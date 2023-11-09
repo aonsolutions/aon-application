@@ -8,7 +8,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -40,23 +40,23 @@ public class NordigenJSONUtils {
 		return countryArray;
 	}
 	
-	public static NORDIGEN_ACCESS_SCOPES[] accessScopesFromJSON(JSONArray scopesJson) {
+	public static NordigenAccessScope[] accessScopesFromJSON(JSONArray scopesJson) {
 		if (scopesJson == null) {
-			return new NORDIGEN_ACCESS_SCOPES[0];
+			return new NordigenAccessScope[0];
 		}
 		int arrLength = scopesJson.length();
-		NORDIGEN_ACCESS_SCOPES[] scopesArr = new NORDIGEN_ACCESS_SCOPES[arrLength];
+		NordigenAccessScope[] scopesArr = new NordigenAccessScope[arrLength];
 		for (int i=0; i<arrLength; i++) {
-			scopesArr[i] = NORDIGEN_ACCESS_SCOPES.getByValue(scopesJson.optString(i));
+			scopesArr[i] = NordigenAccessScope.getByValue(scopesJson.optString(i));
 		}
 		return scopesArr;
 	}
 	
 	
-	public static JSONArray accessScopesToJSON(NORDIGEN_ACCESS_SCOPES[] scopes) {
+	public static JSONArray accessScopesToJSON(NordigenAccessScope[] scopes) {
 		JSONArray jsonArr = new JSONArray();
 		if (scopes != null) {
-			for (NORDIGEN_ACCESS_SCOPES scope : scopes) {
+			for (NordigenAccessScope scope : scopes) {
 				if (scope != null) {				
 					jsonArr.put(scope.getValue());
 				}

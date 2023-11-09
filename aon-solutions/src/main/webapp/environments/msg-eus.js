@@ -227,6 +227,7 @@ export const ISSUEDS = 'Igorritakoak';
 
 // ----- L
 
+export const LABORAL_COSTS = 'Lan-gastuak';
 export const LANGUAGE = 'Hizkuntza';
 export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';

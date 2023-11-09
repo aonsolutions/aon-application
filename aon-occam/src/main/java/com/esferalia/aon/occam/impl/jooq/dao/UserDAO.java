@@ -11,8 +11,8 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;

@@ -9,45 +9,376 @@
 
 	<aon:div id="managementMenuBar" style="display:none" styleClass="aon-management-menu-bar" >
 
+		<aon:if test="#{aonRole.saleOperator}">
+		
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_sales}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink 
+						id="customer-management"
+						rendered="#{actionDenied.renderedOption('customer_search-management')}"
+						action="customer_search-management"
+						actionListener="#{customer.onEditSearch}" >
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="group" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.customer_finance_checking}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="saleInvoiceManagement"
+						rendered="#{actionDenied.renderedOption('saleInvoice_search')}"
+						action="saleInvoice_search"
+						actionListener="#{saleInvoice.onEditSearch}">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="description" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_sale_invoice_management_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="invoicePrint"
+						rendered="#{actionDenied.renderedOption('invoicePrint_search')}"
+						action="invoicePrint_search"
+						actionListener="#{invoicePrint.onEditSearch}">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="print" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_print_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:if test="#{dur.commercial}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="sales-management" 
+							rendered="#{actionDenied.renderedOption('sales_search-management')}"
+							action="sales_search-management"
+							actionListener="#{sales.onEditSearch}"
+							>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="print" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.sales_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				<aon:if test="#{dur.warehouse}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="delivery_invoicing"
+							rendered="#{actionDenied.renderedOption('deliveryInvoicing')}"
+							action="deliveryInvoicing"
+							actionListener="#{deliveryInvoicing.onInitialize}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_delivery_invoicing_module}" />
+						</aon:commandLink>
+					</aon:div>	
+				</aon:if>
+			</aon:div>
+		
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_module_finance}" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="financeCharge-management"
+					rendered="#{actionDenied.renderedOption('finance_search-charge-management')}"
+					action="finance_search-charge-management"
+					actionListener="#{finance.onEditSearchCharge}"
+					>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_charge_module}" />
+					</aon:commandLink>
+				</aon:div>
+	
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="financePayment-management"
+						rendered="#{actionDenied.renderedOption('finance_search-payment-management')}"
+					action="finance_search-payment-management"
+					actionListener="#{finance.onEditSearchPayment}"
+					>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_payment_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_finance-accounting_2"
+						rendered="#{actionDenied.renderedOption('gwt_finance-accounting')}"
+						action="gwt_finance-accounting"
+						title="Cartera de cobros y pagos"
+					>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" Cartera de cobros y pagos" />
+					</aon:commandLink>
+				</aon:div>
+	
+				<aon:if test="#{aonRole.config}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="payMethod-management"
+							rendered="#{actionDenied.renderedOption('payMethod-management')}"
+							action="payMethod-management"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.config_paymethod_module}" />
+					</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="invoiceRemover-management"
+						rendered="#{actionDenied.renderedOption('invoiceRemover_search-management')}"
+						action="invoiceRemover_search-management"
+						actionListener="#{invoiceRemover.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_removing_module}" />
+					</aon:commandLink>
+				</aon:div>
+	
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_invoiceStats-management"
+						rendered="#{actionDenied.renderedOption('gwt_invoiceStat-management')}"
+						action="gwt_invoiceStat-management"
+						title="#{bundle.aon_global_statistics}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_global_statistics}" />
+					</aon:commandLink>												
+				</aon:div>
+			</aon:div>
+		</aon:if>
+			
+		<aon:if test="#{aonRole.purchaseOperator}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_purchases}" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="supplier-management" 
+						rendered="#{actionDenied.renderedOption('supplier_search-management')}"
+						action="supplier_search-management"
+						actionListener="#{supplier.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_suppliers}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="purchaseInvoiceManagement"
+						rendered="#{actionDenied.renderedOption('purchaseInvoice_search')}"
+						action="purchaseInvoice_search"
+						actionListener="#{purchaseInvoice.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_purchase_invoice_management_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:if test="#{dur.commercial}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="purchase" 
+							rendered="#{actionDenied.renderedOption('purchase_search')}"
+							action="purchase_search"
+							actionListener="#{purchase.onEditSearch}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.purchase_module2}" />
+					</aon:commandLink>
+					</aon:div>				
+				</aon:if>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="proposal"
+						rendered="#{actionDenied.renderedOption('proposal_search')}"
+						action="proposal_search"
+						actionListener="#{proposal.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.purchase_proposal_module}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{aonRole.fiscal}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.config_tax_module}" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<!-- Panel de control de IVA -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_vatReport-management"
+						rendered="#{actionDenied.renderedOption('gwt_vatReport-management')}"
+						action="gwt_vatReport-management" title="Panel de control de IVA"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" Panel de control de IVA" />
+					</aon:commandLink>
+				</aon:div>
+			
+				<!-- Panel de control de IRPF -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_irpfReport-management"
+						rendered="#{actionDenied.renderedOption('gwt_irpfReport-management')}"
+						action="gwt_irpfReport-management" title="Panel de control de IRPF"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" Panel de control de IRPF" />
+					</aon:commandLink>
+				</aon:div>
+						
+				<!-- SII -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_sii-management"
+						rendered="#{actionDenied.renderedOption('gwt_sii-management')}"
+						action="gwt_sii-management"
+						title="SII - Suministro Inmediato de Información"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" SII - Suministro Inmediato de Información" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Modelo 347 --> 
+				<aon:div styleClass="aon-direct-access-list-element"> 
+					<aon:commandLink id="gwt_mod347-smb" 
+						rendered="#{actionDenied.renderedOption('gwt_mod347-smb')}"
+						action="gwt_mod347-smb" 
+						title="#{bundle.fiscal_model_347_module}"
+					>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="Modelo 347 - #{bundle.fiscal_model_347_module}" />
+					</aon:commandLink>
+				</aon:div>										
+			</aon:div>
+		</aon:if>
+		
+		<aon:if test="#{aonRole.purchaseOperator}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_expenses}" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+			
+				<!-- Acreedores -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="creditor-management" 
+						rendered="#{actionDenied.renderedOption('creditor_search-management')}"
+						action="creditor_search-management"
+						actionListener="#{creditor.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_creditor_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Facturas de Gastos -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="expenseInvoice-management"
+						rendered="#{actionDenied.renderedOption('expenseInvoice_search-management')}"
+						action="expenseInvoice_search-management"
+						actionListener="#{expenseInvoice.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_expense_invoice_management_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Gastos no Deducibles en IVA -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="undeductibleInvoiceManagement"
+						rendered="#{actionDenied.renderedOption('undeductibleInvoice_search')}"
+						action="undeductibleInvoice_search"
+						actionListener="#{undeductibleInvoice.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_undeductible_invoice_management_module}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+
 		<aon:div 
 		style="cursor:pointer;" 
 		styleClass="aon-portlet-title" 
-		onclick="javascript:collapseMenuBar(this)">
+		onclick="javascript:expandMenuBar(this)">
 			<aon:outputText styleClass="aon-portlet-title-line"/>
-			<aon:outputText value="#{bundle.aon_sales}" />
+			<aon:outputText value="#{bundle.aon_masters}" />
 		</aon:div>
-
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink 
-					id="customer-management"
-					rendered="#{actionDenied.renderedOption('customer_search-management')}"
-					action="customer_search-management"
-					actionListener="#{customer.onEditSearch}" >
-						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="group" />
-						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.customer_finance_checking}" />
-				</aon:commandLink>
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="saleInvoiceManagement"
-					rendered="#{actionDenied.renderedOption('saleInvoice_search')}"
-					action="saleInvoice_search"
-					actionListener="#{saleInvoice.onEditSearch}">
-						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="description" />
-						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_sale_invoice_management_module}" />
-				</aon:commandLink>
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="invoicePrint"
-					rendered="#{actionDenied.renderedOption('invoicePrint_search')}"
-					action="invoicePrint_search"
-					actionListener="#{invoicePrint.onEditSearch}">
-						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="print" />
-						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_print_module}" />
-				</aon:commandLink>
-			</aon:div>
+		<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:if test="#{aonRole.productOperator}">
+					<!-- Productos -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="product-management" 
+							rendered="#{actionDenied.renderedOption('product_search-management')}"
+							action="product_search-management"
+							actionListener="#{product.onEditSearch}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_role_product}" />
+					</aon:commandLink>
+					</aon:div>
+				</aon:if>	
+				
+				<!-- Gastos -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="expenseItem-management" 
+						rendered="#{actionDenied.renderedOption('expenseItem-management')}"
+						action="expenseItem-management" 
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_expenses}" />
+					</aon:commandLink>
+				</aon:div>	
+	
+				<aon:if test="#{aonRole.config}">
+					<!-- Categorias -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="productCategory-management"
+							rendered="#{actionDenied.renderedOption('productCategory-management')}"
+							action="productCategory-management"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_categories}" />
+					</aon:commandLink>
+					</aon:div>
+					
+					<!-- País / Provincia -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="geotreeParent_list-management"
+							rendered="#{actionDenied.renderedOption('geotreeParent_list-financePortal')}"
+							action="geotreeParent_list-financePortal"
+							actionListener="#{geotreeParent.onSearch}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.geozone_module}" />
+					</aon:commandLink>
+					</aon:div>
+				</aon:if>
+	
+				<!-- Segmentación -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="segment_form-management"
+						rendered="#{actionDenied.renderedOption('segment_form-management')}"
+						action="segment_form-management"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.registry_segment_module}" />
+					</aon:commandLink>
+				</aon:div>
 		</aon:div>
-
-
 	</aon:div>
 </ui:composition>

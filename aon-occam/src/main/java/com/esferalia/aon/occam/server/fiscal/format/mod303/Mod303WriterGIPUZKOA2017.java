@@ -27,7 +27,7 @@ public class Mod303WriterGIPUZKOA2017 implements IMod303Writer{
 			,(wr, mod) -> wr.append(mod.getPeriod().isQuarterPeriod() ? "300" : "320") // Modelo 300 (si presentacion trimestral) o 320 (si presentacion mensual) AN3
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getPeriod().getFormatName( mod.getAdministration() ), 2)) // Periodo AN2
 			
-			// FALTA - Que hay que poner ?? en los que genera el programa de ayuda, y en los que genera hasta ahora AON, siempre pone 01
+			// Que hay que poner ?? en los que genera el programa de ayuda, y en los que genera hasta ahora AON, siempre pone 01
 			,(wr, mod) -> wr.append("01") // Código de registro N2
 			
 			,(wr, mod) -> wr.append((mod.getFinanceCCC() != null) && (mod.getFinanceCCC().length() == 20)?AonFiscalFileUtils.text(mod.getFinanceCCC(),20):AonFiscalFileUtils.zeros(20)) // Código cuenta cliente N20

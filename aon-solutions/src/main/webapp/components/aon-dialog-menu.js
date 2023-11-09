@@ -153,7 +153,8 @@ export class AonDialogMenu extends AonElement {
 	open(){
 		let dialog = this.getDialog();
 		if(this.isMobile()) {
-			this.getElement('aonMobileMenuSidenav').style.zIndex = "-1";
+			let aonMobileMenuSidenav = this.getElement('aonMobileMenuSidenav');
+			if(aonMobileMenuSidenav) aonMobileMenuSidenav.style.zIndex = "-1";
 			this.setDrag(this.START_TOP);
 			dialog.style.display = "block";
 			setTimeout(()=>{
@@ -197,8 +198,8 @@ export class AonDialogMenu extends AonElement {
 
 	setContent(element, top, left) {
 		let content = this.isMobile() ? this.getBody() : this.getContent();
+		content.innerHTML = "";
 		if(!this.isMobile() && top && left) {
-			content.innerHTML = "";
 			content.style.top = top + 'px' || '90px';
 			content.style.left = (left > (this.getDialog().offsetWidth/2) ? left - 180 : left)+'px' ;	
 		}
@@ -374,6 +375,8 @@ export class AonDialogMenu extends AonElement {
 		
 		if(button.aonIcon){
 			icon.aonIcon = button.aonIcon;
+		} else if(button.image) {
+			icon.image = button.image;
 		} else {
 			icon.icon = button.icon || 'help_outline';
 		}
@@ -385,6 +388,8 @@ export class AonDialogMenu extends AonElement {
 		icon.style.gap = "10px";
 		icon.style.margin = "10px 0";
 		parent.appendChild(icon);
+		if(button.language)
+			this.getElement(icon.IMAGE).style.width = '35px';
 		if(button.permission)  // ADD EVENT
 			icon.addEventListener(EVENT.CLICK, () => {
 				this.close();

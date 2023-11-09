@@ -6,14 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public enum AonError implements Serializable{
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED  
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00AA ª --> \u00BA
-	// ¿ --> \u00BF 
+	// Ã --> \u00C1 Ã¡ --> \u00E1
+	// Ã‰ --> \u00C9 Ã© --> \u00E9
+	// Ã --> \u00CD Ã­ --> \u00ED  
+	// Ã“ --> \u00D3 Ã³ --> \u00F3
+	// Ãš --> \u00DA Ãº --> \u00FA
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âº --> \u00AA Âª --> \u00BA
+	// Â¿ --> \u00BF 
 	
 	
 	// -----------------------------------------------------------
@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	,INVALID_FORMAT("El formato del dato \"{0}\" no es correcto: \"{1}\"")
+	,NOT_EXIST("No existe \"{0}\"")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
@@ -153,7 +154,7 @@ public enum AonError implements Serializable{
 
 	// --------------------------------------------- BRAND
 	, BRAND_NULL("El valor de la marca es nulo.")
-	, BRAND_EMPTY("El valor de la marca esta vacío.")
+	, BRAND_EMPTY("El valor de la marca esta vacÃ­o.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
 	
@@ -247,11 +248,10 @@ public enum AonError implements Serializable{
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
-	
 	//-----------------------------------------------UPLOAD OF DNI
 	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
-	,FILE_SIZE_EXCEEDED("El tamaño de archivo no puede superar los 5MB")
+	,FILE_SIZE_EXCEEDED("El tamaÃ±o de archivo no puede superar los 5MB")
 	,NULL_TEXT_RECEIVED("El texto recibido es nulo")
 	,INVALID_DNI_FORMAT("El formato del campo para el dni no es valido")
 	,INVALID_NATIONALITY_FORMAT("El formato del campo para la nacionalidad no es valido")
@@ -259,6 +259,17 @@ public enum AonError implements Serializable{
 	,INVALID_FIRST_SURNAME("El formato para el campo del primer apellido no es valido")
 	,INVALID_SECOND_SURNAME("El formato para el campo del segundo apellido no es valido")
 	,NULL_NEXT_LINE("Error al cargar los datos, intentelo otra vez")
+
+  // ---------------------------------------------- REGISTRY_BANK
+	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
+	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")
+	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
+	,REGISTRY_BANK_NULL_REGISTRY("El registro no puede ser nulo")
+	,REGISTRY_BANK_NULL_BANK_ACCOUNT("La cuenta de banco no puede ser nula")
+	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o del bic es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
 	;
 	
 	

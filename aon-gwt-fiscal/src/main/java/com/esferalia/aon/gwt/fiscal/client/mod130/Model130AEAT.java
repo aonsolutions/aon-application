@@ -156,6 +156,7 @@ public class Model130AEAT extends Model130Base {
 						@Override
 						public void onSuccess(Mod130 selected) {
 							selectAndPopulate(selected);
+							showPaymentInfo(selected);							
 						}
 						@Override
 						public void onFailure(Throwable caught) {

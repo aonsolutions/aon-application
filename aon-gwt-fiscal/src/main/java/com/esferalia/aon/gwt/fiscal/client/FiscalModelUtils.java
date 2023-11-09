@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
@@ -447,6 +449,41 @@ public class FiscalModelUtils {
 						
 			}
 		});
+	}
+	
+	// Resultado 999,99 · <tipo_declaracion> · IBAN <iban> <alias_banco> · NRC <nrc>
+	public static String getPaymentInfo(FiscalModel mod) {
+		// Resultado
+		StringBuilder buff = new StringBuilder(AON.MSG.result());
+		buff.append(AonStringUtils.SPACE);
+		double result = AonNumberUtils.todouble(mod.getDeclarationResult());
+		buff.append(AON.FMT.format(result));
+		// Tipo Declaración
+		if (mod.getDeclarationResultType() != null) {
+			buff.append(AonStringUtils.SPACE);			
+			buff.append(AonStringUtils.BULLET);
+			buff.append(AonStringUtils.SPACE);
+			buff.append(mod.getDeclarationResultType().getDescription());
+		}
+		// IBAN
+		if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {			
+			buff.append(AonStringUtils.SPACE);
+			buff.append(AonStringUtils.BULLET);
+			buff.append(AonStringUtils.SPACE);
+			buff.append("IBAN ");
+			buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAccount().getIban()));
+			buff.append(AonStringUtils.SPACE);
+			buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
+		}
+		// NRC
+		if (AonStringUtils.isNotBlank(mod.getNrc())) {
+			buff.append(AonStringUtils.SPACE);
+			buff.append(AonStringUtils.BULLET);
+			buff.append(AonStringUtils.SPACE);			
+			buff.append("NRC ");
+			buff.append(mod.getNrc());
+		}
+		return buff.toString();
 	}
 	
 

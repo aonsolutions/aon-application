@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -750,4 +751,21 @@ public class Mod202DAO extends FiscalModelDAO {
 		}
 		return 0.0;
 	}
+	
+	public static Mod202 markAsCustomerRejected(AONContext ctx, Mod202 mod202, String reason) {
+		FiscalModelValidation.statusChange(mod202, FiscalStatus.CUSTOMER_REJECTED);
+		mod202.setStatus(FiscalStatus.CUSTOMER_REJECTED);
+		if (AonStringUtils.isNotBlank(reason)) {
+			String comments = mod202.getComments();
+			if (AonStringUtils.isNotBlank(comments)) {
+				comments = AonStringUtils.join(comments, "\n", reason);
+			} else {
+				comments = reason; 
+			}
+			mod202.setComments( comments );
+		}
+		mod202 = saveMod202(ctx, mod202);
+		return mod202;
+	}
+	
 }

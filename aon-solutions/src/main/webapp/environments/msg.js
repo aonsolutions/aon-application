@@ -354,6 +354,7 @@ export const ISSUE = "Asunto"; //TODO
 
 // ----- L
 export const LABELS = "Etiquetas";
+export const LABORAL_COSTS = MSG.LABORAL_COSTS;
 export const LANGUAGE = MSG.LANGUAGE;
 export const LAST = MSG.LAST;
 export const LAST_ACCESS = "Último Acceso";

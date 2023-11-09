@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountMetadataFromJSON;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountMetadataToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCOUNT_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -34,7 +34,7 @@ public enum NordigenAccountMetadataJSON {
 			(account, json) -> json.put("institution_id", account.getInstitutionId())
 	),
 	STATUS(
-			(account, json) -> account.setStatus(NORDIGEN_ACCOUNT_STATUS.safeValueOf(json.optString("status", null))),
+			(account, json) -> account.setStatus(NordigenAccountStatus.safeValueOf(json.optString("status", null))),
 			(account, json) -> json.put("status", account.getStatus() != null ? account.getStatus().getDescription() : null)
 	),
 	OWNER_NAME(

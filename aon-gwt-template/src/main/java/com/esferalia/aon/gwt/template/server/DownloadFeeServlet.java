@@ -174,6 +174,8 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getItem().getSerialNumber());
         		} else if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LINEA2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getLine());
+        		} else if(IConstants.AGENTE_DE_SOPORTE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getSellerSupport().getName());
         		}
         	}
         }

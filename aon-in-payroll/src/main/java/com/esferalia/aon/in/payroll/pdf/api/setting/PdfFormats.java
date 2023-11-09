@@ -16,12 +16,23 @@ public class PdfFormats {
 	 * 
 	 * @return the latin number String [Format: ###,##0.00]
 	 */
-	public static String toLatinNumber(Double number) {
+	public static String toLatinNumber(Double number, Integer decimals) {
 		if (number == null)
 			return "";
-		DecimalFormat formater = new DecimalFormat("###,##0.00");
+		String format = decimals > 0 ? "###,##0." : "###,##0";
+		for(Integer i= 0; i < decimals; i++) format = format + "0"; 
+		DecimalFormat formater = new DecimalFormat(format);
 		formater.setRoundingMode(RoundingMode.HALF_UP);
-		return formater.format(number);
+		String result = formater.format(number);
+		while("0".equals(result.substring(result.length() -1)) && decimals > 2) {
+			result = result.substring(0, result.length() -1);
+			decimals--;
+		}
+		return result; 
+	}
+	
+	public static String toLatinNumber(Double number) {
+		return toLatinNumber(number, 2);
 	}
 	
 	/**

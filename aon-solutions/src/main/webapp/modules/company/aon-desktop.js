@@ -8,7 +8,6 @@ import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
@@ -33,7 +32,6 @@ import { AonNewUpload } from '../../components/aon-new-upload.js'
 import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
-import { AonCompanyDashboardCostsList } from '../laboral/company/aon-company-dashboard-costs-list.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonAccessCard } from '../../components/aon-access-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
@@ -45,6 +43,8 @@ import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
 import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
+import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
 
 export class AonDesktop extends AonElement {
 
@@ -79,7 +79,6 @@ export class AonDesktop extends AonElement {
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
 		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
 		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
-	
 	}	
 
 	getDur() {
@@ -122,7 +121,9 @@ export class AonDesktop extends AonElement {
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => uploadInvoices(inputInvoiceFile, target.files));
+		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => {
+			this.uploadInvoiceDesktop(undefined, target.files);
+		});
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
@@ -330,7 +331,15 @@ export class AonDesktop extends AonElement {
 	}
 
 	uploadInvoiceDesktop(input, files){
-		uploadInvoices(input, files);
+		let uploadToast = this.getElement('aonUploadToast');
+		if(!uploadToast){ 
+			uploadToast = new AonUploadToast();
+			uploadToast.setDur(this.getDur());
+			this.appendChild(uploadToast);
+		}
+		for (let file of files) {
+			uploadToast.addFile("invoice", file);
+		}
 	}
 
 	async createDashboard(parent, company){
@@ -345,22 +354,22 @@ export class AonDesktop extends AonElement {
 		parent.appendChild(dashboard);
 
 		// Upload Panel
-		// let upload = this.createElement(TAG.DIV);
-		// upload.className = CSS.AON_UPLOAD_PANEL;
-		// upload.id = "uploads";
-		// dashboard.appendChild(upload);
+		let upload = this.createElement(TAG.DIV);
+		upload.className = CSS.AON_UPLOAD_PANEL;
+		upload.id = "uploads";
+		dashboard.appendChild(upload);
 
-		// let uploadDoc = new AonNewUpload();
-		// uploadDoc.id = "docUpload";
-		// uploadDoc.setMessage("Subir documentación");
-		// uploadDoc.setType("Documental");
-		// upload.appendChild(uploadDoc);
+		let uploadDoc = new AonNewUpload();
+		uploadDoc.id = "docUpload";
+		uploadDoc.setMessage("Subir documentación");
+		uploadDoc.setType("Documental");
+		upload.appendChild(uploadDoc);
 
-		// let uploadInv = new AonNewUpload();
-		// uploadInv.id = "factUpload";
-		// uploadInv.setMessage("Subir factura");
-		// uploadInv.setType("Invoice");
-		// upload.appendChild(uploadInv);
+		let uploadInv = new AonNewUpload();
+		uploadInv.id = "factUpload";
+		uploadInv.setMessage("Subir factura");
+		uploadInv.setType("Invoice");
+		upload.appendChild(uploadInv);
 
 		// Fast Access Buttons Panel
 		let fastAccessButtons = this.createElement(TAG.DIV);
@@ -397,17 +406,6 @@ export class AonDesktop extends AonElement {
 			this.rootPanel(aonMessengerChat);
 		});
 		fastAccessButtons.appendChild(newRequest);
-
-		// if(this.getDur().isAon()){
-		// 	let conecta = new AonDashboardButton();
-		// 	conecta.setId('conecta');
-		// 	conecta.setLogo('aon_app');
-		// 	conecta.setTitle('CONECT@')
-		// 	conecta.addEventListener(EVENT.CLICK, () => {
-		// 		this.appSelection(ClassicApps.AON_SOLUTIONS.app);
-		// 	});
-		// 	fastAccessButtons.appendChild(conecta);
-		// }
 
 		if(this.getDur().isAon()){
 			let newEmployee = new AonDashboardButton();
@@ -495,7 +493,7 @@ export class AonDesktop extends AonElement {
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
-			payrollCard.title = MSG.COMPANY_COSTS;
+			payrollCard.title = MSG.LABORAL_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -505,7 +503,9 @@ export class AonDesktop extends AonElement {
 			let lastMonthFilter = getPeriodLaboral("last_month");
 			lastMonthFilter.period = lastMonthFilter.value;
 
-			payrollCard.setContent(new AonCompanyDashboardCostsList(lastMonthFilter));
+			let aonCompanyCostsCard = new AonCompanyCostsCard(lastMonthFilter);
+			payrollCard.setContent(aonCompanyCostsCard);
+			await paintCompanyCostPieChart();
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
@@ -722,7 +722,10 @@ export class AonDesktop extends AonElement {
 		let options = periods.map(option => ({
 			...option,
 			period: option.value,
-			fn: () => payrollCard.setContent(new AonCompanyDashboardCostsList({...option, period: option.value}))
+			fn: async () => {
+				payrollCard.setContent(new AonCompanyCostsCard({...option, period: option.value}));
+				await paintCompanyCostPieChart();
+			}
 		  }));
 
 		d.setMenuOptions(options, top, left);
@@ -787,6 +790,37 @@ export class AonDesktop extends AonElement {
 		
 		let options = [];
 
+		// Borrador
+		let period;
+		let periodText;
+		let year;
+		if(result[0].period == "T1") {
+			period = "T2";
+			periodText = "2º Trim.";
+			year = result[0].year;
+		} else if(result[0].period == "T2") {
+			period = "T3";
+			periodText = "3º Trim.";
+			year = result[0].year;
+		} else if(result[0].period == "T3") {
+			period = "T4";
+			periodText = "4º Trim.";
+			year = result[0].year;
+		} else {
+			period = "T1";
+			periodText = "1º Trim.";
+			year = result[0].year + 1;
+		}
+		const periodOpt = {
+			name: periodText + " " + year + " (B)",
+			title: periodText + " " + year + " (Borrador)",
+			icon: MATERIAL_ICONS.EVENT,
+			backgroundColor: "#4472C4",
+			fn: () => aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+		};
+		options.push(periodOpt);
+
+		// Filtros
 		for (let index = 0; index < 4; index++) {
 			const period = result[index];
 			const periodOpt = {
@@ -1068,7 +1102,7 @@ export class AonDesktop extends AonElement {
 							break;
 						case Apps.INVOICE.app:
 							let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-							uploadInvoices(inputInvoiceFile, files);
+							this.uploadInvoiceDesktop(undefined, files);
 							break;								
 						}
 					}

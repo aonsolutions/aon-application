@@ -50,6 +50,7 @@ public class FaceServlet extends AonApiHttpServlet {
 			String domainIdStr = req.getParameter(IJsonNames.DOMAIN_ID);
 			Integer domainId = Integer.parseInt(domainIdStr);
 			String login = "";
+			String legalLiterals = req.getParameter("legalLiterals");
 
 			Domain domain = new Domain()
 				.setName(domainName)
@@ -71,7 +72,7 @@ public class FaceServlet extends AonApiHttpServlet {
 			}
 
 //			Version 3.2.2
-			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice);
+			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice, legalLiterals);
 			byte[] data = facturae.generate();
 			try {
 				Certificate certificate = checkCertificate(api);

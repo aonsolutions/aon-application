@@ -42,6 +42,10 @@
 	}
 	</style>	
 	
+	<aon:if test="#{userUtils.newAONTheme}">
+		<ui:include src="/facelet/new/portlet/s3UploadForm.xhtml" />
+	</aon:if>				
+
 	<aon:form id="mainForm" >
 
 		<aon:div styleClass="aon-scroll-area aon-height-all" style="padding: .0em 1.5em 0 0 !important;">
@@ -52,7 +56,7 @@
 				<aon:if test="#{!userUtils.newAONTheme}">				
 					<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
-				<!--  
+				<!--
 				<aon:if test="#{userUtils.newAONTheme}">				
 					<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
@@ -61,12 +65,17 @@
 					
 					<aon:if test="#{userUtils.newAONTheme}">				
 						
+						<aon:if test="#{desktop.managementSelected}">
+							<ui:include src="/facelet/new/portlet/managementDesktopPortlet.xhtml" />
+						</aon:if>
 						<aon:if test="#{desktop.accountingSelected}">
 							<ui:include src="/facelet/new/portlet/accountingDesktopPortlet.xhtml" />
 						</aon:if>
 						<aon:if test="#{desktop.payrollSelected}">
 							<ui:include src="/facelet/new/portlet/payrollDesktopPortlet.xhtml" />
 						</aon:if>
+						
+						
 						
 						<aon:if test="#{desktop.fiscalSelected}">
 							<aon:div id="accountingMenuDesktop" styleClass="aon-menu-desktop" >

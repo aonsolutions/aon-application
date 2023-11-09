@@ -3,6 +3,7 @@ import {getUserListSpeed, generateToken, deleteUser} from  '../../services/servi
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import * as LS from '../../services/localStorageService.js';
+import { AonSelect } from '../../components/aon-select.js';
 
 export class AonServiceAccountList extends AonElement {
 
@@ -72,14 +73,39 @@ export class AonServiceAccountList extends AonElement {
 	}	
 
 	generateToken(user) {
-		let data = {
-			domainId: LS.getDomainId(),
-			domainName: LS.getDomainName(),
-			domainLogin: LS.getDomainLogin(),
-			id: user.id
-		};
-		let json = btoa(JSON.stringify(data));
-		generateToken(json);
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Generar Token");
+
+		let select = this.createAonElement(new AonSelect(), "generateTokenTime", "Expira en");
+		select.setOptions([{
+			value: 0,
+			name: '1 mes'
+		}, {
+			value: 1,
+			name: '3 meses'
+		}, {
+			value: 2,
+			name: '1 año'
+		}, {
+			value: 3,
+			name: 'Nunca'
+		}]);
+
+		d.setContent(select);
+		d.addAcceptAction(() => {
+			let data = {
+				domainId: LS.getDomainId(),
+				domainName: LS.getDomainName(),
+				domainLogin: LS.getDomainLogin(),
+				id: user.id,
+				time: select.value
+			};
+			let json = btoa(JSON.stringify(data));
+			generateToken(json);
+		});			
+		d.open();
 	}
 
 	deleteServiceAccount(user) {

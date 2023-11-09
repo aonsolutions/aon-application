@@ -97,7 +97,7 @@ public class InvoiceDetailDAO {
                 .join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
                 .leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
                 .leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
-                .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
+                .leftOuterJoin(SellerDAO.SELLER_COMERCIAL_ALIAS).on(SellerDAO.SELLER_COMERCIAL_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
                 .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
                 .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
                 .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
@@ -258,7 +258,7 @@ public class InvoiceDetailDAO {
 							? ItemFiller.build(r)
 							: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setSeller(checkField(r, SELLER.REGISTRY) 
-							? SellerFiller.build(r)
+							? SellerFiller.build(r, true)
 							: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
 					.setWorkplace(checkField(r, WORKPLACE.ID) 
 							? WorkplaceFiller.build(r)
