@@ -6,6 +6,7 @@ export const ROOT_PANEL = 'rootPanel';
 export const AON_DOMAIN_NAME = 'aon_domain_name';
 export const AON_DOMAIN_ID = 'aon_domain_id';
 export const AON_DOMAIN_LOGIN = 'aon_domain_login';
+export const AON_DOMAIN_DOCUMENT = 'aon_domain_document';
 export const AON_SESSION_ID = 'aon_session_id';
 export const AON_APPLICATION_TOP = 'aon_application_top'; // ¿?
 export const AON_SOLUTIONS = 'aon_solutions';
@@ -73,6 +74,17 @@ export const setDomainLogin = (value) => {
 
 export const removeDomainLogin = () => {
     remove(AON_DOMAIN_LOGIN);
+}
+
+export const getDomainDocument = () => get(AON_DOMAIN_DOCUMENT);
+
+
+export const setDomainDocumnet = (value) => {
+    set(AON_DOMAIN_DOCUMENT, value);
+}
+
+export const removeDomainDocument = () => {
+    remove(AON_DOMAIN_DOCUMENT);
 }
 
 export const getApplicationTop = () =>  get(AON_APPLICATION_TOP);
@@ -143,4 +155,5 @@ export const removeDomain = () => {
     removeDomainId();
     removeDomainName();
     removeDomainLogin();
+    removeDomainDocument();
 }

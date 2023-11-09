@@ -619,6 +619,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return null;
 	}
 
+	public String getCurrentDomainDocument() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			DomainData domainData = (DomainData) getModel().getRowData();
+			String document = domainData.getDocument();
+			return document;
+		}
+		return null;
+	}
+
 	public String getSchema() {
 		try {
 			AuthPrincipal principal = AonUtil.getAuthPrincipal();

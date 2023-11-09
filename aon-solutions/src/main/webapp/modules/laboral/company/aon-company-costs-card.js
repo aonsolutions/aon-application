@@ -55,11 +55,19 @@ export class AonCompanyCostsCard extends AonElement {
     canvasDiv.style.maxWidth = "19rem";
     canvasDiv.style.maxHeight = "15rem";
     canvasDiv.style.height = "100%";
+    canvasDiv.style.alignItems = "center";
     main.appendChild(canvasDiv);
 
     let canvasChart = this.createElement(TAG.CANVAS);
     canvasChart.id = this.id + "Chart";
     canvasDiv.appendChild(canvasChart);
+
+    let emptyData = this.createElement(TAG.DIV);
+    emptyData.id = this.id + "EmptyMessage";
+    emptyData.innerHTML = "No existen nóminas para calcular costes";
+    emptyData.style.fontWeight = "500";
+    emptyData.style.display = 'none';
+    canvasDiv.appendChild(emptyData);
   }
 
 }
@@ -97,11 +105,11 @@ const paintCompanyCostPieChart = async () => {
           // label: 'My First Dataset',
           data: [sumEnterpriseSs, sumEmployeeSs, totalSS, importIrpf, totalLiquid],
           backgroundColor: [
-            '#0051C6',
-            '#db4437',
-            'black',
-            '#B3B3B3',
-            '#5e97f6'
+            'rgba(0, 81, 198, 0.7)',
+            'rgba(219, 68, 55, 0.7)',
+            'rgba(0, 0, 0, 0.7)',
+            'rgba(179, 179, 179, 0.7)',
+            'rgba(94, 151, 246, 0.7)'
           ],
           hoverOffset: 4
         }]
@@ -134,12 +142,22 @@ const paintCompanyCostPieChart = async () => {
       }
 
       let canvasChart = document.getElementById("aon-company-costs-cardChart");
+      canvasChart.style.display = 'block';
+
+      let emptyMessage = document.getElementById("aon-company-costs-cardEmptyMessage");
+      emptyMessage.style.display = 'none';
 
       if(chartCanva){
         chartCanva.destroy();
       }
-
+      
       chartCanva = new Chart(canvasChart, config);
+    } else {
+      let canvasChart = document.getElementById("aon-company-costs-cardChart");
+      canvasChart.style.display = 'none';
+
+      let emptyMessage = document.getElementById("aon-company-costs-cardEmptyMessage");
+      emptyMessage.style.display = 'block';
     }
 
     let startDateText = AonDateUtils.getMonthYear(startDate),

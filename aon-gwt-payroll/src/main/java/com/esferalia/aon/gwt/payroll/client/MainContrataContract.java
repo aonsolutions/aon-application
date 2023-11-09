@@ -1023,6 +1023,9 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("inactive", inactiveContractsCB.getValue().toString()));
+		flowPanel.add(new Hidden("workplace", workplaceLB.getSelectedValue()));
+		flowPanel.add(new Hidden("employee", employeeSB.getValue()));
 		formPanel.add(flowPanel);
 		
 		formPanel.addSubmitCompleteHandler(e1 -> employeeToolbar.remove(formPanel));

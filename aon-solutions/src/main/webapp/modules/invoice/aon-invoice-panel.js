@@ -38,6 +38,7 @@ import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonInvestList } from '../product/aon-invest-list.js';
 import { AonInvest } from '../product/aon-invest.js';
 import { AonSelect } from '../../components/aon-select.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -106,6 +107,7 @@ export class AonInvoicePanel extends AonElement {
 		}
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
+
 	}
 
 	getDur(){
@@ -120,11 +122,12 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
-		input.addEventListener(EVENT.CHANGE, () => this.preview(input.files));
+		input.addEventListener(EVENT.CHANGE, () => this.preview(input, input.files));
 
-		this.getElement(this.INPUT_CAMERA).addEventListener(EVENT.CHANGE,  ({target}) => this.preview(target.files));
+		let inputCamera = this.getElement(this.INPUT_CAMERA);
+		inputCamera.addEventListener(EVENT.CHANGE,  ({target}) => this.preview(inputCamera, target.files));
 
-		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
+		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(aonInvoice, e.detail));
 
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
@@ -208,11 +211,18 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildRawdocOptions() {
-		let pendingOptions = [ 
+		let pendingOptions = (this.isBeta() && this.getDur().isOcr()) ? 
+		[ 
+			OPTION.RAWDOC_INBOX,
+			OPTION.RAWDOC_OCR,
+			OPTION.RAWDOC_REJECT, 
+			OPTION.RAWDOC_DRAFT
+		]
+		:[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
-		];
+		] ;
 		let data = {
 			id: MSG.PENDING_DOCUMENTS,
 			title: MSG.PENDING_DOCUMENTS,
@@ -570,11 +580,23 @@ export class AonInvoicePanel extends AonElement {
 		this.getElement(this.INPUT_FILE).click();
 	}
 
-	preview(files) {
-		for(let i = 0; i < files.length; i++) {
-			getReader(files[i]).then(f=>{
-				this.attach(f);
-			});
+	preview(el, files) {
+		if(this.isBeta() && this.getDur().isOcr()) {
+			let uploadToast = this.getElement('aonUploadToast');
+			if(!uploadToast){ 
+				uploadToast = new AonUploadToast();
+				uploadToast.setDur(this.getDur());
+				this.appendChild(uploadToast);
+			}
+			for (let file of files) {
+				uploadToast.addFile("invoice", file);
+			}
+		} else{
+			for(let i = 0; i < files.length; i++) {
+				getReader(files[i]).then(f=>{
+					this.attach(f);
+				});
+			}
 		}
 	}
 
@@ -648,6 +670,9 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REJECTED});
+				break;
+			case OPTION.RAWDOC_OCR.id:
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50});
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});
