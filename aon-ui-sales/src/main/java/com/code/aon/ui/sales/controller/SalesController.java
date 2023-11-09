@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,6 +22,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +95,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -545,6 +549,11 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public boolean isInvoiced(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.INVOICED;
+	}
+	
+	public boolean isInPreparation(){
+		Sales sales = (Sales)this.getTo();
+		return sales.getStatus() == SalesStatus.IN_PREPARATION;
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
@@ -1208,5 +1217,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		accept(event);
 		
 
+	}
+	
+	public String getPackagingSalesDownloadURL() {
+		Sales sales = (Sales) getTo();
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.SALES, sales.getId())
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
 }
