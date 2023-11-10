@@ -6,12 +6,10 @@ import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class AonRegistryBankGrid extends AonDisplayGrid {
-	
-	private RegistryFull<?> registryFull;
-	private FlowPanel rootPanel;
+public class AonRegistryBankGrid extends SimpleLayoutPanel {
 	
 	/**
 	 * The constructor
@@ -20,48 +18,36 @@ public class AonRegistryBankGrid extends AonDisplayGrid {
 	 * @param callback
 	 * @param rootPanel
 	 */
-	public AonRegistryBankGrid(RegistryFull<?> registryFull, FlowPanel rootPanel) {
-		this.registryFull = registryFull;
-		this.rootPanel = rootPanel;
-	}
+	public AonRegistryBankGrid(RegistryFull<?> registryFull) {
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
+		this.setWidget(scrollPanel);
+		
+		FlowPanel container = new FlowPanel();
+		scrollPanel.setWidget(container);
 
-	/**
-	 * Shows the banks of a registry
-	 */
-	public void getBanksGrid() {
-		FlowPanel labelContainer = new FlowPanel();
-		labelContainer.setStyleName(AON.CSS.aonFlexBlock());
-		labelContainer.addStyleName(AON.CSS.aonBorderBottom());
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		container.add( grid );
 
-		Label banksLabel = new Label(AON.MSG.banks());
-		banksLabel.addStyleName(AON.CSS.aonFlexGrow1());
-		banksLabel.addStyleName(AON.CSS.aonBold());
-		labelContainer.add(banksLabel);
-		
-		AonTableButton addBank = new AonTableButton( AON.MSG.addBank(), AON.CSS.aonIconAdd() );
-		rootPanel.add(labelContainer);
-		
-		this.addStyleName(AON.CSS.aonWidthAlmostAll());
-		this.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(this);
-		
-		addBank.addClickHandler(event -> {
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.addBank(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(event -> {
 			if (registryFull.getBanks() == null || registryFull.getBanks().isEmpty()) {
-				paintBankHeader(this);		
+				paintBankHeader(grid);		
 			}
 			RegistryBank registryBank = new RegistryBank();
 			registryFull.addBank(registryBank);
-			paintRow(this, registryBank);
+			paintRow(grid, registryBank);
 		});
+		container.add( addButton );
 		
-		labelContainer.add(addBank);
-
 		if (registryFull.getBanks() != null) {
 			if (!registryFull.getBanks().isEmpty()) {
-				paintBankHeader(this);		
+				paintBankHeader(grid);		
 			}
 			for (RegistryBank registryBank: registryFull.getBanks()) {
-				paintRow(this, registryBank);
+				paintRow(grid, registryBank);
 			}
 		}
 	}
@@ -70,8 +56,8 @@ public class AonRegistryBankGrid extends AonDisplayGrid {
 	 * Adds the cells of the bank table
 	 * @param displayTab
 	 */
-	private void paintBankHeader(AonRegistryBankGrid displayTab) {
-		displayTab.addHeaderRow()
+	private void paintBankHeader(AonDisplayGrid grid) {
+		grid.addHeaderRow()
 			.addCell(new InlineLabel(AON.MSG.bankAccount()))
 			.addCell(new InlineLabel(AON.MSG.description()))
 			.addCell(new InlineLabel("Bic / Swift"))
@@ -83,7 +69,7 @@ public class AonRegistryBankGrid extends AonDisplayGrid {
 	 * @param displayTab
 	 * @param registryAddress
 	 */
-	private void paintRow(AonRegistryBankGrid displayTab, RegistryBank registryBank) {
+	private void paintRow(AonDisplayGrid grid, RegistryBank registryBank) {
 		
 		// ***************************************************************** [BANK ACCOUNT]		
 		final AonBankAccountBox aonBankAccountBox = new AonBankAccountBox();
@@ -136,7 +122,7 @@ public class AonRegistryBankGrid extends AonDisplayGrid {
 			aonBankAccountBox.setEnabled(true);
 		});
 		
-		displayTab.addHeaderRow()
+		grid.addHeaderRow()
 			.addCell(aonBankAccountBox)
 			.addCell(descriptionText)
 			.addCell(bicText)

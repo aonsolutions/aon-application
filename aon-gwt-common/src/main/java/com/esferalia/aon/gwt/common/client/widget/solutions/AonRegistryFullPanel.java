@@ -7,38 +7,27 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
-import com.esferalia.aon.gwt.common.client.widget.MediaTypeListBox;
-import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.IAccount;
 import com.esferalia.aon.occam.api.model.IScopable;
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
-import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.MediaType;
-import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel implements Focusable {
+public abstract class AonRegistryFullPanel<R extends RegistryFull<?>> extends DockLayoutPanel implements Focusable {
 	public static final int MIN_WIDTH = 850;
 	public static final int MIN_HEIGHT = 650;
 	private RegistryServiceAsync service;
@@ -58,36 +47,29 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 
 	private final FlowPanel rootPanel = new FlowPanel();
 	private final AonTextBox nameText = new AonTextBox();
-	
 	private AonAccountBox accountBox;
 	
-	public AonRegistryFullPanel(AonModuleOptions<?> options, R registryFull,AonRegistryFullPanelCallback<R> callback) {
-		setStyleName(AON.CSS.aonScrollArea());
-		addStyleName(AON.CSS.aonBoxSizingBorderBox());
-		addStyleName(AON.CSS.aonWidthAll());
-		addStyleName(AON.CSS.aonHeightAll());
-		setWidget(rootPanel);
+	protected AonRegistryFullPanel(AonModuleOptions<?> options, R registryFull,AonRegistryFullPanelCallback<R> callback) {
+		super(Unit.PX);
+		
+		this.setStyleName(AON.CSS.aonSelector());
+		this.addStyleName(AON.CSS.aonScrollArea());
+		
+		AonToolbar toolbar = new AonToolbar();
+		addButtons(options, toolbar, registryFull, callback);
+		this.addNorth(toolbar, AonToolbar.HEIGTH);
+		
+		this.addNorth(rootPanel, 250);
 
 		addRegistry(options, registryFull,callback);
 		addExtended(options, registryFull,callback);
 		
 		TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(30, Unit.PX);
-		tabLayoutPanel.setHeight("500px");
-		
-		AonRegistryAddressGrid aonRegistryAddressGrid = new AonRegistryAddressGrid(registryFull, options, tabLayoutPanel);
-		aonRegistryAddressGrid.getAddressesGrid();
-		
-		AonRegistryMediaGrid aonRegistryMediaGrid = new AonRegistryMediaGrid(registryFull, rootPanel);
-		aonRegistryMediaGrid.getMediasGrid();
-		
-		AonRegistryBankGrid aonRegistryBankGrid = new AonRegistryBankGrid(registryFull, rootPanel);
-		aonRegistryBankGrid.getBanksGrid();
-		
-		
-		tabLayoutPanel.add(aonRegistryAddressGrid);
-		tabLayoutPanel.add(aonRegistryMediaGrid);
-		tabLayoutPanel.add(aonRegistryBankGrid);
-		rootPanel.add(tabLayoutPanel);
+		tabLayoutPanel.addStyleName(AON.CSS.aonMarginTop());
+		tabLayoutPanel.add(new AonRegistryAddressGrid(options, registryFull), AON.MSG.addresses());
+		tabLayoutPanel.add(new AonRegistryMediaGrid(registryFull), AON.MSG.contacts());
+		tabLayoutPanel.add(new AonRegistryBankGrid(registryFull), AON.MSG.banks());
+		this.add(tabLayoutPanel);
 	}
 	
 	protected FlowPanel getRootPanel() {
@@ -216,5 +198,5 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 		return service;
 	}
 	
-	
+	protected abstract void addButtons(AonModuleOptions<?> options, AonToolbar toolbar, R registryFull,AonRegistryFullPanelCallback<R> callback);	
 }

@@ -10,76 +10,61 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class AonRegistryAddressGrid extends AonDisplayGrid {
+public class AonRegistryAddressGrid extends SimpleLayoutPanel {
 
-	private RegistryFull<?> registryFull;
-	private AonModuleOptions<?> options;
-	private TabLayoutPanel panel;
-	
 	/**
 	 * The constructor
 	 * @param options module options
 	 * @param registryFull the registry with the addresses
 	 * @param rootPanel
 	 */
-	public AonRegistryAddressGrid(RegistryFull<?> registryFull, AonModuleOptions<?> options, TabLayoutPanel panel) {
-		this.registryFull = registryFull;
-		this.options = options;
-		this.panel = panel;
-	}
-	
-	/**
-	 * Shows the address of a registry
-	 */
-	public void getAddressesGrid() {
-		FlowPanel labelContainer = new FlowPanel();
-		labelContainer.setStyleName(AON.CSS.aonFlexBlock());
-		labelContainer.addStyleName(AON.CSS.aonBorderBottom());
-
-		Label addressesLabel = new Label(AON.MSG.addresses());
-		addressesLabel.addStyleName(AON.CSS.aonFlexGrow1());
-		addressesLabel.addStyleName(AON.CSS.aonBold());
-		labelContainer.add(addressesLabel);
+	public AonRegistryAddressGrid(AonModuleOptions<?> options, RegistryFull<?> registryFull) {
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
+		this.setWidget(scrollPanel);
 		
-		AonTableButton addAddress = new AonTableButton( AON.MSG.addAddress(), AON.CSS.aonIconAdd() );
-		panel.add(labelContainer);
+		FlowPanel container = new FlowPanel();
+		scrollPanel.setWidget(container);
+		 
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		container.add( grid );
 		
-		this.addStyleName(AON.CSS.aonWidthAlmostAll());
-		this.addStyleName(AON.CSS.aonBlockCenter());
-		panel.add(this);
-		
-		addAddress.addClickHandler(event -> {
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.addAddress(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(event -> {
 			if ( registryFull.getAddresses() == null || registryFull.getAddresses().isEmpty()) {
-				paintAddressHeader(this);		
+				paintAddressHeader(grid);		
 			}
 			RegistryAddress registryAddress = new RegistryAddress();
 			registryAddress.setMain( registryFull.getAddresses() == null || registryFull.getAddresses().isEmpty() )
 				.setDirty(false);
 			registryFull.addAddress(registryAddress);
-			paintRow(this, options, registryAddress );
+			paintRow(grid, options, registryAddress );
 		});
-		labelContainer.add(addAddress);
-
+		container.add( addButton );
+		
 		if ( registryFull.getAddresses() != null) {
 			if ( !registryFull.getAddresses().isEmpty()) {
-				paintAddressHeader(this);		
+				paintAddressHeader(grid);		
 			}
 			for (RegistryAddress registryAddress: registryFull.getAddresses() ) {
-				paintRow(this, options, registryAddress);
+				paintRow(grid, options, registryAddress);
 			}
 		}
+
 	}
 
 	/**
 	 * Adds the cells of the address table
 	 * @param displayTab
 	 */
-	private void paintAddressHeader(AonRegistryAddressGrid displayTab) {
-		displayTab.addHeaderRow()
+	private void paintAddressHeader(AonDisplayGrid grid) {
+		grid.addHeaderRow()
 			.addCell(new InlineLabel(""))
 			.addCell(new InlineLabel(""))
 			.addCell(new InlineLabel(AON.MSG.address()))
@@ -95,7 +80,7 @@ public class AonRegistryAddressGrid extends AonDisplayGrid {
 	 * @param displayTab
 	 * @param registryAddress
 	 */
-	private void paintRow(AonRegistryAddressGrid displayTab, AonModuleOptions<?> options, RegistryAddress registryAddress) {
+	private void paintRow(AonDisplayGrid grid, AonModuleOptions<?> options, RegistryAddress registryAddress) {
 		final CheckBox mainBox = new CheckBox();
 		mainBox.setValue(registryAddress.isMain());
 		mainBox.addClickHandler(event -> registryAddress.setMain(mainBox.getValue()));
@@ -219,7 +204,7 @@ public class AonRegistryAddressGrid extends AonDisplayGrid {
 			geozoneBox.setEnabled(true);
 		});
 		
-		displayTab.addHeaderRow()
+		grid.addHeaderRow()
 			.addCell(mainBox)
 			.addCell(streetTypeBox)
 			.addCell(addressText)

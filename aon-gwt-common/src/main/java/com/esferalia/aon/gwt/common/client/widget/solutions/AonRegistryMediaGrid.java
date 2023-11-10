@@ -9,61 +9,48 @@ import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class AonRegistryMediaGrid extends AonDisplayGrid {
-	
-	private RegistryFull<?> registryFull;
-	private FlowPanel rootPanel;
+public class AonRegistryMediaGrid extends SimpleLayoutPanel {
 	
 	/**
 	 * The constructor
 	 * @param registryFull the registry with the addresses
 	 * @param rootPanel
 	 */
-	public AonRegistryMediaGrid(RegistryFull<?> registryFull, FlowPanel rootPanel) {
-		this.registryFull = registryFull;
-		this.rootPanel = rootPanel;
-	}
-	
-	/**
-	 * Shows the medias of a registry
-	 */
-	public void getMediasGrid() {
-		FlowPanel labelContainer = new FlowPanel();
-		labelContainer.setStyleName(AON.CSS.aonFlexBlock());
-		labelContainer.addStyleName(AON.CSS.aonBorderBottom());
+	public AonRegistryMediaGrid(RegistryFull<?> registryFull) {
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
+		this.setWidget(scrollPanel);
 		
-		Label mediasLabel = new Label(AON.MSG.contacts());
-		mediasLabel.addStyleName(AON.CSS.aonFlexGrow1());
-		mediasLabel.addStyleName(AON.CSS.aonBold());
-		labelContainer.add(mediasLabel);
-		
-		AonTableButton addMedia = new AonTableButton( AON.MSG.addContact(), AON.CSS.aonIconAdd() );
-		rootPanel.add(labelContainer);
-		
-		this.addStyleName(AON.CSS.aonWidthAlmostAll());
-		this.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(this);
+		FlowPanel container = new FlowPanel();
+		scrollPanel.setWidget(container);
 
-		addMedia.addClickHandler(event -> {
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		container.add( grid );
+		
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.addContact(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(event -> {
 			if ( registryFull.getMedias() == null || registryFull.getMedias().isEmpty()) {
-				paintMediaHeader(this);		
+				paintMediaHeader(grid);		
 			}
-			RegistryMedia registryMedia = new RegistryMedia();
-			registryMedia.setMedia(MediaType.FIXED_PHONE)
+			RegistryMedia registryMedia = new RegistryMedia()
+				.setMedia(MediaType.FIXED_PHONE)
 				.setDirty(false);
 			registryFull.addMedia(registryMedia);
-			paintRow(this, registryMedia );
+			paintRow(grid, registryMedia );
 		});
+		container.add( addButton );
 		
-		labelContainer.add(addMedia);
 		if (registryFull.getMedias() != null ) {
 			if (!registryFull.getMedias().isEmpty()) {
-				paintMediaHeader(this);		
+				paintMediaHeader(grid);		
 			}
 			for (RegistryMedia registryMedia : registryFull.getMedias() ) {
-				paintRow(this, registryMedia );
+				paintRow(grid, registryMedia );
 			}
 		}
 	}
@@ -72,8 +59,8 @@ public class AonRegistryMediaGrid extends AonDisplayGrid {
 	 * Adds the cells of the media table
 	 * @param displayTab
 	 */
-	private void paintMediaHeader(AonRegistryMediaGrid displayTab) {
-		displayTab.addHeaderRow()
+	private void paintMediaHeader(AonDisplayGrid grid) {
+		grid.addHeaderRow()
 			.addCell(new InlineLabel(AON.MSG.type()))
 			.addCell(new InlineLabel(AON.MSG.data()))
 			.addCell(new InlineLabel(AON.MSG.comments()))
@@ -89,7 +76,7 @@ public class AonRegistryMediaGrid extends AonDisplayGrid {
 	 * @param options the module options
 	 * @param registryMedia
 	 */
-	private void paintRow(AonRegistryMediaGrid displayTab, RegistryMedia registryMedia) {
+	private void paintRow(AonDisplayGrid grid, RegistryMedia registryMedia) {
 		final MediaTypeListBox mediaBox = new MediaTypeListBox();
 		mediaBox.setValue(registryMedia.getMedia());
 		final AonTextBox valueBox = new AonTextBox();
@@ -188,7 +175,7 @@ public class AonRegistryMediaGrid extends AonDisplayGrid {
 		});
 		
 		registryMedia.getMedia().visit( mediaVisitor );
-		displayTab.addRow()
+		grid.addRow()
 			.addCell(mediaBox)
 			.addCell(valueBox)
 			.addCell(commentsBox)
