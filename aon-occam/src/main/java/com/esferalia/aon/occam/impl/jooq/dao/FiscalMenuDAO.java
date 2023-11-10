@@ -78,7 +78,8 @@ public class FiscalMenuDAO {
 				@Override 
 				public void visitM111() {
 					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
-						.map(fm -> fm.setModel((fm.getModel() == FiscalModelType.M390)?FiscalModelType.M390_HF:fm.getModel())) 
+						.map(fm -> fm.setModel((fm.getModel() == FiscalModelType.M390)?FiscalModelType.M390_HF:fm.getModel()))
+						.filter( fm -> fm.getModel() != FiscalModelType.M349 )  // No se coge de fs_model el modelo 349, pues no todos los datos están actualizados, se coge más abajo de su tabla
 						.filter(fm -> fm.getModel() != FiscalModelType.M390_HF 
 							|| (fm.getModel() == FiscalModelType.M390_HF
 								&& ( params.getModel() == null 

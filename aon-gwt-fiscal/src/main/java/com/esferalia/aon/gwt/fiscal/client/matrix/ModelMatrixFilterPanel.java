@@ -262,4 +262,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		
 	}
 
+	public AonSearchPanelButton getRefreshButton() {
+		return refreshButton;
+	}
+
 }
