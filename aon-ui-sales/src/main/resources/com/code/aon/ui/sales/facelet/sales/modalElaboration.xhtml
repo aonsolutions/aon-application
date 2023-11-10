@@ -78,14 +78,6 @@
 											value="#{sales.elaborationProcess.warehouse}">
 											<f:selectItems value="#{warehouseCollections.warehouses}" />
 										</aon:selectOneMenu>
-										<aon:if test="#{domainSwitcher.udapa}" >
-											<aon:outputLabel for="Sales_elaborationSource" 
-												value="Destino" />
-											<aon:selectOneMenu id="Sales_elaborationSource" 
-												value="#{sales.elaborationProcess.source}">
-												<f:selectItems value="#{salesCollections.elaborationSources}" />
-											</aon:selectOneMenu>
-										</aon:if>
 									</aon:panelGrid>
 									
 									<aon:div styleClass="aon-margin-top">
