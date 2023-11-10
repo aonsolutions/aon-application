@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.AonVersion;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
-import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 
 public class SalesCollectionsController implements Serializable {
 	
@@ -19,12 +18,11 @@ public class SalesCollectionsController implements Serializable {
 
 	private List<SelectItem> salesStatuses;
 	private List<SelectItem> documentTypes;
-	private List<SelectItem> elaborationSources;
 
 	public List<SelectItem> getSalesStatuses() {
 		if (salesStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salesStatuses = new LinkedList<SelectItem>();
+			salesStatuses = new LinkedList<>();
 			for (SalesStatus status : SalesStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -37,7 +35,7 @@ public class SalesCollectionsController implements Serializable {
 	public List<SelectItem> getDocumentTypes() {
 		if (documentTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			documentTypes = new LinkedList<SelectItem>();
+			documentTypes = new LinkedList<>();
 			for (DocumentType type : DocumentType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
@@ -48,24 +46,12 @@ public class SalesCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getBasicSalesTypes() {
-		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem(DocumentType.NORMAL, DocumentType.NORMAL.getName(locale));
 		list.add(item);
 		item = new SelectItem(DocumentType.ITEM_RETURN, DocumentType.ITEM_RETURN.getName(locale));
 		list.add(item);
 		return list;
-	}
-
-	public List<SelectItem> getElaborationSources() {
-		if (elaborationSources == null) {
-			elaborationSources = new LinkedList<>();
-			for (ElaborationSource source : ElaborationSource.values()) {
-				String name = source.getName();
-				SelectItem item = new SelectItem(source, name);
-				elaborationSources.add(item);
-			}
-		}
-		return elaborationSources;
 	}
 }

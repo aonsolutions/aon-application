@@ -15,7 +15,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TARGET_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SUPPLIER_ALIAS;
 
@@ -162,7 +162,7 @@ public class OfferDAO {
 			.leftOuterJoin(TAX).on(PRODUCT.VAT.equal(TAX.ID))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.equal(OFFER.SELLER))
-			.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL_ALIAS.ID.equal(OFFER.SELLER))
+			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(OFFER.SELLER))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(OFFER.WORKPLACE))
 			.where(OFFER_PROPERTIES.getConditions(filter))
 			.orderBy(OFFER.ISSUE_DATE,OFFER.SERIES,OFFER.NUMBER,OFFER_DETAIL.LINE)
@@ -285,7 +285,7 @@ public class OfferDAO {
 							? TargetFiller.build(r, TARGET_ALIAS)
 							: new Target().copy(new Registry().setId(r.getValue(OFFER.TARGET))))
 					.setSeller(checkField(r, SELLER.REGISTRY)
-							? SellerFiller.build(r, true)
+							? SellerFiller.build(r)
 							: new Seller().setId(r.getValue(OFFER.SELLER)))
 					.setSupplier(checkField(r, SUPPLIER.REGISTRY) 
 							? SupplierFiller.buildSupplier(r, SUPPLIER_ALIAS)
