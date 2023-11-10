@@ -13,7 +13,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.util.stream.Stream;
 
@@ -49,6 +49,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.OfferDetailCommission
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommissionDAO {
+	
+	private CommissionDAO() {
+	
+	}
 	
 	private static final OfferDetailCommissionPropertiesDAO OFFER_DETAIL_COMMISSION_PROPERTIES = new OfferDetailCommissionPropertiesDAO();
 	private static final InvoiceDetailCommissionPropertiesDAO INVOICE_DETAIL_COMMISSION_PROPERTIES = new InvoiceDetailCommissionPropertiesDAO();
@@ -109,7 +113,7 @@ public class CommissionDAO {
 				.join(OFFER_DETAIL).on(OFFER_DETAIL_COMMISSION.OFFER_DETAIL.eq(OFFER_DETAIL.ID))
 				.join(OFFER).on(OFFER_DETAIL.OFFER.eq(OFFER.ID))
 				.leftOuterJoin(SELLER).on(OFFER.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(OFFER.SELLER.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(SELLER_ALIAS).on(OFFER.SELLER.eq(SELLER_ALIAS.ID))
 				.where(OFFER_DETAIL_COMMISSION_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new OfferDetailCommissionFiller());
 	}
