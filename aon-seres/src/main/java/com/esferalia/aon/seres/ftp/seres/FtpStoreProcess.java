@@ -31,15 +31,9 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryCommunicationStatus;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryCommunicationType;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 
 
@@ -182,16 +176,19 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		drd.setCreationDate(new Date());
 		AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
 
-		Domain domain = new Domain().setId(domainId).setName(domainName);
-		User user = new User().setLogin(loggedUser);
-
-		DeliveryInfo di = new DeliveryInfo()
-				.setDelivery(sourceId)
-				.setDomain(domain.getId())
-				.setType(DeliveryCommunicationType.SERES)
-				.setStatus(level.equals(Level.INFO)? DeliveryCommunicationStatus.ACCEPTED : DeliveryCommunicationStatus.WRONG);
-		AON.saveDeliveryInfo(domain, user, di);
 		
+
+//		if(DataResponseSource.SERES_DELIVERY.equals(source)) {
+//			Domain domain = new Domain().setId(domainId).setName(domainName);
+//			User user = new User().setLogin(loggedUser);
+//			DeliveryInfo di = new DeliveryInfo()
+//					.setDelivery(sourceId)
+//					.setDomain(domain.getId())
+//					.setType(DeliveryCommunicationType.SERES)
+//					.setStatus(level.equals(Level.INFO)? DeliveryCommunicationStatus.ACCEPTED : DeliveryCommunicationStatus.WRONG);
+//			AON.saveDeliveryInfo(domain, user, di);
+//		}
+
 		if( !level.equals(Level.INFO) ) {
 			sendEmail2(domainName, domainId, loggedUser, "ERROR", "Envio al FTP de Seresnet", "Envio NO correcto: "+referenceCode, null, null, RECIPIENTS_TO_FAILURES);
 		}

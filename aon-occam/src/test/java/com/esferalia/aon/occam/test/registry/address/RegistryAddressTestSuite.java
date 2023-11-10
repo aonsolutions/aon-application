@@ -13,6 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveOverflowZip.class,
 	ValidationSaveMainAddress.class,
 	CRUDETest.class,
+	ValidationDeleteForeignKey.class,
 })
 public class RegistryAddressTestSuite {
 	

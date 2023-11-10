@@ -8,7 +8,8 @@ public enum SalesStatus {
     BLOCKED,
     SERVED,
     CLOSED,
-    INVOICED;
+    INVOICED,
+    IN_PREPARATION;
 	
 	public byte value(){
 		return (byte) this.ordinal();

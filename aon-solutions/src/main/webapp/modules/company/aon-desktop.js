@@ -679,7 +679,10 @@ export class AonDesktop extends AonElement {
 			title:"Vista Anual",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
-			fn: () => pygCard.setContent(new AonDashboardGraphicsTrial("yearly"))
+			fn: () => {
+				pygCard.clear();
+				pygCard.setContent(new AonDashboardGraphicsTrial("yearly"));
+			}
 		};
 
 		const trimestral = {
@@ -687,7 +690,10 @@ export class AonDesktop extends AonElement {
 			title:"Vista Trimestral",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
-			fn : () => pygCard.setContent(new AonDashboardGraphicsTrial("quarterly"))
+			fn: () => {
+				pygCard.clear();
+				pygCard.setContent(new AonDashboardGraphicsTrial("quarterly"));
+			}
 		};
 
 		const mensual = {
@@ -695,7 +701,10 @@ export class AonDesktop extends AonElement {
 			title: "Vista Mensual",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
-			fn :  () => pygCard.setContent(new AonDashboardGraphicsTrial("monthly"))
+			fn: () => {
+				pygCard.clear();
+				pygCard.setContent(new AonDashboardGraphicsTrial("monthly"));
+			}
 		};
 	
 		let options = [anual, trimestral, mensual];

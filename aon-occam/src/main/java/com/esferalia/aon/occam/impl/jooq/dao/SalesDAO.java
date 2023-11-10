@@ -117,6 +117,7 @@ public class SalesDAO {
 		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_PERIOD);}
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
 		@Override public Property<Integer> getSalesDetailIdProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.ID);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(SALES.CARRIER_PACKING);}
 	}
 	
 	public static int getNextNumber(AONContext ctx, String series ) {
@@ -622,6 +623,7 @@ public class SalesDAO {
 				.setCarrier(checkField(r, CARRIER.REGISTRY) || checkField(r, CARRIER_ALIAS.ID)
 						? CarrierFiller.build(r)
 						: new Carrier().setId(getValue(r, SALES.CARRIER)))
+				.setCarrierPacking(getValue(r, SALES.CARRIER_PACKING))
 				.setShippingAlternativeAddress(getValue(r, SALES.SHIPPING_ALTERNATIVE_ADDRESS))
 				.setShippingAlternativeAddress2(getValue(r, SALES.SHIPPING_ALTERNATIVE_ADDRESS2))
 				.setShippingAlternativeZip(getValue(r, SALES.SHIPPING_ALTERNATIVE_ZIP))
