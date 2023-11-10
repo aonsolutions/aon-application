@@ -16,7 +16,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -114,7 +114,7 @@ public class SerfruitDAO {
 			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			.join(ELABORATION).on(ELABORATION.SOURCE_ID.eq(SALES_DETAIL.ID))
 			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(SALES.SELLER))
-			.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+			.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(SALES.CARRIER))
 			.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))

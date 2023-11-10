@@ -17,8 +17,6 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_SUPPORT_ALIAS;
 
 import java.sql.Date;
 import java.util.HashMap;
@@ -35,7 +33,6 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.Table;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -72,6 +69,8 @@ public class FeeDAO {
 	
 	public static final com.esferalia.aon.jooq.tables.Seller SELLER_COMERCIAL = SELLER.as("seller_comercial");
     public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_COMERCIAL_ALIAS = REGISTRY.as("registry_comercial_seller");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
 	
 	private static final FeePropertiesDAO FEE_PROPERTIES = new FeePropertiesDAO();
 	private static class FeePropertiesDAO implements FeeProperties {
@@ -362,10 +361,10 @@ public class FeeDAO {
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSeller(checkField(r, SELLER_COMERCIAL.REGISTRY)
-					? SellerFiller.build(r, true)
+					? SellerFiller.build(r, SELLER_COMERCIAL_ALIAS)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSellerSupport(checkField(r, SELLER_SUPPORT.REGISTRY)
-						? SellerFiller.build(r, false)
+						? SellerFiller.build(r, SELLER_SUPPORT_ALIAS)
 						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
@@ -651,7 +650,7 @@ public class FeeDAO {
 				.fetch();
 		
 		sellerRecords.forEach(r -> {
-			Seller seller = SellerFiller.build(r, true);
+			Seller seller = SellerFiller.build(r, REGISTRY);
 			suggestions.put(r.get(REGISTRY.NAME), seller);
 		});
 		
