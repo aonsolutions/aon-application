@@ -32,7 +32,6 @@ public class SalesElaborationProcess implements Serializable {
 	private SerializableListDataModel model;
 	
 	private Warehouse warehouse;
-	private ElaborationSource source;
 	private Date date;
 	
 	public SalesElaborationProcess(SalesController salesController) {
@@ -47,17 +46,6 @@ public class SalesElaborationProcess implements Serializable {
 		this.warehouse = warehouse;
 	}
 
-	public ElaborationSource getSource() {
-		if(source == null) {
-			source = ElaborationSource.SALES;
-		}
-		return source;
-	}
-	
-	public void setSource(ElaborationSource source) {
-		this.source = source;
-	}
-	
 	public Date getDate() {
 		return date;
 	}
@@ -130,13 +118,11 @@ public class SalesElaborationProcess implements Serializable {
 					"No hay ninguna elaboración pendiente");
 		} else {
 			manufacturableList.forEach(salesDetail -> {
-				utils.createElaboration(salesDetail, getDate(), getWarehouse().getId(), getSource());
+				utils.createElaboration(salesDetail, getDate(), getWarehouse().getId(), ElaborationSource.SALES);
 			});
 		}
 		salesController.loadElaborationMap();
-		if(ElaborationSource.SALES.equals(getSource()) || ElaborationSource.SALES_INGENET.equals(getSource())) {
-			enableForIngenet(sales, event);
-		}
+		enableForIngenet(sales, event);
 	}
 	
 	// FIXME this is temporary method
@@ -154,7 +140,7 @@ public class SalesElaborationProcess implements Serializable {
 		if(getModel().isRowAvailable()){
 			SalesDetail detail = (SalesDetail) getModel().getRowData();
 			SalesUtils utils = new SalesUtils();
-			utils.createElaboration(detail, getDate(), getWarehouse().getId(), getSource());
+			utils.createElaboration(detail, getDate(), getWarehouse().getId(), ElaborationSource.SALES);
 		}
 		salesController.loadElaborationMap();
 	}
