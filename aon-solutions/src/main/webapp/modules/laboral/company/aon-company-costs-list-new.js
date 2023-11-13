@@ -46,7 +46,7 @@ export class AonCompanyCostsListNew extends AonElement {
   initialize() {
     this.id = this.id || PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.getApplication().addToolbarTitle(MSG.COMPANY_COSTS);
+    this.getApplication().addToolbarTitle(MSG.LABORAL_COSTS);
   }
 
   async build() {
@@ -176,7 +176,7 @@ const paintCompanyCostPieChart = async () => {
 
     let startDate = new Date();
     let endDate = new Date();
-    let title = MSG.RESUME_COSTS;
+    let title = MSG.LABORAL_COSTS;
     let workplaceText = "";
     let total = 0;
     
@@ -189,22 +189,22 @@ const paintCompanyCostPieChart = async () => {
       const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
       const totalLiquid = data.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
       const totalSS = sumEnterpriseSs + sumEmployeeSs;
-      total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
+      total = totalSS + importIrpf + totalLiquid;
 
       const dataChart = {
         labels: [
-          'SS Empresa',
-          'SS Empleado',
+          // 'SS Empresa',
+          // 'SS Empleado',
           'Total SS',
           'Total IRPF',
           'Total Nominas'
         ],
         datasets: [{
           // label: 'My First Dataset',
-          data: [sumEnterpriseSs, sumEmployeeSs, totalSS, importIrpf, totalLiquid],
+          data: [/*sumEnterpriseSs, sumEmployeeSs,*/ totalSS, importIrpf, totalLiquid],
           backgroundColor: [
-            '#0051C6',
-            '#db4437',
+            // '#0051C6',
+            // '#db4437',
             'black',
             '#B3B3B3',
             '#5e97f6'
@@ -249,9 +249,10 @@ const paintCompanyCostPieChart = async () => {
       chartCanva = new Chart(canvasChart, config);
 
       createLeyend([
-        {color: '#0051C6', title: 'SS Empresa', amount: sumEnterpriseSs},
-        {color: '#db4437', title: 'SS Empleado', amount: sumEmployeeSs},
-        {color: 'black', title: 'Total SS', amount: totalSS},
+        {color: 'black', title: 'Total SS', amount: totalSS, breakdown:[
+          {color: '#0051C6', title: 'SS Empresa', amount: sumEnterpriseSs},
+          {color: '#db4437', title: 'SS Empleado', amount: sumEmployeeSs},
+        ]},
         {color: '#B3B3B3', title: 'Total IRPF', amount: importIrpf},
         {color: '#5e97f6', title: 'Total Nominas', amount: totalLiquid},
       ]);
@@ -305,6 +306,39 @@ const createLeyend = (leyends) => {
     amount.style.textAlign = "right";
     amount.innerHTML = formatNumber(leyend.amount, 2, "EUR");
     row.appendChild(amount);
+
+    if(leyend.breakdown){
+
+      for (let indexBreakdown = 0; indexBreakdown < leyend.breakdown.length; indexBreakdown++) {
+        const leyendBreakdown = leyend.breakdown[indexBreakdown];
+
+        let row = createElement(TAG.DIV);
+        row.style.display = "flex";
+        row.style.gap = "1rem";
+        row.style.marginLeft = "2rem";
+        leyendDiv.appendChild(row);
+      
+        // let color = createElement(TAG.DIV);
+        // color.style.width = "15px"
+        // color.style.height = "15px"
+        // color.style.borderRadius = "50%"
+        // color.style.backgroundColor = leyend.color;
+        // row.appendChild(color);
+      
+        let title = createElement(TAG.DIV);
+        title.style.minWidth = "7rem";
+        title.style.textAlign = "left";
+        title.innerHTML = leyendBreakdown.title;
+        row.appendChild(title);
+      
+        let amount = createElement(TAG.DIV);
+        amount.style.minWidth = "7rem";
+        amount.style.textAlign = "right";
+        amount.innerHTML = formatNumber(leyendBreakdown.amount, 2, "EUR");
+        row.appendChild(amount);
+      }
+
+    }
   }
 
   let button = createElement(TAG.BUTTON);

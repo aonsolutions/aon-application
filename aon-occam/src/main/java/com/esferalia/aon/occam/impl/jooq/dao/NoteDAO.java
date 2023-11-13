@@ -69,7 +69,7 @@ public class NoteDAO {
 	
 	public static Note save(AONContext ctx, Note note) {
 		autoComplete(note);
-		return note.getId() != null
+		return (note.getId() != null && note.getId() > 0)
 			? update(ctx, note)
 			: insert(ctx, note); 
 	}
