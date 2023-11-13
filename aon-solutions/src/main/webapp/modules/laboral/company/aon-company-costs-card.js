@@ -78,7 +78,7 @@ const paintCompanyCostPieChart = async () => {
 
     let startDate = new Date();
     let endDate = new Date();
-    let title = MSG.RESUME_COSTS;
+    let title = MSG.LABORAL_COSTS;
     let workplaceText = "";
     let total = 0;
     
@@ -91,22 +91,22 @@ const paintCompanyCostPieChart = async () => {
       const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
       const totalLiquid = data.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
       const totalSS = sumEnterpriseSs + sumEmployeeSs;
-      total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
+      total = totalSS + importIrpf + totalLiquid;
 
       const dataChart = {
         labels: [
-          'SS Empresa',
-          'SS Empleado',
+          // 'SS Empresa',
+          // 'SS Empleado',
           'Total SS',
           'Total IRPF',
           'Total Nominas'
         ],
         datasets: [{
           // label: 'My First Dataset',
-          data: [sumEnterpriseSs, sumEmployeeSs, totalSS, importIrpf, totalLiquid],
+          data: [/*sumEnterpriseSs, sumEmployeeSs,*/ totalSS, importIrpf, totalLiquid],
           backgroundColor: [
-            'rgba(0, 81, 198, 0.7)',
-            'rgba(219, 68, 55, 0.7)',
+            // 'rgba(0, 81, 198, 0.7)',
+            // 'rgba(219, 68, 55, 0.7)',
             'rgba(0, 0, 0, 0.7)',
             'rgba(179, 179, 179, 0.7)',
             'rgba(94, 151, 246, 0.7)'
