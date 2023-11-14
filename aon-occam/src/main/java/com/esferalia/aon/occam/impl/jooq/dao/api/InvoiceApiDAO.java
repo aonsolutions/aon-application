@@ -7,17 +7,25 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.SelectHavingConditionStep;
+import org.jooq.SelectHavingStep;
+import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Rawdoc;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceRawDocFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -36,12 +44,70 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoiceRawDocPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
+	private static final InvoiceRawDocPropertiesDAO INVOICE_RAWDOC_PROPERTIES = new InvoiceRawDocPropertiesDAO();
+	public static final Field<LocalDate> ISSUE_DATE =  DSL.field("issue_date", LocalDate.class);
+	public static final Field<Boolean> IS_INBOX =  DSL.field("is_inbox", Boolean.class);
+	public static final Field<Byte> TYPE = DSL.field("type", Byte.class);
+	public static final Field<String> REFERENCE_CODE = DSL.field("type", String.class);
+	public static final Field<String> REGISTRY_NAME = DSL.field("type", String.class);
+	public static final Field<Byte> STATUS = DSL.field("status", Byte.class);
+	public static final Field<Integer> MIME_TYPE = DSL.field("mime_type", Integer.class);
+	
+	public static Stream<InvoiceAndRaw> getInvoiceAndRaw(AONContext ctx, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc) {
+		Integer page = INVOICE_PROPERTIES.getPage(filter);
+		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
+		String switchSQL = " CASE ";
+		for(int i = 0; i < InvoiceType.values().length; i++) {
+			switchSQL += " WHEN REPLACE(JSON_EXTRACT(rawdoc.json, '$.type'), '\"', '') = \"" + InvoiceType.values()[i].getTediName() + "\" THEN " + i;
+		}
+		switchSQL += " ELSE 1 END";		
+		
+		SelectHavingStep<Record> query1 = ctx.getDslContext()
+				.select(INVOICE.ID)
+				.select(INVOICE.DOMAIN)
+				.select(INVOICE.TOTAL)
+				.select(INVOICE.REFERENCE_CODE)
+				.select(INVOICE.NUMBER)
+				.select(INVOICE.SERIES)
+				.select(INVOICE.ISSUE_DATE)
+				.select(INVOICE.RNAME)
+				.select(INVOICE.TYPE)
+				.select(INVOICE.STATUS)
+				.select(DSL.inline(false).as(IS_INBOX))
+				.select(DSL.inline(null, MIME_TYPE).as(MIME_TYPE))
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+				.groupBy(INVOICE.ID); 
+		SelectHavingConditionStep<Record> query2 = ctx.getDslContext()
+				.select(Rawdoc.RAWDOC.ID)
+				.select(Rawdoc.RAWDOC.DOMAIN)
+				.select(DSL.field("JSON_EXTRACT(rawdoc.json, '$.total')"))
+				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.reference'), '\"', '')"))
+				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.number'), '\"', '')"))
+				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.serie'), '\"', '')"))
+				.select(DSL.field("DATE_FORMAT(SUBSTRING(REPLACE(JSON_EXTRACT(rawdoc.json, '$.date'), '\"', ''),1,10),'%Y-%m-%d')").as(ISSUE_DATE))
+				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.name'), '\"', '')"))
+				.select(DSL.field(switchSQL).as(TYPE))
+				.select(DSL.inline((byte) 0).as(STATUS))
+				.select(DSL.inline(true).as(IS_INBOX))
+				.select(Rawdoc.RAWDOC.MIME_TYPE)
+				.from(Rawdoc.RAWDOC)
+				.groupBy(Rawdoc.RAWDOC.ID)
+				.having(INVOICE_RAWDOC_PROPERTIES.getConditions(filterRawdoc));
+		return query1.union(query2)
+				.orderBy(INVOICE.ISSUE_DATE.desc())
+				.limit(perPage)
+				.offset(perPage * (page -1))
+				.fetch().stream().map(new InvoiceAndRawFiller());
+	}
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
@@ -56,7 +122,7 @@ public class InvoiceApiDAO {
 			.limit(perPage)
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
-	}
+	}	
 	
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext()
@@ -74,6 +140,24 @@ public class InvoiceApiDAO {
 				.from(INVOICE_TAX)
 				.where(INVOICE_TAX.ID.eq(invoiceDetailId))
 				.fetch().stream().map(new InvoiceTaxFiller());
+	}
+	
+	public static class InvoiceAndRawFiller extends Filler implements Function<Record,InvoiceAndRaw> {
+		@Override
+		public InvoiceAndRaw apply(Record r) {
+			return new InvoiceAndRaw()
+				.setId(r.getValue(INVOICE.ID))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setTotal(r.getValue(INVOICE.TOTAL))
+				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )
+				.setIsInbox(r.getValue(IS_INBOX))
+				.setMimeType(r.getValue(MIME_TYPE))
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setSeries(r.getValue(INVOICE.SERIES));
+		}
 	}
 
 	private static class InvoiceTaxFiller  implements Function<Record,InvoiceTax> {
@@ -93,8 +177,6 @@ public class InvoiceApiDAO {
 					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));	
 		}
 	}
-	
-
 
 	public static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
 		AONContext aonCtx;

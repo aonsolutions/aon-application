@@ -99,7 +99,7 @@ public class ContractDAO {
 				.select(REGISTRY.fields())
 				.select(ENTERPRISE_CCC.fields())
 				.select(WORKPLACE.DESCRIPTION)
-				.select(DSL.concat(PERSON.FIRST_SURNAME, DSL.val(" "), PERSON.SECOND_SURNAME, DSL.val(", "), PERSON.NAME).as(PERSON_FULL_NAME))
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
 				.select(DSL.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class))
 						.from(SALARY)
 						.where(SALARY.CONTRACT.eq(CONTRACT.ID))

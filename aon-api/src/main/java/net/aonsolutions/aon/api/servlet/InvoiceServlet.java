@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -39,8 +40,10 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRawDocProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -90,7 +93,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String[] types;
 		Integer page;
 		Integer perPage;
-		
+		Byte recorded;
+
 		Date from;
 		Date to;
 		
@@ -156,6 +160,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			this.to = to;
 			return this;
 		}
+		
+		public Byte getRecorded() {
+			return recorded;
+		}
+
+		public InvoiceFilter setRecorded(Byte recorded) {
+			this.recorded = recorded;
+			return this;
+		}
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
@@ -169,6 +182,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getInvoiceObject(api));
+				break;
+			case "/invoice_and_raw_list":
+				response(req, resp, getInvoiceAndRawObject(api));
 				break;
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
@@ -267,6 +283,61 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			error(req, resp, e);
 		}
 	}
+	
+	private Object getInvoiceAndRawObject(AonApiData api) {
+		InvoiceFilter filter = new InvoiceFilter()
+				.setDescription(api.getData().optString("description"))
+				.setStatus(api.getData().optString(IConstants.STATUS))
+				.setTypes(api.getData().opt(IConstants.TYPE) != null 
+					? api.getData().optString(IConstants.TYPE).split(","): null)
+				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setPage(api.getData().optInt("page"))
+				.setPerPage(api.getData().optInt("per_page"))
+				.setRecorded(api.getData().optString("recorded") != "" ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
+		JSONArray jsArray = new JSONArray();
+		AON_SOLUTIONS.getInvoiceAndRaw(api.getDomain().getName(), api.getDomain().getId(), "api", 
+				f -> invoiceFilter(f, api.getDomain().getId(), filter), f -> invoiceRawDocFilter(f, api.getDomain().getId(), filter))
+		.forEach(invoice -> {
+			jsArray.put(InvoiceAndRawList2JSON(invoice, api));
+		}
+		);
+		return jsArray;
+	}
+	
+	public static Filter invoiceRawDocFilter(InvoiceRawDocProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
+    	Filter filter =  f.getDomainProperty().eq(domainId);
+    
+    	if(invoiceFilter.getDescription() != null) {
+    		filter = filter.and(
+    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
+    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
+    	}
+
+    	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
+    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value())
+    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
+    		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
+    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
+   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
+    		}
+    		filter = filter.and(filter2); 
+    	}
+    	
+    	if(invoiceFilter.getFrom() != null) {
+    		filter = filter.and(f.getDateProperty().ge(invoiceFilter.getFrom().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
+    	}
+    	
+    	if(invoiceFilter.getTo() != null) {
+    		filter = filter.and(f.getDateProperty().le(invoiceFilter.getTo().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
+    	}
+    	
+    	if(invoiceFilter.getRecorded() != null) {
+    		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
+    	}
+    	
+		return filter;
+    }
 
 	private Object getInvoiceObject(AonApiData api) {
 		if(api.getData().opt(IConstants.ID) != null) {
@@ -421,6 +492,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getEndIssueDateProperty().le(invoiceFilter.getTo()));
     	}
     	
+    	if(invoiceFilter.getRecorded() != null) {
+    		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
+    	}
+    	
     	if(invoiceFilter.getPage() != null) {
     		filter.page(invoiceFilter.getPage());
     	} 
@@ -564,6 +639,45 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.STATUS, invoice.isRecorded() 
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
+		return json;
+	}
+	
+	private static JSONObject InvoiceAndRawList2JSON(InvoiceAndRaw invoice, AonApiData api) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.ID, invoice.getId());
+		json.put(IJsonNames.DATE, invoice.getIssueDate());
+		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
+		json.put(IJsonNames.NAME, invoice.getRegistryName());
+		json.put(IJsonNames.TOTAL, invoice.getTotal());
+		json.put(IJsonNames.TYPE, invoice.getType());
+		json.put(IJsonNames.STATUS, invoice.isRecorded() 
+				? InvoiceStatus.SCORED.name().toLowerCase() 
+				: InvoiceStatus.PENDING.name().toLowerCase());
+		json.put("isInbox", invoice.getIsInbox());
+		json.put(IJsonNames.NUMBER, invoice.getNumber());
+		json.put(IJsonNames.SERIE, invoice.getSeries());
+		if(!invoice.getIsInbox()) {
+			json.put(IJsonNames.FILE, invoice.getId());
+		}else if(invoice.getMimeType() != null) {
+			JSONObject data = new JSONObject();
+			data.put("domain_name", api.getDomain().getName());
+			data.put("domain_id", api.getDomain().getId());
+			data.put("id", invoice.getId());
+			data.put("attach_type", AttachType.RAWDOC.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String url =  "ms/api/file/" +  result;
+			json.put(IJsonNames.FILE, url);
+		}else{
+			JSONObject data = new JSONObject();
+			data.put("id", invoice.getId());
+			data.put("source", "rawdoc");
+			data.put("domain_id", api.getDomain().getId());
+			data.put("domain_name", api.getDomain().getName());
+			data.put("login", api.getUser().getLogin());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String url =  "ms/api/download_invoice?json=" +  result;
+			json.put(IJsonNames.FILE, url);
+		}
 		return json;
 	}
 	
