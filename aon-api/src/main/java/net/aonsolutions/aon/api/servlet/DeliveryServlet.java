@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
@@ -15,10 +16,18 @@ import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
+import com.esferalia.aon.seres.DeliveryUpload;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -116,7 +125,8 @@ public class DeliveryServlet extends AonApiHttpServlet {
 //		api.setData(json);
 
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
-		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+		boolean serfruit = JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT);
+		if(serfruit) {
 			delivery = SERFRUIT.saveDelivery(api.getDomain(), api.getUser(), delivery);
 		} else delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
 
@@ -129,6 +139,10 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(JsonUtils.has(api.getData(), IJsonNames.CARRIER_PACKING)) {
 			CarrierPacking carrierPacking = CarrierPackingJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.CARRIER_PACKING));
 			SERFRUIT.saveCarrierPacking(api.getDomain(), api.getUser(), delivery, carrierPacking);
+		}
+		
+		if(serfruit && api.getDomain().getName().equals("udapa.aonsolutions.net")) {
+			seres(api, delivery);
 		}
 
 		return DeliveryJSON.toJSON(delivery);
@@ -172,7 +186,39 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(customer != null) {
 			filter = filter.and(f.getCustomerProperty().eq(customer));
 		}
+		
+		Integer carrierPacking = JsonUtils.getInteger(api.getData(), IJsonNames.CARRIER_PACKING);
+		if(carrierPacking != null) {
+			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+		}
 
 		return filter;
 	}
+	
+	// ENVIAR ALBARÁN A SERES...
+	
+	private void seres(AonApiData api, Delivery delivery) {
+		RegistryNote rNote = AON.getRegistryNote(api.getDomain(), api.getUser().getLogin(), f -> 
+			f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
+			.and(f.getRegistryProperty().eq(delivery.getCustomer().getId()))
+			.and(f.getDescriptionProperty().eq("SERES_AUTO_COMMIT_DELIVERY")));
+		
+		boolean autoSendDelivery = rNote!=null && Boolean.getBoolean(rNote.getComments());
+		if(autoSendDelivery){
+			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
+			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
+			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
+			delivery.setEdiCodes(codes);
+			
+			Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getSourceTypeProperty().eq(DataAttachSource.DELIVERY.value()))
+					.and(f.getSourceBatchProperty().eq(delivery.getId()))
+				, AttachType.DATA, true);
+			delivery.setPackagingData(attach.getData());
+			du.uploadDelivery(delivery);
+		}
+	}
+	
 }
+

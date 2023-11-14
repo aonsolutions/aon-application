@@ -44,6 +44,8 @@ public class CustomerFeeParams implements Serializable {
 	private Integer limit;
 	private Integer offset;
 	
+	private Integer[] feeIds;
+	
 	public CustomerFeeParams() {
 		super();
 	}
@@ -227,5 +229,13 @@ public class CustomerFeeParams implements Serializable {
 	public CustomerFeeParams setSegment(Integer segment) {
 		this.segment = segment;
 		return this;
+	}
+
+	public void setFeeIds(Integer[] feeIds) {
+		this.feeIds = feeIds;
+	}
+	
+	public Integer[] getFeeIds() {
+		return this.feeIds;
 	}
 }

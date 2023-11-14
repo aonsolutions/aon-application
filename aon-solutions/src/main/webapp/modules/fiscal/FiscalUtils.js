@@ -43,7 +43,8 @@ const getModelNew = (model)=> {
     color = "in";
   }
 
-  const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${TAX_ENUMS.TAX_MODEL_NUMBER[model.model]}</div>`;
+  let modelText = newModel === "111" && model.administration === "ALAVA" ? "110" : newModel;
+  const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
   
   return {
     ...model,

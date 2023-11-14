@@ -333,7 +333,22 @@ public enum Country implements Serializable {
 			return null;
 		}
 	}
-
+	
+	public static Country getCountryByIso3(String iso3) {
+		if (AonStringUtils.isBlank(iso3)) {
+			return null;
+		}
+		try {
+			for(int i=0; i<Country.values().length; i++)
+				if(AonStringUtils.equalsIgnoreCase(Country.values()[i].getName(), iso3))
+					return Country.values()[i];
+			
+			return null;
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}	
+	
 	public static String safeIso2(Country country) {
 		if (country == null) {
 			return null;

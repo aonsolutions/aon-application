@@ -27,11 +27,11 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
@@ -202,89 +202,7 @@ public class CommunicationServlet extends HttpServlet {
 
 		return array;
 	}
-	
-	private JSONArray getOutcomeAll(Domain domain, String login, HttpServletRequest req) {
-		Map<String, String[]> filterMap = getFilterMap(req);
-		JSONArray array = new JSONArray();
-		
-		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
 
-		Supplier<Stream<Delivery>> deliveryStreamSupplier = () -> AON.getDeliveryStream(domain.getName(), domain.getId(), login,
-				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f));
-		List<Integer> deliveryIds = deliveryStreamSupplier.get().map(Delivery::getId).collect(Collectors.toList());
-		List<Integer> invoiceIds = AON.getInvoiceStream(domain.getName(), domain.getId(), login,
-				f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f)).map(Invoice::getId).collect(Collectors.toList());
-		
-		List<Integer> responseDeliveryIds = AON
-				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
-						f -> f.getDomainProperty().eq(domain.getId())
-								.and(f.getSourceProperty().eq(DataResponseSource.SERES_DELIVERY.value())))
-				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
-				.map(DataResponse::getSourceId).collect(Collectors.toList());
-		List<Integer> responseInvoiceIds = AON
-				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
-						f -> f.getDomainProperty().eq(domain.getId())
-								.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())))
-				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
-				.map(DataResponse::getSourceId).collect(Collectors.toList());
-		
-		array.put(new JSONObject()
-				.put("label", OUTCOME_DELIVERY)
-				.put("quantity", deliveryIds.size())
-				.put("pending", deliveryIds.size() - responseDeliveryIds.size())
-				.put("error", -1)
-		);
-		array.put(new JSONObject()
-				.put("label", OUTCOME_INVOICE)
-				.put("quantity", invoiceIds.size())
-				.put("pending", invoiceIds.size() - responseInvoiceIds.size())
-				.put("error", -1)
-		);
-		
-		return array;
-	}
-	
-	private JSONArray getIncomeAll(Domain domain, String login, HttpServletRequest req) {
-		Map<String, String[]> filterMap = getFilterMap(req);
-		JSONArray array = new JSONArray();
-		
-		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-
-		List<Integer> invoiceIds = AON.getInvoiceStream(domain.getName(), domain.getId(), login,
-				f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f)).map(Invoice::getId).collect(Collectors.toList());
-		List<Integer> salesIds = AON.getSalesStream(domain.getName(), domain.getId(), login,
-				f -> salesFilter(domain, ediRegistryIds, filterMap, f)).map(Sales::getId).collect(Collectors.toList());
-		
-		List<Integer> responseSalesIds = AON
-				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
-						f -> f.getDomainProperty().eq(domain.getId())
-								.and(f.getSourceProperty().eq(DataResponseSource.SERES_SALES.value())))
-				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
-				.map(DataResponse::getSourceId).collect(Collectors.toList());
-		
-		List<Integer> responseInvoiceIds = AON
-				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
-						f -> f.getDomainProperty().eq(domain.getId())
-								.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())))
-				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
-				.map(DataResponse::getSourceId).collect(Collectors.toList());
-		
-		array.put(new JSONObject()
-				.put("label", INCOME_SALES)
-				.put("quantity", salesIds.size())
-				.put("pending", salesIds.size() - responseSalesIds.size())
-				.put("error", -1)
-		);
-		array.put(new JSONObject()
-				.put("label", INCOME_INVOICE)
-				.put("quantity", invoiceIds.size())
-				.put("pending", invoiceIds.size() - responseInvoiceIds.size())
-				.put("error", -1)
-		);
-		
-		return array;
-	}
-	
 	// TODO getLastDataResponseDetailStream cambiar..
 	private JSONArray getIngenetSalesAll(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);

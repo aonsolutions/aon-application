@@ -1,6 +1,10 @@
-package com.esferalia.aon.occam.api;
+package com.esferalia.aon.occam.api.model;
 
-public class Options {
+import java.io.Serializable;
+
+public class Options implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private boolean full;
 	private Integer page;

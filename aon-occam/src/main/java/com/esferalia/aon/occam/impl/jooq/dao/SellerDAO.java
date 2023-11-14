@@ -14,6 +14,7 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -31,7 +32,8 @@ public class SellerDAO {
 
     }
 	
-	public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = REGISTRY.as("registry_seller");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = REGISTRY.as("registry_seller");
+    
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
 	
 	public static class SellerPropertiesDAO implements SellerProperties {
@@ -146,18 +148,23 @@ public class SellerDAO {
 		public Seller apply(Record r) {
 			return build(r);
 		}
-		
+
 		public static Seller build(Record r) {
-			return  new Seller()
-					.copy(RegistryFiller.build(r, SELLER_ALIAS))
-					.setId(r.getValue(SELLER.REGISTRY))
-					.setDomain(r.getValue(SELLER.DOMAIN))
-					.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
-					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-					.setScope(checkField(r, SCOPE.ID)
-						? ScopeFiller.buildScope(r)
-						: new Scope().setId(r.getValue(SELLER.SCOPE)));
+			return build(r, SELLER_ALIAS);			
 		}
+		
+		public static Seller build(Record r, Registry registry) {
+			return  new Seller()
+				.copy(RegistryFiller.build(r, registry))
+				.setId(r.getValue(SELLER.REGISTRY))
+				.setDomain(r.getValue(SELLER.DOMAIN))
+				.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
+				.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
+				.setScope(checkField(r, SCOPE.ID)
+					? ScopeFiller.buildScope(r)
+					: new Scope().setId(r.getValue(SELLER.SCOPE)));
+		}
+
 	}
 	
 }

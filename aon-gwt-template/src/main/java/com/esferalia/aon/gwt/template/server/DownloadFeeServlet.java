@@ -35,8 +35,11 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONString;
 
 @WebServlet(name = "DownloadTemplatesFee", urlPatterns = { "/aon_gwt_template/ms/gwt_download_fee/*"
 															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"
@@ -102,19 +105,27 @@ public class DownloadFeeServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
+        
+        Boolean isCustomerFee = filterJSON.optBoolean("isCustomerFee", false);
   
         LinkedList<Fee> fees;
-        if(filterJSON.opt("segment") != null) {
-			JSONArray segment = filterJSON.optJSONArray("segment");
-			if(segment.length() > 0) {
-				Integer[] segments = new Integer[segment.length()];
-				for (Integer i = 0; i < segment.length(); i++) {
-					segments[i] = segment.getInt(i);
-				}
-				Integer[] cIDs = AON.getRSegmentStream(domain.getName(), domain.getId(), login, f -> f.getSegmentProperty().in(segments));
-				fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, cIDs));
-			}else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
-		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
+        
+        if(isCustomerFee) {
+        	fees = AON.getFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
+        } else {
+            if(filterJSON.opt("segment") != null) {
+    			JSONArray segment = filterJSON.optJSONArray("segment");
+    			if(segment.length() > 0) {
+    				Integer[] segments = new Integer[segment.length()];
+    				for (Integer i = 0; i < segment.length(); i++) {
+    					segments[i] = segment.getInt(i);
+    				}
+    				Integer[] cIDs = AON.getRSegmentStream(domain.getName(), domain.getId(), login, f -> f.getSegmentProperty().in(segments));
+    				fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, cIDs));
+    			}else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
+    		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
+        }
+        
        
         for(Integer i = 0; i < fees.size(); i++) {
         	Row row = hoja.createRow(i+1);
@@ -174,6 +185,8 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getItem().getSerialNumber());
         		} else if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LINEA2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getLine());
+        		} else if(IConstants.AGENTE_DE_SOPORTE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getSellerSupport().getName());
         		}
         	}
         }
@@ -435,6 +448,99 @@ public class DownloadFeeServlet extends HttpServlet {
 		}
 		
 		return filter;
+	
+	}
+	
+	private CustomerFeeParams getCondition(Domain domain, JSONObject filterJSON) {
+		CustomerFeeParams params = new CustomerFeeParams();
+		params.setDomain(domain.getId());
+		
+		if(null != filterJSON.opt("month") && null == filterJSON.opt("year")) {
+			params.setMonth(filterJSON.optInt("month"));
+		} else if(null == filterJSON.opt("month") && null != filterJSON.opt("year")) {
+			params.setYear(filterJSON.optInt("year"));
+		} else if(null != filterJSON.opt("month") && null != filterJSON.opt("year")) {
+			params.setMonth(filterJSON.optInt("month"));
+			params.setYear(filterJSON.optInt("year"));
+		}
+		
+		if(filterJSON.opt("periodicity") != null) {
+			params.setPeriodicity((byte)filterJSON.optInt("periodicity"));
+		}
+		
+		if(filterJSON.opt("customer") != null) {
+			params.setCustomer(filterJSON.optInt("customer"));
+		}
+		
+		if(filterJSON.opt("status") != null) {
+			params.setCustomerStatus((byte)filterJSON.optInt("status"));
+		}
+		
+		if(filterJSON.opt("segmentId") != null) {
+			params.setSegment(filterJSON.optInt("segmentId"));
+		}
+		
+		if(filterJSON.opt("startDate") != null) {
+			params.setStartDate(new java.sql.Date(filterJSON.optLong("startDate")));
+			params.setStartCompare((byte)filterJSON.optInt("startDateCompare"));
+		}
+		
+		if(filterJSON.opt("endDate") != null) {
+			params.setEndDate(new java.sql.Date(filterJSON.optLong("endDate")));
+			params.setEndCompare((byte)filterJSON.optInt("endDateCompare"));
+		}
+		
+		if(filterJSON.opt("product") != null) {
+			params.setProduct(filterJSON.optInt("product"));
+		}
+		
+		if(filterJSON.opt("productCategory") != null) {
+			params.setProductCategory(filterJSON.optInt("productCategory"));
+		}
+		
+		if(filterJSON.opt("productTag") != null) {
+			params.setProductTag(filterJSON.optInt("productTag"));
+		}
+		
+		if(filterJSON.opt("quantity") != null) {
+			params.setQuantity(filterJSON.optString("quantity"));
+		}
+		
+		if(filterJSON.opt("price") != null) {
+			params.setPrice(filterJSON.optString("price"));
+		}
+		
+		if(filterJSON.opt("discount") != null) {
+			params.setDiscount(filterJSON.optString("discount"));
+		}
+		
+		if(filterJSON.opt("seller") != null) {
+			params.setSeller(filterJSON.optString("seller"));
+		}
+		
+		if(filterJSON.opt("workplace") != null) {
+			params.setWorkplace(filterJSON.optString("workplace"));
+		}
+		
+		if(filterJSON.opt("invoicingGroup") != null) {
+			params.setInvoicingGroup(filterJSON.optString("invoicingGroup"));
+		}
+		
+		if(filterJSON.opt("project") != null) {
+			params.setProject(filterJSON.optInt("project"));
+		}
+		
+		if(filterJSON.opt("feeIds") != null) {
+			 JSONObject feeIds = filterJSON.optJSONObject("feeIds");
+			 List<Integer> ids = new ArrayList<>();
+			 for(int i=0; i<feeIds.length(); i++) {
+				 ids.add(feeIds.optInt("feeId"+i));
+			 }
+			
+			 params.setFeeIds(ids.toArray(Integer[]::new));
+		}
+		
+		return params;
 	
 	}
 	

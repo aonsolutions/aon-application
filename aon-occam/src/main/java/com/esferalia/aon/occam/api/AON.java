@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
@@ -150,6 +151,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -270,6 +272,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -8057,5 +8060,26 @@ public class AON {
 			getFinance().deleteBookingList(ctx, selectedBookings);
 		}
 	}
+	
+	// DELIVERY INFO
+	
+	public static DeliveryInfo getDeliveryInfo(Domain domain, User user, DeliveryInfoFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().getDeliveryInfo(ctx, filter);
+		}
+	}
+
+	public static DeliveryInfo saveDeliveryInfo(Domain domain, User user, DeliveryInfo deliveryInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().saveDeliveryInfo(ctx, deliveryInfo);
+		}
+	}
+	
+	public static void deleteDeliveryInfo(String schema, Integer deliveryId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
+			getWarehouse().deleteDeliveryInfo(ctx, deliveryId);
+		}
+	}	
+	
 	
 }

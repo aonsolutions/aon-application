@@ -75,6 +75,7 @@ export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
+export const CANCEL = 'cancel';
 export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
 export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
 export const CARD_GIFTCARD = 'card_giftcard';
@@ -85,6 +86,7 @@ export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
 export const CHEVRON_RIGHT = 'chevron_right';
 export const CHROME_READER_MODE = 'chrome_reader_mode';
+export const CIRCLE = 'circle';
 export const CLASS = 'class';
 export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
@@ -179,6 +181,8 @@ export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';
+
+export const NOTES = 'speaker_notes';
 
 export const NOTIFICATIONS = "notifications";
 export const NOTIFICATION_ADD = "notification_add";

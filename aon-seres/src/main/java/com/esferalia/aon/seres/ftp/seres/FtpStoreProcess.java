@@ -175,6 +175,20 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		drd.setCreationUser(loggedUser);
 		drd.setCreationDate(new Date());
 		AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
+
+		
+
+//		if(DataResponseSource.SERES_DELIVERY.equals(source)) {
+//			Domain domain = new Domain().setId(domainId).setName(domainName);
+//			User user = new User().setLogin(loggedUser);
+//			DeliveryInfo di = new DeliveryInfo()
+//					.setDelivery(sourceId)
+//					.setDomain(domain.getId())
+//					.setType(DeliveryCommunicationType.SERES)
+//					.setStatus(level.equals(Level.INFO)? DeliveryCommunicationStatus.ACCEPTED : DeliveryCommunicationStatus.WRONG);
+//			AON.saveDeliveryInfo(domain, user, di);
+//		}
+
 		if( !level.equals(Level.INFO) ) {
 			sendEmail2(domainName, domainId, loggedUser, "ERROR", "Envio al FTP de Seresnet", "Envio NO correcto: "+referenceCode, null, null, RECIPIENTS_TO_FAILURES);
 		}

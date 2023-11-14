@@ -15,7 +15,7 @@ import { AonNumber } from '../../components/aon-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialog } from '../../components/aon-dialog.js';
-import { getDeliveries } from '../../services/warehouseService.js';
+import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
 import { getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 
 export class AonMobileSale extends AonElement {
@@ -158,43 +158,52 @@ export class AonMobileSale extends AonElement {
 	}
 
 	buildDelivery(table, detail) {
-		table.addRow();
-		let deliverySelect = new AonSelect();
-		deliverySelect.id = this.id + 'DialogDelivery';
-		deliverySelect.title = MSG.DELIVERY;
-		deliverySelect.addEventListener(EVENT.SELECT, () => {
-			this.packaging.delivery = deliverySelect.value;
-			this.buildProductPackaging(table, detail);
-		});
-		
-		let td = table.addCell(deliverySelect);
-		td.style.width = '100%';
-		
-		let addButton = new AonIconButton();
-		addButton.id = this.id + 'DeliveryAddButton';
-		addButton.title = MSG.ADD;
-		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
-		addButton.addEventListener(EVENT.CLICK, () => {
-			this.packaging = {};
-			table.removeRows();
-			this.buildNewDelivery(table, detail);
-			this.buildProductPackaging(table, detail);
-		});
-		table.addCell(addButton);
-
 		let deliveryFilter = {
 			status: 'PENDING',
 			customer: this.sale.customer.id,
+			carrierPacking: this.sale.carrierPacking,
 			full:true
 		};
-		getDeliveries(deliveryFilter).then( deliveries => {
-			deliverySelect.setOptions(deliveries.map(d => {
-				return {
-					value: d.id,
-					name: d.series + '/' + d.number
-				  }
-			}))
-		});
+		if(this.sale.carrierPacking) {
+			getDelivery(deliveryFilter).then( delivery => {
+				this.packaging.delivery = delivery;
+				this.buildProductPackaging(table, detail);
+			});
+		} else {
+			table.addRow();
+			let deliverySelect = new AonSelect();
+			deliverySelect.id = this.id + 'DialogDelivery';
+			deliverySelect.title = MSG.DELIVERY;
+			deliverySelect.addEventListener(EVENT.SELECT, () => {
+				this.packaging.delivery = deliverySelect.value;
+				this.buildProductPackaging(table, detail);
+			});
+			
+			let td = table.addCell(deliverySelect);
+			td.style.width = '100%';
+			
+			let addButton = new AonIconButton();
+			addButton.id = this.id + 'DeliveryAddButton';
+			addButton.title = MSG.ADD;
+			addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+			addButton.addEventListener(EVENT.CLICK, () => {
+				this.packaging = {};
+				table.removeRows();
+				this.buildNewDelivery(table, detail);
+				this.buildProductPackaging(table, detail);
+			});
+			table.addCell(addButton);
+			getDeliveries(deliveryFilter).then( deliveries => {
+				deliverySelect.setOptions(deliveries.map(d => {
+					return {
+						value: d.id,
+						name: d.series + '/' + d.number
+					  }
+				}))
+				
+			});
+		}
+
 	}
 
 	buildNewDelivery(table, detail) {
@@ -271,7 +280,9 @@ export class AonMobileSale extends AonElement {
 		addButton.title = MSG.ADD;
 		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 		addButton.addEventListener(EVENT.CLICK, () => {
-			while(table.rows >= 2) {
+			let cont = this.sale.carrierPacking ? 1 : 2;
+			
+			while(table.rows >= cont) {
 				table.removeRow(table.rows);
 			}
 			this.buildNewPackaging(table, detail);
@@ -287,7 +298,8 @@ export class AonMobileSale extends AonElement {
 		envaseSelect.id = this.id + 'DialogEnvase';
 		envaseSelect.title = 'Nuevo Envase';
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
-			while(table.rows > 2) {
+			let cont = this.sale.carrierPacking ? 1 : 2;
+			while(table.rows > cont) {
 				table.removeRow(table.rows);
 			}
 			this.packaging.container = {
@@ -304,7 +316,9 @@ export class AonMobileSale extends AonElement {
 		pButton.title = MSG.ADD;
 		pButton.icon = MATERIAL_ICONS.QR_CODE_SCANNER;
 		pButton.addEventListener(EVENT.CLICK, () => {
-			while(table.rows >= 2) {
+			let cont = this.sale.carrierPacking ? 1 : 2;
+
+			while(table.rows >= cont) {
 				table.removeRow(table.rows);
 			}
 			this.buildProductPackaging(table, detail);

@@ -180,6 +180,7 @@ export class AonBankCard extends AonElement {
 
     const bankTotalDiv = this.getElement("bankTotalDiv");
     bankTotalDiv.className = CSS.AON_CARD_TOTAL;
+    bankTotalDiv.classList.add(CSS.AON_BANK_CARD_TOTAL);
     bankTotalDiv.innerHTML = this.getTotal(banks);
   }
 
@@ -189,11 +190,6 @@ export class AonBankCard extends AonElement {
     }
   }
 
-  formatDate(date){
-    let dateFormat = date ? date : new Date(); 
-    return AonDateUtils.getDayMonthOrFull(dateFormat);
-  }
-
   formatNumber(number){
     return !number || number == 0 ? "No disponible" : formatNumber(number, 2, "EUR");
   }
@@ -201,6 +197,82 @@ export class AonBankCard extends AonElement {
   getTotal(banks){
     let total = banks.reduce((t, bank) => t + bank.balance, 0);
     return total > 0 ? formatNumber(total, 2, "EUR") : "No disponible";
+  }
+
+  formatDate(inputDate) {
+    inputDate = inputDate ? new Date(inputDate) : new Date(); 
+    inputDate.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const sixDaysAgo = new Date(today);
+    sixDaysAgo.setDate(today.getDate() - 7);
+    sixDaysAgo.setHours(0, 0, 0, 0);
+  
+    if (this.isSameDay(inputDate, today)) {
+      return `Actualizado hoy. ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
+    } else if (this.isSameDay(inputDate, yesterday)) {
+      return `Actualizado ayer, ${this.getDayName(inputDate)}`;
+    } else if (inputDate > sixDaysAgo) {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      return `Actualizado el ${this.getDayName(inputDate)} (Hace ${dayDiff} días)`
+    } else {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      const formattedDate = `${this.padWithZero(inputDate.getDate())} ${this.getMonthName(inputDate)}`;
+      return `Actualizado el ${formattedDate} (Hace ${dayDiff} días)`;
+    }
+  }
+  
+  isSameDay(date1, date2) {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
+  
+  formatTime(date) {
+    const hours = this.padWithZero(date.getHours());
+    const minutes = this.padWithZero(date.getMinutes());
+    return `${hours}:${minutes}`;
+  }
+  
+  getDayName(date) {
+    const dayNames = [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+    ];
+    return dayNames[date.getDay()];
+  }
+  
+   getMonthName(date) {
+      const monthNames = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+      ];
+      return monthNames[date.getMonth()];
+    }
+  
+  padWithZero(num) {
+    return num.toString().padStart(2, "0");
   }
 
 }

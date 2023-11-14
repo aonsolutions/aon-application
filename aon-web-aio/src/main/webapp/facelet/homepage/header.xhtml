@@ -1824,6 +1824,81 @@
 		position: inherit;		
 	} 
 	
+	.aon-upload-toast {
+		bottom: 20px;
+		right: 20px;
+		position:fixed;
+		min-width: 387px;
+		min-height: 143px;
+		border-radius: 4px;
+		background-color: #eaf1fb;
+		padding: 15px 22.5px 26px 24px;
+	}
+	
+	.aon-upload-toast .aon-scroll-area {
+  		overflow-y: auto;
+		max-height: calc(100vh - 50vh);
+		
+  	}
+	
+	.aon-upload-toast-header {
+		width: 100%;
+		padding-bottom: 2px;
+		display: inline-block;
+		vertical-align: middle;
+		border-bottom: 1px solid rgb(210, 210, 214);
+	}
+
+	.aon-upload-toast-body {
+		width: 100%;
+		padding-top: 6px;
+	}
+	
+	.aon-upload-toast-body .material-icons,
+	.aon-upload-toast-header .material-icons {
+		color: #2152a5 !important;
+	}
+	
+	.aon-upload-toast-body tr:first-child {
+		display:none;
+	}
+
+	.aon-upload-toast-body-type {
+	}
+
+	.aon-upload-toast-body-name {
+		width: 100%;
+		text-align: left;
+		padding-left: 20px;
+		display: inline-block;
+	}
+
+	.aon-upload-toast-header-text {
+		width: 100%;
+  		text-align: left;
+  		display: inline-block;
+  	}
+
+	.aon-file-upload-panel {
+		display: flex;
+		cursor: pointer;
+		min-height: 60px;
+		margin-top: 22px;
+		margin-left: 42px;
+		margin-right: 42px;
+		border-radius: 2px;
+		border: 2px dashed #d2d2d6;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+	}
+	.aon-file-upload-panel .material-icons {
+		font-size: 22px !important;
+	}
+	
+	.aon-file-upload-panel.highlight {
+		border-color: black;
+	}
 
 	</style>
 

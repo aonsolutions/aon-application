@@ -469,6 +469,14 @@ public interface Properties {
 		Property<Integer> getSalesDetail();
 	}
 	
+	public interface DeliveryInfoProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getDeliveryProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
 	public interface TagProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -871,7 +879,7 @@ public interface Properties {
 		Property<Integer> getRegistryRelationProperty();
 	}
 	
-	public interface CreditorProperties extends RegistryProperties, AuditProperties{
+	public interface CreditorProperties extends RegistryProperties, AuditProperties {
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
 		Property<Byte> getWithholdingProperty();
@@ -1197,6 +1205,7 @@ public interface Properties {
 		Property<String> getBicProperty();		
 		Property<Byte> getPurchaseGeneratedProperty();
 		Property<Integer> getCarrierProperty();
+		Property<Integer> getCarrierPackingProperty();
 		Property<String> getShippingAlternativeAddressProperty();
 		Property<String> getShippingAlternativeAddress2Property();
 		Property<String> getShippingAlternativeZipProperty();
@@ -1222,6 +1231,14 @@ public interface Properties {
 		Property<Byte> getStatusProperty();
 		Property<Integer> getOfferDetailProperty();
 		Property<Double> getDeliveredProperty();
+	}
+	
+	public interface SalesInfoProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getSalesProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();
 	}
 	
 	public interface CategoryProperties{

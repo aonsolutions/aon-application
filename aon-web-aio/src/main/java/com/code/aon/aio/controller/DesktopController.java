@@ -7,6 +7,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -175,6 +176,10 @@ public class DesktopController implements Serializable {
 
     public TaskInfo getTaskInfo() {
     	return getState().getTaskInfo();
+    }
+    
+    public String getTime(String pattern) {
+	return new SimpleDateFormat(pattern).format(new Date());
     }
 
     public NoticeInfo getNoticeInfo() {
