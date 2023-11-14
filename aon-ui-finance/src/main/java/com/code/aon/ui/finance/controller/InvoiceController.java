@@ -2136,6 +2136,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Date date = AON_SOLUTIONS.getInvoiceExpDate(domainName, domainId, login, getInvoice().getId());
 		if(date == null && isTbaiInvoice()) date = getInvoice().getDate();
-		return AonDateUtils.format(date, "dd/MM/yyyy");
+		if(date == null) return "Pendiente de emisión";
+		else return AonDateUtils.format(date, "dd/MM/yyyy");
 	}
 }
