@@ -4,7 +4,7 @@ import { formatNumber } from "../../services/utils.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { CSS } from "../../environments/environments.js";
 import { FISCAL_VIEWS } from "./FiscalEnums.js";
-import { getModelsFiscal } from "../../services/fiscalService.js";
+import { getModelsFiscal, getEstimationModelsFiscal } from "../../services/fiscalService.js";
 import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
 import { TAG } from "../../environments/environments.js";
@@ -13,14 +13,14 @@ import { MATERIAL_ICONS } from "../../environments/environments.js";
 export class AonFiscalCard extends AonElement {
   AON_FISCAL;
   MODELS = [];
-  BANKS=[];
+  BANKS = [];
   dur;
   TABLE_ID;
   content;
   _filter;
 
   defaultFilter;
-  
+
   constructor(filter) {
     super();
     this.defaultFilter = filter;
@@ -66,24 +66,26 @@ export class AonFiscalCard extends AonElement {
   }
 
   buildToolbar() {
-    this.getModelsFiscal().then(filteredData => {
+    this.getModelsFiscal().then((filteredData) => {
       this.getTable(filteredData);
     });
   }
 
   async getModelsFiscal() {
-    if(!this.MODELS.length){
+    if (!this.MODELS.length) {
       try {
         const datos = await getModelsFiscal();
         if (datos) {
-          this.MODELS = sortBy(datos,'year','desc')
-          .map((model) => FiscalUtils.getModelNew(model));
+          this.MODELS = sortBy(datos, "year", "desc").map((model) =>
+            FiscalUtils.getModelNew(model)
+          );
         }
 
         const filter = await this.defaultFilter;
-        let filterDatos = this.MODELS.filter(dato => { return dato.year == filter.year && dato.period === filter.period});
+        let filterDatos = this.MODELS.filter((dato) => {
+          return dato.year == filter.year && dato.period === filter.period;
+        });
         return filterDatos;
-
       } catch (error) {
         console.error(error);
         this.showError(error);
@@ -91,11 +93,10 @@ export class AonFiscalCard extends AonElement {
     } else {
       return this.MODELS;
     }
-    
   }
 
-  getDataForKey(models, key){
-    let datas = models.map(m => m[key]);
+  getDataForKey(models, key) {
+    let datas = models.map((m) => m[key]);
     return datas.filter((item, pos) => datas.indexOf(item) === pos);
   }
 
@@ -103,11 +104,12 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    let maxModels = modelDatas && modelDatas.length < 4 ? modelDatas.length : 4;
+    let maxModels = modelDatas && modelDatas.length < 5 ? modelDatas.length : 5;
+    let accumulatedModels = 0;
 
     for (let index = 0; index < maxModels; index++) {
       const modelData = modelDatas[index];
-    
+
       let row = this.createElement(TAG.DIV);
       row.className = CSS.AON_FLEX;
       row.style.justifyContent = "space-between";
@@ -120,28 +122,18 @@ export class AonFiscalCard extends AonElement {
       leftContent.style.alignItems = "center";
       leftContent.style.gap = "1rem";
 
-      let descriptionContent = this.createElement(TAG.DIV);
-      descriptionContent.className = CSS.AON_FLEX;
-      descriptionContent.style.flexDirection = "column";
-      leftContent.appendChild(descriptionContent);
-
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1.2rem";
+      description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
-      description.innerHTML = "Modelo " + modelData.newModel;
-      descriptionContent.appendChild(description);
+      description.innerHTML = "Modelo " + this.getParsedModel(modelData);
+      leftContent.appendChild(description);
 
       let territory = this.createElement(TAG.SPAN);
       territory.style.color = "rgb(120, 120, 133)";
-      territory.style.fontSize = ".8rem";
+      territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
       territory.innerHTML = this.getModelTerritory(modelData.administration);
-      descriptionContent.appendChild(territory);
-
-      let iva = this.createElement(TAG.SPAN);
-      iva.style.color = "rgb(120, 120, 133)";
-      iva.innerHTML = this.getModelType(modelData.newModel);
-      leftContent.appendChild(iva);
+      leftContent.appendChild(territory);
 
       let rightContent = this.createElement(TAG.DIV);
       rightContent.className = CSS.AON_FLEX;
@@ -161,6 +153,48 @@ export class AonFiscalCard extends AonElement {
       amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
       rightContent.appendChild(amount);
 
+      accumulatedModels += modelData.result;
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    // Create others row
+    let total = modelDatas.reduce((t, model) => t + model.result, 0);
+    if (modelDatas.length > 5) {
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = "1rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = "Otros";
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
+      rightContent.appendChild(amount);
+
       row.appendChild(leftContent);
       row.appendChild(rightContent);
 
@@ -169,25 +203,120 @@ export class AonFiscalCard extends AonElement {
 
     const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
+    fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
     fiscalTotalDiv.innerHTML = this.getTotal(modelDatas);
+  }
+
+  getEstimationTable(estimationModels) {
+    let content = this.getElement("fiscalCardTable");
+    this.removeAllChildNodes(content);
+
+    estimationModels = estimationModels.filter(estimationModel => estimationModel.amount && estimationModel.amount > 0);
+
+    let maxModels = estimationModels && estimationModels.length < 5 ? estimationModels.length : 5;
+    let accumulatedModels = 0;
+
+    for (let index = 0; index < maxModels; index++) {
+      const modelData = estimationModels[index];
+
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = estimationModels.length > 5 ? "1rem" : "1.2rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = modelData.description;
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(modelData.amount, 2, "EUR");
+      rightContent.appendChild(amount);
+
+      accumulatedModels += modelData.amount;
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    // Create others row
+    let total = estimationModels.reduce((t, model) => t + model.amount, 0);
+    if (estimationModels.length > 5) {
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = "1rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = "Otros";
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
+      rightContent.appendChild(amount);
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
+    fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
+    fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
+    fiscalTotalDiv.innerHTML = this.getEstimationTotal(estimationModels);
   }
 
   removeAllChildNodes(parent) {
     while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-    }
-}
-
-  getModelType(model){
-    switch (model.charAt(0)) {
-      case "1":
-        return "IRPF"
-      default:
-        return "IVA";
+      parent.removeChild(parent.firstChild);
     }
   }
 
-  getModelTerritory(territory){
+  getParsedModel(modelData) {
+    let model = modelData.newModel;
+    let territory = modelData.administration;
+    return model === "111" && territory === "ALAVA" ? "110" : model;
+  }
+
+  getModelTerritory(territory) {
     switch (territory) {
       case "COMMON_TERRITORY":
         return "AEAT";
@@ -196,12 +325,17 @@ export class AonFiscalCard extends AonElement {
     }
   }
 
-  getTotal(models){
+  getTotal(models) {
     let total = models.reduce((t, model) => t + model.result, 0);
     return formatNumber(total, 2, "EUR");
   }
 
-  createStatus(status){
+  getEstimationTotal(models) {
+    let total = models.reduce((t, model) => t + model.amount, 0);
+    return formatNumber(total, 2, "EUR");
+  }
+
+  createStatus(status) {
     let span = this.createElement(TAG.DIV);
     span.style.width = "10px";
     span.style.height = "10px";
@@ -209,43 +343,43 @@ export class AonFiscalCard extends AonElement {
 
     switch (status) {
       case "PENDING":
-        span.title= "Pendiente";
+        span.title = "Pendiente";
         span.style.backgroundColor = "lightgray";
         break;
       case "FINISHED":
-        span.title= "Finalizado";
+        span.title = "Finalizado";
         span.style.backgroundColor = "rgb(227, 255, 171)";
         break;
       case "BATCHED":
-        span.title= "En Lote";        
+        span.title = "En Lote";
         span.style.backgroundColor = "black";
         break;
       case "BLOCKED":
-        span.title= "Bloqueado";
+        span.title = "Bloqueado";
         span.style.backgroundColor = "black";
         break;
       case "SENT":
-        span.title= "Presentado";
+        span.title = "Presentado";
         span.style.backgroundColor = "rgb(62, 201, 70)";
         break;
       case "MISSING":
-        span.title= "Desconocido";
+        span.title = "Desconocido";
         span.style.backgroundColor = "black";
         break;
       case "CUSTOMER_CHECK":
-        span.title= "Envio a cliente";
+        span.title = "Envio a cliente";
         span.style.backgroundColor = "lightyellow";
         break;
       case "CUSTOMER_ACCEPTED":
-        span.title= "Aceptado por cliente";
+        span.title = "Aceptado por cliente";
         span.style.backgroundColor = "rgb(233, 255, 219)";
         break;
       case "CUSTOMER_REJECTED":
-        span.title= "Rechazado por cliente";
+        span.title = "Rechazado por cliente";
         span.style.backgroundColor = "darkred";
         break;
       default:
-        span.title= "";
+        span.title = "";
         span.style.backgroundColor = "black";
         break;
     }
@@ -253,12 +387,12 @@ export class AonFiscalCard extends AonElement {
     return span;
   }
 
-  get getFilterModels(){
+  get getFilterModels() {
     const result = this.MODELS.filter(function (a) {
-      var key = a.year + '|' + a.period;
+      var key = a.year + "|" + a.period;
       if (!this[key]) {
-          this[key] = true;
-          return true;
+        this[key] = true;
+        return true;
       }
     }, Object.create(null));
 
@@ -267,28 +401,36 @@ export class AonFiscalCard extends AonElement {
       var bSize = b.year;
       var aLow = a.period;
       var bLow = b.period;
-  
-      if(aSize == bSize)
-      {
-          return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0;
-      }
-      else
-      {
-          return (aSize < bSize) ? -1 : 1;
+
+      if (aSize == bSize) {
+        return aLow < bLow ? -1 : aLow > bLow ? 1 : 0;
+      } else {
+        return aSize < bSize ? -1 : 1;
       }
     });
 
     return result.reverse();
   }
 
-  filterTable(filter){
+  filterTable(filter) {
     let section2 = this.getElement("fiscalTitleSection2");
     let titleSection2 = section2.firstChild;
 
     titleSection2.innerHTML = filter.title;
-    let filterDatos = this.MODELS.filter(dato => { return dato.year == filter.year && dato.period === filter.period});
+    let filterDatos = this.MODELS.filter((dato) => {
+      return dato.year == filter.year && dato.period === filter.period;
+    });
     this.getTable(filterDatos);
   }
 
+  async filterEstimationTable(filter) {
+    let section2 = this.getElement("fiscalTitleSection2");
+    let titleSection2 = section2.firstChild;
+    titleSection2.innerHTML = filter.title;
+
+    const estimationModels = await getEstimationModelsFiscal(filter);
+    // console.log(estimationModels);
+    this.getEstimationTable(estimationModels);
+  }
 }
 window.customElements.define("aon-fiscal-card", AonFiscalCard);

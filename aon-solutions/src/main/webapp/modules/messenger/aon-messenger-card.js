@@ -256,8 +256,10 @@ export class AonMessengerCard extends AonElement {
 
       let date = this.createElement(TAG.SPAN);
       date.style.whiteSpace = "nowrap";
-      date.style.minWidth = window.innerWidth < 768 ? "5rem" : "9rem";
+      date.style.minWidth = window.innerWidth < 768 ? "5rem" : "8rem";
       date.style.textAlign = "right";
+      date.style.color = "rgb(120, 120, 133)";
+      date.style.fontSize = "0.8rem";
       date.innerHTML = messenger.dateParse;
 
       rightContent.appendChild(date);

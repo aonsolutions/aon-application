@@ -603,6 +603,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
+				showPaymentInfo(result);
 			}
 
 			@Override
@@ -619,23 +620,24 @@ public abstract class Model115Base extends DockLayoutPanel {
 			this.remove(paymentContainer);
 			this.forceLayout();
 		}
-		if (mod.isFinished() || mod.isSent()) {
-			StringBuilder buff = new StringBuilder(AON.MSG.result());
-			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getDeclarationResult()));
-			if (mod.getDeclarationResultType() != null) {
-				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationResultType().getDescription());
-			}
-			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
-				buff.append(AonStringUtils.SPACE);
-				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAccount().getIban()));
-				buff.append(AonStringUtils.SPACE);
-				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
-			}
+		if (mod.isFinished() || mod.isSent() || mod.isCustomerCheck()) {
+//			StringBuilder buff = new StringBuilder(AON.MSG.result());
+//			buff.append(AonStringUtils.SPACE);
+//			buff.append(AON.FMT.format(mod.getDeclarationResult()));
+//			if (mod.getDeclarationResultType() != null) {
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(mod.getDeclarationResultType().getDescription());
+//			}
+//			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAccount().getIban()));
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
+//			}
 			paymentContainer = new FlowPanel();
 			paymentContainer.setStyleName(AON.CSS.aonWidthAll());
-			Label label = new Label( buff.toString() );
+//			Label label = new Label( buff.toString() );
+			Label label = new Label( FiscalModelUtils.getPaymentInfo(mod) );
 			label.setStyleName(AON.CSS.aonWidthAll());
 			label.addStyleName(AON.CSS.aonTextCenter());
 			label.addStyleName(AON.CSS.aonBold());

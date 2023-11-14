@@ -86,6 +86,8 @@ export const AON_CARD_TITLE = 'aonCardTitle';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
 export const AON_CARD_TOTAL = 'aonCardTotal';
+export const AON_BANK_CARD_TOTAL = 'aonBankCardTotal';
+export const AON_FISCAL_CARD_TOTAL = 'aonFiscalCardTotal';
 export const AON_DIALOG = 'aonDialog';
 export const AON_DIALOG_CONTENT = 'aonDialogContent';
 export const AON_DIALOG_MENU_CONTENT = 'aonDialogMenuContent';
@@ -126,6 +128,7 @@ export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
 export const AON_ELLIPSIS = 'aonEllipsis';
 export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
+export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
 export const AON_BADGE = 'aonBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
@@ -376,6 +379,24 @@ export const AON_SEARCH_INPUT = 'aonSearchInput';
 export const AON_AUTOSIZE_TEXTAREA = 'aonAutosizeTextarea';
 export const AON_AUTOSIZE_TEXTAREA_CONTENT = 'aonAutosizeTextareaContent';
 export const AON_AUTOSIZE_TEXTAREA_TITLE = 'aonAutosizeTextareaTitle';
+
+// Note
+export const NOTE_CONTAINER = 'noteContainer';
+export const NOTE_CARD = 'noteCard';
+export const NOTE_TITLE_CARD = 'noteTitleCard';
+export const NOTE_TITLE = 'noteTitle';
+export const NOTE_BODY_CONTENT = 'noteBodyContent';
+export const NOTE_BODY = 'noteBody';
+export const NOTE_DATE = 'noteDate';
+export const EMPTY_NOTE = 'emptyNote';
+
+// Dialog
+export const DIALOG_OVERLAY = 'dialogOverlay';
+export const DIALOG_CONTENT = 'dialogContent';
+export const DIALOG_MESSAGE = 'dialogMessage';
+export const DIALOG_BUTTONS = 'dialogButtons';
+export const DIALOG_ACCEPT = 'dialogAccept';
+export const DIALOG_CANCEL = 'dialogCancel';
 
 /**
  * Name to CSS variable conversion.

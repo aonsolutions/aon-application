@@ -16,6 +16,8 @@
  */
 package com.esferalia.aon.watson.util;
 
+import java.util.function.Function;
+
 /**
  * <p>Operations on {@code Object}.</p>
  *
@@ -77,5 +79,9 @@ public class AonObjectUtils {
     public static boolean notEqual(final Object object1, final Object object2) {
         return AonObjectUtils.equals(object1, object2) == false;
     }
+    
+	public static <T, R> R ifNotNullGet(final T object, Function<T, R> value) {
+		return object == null ? null : value.apply(object);
+	}
 
 }

@@ -4,6 +4,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
+
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -33,7 +35,6 @@ public class RegistrySellerDAO {
 
     }
 	
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = SellerDAO.SELLER_ALIAS;
 	private static final RegistrySellerPropertiesDAO REGISTRY_SELLER_PROPERTIES = new RegistrySellerPropertiesDAO();
 	
 	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {

@@ -10,9 +10,11 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
@@ -29,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -205,4 +208,12 @@ public interface IWarehouse {
 	List<Packaging> savePackaging(AONContext ctx, Packaging packaging);
 	DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery, Integer product);
 	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
+	
+	// 	***********************************************
+	// 	**************************** DELIVERY INFO ****
+	// 	***********************************************
+		
+	DeliveryInfo getDeliveryInfo(AONContext ctx, DeliveryInfoFilter filter);
+	DeliveryInfo saveDeliveryInfo(AONContext ctx, DeliveryInfo invoiceInfo);
+	void deleteDeliveryInfo(AONContext ctx, Integer deliveryId);
 }

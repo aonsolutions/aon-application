@@ -157,7 +157,8 @@ export const PAYROLL_VIEWS = {
   AON_CERT: "aonCert",
   AON_CTA_LIST: "aonCtaList",
   AON_ALTA_DIRECTA: "aonAltaDirecta",
-  AON_COMPANY_COSTS_LIST: "aon-company-costs-list"
+  AON_COMPANY_COSTS_LIST: "aon-company-costs-list",
+  AON_COMPANY_COSTS_CARD: "aon-company-costs-card"
 }
 
 export const EXCEPTION_MESSAGE = {

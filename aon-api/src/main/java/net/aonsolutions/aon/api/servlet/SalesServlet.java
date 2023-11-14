@@ -4,27 +4,25 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.INGENET;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.SalesJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @WebServlet(name = "AonApiSalesServlet", urlPatterns = {"/ms/api/sales/*"})
@@ -109,8 +107,6 @@ public class SalesServlet extends AonApiHttpServlet {
 	private static JSONArray getSales(AonApiData api) {
 		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
 			return getSerfruitSales(api);
-		} else if(JsonUtils.getboolean(api.getData(), IJsonNames.INGENET)) {
-			return getIngenetSales(api);
 		} else return getAonSales(api);
 	}
 	
@@ -124,11 +120,6 @@ public class SalesServlet extends AonApiHttpServlet {
 		Stream<Sales> stream = SERFRUIT.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
 		return SalesJSON.toJSON(stream);
 	}	
-	
-	private static JSONArray getIngenetSales(AonApiData api) {
-		Stream<Sales> stream = INGENET.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
-		return SalesJSON.toJSON(stream);
-	}
 	
 	private static JSONObject saveSales(AonApiData api) {
 		Sales sales = SalesJSON.fromJSON(api.getData());

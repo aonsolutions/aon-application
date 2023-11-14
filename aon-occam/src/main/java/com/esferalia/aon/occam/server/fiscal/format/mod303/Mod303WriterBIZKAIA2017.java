@@ -97,7 +97,7 @@ public class Mod303WriterBIZKAIA2017 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append("P00IM0027"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C027),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   ,(wr, mod) -> wr.append("P00IM0028"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C028),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   
-			   // FALTA - [29] Regularización por aplicación porcentaje definitivo de prorrata (sólo en el mes 12)
+			   // [29] Regularización por aplicación porcentaje definitivo de prorrata (sólo en el mes 12)
 			   // En el PDF que saca el programa de ayuda (tambien en la orden publicada), si que está esta casilla, pero en el documento disponible en la Web no lo está
 			   // de cualquier forma en la plataforma de AON, aún no existe este campo
 			   //,(wr, mod) -> wr.append("P00IM0029"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C029),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
@@ -173,7 +173,7 @@ public class Mod303WriterBIZKAIA2017 implements IMod303Writer{
 			   
 			   ,(wr, mod) -> wr.append( mod.getProratePercent() != 0.0 && mod.getProratePercent() != 100.0 ? "P00TX0101" + AonFiscalFileUtils.text("S",40) + AonStringUtils.CR_LF : "")  
 
-			   // FALTA - [102] - Prorrata especial - Existe la clave, pero no aparece en el formulario en pantalla
+			   // [102] - Prorrata especial - Existe la clave, pero no aparece en el formulario en pantalla
 			   //,(wr, mod) -> wr.append("P00TX0102"),(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(40)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   
 			   ,(wr, mod) -> wr.append("P00P30103"),(wr, mod) -> wr.append(AonFiscalFileUtils.p3(mod.getProratePercent())),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
@@ -187,7 +187,7 @@ public class Mod303WriterBIZKAIA2017 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append( mod.getAmount(Mod303Key.BZ_C186) == 1 ? "P00MR0186" + "X" + AonStringUtils.CR_LF : "")
 			   ,(wr, mod) -> wr.append( mod.getAmount(Mod303Key.BZ_C187) == 1 ? "P00MR0187" + "X" + AonStringUtils.CR_LF : "")
 			   
-			   // FALTA - No estan los campos
+			   // No estan los campos
 			   // [188] - Opción por la aplicación de la prorrata especial
 			   //,(wr, mod) -> wr.append( mod.getAmount(Mod303Key.BZ_C188) == 1 ? "P00MR0188" + "X" + AonStringUtils.CR_LF : "")
 			   // [189] - Revocación de la opción por la aplicación de la prorrata especial

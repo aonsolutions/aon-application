@@ -6,14 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public enum AonError implements Serializable{
-	// ¡ --> \u00C1 · --> \u00E1
-	// … --> \u00C9 È --> \u00E9
-	// Õ --> \u00CD Ì --> \u00ED  
-	// ” --> \u00D3 Û --> \u00F3
-	// ⁄ --> \u00DA ˙ --> \u00FA
-	// — --> \u00D1 Ò --> \u00F1
-	// ∫ --> \u00AA ™ --> \u00BA
-	// ø --> \u00BF 
+	// √Å --> \u00C1 √° --> \u00E1
+	// √â --> \u00C9 √© --> \u00E9
+	// √ç --> \u00CD √≠ --> \u00ED  
+	// √ì --> \u00D3 √≥ --> \u00F3
+	// √ö --> \u00DA √∫ --> \u00FA
+	// √ë --> \u00D1 √± --> \u00F1
+	// ¬∫ --> \u00AA ¬™ --> \u00BA
+	// ¬ø --> \u00BF 
 	
 	
 	// -----------------------------------------------------------
@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	,INVALID_FORMAT("El formato del dato \"{0}\" no es correcto: \"{1}\"")
+	,NOT_EXIST("No existe \"{0}\"")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
@@ -153,7 +154,7 @@ public enum AonError implements Serializable{
 
 	// --------------------------------------------- BRAND
 	, BRAND_NULL("El valor de la marca es nulo.")
-	, BRAND_EMPTY("El valor de la marca esta vacÌo.")
+	, BRAND_EMPTY("El valor de la marca esta vac√≠o.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
 	
@@ -232,6 +233,7 @@ public enum AonError implements Serializable{
 	,FINANCE_ENTRY_LATER_TRACKINGS("No se puede borrar el asiento, alguno de los vencimientos tiene movimientos posteriores.")
 	,FINANCE_ENTRY_FROM_FBATCH("No se puede borrar el asiento. Procede de remesa, deshaga el apunte desde la pantalla de remesas.")
 	,INVOICE_FINANCES_AMOUNT("La suma de los importes de los vencimientos no coincide con el total factura")
+	,DELETE_RADDRESS_INVOICE("No se puede borrar una direcci\u00F3n que est\u00E1 registrada en una factura")
 	// --------------------------------------------- RAWDOC
 	,EMPTY_RAWDOC_NATURE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_RAWDOC_TYPE("El tipo del documento es un dato obligatorio, no puede estar vac\u00EDo")
@@ -245,12 +247,30 @@ public enum AonError implements Serializable{
 	,NULL_TYPE("El valor del tipo de la pregunta es nulo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
-	
-	
-	
-	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
+	//-----------------------------------------------UPLOAD OF DNI
+	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
+	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
+	,FILE_SIZE_EXCEEDED("El tama√±o de archivo no puede superar los 5MB")
+	,NULL_TEXT_RECEIVED("El texto recibido es nulo")
+	,INVALID_DNI_FORMAT("El formato del campo para el dni no es valido")
+	,INVALID_NATIONALITY_FORMAT("El formato del campo para la nacionalidad no es valido")
+	,INVALID_NAME_FORMAT("El formato para el campo del nombre no es valido")
+	,INVALID_FIRST_SURNAME("El formato para el campo del primer apellido no es valido")
+	,INVALID_SECOND_SURNAME("El formato para el campo del segundo apellido no es valido")
+	,NULL_NEXT_LINE("Error al cargar los datos, intentelo otra vez")
+
+  // ---------------------------------------------- REGISTRY_BANK
+	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
+	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")
+	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
+	,REGISTRY_BANK_NULL_REGISTRY("El registro no puede ser nulo")
+	,REGISTRY_BANK_NULL_BANK_ACCOUNT("La cuenta de banco no puede ser nula")
+	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o del bic es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
 	;
 	
 	

@@ -85,6 +85,7 @@ export class AonMobileDesktop extends AonElement {
 				let company = JSON.parse(localStorage.getItem('company'));
 				localStorage.setItem('aon_domain_id', company.id);
 				localStorage.setItem('aon_domain_name', company.domain);
+				localStorage.setItem('aon_domain_document', company.document);
 				const user = await getUser();
 				localStorage.setItem('aon_domain_login', user.login);
 				await this.buildCompany();
@@ -160,6 +161,7 @@ export class AonMobileDesktop extends AonElement {
 					localStorage.setItem('company', JSON.stringify(company));
 					localStorage.setItem("aon_domain_id", company.id);
 					localStorage.setItem("aon_domain_name", company.domain);
+					localStorage.setItem("aon_domain_document", company.document);
 					const user = await getUser();
 					localStorage.setItem('aon_domain_login', user.login);
 					// let menu = document.querySelector('aon-mobile-menu');

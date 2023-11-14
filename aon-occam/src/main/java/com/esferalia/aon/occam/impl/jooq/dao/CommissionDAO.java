@@ -50,6 +50,10 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommissionDAO {
 	
+	private CommissionDAO() {
+	
+	}
+	
 	private static final OfferDetailCommissionPropertiesDAO OFFER_DETAIL_COMMISSION_PROPERTIES = new OfferDetailCommissionPropertiesDAO();
 	private static final InvoiceDetailCommissionPropertiesDAO INVOICE_DETAIL_COMMISSION_PROPERTIES = new InvoiceDetailCommissionPropertiesDAO();
 	private static final CommissionPropertiesDAO COMMISSION_PROPERTIES = new CommissionPropertiesDAO();

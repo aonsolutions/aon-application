@@ -2,90 +2,76 @@ package com.esferalia.aon.occam.api.json.nordigen;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountBalanceFromJSON;
-import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountBalanceToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum NordigenAccountBalanceJSON {
-	BALANCE_AMOUNT(
-			(balance, json) -> balance.setBalanceAmount(NordigenJSONUtils.accountAmountFromJSON(json.optJSONObject("balanceAmount"))),
-			(balance, json) -> json.put("balanceAmount", NordigenJSONUtils.accountAmountToJSON(balance.getBalanceAmount()))
-	),
-	BALANCE_TYPE(			
-			(balance, json) -> balance.setBalanceType(NORDIGEN_BALANCE_TYPE.getByValue(json.optString("balanceType"))),
-			(balance, json) -> json.put("balanceType", balance.getBalanceType() != null ? balance.getBalanceType().getValue() : null)
-	),
-	REFERENCE_DATE(
-			(balance, json) -> balance.setReferenceDate(AonDateUtils.parse(json.optString("referenceDate", null), AonDateUtils.SIMPLE_DATE_FORMAT4)),
-			(balance, json) -> json.put("referenceDate", AonDateUtils.format(balance.getReferenceDate(), AonDateUtils.SIMPLE_DATE_FORMAT4))
-	),
-	ORIGINAL_JSON(
-			(balance, json) -> balance.setOriginalJson(AonStringUtils.isNotBlank(json.optString("originalJson")) ? json.optString("originalJson") : json.toString(4)),
-			(balance, json) -> json.put("originalJson", balance.getOriginalJson())
-	)
-	;
-	private INordigenAccountBalanceFromJSON fromJSON;
-	private INordigenAccountBalanceToJSON toJSON;
+public class NordigenAccountBalanceJSON {
 	
-	private NordigenAccountBalanceJSON(INordigenAccountBalanceFromJSON fromJSON, INordigenAccountBalanceToJSON toJSON) {
-		this.fromJSON = fromJSON;
-		this.toJSON = toJSON;
+	
+	private NordigenAccountBalanceJSON() {
 	}
 	
-	public static JSONObject toJSON(NordigenAccountBalance balance) {
-		if (balance != null) {
-			JSONObject json = new JSONObject();
-			for (NordigenAccountBalanceJSON n : NordigenAccountBalanceJSON.values()) {
-				n.toJSON.to(balance, json);
-			}
-			return json;
+	public static LinkedList<NordigenAccountBalance> fromBalances(String balancesString) {
+		if (AonStringUtils.isNotBlank(balancesString)) {
+			JSONObject balances = new JSONObject(balancesString);
+			JSONArray balancesJson = balances.optJSONArray("balances");
+			return NordigenAccountBalanceJSON.from(balancesJson);
 		}
-		return null;
+		return new LinkedList<>();
 	}
 	
-	public static NordigenAccountBalance fromString(String text) {
-		JSONObject json = new JSONObject(text);
-		return fromJSON(json);
+	public static NordigenAccountBalance from(String text) throws NordigenException {
+		try {
+			return from(new JSONObject(text));
+		} catch (JSONException e) {
+			throw new NordigenException(e.getMessage()); 
+		} 
+	}
+	
+	public static LinkedList<NordigenAccountBalance> from(JSONArray array) {
+		if (array == null || array.isEmpty()) return new LinkedList<>();
+		return NordigenJSONUtils.stream(array)
+			.map(NordigenAccountBalanceJSON::from)
+			.collect(Collectors.toCollection(LinkedList::new));		
+	}
+	
+	public static NordigenAccountBalance from(JSONObject json) {
+		if (json == null) return null; 
+		return new NordigenAccountBalance()
+			.setBalanceAmount(NordigenJSONUtils.accountAmountFromJSON(json.optJSONObject("balanceAmount")))
+			.setBalanceType(NordigenBalanceType.getByValue(json.optString("balanceType")))
+			.setReferenceDate(NordigenJSONUtils.getDate(json,"referenceDate"))
+			.setOriginalJson(AonStringUtils.isNotBlank(json.optString("originalJson")) ? json.optString("originalJson") : json.toString(4));
+	}
+	
+	public static JSONArray to(List<NordigenAccountBalance> list) {
+		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
+		return to(list.stream());
 	}
 
-	public static NordigenAccountBalance fromJSON(JSONObject json) {
-		if (json != null) {
-			NordigenAccountBalance institution = new NordigenAccountBalance();
-			for (NordigenAccountBalanceJSON n : NordigenAccountBalanceJSON.values()) {
-				n.fromJSON.from(institution, json);
-			}
-			return institution;
-		}
-		return null;
+	public static JSONArray to(Stream<NordigenAccountBalance> stream) {
+		return stream
+			.map(NordigenAccountBalanceJSON::to)
+			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
-	
-	public static List<NordigenAccountBalance> fromJSONArray(JSONArray jsonArray) {
-		List<NordigenAccountBalance> instList = new LinkedList<>();
-		if (jsonArray != null) {
-			for (int i=0; i<jsonArray.length(); i++) {
-				JSONObject jsonObj = jsonArray.optJSONObject(i);
-				NordigenAccountBalance institution = NordigenAccountBalanceJSON.fromJSON(jsonObj);
-				instList.add(institution);
-			}
-		}
-		return instList;
-	}
-	
-	public static JSONArray toJSONArray(List<NordigenAccountBalance> list) {
-		JSONArray instArr = new JSONArray();
-		if (list != null) {
-			for (NordigenAccountBalance inst: list) {
-				JSONObject instJson = NordigenAccountBalanceJSON.toJSON(inst);
-				instArr.put(instJson);
-			}
-		}
-		return instArr;
+
+	public static JSONObject to(NordigenAccountBalance balance) {
+		if (balance == null) return null;
+		return new JSONObject()
+			.put("balanceAmount", NordigenJSONUtils.accountAmountToJSON(balance.getBalanceAmount()))
+			.put("balanceType", balance.getBalanceType() != null ? balance.getBalanceType().getValue() : null)
+			.put("referenceDate", NordigenJSONUtils.formatDate(balance.getReferenceDate()))
+			.put("originalJson", balance.getOriginalJson());
 	}
 }

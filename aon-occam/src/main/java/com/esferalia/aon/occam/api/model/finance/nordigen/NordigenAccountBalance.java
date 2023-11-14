@@ -7,25 +7,15 @@ public class NordigenAccountBalance implements Serializable {
 	
 	private static final long serialVersionUID = 448347838380309919L;
 	
-	private NORDIGEN_BALANCE_TYPE balanceType;
+	private NordigenBalanceType balanceType;
 	private NordigenAccountAmount balanceAmount;
 	private Date referenceDate;
 	private String originalJson;
 	
-	public NordigenAccountBalance() {
-		super();
-	}
-	
-	public NordigenAccountBalance(NORDIGEN_BALANCE_TYPE balanceType, NordigenAccountAmount balanceAmount) {
-		this.balanceType = balanceType;
-		this.balanceAmount = balanceAmount;
-	}
-
-	public NORDIGEN_BALANCE_TYPE getBalanceType() {
+	public NordigenBalanceType getBalanceType() {
 		return balanceType;
 	}
-
-	public NordigenAccountBalance setBalanceType(NORDIGEN_BALANCE_TYPE balanceType) {
+	public NordigenAccountBalance setBalanceType(NordigenBalanceType balanceType) {
 		this.balanceType = balanceType;
 		return this;
 	}
@@ -33,7 +23,6 @@ public class NordigenAccountBalance implements Serializable {
 	public NordigenAccountAmount getBalanceAmount() {
 		return balanceAmount;
 	}
-
 	public NordigenAccountBalance setBalanceAmount(NordigenAccountAmount balanceAmount) {
 		this.balanceAmount = balanceAmount;
 		return this;
@@ -42,7 +31,6 @@ public class NordigenAccountBalance implements Serializable {
 	public Date getReferenceDate() {
 		return referenceDate;
 	}
-
 	public NordigenAccountBalance setReferenceDate(Date referenceDate) {
 		this.referenceDate = referenceDate;
 		return this;
@@ -51,7 +39,6 @@ public class NordigenAccountBalance implements Serializable {
 	public String getOriginalJson() {
 		return originalJson;
 	}
-	
 	public NordigenAccountBalance setOriginalJson(String originalJson) {
 		this.originalJson = originalJson;
 		return this;

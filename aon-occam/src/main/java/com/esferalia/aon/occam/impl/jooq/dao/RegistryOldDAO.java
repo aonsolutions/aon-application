@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
+@Deprecated
 public class RegistryOldDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();

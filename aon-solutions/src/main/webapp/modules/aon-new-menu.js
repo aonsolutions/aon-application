@@ -23,6 +23,7 @@ import { AonBooking } from './marketplace/aon-booking.js';
 import { AonOfficePanel } from './office/aon-office-panel.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonAppMenu } from './aon-app-menu.js';
+import { AonNotes } from './note/aon-notes.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -192,8 +193,11 @@ export class AonNewMenu extends AonElement {
 				this.buildAppMenu(AuxApps.TOOLS);
 				break;
 			case Apps.NOTES.app:
-				this.buildNoteMenu(Apps.NOTES);
-			break;
+				this.rootPanel(new AonNotes());
+				break;
+			// case Apps.NOTES.app:
+			// 	this.buildNoteMenu(Apps.NOTES);
+			// 	break;
 			case Apps.OFFICE.app:
 				this.rootPanel(new AonOfficePanel());
 			break;
@@ -284,6 +288,16 @@ export class AonNewMenu extends AonElement {
 		// 	appOptions.style.display = 'none';
 		// });
 		li.addEventListener(EVENT.CLICK, () => {
+			let expandButtonDiv = this.getElement("aonExpandButtonDiv");
+			let expandButton = expandButtonDiv.firstChild;
+			if(this.isExpanded()) {
+				expandButtonDiv.style.left = '57px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			} else {
+				expandButtonDiv.style.left = '237px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			}
+			
 			this.expand();
 		})
 		ul.appendChild(li);

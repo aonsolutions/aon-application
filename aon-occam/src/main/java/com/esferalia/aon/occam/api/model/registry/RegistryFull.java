@@ -9,11 +9,13 @@ public class RegistryFull<R extends Registry> implements Serializable {
 
 	private static final long serialVersionUID = 1169435863658845445L;
 	private R registry;
+	private List<RegistryBank> banks;
 	private LinkedList<RegistryAddress> addresses;
 	private LinkedList<RegistryMedia> medias;
 	private List<RecordData> recordData;
 	
 	// ------------------------------------------ REGISTRY
+	
 	public R getRegistry() {
 		return registry;
 	}
@@ -29,8 +31,33 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	public Integer getDomain() {
 		return registry==null || registry.getDomain() == null? null : registry.getDomain().getId();
 	}
+	
+	// ------------------------------------------ REGISTRY BANK
+	
+	public List<RegistryBank> getBanks() {
+		return banks;
+	}
+		
+	public RegistryFull<R> setBanks(List<RegistryBank> banks) {
+		this.banks = banks;
+		return this;
+	}
+		
+	private List<RegistryBank> ensureBanks() {
+		return this.banks == null ? new LinkedList<>() : banks; 
+	}
+		
+	public RegistryFull<R> addBank(RegistryBank bank) {
+		ensureBanks().add(bank);
+		return this;
+	}
+		
+	public boolean hasBanks() {
+		return this.banks != null && !this.banks.isEmpty();
+	}
 
 	// ------------------------------------------ REGISTRY ADDRESS
+	
 	public LinkedList<RegistryAddress> getAddresses() {
 		return addresses;
 	}
@@ -39,7 +66,7 @@ public class RegistryFull<R extends Registry> implements Serializable {
 		return this;
 	}
 	private LinkedList<RegistryAddress> ensureAddresses() {
-		if (this.addresses == null) this.addresses = new LinkedList<RegistryAddress>(); 
+		if (this.addresses == null) this.addresses = new LinkedList<>(); 
 		return this.addresses;
 	}
 	public RegistryFull<R> addAddress(RegistryAddress address) {
@@ -47,7 +74,7 @@ public class RegistryFull<R extends Registry> implements Serializable {
 		return this;
 	}
 	public boolean hasAddresses() {
-		return this.addresses != null && this.addresses.size() > 0;
+		return this.addresses != null && !this.addresses.isEmpty();
 	}
 	public RegistryAddress getMainAddress() {
 		return (hasAddresses()) 
@@ -56,6 +83,7 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	}
 
 	// ------------------------------------------ REGISTRY MEDIA
+	
 	public LinkedList<RegistryMedia> getMedias() {
 		return medias;
 	}
@@ -64,7 +92,7 @@ public class RegistryFull<R extends Registry> implements Serializable {
 		return this;
 	}
 	private LinkedList<RegistryMedia> ensureMedias() {
-		if (this.medias == null) this.medias = new LinkedList<RegistryMedia>(); 
+		if (this.medias == null) this.medias = new LinkedList<>(); 
 		return this.medias;
 	}
 	public RegistryFull<R> addMedia(RegistryMedia media) {
@@ -98,17 +126,13 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	}
 	
 	// ------------------------------------------ OTHER
+	
 	public boolean isNew() {
 		return getId() == null;
 	}
-	
+		
 	protected void initializeChilds() {
-//		ensureAddresses().add( new RegistryAddress() );
-//		ensureMedias().add(new RegistryMedia().setMedia(MediaType.FIXED_PHONE));
-//		ensureMedias().add(new RegistryMedia().setMedia(MediaType.CELLULAR));
-//		ensureMedias().add(new RegistryMedia().setMedia(MediaType.FAX));
-//		ensureMedias().add(new RegistryMedia().setMedia(MediaType.EMAIL));
-//		ensureMedias().add(new RegistryMedia().setMedia(MediaType.WEB));
+		// Empty method
 	}
 	
 }

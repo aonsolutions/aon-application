@@ -1,26 +1,125 @@
 package com.esferalia.aon.occam.api.json.nordigen;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenJSONUtils {
 	
-	private NordigenJSONUtils() throws IllegalAccessException {
-		throw new IllegalAccessException("Utility class");
+	private static final String DATE_PATTERN = "yyyy-MM-dd";
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private static final String DATE_TIME_PATTERN_AUX = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'";
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+	private static final DateTimeFormatter  DATE_TIME_FORMATTER_AUX = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_AUX);
+	
+	private NordigenJSONUtils() {
 	}
 	
+	public static Stream<JSONObject> stream(JSONArray array) {
+		return IntStream.range(0, array.length())
+			.mapToObj(array::getJSONObject);
+	}
+	
+	public static JSONObject getObject(JSONObject json, String key ) {
+		if(json == null) return null;
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
+			, t -> json.optJSONObject(key, null));
+	}
+	
+	public static JSONArray getArray(JSONObject json, String key ) {
+		if(json == null) return null;
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
+			, t -> json.optJSONArray(key));
+	}
+
+	public static Integer getInteger(JSONObject json, String key ) {
+		if(json == null) return null;
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
+			, t -> AonNumberUtils.toInteger(json.optNumber(key, null)));
+	}
+	
+	public static Double getDouble(JSONObject json, String key ) {
+		if(json == null) return null;
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
+			, t -> AonNumberUtils.toDouble(json.optNumber(key, null)));
+	}
+
+	public static String getString(JSONObject json, String key ) {
+		if(json == null) return null;
+		return json.optString(key,null);
+	}
+	
+	public static BigDecimal getBigDecimal(JSONObject json, String key ) {
+		if(json == null) return null;
+		return json.optBigDecimal(key,null);
+	}
+	
+	public static boolean getBoolean(JSONObject json, String key ) {
+		if (json != null && AonStringUtils.isNotBlank(getString(json, key))) {
+			return Boolean.valueOf( json.optBoolean(key)); 
+		}
+		return false;
+	}
+	
+	public static Date getDate(JSONObject json, String key ) {
+		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) {
+			LocalDate ld = LocalDate.parse( json.optString(key, null), DATE_FORMATTER);
+			return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		}
+		return null;
+	}
+	public static String formatDate(Date date) {
+		if (date == null) return null;
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMATTER);
+	}
+	
+	public static Date getDateTime(JSONObject json, String key ) {
+		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) { 
+			LocalDateTime ld = LocalDateTime.parse( json.optString(key, null), DATE_TIME_FORMATTER);
+			return Date.from(ld.atZone(ZoneId.systemDefault()).toInstant());
+		}
+		return null;
+	}
+	public static String formatDateTime(Date date) {
+		if (date == null) return null;
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMATTER);
+	}
+	
+	public static Date getDateTimeAux(JSONObject json, String key ) {
+		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) { 
+			LocalDateTime ld = LocalDateTime.parse( json.optString(key, null), DATE_TIME_FORMATTER_AUX);
+			return Date.from(ld.atZone(ZoneId.systemDefault()).toInstant());
+		}
+		return null;
+	}
+	public static String formatDateTimeAux(Date date) {
+		if (date == null) return null;
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMATTER_AUX);
+	}
+
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
 	public static Set<Country> countryJSONArrayToSet(JSONArray countriesJSON) {
 		Set<Country> countryList = new HashSet<>();
 		if (countriesJSON != null) {
@@ -40,23 +139,23 @@ public class NordigenJSONUtils {
 		return countryArray;
 	}
 	
-	public static NORDIGEN_ACCESS_SCOPES[] accessScopesFromJSON(JSONArray scopesJson) {
+	public static NordigenAccessScope[] accessScopesFromJSON(JSONArray scopesJson) {
 		if (scopesJson == null) {
-			return new NORDIGEN_ACCESS_SCOPES[0];
+			return new NordigenAccessScope[0];
 		}
 		int arrLength = scopesJson.length();
-		NORDIGEN_ACCESS_SCOPES[] scopesArr = new NORDIGEN_ACCESS_SCOPES[arrLength];
+		NordigenAccessScope[] scopesArr = new NordigenAccessScope[arrLength];
 		for (int i=0; i<arrLength; i++) {
-			scopesArr[i] = NORDIGEN_ACCESS_SCOPES.getByValue(scopesJson.optString(i));
+			scopesArr[i] = NordigenAccessScope.getByValue(scopesJson.optString(i));
 		}
 		return scopesArr;
 	}
 	
 	
-	public static JSONArray accessScopesToJSON(NORDIGEN_ACCESS_SCOPES[] scopes) {
+	public static JSONArray accessScopesToJSON(NordigenAccessScope[] scopes) {
 		JSONArray jsonArr = new JSONArray();
 		if (scopes != null) {
-			for (NORDIGEN_ACCESS_SCOPES scope : scopes) {
+			for (NordigenAccessScope scope : scopes) {
 				if (scope != null) {				
 					jsonArr.put(scope.getValue());
 				}
@@ -104,31 +203,4 @@ public class NordigenJSONUtils {
 		return null;
 	}
 	
-	public static NordigenAccessToken accessTokenFromJSON(JSONObject json) {
-		NordigenAccessToken token = new NordigenAccessToken();
-		if (json != null) {
-			token.setAccess(AonStringUtils.trimToNull(json.optString("access")));
-			token.setAccessExpires(json.isNull("access_expires") ? null : json.optLong("access_expires"));
-			token.setRefresh(AonStringUtils.trimToNull(json.optString("refresh")));
-			token.setRefreshExpires(json.isNull("refresh_expires") ? null : json.optLong("refresh_expires"));
-		}
-		return token;
-	}
-	
-	public static void updateAccessToken(JSONObject json, NordigenAccessToken token) {
-		if (token != null) {
-			if (!json.isNull("access")) {
-				token.setAccess(AonStringUtils.trimToNull(json.optString("access")));				
-			}
-			if (!json.isNull("access_expires")) {
-				token.setAccessExpires(json.isNull("access_expires") ? null : json.optLong("access_expires"));				
-			}
-			if (!json.isNull("refresh")) {
-				token.setRefresh(AonStringUtils.trimToNull(json.optString("refresh")));				
-			}
-			if (!json.isNull("refresh_expires")) {
-				token.setRefreshExpires(json.isNull("refresh_expires") ? null : json.optLong("refresh_expires"));				
-			}
-		}
-	}
 }

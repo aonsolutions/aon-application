@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
@@ -79,7 +80,8 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getDomainName(),callback.getOptions().getDomain(),callback.getOptions().getUser());
 			final AonIbanTextBox iban = new AonIbanTextBox( new BanksSuggestOracle(callback) );
-			final ListBox listBox = new ListBox();
+			final AonTextBox nrc = new AonTextBox();			
+			final ListBox listBox = new ListBox();			
 			listBox.setSelectedIndex(0);
 			if (AonMathUtils.isLessThanZero(mod303.getDeclarationResult()) ) {
 				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(), FiscalModelDeclarationType.PAYBACK.getValue());
@@ -99,6 +101,11 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				mod303.setDeclarationResultType( type );
 				iban.setEnabled( type.isBankRequired() );
 				creditorBox.setEnabled(type.mustCreateFinance());
+				nrc.setEnabled(type == FiscalModelDeclarationType.DEPOSIT);
+				if (type != FiscalModelDeclarationType.DEPOSIT) {
+					nrc.setValue("");
+					mod303.setNrc("");
+				}
 			});
 			tab.setWidget(row, 1, listBox );
 			row++;
@@ -140,6 +147,20 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				mod303.getFinance().setBankAlias(cont.getAlias());
 				mod303.getFinance().setBic(cont.getBic());
 			});
+			
+			// NRC (Solo si el resultado es positivo)
+			if (mod303.getDeclarationResult() > 0) {
+				row++;
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
+				tab.setWidget(row, 0, new Label("NRC"));
+				
+				nrc.setText(mod303.getNrc());
+				nrc.addValueChangeHandler(event -> {
+					mod303.setNrc(nrc.getValue());
+				});
+				tab.setWidget(row, 1, nrc);
+			}
+			
 		}
 		
 		row++;

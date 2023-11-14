@@ -179,6 +179,7 @@ export const MATERIAL_ICONS = 'material-icons';
 export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
 export const MAX = 'max';
+export const MAXLENGTH = 'maxlength';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
@@ -188,6 +189,7 @@ export const MSG = 'msg';
 
 export const NAME = 'name';
 export const NEXT = 'next';
+export const NOTES = 'notes';
 export const NUMBER = 'number';
 
 // ----- O
@@ -228,6 +230,7 @@ export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
+export const RAWDOC_OCR = 'rawdocOcr';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const RECEIVER = 'receiver';

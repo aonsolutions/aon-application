@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
@@ -25,7 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO.GeoZoneFiller;
-import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryAddressValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -40,6 +39,7 @@ public class RegistryAddressDAO {
 	public static final String ADDRESS_REGISTRY_LABEL = "Registry";
 	public static final String ADDRESS_NUMBER_LABEL = "N\u00fcmero";
 	public static final String ADDRESS_ZIP_LABEL = "C\u00F3digo postal";
+
 	
 	private static final RAddressPropertiesDAO RADDRESS_PROPERTIES = new RAddressPropertiesDAO();
 	private static class RAddressPropertiesDAO implements RegistryAddressProperties {
@@ -84,7 +84,7 @@ public class RegistryAddressDAO {
 					.setId(r.getValue(RADDRESS.ID))
 					.setDomain(r.getValue(RADDRESS.DOMAIN))
 					.setRegistry(r.getValue(RADDRESS.REGISTRY))
-					.setMain(r.getValue(RADDRESS.TYPE)==MAIN_ADDRESS)
+					.setMain(MAIN_ADDRESS.equals(r.getValue(RADDRESS.TYPE)))
 					.setRecipient(r.getValue(RADDRESS.RECIPIENT))
 					.setStreetType(StreetType.getForAeatCode(r.getValue(RADDRESS.STREET_TYPE), AonLanguage.SPANISH))
 					.setAddress(r.getValue(RADDRESS.ADDRESS))
@@ -105,12 +105,11 @@ public class RegistryAddressDAO {
 					.setDirty(false)
 					;
 		}
-		
 	}
 	
 	private static class RegistryAddressAutoComplete {
 		
-		public static BiConsumer<AONContext, RegistryAddress> COMPLETE_MAIN_TYPE = (ctx, address) -> {
+		public static final BiConsumer<AONContext, RegistryAddress> COMPLETE_MAIN_TYPE = (ctx, address) -> {
 			if (address.isMain()) {
 				RegistryAddressDAO.getStreamByRegistry( ctx, address.getRegistry())
 					.filter( adr -> !AonNumberUtils.equals(adr.getId(),address.getId()))
@@ -140,7 +139,7 @@ public class RegistryAddressDAO {
 			}
 		};
 		
-		public static BiConsumer<AONContext, RegistryAddress> COMPLETE_GEOZONE = (ctx, address) -> {
+		public static final BiConsumer<AONContext, RegistryAddress> COMPLETE_GEOZONE = (ctx, address) -> {
 			if(address.getGeozone() == null) {
 				GeoZone geozone = new GeoZone();
 				if(Country.ES.equals(address.getCountry()) && address.getZip() != null
@@ -188,41 +187,6 @@ public class RegistryAddressDAO {
 				.accept(ctx,registryAddress);
 		}
 		
-	}
-	
-	private static class RegistryAddressValidation {
-		public static BiConsumer<AONContext,RegistryAddress> EMPTY_DOMAIN = (ctx,registryAddress) -> {
-			if (registryAddress.getDomain() == null) 
-				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
-		};
-		
-		public static BiConsumer<AONContext,RegistryAddress> EMPTY_REGISTRY = (ctx,registryAddress) -> {
-			if (registryAddress.getRegistry() == null) 
-				throw new AonCoreException(AonError.EMPTY_DATA.format(ADDRESS_REGISTRY_LABEL)) ;
-		};
-		
-		public static BiConsumer<AONContext,RegistryAddress> OVERFLOW_NUMBER = (ctx,registryAddress) -> {
-			if (AonStringUtils.length(registryAddress.getNumber()) > RADDRESS.NUMBER.getDataType().length() )
-				throw new AonCoreException(AonError.INVALID_LENGTH.format( ADDRESS_NUMBER_LABEL, RADDRESS.NUMBER.getDataType().length() ));
-		};
-		
-		public static BiConsumer<AONContext,RegistryAddress> OVERFLOW_ZIP = (ctx,registryAddress) -> {
-			if (AonStringUtils.length(registryAddress.getZip()) > RADDRESS.ZIP.getDataType().length() )
-				throw new AonCoreException(AonError.INVALID_LENGTH.format( ADDRESS_ZIP_LABEL, RADDRESS.ZIP.getDataType().length() ));
-		};
-		
-
-		public static void validate(AONContext ctx, RegistryAddress registryAddress) throws AonCoreException {
-				EMPTY_DOMAIN
-				.andThen(EMPTY_REGISTRY)
-				.andThen(OVERFLOW_NUMBER)
-				.andThen(OVERFLOW_ZIP)
-				.accept(ctx,registryAddress);
-		}
-		
-		public static void validateDeletion(AONContext ctx, Integer id) {
-			// TODO Auto-generated method stub
-		}
 	}
 
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistryAddressFilter filter) {

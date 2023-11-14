@@ -88,6 +88,7 @@ export class AonBankCard extends AonElement {
     this.removeAllChildNodes(content);
 
     let maxLength = banks.length > 4 ? 4 : banks.length;
+    let accumulatedBanks = 0;
 
     for (let index = 0; index < maxLength; index++) {
       const bank = banks[index];
@@ -105,7 +106,7 @@ export class AonBankCard extends AonElement {
       leftContent.style.flexDirection = "column";
 
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1.1rem";
+      description.style.fontSize = banks.length > 4 ? "1rem" : "1.2rem";
       description.style.color = "rgb(0, 36, 105)";
       description.style.fontWeight = "500";
       description.innerHTML = bank.alias;
@@ -113,7 +114,7 @@ export class AonBankCard extends AonElement {
 
       let date = this.createElement(TAG.SPAN);
       date.style.color = "rgb(120, 120, 133)";
-      date.style.fontSize = ".8rem";
+      date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
       date.innerHTML = this.formatDate(bank.balanceDate);
       leftContent.appendChild(date);
 
@@ -129,6 +130,48 @@ export class AonBankCard extends AonElement {
       amount.innerHTML = this.formatNumber(bank.balance);
       rightContent.appendChild(amount);
 
+      accumulatedBanks += bank.balance;
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    // Create others row
+    let total = banks.reduce((t, bank) => t + bank.balance, 0);
+    if(banks.length > 4){
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = "1rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = "Otros";
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(total - accumulatedBanks, 2, "EUR");
+      rightContent.appendChild(amount);
+
       row.appendChild(leftContent);
       row.appendChild(rightContent);
 
@@ -137,6 +180,7 @@ export class AonBankCard extends AonElement {
 
     const bankTotalDiv = this.getElement("bankTotalDiv");
     bankTotalDiv.className = CSS.AON_CARD_TOTAL;
+    bankTotalDiv.classList.add(CSS.AON_BANK_CARD_TOTAL);
     bankTotalDiv.innerHTML = this.getTotal(banks);
   }
 
@@ -146,11 +190,6 @@ export class AonBankCard extends AonElement {
     }
   }
 
-  formatDate(date){
-    let dateFormat = date ? date : new Date(); 
-    return AonDateUtils.getDayMonthOrFull(dateFormat);
-  }
-
   formatNumber(number){
     return !number || number == 0 ? "No disponible" : formatNumber(number, 2, "EUR");
   }
@@ -158,6 +197,82 @@ export class AonBankCard extends AonElement {
   getTotal(banks){
     let total = banks.reduce((t, bank) => t + bank.balance, 0);
     return total > 0 ? formatNumber(total, 2, "EUR") : "No disponible";
+  }
+
+  formatDate(inputDate) {
+    inputDate = inputDate ? new Date(inputDate) : new Date(); 
+    inputDate.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const sixDaysAgo = new Date(today);
+    sixDaysAgo.setDate(today.getDate() - 7);
+    sixDaysAgo.setHours(0, 0, 0, 0);
+  
+    if (this.isSameDay(inputDate, today)) {
+      return `Actualizado hoy. ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
+    } else if (this.isSameDay(inputDate, yesterday)) {
+      return `Actualizado ayer, ${this.getDayName(inputDate)}`;
+    } else if (inputDate > sixDaysAgo) {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      return `Actualizado el ${this.getDayName(inputDate)} (Hace ${dayDiff} días)`
+    } else {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      const formattedDate = `${this.padWithZero(inputDate.getDate())} ${this.getMonthName(inputDate)}`;
+      return `Actualizado el ${formattedDate} (Hace ${dayDiff} días)`;
+    }
+  }
+  
+  isSameDay(date1, date2) {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
+  
+  formatTime(date) {
+    const hours = this.padWithZero(date.getHours());
+    const minutes = this.padWithZero(date.getMinutes());
+    return `${hours}:${minutes}`;
+  }
+  
+  getDayName(date) {
+    const dayNames = [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+    ];
+    return dayNames[date.getDay()];
+  }
+  
+   getMonthName(date) {
+      const monthNames = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+      ];
+      return monthNames[date.getMonth()];
+    }
+  
+  padWithZero(num) {
+    return num.toString().padStart(2, "0");
   }
 
 }

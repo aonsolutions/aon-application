@@ -174,6 +174,7 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 		columnList.add(IConstants.DETALLE3);
 		columnList.add(IConstants.CODIGO_DE_BARRAS);
 		columnList.add(IConstants.NUMERO_DE_SERIE);
+		columnList.add(IConstants.AGENTE_DE_SOPORTE);
         return columnList;
 	}
 	

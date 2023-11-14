@@ -1771,6 +1771,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("A\u00F1adir direcci\u00F3n")
 	String addAddress();
+	
+	@DefaultMessage("Eliminar direcci\u00F3n")
+	String deleteAddress();
+
+	@DefaultMessage("A\u00F1adir banco")
+	String addBank();
+	
+	@DefaultMessage("Eliminar banco")
+	String deleteBank();
 
 	@DefaultMessage("Contactos")
 	String contacts();
@@ -1778,12 +1787,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("A\u00F1adir contacto")
 	String addContact();
 
-	@DefaultMessage("A\u00F1adir contacto")
+	@DefaultMessage("Eliminar contacto")
 	String deleteContact();
 
 	@DefaultMessage("Valor nominal")
 	String nominalValue();
-
+	
 	@DefaultMessage("Nuevo administrador")
 	String newAdministrator();
 

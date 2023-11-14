@@ -227,6 +227,7 @@ export const ISSUEDS = 'Issued';
 
 // ----- L
 
+export const LABORAL_COSTS = 'Job Summary';
 export const LANGUAGE = 'Language';
 export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';

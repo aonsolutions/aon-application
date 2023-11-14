@@ -590,10 +590,86 @@ public class ModelAdmonUtils {
 	}
 
 	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, byte[] body) {
+
+		// Asignar NRC al modelo para que se grabe cuando se marque como presentado o si la presentación genera error, que se grabe el modelo solo si el NRC se ha modificado
+		boolean saveNrc = AonStringUtils.notEquals(fm.getNrc(), aeatParams.getNrc());
+		fm.setNrc(aeatParams.getNrc()); 
+		
 		AEATResponse response = AEATJson.toJSON(body); 
 		if (response.isCorrect()) {
 			manageRightResponse(resp,aeatParams,fm,new String(body));		
 		} else {
+			if (saveNrc) {
+				Occam occam = new Occam()
+						.setDomainName(aeatParams.getDomainName())
+						.setDomain(aeatParams.getDomainId())
+						.setUser(aeatParams.getUser());
+				fm.getModel().visit(new IFiscalModelTypeVisitor() {
+
+					@Override
+					public void visitM111() {
+						MODEL111.save(occam, getMod111(fm));
+					}
+
+					@Override
+					public void visitM115() {
+						MODEL115.save(occam, getMod115(fm));
+					}
+
+					@Override
+					public void visitM123() {
+						MODEL123.save(occam, getMod123(fm));
+					}
+
+					@Override
+					public void visitM130() {
+						MODEL130.save(occam, getMod130(fm));
+					}
+
+					@Override
+					public void visitM131() {
+						MODEL131.save(occam, getMod131(fm));
+					}
+
+					@Override
+					public void visitM202() {
+						MODEL202.save(occam, getMod202(fm));
+					}
+
+					@Override
+					public void visitM303() {
+						MODEL303.save(occam, getMod303(fm));
+					}
+
+					@Override
+					public void visitM347() {}
+
+					@Override
+					public void visitM349() {}
+
+					@Override
+					public void visitM390() {}
+
+					@Override
+					public void visitM390HF() {}
+
+					@Override
+					public void visitM180() {}
+
+					@Override
+					public void visitM184() {}
+
+					@Override
+					public void visitM190() {}
+
+					@Override
+					public void visitM193() {}
+
+					@Override
+					public void visitM200() {}
+
+				});
+			}			
 			manageWrongResponse(resp, response);
 		}
 	}
@@ -630,7 +706,7 @@ public class ModelAdmonUtils {
 			}
 			@Override 
 			public void visitM303() { 
-				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
+				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);				
 			}
 			@Override 
 			public void visitM390() { 
@@ -682,7 +758,7 @@ public class ModelAdmonUtils {
 	}
 
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
-		try {
+		try {			 
 			String period = model.getPeriod().getName();
 			if ( model.getModel() == FiscalModelType.M202) {
 				if ( model.getPeriod() == Period.T1) period = "1P";
@@ -707,7 +783,7 @@ public class ModelAdmonUtils {
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
 				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasicaDos";
-
+			
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
 					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
@@ -854,7 +930,7 @@ public class ModelAdmonUtils {
 			if (idShipment != null) {				
 				// Envío de Datos (Validación y Envío de los Registros Tipo 2)								
 				if (sendOnlineTGVI_2(resp, aeatParams, model, idShipment, fileLines, totalBlocks)) {					
-					// Presentación (Si todo ha ido bien, presentación del modelo)
+					// Presentación (Si el envio de datos ha ido bien, presentación del modelo)
 					sendOnlineTGVI_3(resp, aeatParams, model, idShipment);					
 				} 
 			}
@@ -864,7 +940,7 @@ public class ModelAdmonUtils {
 		}
 	}
 	
-	// TGVI Online - Inicialización (Devuelve idEnvio todo ha ido bien, en caso contrario devuelve null)
+	// TGVI Online - Inicialización (Devuelve idEnvio si ha ido bien, en caso contrario devuelve null)
 	private static String sendOnlineTGVI_1(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String body, int totalBlocks) {
 		
 		try {
@@ -1121,7 +1197,7 @@ public class ModelAdmonUtils {
 		}
 	}
 	
-	// TGVI Online - Presentación (los procesos 1 y 2 simplemente validan el contenido del fichero y, si todo ha ido bien, este proceso es el que realiza la presentación)
+	// TGVI Online - Presentación (los procesos 1 y 2 simplemente validan el contenido del fichero y, si ha ido bien, este proceso es el que realiza la presentación)
 	private static void sendOnlineTGVI_3(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment) {
 		
 		try {

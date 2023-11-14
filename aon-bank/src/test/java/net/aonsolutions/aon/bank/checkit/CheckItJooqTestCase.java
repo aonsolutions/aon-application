@@ -1,18 +1,17 @@
 package net.aonsolutions.aon.bank.checkit;
 
-import static org.junit.Assert.fail;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import net.aonsolutions.aon.bank.checkit.CheckItAPI;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class CheckItJooqTestCase {
+class CheckItJooqTestCase {
 
 	private static final Integer AON_ID = 11413;
 //	private static final Integer RAYSON_ID = 11414;
 	
-	@Ignore("Ignored because the iban's been modified and it'd crash")
+	@Disabled("Ignored because the iban's been modified and it'd crash")
 	@Test
 	public void InsertTransactionsTest() {
 //		ES6830581804332720027870 -> de muestra en la BD

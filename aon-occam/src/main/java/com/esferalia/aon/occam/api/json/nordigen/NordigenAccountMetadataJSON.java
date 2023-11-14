@@ -2,101 +2,71 @@ package com.esferalia.aon.occam.api.json.nordigen;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountMetadataFromJSON;
-import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountMetadataToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCOUNT_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountStatus;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-public enum NordigenAccountMetadataJSON {
-	ID(
-			(account, json) -> account.setId(json.optString("id", null)),
-			(account, json) -> json.put("id", account.getId())
-	),
-	CREATED(
-			(agreement, json) -> agreement.setCreated(AonDateUtils.parse(json.optString("created", null), AonDateUtils.DATE_TIME_FORMAT_AUX)),
-			(agreement, json) -> json.put("created", AonDateUtils.format(agreement.getCreated(), AonDateUtils.DATE_TIME_FORMAT_AUX))
-	),
-	LAST_ACCESSED(
-			(agreement, json) -> agreement.setLastAccessed(AonDateUtils.parse(json.optString("last_accessed", null), AonDateUtils.DATE_TIME_FORMAT_AUX)),
-			(agreement, json) -> json.put("last_accessed", AonDateUtils.format(agreement.getLastAccessed(), AonDateUtils.DATE_TIME_FORMAT_AUX))
-	),
-	IBAN(
-			(account, json) -> account.setIban(json.optString("iban", null)),
-			(account, json) -> json.put("iban", account.getIban())
-	),
-	INSTITUTION_ID(
-			(account, json) -> account.setInstitutionId(json.optString("institution_id", null)),
-			(account, json) -> json.put("institution_id", account.getInstitutionId())
-	),
-	STATUS(
-			(account, json) -> account.setStatus(NORDIGEN_ACCOUNT_STATUS.safeValueOf(json.optString("status", null))),
-			(account, json) -> json.put("status", account.getStatus() != null ? account.getStatus().getDescription() : null)
-	),
-	OWNER_NAME(
-			(account, json) -> account.setOwnerName(json.optString("owner_name", null)),
-			(account, json) -> json.put("owner_name", account.getOwnerName())
-	),
-	;
-	private INordigenAccountMetadataFromJSON fromJSON;
-	private INordigenAccountMetadataToJSON toJSON;
-	
-	private NordigenAccountMetadataJSON(INordigenAccountMetadataFromJSON fromJSON, INordigenAccountMetadataToJSON toJSON) {
-		this.fromJSON = fromJSON;
-		this.toJSON = toJSON;
+public class NordigenAccountMetadataJSON {
+	private NordigenAccountMetadataJSON() {
 	}
 	
-	public static JSONObject toJSON(NordigenAccountMetadata account) {
-		if (account != null) {
-			JSONObject json = new JSONObject();
-			for (NordigenAccountMetadataJSON n : NordigenAccountMetadataJSON.values()) {
-				n.toJSON.to(account, json);
-			}
-			return json;
-		}
-		return null;
+	public static NordigenAccountMetadata from(String text) throws NordigenException {
+		try {
+			return from(new JSONObject(text));
+		} catch (JSONException e) {
+			throw new NordigenException(e.getMessage()); 
+		} 
 	}
 	
-	public static NordigenAccountMetadata fromString(String text) {
-		JSONObject json = new JSONObject(text);
-		return fromJSON(json);
+	public static List<NordigenAccountMetadata> from(JSONArray array) {
+		if (array == null || array.isEmpty()) return new LinkedList<>();
+		return NordigenJSONUtils.stream(array)
+			.map(NordigenAccountMetadataJSON::from)
+			.toList();		
+	}
+	
+	public static NordigenAccountMetadata from(JSONObject json) {
+		if (json == null) return null; 
+		return new NordigenAccountMetadata()
+			.setId(json.optString("id", null))
+			.setCreated(AonDateUtils.parse(json.optString("created", null), AonDateUtils.DATE_TIME_FORMAT_AUX))
+			.setLastAccessed(AonDateUtils.parse(json.optString("last_accessed", null), AonDateUtils.DATE_TIME_FORMAT_AUX))
+			.setIban(json.optString("iban", null))
+			.setInstitutionId(json.optString("institution_id", null))
+			.setStatus(NordigenAccountStatus.safeValueOf(json.optString("status", null)))
+			.setOwnerName(json.optString("owner_name", null));
+	}
+	
+	public static JSONArray to(List<NordigenAccountMetadata> list) {
+		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
+		return to(list.stream());
 	}
 
-	public static NordigenAccountMetadata fromJSON(JSONObject json) {
-		if (json != null) {
-			NordigenAccountMetadata account = new NordigenAccountMetadata();
-			for (NordigenAccountMetadataJSON n : NordigenAccountMetadataJSON.values()) {
-				n.fromJSON.from(account, json);
-			}
-			return account;
-		}
-		return null;
+	public static JSONArray to(Stream<NordigenAccountMetadata> stream) {
+		return stream
+			.map(NordigenAccountMetadataJSON::to)
+			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
-	
-	public static List<NordigenAccountMetadata> fromJSONArray(JSONArray jsonArray) {
-		List<NordigenAccountMetadata> accList = new LinkedList<>();
-		if (jsonArray != null) {
-			for (int i=0; i<jsonArray.length(); i++) {
-				JSONObject jsonObj = jsonArray.optJSONObject(i);
-				NordigenAccountMetadata account = NordigenAccountMetadataJSON.fromJSON(jsonObj);
-				accList.add(account);
-			}
-		}
-		return accList;
+
+	public static JSONObject to(NordigenAccountMetadata accountMetadata) {
+		if (accountMetadata == null) return null;
+		return new JSONObject()
+			.put("id", accountMetadata.getId())
+			.put("created", AonDateUtils.format(accountMetadata.getCreated(), AonDateUtils.DATE_TIME_FORMAT_AUX))
+			.put("last_accessed", AonDateUtils.format(accountMetadata.getLastAccessed(), AonDateUtils.DATE_TIME_FORMAT_AUX))
+			.put("iban", accountMetadata.getIban())
+			.put("institution_id", accountMetadata.getInstitutionId())
+			.put("status", accountMetadata.getStatus() != null ? accountMetadata.getStatus().getDescription() : null)
+			.put("owner_name", accountMetadata.getOwnerName());
 	}
-	
-	public static JSONArray toJSONArray(List<NordigenAccountMetadata> list) {
-		JSONArray accArr = new JSONArray();
-		if (list != null) {
-			for (NordigenAccountMetadata acc: list) {
-				JSONObject accJson = NordigenAccountMetadataJSON.toJSON(acc);
-				accArr.put(accJson);
-			}
-		}
-		return accArr;
-	}
+			
 }

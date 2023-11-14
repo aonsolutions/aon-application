@@ -114,6 +114,7 @@ export class AonModule extends AonElement {
 		LS.setCompany(JSON.stringify(company));
 		LS.setDomainId(company.id);
 		LS.setDomainName(company.domain);
+		LS.setDomainDocumnet(company.document);
 		LS.setOnlyOne(onlyOne);
 
 		let home = this.getElement(this.AON_HOME);
