@@ -700,7 +700,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		    	try {
 		    		TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
 		    		json = tediParse(TediInvoiceJSON.toJSON(r.getTedi()), json);
-		    	} catch (TediException e) {
+		    	} catch (Exception e) {
 		    		e.printStackTrace();
 		    	}
 		    }
