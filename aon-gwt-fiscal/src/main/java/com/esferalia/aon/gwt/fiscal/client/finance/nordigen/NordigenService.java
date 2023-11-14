@@ -20,8 +20,7 @@ public interface NordigenService extends RemoteService {
 	
 	NordigenConfiguration getConfiguration(Occam occam) throws NordigenException;
 	NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account) throws NordigenException;
-	List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) throws NordigenException;
-	List<NordigenRequisition> findAllDomainRequisitions(NordigenAccessToken token, String currentDomainName) throws NordigenException;
+	List<NordigenRequisition> getDomainRequisitions(NordigenAccessToken token, String currentDomainName) throws NordigenException;
 	Boolean deleteRequisitionById (NordigenAccessToken token, Occam occam, String requisitionId) throws NordigenException;
 	void cancelRequisition (NordigenAccessToken token, Occam occam, Integer rbankId) throws NordigenException;
 	NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws NordigenException;
