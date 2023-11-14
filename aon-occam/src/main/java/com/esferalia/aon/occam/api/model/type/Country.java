@@ -14,6 +14,7 @@ public enum Country implements Serializable {
 	AI("ANGUILA","AI","AIA",660,4,34),
 	AQ("ANT\u00C1RTIDA","AQ","ATA",10,4,34),
 	AG("ANTIGUA Y BARBUDA","AG","ATG",28,4,34),
+	AP("AP\u00C1TRIDA","AP","APT",999,4,34),
 	SA("ARABIA SAUDITA","SA","SAU",682,2,24),
 	DZ("ARGELIA","DZ","DZA",12,4,34),
 	AR("ARGENTINA","AR","ARG",32,4,34),
