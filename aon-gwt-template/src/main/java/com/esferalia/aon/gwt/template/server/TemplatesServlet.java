@@ -640,7 +640,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 								break;
 						}
 						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel.
-							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
+							if(ti.getColumns().size()<= cell.getColumnIndex()
+									|| ti.getColumns().get(cell.getColumnIndex()) == null 
+									|| !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(object.toString())){
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
