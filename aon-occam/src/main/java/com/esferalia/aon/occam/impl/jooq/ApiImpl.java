@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -17,6 +18,12 @@ public class ApiImpl implements IApi {
 	public Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceApiDAO.getInvoices(ctx, filter));
+	}
+	
+	@Override
+	public Date getInvoiceExpDate(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getInvoiceExpDate(ctx, id));
 	}
 	
 	@Override

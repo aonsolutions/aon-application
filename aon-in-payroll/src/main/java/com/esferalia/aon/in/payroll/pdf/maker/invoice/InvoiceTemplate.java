@@ -156,6 +156,7 @@ public class InvoiceTemplate {
 	List<InvoiceDetail> specialTaxes;
 	
 	Map<DetailCategory, List<InvoiceDetail>> detailMap;
+	boolean tbai;
 	
 	public InvoiceTemplate(CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
 //		company.getRegistry().getDomain().getDomainType(); DomainType.GARAGE;
@@ -175,7 +176,7 @@ public class InvoiceTemplate {
 		this.msg = new InvoiceTemplateMsg(config.getLanguage());
 		this.config = config;
 		this.logo = logo;
-		
+		this.tbai = tbaiId != null;
 		try {
 			for (Invoice invoice : invoices) {
 				
@@ -252,7 +253,7 @@ public class InvoiceTemplate {
 			this.config = config;
 			this.logo = logo;
 			this.bottomExtra = 0;
-			
+			this.tbai = tbaiId != null;
 			
 			if (invoice == null)
 				throw new CanNotCreatePdfException("No invoice found.");
@@ -1594,8 +1595,22 @@ public class InvoiceTemplate {
 
 		y -= 16;
 
-		drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
-		drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 50, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+		if (tbai) {			
+			Date expDate = invoice != null && invoice.getFiscal() != null && invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+			
+			drawText(contents, "Fecha emisión" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(expDate, STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+
+			y -= 20;
+
+			drawText(contents, "Fecha operación" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			
+		} else {
+			drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 50, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			
+		}
 		
 		y -= 20;
 
@@ -1613,7 +1628,7 @@ public class InvoiceTemplate {
 		y -= 10;
 		x += 250;
 
-		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor(), opacity);
+		drawBox(contents, x, y, 250, tbai ? 100 : 80, config.getTheme().getCustomerBackgroundColor(), opacity);
 		x += 10;
 		y  = height - top - 35;
 		String str = safeString(invoice.getRegistryName())

@@ -125,6 +125,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -2127,5 +2128,15 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
 		return TbaiData.getInstance(getTbaiConfiguration()).get(domain, user, getInvoice().getId());		
+	}
+	
+	public String getExpDate() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Date date = AON_SOLUTIONS.getInvoiceExpDate(domainName, domainId, login, getInvoice().getId());
+		if(date == null && isTbaiInvoice()) date = getInvoice().getDate();
+		if(date == null) return "Pendiente de emisión";
+		else return AonDateUtils.format(date, "dd/MM/yyyy");
 	}
 }

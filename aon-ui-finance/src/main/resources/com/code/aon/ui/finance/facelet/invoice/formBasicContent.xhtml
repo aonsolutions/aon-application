@@ -83,9 +83,16 @@
 			</aon:div>
 		</aon:panelGrid>
 	</aon:div>
+	
+	<aon:if test="#{invoiceController.tbai and invoiceController.to.sales}">
+		<aon:outputLabel for="Invoice_issueDate"
+			value="Fecha Operación" />
+	</aon:if>
+	<aon:if test="#{!invoiceController.tbai or (invoiceController.tbai and !invoiceController.to.sales)}">
+		<aon:outputLabel for="Invoice_issueDate"
+			value="#{bundle.aon_date}" />	
+	</aon:if>
 
-	<aon:outputLabel for="Invoice_issueDate"
-		value="#{bundle.aon_date}" />
 	<aon:selectInputDate id="Invoice_issueDate"
 		value="#{invoiceController.to.issueDate}" required="true"
 		disabled="#{invoiceController.readOnly}"
@@ -145,7 +152,7 @@
 		</ui:include>
 	</aon:if>
 
-	<aon:if test="#{!invoiceController.nevv}">
+	<aon:if test="#{!invoiceController.nevv and (!invoiceController.tbai or (invoiceController.tbai and !invoiceController.to.sales))}">
 		<aon:outputLabel for="Invoice_taxDate" 
 			value="#{bundle.finance_tax_date}" />
 		<aon:div>
@@ -167,7 +174,13 @@
 			</aon:if>
 		</aon:div>
 	</aon:if>
+	
+	<aon:if test="#{!invoiceController.nevv and invoiceController.tbai and invoiceController.to.sales}">
+		<aon:outputLabel for="Invoice_taxDate" 
+				value="Fecha Emisión" />
+		<aon:outputText value="#{invoiceController.expDate}" />
 
+	</aon:if>
 	<aon:outputLabel for="Invoice_registry_document"
 		value="#{bundle.aon_company_document}" />
 	<aon:panelGroup id="Invoice_registry_document_panel">
