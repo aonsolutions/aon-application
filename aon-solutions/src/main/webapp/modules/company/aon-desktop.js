@@ -882,7 +882,9 @@ export class AonDesktop extends AonElement {
 		const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
 
 		if(dayDiff > 30){
-			aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+			setTimeout(() => {
+				aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+			}, 100);
 		}
 	}
 

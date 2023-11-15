@@ -465,9 +465,10 @@ public class Certificado {
 				}
 
 				Page page = ((HtmlSubmitInput) htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
-
+				
 				if (page.isHtmlPage()) {
 					handleSepeExceptions((HtmlPage) page);
+					throw new SepeException("No se ha podido comunicar el Certific@2, intentelo mas tarde");
 				} else {
 					try {
 						return page.getWebResponse().getContentAsStream().readAllBytes();
@@ -476,10 +477,7 @@ public class Certificado {
 					}
 				}
 			}
-			
-			System.out.println("END");
 		}
-		return null;
 	}
 
 	private static HtmlPage firstPageSepeCert(WebClient webClient)
@@ -545,6 +543,12 @@ public class Certificado {
 			DomNode error = htmlPage.querySelector("#contenido > form > p.formAviso");
 			if (error != null && !error.getVisibleText().isEmpty())
 				throw new SepeException(error.getVisibleText());
+		} catch (NullPointerException e) {}
+		
+		try {
+			DomNode warningMessage = htmlPage.querySelector("#contenido .msj_advertencia > p");
+			if(warningMessage != null && !warningMessage.getVisibleText().isEmpty())
+				throw new SepeException(warningMessage.getVisibleText());
 		} catch (NullPointerException e) {}
 	}
 	

@@ -2254,16 +2254,19 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected void fillTimeUnits(IContractSalaryCalculatorContext ctx) {
-		try {
-			if ( ctx.getExpressionContext().isDef(ContextVariable.TOTAL_DAYS)) {
-				salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ContextVariable.TOTAL_DAYS).stream()
-					.map(var -> (Number) var.getValue(var.getPeriod()))
-					.collect(Collectors.summingDouble(number -> number.doubleValue())).intValue());
-				return;
-			}
-		
-		} catch ( Exception e ) {
-		}
+	    	for ( ContextVariable ctxVar : new ContextVariable [] {ContextVariable.TOTAL_DAYS, ContextVariable.DO_DAYS}) {
+        		try {
+        			if ( ctx.getExpressionContext().isDef(ctxVar)) {
+        				salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ctxVar).stream()
+        					.map(v -> (Number) v.getValue(v.getPeriod()))
+        					.collect(Collectors.summingDouble(Number::doubleValue)).intValue());
+        				return;
+        			}
+        		
+        		} catch ( Exception e ) {
+        		    	;
+        		}
+	    	}
 		try {
 			salaryBuilder.setTimeUnits(
 			ctx.getExpressionContext().eval(ContextVariable.QUOTE_DAYS.getName(), ctx.getStartDate(), ctx.getEndDate(), Number.class).stream()
