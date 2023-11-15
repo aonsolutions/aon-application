@@ -26,67 +26,16 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuiteClasses({ PersonDocumentParserGlobalTest.PersonDocumentParserTest.class,
 		PersonDocumentParserGlobalTest.PersonDocumentParserTest2.class,
-		PersonDocumentParserGlobalTest.PersonDocumentParserTest3.class, })
+		PersonDocumentParserGlobalTest.PersonDocumentParserTest3.class,
+		PersonDocumentParserGlobalTest.PersonDocumentParserTest4.class})
 
 public class PersonDocumentParserGlobalTest {
 
 	public static class PersonDocumentParserTest {
 
 		@Test
-		public void personDocumentParserJPGTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/GenericDNI.jpg";
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument person = PersonDocumentParser.parse(bytes);
-				String expectedDocument = "12345678A";
-				String actualDocument = person.getDocument();
-				assertEquals(expectedDocument, actualDocument);
-			}
-		}
-
-		@Test
-		public void personDocumentParserBlurredTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/BlurredDNI.pdf";
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				String expectedDni = "65004204V";
-				String actualDni = person.getDocument();
-				assertEquals(expectedDni, actualDni);
-			}
-		}
-
-		@Test
-		public void personDocumentParserPDFOldFormatTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/DNIJordi.pdf";
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				String expectedName = "JORDI";
-				String actualName = person.getName();
-				assertEquals(expectedName, actualName);
-			}
-		}
-
-		@Test
-		public void personDocumentParserPNGTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/GenericDNI.png";
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				String expectedName = "CARMEN";
-				String actualName = person.getName();
-				assertEquals(expectedName, actualName);
-			}
-		}
-
-		@Test
 		public void personDocumentParserJPEGRotateTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/dniJuanmaRotate.jpeg";
+			String file = "com/esferalia/aon/in/payroll/image/dniJuanmaRotate.jpeg";
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try (InputStream is = classLoader.getResourceAsStream(file)) {
 				byte[] bytes = AonIOUtils.toByteArray(is);
@@ -96,23 +45,10 @@ public class PersonDocumentParserGlobalTest {
 				assertEquals(expectedDocument, actualDni);
 			}
 		}
-
-		@Test
-		public void personDocumentParserOldFormatTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/oldFormatDNI.jpeg";
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				String expectedDni = "99999999-R";
-				String actualDni = person.getDocument();
-				assertEquals(expectedDni, actualDni);
-			}
-		}
 		
 		@Test
 		public void personDocumentParserBirthdateTest() throws Exception{
-			String file = "com/esferalia/aon/in/payroll/pdf/dniJuanma.png";
+			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try(InputStream is = classLoader.getResourceAsStream(file)){
 				byte[] bytes = AonIOUtils.toByteArray(is);
@@ -133,7 +69,7 @@ public class PersonDocumentParserGlobalTest {
 		
 		@Test
 		public void personDocumentParserIssueDateTest() throws Exception{
-			String file = "com/esferalia/aon/in/payroll/pdf/dniJuanma.png";
+			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try(InputStream is = classLoader.getResourceAsStream(file)){
 				byte[] bytes = AonIOUtils.toByteArray(is);
@@ -153,7 +89,7 @@ public class PersonDocumentParserGlobalTest {
 		
 		@Test
 		public void personDocumentParserValidityDateTest() throws Exception{
-			String file = "com/esferalia/aon/in/payroll/pdf/dniJuanma.png";
+			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try(InputStream is = classLoader.getResourceAsStream(file)){
 				byte[] bytes = AonIOUtils.toByteArray(is);
@@ -170,7 +106,20 @@ public class PersonDocumentParserGlobalTest {
 				assertEquals(expectedValidityDate, actualValidityDate);
 			}
 		}
-
+		
+		@Test
+		public void personDocumentParserOtherFormat() throws Exception {
+			String file = "com/esferalia/aon/in/payroll/image/dniJuanmaInvert.png";
+			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
+			try (InputStream is = classLoader.getResourceAsStream(file)) {
+				byte[] bytes = AonIOUtils.toByteArray(is);
+				PersonDocument  person = PersonDocumentParser.parse(bytes);
+				Country expectedNation = Country.ES;
+				Country actualNation = person.getNationality();
+				assertEquals(expectedNation, actualNation);
+			}
+		}		
+	
 		@Test
 		public void personDocumentParserNullInputTest() throws Exception {
 			byte[] bytes = null;
@@ -186,7 +135,7 @@ public class PersonDocumentParserGlobalTest {
 
 		@Parameterized.Parameters
 		public static Collection<Object> fileNames() {
-			return Arrays.asList(new Object[] { "DNI-EUKE-1.jpg", "GenericDNI.jpeg", "dniJuanmaInvert.png" });
+			return Arrays.asList(new Object[] { "DNI-EUKE-1.jpg", "GenericDNI.jpeg" });
 		}
 
 		public PersonDocumentParserTest2(String fileName) {
@@ -195,14 +144,12 @@ public class PersonDocumentParserGlobalTest {
 
 		@Test
 		public void personDocumentParserOtherFormat() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/" + fileName;
+			String file = "com/esferalia/aon/in/payroll/image/" + fileName;
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try (InputStream is = classLoader.getResourceAsStream(file)) {
 				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				Country expectedNation = Country.ES;
-				Country actualNation = person.getNationality();
-				assertEquals(expectedNation, actualNation);
+				AonCoreException e = assertThrows(AonCoreException.class, () ->PersonDocumentParser.parse(bytes));
+				assertEquals (AonError.GROUP_NOT_MATCH.getMessage(), e.getMessage());
 			}
 		}
 
@@ -216,7 +163,7 @@ public class PersonDocumentParserGlobalTest {
 		@Parameterized.Parameters
 		public static Collection<Object> fileNames() {
 			return Arrays
-					.asList(new Object[] { "dniJuanmaTorcido.pdf", "dniJuanmaTorcido.jpg", "dniJuanmaTorcido.png" });
+					.asList(new Object[] { "pdf/dniJuanmaTorcido.pdf", "image/dniJuanmaTorcido.jpg", "image/dniJuanmaTorcido.png" });
 		}
 
 		public PersonDocumentParserTest3(String fileName) {
@@ -225,7 +172,7 @@ public class PersonDocumentParserGlobalTest {
 
 		@Test
 		public void personDocumentParserParameterizedTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/pdf/" + fileName;
+			String file = "com/esferalia/aon/in/payroll/" + fileName;
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try (InputStream is = classLoader.getResourceAsStream(file)) {
 				byte[] bytes = AonIOUtils.toByteArray(is);
@@ -237,5 +184,32 @@ public class PersonDocumentParserGlobalTest {
 			}
 		}
 
+	}
+	
+	@RunWith(Parameterized.class)
+	public static class PersonDocumentParserTest4{
+		private String fileName;
+
+		@Parameterized.Parameters
+		public static Collection<Object> fileNames() {
+			return Arrays
+					.asList(new Object[] { "image/GenericDNI.jpg", "pdf/BlurredDNI.pdf", "pdf/DNIJordi.pdf", "image/GenericDNI.png", "image/oldFormatDNI.jpeg" });
+		}
+		
+		public PersonDocumentParserTest4(String fileName) {
+			this.fileName = fileName;
+		}
+		
+		
+		@Test
+		public void personDocumentParserJPGTest() throws Exception {
+			String file = "com/esferalia/aon/in/payroll/"+fileName;
+			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
+			try (InputStream is = classLoader.getResourceAsStream(file)) {
+				byte[] bytes = AonIOUtils.toByteArray(is);
+				AonCoreException e = assertThrows(AonCoreException.class, () ->PersonDocumentParser.parse(bytes));
+				assertEquals(AonError.GROUP_NOT_MATCH.getMessage(), e.getMessage());
+			}
+		}
 	}
 }

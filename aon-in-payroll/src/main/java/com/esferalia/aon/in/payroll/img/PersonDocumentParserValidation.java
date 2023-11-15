@@ -54,6 +54,18 @@ class PersonDocumentParserValidation {
 			throw new AonCoreException(AonError.NULL_DATE_STRING.getMessage());
 		}
 	};
+	
+	private static final Consumer<Boolean> GROUP_NOT_EXISTS = matcher ->{
+		if (matcher.equals(false)) {
+			throw new AonCoreException(AonError.GROUP_NOT_MATCH.getMessage());
+		}
+	};
+	
+	private static final Consumer<String> GROUP_NOT_MATCH = data ->{
+		if (data == null || data.equals("")) {
+			throw new AonCoreException(AonError.GROUP_NOT_MATCH.getMessage());
+		}
+	};
 
 	static void validateBytes(byte[] bytes) throws AonCoreException {
 		NULL_BYTES_FILE_UPLOADED.accept(bytes);
@@ -74,4 +86,12 @@ class PersonDocumentParserValidation {
 	static void validateDates(String date) throws AonCoreException{
 		NULL_DATE_STRING.accept(date);
 	}
+	
+	static void validateGroup(String data) throws AonCoreException{
+		GROUP_NOT_MATCH.accept(data);
+	}
+	static void validateMatcher(boolean matcher) throws AonCoreException{
+		GROUP_NOT_EXISTS.accept(matcher);
+	}
+	
 }

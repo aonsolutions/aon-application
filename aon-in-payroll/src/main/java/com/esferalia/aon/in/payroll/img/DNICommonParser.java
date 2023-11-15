@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import com.esferalia.aon.in.payroll.img.PersonDocumentParsers.IPersonDocumentParser;
 import com.esferalia.aon.occam.api.model.PersonDocument;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 class DNICommonParser implements IPersonDocumentParser {
@@ -35,8 +37,10 @@ class DNICommonParser implements IPersonDocumentParser {
 		String documentDNIRegex = "[\\d]?[\\d][\\s-_/\\.]?[\\d]{3}[\\s-_/\\.]?[\\d]{3}[\\s-_/]?[A-Z]";
 		Pattern pattern = Pattern.compile(documentDNIRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
+        PersonDocumentParserValidation.validateMatcher(matcher.find());
 		if (matcher.find()) {
 			document = matcher.group();
+			PersonDocumentParserValidation.validateGroup(document);
 		}
 		person.setDocument(document);
 	}
@@ -46,8 +50,10 @@ class DNICommonParser implements IPersonDocumentParser {
 		Pattern pattern = Pattern.compile(nationalityRegex);
 		Matcher matcher = pattern.matcher(text);
 
+		PersonDocumentParserValidation.validateMatcher(matcher.find());
 		while (matcher.find()) {
 			String potentialNationality = matcher.group();
+			PersonDocumentParserValidation.validateGroup(potentialNationality);
 			for (Country country : Country.values()) {
 				if (country.getIso3().equals(potentialNationality)) {
 					person.setNationality(country);
@@ -69,8 +75,10 @@ class DNICommonParser implements IPersonDocumentParser {
 		}
 	    Pattern pattern = Pattern.compile(keyWordPattern+"\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
 	    Matcher matcher = pattern.matcher(text);
+        PersonDocumentParserValidation.validateMatcher(matcher.find());
 	    if (matcher.find()) {
 	        name = matcher.group(1).trim();
+	        PersonDocumentParserValidation.validateGroup(name);
 	    }
 	    person.setName(name);
 	}
@@ -88,10 +96,12 @@ class DNICommonParser implements IPersonDocumentParser {
 		Pattern pattern = Pattern.compile(keyWordPattern+"\\s+([^\\n]+)\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
-
+        PersonDocumentParserValidation.validateMatcher(matcher.find());
 		if (matcher.find()) {
 			surnames[0] = matcher.group(1).trim();
+	    	PersonDocumentParserValidation.validateGroup(surnames[0]);
 			surnames[1] = matcher.group(2).trim();
+			PersonDocumentParserValidation.validateGroup(surnames[1]);
 		}
 		
 		person.setFirstSurname(surnames[0]);
@@ -103,10 +113,15 @@ class DNICommonParser implements IPersonDocumentParser {
 		Pattern pattern = Pattern.compile("(\\d{2})\\s(\\d{2})\\s(\\d{4})\\b", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
         String [] birthDate = new String[3];
+        PersonDocumentParserValidation.validateMatcher(matcher.find());
         if (matcher.find()) {
 	    	birthDate[0] = matcher.group(1);
+	    	PersonDocumentParserValidation.validateGroup(birthDate[0]);
 	    	birthDate[1]= matcher.group(2);
+	    	PersonDocumentParserValidation.validateGroup(birthDate[1]);
 	    	birthDate[2]= matcher.group(3);	    	
+	    	PersonDocumentParserValidation.validateGroup(birthDate[2]);
+
 	    }
         String birth = birthDate[0]+" "+ birthDate[1]+" "+ birthDate[2];
         PersonDocumentParserValidation.validateDates(birth);
@@ -119,13 +134,23 @@ class DNICommonParser implements IPersonDocumentParser {
 	    String [] validateDate = new String[6];
 	    Pattern pattern = Pattern.compile("[^a-z](\\d{2})\\s(\\d{2})\\s(\\d{4})\\s(\\d{2})\\s(\\d{2})\\s(\\d{4})");
         Matcher matcher = pattern.matcher(text);
+        PersonDocumentParserValidation.validateMatcher(matcher.find());
 	    while (matcher.find()) {
+	    	
 	    	validateDate[0] = matcher.group(1);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[0]);
 	    	validateDate[1] = matcher.group(2);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[1]);
 	    	validateDate[2] = matcher.group(3);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[2]);
+	    	
 	    	validateDate[3] = matcher.group(4);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[3]);
 	    	validateDate[4] = matcher.group(5);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[4]);
 	    	validateDate[5] = matcher.group(6);
+	    	PersonDocumentParserValidation.validateGroup(validateDate[5]);
+
 	    }
 	    String issueDate = validateDate[0]+" "+ validateDate[1]+" "+ validateDate[2];      
 	    String validityDate = validateDate[3]+" "+ validateDate[4]+" "+ validateDate[5];      
@@ -137,16 +162,12 @@ class DNICommonParser implements IPersonDocumentParser {
 
 	}
 	
-	private Date parseDates(String dateToParse)  {
+	private Date parseDates(String dateToParse) {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd MM yyyy");
 		try {
 			return formatter.parse(dateToParse);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			throw new AonCoreException(AonError.NULL_DATE_STRING.getMessage());
 		}
-		return null;
 	}
-	
-
-	
 }
