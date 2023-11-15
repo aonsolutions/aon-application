@@ -55,15 +55,10 @@ class PersonDocumentParserValidation {
 		}
 	};
 	
-	private static final Consumer<Boolean> GROUP_NOT_EXISTS = matcher ->{
-		if (matcher.equals(false)) {
-			throw new AonCoreException(AonError.GROUP_NOT_MATCH.getMessage());
-		}
-	};
 	
 	private static final Consumer<String> GROUP_NOT_MATCH = data ->{
 		if (data == null || data.equals("")) {
-			throw new AonCoreException(AonError.GROUP_NOT_MATCH.getMessage());
+			data = "";
 		}
 	};
 
@@ -89,9 +84,6 @@ class PersonDocumentParserValidation {
 	
 	static void validateGroup(String data) throws AonCoreException{
 		GROUP_NOT_MATCH.accept(data);
-	}
-	static void validateMatcher(boolean matcher) throws AonCoreException{
-		GROUP_NOT_EXISTS.accept(matcher);
 	}
 	
 }
