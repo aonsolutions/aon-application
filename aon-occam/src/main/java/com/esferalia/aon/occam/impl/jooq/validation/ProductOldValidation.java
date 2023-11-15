@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductOldValidation {
 	
@@ -330,7 +331,7 @@ public class ProductOldValidation {
 				.and(ITEM.PRODUCT.eq(i.getProductId()))
 				.fetchOne(0, int.class);
 		
-		if(count>0 && count2>0 && count3>0 && count4>0)
+		if(count>0 && count2>0 && count3>0 && count4>0 && AonStringUtils.isNotBlank(i.getDetails()))
 			throw new AonCoreException(AonError.DUPLICATE_DETAILS.format(i.getDetails()));
 		
 	};
