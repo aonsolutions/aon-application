@@ -271,6 +271,7 @@ public enum AonError implements Serializable{
 	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID("La cuenta bancaria es inv\u00E1lida")
 	;
 	
 	

@@ -83,6 +83,15 @@ public class RegistryBankValidation {
 		}
 	};
 	
+	/**
+	 * Throws an exception if the iban is invalid
+	 */
+	private static final BiConsumer<AONContext, RegistryBank> INVALID_IBAN = (ctx, registryBank) -> {
+		if (registryBank != null && registryBank.getBankAccount() != null && (registryBank.getBankAccount().isEmpty() || !registryBank.getBankAccount().isValidBankAccount())) {
+			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID.getMessage());
+		}
+	};
+	
 	public static void validate(AONContext ctx, RegistryBank registryBank) throws AonCoreException {
 		NULL.andThen(EMPTY)
 		.andThen(EMPTY_DOMAIN)
@@ -91,6 +100,7 @@ public class RegistryBankValidation {
 		.andThen(INVALID_SIZE_SUFFIX)
 		.andThen(INVALID_SIZE_REQUISITION)
 		.andThen(INVALID_SIZE_SEPA_MANDATE_REF)
+		.andThen(INVALID_IBAN)
 		.accept(ctx, registryBank);
 	}
 }

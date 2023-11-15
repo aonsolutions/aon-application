@@ -27,6 +27,7 @@ public class BankAccount implements Serializable {
 	private String bban7;
 	private String bban8;
 
+	public BankAccount() {}
 	
 	public BankAccount(String value) {
 		setCountry(Country.safeValueOf(AonStringUtils.substring(value, 0, 2)));
@@ -42,7 +43,7 @@ public class BankAccount implements Serializable {
 	}
 	
 	public BankAccount(String value, Boolean ccc) {
-		if(ccc ) {
+		if(Boolean.TRUE.equals(ccc) ) {
 			value =  Country.ES.getIso2() + calculateIbanControlDigit(value, Country.ES) + value;
 		}
 		setCountry(Country.safeValueOf(AonStringUtils.substring(value, 0, 2)));
@@ -55,19 +56,6 @@ public class BankAccount implements Serializable {
 		setBban6(AonStringUtils.substring(value, 24, 28));
 		setBban7(AonStringUtils.substring(value, 28, 32));
 		setBban8(AonStringUtils.substring(value, 32, 34));
-	}
-	
-	public BankAccount() {
-		setCountry(Country.ES);
-		setCheck(AonStringUtils.EMPTY);
-		setBban1(AonStringUtils.EMPTY);
-		setBban2(AonStringUtils.EMPTY);
-		setBban3(AonStringUtils.EMPTY);
-		setBban4(AonStringUtils.EMPTY);
-		setBban5(AonStringUtils.EMPTY);
-		setBban6(AonStringUtils.EMPTY);
-		setBban7(AonStringUtils.EMPTY);
-		setBban8(AonStringUtils.EMPTY);
 	}
 
 	public Country getCountry() {
@@ -410,6 +398,17 @@ public class BankAccount implements Serializable {
 			}
 		}
 		return ibanAsNumber.toString();
+	}
+
+	public boolean isEmpty() {
+		if (country != null && check != null && bban1 != null && bban2 != null && bban3 != null && bban4 != null &&
+			bban5 != null && bban6 != null && bban7 != null && bban8 != null) {
+			return (check.isEmpty() && bban1.isEmpty() && bban2.isEmpty() && bban3.isEmpty() && bban4.isEmpty() && bban5.isEmpty()
+			&& bban6.isEmpty() && bban7.isEmpty() && bban8.isEmpty());
+		} else {
+			return false;
+		}
+				
 	}
 
 }
