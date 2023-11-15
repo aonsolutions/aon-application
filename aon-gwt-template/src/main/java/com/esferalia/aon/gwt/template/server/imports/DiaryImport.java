@@ -437,7 +437,7 @@ public class DiaryImport extends ImportUtils {
 							.setDomain(domain.getId())
 							.setActive(true);
 					
-					List<Account> lowLevels = ACCOUNTING.generateLowerLevels(occam, account, 3);
+					List<Account> lowLevels = ACCOUNTING.generateLowerLevels(occam, account, 1);
 					if (!lowLevels.isEmpty()) {
 						LinkedList<String> warnList = new LinkedList<>();
 						warnList.add("Se autogeneraron las siguientes cuentas:");
@@ -479,5 +479,4 @@ public class DiaryImport extends ImportUtils {
 		error.setLine(index);
 		return error;
 	}
-	
 }

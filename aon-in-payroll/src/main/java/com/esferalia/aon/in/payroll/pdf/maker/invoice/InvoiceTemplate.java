@@ -1584,37 +1584,37 @@ public class InvoiceTemplate {
 			invoiceTitle = getMsg().rectifiedInvoice();
 		else
 			invoiceTitle = invoice.isSimplified() ? getMsg().simplifiedInvoice() : getMsg().invoice().toUpperCase();
-		
+		float left = tbai ?  100 : 50; 
 		drawText(contents, invoiceTitle, x, y, config.getTheme().getTitleTextColor(), boldFont, 16);
 		y -= 30;
-
-		drawText(contents, getMsg().number() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11,REFERENCE_NUMBER);
+		String number = tbai ? getMsg().invoiceNumber() : getMsg().number();
+		drawText(contents, number + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11,REFERENCE_NUMBER);
 		String reference = invoice.isProforma() ? "PROFORMA" : invoice.getReferenceCode();
-		drawText(contents, safeString(reference), x + 50, y, config.getTheme().getTextColor(), regularFont, 11,REFERENCE_NUMBER);
-		y -= 4;
+		drawText(contents, safeString(reference), x + left, y, config.getTheme().getTextColor(), regularFont, 11,REFERENCE_NUMBER);
 
-		y -= 16;
+		y -= 20;
 
 		if (tbai) {			
-			Date expDate = invoice != null && invoice.getFiscal() != null && invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
-			
-			drawText(contents, "Fecha emisión" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
-			drawText(contents, formatDate(expDate, STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			drawText(contents, getMsg().operationDate() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + left, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
 
 			y -= 20;
 
-			drawText(contents, "Fecha operación" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
-			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			Date expDate = invoice != null && invoice.getFiscal() != null && invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
 			
+			drawText(contents, getMsg().expeditionDate() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(expDate, STANDARD_DATE_FORMAT).orElse(""), x + left, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);			
 		} else {
 			drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
-			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 50, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + left, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
 			
 		}
 		
 		y -= 20;
 
-		drawText(contents, "N.I.F.:", x, y, config.getTheme().getTitleTextColor(), boldFont, 11, NIF);
+		String nif = tbai ? getMsg().customerNif() : getMsg().nif();
+
+		drawText(contents, nif + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11, NIF);
 		
 		String countryCode = "";
 //		if (invoice.isExtracommunity() && countryCode != null) {
@@ -1623,7 +1623,7 @@ public class InvoiceTemplate {
 		if (invoice.getRegistryDocumentCountry() != null) {			
 			countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
 		}
-		drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + 50, y, config.getTheme().getTextColor(), regularFont, 11, NIF);
+		drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + left, y, config.getTheme().getTextColor(), regularFont, 11, NIF);
 		
 		y -= 10;
 		x += 250;
