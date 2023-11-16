@@ -189,6 +189,7 @@ export const MSG = 'msg';
 
 export const NAME = 'name';
 export const NEXT = 'next';
+export const NOTES = 'notes';
 export const NUMBER = 'number';
 
 // ----- O

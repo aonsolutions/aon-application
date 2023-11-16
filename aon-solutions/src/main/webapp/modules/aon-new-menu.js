@@ -23,6 +23,7 @@ import { AonBooking } from './marketplace/aon-booking.js';
 import { AonOfficePanel } from './office/aon-office-panel.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonAppMenu } from './aon-app-menu.js';
+import { AonNotes } from './note/aon-notes.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -192,8 +193,11 @@ export class AonNewMenu extends AonElement {
 				this.buildAppMenu(AuxApps.TOOLS);
 				break;
 			case Apps.NOTES.app:
-				this.buildNoteMenu(Apps.NOTES);
-			break;
+				this.rootPanel(new AonNotes());
+				break;
+			// case Apps.NOTES.app:
+			// 	this.buildNoteMenu(Apps.NOTES);
+			// 	break;
 			case Apps.OFFICE.app:
 				this.rootPanel(new AonOfficePanel());
 			break;

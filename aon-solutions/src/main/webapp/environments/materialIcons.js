@@ -182,6 +182,8 @@ export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';
 
+export const NOTES = 'speaker_notes';
+
 export const NOTIFICATIONS = "notifications";
 export const NOTIFICATION_ADD = "notification_add";
 
