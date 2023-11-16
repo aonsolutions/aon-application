@@ -427,24 +427,27 @@ public class ModelMatrixPanel extends FlowPanel {
 
 	private AonDisplayTable getMonthsTable() {
 		AonDisplayTable monthsTable = new AonDisplayTable();
-		monthsTable.addStyleName(AON.CSS.aonWidthAll());
-		monthsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
-		AonDisplayTableRow monthsRow = monthsTable.addRow();
-		monthsRow.addStyleName(AON.CSS.aonFontSmaller());
-		monthsRow.addStyleName(AON.CSS.aonBold());
-		Arrays.stream(MONTHS)
-			.forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );
+		if (params.getPeriod() == null || params.getPeriod().isMonthPeriod()) {
+			monthsTable.addStyleName(AON.CSS.aonWidthAll());
+			monthsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
+			AonDisplayTableRow monthsRow = monthsTable.addRow();
+			monthsRow.addStyleName(AON.CSS.aonFontSmaller());
+			monthsRow.addStyleName(AON.CSS.aonBold());
+			Arrays.stream(MONTHS).forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );
+		}
 		return monthsTable;
 	}
 
 	private AonDisplayTable getQuarsTable() {
 		AonDisplayTable quarsTable = new AonDisplayTable();
-		quarsTable.addStyleName(AON.CSS.aonWidthAll());
-		quarsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
-		AonDisplayTableRow quarsRow = quarsTable.addRow();
-		quarsRow.addStyleName(AON.CSS.aonFontSmaller());
-		quarsRow.addStyleName(AON.CSS.aonBold());
-		Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
+		if (params.getPeriod() == null || params.getPeriod().isQuarterPeriod()) {
+			quarsTable.addStyleName(AON.CSS.aonWidthAll());
+			quarsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
+			AonDisplayTableRow quarsRow = quarsTable.addRow();
+			quarsRow.addStyleName(AON.CSS.aonFontSmaller());
+			quarsRow.addStyleName(AON.CSS.aonBold());
+			Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
+		}
 		return quarsTable;
 	}
 
