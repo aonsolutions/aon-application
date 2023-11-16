@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -96,6 +97,16 @@ public enum FiscalMatrixParamsJSON {
 		@Override
 		public JSONObject to(FiscalMatrixParams params, JSONObject json) {
 			return json.put(IJsonNames.STATUS, params.getStatus().toString());
+		}
+	},
+	PERIOD{
+		@Override
+		public FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json) {
+			return params.setPeriod(Period.safeValueOf(json.optString(IJsonNames.PERIOD,null)));
+		}
+		@Override
+		public JSONObject to(FiscalMatrixParams params, JSONObject json) {
+			return json.put(IJsonNames.PERIOD, params.getPeriod().toString());
 		}
 	},
 	;
