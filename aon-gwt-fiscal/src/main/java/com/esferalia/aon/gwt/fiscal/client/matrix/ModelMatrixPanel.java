@@ -103,7 +103,10 @@ public class ModelMatrixPanel extends FlowPanel {
 		filterMap.put(IJsonNames.NAME, nameList);
 		LinkedList<String> statusList = new LinkedList<>();
 		statusList.add(params.getStatus()==null?"":params.getStatus().toString());
-		filterMap.put(IJsonNames.STATUS, statusList);		
+		filterMap.put(IJsonNames.STATUS, statusList);
+		LinkedList<String> periodList = new LinkedList<>();
+		periodList.add(params.getPeriod()==null?"":params.getPeriod().getName());
+		filterMap.put(IJsonNames.PERIOD, periodList);
 
 		api.getFiscal().getFiscalModels( filterMap, new AsyncCallback<JSON<JsFiscalMenuItem>>() {
 			
@@ -256,7 +259,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.addStyleName( AON.CSS.aonBorderBottom() );
 		cell.addStyleName( AON.CSS.aonTextCenter() );
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
-		if (params.getStatus() == null) {
+		if (params.getStatus() == null && params.getPeriod() == null) {
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 			cell.add(addButton);		
 			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model

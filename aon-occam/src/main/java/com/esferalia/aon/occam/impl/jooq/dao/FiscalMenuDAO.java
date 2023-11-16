@@ -98,6 +98,7 @@ public class FiscalMenuDAO {
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
 					}
@@ -111,6 +112,7 @@ public class FiscalMenuDAO {
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
 					}
@@ -124,6 +126,7 @@ public class FiscalMenuDAO {
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
 					}
@@ -137,6 +140,7 @@ public class FiscalMenuDAO {
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
 					}
@@ -150,6 +154,7 @@ public class FiscalMenuDAO {
 						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
 					}
@@ -163,6 +168,7 @@ public class FiscalMenuDAO {
 						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
 					}
@@ -176,6 +182,7 @@ public class FiscalMenuDAO {
 						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
 					}
@@ -190,6 +197,7 @@ public class FiscalMenuDAO {
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
 									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
 					}
@@ -274,7 +282,10 @@ public class FiscalMenuDAO {
 			prop = prop.and( p.getNameProperty().like( "%"+params.getDeclared()+"%"));
 		}
 		if (params.getStatus() != null) {
-			prop = prop.and( p.getStatusProperty().eq(params.getStatus().value()));
+			prop = prop.and( p.getStatusProperty().eq(params.getStatus().value()) );
+		}
+		if (params.getPeriod() != null) {
+			prop = prop.and( p.getPeriodProperty().eq(params.getPeriod().value()) );
 		}
 			
 		return prop;
