@@ -190,17 +190,6 @@ public class DiaryImport extends ImportUtils {
 			}
 			return;
 		}
-
-		if(isApunte(title)) {
-			Double d = Utils.parseDouble(o);
-			apunte = d.intValue();
-			if(!apunte.equals(diary.get(asiento).getEntry().getDetails().size())) {
-				diary.get(asiento).getEntry().addDetail(new AccountEntryDetail()
-						.setDomain(domain.getId())
-						.setLine(apunte));
-			}
-			return;
-		}
 		
 		if(isDate(title)) {
 			Date date = new Date();
