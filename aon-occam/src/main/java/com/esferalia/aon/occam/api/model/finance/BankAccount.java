@@ -27,7 +27,18 @@ public class BankAccount implements Serializable {
 	private String bban7;
 	private String bban8;
 
-	public BankAccount() {}
+	public BankAccount() {
+		setCountry(Country.ES);
+		setCheck(AonStringUtils.EMPTY);
+		setBban1(AonStringUtils.EMPTY);
+		setBban2(AonStringUtils.EMPTY);
+		setBban3(AonStringUtils.EMPTY);
+		setBban4(AonStringUtils.EMPTY);
+		setBban5(AonStringUtils.EMPTY);
+		setBban6(AonStringUtils.EMPTY);
+		setBban7(AonStringUtils.EMPTY);
+		setBban8(AonStringUtils.EMPTY);
+	}
 	
 	public BankAccount(String value) {
 		setCountry(Country.safeValueOf(AonStringUtils.substring(value, 0, 2)));
@@ -305,21 +316,29 @@ public class BankAccount implements Serializable {
 	}
 
 	public boolean isValidBban() {
-		if (!isValidBbanLength()) {
+		if (getCountry() == null)
 			return false;
+		
+		if (getCountry() != Country.ES) {
+			return true;
+		} else {
+			if (!isValidBbanLength())
+				return false;
+			else {
+				String control = calculateBbanControlDigit();
+				return control != null && control.equals(AonStringUtils.substring(getBban3(), 0, 2));
+			}
 		}
-		if (getCountry() == Country.ES) {
-			String control = calculateBbanControlDigit();
-			return control != null && control.equals(AonStringUtils.substring(getBban3(), 0, 2));
-		}
-		return true;
 	}
 
 	public boolean isValidBbanLength() {
-		if (getCountry() == null) {
+		if (getCountry() == null)
 			return false;
-		}
-		return getBban().length() == getCountry().getBbanLength();
+		
+		if (getCountry() != Country.ES)
+			return true;
+		else
+			return getBban().length() == getCountry().getBbanLength();
 	}
 
 	public String calculateBbanControlDigit() {
@@ -359,18 +378,29 @@ public class BankAccount implements Serializable {
 	}
 
 	public boolean isValidIban() {
-		if (!isValidIbanLength()) {
+		if (getCountry() == null)
 			return false;
+		
+		if (getCountry() != Country.ES)
+			return true;
+		else {
+			if (!isValidIbanLength())
+				return false;
+			else {
+				String control = calculateIbanControlDigit();
+				return control != null && control.equals(getCheck());
+			}
 		}
-		String control = calculateIbanControlDigit();
-		return control != null && control.equals(getCheck());
 	}
 
 	public boolean isValidIbanLength() {
-		if (getCountry() == null) {
+		if (getCountry() == null)
 			return false;
-		}
-		return getIban().length() == getCountry().getIbanLength();
+
+		if (getCountry() != Country.ES)
+			return true;
+		else
+			return getIban().length() == getCountry().getIbanLength();
 	}
 
 	public String calculateIbanControlDigit() {

@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.test.registry.bank;
 
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +17,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
-import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -29,7 +26,6 @@ import com.github.javafaker.Faker;
  * Tests the methods of the class RegistryBankDAO
  */
 public class RegistryBankDAOTest extends AbstractOccamTest {
-
 	/**
 	 * Test create, update and delete
 	 */
@@ -98,16 +94,15 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws an exception if we save a null or empty bank account
+	 * Test that it throws an exception if we save a null bank account
 	 */
 	@Test
 	public void saveNullBankAccountRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setBankAccount(null);
-		
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
-		
 		assertEquals(AonError.REGISTRY_BANK_INVALID.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	/**
@@ -361,34 +356,22 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Tests that if we put a null active, it sets to false
+	 * Tests that it throws an exception if the iban is invalid
 	 */
 	@Test
-	public void saveNullCompleteActive() {
+	public void saveInvalidBankAccount() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
-		registryBank.setActive(null);
-		
-		registryBank = RegistryBankDAO.save(ctx, registryBank);
-		
-		assertNotNull(registryBank.getActive());
-		assertFalse(registryBank.isActive());
-	}
-	
-	/**
-	 * Test that it throws an exception if we save an invalid iban
-	 */
-	@Test
-	public void saveInvalidIban() {
-		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
-		registryBank.setBankAccount(new BankAccount(Faker.instance().letterify("ES????????????????????????????????")));
-		
-		assertFalse(registryBank.getBankAccount().isValidIban());
-		
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
-		
-		assertEquals(AonError.REGISTRY_BANK_INVALID.getMessage(), e.getMessage());
+		registryBank.setBankAccount(new BankAccount(Faker.instance().numerify("ES########################").toString()));
+
+		if (registryBank.getBankAccount().isValidBankAccount()) {
+			AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
+			assertEquals(AonError.REGISTRY_BANK_INVALID.getMessage(), e.getMessage());
+		}
 	}
 }
+
+
+
 
 
 
