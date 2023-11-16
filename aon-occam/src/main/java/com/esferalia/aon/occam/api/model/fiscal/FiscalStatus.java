@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum FiscalStatus implements Serializable {
 	 
@@ -34,7 +35,7 @@ public enum FiscalStatus implements Serializable {
 	public abstract <T> T visit(IFiscalStatusVisitor<T> visitor);
 	
 	public static FiscalStatus safeValueOf( String i ) {
-		if (i == null) return null;
+		if(AonStringUtils.isBlank(i)) return null;
 		return FiscalStatus.valueOf( i );
 	}
 	public static FiscalStatus safeValueOf( Byte i ) {
