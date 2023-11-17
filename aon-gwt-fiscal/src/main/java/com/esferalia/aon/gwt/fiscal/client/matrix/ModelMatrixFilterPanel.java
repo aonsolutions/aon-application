@@ -47,9 +47,11 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	private CheckBox showMadeModels;
 	private AonTextBox declared;
 	private AonSearchPanelButton refreshButton;
-	private AonSearchPanelButton configButton;
+//	private AonSearchPanelButton configButton;
+	private AonSearchPanelButton sendButton;
 	private ListBox statusBox;
 	private ListBox periodBox;	
+	private CheckBox multiplePresentation;  
 	
 	protected ModelMatrixFilterPanel(MatrixModuleOptions options) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -90,7 +92,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
-		year.addChangeHandler(event -> fireValueChangeEvent());
+		year.addChangeHandler(event -> { 
+			//options.getSelected().clear();  
+			fireValueChangeEvent(); 
+		});
 		
 		InlineLabel modelLabel = new InlineLabel(AON.MSG.fiscalModels());
 		modelLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -102,7 +107,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
-		model.addChangeHandler(event -> fireValueChangeEvent());
+		model.addChangeHandler(event -> {
+			//options.getSelected().clear();
+			fireValueChangeEvent(); 
+		});
 
 		InlineLabel declaredLabel = new InlineLabel(AON.MSG.declared());
 		declaredLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -112,7 +120,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 		InlineLabel admonLabel = new InlineLabel(AON.MSG.administration());
 		admonLabel.setStyleName(AON.CSS.aonMarginRight());
-
+        // FALTA - COGER ADMINISTRACION POR DEFECTO SI ES POSIBLE
 		admon = new ListBox();
 		admon.setStyleName(AON.CSS.aonMarginRight());
 		admon.addItem(" TODAS ", "");
@@ -131,7 +139,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
 				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
 			}
-			scopeBox.addChangeHandler(event -> fireValueChangeEvent());
+			scopeBox.addChangeHandler(event -> {
+				//options.getSelected().clear();
+				fireValueChangeEvent();
+			});
 		}
 
 		showConfigurated = new CheckBox();
@@ -144,15 +155,25 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		showMadeModels.setValue(true);
 		showMadeModels.setStyleName(AON.CSS.aonMarginRight());
 		showMadeModels.setText("Mostrar los realizados");
-		showMadeModels.addClickHandler( event -> fireValueChangeEvent());
+		showMadeModels.addClickHandler( event -> {
+			//options.getSelected().clear();
+			fireValueChangeEvent(); 
+		});
 		
+		// Botón refrescar
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refreshButton.addStyleName(AON.CSS.aonMarginRight());
 		refreshButton.addClickHandler(event -> fireValueChangeEvent());
 
-		configButton = new AonSearchPanelButton(AON.MSG.settings(),AON.CSS.aonIconSettings());
-		configButton.addStyleName(AON.CSS.aonMarginRight());
-		configButton.addClickHandler(event -> showConfigurationPanel());
+//		configButton = new AonSearchPanelButton(AON.MSG.settings(),AON.CSS.aonIconSettings());
+//		configButton.addStyleName(AON.CSS.aonMarginRight());
+//		configButton.addClickHandler(event -> showConfigurationPanel());
+		
+		// Boton presentación multiple
+		sendButton = new AonSearchPanelButton("Presentaci\u00F3n m\u00FAltiple de los modelos seleccionados",AON.CSS.aonIconSend());
+		sendButton.addStyleName(AON.CSS.aonMarginRight());
+		sendButton.setVisible(false);
+		sendButton.addClickHandler(event -> send(options));
 		
 		// Estado 
 		InlineLabel statusLabel = new InlineLabel(AON.MSG.status());
@@ -176,7 +197,18 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		for (Period p : Period.values()) {
 			periodBox.addItem(p.getDescription());
 		}
-		periodBox.addChangeHandler(event -> fireValueChangeEvent());
+		periodBox.addChangeHandler(event -> {
+			//options.getSelected().clear();
+			fireValueChangeEvent();
+		});
+		
+		// Habilitar presentacion múltiple
+		multiplePresentation = new CheckBox();
+		multiplePresentation.setValue(false);
+		multiplePresentation.setEnabled(false);
+		multiplePresentation.setStyleName(AON.CSS.aonMarginRight());
+		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");
+		multiplePresentation.addClickHandler( event -> fireValueChangeEvent());
 		
 		if (!options.isCompactMode()) {
 			addRow()
@@ -200,8 +232,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				.addCell(periodLabel,AON.CSS.aonTableLabel())
 				.addCell(periodBox)
 				.addCell(showMadeModels)
-				.addCell(refreshButton)
-				.addCell(new InlineLabel())
+//				.addCell(refreshButton)
+//				.addCell(new InlineLabel())
+				.addCell(new AonDisplayTable().addRow().addCell(refreshButton).addCell(sendButton))
+				.addCell(multiplePresentation)
 				.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
 			;
 		} else {
@@ -220,16 +254,49 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	protected void fireValueChangeEvent() {
 		int y = AonNumberUtils.toint(year.getSelectedValue());
 		FiscalMatrixParams params = new FiscalMatrixParams();
+		
+		// Administracion
 		Administration administration = null;
 		if ( admon.getSelectedIndex() > 0) {
 			administration = Administration.values()[admon.getSelectedIndex() - 1];
 		}
+		
+		// Modelo 
 		FiscalModelType modelType = null;
 		if ( model.getSelectedIndex() > 0) {
 			modelType = FiscalModelType.valueOf(model.getSelectedValue());
 		}
-		LOGGER.info("Scope ..: " + scopeBox.getSelectedValue()); 
+		
+		// Scope
+//		LOGGER.info("Scope ..: " + scopeBox.getSelectedValue()); 
 		Integer scope = AonNumberUtils.toInteger(scopeBox.getSelectedValue());
+		
+		// Estado 
+		FiscalStatus status = null;
+		if (statusBox.getSelectedIndex() > 0) {
+			status = FiscalStatus.values()[statusBox.getSelectedIndex() - 1];
+		}
+		
+		// Periodo 
+		Period period = null;
+		if (periodBox.getSelectedIndex() > 0) {
+			period = Period.values()[periodBox.getSelectedIndex() - 1];		
+		}
+		
+		// Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y Algún periodo seleccionado 
+		multiplePresentation.setEnabled(administration == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && period != null);
+		if (!multiplePresentation.isEnabled()) {
+			multiplePresentation.setValue(false,false);			
+		}
+		
+		sendButton.setVisible(multiplePresentation.getValue());
+		
+		// Si habilitar multiple, desmarcamos mostrar los configurados, solo se actua sobre los realizados 
+		if (multiplePresentation.getValue()) {
+			showConfigurated.setValue(false,false);
+		}			
+		showConfigurated.setEnabled(!multiplePresentation.getValue());
+		
 		params.setYear(y)
 			.setModel(modelType)
 			.setAdministration(administration)
@@ -237,8 +304,11 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			.setConfiguredVisible(showConfigurated.getValue())
 			.setMadeModelsVisible(showMadeModels.getValue())
 			.setDeclared( declared.getValue() )
-			.setStatus( statusBox.getSelectedIndex() > 0 ? FiscalStatus.values()[statusBox.getSelectedIndex() - 1] : null )
-			.setPeriod( periodBox.getSelectedIndex() > 0 ? Period.values()[periodBox.getSelectedIndex() - 1] : null )
+//			.setStatus( statusBox.getSelectedIndex() > 0 ? FiscalStatus.values()[statusBox.getSelectedIndex() - 1] : null )
+//			.setPeriod( periodBox.getSelectedIndex() > 0 ? Period.values()[periodBox.getSelectedIndex() - 1] : null )
+			.setStatus(status)
+			.setPeriod(period)
+			.setMultiplePresentation(multiplePresentation.getValue())			
 			;
 
 		ValueChangeEvent.fire(ModelMatrixFilterPanel.this, params);
@@ -280,6 +350,16 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 	public AonSearchPanelButton getRefreshButton() {
 		return refreshButton;
+	}
+	
+	private void send(MatrixModuleOptions options) {
+		// FALTA - TODO
+		
+		Window.alert("PRESENTACION MULTIPLE DE LOS MODELOS SELECCIONADOS: " + options.getSelected());
+		// FALTA - ENVIAR PRESENTACION
+		// FALTA - MOSTRAR RESULTADOS ERRONEOS O MENSAJE OK
+		// FALTA - REFRESCAR DATOS AL TERMINAR 
+		refreshButton.click();		
 	}
 
 }
