@@ -283,6 +283,9 @@ public class ProductOldValidation {
 				.and(i.getBarcode() != null
 					? f.getBarcodeProperty().eq(i.getBarcode())
 					: f.getBarcodeProperty().isNull())
+				.and(i.getSerialNumber() != null
+					? f.getSerialNumberProperty().eq(i.getSerialNumber())
+					: f.getSerialNumberProperty().isNull())
 		);
 		
 		if(!item.isEmpty()) {
