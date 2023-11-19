@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,6 +136,11 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
 		return InvoiceDAO.getInvoiceDetails(ctx, filter);
+	}
+	
+	@Override
+	public ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
+		return InvoiceDAO.getInvoiceDetailsList(ctx, filter);
 	}
 
 	@Override
