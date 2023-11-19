@@ -15,9 +15,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -57,7 +58,14 @@ public class ModelMatrixPanel extends FlowPanel {
 	private static final String[] MONTHS = new String[]{"ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"};
 	private static final String[] QUARS = new String[]{"1\u00BA TRIM","2\u00BA TRIM","3\u00BA TRIM","4\u00BA TRIM"};
 	
-	public ModelMatrixPanel(MatrixModuleOptions options, FiscalMatrixParams params) {
+	private FiscalMatrixParams params;
+	private AonSearchPanelButton refreshButton;
+	
+	public ModelMatrixPanel(MatrixModuleOptions options, FiscalMatrixParams params, AonSearchPanelButton refreshButton) {
+		
+		this.params = params;
+		this.refreshButton = refreshButton;
+		
 		final PopupPanel pop = new PopupPanel(false, true);
 		if (!options.isCompactMode()) {
 			pop.add(new AonSplash());
@@ -93,6 +101,13 @@ public class ModelMatrixPanel extends FlowPanel {
 		LinkedList<String> nameList = new LinkedList<>();
 		nameList.add(AonStringUtils.defaultIfBlank(params.getDeclared()));
 		filterMap.put(IJsonNames.NAME, nameList);
+		LinkedList<String> statusList = new LinkedList<>();
+		statusList.add(params.getStatus()==null?"":params.getStatus().toString());
+		filterMap.put(IJsonNames.STATUS, statusList);
+		LinkedList<String> periodList = new LinkedList<>();
+		periodList.add(params.getPeriod()==null?"":params.getPeriod().getName());
+		filterMap.put(IJsonNames.PERIOD, periodList);
+
 		api.getFiscal().getFiscalModels( filterMap, new AsyncCallback<JSON<JsFiscalMenuItem>>() {
 			
 			@Override
@@ -230,6 +245,7 @@ public class ModelMatrixPanel extends FlowPanel {
 						cloned.setId(null);
 					}
 					cloned.setStatus( status );
+					cloned.setPeriod(period);
 					paintViewModelCell(options, cell, cloned );
 				}
 			}
@@ -238,48 +254,52 @@ public class ModelMatrixPanel extends FlowPanel {
 
 	private void paintNewModelCell(MatrixModuleOptions options, AonDisplayTableCell cell, IFiscalModel model) {
 		cell.clear();
-		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-		cell.add(addButton);
+//		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+//		cell.add(addButton);
 		cell.addStyleName( AON.CSS.aonBorderBottom() );
 		cell.addStyleName( AON.CSS.aonTextCenter() );
-		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));									
-		addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
-				, new AonModuleCallback<IFiscalModel>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onChange(IFiscalModel changed) {
-				LOGGER.info("Change " + changed.getStatus().getName());
-				refresh( changed );
-			}
-
-
-			@Override
-			public void onRemove(IFiscalModel removed) {
-				LOGGER.info("Remove " + removed.getStatus().getName());
-				refresh( removed );
-			}
-
-			@Override
-			public void onExit(IFiscalModel edited) {
-				LOGGER.info("Exit " + edited.getStatus().getName());
-				if (edited.getId() != null) {
-					refresh( edited );
+		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
+		if (params.getStatus() == null && params.getPeriod() == null) {
+			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+			cell.add(addButton);		
+			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
+					, new AonModuleCallback<IFiscalModel>() {
+	
+				private static final long serialVersionUID = 1L;
+	
+				@Override
+				public void onChange(IFiscalModel changed) {
+					LOGGER.info("Change " + changed.getStatus().getName());
+					refresh( changed );
 				}
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				LOGGER.info("Failure");
-				showError(caught.getMessage());
-			}
-			
-			private void refresh(IFiscalModel model) {
-				ModelMatrixPanel.this.paintViewModelCell( options, cell, model);
-			}
-			
-		})));
+	
+	
+				@Override
+				public void onRemove(IFiscalModel removed) {
+					LOGGER.info("Remove " + removed.getStatus().getName());
+					refresh( removed );
+				}
+	
+				@Override
+				public void onExit(IFiscalModel edited) {
+					LOGGER.info("Exit " + edited.getStatus().getName());
+					if (edited.getId() != null) {
+						refresh( edited );
+					}
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					LOGGER.info("Failure");
+					showError(caught.getMessage());
+				}
+				
+				private void refresh(IFiscalModel model) {
+					ModelMatrixPanel.this.paintViewModelCell( options, cell, model);
+				}
+				
+			})));
+		}
 	}
 	
 	private void paintViewModelCell(MatrixModuleOptions options, AonDisplayTableCell cell, IFiscalModel model) {
@@ -324,7 +344,11 @@ public class ModelMatrixPanel extends FlowPanel {
 			}
 			
 			private void refresh(IFiscalModel model) {
-				cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+				if (params.getStatus() == null) {
+					cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+				} else if (model.getStatus() != params.getStatus()) {
+					refreshButton.click();
+				}
 			}
 			
 		})));
@@ -403,24 +427,27 @@ public class ModelMatrixPanel extends FlowPanel {
 
 	private AonDisplayTable getMonthsTable() {
 		AonDisplayTable monthsTable = new AonDisplayTable();
-		monthsTable.addStyleName(AON.CSS.aonWidthAll());
-		monthsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
-		AonDisplayTableRow monthsRow = monthsTable.addRow();
-		monthsRow.addStyleName(AON.CSS.aonFontSmaller());
-		monthsRow.addStyleName(AON.CSS.aonBold());
-		Arrays.stream(MONTHS)
-			.forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );
+		if (params.getPeriod() == null || params.getPeriod().isMonthPeriod()) {
+			monthsTable.addStyleName(AON.CSS.aonWidthAll());
+			monthsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
+			AonDisplayTableRow monthsRow = monthsTable.addRow();
+			monthsRow.addStyleName(AON.CSS.aonFontSmaller());
+			monthsRow.addStyleName(AON.CSS.aonBold());
+			Arrays.stream(MONTHS).forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );
+		}
 		return monthsTable;
 	}
 
 	private AonDisplayTable getQuarsTable() {
 		AonDisplayTable quarsTable = new AonDisplayTable();
-		quarsTable.addStyleName(AON.CSS.aonWidthAll());
-		quarsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
-		AonDisplayTableRow quarsRow = quarsTable.addRow();
-		quarsRow.addStyleName(AON.CSS.aonFontSmaller());
-		quarsRow.addStyleName(AON.CSS.aonBold());
-		Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
+		if (params.getPeriod() == null || params.getPeriod().isQuarterPeriod()) {
+			quarsTable.addStyleName(AON.CSS.aonWidthAll());
+			quarsTable.getElement().getStyle().setProperty(TABLE_LAYOUT, FIXED);
+			AonDisplayTableRow quarsRow = quarsTable.addRow();
+			quarsRow.addStyleName(AON.CSS.aonFontSmaller());
+			quarsRow.addStyleName(AON.CSS.aonBold());
+			Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
+		}
 		return quarsTable;
 	}
 

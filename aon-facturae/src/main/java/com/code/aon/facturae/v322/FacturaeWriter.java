@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AccountType;
@@ -735,7 +736,8 @@ public class FacturaeWriter {
 		double taxableBase = getInvoice().getBreakdown().stream().filter(f -> 
 			f.getTaxType().equals(com.esferalia.aon.occam.api.model.type.TaxType.VAT))
 			.mapToDouble(InvoiceBreakdown::getBase).sum();
-		invoiceTotals.setTotalGrossAmount( taxableBase );
+		taxableBase = AonMathUtils.round(taxableBase);
+		invoiceTotals.setTotalGrossAmount(taxableBase);
 		invoiceTotals.setTotalGrossAmountBeforeTaxes( taxableBase );
 		double totalTaxOutputs = getInvoice().getBreakdown().stream().filter(f -> 
 			f.getTaxType().equals(com.esferalia.aon.occam.api.model.type.TaxType.VAT))

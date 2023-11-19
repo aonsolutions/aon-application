@@ -32,15 +32,10 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account) throws NordigenException {
 		return AonNordigen.setBankAccountValues(occam, token, account);
 	}
-	
-	@Override
-	public List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) throws NordigenException {
-		return AonNordigen.getNotInsertedTransactions(token, occam , nordigenBankAccount);
-	}
 
 	@Override
-	public List<NordigenRequisition> findAllDomainRequisitions(NordigenAccessToken token, String domainName) throws NordigenException {
-		return AonNordigen.findAllDomainRequisitions(token, domainName);
+	public List<NordigenRequisition> getDomainRequisitions(NordigenAccessToken token, String domainName) throws NordigenException {
+		return AonNordigen.getDomainRequisitions(token, domainName);
 	}
 
 	@Override

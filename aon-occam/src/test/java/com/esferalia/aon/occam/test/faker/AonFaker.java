@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -752,19 +753,39 @@ public class AonFaker {
 		return randomCountry;
 	}
 	
-	public static BankAccount getBankAccount(AONContext ctx) {
-		BankAccount bankAccount = new BankAccount(Faker.instance().finance().iban());
+	public static String getValidIban(AONContext ctx) {
+		String value = getCountry(ctx).toString() + Faker.instance().numerify("################################");
+
+		Country country = Country.safeValueOf(AonStringUtils.substring(value, 0, 2));
+		value = AonStringUtils.substring(value, 0, country.getIbanLength());
 		
-		if (bankAccount.getCountry() == null) { bankAccount.setCountry(AonFaker.getCountry(ctx)); }
-		if (bankAccount.getCheck() == null) { bankAccount.setCheck(faker.letterify("??")); }
-		if (bankAccount.getBban1() == null) { bankAccount.setBban1(faker.letterify("????")); }
-		if (bankAccount.getBban2() == null) { bankAccount.setBban2(faker.letterify("????")); }
-		if (bankAccount.getBban3() == null) { bankAccount.setBban3(faker.letterify("????")); }
-		if (bankAccount.getBban4() == null) { bankAccount.setBban4(faker.letterify("????")); }
-		if (bankAccount.getBban5() == null) { bankAccount.setBban5(faker.letterify("????")); }
-		if (bankAccount.getBban6() == null) { bankAccount.setBban6(faker.letterify("????")); }
-		if (bankAccount.getBban7() == null) { bankAccount.setBban7(faker.letterify("????")); }
-		if (bankAccount.getBban8() == null) { bankAccount.setBban8(faker.letterify("????")); }
+		BankAccount bankAccount = new BankAccount(value);
+		
+		if (country == Country.ES) {
+			// bban is valid
+			bankAccount = new BankAccount(value);
+			String controlDigit = bankAccount.calculateBbanControlDigit();
+			
+			value = AonStringUtils.substring(value, 0, 12) + controlDigit + AonStringUtils.substring(value, 14, 24);
+			
+			// iban is valid
+			bankAccount = new BankAccount(value);
+			controlDigit = bankAccount.calculateIbanControlDigit();
+			
+			value = AonStringUtils.substring(value, 0, 2) + controlDigit + AonStringUtils.substring(value, 4, 24);
+		}
+		
+		return value;
+	}
+	
+	public static BankAccount getBankAccount(AONContext ctx) {
+		BankAccount bankAccount = new BankAccount(AonFaker.getValidIban(ctx));
+		
+		if (bankAccount.getCountry() == Country.ES) {
+			bankAccount.setBban6(AonStringUtils.EMPTY);
+			bankAccount.setBban7(AonStringUtils.EMPTY);
+			bankAccount.setBban8(AonStringUtils.EMPTY);
+		}
 
 		return bankAccount;		
 	}

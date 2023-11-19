@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -78,7 +79,7 @@ public class ModelMatrix extends MainEntryPoint {
 	public void onModuleLoad(MatrixModuleOptions options) {
 		AON.ensureInjected();
 		ModelMatrixFilterPanel filterPanel = new ModelMatrixFilterPanel(options);
-		filterPanel.addValueChangeHandler( event -> search( options, event.getValue() ));
+		filterPanel.addValueChangeHandler( event -> search( options, event.getValue(), filterPanel.getRefreshButton() ));
 		if (options.isCompactMode()) {
 			
 			ScrollPanel mainScroll = new ScrollPanel();
@@ -103,9 +104,9 @@ public class ModelMatrix extends MainEntryPoint {
 		
 	}
 
-	private void search(MatrixModuleOptions options, FiscalMatrixParams params) {
+	private void search(MatrixModuleOptions options, FiscalMatrixParams params, AonSearchPanelButton refreshButton) {
 		dataPanel.clear();
-		dataPanel.add( new ModelMatrixPanel(options, params));
+		dataPanel.add(new ModelMatrixPanel(options, params, refreshButton));
 	}
 	
 }

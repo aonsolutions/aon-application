@@ -3,24 +3,17 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.RegistryService;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> implements Focusable {
-	
-	private RegistryServiceAsync service;
 	
 	private static final Logger LOGGER = Logger.getLogger(AonSupplierFullPanel.class.getName());
 	static {
@@ -29,11 +22,6 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 	
 	public AonSupplierFullPanel(AonModuleOptions<?> options, SupplierFull supplierFull, AonRegistryFullPanelCallback<SupplierFull> callback) {
 		super(options, supplierFull,callback);
-		
-		RegistryServiceAsync serviceRaw = GWT.create(RegistryService.class);
-		service = new RegistryServiceAsyncDecorator(serviceRaw);
-	
-		getRootPanel().add(addButtons(options,supplierFull,callback));
 	}
 
 
@@ -90,20 +78,12 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		addBasicRow(displayTab, new InlineLabel(AON.MSG.fiscalInformation()), taxPanel);				
 	}
 	
-	private FlowPanel addButtons(AonModuleOptions<?> options, SupplierFull supplierFull, AonRegistryFullPanelCallback<SupplierFull> callback) {
-    	FlowPanel buttons = new FlowPanel();
-    	final Button okButton = new Button();
-    	buttons.setStyleName(AON.CSS.aonTextCenter());
-    	buttons.addStyleName(AON.CSS.aonMarginTop());
-    	buttons.addStyleName(AON.CSS.aonMarginBottom());
-    	buttons.addStyleName(AON.CSS.aonNowrap());
-    	okButton.setStyleName(AON.CSS.aonOkButton());    	
-    	okButton.setText( AON.MSG.accept());
-    	
+	@Override
+	protected void addButtons(AonModuleOptions<?> options,AonToolbar toolbar, SupplierFull supplierFull, AonRegistryFullPanelCallback<SupplierFull> callback) {
+		final AonToolbarButton okButton = new AonToolbarButton(AON.MSG.accept(), AON.CSS.aonIconAccept());
     	okButton.addClickHandler(event -> {
 			okButton.setEnabled(false);
-			service.save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
-
+			getService().save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
 				@Override
 				public void onSuccess(SupplierFull result) {
 					callback.onAccept(result);
@@ -116,20 +96,14 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 				}
 			});
 		});
-    	buttons.add(okButton);
+    	toolbar.add(okButton);
     	
-    	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-    	cancelButton.setText( AON.MSG.cancelAction());
+    	final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(), AON.CSS.aonIconCancel());
     	cancelButton.addClickHandler(event -> {
 			cancelButton.setEnabled(false);
 			callback.onCancel();
 		});
-    	buttons.add(cancelButton);
-    	
-    	return buttons;
-    	
+    	toolbar.add(cancelButton);
 	}
 	
 	public void setAccountEnabled(boolean enabled) {

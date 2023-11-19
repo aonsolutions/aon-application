@@ -32,6 +32,12 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class AccountModulePanel extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
 
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
+
 	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerPanel;
 	
@@ -48,16 +54,12 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
 	
-	private static CommonServiceAsync COMMON_SERVICE;
 
 	public AccountModulePanel(AccountModuleOptions options) {
 		super(Unit.PX);
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
 		northPanel = new SimpleLayoutPanel();
-		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		id = new IntegerBox();
 		id.setVisibleLength(8);
@@ -100,9 +102,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 
 		costCenter = new ListBox();
 		costCenter.addItem("-", "");
-		getCostCenters(options, costCenterStream -> {
-			costCenterStream.forEach(costCenterIt -> costCenter.addItem(costCenterIt.getValue(), costCenterIt.getValue()));
-		});
+		getCostCenters(options, costCenterStream -> costCenterStream.forEach(costCenterIt -> costCenter.addItem(costCenterIt.getValue(), costCenterIt.getValue())) );
 		costCenter.setStyleName(AON.CSS.aonInputText());
 		costCenter.addChangeHandler(event -> onSearch( options ));
 

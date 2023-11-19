@@ -20,12 +20,12 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.github.javafaker.Faker;
 
 /**
  * Tests the methods of the class RegistryBankDAO
  */
 public class RegistryBankDAOTest extends AbstractOccamTest {
-
 	/**
 	 * Test create, update and delete
 	 */
@@ -100,8 +100,8 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	public void saveNullBankAccountRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setBankAccount(null);
-		registryBank = RegistryBankDAO.save(ctx, registryBank);
-		Asserts.assertEqualsBankAccount(new BankAccount(), registryBank.getBankAccount());
+		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
+		assertEquals(AonError.REGISTRY_BANK_INVALID.getMessage(), e.getMessage());
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
@@ -354,7 +354,24 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		RegistryBank deleted = RegistryBankDAO.get(ctx, inserted.getId());
 		assertTrue(deleted.isEmpty());
 	}
+	
+	/**
+	 * Tests that it throws an exception if the iban is invalid
+	 */
+	@Test
+	public void saveInvalidBankAccount() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		registryBank.setBankAccount(new BankAccount(Faker.instance().numerify("ES########################").toString()));
+
+		if (registryBank.getBankAccount().isValidBankAccount()) {
+			AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
+			assertEquals(AonError.REGISTRY_BANK_INVALID.getMessage(), e.getMessage());
+		}
+	}
 }
+
+
+
 
 
 

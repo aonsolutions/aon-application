@@ -1,14 +1,15 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.StatementConcept;
+import com.esferalia.aon.occam.api.model.type.StatementStatus;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenBankAccount implements Serializable {
@@ -18,8 +19,8 @@ public class NordigenBankAccount implements Serializable {
 	private RegistryBank rbank;
 	private RegistryAddInfo raddInfo;
 	private NordigenAccountMetadata metadata;
-	private NordigenAccountDetails details;
-	private List<NordigenAccountBalance> balances;
+//	private NordigenAccountDetail detail;
+	private LinkedList<NordigenAccountBalance> balances;
 	private NordigenRequisition requisition;
 	private NordigenInstitution institution;
 	
@@ -27,10 +28,10 @@ public class NordigenBankAccount implements Serializable {
 	private String iban;
 	private String bankAlias;
 	private Date lastMovementDate;
-	private Set<String> logs;
+	private LinkedHashSet<String> logs;
 	private String requisitionId;
 	
-	private List<NordigenBankStatement> notInsertedMovements;
+	private LinkedList<NordigenBankStatement> notInsertedMovements;
 	
 	public RegistryBank getRbank() {
 		return rbank;
@@ -46,13 +47,13 @@ public class NordigenBankAccount implements Serializable {
 		this.metadata = metadata;
 		return this;
 	}
-	public NordigenAccountDetails getDetails() {
-		return details;
-	}
-	public NordigenBankAccount setDetails(NordigenAccountDetails details) {
-		this.details = details;
-		return this;
-	}
+//	public NordigenAccountDetail getDetail() {
+//		return detail;
+//	}
+//	public NordigenBankAccount setDetail(NordigenAccountDetail detail) {
+//		this.detail = detail;
+//		return this;
+//	}
 	public NordigenRequisition getRequisition() {
 		return requisition;
 	}
@@ -95,12 +96,11 @@ public class NordigenBankAccount implements Serializable {
 		this.bankAlias = bankAlias;
 		return this;
 	}
-	public List<NordigenAccountBalance> getBalances() {
-		if (balances == null)
-			return Collections.emptyList();
+	public LinkedList<NordigenAccountBalance> getBalances() {
+		if (balances == null) return new LinkedList<>();
 		return balances;
 	}
-	public NordigenBankAccount setBalances(List<NordigenAccountBalance> balances) {
+	public NordigenBankAccount setBalances(LinkedList<NordigenAccountBalance> balances) {
 		this.balances = balances;
 		return this;
 	}
@@ -118,13 +118,13 @@ public class NordigenBankAccount implements Serializable {
 		this.lastMovementDate = lastMovementDate;
 		return this;
 	}
-	public Set<String> getLogs() {
+	public LinkedHashSet<String> getLogs() {
 		if (logs == null) {
 			logs = new LinkedHashSet<>();
 		}
 		return logs;
 	}
-	public Set<String> addLog(String log) {
+	public LinkedHashSet<String> addLog(String log) {
 		if (logs == null) {
 			logs = new LinkedHashSet<>();
 		}
@@ -133,20 +133,59 @@ public class NordigenBankAccount implements Serializable {
 		}
 		return logs;
 	}
-	public NordigenBankAccount setLogs(Set<String> logs) {
-		if (logs != null) {			
+	public NordigenBankAccount setLogs(LinkedHashSet<String> logs) {
+		if (logs != null) {		
 			this.logs = logs;
 		}
 		return this;
 	}
-	public List<NordigenBankStatement> getNotInsertedMovements() {
+	public LinkedList<NordigenBankStatement> getNotInsertedMovements() {
 		return notInsertedMovements;
 	}
-	public NordigenBankAccount setNotInsertedMovements(List<NordigenBankStatement> notInsertedMovements) {
+	public NordigenBankAccount setNotInsertedMovements(LinkedList<NordigenBankStatement> notInsertedMovements) {
 		this.notInsertedMovements = notInsertedMovements;
 		return this;
 	}
 
 	
+	public static NordigenBankStatement  toBankStatement(NordigenBankAccount account, NordigenAccountTransaction transaction) {
+		NordigenBankStatement statement = new NordigenBankStatement();
+		double amount = NordigenAccountAmount.getAmount( transaction.getTransactionAmount());
+		boolean bpayment = AonMathUtils.isLessThanZero( amount );
+		String description = "";
+		if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationUnstructured())) {
+			description = transaction.getRemittanceInformationUnstructured();
+		} else if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationStructured())) {				
+			description = transaction.getRemittanceInformationStructured();
+		}
+		description = AonStringUtils.substring(description, 0, 80);
+		
+		StringBuilder sb = new StringBuilder();
+		if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
+			sb.append(transaction.getTransactionId());
+		} else if (AonStringUtils.isNotBlank(transaction.getInternalTransactionId())) {
+			sb.append(transaction.getInternalTransactionId());				
+		}
+		statement
+			.setDomain(account.getRbank().getDomain())
+			.setRegistryBank(account.getRbank())
+			.setOperationDate(transaction.getBookingDate() != null ? transaction.getBookingDate() : new Date())
+			.setCommonConcept(StatementConcept.UNKNOWN)
+			.setPayment(bpayment)
+			.setAmount(Math.abs(amount))
+			.setDescription(description)
+			.setStatus(StatementStatus.PENDING)
+			.setReference1("NORDIGEN")
+			.setReference2(AonStringUtils.trimToNull(AonStringUtils.substring(sb.toString(), 0, 64)));
+		
+		String id = null;
+		if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
+			id = transaction.getTransactionId();
+		} else if (AonStringUtils.isNotBlank(transaction.getInternalTransactionId())) {
+			id = transaction.getInternalTransactionId();
+		}
+		statement.setNordigenMovementId(id);
+		return statement;
+	}
 	
 }
