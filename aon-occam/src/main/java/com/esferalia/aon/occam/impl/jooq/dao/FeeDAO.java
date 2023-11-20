@@ -136,6 +136,8 @@ public class FeeDAO {
 			
 		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
+		condition = condition.and(RSELLER.TYPE.eq((byte)1));
+		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)

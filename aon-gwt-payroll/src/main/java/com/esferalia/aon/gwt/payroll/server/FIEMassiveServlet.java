@@ -457,7 +457,9 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		@Override
 		public void onDitItEndCause(String itEndCause) {
 			if(AonStringUtils.isNotBlank(itEndCause))
-				it.setHightCause(Byte.parseByte(itEndCause));
+				try {
+					it.setHightCause(Byte.parseByte(itEndCause));
+				} catch (Exception e) {}
 		}
 
 		@Override
