@@ -453,8 +453,21 @@ public class FacturasRecibidas extends SIIBuilt {
 		https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
 
 		emisor.setNombreRazon(vat.getRegistryName());
+		
 		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
 			emisor.setNIF(vat.getRegistryDocument());
+		} else if(vat.isIntracommunity()){
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			String document = vat.getRegistryDocument();
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				document = countryDocument + document;
+			}
+			otro.setID(document);		
+			otro.setIDType(IDType.NIF_IVA.getName());
+			emisor.setIDOtro(otro);
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
