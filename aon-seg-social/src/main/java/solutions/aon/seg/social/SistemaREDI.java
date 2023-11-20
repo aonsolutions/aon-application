@@ -594,22 +594,25 @@ class SistemaREDI {
 			
 			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
 			htmlPage = certSSRequest.click();
-			
+				
 			handleSepeExceptions(htmlPage);
 			
 			//Aqui hay que seleccionar el ccc sobre el que se quiere hacer la consulta, pero ya se devuelve un XmlPage
+			HtmlAnchor cccAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc);
+			XmlPage xmlPage = cccAnchor.click();
 			
-			Page documentPage = htmlPage;
-			if (documentPage.isHtmlPage()) {
-				htmlPage = (HtmlPage) documentPage;
-				handleSepeExceptions(htmlPage);
-			} else {
-				try {
-					return documentPage.getWebResponse().getContentAsStream().readAllBytes();
-				} catch (Exception e) {
-					throw new UnfilledMandatory();
-				}
-			}	
+			// TODO: esto para obtener el documento en PDF cuando en el navegador se visualiza un PDF
+//			Page documentPage = htmlPage;
+//			if (documentPage.isHtmlPage()) {
+//				htmlPage = (HtmlPage) documentPage;
+//				handleSepeExceptions(htmlPage);
+//			} else {
+//				try {
+//					return documentPage.getWebResponse().getContentAsStream().readAllBytes();
+//				} catch (Exception e) {
+//					throw new UnfilledMandatory();
+//				}
+//			}	
 		} catch (FailingHttpStatusCodeException e1) {
 			e1.printStackTrace();
 		} catch (MalformedURLException e1) {
