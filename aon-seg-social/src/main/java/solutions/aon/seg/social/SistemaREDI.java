@@ -591,14 +591,13 @@ class SistemaREDI {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA-CI.html");
-			Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/sepe.html");
 			
 			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
 			htmlPage = certSSRequest.click();
 			
-			Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/sepe_2.html");
-			
 			handleSepeExceptions(htmlPage);
+			
+			//Aqui hay que seleccionar el ccc sobre el que se quiere hacer la consulta, pero ya se devuelve un XmlPage
 			
 			Page documentPage = htmlPage;
 			if (documentPage.isHtmlPage()) {
