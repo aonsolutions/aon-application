@@ -73,15 +73,15 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 		
 		// ***************************************************************** [BANK ACCOUNT]		
 		final AonBankAccountBox aonBankAccountBox = new AonBankAccountBox();
-		aonBankAccountBox.setWidth("250px");
+		aonBankAccountBox.setWidth("350px");
 		aonBankAccountBox.setValue(registryBank.getBankAccount());
 		aonBankAccountBox.addValueChangeHandler(event -> registryBank.setBankAccount(aonBankAccountBox.getValue()));
 		
 		// ***************************************************************** [DESCRIPTION]		
 		final AonTextBox descriptionText = new AonTextBox();
 		descriptionText.setValue(registryBank.getAlias());
-		descriptionText.setVisibleLength(20);
-		descriptionText.setMaxLength(25);
+		descriptionText.setVisibleLength(18);
+		descriptionText.setMaxLength(20);
 		descriptionText.addValueChangeHandler(event -> registryBank.setAlias(descriptionText.getValue()));
 
 		// ***************************************************************** [BIC / SWIFT]		
