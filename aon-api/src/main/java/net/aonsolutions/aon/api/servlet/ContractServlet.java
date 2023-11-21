@@ -75,7 +75,6 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
-		System.out.println(status);
 		if(name != null) {
 			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
 		}

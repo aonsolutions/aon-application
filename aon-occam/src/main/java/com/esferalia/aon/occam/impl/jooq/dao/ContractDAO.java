@@ -89,46 +89,36 @@ public class ContractDAO {
 	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
-		Byte typeContract = 0;
-		Byte status = 1;
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);		
 		Table<?> registryTable = REGISTRY.as("registryTable");
 		return ctx.getDslContext()
 				.select(CONTRACT.fields())
-				.select(PERSON.fields())
 				.select(REGISTRY.fields())
-				.select(ENTERPRISE_CCC.fields())
 				.select(WORKPLACE.DESCRIPTION)
 				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
 				.select(DSL.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class))
 						.from(SALARY)
 						.where(SALARY.CONTRACT.eq(CONTRACT.ID))
-						.and(SALARY.TYPE.eq(typeContract))
+						.and(SALARY.TYPE.eq((byte) 0))
 						.groupBy(SALARY.END_DATE)
 						.orderBy(SALARY.END_DATE.desc())
 						.limit(1).asField().as(SALARY_CGC_BASE)
 						)
-				.select(DSL.select(DSL.coalesce(DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq(status), dateMiliseconds, dateMiliseconds.neg())).cast(Double.class), 0).cast(Double.class))
+				.select(DSL.select(DSL.coalesce(DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 1), dateMiliseconds, dateMiliseconds.neg())).cast(Double.class), 0).cast(Double.class))
 						.from(Timecontrol.TIMECONTROL)
 						.innerJoin(registryTable).on(registryTable.field(REGISTRY.ID).eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
 						.where("date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())")
 						.and(registryTable.field(REGISTRY.DOCUMENT).eq(REGISTRY.DOCUMENT))
 						.asField().as(MARK_TOTAL_TIME)
 						)
-				.select(DSL.select(CONTRACT_DATA.EXPRESSION)
-						.from(CONTRACT_DATA)
-						.where(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
-						.and(CONTRACT_DATA.NAME.like("TC2"))
-						.orderBy(CONTRACT_DATA.START_DATE.desc())
-						.limit(1).asField().as(CONTRACT_TYPE)
-						) 
+				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
 				.from(CONTRACT)
-				.innerJoin(PERSON).onKey()
-				.innerJoin(REGISTRY).onKey()
-				.innerJoin(ENTERPRISE_CCC).onKey()
+				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
 				.innerJoin(WORKPLACE).onKey()
+				.innerJoin(CONTRACT_DATA).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+				.where(CONTRACT_DATA.NAME.like("TC2"))
 				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
-				.orderBy(PERSON.FIRST_SURNAME.asc(), PERSON.SECOND_SURNAME.asc())
+				.orderBy(PERSON_FULL_NAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch().stream().map(new ContractExtendedDataFiller());
 	}

@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -53,12 +54,13 @@ public class InvoiceApiDAO {
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	private static final InvoiceRawDocPropertiesDAO INVOICE_RAWDOC_PROPERTIES = new InvoiceRawDocPropertiesDAO();
 	public static final Field<LocalDate> ISSUE_DATE =  DSL.field("issue_date", LocalDate.class);
-	public static final Field<Boolean> IS_INBOX =  DSL.field("is_inbox", Boolean.class);
+	public static final Field<Boolean> IS_RAWDOC =  DSL.field("is_inbox", Boolean.class);
 	public static final Field<Byte> TYPE = DSL.field("type", Byte.class);
 	public static final Field<String> REFERENCE_CODE = DSL.field("type", String.class);
 	public static final Field<String> REGISTRY_NAME = DSL.field("type", String.class);
 	public static final Field<Byte> STATUS = DSL.field("status", Byte.class);
 	public static final Field<Integer> MIME_TYPE = DSL.field("mime_type", Integer.class);
+	public static final Field<Byte> RAWDOC_STATUS = DSL.field("rawdoc_status", Byte.class);
 	
 	public static Stream<InvoiceAndRaw> getInvoiceAndRaw(AONContext ctx, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
@@ -80,8 +82,9 @@ public class InvoiceApiDAO {
 				.select(INVOICE.RNAME)
 				.select(INVOICE.TYPE)
 				.select(INVOICE.STATUS)
-				.select(DSL.inline(false).as(IS_INBOX))
+				.select(DSL.inline(false).as(IS_RAWDOC))
 				.select(DSL.inline(null, MIME_TYPE).as(MIME_TYPE))
+				.select(DSL.inline(null, RAWDOC_STATUS).as(RAWDOC_STATUS))
 				.from(INVOICE)
 				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
 				.where(INVOICE_PROPERTIES.getConditions(filter))
@@ -97,11 +100,13 @@ public class InvoiceApiDAO {
 				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.name'), '\"', '')"))
 				.select(DSL.field(switchSQL).as(TYPE))
 				.select(DSL.inline((byte) 0).as(STATUS))
-				.select(DSL.inline(true).as(IS_INBOX))
+				.select(DSL.inline(true).as(IS_RAWDOC))
 				.select(Rawdoc.RAWDOC.MIME_TYPE)
+				.select(Rawdoc.RAWDOC.STATUS.as(RAWDOC_STATUS))
 				.from(Rawdoc.RAWDOC)
 				.groupBy(Rawdoc.RAWDOC.ID)
-				.having(INVOICE_RAWDOC_PROPERTIES.getConditions(filterRawdoc));
+				.having(INVOICE_RAWDOC_PROPERTIES.getConditions(filterRawdoc))
+				.and(Rawdoc.RAWDOC.STATUS.eq((byte) 0));
 		return query1.union(query2)
 				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.limit(perPage)
@@ -153,10 +158,11 @@ public class InvoiceApiDAO {
 				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
 				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )
-				.setIsInbox(r.getValue(IS_INBOX))
+				.setIsInbox(r.getValue(IS_RAWDOC))
 				.setMimeType(r.getValue(MIME_TYPE))
 				.setNumber(r.getValue(INVOICE.NUMBER))
-				.setSeries(r.getValue(INVOICE.SERIES));
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setRawdocStatus(RawdocStatus.safeValueOf(r.getValue(RAWDOC_STATUS)));
 		}
 	}
 

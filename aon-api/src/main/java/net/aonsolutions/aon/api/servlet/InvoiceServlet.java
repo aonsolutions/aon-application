@@ -297,7 +297,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setRecorded(api.getData().optString("recorded") != "" ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
 		JSONArray jsArray = new JSONArray();
 		AON_SOLUTIONS.getInvoiceAndRaw(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter), f -> invoiceRawDocFilter(f, api.getDomain().getId(), filter))
+				f -> invoiceFilter(f, api.getDomain().getId(), filter), f -> invoiceRawDocFilter(f, api.getDomain().getId(), filter, api))
 		.forEach(invoice -> {
 			jsArray.put(InvoiceAndRawList2JSON(invoice, api));
 		}
@@ -305,9 +305,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return jsArray;
 	}
 	
-	public static Filter invoiceRawDocFilter(InvoiceRawDocProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
+	public static Filter invoiceRawDocFilter(InvoiceRawDocProperties f, Integer domainId, InvoiceFilter invoiceFilter, AonApiData api) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
-    
+    	
     	if(invoiceFilter.getDescription() != null) {
     		filter = filter.and(
     			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
@@ -656,16 +656,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("isInbox", invoice.getIsInbox());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
-		if(!invoice.getIsInbox()) {
+		json.put("rawdocStatus", invoice.getRawdocStatus() != null ? invoice.getRawdocStatus().getName() : null);
+		if(Boolean.FALSE.equals(invoice.getIsInbox())) {
 			json.put(IJsonNames.FILE, invoice.getId());
 		}else if(invoice.getMimeType() != null) {
+			System.out.print("inside /file path");
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
 			data.put("domain_id", api.getDomain().getId());
 			data.put("id", invoice.getId());
 			data.put("attach_type", AttachType.RAWDOC.getName());
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "ms/api/file/" +  result;
+			String url =  "/ms/api/file/" +  result;
 			json.put(IJsonNames.FILE, url);
 		}else{
 			JSONObject data = new JSONObject();
@@ -675,7 +677,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			data.put("domain_name", api.getDomain().getName());
 			data.put("login", api.getUser().getLogin());
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url =  "ms/api/download_invoice?json=" +  result;
+			String url =  "/ms/api/download_invoice_pdf?json=" +  result;
 			json.put(IJsonNames.FILE, url);
 		}
 		return json;

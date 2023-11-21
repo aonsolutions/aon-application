@@ -3,11 +3,22 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 
 public class InvoiceAndRaw extends Invoice {
 	private static final long serialVersionUID = 1L;
 	Boolean isInbox;
 	Integer mimeType;
+	RawdocStatus rawdocStatus;
+
+	public RawdocStatus getRawdocStatus() {
+		return rawdocStatus;
+	}
+
+	public InvoiceAndRaw setRawdocStatus(RawdocStatus rawdocStatus) {
+		this.rawdocStatus = rawdocStatus;
+		return this;
+	}
 
 	public Integer getMimeType() {
 		return mimeType;
