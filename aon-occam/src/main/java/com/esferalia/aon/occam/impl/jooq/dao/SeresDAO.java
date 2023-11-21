@@ -80,6 +80,7 @@ public class SeresDAO {
                 .setCustomerEdiInvoice(ediCodes.get(IEdiSupport.FACTURA))
                 .setCustomerEdiPoint(ediCodes.get(IEdiSupport.PTO_ENTREGA))
                 .setCustomerPackage(obtainPackingTag(ctx, customerId, addressId))
+                .setCustomerInvoicePackage(obtainInvoicePackingTag(ctx, customerId, addressId))
                 .setCompanyEdiCode(obtainEdiCompanyCode(ctx));
 	}
 	
@@ -147,6 +148,22 @@ public class SeresDAO {
 		String value = getRegistryNoteComments(ctx, rAddressId.toString(), registryId);
 		Matcher m;
 		Pattern p = Pattern.compile(MEDIDA + "=([^;]*);");
+		try {
+			if (value != null && (m = p.matcher(value)).find()) {
+				Integer tagId = Integer.valueOf(m.group(1));
+				com.esferalia.aon.occam.api.model.office.Tag tag = TagDAO.getTag(ctx, tagId);
+				return tag!=null ? tag.getName() : "";
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String obtainInvoicePackingTag(AONContext ctx, Integer registryId, Integer rAddressId) {
+		String value = getRegistryNoteComments(ctx, rAddressId.toString(), registryId);
+		Matcher m;
+		Pattern p = Pattern.compile(MEDIDA_FACTURA + "=([^;]*);");
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				Integer tagId = Integer.valueOf(m.group(1));

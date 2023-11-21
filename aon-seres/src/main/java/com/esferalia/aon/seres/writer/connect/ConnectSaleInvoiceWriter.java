@@ -127,7 +127,7 @@ public class ConnectSaleInvoiceWriter {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sinclList = createSINCLList(detailList, ediCodes.getCustomerPackage());
+			rectl.sinclList = createSINCLList(detailList, ediCodes.getCustomerInvoicePackage());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
