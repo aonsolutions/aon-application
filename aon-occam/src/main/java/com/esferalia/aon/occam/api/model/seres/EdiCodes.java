@@ -6,6 +6,7 @@ public class EdiCodes {
 	String customerEdiCode;
 	String deliveryPointEdiCode;
 	String customerPackage;
+	String customerInvoicePackage;
 	String companyEdiCode;
 	
 	String customerEdiHeader;
@@ -55,6 +56,15 @@ public class EdiCodes {
 
 	public EdiCodes setCustomerPackage(String customerPackage) {
 		this.customerPackage = customerPackage;
+		return this;
+	}
+	
+	public String getCustomerInvoicePackage() {
+		return customerInvoicePackage;
+	}
+
+	public EdiCodes setCustomerInvoicePackage(String customerInvoicePackage) {
+		this.customerInvoicePackage = customerInvoicePackage;
 		return this;
 	}
 
