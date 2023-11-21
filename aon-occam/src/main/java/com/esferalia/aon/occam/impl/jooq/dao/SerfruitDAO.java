@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -142,6 +143,8 @@ public class SerfruitDAO {
 			delivery.getDetails().stream().map(detail -> {
 				SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(detail.getSalesDetail()));
 				sd.setDelivered(sd.getDelivered() + detail.getQuantity());
+				sd.setStatus(sd.getQuantity() != sd.getDelivered() 
+					? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
 				sd = SalesDetailDAO.save(ctx, sd);
 				
 				Elaboration elaboration = ElaborationDAO.get(ctx, f -> f.getSourceIdProperty().eq(detail.getSalesDetail()), new Options().setFull(true));
