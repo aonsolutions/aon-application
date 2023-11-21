@@ -117,6 +117,13 @@ public class SerfruitDAO {
 	
 
 	public static Delivery saveDelivery(AONContext ctx, Delivery delivery) {
+		delivery.setShippingAlternativeAddress(null);
+		delivery.setShippingAlternativeAddress2(null);
+		delivery.setShippingAlternativeCity(null);
+		delivery.setShippingAlternativePhone(null);
+		delivery.setShippingAlternativeRecipient(null);
+		delivery.setShippingAlternativeZip(null);
+		delivery.setShippingContact(null);
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
