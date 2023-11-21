@@ -202,13 +202,14 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	// ENVIAR ALBARÁN A SERES...
 	
 	private void seres(AonApiData api, Delivery delivery) {
-		System.out.println("SEND DELIVERY TO SERES");
+		System.out.println("SEND DELIVERY TO SERES - REGISTRY " + delivery.getCustomer().getId());
 		RegistryNote rNote = AON.getRegistryNote(api.getDomain(), api.getUser().getLogin(), f -> 
 			f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
 			.and(f.getRegistryProperty().eq(delivery.getCustomer().getId()))
 			.and(f.getDescriptionProperty().eq("SERES_AUTO_COMMIT_DELIVERY")));
 		
-		boolean autoSendDelivery = rNote!=null && Boolean.getBoolean(rNote.getComments());
+		boolean autoSendDelivery = rNote!=null && rNote.getComments() != null 
+				&& rNote.getComments().trim().equalsIgnoreCase("true");
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
