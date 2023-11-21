@@ -35,8 +35,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -79,20 +79,6 @@ public class SerfruitDAO {
 				.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(from)))
 				.and(f.getIssueDateProperty().le(AonDateUtils.toSql(date)))
 		);
-		
-//		
-//		Integer[] salesDetailIds = ElaborationDAO.getElaborationStream(ctx, f -> 
-////			f.getSourceProperty().eq(ElaborationSource.SALES_SERFRUIT.value())
-////			.and(
-//				f.getStatusProperty().eq(ElaborationStatus.PENDING.value())
-//				.and(f.getDomainProperty().eq(ctx.getDomainId()))
-//				.and(f.getDateProperty().between(AonDateUtils.toTimestamp(from), AonDateUtils.toTimestamp(date)))
-////			)
-//			.and(f.getSourceIdProperty().isNotNull()))
-//		.map(Elaboration::getSourceId).toArray(Integer[]::new);
-//		
-//		return SalesDAO.getStream(ctx, f -> filter.filter(new SalesPropertiesDAO())
-//				.and(f.getSalesDetailIdProperty().in(salesDetailIds)), options);
 	}
 	
 	public static Stream<Sales> getFullStream(AONContext ctx, SalesFilter filter){
@@ -133,7 +119,12 @@ public class SerfruitDAO {
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
-			item.setDescription(item.getProduct().getName() + " #" + item.getSerialNumber());
+			String description = item.getProduct().getName() + " #" + item.getSerialNumber();
+			if(isEroski(delivery.getCustomer().getDocument())
+                   && AonStringUtils.containsIgnoreCase(description, "natur")) {
+                description += " CUMPLE TOTALMENTE GRASP";
+            }
+			item.setDescription(description);
 			item.setBarcode(null);
 			if(item.getSerialDate() == null) item.setSerialDate(new Date());
 			if(item.getProduct().isPerishable()) {
@@ -237,7 +228,7 @@ public class SerfruitDAO {
 			detail.setDescription(description);
 			detail.setWarehouse(w.getId());
 			detail.setDiscountExpression("0");
-			detail.setQuantity(Double.valueOf(dp.getQuantity()));
+			detail.setQuantity(dp.getQuantity());
 			detail.setCreationUser(ctx.getUser());
 			detail.setCreationDate(new Date());
 			delivery.getDetails().add(detail);
@@ -376,6 +367,12 @@ public class SerfruitDAO {
 		.where(SALES_DETAIL.ID.in(ids))
 		.execute();
 	}
+	
+    public static boolean isEroski(String document) {
+        return "F20033361".equalsIgnoreCase(document)
+                || "B88512975".equalsIgnoreCase(document)
+                || "A08115032".equalsIgnoreCase(document);
+   }
 }
 
 
