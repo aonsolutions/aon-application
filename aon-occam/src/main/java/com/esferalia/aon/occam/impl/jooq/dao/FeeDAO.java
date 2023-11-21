@@ -121,7 +121,7 @@ public class FeeDAO {
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
 				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.TYPE.eq((byte)1)))
 				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
 				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
@@ -135,8 +135,6 @@ public class FeeDAO {
 		}
 			
 		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
-		
-		condition = condition.and(RSELLER.TYPE.eq((byte)1));
 		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
