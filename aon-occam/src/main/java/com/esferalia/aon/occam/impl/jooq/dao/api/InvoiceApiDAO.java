@@ -5,9 +5,11 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -128,6 +130,17 @@ public class InvoiceApiDAO {
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
 	}	
+	
+	public static Date getInvoiceExpDate(AONContext ctx, Integer id) {
+		return ctx.getDslContext().select(INVOICE_FISCAL.EXP_DATE)
+		.from(INVOICE_FISCAL)
+		.where(INVOICE_FISCAL.DOMAIN.eq(ctx.getDomainId()))
+		.and(INVOICE_FISCAL.INVOICE.eq(id))
+		.and(INVOICE_FISCAL.EXP_DATE.isNotNull())
+		.fetch().stream()
+		.map(r ->  r.getValue(INVOICE_FISCAL.EXP_DATE))
+		.findFirst().orElse(null);
+	}
 	
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext()

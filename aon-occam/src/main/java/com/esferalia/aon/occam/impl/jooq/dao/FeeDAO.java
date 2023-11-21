@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -135,6 +136,8 @@ public class FeeDAO {
 			
 		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
+		condition = condition.and(RSELLER.TYPE.eq((byte)1));
+		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
@@ -144,11 +147,22 @@ public class FeeDAO {
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
 		
-		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
-		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		
+		return fees;
 	}
 	
+	private static LinkedList<String> getCustomerFeeSegments(AONContext ctx, Integer id) {
+		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
+			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+			.where(RSEGMENT.REGISTRY.eq(id))
+			.fetch(SEGMENT.NAME);
+		
+		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		

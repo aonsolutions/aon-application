@@ -1,15 +1,14 @@
 package com.esferalia.aon.in.payroll.img;
 
 import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentExtracter;
-import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.PersonDocument;
 
 public class PersonDocumentParser {
 		
 	private PersonDocumentParser() {
 	}
-
-
-	public static Person parse(byte[] bytes) {
+	
+	public static PersonDocument parse(byte[] bytes) {
 		PersonDocumentParserValidation.validateBytes(bytes);
 		IPersonDocumentExtracter extracter = PersonDocumentExtracters.getExtracter(bytes);
 		String text = extracter.extract(bytes);

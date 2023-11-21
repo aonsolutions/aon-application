@@ -12,6 +12,7 @@ public interface IApi {
 
 	Stream<InvoiceAndRaw> getInvoiceAndRaw(AONContext ctx, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc);
 	Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter);
+	java.util.Date getInvoiceExpDate(AONContext ctx, Integer id); 
 	List<Invoice> getTbaiDeletedInvoices(AONContext ctx);
 
 }

@@ -187,7 +187,17 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getLine());
         		} else if(IConstants.AGENTE_DE_SOPORTE.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getSellerSupport().getName());
-        		}
+        		}else if(IConstants.SEGMENTO.equalsIgnoreCase(title)) {		
+        			String segments = "";
+        			for (String segment : fee.getSegments()) {
+        				segments += segment + ", ";
+        	        }
+
+        	        // Remove the trailing comma and space
+        			if(AonStringUtils.isNotBlank(segments)) segments = segments.substring(0, segments.length() - 2);
+        			
+         			cell.setCellValue(segments);
+         		}
         	}
         }
         

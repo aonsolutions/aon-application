@@ -1,14 +1,18 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
+
+import java.util.Arrays;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum NordigenRequisitionStatus {
-	CR("CR", "CREATED", "Requisition has been successfully created"),
-	LN("LN", "LINKED", "Account has been successfully linked to requisition"),
-	EX("EX", "EXPIRED", "Access to account has expired as set in End User Agreement"),
-	RJ("RJ", "REJECTED", "SSN verification has failed"),
-	UA("UA", "UNDERGOING_AUTHENTICATION", "End-user is redirected to the financial institution for authentication"),
-	GA("GA", "GRANTING_ACCESS", "End-user is granting access to their account information"),
-	SA("SA", "SELECTING_ACCOUNTS", "End-user is selecting accounts"),
-	GC("GC", "GIVING_CONSENT", "End-user is giving consent at Nordigen's consent screen")
+	CREATED("CR", "CREATED", "Requisition has been successfully created"),
+	LINKED("LN", "LINKED", "Account has been successfully linked to requisition"),
+	EXPIRED("EX", "EXPIRED", "Access to account has expired as set in End User Agreement"),
+	REJECTED("RJ", "REJECTED", "SSN verification has failed"),
+	UNDERGOING_AUTHENTICATION("UA", "UNDERGOING_AUTHENTICATION", "End-user is redirected to the financial institution for authentication"),
+	GRANTING_ACCESS("GA", "GRANTING_ACCESS", "End-user is granting access to their account information"),
+	SELECTING_ACCOUNTS("SA", "SELECTING_ACCOUNTS", "End-user is selecting accounts"),
+	GIVING_CONSENT("GC", "GIVING_CONSENT", "End-user is giving consent at Nordigen's consent screen")
 	;
 	
 	
@@ -35,10 +39,10 @@ public enum NordigenRequisitionStatus {
 	}
 	
 	public static NordigenRequisitionStatus safeValueOf(String shortName) {
-		try {
-			return NordigenRequisitionStatus.valueOf(shortName);
-		} catch (NullPointerException | IllegalArgumentException e) {
-			return null;
-		}
+		if(AonStringUtils.isBlank(shortName)) return null;
+		return Arrays.stream(values())
+			.filter(dt -> shortName.equalsIgnoreCase(dt.getShortName()))
+			.findFirst()
+			.orElse(null);
 	}
 }

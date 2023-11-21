@@ -33,7 +33,7 @@ public class NordigenUtils {
 	
 	public static boolean isRequisitionLinked(NordigenRequisition requisition) {
 		if (requisition != null) {
-			return NordigenRequisitionStatus.LN.equals(requisition.getStatus());
+			return NordigenRequisitionStatus.LINKED.equals(requisition.getStatus());
 		}
 			return false;
 	}

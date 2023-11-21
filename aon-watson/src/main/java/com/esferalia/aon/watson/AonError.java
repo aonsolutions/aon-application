@@ -249,10 +249,10 @@ public enum AonError implements Serializable{
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
-	//-----------------------------------------------UPLOAD OF DNI
+	//-----------------------------------------------UPLOAD OF DOCUMENT
 	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
-	,FILE_SIZE_EXCEEDED("El tamaño de archivo no puede superar los 5MB")
+	,FILE_SIZE_EXCEEDED("El tama\u00F1o de archivo no puede superar los 5MB")
 	,NULL_TEXT_RECEIVED("El texto recibido es nulo")
 	,INVALID_DNI_FORMAT("El formato del campo para el dni no es valido")
 	,INVALID_NATIONALITY_FORMAT("El formato del campo para la nacionalidad no es valido")
@@ -260,17 +260,19 @@ public enum AonError implements Serializable{
 	,INVALID_FIRST_SURNAME("El formato para el campo del primer apellido no es valido")
 	,INVALID_SECOND_SURNAME("El formato para el campo del segundo apellido no es valido")
 	,NULL_NEXT_LINE("Error al cargar los datos, intentelo otra vez")
+	,NULL_DATE_STRING("No se ha podido establecer la fecha, intentelo otra vez")
+	,GROUP_NOT_MATCH("No se ha podido encontrar el dato, intentelo otra vez")
 
   // ---------------------------------------------- REGISTRY_BANK
 	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
 	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")
 	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
 	,REGISTRY_BANK_NULL_REGISTRY("El registro no puede ser nulo")
-	,REGISTRY_BANK_NULL_BANK_ACCOUNT("La cuenta de banco no puede ser nula")
 	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o del bic es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID("La cuenta bancaria es inv\u00E1lida")
 	;
 	
 	

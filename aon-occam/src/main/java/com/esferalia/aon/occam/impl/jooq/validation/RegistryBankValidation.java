@@ -32,7 +32,7 @@ public class RegistryBankValidation {
 	/**
 	 * Throws an exception if the registryBank's domain is null
 	 */
-	private static final BiConsumer<AONContext, RegistryBank> EMPTY_DOMAIN = (ctx, registryBank) -> {
+	private static final BiConsumer<AONContext, RegistryBank> NULL_DOMAIN = (ctx, registryBank) -> {
 		if (registryBank.getDomain() == null) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_NULL_DOMAIN.getMessage());
 		}
@@ -41,9 +41,18 @@ public class RegistryBankValidation {
 	/**
 	 * Throws an exception if the registryBank's registry is null
 	 */
-	private static final BiConsumer<AONContext, RegistryBank> EMPTY_REGISTRY = (ctx, registryBank) -> {
+	private static final BiConsumer<AONContext, RegistryBank> NULL_REGISTRY = (ctx, registryBank) -> {
 		if (registryBank.getRegistry() == null) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_NULL_REGISTRY.getMessage());
+		}
+	};
+	
+	/**
+	 * Throws an exception if the registryBank's bank account is empty or invalid
+	 */
+	private static final BiConsumer<AONContext, RegistryBank> INVALID_BANK_ACCOUNT = (ctx, registryBank) -> {
+		if (registryBank.getBankAccount().isEmpty() || !registryBank.getBankAccount().isValidBankAccount()) {
+			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID.getMessage());
 		}
 	};
 	
@@ -85,8 +94,9 @@ public class RegistryBankValidation {
 	
 	public static void validate(AONContext ctx, RegistryBank registryBank) throws AonCoreException {
 		NULL.andThen(EMPTY)
-		.andThen(EMPTY_DOMAIN)
-		.andThen(EMPTY_REGISTRY)
+		.andThen(NULL_DOMAIN)
+		.andThen(NULL_REGISTRY)
+		.andThen(INVALID_BANK_ACCOUNT)
 		.andThen(INVALID_SIZE_BIC)
 		.andThen(INVALID_SIZE_SUFFIX)
 		.andThen(INVALID_SIZE_REQUISITION)

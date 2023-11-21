@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class NordigenAccessToken implements Serializable {
 
 	private static final long serialVersionUID = 2227685219198528965L;
@@ -69,4 +71,21 @@ public class NordigenAccessToken implements Serializable {
 		return this;
 	}
 	
+	public NordigenAccessToken refreshAccessToken(NordigenAccessToken refreshedToken) {
+		if (refreshedToken != null ) {
+			if (AonStringUtils.isNotBlank(refreshedToken.getAccess())) {
+				this.setAccess(refreshedToken.getAccess());				
+			}
+			if (refreshedToken.getAccessExpires() != null && refreshedToken.getAccessExpires() != 0) {
+				this.setAccessExpires(refreshedToken.getAccessExpires());
+			}
+			if (AonStringUtils.isNotBlank(refreshedToken.getRefresh())) {
+				this.setRefresh(refreshedToken.getRefresh());				
+			}
+			if (refreshedToken.getRefreshExpires() != null && refreshedToken.getRefreshExpires() != 0) {
+				this.setRefreshExpires(refreshedToken.getRefreshExpires());
+			}
+		}
+		return this;
+	}
 }

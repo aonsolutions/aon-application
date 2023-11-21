@@ -418,7 +418,7 @@ public class FeeImport extends Import {
 	
 	private static Filter workplaceFilter(Domain domain, User user, Workplace workplace, WorkplaceProperties f) {
 		return f.getDomainProperty().eq(domain.getId())
-			.and(f.getDescriptionProperty().eq(workplace.getDescription()));
+			.and(f.getDescriptionProperty().eq(workplace.getDescription().trim()));
 	}
 	
 	private static Filter productFilter(Domain domain, User user, OldItem item, ProductProperties f) {
