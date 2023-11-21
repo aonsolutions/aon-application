@@ -216,7 +216,7 @@ public class DomainCompanyJSON {
 		
 		obj.put(IJsonNames.ID, new JSONString(registry.getId().toString()));
 		obj.put(IJsonNames.DOMAIN, domainToJSON(registry.getDomain()));
-		obj.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()));
+		if(registry.getDocument() != null) obj.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()));
 		obj.put(IJsonNames.DOCUMENT_COUNTRY, new JSONString(registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null));
 		obj.put(IJsonNames.DOCUMENT_TYPE, new JSONString(registry.getDocumentType() != null ? registry.getDocumentType().name(): null));
 		obj.put(IJsonNames.NAME, new JSONString(registry.getName()));
