@@ -329,6 +329,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.LINE
 				
 				,INVOICE_DETAIL.ITEM
+				,PCATEGORY.ID
 				,PCATEGORY.NAME
 				,BRAND.NAME
 				,PRODUCT.ID
