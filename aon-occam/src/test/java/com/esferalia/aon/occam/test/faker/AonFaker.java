@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -543,9 +544,11 @@ public class AonFaker {
 				.setDomain(domain)
 				.setId(Integer.parseInt(Faker.instance().numerify("#####")));
 		
-		
+		Registry registry = new Registry()
+				.setName(Faker.instance().zelda().character());
 		
 		Customer customer = new Customer()
+				.copy(registry)
 				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setBillable(random.nextBoolean())
 				.setCreationDate(Faker.instance().date().birthday())
@@ -596,6 +599,11 @@ public class AonFaker {
 				.setType(new ProjectType())
 				;
 				
+		RegistryAddress address = new RegistryAddress()
+				.setAddress(Faker.instance().address().fullAddress())
+				.setCity(Faker.instance().address().city())
+				.setProvince(Faker.instance().address().country())
+				.setZip(Faker.instance().address().zipCode());				
 		
 		return new Delivery()
 				.setDomain(domain)
@@ -607,6 +615,9 @@ public class AonFaker {
 				.setWorkplace(workplace)
 				.setStatus(DeliveryStatus.PENDING)
 				.setScope(customer.getScope()) 
+				.setAddress(address)
+				.setShippingContact(Faker.instance().zelda().character())
+				.setWorkplace(workplace)
 				;
 	}
 	
