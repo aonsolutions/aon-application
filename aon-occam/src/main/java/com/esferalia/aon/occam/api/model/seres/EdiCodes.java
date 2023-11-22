@@ -13,6 +13,8 @@ public class EdiCodes {
 	String customerEdiPoint;
 	String customerEdiInvoice;
 	
+	EdiCodes mainEdiCodes;
+	
 	String mscode;
 	String mrcode;
 	String sucode;
@@ -207,6 +209,15 @@ public class EdiCodes {
 
 	public EdiCodes setIvcode(String ivcode) {
 		this.ivcode = ivcode;
+		return this;
+	}
+	
+	public EdiCodes getMainEdiCodes() {
+		return mainEdiCodes;
+	}
+	
+	public EdiCodes setMainEdiCodes(EdiCodes mainEdiCodes) {
+		this.mainEdiCodes = mainEdiCodes;
 		return this;
 	}
 	
