@@ -1878,6 +1878,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
+				this.contrataEmployeeObject.getContractData().getHolidaysDate(),
+				this.contrataEmployeeObject.getContractData().getSAA(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
 				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				false) {
@@ -1945,6 +1947,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
+				this.contrataEmployeeObject.getContractData().getHolidaysDate(),
+				this.contrataEmployeeObject.getContractData().getSAA(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
 				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				true) {

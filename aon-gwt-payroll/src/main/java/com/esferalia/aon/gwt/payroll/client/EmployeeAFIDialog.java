@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
@@ -18,8 +19,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
-import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.SettleReason;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
@@ -53,6 +54,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
@@ -101,7 +103,22 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	@UiField
 	ListBox settleReasonLB;
+	
+	@UiField
+	HTMLPanel settleHolidayData;
 
+	@UiField
+	TextBox holidaysTB;
+	
+	@UiField
+	DateBoxEx holidaysEndDB;
+	
+	@UiField
+	Label holidaysTypeTitle;
+	
+	@UiField
+	ListBox holidaysTypeLB;
+	
 	@UiField
 	HTMLPanel tabsPanel;
 
@@ -163,6 +180,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 	private Date selectedDate;
 	
+	private Date holidayDate;
+	private String saa;
+	
 	private boolean isComunication = false;
 	private boolean isTransform = false;
 	private boolean hasSettle = false;
@@ -172,7 +192,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 
 	protected EmployeeAFIDialog(Date contractStartDate, Date contractEndDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, String cno,
-			Integer contractId, Integer domainId, Integer workplaceId, boolean hasSettle, boolean isTransform, boolean isComunication) {
+			Integer contractId, Integer domainId, Integer workplaceId, Date holidayDate, String saa, boolean hasSettle, boolean isTransform, boolean isComunication) {
 
 		setCaption(isComunication ? "Notificaci\u00f3n TGSS (AFI)" : "Datos AFI");
 
@@ -203,6 +223,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.contractId = contractId;
 		this.domainId = domainId;
 		this.workplaceId = workplaceId;
+		
+		this.settleHolidayData.setVisible(false);
+		
+		this.holidayDate = holidayDate;
+		this.saa = saa;
 
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
@@ -313,6 +338,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		for (Entry<Integer, String> settleReasonEntry : this.settleReason.getSettleReasonEntries())
 			this.settleReasonLB.addItem(settleReasonEntry.getKey() + " - " + settleReasonEntry.getValue(),
 					settleReasonEntry.getKey().toString());
+		
+		this.holidaysTypeLB.clear();
+		this.holidaysTypeLB.addItem("Retribuidas y no disfrutadas", "001");
+		this.holidaysTypeLB.addItem("No disfrutadas, retribuidas y cotizadas", "015");
 
 		// TC2
 		this.tc2.clear();
@@ -335,6 +364,22 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		if(Boolean.TRUE.equals(this.hasSettle)) {
 			this.afiTypeLB.setSelectedIndex(2);
 			afiTypeLB.setEnabled(false);
+			if(null != this.holidayDate) {
+				holidaysEndDB.setEnabled(false);
+				holidaysTB.setEnabled(false);
+				holidaysTypeLB.setEnabled(false);
+				
+				this.settleHolidayData.setVisible(true);
+				long days = DateUtils.getDaysBetween(this.contractEndDate, this.holidayDate);
+				holidaysEndDB.setValue(this.holidayDate);
+				holidaysTB.setValue(days + "");
+				
+				if(this.contractEndDate.equals(this.holidayDate)) {
+					this.holidaysTypeLB.setVisible(false);
+					this.holidaysTypeTitle.setVisible(false);
+				}
+				setSelectedValueLB(this.holidaysTypeLB, this.saa);
+			}
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), afiTypeLB);
 		}
 	}
