@@ -60,7 +60,7 @@ public class SeresDAO {
 				seresInfo.setPassword(r.getValue());
 			}
 			
-			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PASSWORD.toString())) {
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PORT.toString())) {
 				seresInfo.setPort(Integer.parseInt(r.getValue()));
 			}
 			
