@@ -136,6 +136,7 @@ public class Cra {
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
+					.orderBy(SALARY.START_DATE)
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -149,7 +150,7 @@ public class Cra {
 				// Prepare DDE
 				JSONObject dde = new JSONObject();
 	
-				dde.put("cccRegime", parseSSRegime(salaryRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
+				dde.put("cccRegime", getEnterpriseCCC(dslContext, salaryRecords));
 				dde.put("ccc", ccc);
 				dde.put("year", startDate.get(Calendar.YEAR));
 				dde.put("month", startDate.get(Calendar.MONTH)+1);
@@ -196,6 +197,7 @@ public class Cra {
 					.and(SALARY.TYPE.eq((byte)3))
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.DOMAIN.in(domainChilds))
+					.orderBy(SALARY.START_DATE)
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -300,6 +302,7 @@ public class Cra {
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
+					.orderBy(SALARY.START_DATE)
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -312,7 +315,7 @@ public class Cra {
 				// Prepare FINIQ
 				JSONObject finiq = new JSONObject();
 				
-				finiq.put("cccRegime", parseSSRegime(salaryRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
+				finiq.put("cccRegime", getEnterpriseCCC(dslContext, salaryRecords));
 				finiq.put("ccc", ccc);
 				finiq.put("year", startDate.get(Calendar.YEAR));
 				finiq.put("month", startDate.get(Calendar.MONTH)+1);
@@ -419,6 +422,14 @@ public class Cra {
 		
 	}
 	
+	private static String getEnterpriseCCC(DSLContext dslContext, Result<Record> salaryRecords) {
+		
+		// Get last Salary
+		Integer enterpriseCCCId = salaryRecords.get(salaryRecords.size() - 1).get(CONTRACT.ENTERPRISE_CCC);
+		Byte cccType = dslContext.select(ENTERPRISE_CCC.TYPE).from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId)).fetchOne(ENTERPRISE_CCC.TYPE);
+		return parseSSRegime(cccType);
+	}
+
 	// ********************************************************************************************************************************************
 	//													AUXILIAR METHODS
 	// ********************************************************************************************************************************************
