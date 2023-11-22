@@ -666,11 +666,11 @@ public class SaleInvoiceController extends InvoiceController {
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
 					inv.setNumber(number);
+					
+					invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+					inv.setReferenceCode(invoice.getReferenceCode());
+					updateFinances(domainName, login, invoice);
 				}
-			
-				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
-				inv.setReferenceCode(invoice.getReferenceCode());
-				updateFinances(domainName, login, invoice);
 
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
