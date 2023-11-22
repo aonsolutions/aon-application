@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.IEdiSupport;
@@ -73,6 +74,8 @@ public class SeresDAO {
 	    Integer customerId = invoice.getRegistry();
         Integer addressId = invoice.getAddress().getId();
         Map<String, String> ediCodes = obtainEdiCodes(ctx, customerId, addressId);  
+        RegistryAddress main = RegistryAddressDAO.getMain(ctx, customerId);
+        Map<String, String> mainEdiCodes = obtainEdiCodes(ctx, customerId, main.getId());
         
         return new EdiCodes()
                 .setDepartment(ediCodes.get(IEdiSupport.DEPARTMENT))
@@ -81,7 +84,13 @@ public class SeresDAO {
                 .setCustomerEdiPoint(ediCodes.get(IEdiSupport.PTO_ENTREGA))
                 .setCustomerPackage(obtainPackingTag(ctx, customerId, addressId))
                 .setCustomerInvoicePackage(obtainInvoicePackingTag(ctx, customerId, addressId))
-                .setCompanyEdiCode(obtainEdiCompanyCode(ctx));
+                .setCompanyEdiCode(obtainEdiCompanyCode(ctx))
+                .setMainEdiCodes(new EdiCodes()
+                        .setDepartment(mainEdiCodes.get(IEdiSupport.DEPARTMENT))
+                        .setCustomerEdiHeader(mainEdiCodes.get(IEdiSupport.CABECERA))
+                        .setCustomerEdiInvoice(mainEdiCodes.get(IEdiSupport.FACTURA))
+                        .setCustomerEdiPoint(mainEdiCodes.get(IEdiSupport.PTO_ENTREGA))
+                );
 	}
 	
 	public static EdiCodes getEdiCodes(AONContext ctx, Delivery delivery) {
