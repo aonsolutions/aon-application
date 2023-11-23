@@ -133,8 +133,7 @@ public class InvoiceReportServlet extends HttpServlet {
 			User user = AON.getUser(domainName, domainId, login ); 
 			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
 			
-			
-			AON.getInvoiceDetails(domainName, domainId, login,
+			AON.getInvoiceDetailsList(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))

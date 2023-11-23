@@ -141,8 +141,12 @@ public class DeliveryServlet extends AonApiHttpServlet {
 			SERFRUIT.saveCarrierPacking(api.getDomain(), api.getUser(), delivery, carrierPacking);
 		}
 		
-		if(serfruit && api.getDomain().getName().equals("udapa.aonsolutions.net")) {
-			seres(api, delivery);
+		if(serfruit) {
+			try {
+				seres(api, delivery);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		return DeliveryJSON.toJSON(delivery);
@@ -198,13 +202,16 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	// ENVIAR ALBARÁN A SERES...
 	
 	private void seres(AonApiData api, Delivery delivery) {
+		System.out.println("SEND DELIVERY TO SERES - REGISTRY " + delivery.getCustomer().getId());
 		RegistryNote rNote = AON.getRegistryNote(api.getDomain(), api.getUser().getLogin(), f -> 
 			f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
 			.and(f.getRegistryProperty().eq(delivery.getCustomer().getId()))
 			.and(f.getDescriptionProperty().eq("SERES_AUTO_COMMIT_DELIVERY")));
 		
-		boolean autoSendDelivery = rNote!=null && Boolean.getBoolean(rNote.getComments());
+		boolean autoSendDelivery = rNote!=null && rNote.getComments() != null 
+				&& rNote.getComments().trim().equalsIgnoreCase("true");
 		if(autoSendDelivery){
+			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
 			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
@@ -217,7 +224,8 @@ public class DeliveryServlet extends AonApiHttpServlet {
 				, AttachType.DATA, true);
 			delivery.setPackagingData(attach.getData());
 			du.uploadDelivery(delivery);
-		}
+		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
+
 	}
 	
 }

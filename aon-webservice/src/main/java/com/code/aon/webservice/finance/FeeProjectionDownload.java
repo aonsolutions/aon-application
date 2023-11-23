@@ -2,6 +2,7 @@ package com.code.aon.webservice.finance;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -136,11 +137,73 @@ public class FeeProjectionDownload extends HttpServlet{
 	}
 	
 	private Boolean month(int bMonth, int bYear, int month, int year, int period){
-		if(period == 0){
-			return month == bMonth && year == bYear;
-		}
-		return (month % period) == (bMonth % period);		
+		switch (period) {
+			case 0: // Sin periodo
+				return month == bMonth && year == bYear;
+			case 1: // Mensual
+				return true;
+			case 2: // Bimensual
+				return getMonthsByPeriod(bMonth, period).contains(month);
+			case 3: // Trimestral
+				return getMonthsByPeriod(bMonth, period).contains(month);
+			case 4: // Cuatrimestral
+				return getMonthsByPeriod(bMonth, period).contains(month);
+			case 5: // Semestral
+				return getMonthsByPeriod(bMonth, period).contains(month);
+			case 6: // Anual
+				return month == bMonth && year == bYear;
+			default:
+				return false;	
+		}	
 	}
+	
+	private ArrayList<Integer> getMonthsByPeriod(int month, int period){
+		ArrayList<Integer> months = new ArrayList<>();
+		if(period == 2) {
+			int monthLT = month;
+			do {
+				months.add(monthLT);
+				monthLT -= 2;
+			} while(monthLT >= 0);
+			
+			int monthGT = month + 2;
+			while (monthGT <= 11) {
+				months.add(monthGT);
+				monthGT += 2;
+			}
+		} else if(period == 3) {
+			int monthLT = month;
+			do {
+				months.add(monthLT);
+				monthLT -= 3;
+			} while(monthLT >= 0);
+			
+			int monthGT = month + 3;
+			while (monthGT <= 11) {
+				months.add(monthGT);
+				monthGT += 3;
+			}
+		} else if(period == 4) {
+			int monthLT = month;
+			do {
+				months.add(monthLT);
+				monthLT -= 4;
+			} while(monthLT >= 0);
+			
+			int monthGT = month + 4;
+			while (monthGT <= 11) {
+				months.add(monthGT);
+				monthGT += 4;
+			}
+		} else if(period == 5) {
+			months.add(month);
+			if(month + 6 <= 11) months.add(month + 6);
+			if(month - 6 >= 0) months.add(month - 6);
+		}
+		
+		return months;
+	}
+	
 	
 	private Integer printValues(HSSFWorkbook workbook, HSSFSheet sheet, Domain domain, Fee fee, Date from, Integer rowIndex, Boolean isPdf,CellStyle style, CellStyle doubleStyle ){
 		Row row = sheet.createRow(rowIndex);

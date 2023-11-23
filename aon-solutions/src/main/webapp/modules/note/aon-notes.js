@@ -194,6 +194,14 @@ export class AonNotes extends AonElement {
     noteCardDate.id = note.getId() + "Date";
     noteCardDate.className = CSS.NOTE_DATE;
     noteCardDate.value = note.getDate();
+
+    if(note.getDate()){
+      let date = new Date();
+      let dateNote = new Date(note.getDate())
+      if(dateNote.getTime() < date.getTime()) noteCardDate.style.color = "red";
+      else noteCardDate.style.color = "#787885";
+    }
+
     noteCardBodyDiv.appendChild(noteCardDate);
 
     // EVENTS
@@ -207,10 +215,31 @@ export class AonNotes extends AonElement {
       await this.saveNote(note, aonDialogMenu, noteCard, noteCardTitleDiv, noteCardDate);
     });
 
-    noteCardDate.addEventListener("change", async ({ target }) => {
+    noteCardDate.addEventListener("focusout", async ({ target }) => {
       note.setDate(target.value);
+      
+      if(note.getDate()){
+        let date = new Date();
+        let dateNote = new Date(note.getDate())
+        if(dateNote.getTime() < date.getTime()) noteCardDate.style.color = "red";
+        else noteCardDate.style.color = "#787885";
+      }
+
       await this.saveNote(note, aonDialogMenu, noteCard, noteCardTitleDiv, noteCardDate);
     });
+
+    // noteCardDate.addEventListener("change", async ({ target }) => {
+    //   note.setDate(target.value);
+      
+    //   if(note.getDate()){
+    //     let date = new Date();
+    //     let dateNote = new Date(note.getDate())
+    //     if(dateNote.getTime() < date.getTime()) noteCardDate.style.color = "red";
+    //     else noteCardDate.style.color = "#787885";
+    //   }
+
+    //   await this.saveNote(note, aonDialogMenu, noteCard, noteCardTitleDiv, noteCardDate);
+    // });
 
     let aonDialogMenu = new AonDialogMenu();
     aonDialogMenu.id = note.getId()+ "Options";
