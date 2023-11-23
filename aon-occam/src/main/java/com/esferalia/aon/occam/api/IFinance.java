@@ -244,6 +244,12 @@ public interface IFinance {
 	LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 	void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings);
+	
+	// 	***********************************************
+	// 	*********** VENCIMIENTO NOMINAS ***************
+	// 	***********************************************
+	
+	void createSettleSalaries(CloseableAONContext ctx, Date date);
 
 }
 	

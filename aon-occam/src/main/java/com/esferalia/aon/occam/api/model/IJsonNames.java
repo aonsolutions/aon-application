@@ -291,6 +291,7 @@ public final class IJsonNames {
 	public static final String ITEM = "item";
 	public static final String ITEMS = "items";
 	public static final String ITEM_COMPOSITION = "itemComposition";
+	public static final String IS_PAYROLL = "isPayroll";
 
 	// ---------------------------------------------------------------------------------------------	[J] 
 	public static final String JSON = "json";

@@ -104,5 +104,13 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		fsa.getAccountFinances(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
 	}
 
+	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
+	
+	@Override
+	public void createSettleSalaries(String domainName, int domain, String user, Date date, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.createSettleSalaries(domainName, domain, user, date, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 	
 }

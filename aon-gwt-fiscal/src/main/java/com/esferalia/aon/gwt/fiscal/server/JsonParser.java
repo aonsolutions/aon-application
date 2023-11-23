@@ -599,6 +599,7 @@ public class JsonParser {
 		params.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE));	
 		params.setPayMethod(JsonUtils.getInteger(json, IJsonNames.PAY_METHOD));
 		params.setOrder(JsonUtils.getInteger(json, IJsonNames.ORDER_BY));
+		params.setIsPayroll(JsonUtils.getInt(json, IJsonNames.IS_PAYROLL) == 1);
 
 		return params;
 	}
