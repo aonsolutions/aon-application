@@ -316,8 +316,8 @@ public class SerfruitDAO {
                                 .and(f.getSerialDateProperty().isNull())
                                 .and(f.getSerialNumberProperty()
                                         .isNull()));
-        
-        Item item = new Item()
+        if(!AonStringUtils.isBlank(dp.getSscc())) {
+        	Item item = new Item()
                 .setDomain(product.getDomain())
                 .setProduct(product)
                 .setBarcode(null)
@@ -328,11 +328,10 @@ public class SerfruitDAO {
                 .setPackMeasurementTag(baseItem.getPackMeasurementTag())
                 .setPackUnits(baseItem.getPackUnits())
                 .setPackUnitsTag(baseItem.getPackUnitsTag())
-                .setStockUnitTag(baseItem.getStockUnitTag());
-        if(AonStringUtils.isBlank(dp.getSscc())) 
-        	item.setSerialNumber(dp.getSscc());
-        
-        return ItemDAO.save(ctx, item);
+                .setStockUnitTag(baseItem.getStockUnitTag())
+                .setSerialNumber(dp.getSscc());
+        	return ItemDAO.save(ctx, item);
+    	} else return baseItem;
     }
     
     public static Integer obtainDefaultVat(AONContext ctx) {
