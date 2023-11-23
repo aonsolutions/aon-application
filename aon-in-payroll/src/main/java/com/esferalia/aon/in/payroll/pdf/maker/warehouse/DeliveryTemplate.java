@@ -18,8 +18,6 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -27,6 +25,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -45,9 +45,11 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private PDPageContentStream contents;
 	private PDPage page;
 	
-	private CompanyFull company;
-	private Item item;
 	private Delivery delivery;
+	private Warehouse warehouse;
+	private CompanyFull company;
+	private CustomerFull customer;
+	private Item item;
 	private byte[] logo;
 	
 	private float x;
@@ -56,8 +58,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private float marginTop;
 	private float marginSide;
 	
-	private float marginBarCode;
-	private float heightBarCode;
 	private float separateElementsMargin;
 	private float marginText;
 	
@@ -69,15 +69,17 @@ public class DeliveryTemplate implements AutoCloseable  {
 
 	
 	
-	public DeliveryTemplate(Delivery delivery, CompanyFull company, byte[] logo) throws CanNotCreatePdfException {
+	public DeliveryTemplate(Delivery delivery, Warehouse warehouse, CompanyFull company, CustomerFull customer, byte[] logo) throws CanNotCreatePdfException {
 		try {
-			if (delivery == null) {
+			if (delivery == null || warehouse == null || company == null || customer == null) {
 				throw new CanNotCreatePdfException("No delivery");
 			}
-			
-			this.company = company;
-			this.logo = logo;
+
 			this.delivery = delivery;
+			this.warehouse = warehouse;
+			this.company = company;
+			this.customer = customer;
+			this.logo = logo;
 			
 			this.document = new PDDocument();
 			this.page = new PDPage(PDRectangle.A5);
@@ -88,9 +90,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 			this.marginSide = getPageWidth() * 0.036f;
 			this.separateElementsMargin = getPageWidth() * 0.075f;
 			this.marginText = getPageWidth() * 0.095f;
-			
-			this.marginBarCode = this.getPageWidth() * ((15f) / 148f);
-			this.heightBarCode = this.getPageHeight() * ((32f) / 210f);
 						
 			initialX = 0 + marginSide*2;
 			initialY = getPageHeight() - marginTop;
@@ -105,22 +104,30 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
-	private void draw() throws Exception {
+	private void draw() throws IOException {
 		x = initialX;
 		y = initialY;
 		
 		drawCompany();
 		drawReferenceAndDate();
 		drawCustomer();
+		drawDestinyAddressTitle();
 		drawDestinyAddress();
 		drawDeliveryTitle();
 		drawOriginInfo();
+		drawDelivery();
 	}
 	
 	private void drawCompany() throws IOException {
-		this.drawLogo();
-		this.drawCompanyName();
-		this.drawCompanyAddressAndMedia();
+		drawLogo();
+		drawCompanyName();
+		drawCompanyAddress();
+		drawCompanyMedia();
+	}
+	
+	private void drawDelivery() throws IOException {
+		drawDeliveryTableFirstRow();
+		drawDeliveryTableSecondRow();
 	}
 	
 	private void drawLogo() throws IOException {
@@ -140,6 +147,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private void drawCompanyName() throws IOException {
 		
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
+		y -= TITLEFONTSIZE;
 		
 		final float nameWidth = maxLogoWidth*2;
 				
@@ -148,15 +156,13 @@ public class DeliveryTemplate implements AutoCloseable  {
 		List<String> nameLines = PDFToolkit.getLines(companyName, nameWidth, DEFAULT_BOLD_FONT, TITLEFONTSIZE);
 		
 		for (String line : nameLines) {
-			this.y -= TITLEFONTSIZE;
 			PDFToolkit.drawText(this.contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+			y -= TITLEFONTSIZE;
 		}
 	}
 	
-	private void drawCompanyAddressAndMedia() throws IOException {
-		this.y = initialY - TITLEFONTSIZE - TITLEFONTSIZE;
-		
-		// address
+	private void drawCompanyAddress() throws IOException {
+		y = initialY - TITLEFONTSIZE - TITLEFONTSIZE;
 		
 		RegistryAddress mainAddress = company.getMainAddress();
 		
@@ -166,21 +172,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		String province = StringUtils.EMPTY;
 		
 		if (mainAddress != null) {
-			if (mainAddress.getFullAddress() != null) {
-				fullAddress = mainAddress.getFullAddress();
-			}
-			
-			if (mainAddress.getZip() != null) {
-				zip = mainAddress.getZip();
-			}
-			
-			if (mainAddress.getCity() != null) {
-				city = mainAddress.getCity();
-			}
-			
-			if (mainAddress.getProvince() != null) {
-				province = mainAddress.getProvince();
-			}
+			fullAddress = (mainAddress.getFullAddress() != null) ? mainAddress.getFullAddress() : StringUtils.EMPTY;
+			zip = (mainAddress.getZip() != null) ? mainAddress.getZip() : StringUtils.EMPTY;
+			city = (mainAddress.getCity() != null) ? mainAddress.getCity() : StringUtils.EMPTY;
+			province = (mainAddress.getProvince() != null) ? mainAddress.getProvince() : StringUtils.EMPTY;
 		}
 		
 		String zipCityProvince = zip + " " + city + " (" + province.toUpperCase() + ")";
@@ -199,8 +194,9 @@ public class DeliveryTemplate implements AutoCloseable  {
 			this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
 			PDFToolkit.drawText(this.contents, zipCityProvince, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
 		}
-		
-		// media
+	}
+	
+	private void drawCompanyMedia() throws IOException {
 		
 		List<RegistryMedia> medias = company.getMedias();
 		
@@ -212,21 +208,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		if (medias != null) {
 			for (RegistryMedia media : medias) {
 				if (media.getMedia() != null && media.getValue() != null) {
-					if (media.getMedia().equals(MediaType.FIXED_PHONE)) {
-						phone = media.getValue();
-					}
-					
-					if (media.getMedia().equals(MediaType.EMAIL)) {
-						email = media.getValue();
-					}
-					
-					if (media.getMedia().equals(MediaType.FAX)) {
-						fax = media.getValue();
-					}
-					
-					if (media.getMedia().equals(MediaType.WEB)) {
-						web = media.getValue();
-					}
+					phone = (media.getMedia().equals(MediaType.FIXED_PHONE)) ? media.getValue() : StringUtils.EMPTY;
+					email = (media.getMedia().equals(MediaType.EMAIL)) ? media.getValue() : StringUtils.EMPTY;
+					fax   = (media.getMedia().equals(MediaType.FAX)) ? media.getValue() : StringUtils.EMPTY;
+					web   = (media.getMedia().equals(MediaType.WEB)) ? media.getValue() : StringUtils.EMPTY;
 				}
 			}
 		}
@@ -234,19 +219,19 @@ public class DeliveryTemplate implements AutoCloseable  {
 		String telephoneEmail = "t: " + phone + " - e: " + email ;
 		String faxWeb = "f: " + fax + " w: " + web;
 		
-		if (!AonStringUtils.isBlank(telephoneEmail)) {
-			this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-			PDFToolkit.drawText(this.contents, telephoneEmail, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
+		if (!AonStringUtils.isBlank(phone) && !AonStringUtils.isBlank(email)) {
+			y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
+			PDFToolkit.drawText(this.contents, telephoneEmail, x, y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
 		}
 		
-		if (!AonStringUtils.isBlank(faxWeb)) {
-			this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-			PDFToolkit.drawText(this.contents, faxWeb, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
+		if (!AonStringUtils.isBlank(fax) && !AonStringUtils.isBlank(web)) {
+			y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
+			PDFToolkit.drawText(this.contents, faxWeb, x, y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
 		}
 	}
 	
 	private void drawReferenceAndDate() throws IOException {
-		this.x = (float) (maxLogoWidth*3.5 + marginText);
+		this.x = (float) (maxLogoWidth*3.80 + marginText);
 		this.y = initialY - TITLEFONTSIZE;
 		
 		String reference = delivery.getReferenceCode();
@@ -265,37 +250,75 @@ public class DeliveryTemplate implements AutoCloseable  {
 	}
 	
 	private void drawCustomer() throws IOException {
-		this.x = initialX;
-		this.y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
+		x = initialX;
+		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
+		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1 + TEXTFONTSIZE;
 		
-		Customer customer = delivery.getCustomer();
-	
+		List<RegistryMedia> medias = company.getMedias();
+		
 		String name = "Cliente: ";
 		String phone = "Tel\u00E9fono: ";
-		String cellPhone = "M\u00F3vil: ";
+		String cellphone = "M\u00F3vil: ";
 		
-		if (customer != null) {
-			if (customer.getName() != null) {
-				name = "Cliente: " + customer.getName();
+		if (customer.getRegistry() != null && customer.getRegistry().getName() != null) {
+			name = "Cliente: " + customer.getRegistry().getName();
+		}
+		
+		if (medias != null) {
+			for (RegistryMedia media : medias) {
+				if (media.getMedia() != null && media.getValue() != null) {
+					String phoneValue = (media.getMedia().equals(MediaType.FIXED_PHONE)) ? media.getValue() : StringUtils.EMPTY;
+					String cellphoneValue = (media.getMedia().equals(MediaType.CELLULAR)) ? media.getValue() : StringUtils.EMPTY;
+					phone = phone.concat(phoneValue);
+					cellphone = cellphone.concat(cellphoneValue);
+				}
 			}
 		}
 		
-		this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1 + TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, name, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);			
+		final float nameWidth = (float) (maxLogoWidth*1.25);
 		
-		this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, phone, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);	
+		List<String> nameLines = PDFToolkit.getLines(name, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+
+		for (String line : nameLines) {
+			y -= TEXTFONTSIZE + 1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+		}
 		
-		this.y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, cellPhone, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);	
+		y -= TEXTFONTSIZE + 1;
+		
+		nameLines = PDFToolkit.getLines(phone, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+
+		for (String line : nameLines) {
+			y -= TEXTFONTSIZE + 	1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+		}
+		
+		y -= TEXTFONTSIZE + 1;
+		
+		nameLines = PDFToolkit.getLines(cellphone, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+
+		for (String line : nameLines) {
+			y -= TEXTFONTSIZE + 	1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+		}
 	}
 	
-	private void drawDestinyAddress() throws IOException {
+	private void drawDestinyAddressTitle() throws IOException {
 		x = (initialX + getPageWidth()/2);
 		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
 		
 		String title = "DIRECCI\u00D3N DE ENTREGA";
-
+		
+		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
+		PDFToolkit.drawText(this.contents, title, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_BOLD_FONT, TITLEFONTSIZE);
+		
+	}
+	
+	private void drawDestinyAddress() throws IOException {
+		x = (float) (initialX + getPageWidth()/3.15 + marginSide);
+		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
+		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1 + TEXTFONTSIZE;
+		
 		String address = delivery.getShippingAlternativeAddress();
 		String contact = delivery.getShippingContact();
 		String zip = delivery.getShippingAlternativeZip();
@@ -315,45 +338,40 @@ public class DeliveryTemplate implements AutoCloseable  {
 		city = (city == null) ? StringUtils.EMPTY : city;
 
 		String destinatary = "Destinatario: " + contact;
-		String address1    = "Direcci\u00F3n: " + address;
-		String address2;
+		address = "Direcci\u00F3n: " + address + " " + zip + " " + city + " (" + province + ")";
 		
-		if (province == null) {
-			address2 = "                 " + zip + " " + city + " ()";
-		} else {
-			address2 = "                 " + zip + " " + city + " (" + province.toUpperCase() + ")";
+		final float nameWidth = (maxLogoWidth*3);
+		
+		List<String> nameLines = PDFToolkit.getLines(destinatary, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+
+		for (String line : nameLines) {
+			y -= TEXTFONTSIZE + 1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
 		}
 		
-		address2 = ((zip == null || zip.isEmpty()) && (city == null || city.isEmpty())) ? StringUtils.EMPTY : address2;
+		y -= TEXTFONTSIZE + 1;
 		
-		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, title, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_BOLD_FONT, TITLEFONTSIZE);
-		
-		x = (float) (initialX + getPageWidth()/3.15 + marginSide);
-		
-		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, destinatary, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);	
-		
-		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, address1, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);	
-		
-		y -= TEXTFONTSIZE + TEXTFONTSIZE + 1;
-		PDFToolkit.drawText(this.contents, address2, this.x, this.y, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE);
+		nameLines = PDFToolkit.getLines(address, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+
+		for (String line : nameLines) {
+			y -= TEXTFONTSIZE + 	1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+		}
 	}
 	
 	private void drawDeliveryTitle() throws IOException {
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
 		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE);
 		
-		final float nameWidth = getPageWidth();
+		final float nameWidth = (float) (getPageWidth()/3.25);
 				
 		String albaranDeEntrega = AonStringUtils.trimToEmpty("ALBAR\u00C1N DE ENTREGA");
 		
 		List<String> nameLines = PDFToolkit.getLines(albaranDeEntrega, nameWidth, DEFAULT_BOLD_FONT, TITLEFONTSIZE);
 		
 		for (String line : nameLines) {
-			this.y -= TITLEFONTSIZE;
-			PDFToolkit.drawText(this.contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_BOLD_FONT,EXTRATITLEFONTSIZE);
+			this.y -= TEXTFONTSIZE + 1;
+			PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_BOLD_FONT,EXTRATITLEFONTSIZE);
 		}
 	}
 	
@@ -382,7 +400,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 		String workplace = "Centro de Trabajo: ";
 		
 		if (delivery.getWorkplace() != null && delivery.getWorkplace().getDescription() != null) {
-			workplace = "Centro de Trabajo: " + delivery.getWorkplace().getDescription();
+			workplace = "Centro de Trabajo: " + warehouse.getName();
 		}
 		
 		nameLines = PDFToolkit.getLines(workplace, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
@@ -392,7 +410,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 			this.y -= TEXTFONTSIZE + 1;
 		}
 		
-		// Workplace
+		// Store
 		x += maxLogoWidth*2 + separateElementsMargin;
 		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE*2 - EXTRATITLEFONTSIZE - TITLEFONTSIZE);
 		
@@ -400,8 +418,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 		String store = "Almac\u00E9n: ";
 		
-		if (delivery.getWorkplace() != null && delivery.getWorkplace().getDescription() != null) {
-			store = "Almac\u00E9n: " + delivery.getWorkplace().getDescription();
+		if (delivery != null) {
+			store = "Almac\u00E9n: ";
 		}
 		
 		nameLines = PDFToolkit.getLines(store, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
@@ -410,7 +428,54 @@ public class DeliveryTemplate implements AutoCloseable  {
 			PDFToolkit.drawText(this.contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
 			this.y -= TEXTFONTSIZE + 1;
 		}
+	}
 	
+	private void drawDeliveryTableFirstRow() throws IOException {
+		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE*2 - EXTRATITLEFONTSIZE - TITLEFONTSIZE - EXTRATITLEFONTSIZE*3 - 1);
+		float height = this.getPageWidth()-this.marginSide*4;
+		PDFToolkit.drawBox(contents, initialX, y, height, 12, PdfColors.GRAY);
+		
+		String descripcion = "Descripci\u00F3n";
+		y += (float) (3.5);
+				
+		PDFToolkit.drawText(contents,descripcion,initialX,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		
+		String cantidad = "Cantidad";
+		x = (float) (maxLogoWidth*3.25);
+		
+		PDFToolkit.drawText(contents,cantidad,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+
+		String precio = "Precio";
+		x += (float) (maxLogoWidth*0.75);
+		
+		PDFToolkit.drawText(contents,precio,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		
+		String importe = "Importe";
+		x += (maxLogoWidth);
+		
+		PDFToolkit.drawText(contents,importe,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+	}
+	
+	private void drawDeliveryTableSecondRow() throws IOException {
+		x = initialX;
+		y -= TEXTFONTSIZE + TEXTFONTSIZE;
+		
+		List<DeliveryDetail> details = delivery.getDetails();
+		
+		String order = "Pedido: ";
+				
+		float nameWidth = (maxLogoWidth*3);
+				
+		if (delivery != null) {
+			order = "Pedido: ";
+		}
+		
+		List<String> nameLines = PDFToolkit.getLines(order, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+		
+		for (String line : nameLines) {
+			PDFToolkit.drawText(this.contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+			this.y -= TEXTFONTSIZE + 1;
+		}
 	}
 	
 	private float getPageWidth() {
