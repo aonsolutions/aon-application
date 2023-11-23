@@ -251,7 +251,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.CONCEPT  	 	 ,AonStringUtils.isBlank(params.getConcept())? JSON_NULL : new JSONString( params.getConcept()));
 		json.put(IRequestParamsNames.REFERENCE_CODE,AonStringUtils.isBlank(params.getReferenceCode())? JSON_NULL : new JSONString( params.getReferenceCode()));
 		json.put(IRequestParamsNames.PAY_METHOD	,params.getPayMethod() 		== null? JSON_NULL : new JSONNumber( params.getPayMethod()));		
-		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
+		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));	
+		json.put("isPayroll"		,	new JSONNumber( params.isPayroll() ? 1 : 0 ));	
 		return json.toString();
 	}
 

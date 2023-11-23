@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.CraBatchResetDateUpdate;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
 import net.aonsolutions.db.up2date.warehouse.DeliveryInfoInsert;
@@ -398,7 +399,8 @@ public class Up2Date {
 //	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
 //	    DeliveryInfoCreation.DELIVERY_INFO_CREATION,
 //	    DeliveryInfoInsert.DELIVERY_INFO_INSERT,
-	    SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN
+	    SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+      CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE
 	    
 	};
 

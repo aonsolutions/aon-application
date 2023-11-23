@@ -35,5 +35,8 @@ public interface FinanceService extends RemoteService {
 	
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit) throws AonCoreException;
 	
+	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
+	void createSettleSalaries(String domainName, int domain, String user, Date date) throws AonCoreException;
+	
 
 }

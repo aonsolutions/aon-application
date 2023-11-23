@@ -210,6 +210,7 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String FS_PAY_METHOD_ENTRY_POINT = "PayMethod";
 	private static final String FS_FINANCE_ENTRY_POINT = "Finance";
+	private static final String FS_FINANCE_PAYROLL_ENTRY_POINT = "FinancePayroll";
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
@@ -466,6 +467,22 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					FinanceModule financeModule = new FinanceModule();
+					financeModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FINANCE_PAYROLL_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FinanceModule financeModule = new FinanceModule();
+					financeModule.setIsPayroll(true);
 					financeModule.onModuleLoad();
 				}
 				

@@ -921,6 +921,9 @@ public class MainCRA extends MainEntryPoint {
 	public void onFilterDatesChange(ChangeEvent event) {
 		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()),
 				Integer.parseInt(yearTillT.getSelectedValue()));
+		findingDateCRA.setHours(0);
+		findingDateCRA.setMinutes(0);
+		findingDateCRA.setSeconds(0);
 		showLoading("Obteniendo CRAs generados...");
 		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
 			filterCRAs();
@@ -1044,6 +1047,9 @@ public class MainCRA extends MainEntryPoint {
 
 	private void onListCras() {
 		showLoading("Obteniendo CRAs generados...");
+		findingDateCRA.setHours(0);
+		findingDateCRA.setMinutes(0);
+		findingDateCRA.setSeconds(0);
 		this.mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
 			setDateLBSelected();
 			initCRATable();
@@ -1104,7 +1110,27 @@ public class MainCRA extends MainEntryPoint {
 
 						@Override
 						public void onAccept() {
-							createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList, p -> {
+								createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+							}, noSalariesMessage -> {
+								
+								AonDialog dialog = new AonDialog("AVISO: CRA",
+										new HTML(noSalariesMessage.getMessage()
+												+ "\u00BFDesea generar el fichero CRA sin incluir este trabajador?"));
+
+								dialog.confirm(new AonAcceptDialogCallback() {
+
+									@Override
+									public void onCancel() {
+										// Nothing to do here
+									}
+
+									@Override
+									public void onAccept() {
+										createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+									}
+								});
+							});
 						}
 					});
 

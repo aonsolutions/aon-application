@@ -48,6 +48,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	
 	private ListBox confidential;
 	private ListBox payment;
+	private Label payroll;
 	private AonAccountingRegistryBox registryBox;
 	private AonDoubleBox amount;
 	private CheckBox nearbyNumbers;
@@ -63,12 +64,16 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
+	
+	private boolean isPayroll = false;
 
 	public static interface IFinancePanelCallback {
 		boolean isSelected( Finance finance);
 	}
 	
-	public FinanceModuleSearchPanel(final FinanceModuleOptions opt) {
+	public FinanceModuleSearchPanel(final FinanceModuleOptions opt, boolean isPayroll) {
+		
+		this.isPayroll = isPayroll;
 		
 		setStyleName(AON.CSS.aonSearchPanel());
 		addStyleName(AON.CSS.aonScrollArea());
@@ -247,6 +252,8 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			}
 		});
 		
+		payroll = new Label("N\u00f3minas");
+		
 		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
 		cleanButton.addClickHandler(new ClickHandler() {
@@ -356,7 +363,8 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		++row;
 		col = 0;
 		paymentPanel = new FlowPanel();
-		paymentPanel.add(payment);
+		paymentPanel.addStyleName(AON.CSS.aonItemFlex());
+		paymentPanel.add(this.isPayroll ? payroll : payment);
 		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
 		tab.setWidget(row, col, new Label(AON.MSG.type()));
 		++col;
@@ -440,8 +448,8 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		concept.setValue(null);
 		pending.setValue(true);
 		batched.setValue(false);
-		returned.setValue(true);
-		paid.setValue(false);
+		returned.setValue(this.isPayroll ? false : true);
+		paid.setValue(this.isPayroll ? true : false);
 		settled.setValue(false);
 	}
 	
@@ -474,6 +482,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			.setSettled(settled.getValue())
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setHasConfidentialityRole(confidentiality)
+			.setIsPayroll(this.isPayroll)
 			;
 	}
 	
