@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.CraBatchResetDateUpdate;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
 import net.aonsolutions.db.up2date.warehouse.DeliveryInfoInsert;
 import net.aonsolutions.db.up2date.warehouse.SalesDetailAddDeliveryColumn;
@@ -354,7 +355,7 @@ public class Up2Date {
 	    // MEIUpdate.MEIUPDATE,
 	    // Art1512023Update.ART1512023UPDATE,
 	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
-        // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+		// TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
 	    // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
@@ -371,7 +372,8 @@ public class Up2Date {
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
 	    // NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
-		RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
+	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
+	    RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
 
 		
 	    // ----------------------------------------------------------------
@@ -395,12 +397,12 @@ public class Up2Date {
 	    // InsertIAE1516.INSERT_IAE_1516,
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
-	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-//	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-//	    DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-//	    DeliveryInfoInsert.DELIVERY_INFO_INSERT,
-	    SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
-      CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE
+	    // AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
+	    // RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    // DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    // DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    // SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE
 	    
 	};
 
