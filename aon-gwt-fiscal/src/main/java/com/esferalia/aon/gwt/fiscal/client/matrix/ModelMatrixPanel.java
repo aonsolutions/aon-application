@@ -62,6 +62,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	
 	private FiscalMatrixParams params;
 	private AonSearchPanelButton refreshButton;
+	private boolean isBetaEnabled; // FALTA - POR AHORA PARA PODER MOSTRAR DETERMINADOS DATOS SI EL DOMINIO ES BETA
 	
 	private ArrayList<String> selected = new ArrayList<>();
 	private ArrayList<CheckBox> selectedCheckBox = new ArrayList<>();
@@ -71,6 +72,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		
 		this.params = params;
 		this.refreshButton = refreshButton;
+		this.isBetaEnabled = options.getConfiguration().isBetaEnabled();
 		
 		final PopupPanel pop = new PopupPanel(false, true);
 		if (!options.isCompactMode()) {
@@ -219,6 +221,7 @@ public class ModelMatrixPanel extends FlowPanel {
 								JsFiscalMenuItem firstItem = null;
 								for (JsFiscalMenuItem it : items) {
 									if (it != null) {
+										//LOGGER.info("it = " + it.getModel() + " - " + it.getDeclarationResultType() + " - " +  it.getIban() + " - " +  it.getNrc());
 										firstItem = it;
 										break;
 									}
@@ -249,6 +252,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	private void fillPeriodTable(MatrixModuleOptions options, FiscalModel fm, AonDisplayTable periodTable, List<JsFiscalMenuItem> items) {
 		for (JsFiscalMenuItem model : items) {
 			if (model != null ) {
+//				LOGGER.info("model = " + model.getModel() + " - " + model.getDeclarationResultType() + " - " +  model.getIban() + " - " +  model.getNrc());
 				FiscalStatus status = FiscalStatus.safeValueOf( model.getStatus() );
 				if (status != FiscalStatus.MISSING) {
 					Period period = Period.valueOf(model.getPeriod());					
@@ -262,60 +266,65 @@ public class ModelMatrixPanel extends FlowPanel {
 						cloned.setId(null);
 					}
 					cloned.setStatus(status);
-					cloned.setPeriod(period);
-					// FALTA - CREO QUE ES AQUI DONDE TENGO QUE AÑADIR EL RESULTADO, EL IBAN, EL NRC, ....
+					cloned.setPeriod(period);					
+					cloned.setDeclarationResult(model.getResult());
+					cloned.setDeclarationResultType(FiscalModelDeclarationType.safeNameOf(model.getDeclarationResultType()));
+					cloned.setIban(model.getIban());
+					cloned.setNrc(model.getNrc());
+					
 					paintViewModelCell(options, cell, cloned );
 					
-					// FALTA - SI SOLO UN PERIODO AÑADIR CELDA CON RESULTADO, TIPO DECLARACION, IBAN/NRC Y CHECK PARA MARCAR (SI HABILITADO PRESENTACION)
-					if (params.getPeriod() != null) {
+					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
+					// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
+					if (params.getPeriod() != null && options.getConfiguration().isBetaEnabled()) {
 						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
 						if (params.getPeriod() != Period.YEAR) {
-							String iban_nrc = ""; 
+							Label ibanNrcLabel = new Label();
 							if (cloned.getDeclarationResultType() != null) {
 								if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
-									iban_nrc = cloned.getNrc();										
-								} else {
-									
-									iban_nrc = cloned.getIban();
+									ibanNrcLabel.setText(cloned.getNrc());
+								} else {									
+									ibanNrcLabel.setText(cloned.getIban());
+								}								
+								// Si está habilitada la presentación múltiple, comprobar si falta IBAN o NRC
+								if (params.isMultiplePresentation()) {
+									if (AonStringUtils.isBlank(ibanNrcLabel.getText())) {
+										if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
+											ibanNrcLabel.setText("FALTA NRC");
+											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+										} else if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.BANK || cloned.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) {
+											ibanNrcLabel.setText("FALTA IBAN");
+											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+										}
+									}									 
 								}
-								// FALTA - SI ESTA HABILITADA LA PRESENTACION COMPROBAR SI FALTA IBAN O NRC							
 							}	
-							// FALTA - MOSTRAR RESULTADOS DEL MODELO POR AHORA RESULTADOS FIJOS A VER COMO QUEDA
-							cloned.setDeclarationResult(1234.56);
-							cloned.setDeclarationResultType(FiscalModelDeclarationType.PAYBACK);
-							iban_nrc = "ES9912345678901234567890";
-							row.addCell( new Label( cloned.getDeclarationResult() == null ? "" : AON.FMT.format(cloned.getDeclarationResult()) ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextRight() )
-							   .addCell( new Label( cloned.getDeclarationResultType() == null ? "" : cloned.getDeclarationResultType().getDescription() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft() )
-							   .addCell( new Label(iban_nrc), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft() );
+							row.addCell( new Label( cloned.getDeclarationResult() == null ? "" : AON.FMT.format(cloned.getDeclarationResult()) ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextRight(), AON.CSS.aonWidth80(), AON.CSS.aonPaddingRight() )
+							   .addCell( new Label( cloned.getDeclarationResultType() == null ? "" : cloned.getDeclarationResultType().getDescription() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170())
+							   .addCell( ibanNrcLabel, AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170() );
 						}
 						
 						// Si está habilitada la presentacion múltiple, se añade un checkbox para poder seleccionar la fila
 						if (params.isMultiplePresentation()) {
 							CheckBox markForSend = new CheckBox();
 							markForSend.setValue(options.isSelected(cloned));
-							if (options.isSelected(cloned)) {
-								String modelAndId = cloned.getModel().toString() + "_" + cloned.getId().toString();
-								selected.add(modelAndId);
+							if (options.isSelected(cloned)) {								
+								selected.add(options.getSelectedKey(cloned));
 							} else {
 								markAllForSend.setValue(false,false);
 							}
-							//markForSend.addClickHandler( event -> {
 							markForSend.addValueChangeHandler( event -> {
 								if (markForSend.getValue()) {
 									options.addSelected(cloned);
-									markAllForSend.setValue(true,false);
-									selectedCheckBox.forEach( cb -> {
-										if (!cb.getValue()) 
-											markAllForSend.setValue(false,false);  	
-									});
+									if (options.getSelected().size() == selectedCheckBox.size())
+										markAllForSend.setValue(true,false);										
 								} else {
 									options.removeSelected(cloned);
 									markAllForSend.setValue(false,false);
 								}
 							});							
-							row.addCell(markForSend, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
+							row.addCell(markForSend, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
 							selectedCheckBox.add(markForSend);
-							//row.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1());
 						}						
 					}
 					
@@ -326,8 +335,6 @@ public class ModelMatrixPanel extends FlowPanel {
 
 	private void paintNewModelCell(MatrixModuleOptions options, AonDisplayTableCell cell, IFiscalModel model) {
 		cell.clear();
-//		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-//		cell.add(addButton);
 		cell.addStyleName( AON.CSS.aonBorderBottom() );
 		cell.addStyleName( AON.CSS.aonTextCenter() );
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
@@ -344,8 +351,7 @@ public class ModelMatrixPanel extends FlowPanel {
 					LOGGER.info("Change " + changed.getStatus().getName());
 					refresh( changed );
 				}
-	
-	
+		
 				@Override
 				public void onRemove(IFiscalModel removed) {
 					LOGGER.info("Remove " + removed.getStatus().getName());
@@ -386,6 +392,12 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.clear();
 		cell.add(focusPanel);
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+		if (params.getPeriod() != null) {
+			if (params.getPeriod().isMonthPeriod()) 			
+				cell.getElement().getStyle().setWidth(40, Unit.PX);
+			else 
+				cell.getElement().getStyle().setWidth(60, Unit.PX);
+		}
 		focusPanel.addClickHandler( event -> model.getModel().visit(
 			new MatrixViewVisitor(options,model, new AonModuleCallback<IFiscalModel>() {
 
@@ -396,7 +408,6 @@ public class ModelMatrixPanel extends FlowPanel {
 				LOGGER.info("Change " + changed.getStatus().getName());
 				refresh( changed );
 			}
-
 
 			@Override
 			public void onRemove(IFiscalModel removed) {
@@ -416,11 +427,12 @@ public class ModelMatrixPanel extends FlowPanel {
 			}
 			
 			private void refresh(IFiscalModel model) {
-				if (params.getStatus() == null) {
+				if (params.getPeriod() != null) {
+					refreshButton.click();
+				}
+				else if (params.getStatus() == null) {
 					cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
 				} else if (model.getStatus() != params.getStatus()) {
-					// FALTA
-					//options.removeSelected(model);
 					refreshButton.click();
 				}
 			}
@@ -512,8 +524,8 @@ public class ModelMatrixPanel extends FlowPanel {
 			if (params.getPeriod() == null) {
 				Arrays.stream(MONTHS).forEach( m -> monthsRow.addCell(new InlineLabel( m ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter()) );				
 			} else {
-				// Si filtrando por solo un periodo, se muestra solo el mes por el que se filtra 
-				monthsRow.addCell(new InlineLabel( MONTHS[params.getPeriod().value()] ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
+				// Si filtrando por solo un mes, se muestra solo el mes por el que se filtra 
+				monthsRow.addCell(new InlineLabel( MONTHS[params.getPeriod().value()] ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth40());
 				addOnePeriodCells(monthsRow);
 			}
 		}
@@ -532,14 +544,13 @@ public class ModelMatrixPanel extends FlowPanel {
 				Arrays.stream(QUARS).forEach( q -> quarsRow.addCell(new InlineLabel( q ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(),AON.CSS.aonBold()) );
 			} else {
 				// Si filtrando por solo un trimestre, se muestra solo el trimestre por el que se filtra
-				quarsRow.addCell(new InlineLabel( QUARS[params.getPeriod().value()-Period.T1.value()] ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter());
+				quarsRow.addCell(new InlineLabel( QUARS[params.getPeriod().value()-Period.T1.value()] ), AON.CSS.aonBorderBottom(),AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
 				addOnePeriodCells(quarsRow);
 			}
 		}
 		return quarsTable;
 	}
 	
-	// FALTA - MOSTRAR LA CABECERA CUANDO ES ANUAL Y PRESENTACION MULTIPLE
 	private AonDisplayTable getYearlyTable() {
 		AonDisplayTable table = new AonDisplayTable();
 		table.addStyleName(AON.CSS.aonWidthAll());
@@ -547,35 +558,32 @@ public class ModelMatrixPanel extends FlowPanel {
 		AonDisplayTableRow row = table.addRow();
 		row.addStyleName(AON.CSS.aonFontSmaller());
 		row.addStyleName(AON.CSS.aonBold());
-		row.addCell(new InlineLabel("ANUAL"), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
+		row.addCell(new InlineLabel("ANUAL"), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
 		addOnePeriodCells(row);
 		return table;
 	}
 	
 	private void addOnePeriodCells(AonDisplayTableRow row) {
-		if (params.getPeriod() != Period.YEAR) {
-			row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter())
-			   .addCell(new InlineLabel( AON.MSG.type() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter())
-               .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
+		// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
+		if (isBetaEnabled) {
+			if (params.getPeriod() != Period.YEAR) {
+				row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
+				   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
+	               .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170());
+			}
+			if (params.isMultiplePresentation()) {					
+				markAllForSend = new CheckBox();			 
+				markAllForSend.setValue(true);
+				markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
+				markAllForSend.addClickHandler( event -> {
+					selectedCheckBox.forEach( cb -> cb.setValue(markAllForSend.getValue(),true) );
+				});
+				AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
+				table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
+				table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						
+				row.addCell(table, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
+			}	
 		}
-		if (params.isMultiplePresentation()) {					
-			markAllForSend = new CheckBox();			 
-			markAllForSend.setValue(true);
-			//markAllForSend.setText("Presentar");
-			markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
-			markAllForSend.addClickHandler( event -> {
-				// FALTA - RECORRER TODOS LOS CHECKBOX Y MARCARLOS O DESMARCARLOS
-				selectedCheckBox.forEach( cb -> cb.setValue(markAllForSend.getValue(),true) );
-			});
-			//row.addCell(new InlineLabel( "Presentar" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
-			//row.addCell(markAllForSend, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
-			// FALTA - VER SI SE PUEDE PONER DIRECTAMENTE EN EL CHECKBOX EL TEXTO ARRIBA Y EL CHECK ABAJO
-			AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
-			table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
-			table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						
-			row.addCell(table, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
-			//row.addCell(new InlineLabel(), AON.CSS.aonFlexGrow1());
-		}	
 	}
 
 	private Label getEmptyLabel() {
@@ -650,7 +658,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		Window.alert("ERROR:" + message);
 	}
 
-	private FiscalModel cloneModel( IFiscalModel fm) {
+	private FiscalModel cloneModel(IFiscalModel fm) {
 		return new FiscalModel()
 			.setYear(fm.getYear())
 			.setAdministration(fm.getAdministration())
@@ -659,8 +667,6 @@ public class ModelMatrixPanel extends FlowPanel {
 			.setStatus( fm.getStatus() )
 			.setDomain(fm.getDomain())
 			.setDomainName(fm.getDomainName())
-			.setDeclarationResult(fm.getDeclarationResult())
-			.setDeclarationResultType(fm.getDeclarationResultType())
 			;
 	}
 

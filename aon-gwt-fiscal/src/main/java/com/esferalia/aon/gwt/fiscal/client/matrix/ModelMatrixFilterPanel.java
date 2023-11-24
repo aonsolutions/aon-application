@@ -92,10 +92,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
-		year.addChangeHandler(event -> { 
-			//options.getSelected().clear();  
-			fireValueChangeEvent(); 
-		});
+		year.addChangeHandler(event -> fireValueChangeEvent());
 		
 		InlineLabel modelLabel = new InlineLabel(AON.MSG.fiscalModels());
 		modelLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -107,10 +104,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
-		model.addChangeHandler(event -> {
-			//options.getSelected().clear();
-			fireValueChangeEvent(); 
-		});
+		model.addChangeHandler(event -> fireValueChangeEvent());
 
 		InlineLabel declaredLabel = new InlineLabel(AON.MSG.declared());
 		declaredLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -120,7 +114,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 		InlineLabel admonLabel = new InlineLabel(AON.MSG.administration());
 		admonLabel.setStyleName(AON.CSS.aonMarginRight());
-        // FALTA - COGER ADMINISTRACION POR DEFECTO SI ES POSIBLE
+		
 		admon = new ListBox();
 		admon.setStyleName(AON.CSS.aonMarginRight());
 		admon.addItem(" TODAS ", "");
@@ -139,26 +133,20 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
 				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
 			}
-			scopeBox.addChangeHandler(event -> {
-				//options.getSelected().clear();
-				fireValueChangeEvent();
-			});
+			scopeBox.addChangeHandler(event -> fireValueChangeEvent());
 		}
 
 		showConfigurated = new CheckBox();
 		showConfigurated.setValue(false);
 		showConfigurated.setStyleName(AON.CSS.aonMarginRight());
 		showConfigurated.setText("Mostrar los configurados en par\u00E1metros fiscales");
-		showConfigurated.addClickHandler( event -> fireValueChangeEvent());
+		showConfigurated.addClickHandler(event -> fireValueChangeEvent());
 		
 		showMadeModels = new CheckBox();
 		showMadeModels.setValue(true);
 		showMadeModels.setStyleName(AON.CSS.aonMarginRight());
 		showMadeModels.setText("Mostrar los realizados");
-		showMadeModels.addClickHandler( event -> {
-			//options.getSelected().clear();
-			fireValueChangeEvent(); 
-		});
+		showMadeModels.addClickHandler(event -> fireValueChangeEvent());
 		
 		// Botón refrescar
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
@@ -197,18 +185,17 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		for (Period p : Period.values()) {
 			periodBox.addItem(p.getDescription());
 		}
-		periodBox.addChangeHandler(event -> {
-			//options.getSelected().clear();
-			fireValueChangeEvent();
-		});
+		periodBox.addChangeHandler(event -> fireValueChangeEvent());
 		
-		// Habilitar presentacion múltiple
+		// Check para habilitar presentacion múltiple
 		multiplePresentation = new CheckBox();
+		multiplePresentation.setVisible(options.getConfiguration().isBetaEnabled()); // FALTA - POR AHORA SOLO APARECE EN DOMINIOS BETA 		
 		multiplePresentation.setValue(false);
 		multiplePresentation.setEnabled(false);
 		multiplePresentation.setStyleName(AON.CSS.aonMarginRight());
-		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");
-		multiplePresentation.addClickHandler( event -> fireValueChangeEvent());
+		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");		
+		multiplePresentation.setTitle("Esta casilla solo se puede marcar si se filtra por Administraci\u00F3n Territorio Com\u00FAn, Estado Finalizado y un solo Periodo.");
+		multiplePresentation.addClickHandler(event -> fireValueChangeEvent());
 		
 		if (!options.isCompactMode()) {
 			addRow()
@@ -232,8 +219,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				.addCell(periodLabel,AON.CSS.aonTableLabel())
 				.addCell(periodBox)
 				.addCell(showMadeModels)
-//				.addCell(refreshButton)
-//				.addCell(new InlineLabel())
 				.addCell(new AonDisplayTable().addRow().addCell(refreshButton).addCell(sendButton))
 				.addCell(multiplePresentation)
 				.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
@@ -283,7 +268,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			period = Period.values()[periodBox.getSelectedIndex() - 1];		
 		}
 		
-		// Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y Algún periodo seleccionado 
+		// Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y un Periodo seleccionado 
 		multiplePresentation.setEnabled(administration == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && period != null);
 		if (!multiplePresentation.isEnabled()) {
 			multiplePresentation.setValue(false,false);			
@@ -304,8 +289,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			.setConfiguredVisible(showConfigurated.getValue())
 			.setMadeModelsVisible(showMadeModels.getValue())
 			.setDeclared( declared.getValue() )
-//			.setStatus( statusBox.getSelectedIndex() > 0 ? FiscalStatus.values()[statusBox.getSelectedIndex() - 1] : null )
-//			.setPeriod( periodBox.getSelectedIndex() > 0 ? Period.values()[periodBox.getSelectedIndex() - 1] : null )
 			.setStatus(status)
 			.setPeriod(period)
 			.setMultiplePresentation(multiplePresentation.getValue())			
@@ -343,10 +326,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		return AonNumberUtils.toint(year.getSelectedItemText()); 
 	}
 
-	private void showConfigurationPanel() {
-		// TODO Auto-generated method stub
-		
-	}
+//	private void showConfigurationPanel() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	public AonSearchPanelButton getRefreshButton() {
 		return refreshButton;
@@ -356,9 +339,9 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		// FALTA - TODO
 		
 		Window.alert("PRESENTACION MULTIPLE DE LOS MODELOS SELECCIONADOS: " + options.getSelected());
-		// FALTA - ENVIAR PRESENTACION
-		// FALTA - MOSTRAR RESULTADOS ERRONEOS O MENSAJE OK
-		// FALTA - REFRESCAR DATOS AL TERMINAR 
+		// ENVIAR PRESENTACION
+		// MOSTRAR RESULTADOS ERRONEOS
+		// REFRESCAR DATOS AL TERMINAR 
 		refreshButton.click();		
 	}
 

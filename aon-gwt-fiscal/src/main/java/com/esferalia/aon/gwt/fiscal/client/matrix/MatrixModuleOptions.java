@@ -10,7 +10,7 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 	private static final long serialVersionUID = -1477889480738439699L;
 	
 	private boolean compactMode;
-	private ArrayList<String> selected;
+	private ArrayList<String> selected; // Seleccionados para la presentación múltiple
 
 	public boolean isCompactMode() {
 		return compactMode;
@@ -20,28 +20,24 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 		return this;
 	}
 	
+	// FALTA - AÑADIR Y BORRAR SELECCIONADO, POR AHORA SOLO SE GUARDA MODELO_ID
+	
 	public ArrayList<String> getSelected() {
 		if (selected == null)
 			selected = new ArrayList<>();
 		return selected;
+	}	
+	public String getSelectedKey(IFiscalModel model) {
+		return model.getModel().toString() + "_" + model.getId().toString();
 	}
-// FALTA - CREO QUE NO LO NECESITO
-//public FiscalMatrixParams setSelected(ArrayList<String> selected) {
-//	this.selected = selected;
-//	return this;
-//}
-// FALTA - AÑADIR Y BORRAR SELECCIONADO, POR AHORA SOLO SE GUARDA MODELO_ID
 	public void addSelected(IFiscalModel model) {
-		String modelAndId = model.getModel().toString() + "_" + model.getId().toString();
-		getSelected().add(modelAndId);
+		getSelected().add(getSelectedKey(model));
 	}	
 	public void removeSelected(IFiscalModel model) {
-		String modelAndId = model.getModel().toString() + "_" + model.getId().toString();
-		getSelected().remove(modelAndId);
+		getSelected().remove(getSelectedKey(model));
 	}
 	public boolean isSelected(IFiscalModel model) {
-		String modelAndId = model.getModel().toString() + "_" + model.getId().toString();
-		return getSelected().contains(modelAndId);  
+		return getSelected().contains(getSelectedKey(model));  
 	}	
 
 }
