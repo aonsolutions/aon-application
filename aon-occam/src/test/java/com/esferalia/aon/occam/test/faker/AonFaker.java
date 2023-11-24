@@ -940,36 +940,6 @@ public class AonFaker {
 				.setSelected(random.nextBoolean());
 	}
 	
-	public static Customer getCustomer() {
-		Random random = new Random();
-		
-		RegistryStatus[] valuesRegistryStatus = RegistryStatus.values();
-		InvoiceTransactionType[] valuesInvoiceTransactionType = InvoiceTransactionType.values();
-		
-		return new Customer()
-				.copy(getRegistry())
-				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setBillable(random.nextBoolean())
-				.setCreationDate(Faker.instance().date().birthday())
-				.setCreationUser(Faker.instance().zelda().character())
-				.setDeliveryGrouped(random.nextBoolean())
-				.setDeliveryValuated(random.nextBoolean())
-				.setEInvoice(random.nextBoolean())
-				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setInvoicingGroup(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setModificationDate(Faker.instance().date().birthday())
-				.setModificationUser(Faker.instance().zelda().character())
-				.setProjectGrouped(random.nextBoolean())
-				.setRelationship(random.nextBoolean())
-				.setScope(AonFaker.getScope())
-				.setStatus(valuesRegistryStatus[random.nextInt(valuesRegistryStatus.length)])
-				.setSurcharge(random.nextBoolean())
-				.setTariff(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setTransaction(valuesInvoiceTransactionType[random.nextInt(valuesInvoiceTransactionType.length)])
-				.setWithholding(random.nextBoolean())
-				;
-	}
-	
 	public static Workplace getWorkplace() {
 		Random random = new Random();
 		
@@ -986,6 +956,16 @@ public class AonFaker {
 				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setScope(getScope().getId())
 				;
+	}
+	
+	public static Warehouse getWarehouse() {
+	
+		return new Warehouse()
+				.setActive(true)
+				.setDepartment(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setDomain(getDomain().getId())
+				.setName(Faker.instance().job().field() + " S.A")
+				.setWorkplace(getWorkplace().getId());
 	}
 	
 	public static Project getProject() {
@@ -1087,6 +1067,14 @@ public class AonFaker {
 		return list;
 	}
 	
+	public static DeliveryDetail getDeliveryDetail() {
+		return new DeliveryDetail()
+				.setDescription(Faker.instance().food().ingredient())
+				.setPrice(Double.parseDouble(Faker.instance().numerify("##.#").toString()))
+				.setDiscountExpression("0.0")
+				.setQuantity(Double.parseDouble(Faker.instance().numerify("#")));
+	}
+	
 	public static Delivery getDelivery() {
 		Random random = new Random();
 		
@@ -1094,10 +1082,19 @@ public class AonFaker {
 		
 		DeliveryStatus[] deliveryStatus = DeliveryStatus.values();
 		
+		LinkedList<DeliveryDetail> details = new LinkedList<>();
+		DeliveryDetail deliveryDetail1 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail2 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail3 = getDeliveryDetail();
+		details.add(deliveryDetail1);
+		details.add(deliveryDetail2);
+		details.add(deliveryDetail3);
+		
 		return new Delivery()
 				.setDomain(getDomain().getId())
 				.setProject(getProject())
 				.setDate(Faker.instance().date().birthday())
+				.setDetails(details)
 				.setSeries(Faker.instance().letterify("????????"))
 				.setNumber(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setCustomer(AonFaker.getCustomer())
@@ -1106,6 +1103,36 @@ public class AonFaker {
 				.setAddress(getRegistryAddress(registry))
 				.setShippingContact(Faker.instance().zelda().character())
 				.setWorkplace(getWorkplace());
+	}
+	
+	public static Customer getCustomer() {
+		Random random = new Random();
+		
+		RegistryStatus[] valuesRegistryStatus = RegistryStatus.values();
+		InvoiceTransactionType[] valuesInvoiceTransactionType = InvoiceTransactionType.values();
+		
+		return new Customer()
+				.copy(getRegistry())
+				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setBillable(random.nextBoolean())
+				.setCreationDate(Faker.instance().date().birthday())
+				.setCreationUser(Faker.instance().zelda().character())
+				.setDeliveryGrouped(random.nextBoolean())
+				.setDeliveryValuated(random.nextBoolean())
+				.setEInvoice(random.nextBoolean())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setInvoicingGroup(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setModificationDate(Faker.instance().date().birthday())
+				.setModificationUser(Faker.instance().zelda().character())
+				.setProjectGrouped(random.nextBoolean())
+				.setRelationship(random.nextBoolean())
+				.setScope(AonFaker.getScope())
+				.setStatus(valuesRegistryStatus[random.nextInt(valuesRegistryStatus.length)])
+				.setSurcharge(random.nextBoolean())
+				.setTariff(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setTransaction(valuesInvoiceTransactionType[random.nextInt(valuesInvoiceTransactionType.length)])
+				.setWithholding(random.nextBoolean())
+				;
 	}
 	
 	public static CustomerFull getCustomerFull(Customer customer) {
@@ -1124,10 +1151,11 @@ public class AonFaker {
 	}
 	
 	public static Company getCompany() {
-		Company company = new Company();
-		company.setName(Faker.instance().job().title() + " S.A.");
+		Registry registry = getRegistry();
+		registry.setName(Faker.instance().job().field() + " S.A.");
 		
-		return company;
+		return new Company()
+				.copy(registry);
 	}
 	
 	public static CompanyFull getCompanyFull(Company company) {

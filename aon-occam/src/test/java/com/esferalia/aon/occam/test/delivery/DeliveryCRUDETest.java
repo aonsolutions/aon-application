@@ -22,7 +22,7 @@ public class DeliveryCRUDETest extends AbstractOccamTest {
 	
 	private void crudeDeliveryDAO() {
 		Delivery delivery = AonFaker.getDelivery(ctx); 
-		delivery = DeliveryDAO.insertDelivery(ctx, delivery);
+		delivery = DeliveryDAO.save(ctx, delivery);
 		Integer deliveryId = delivery.getId();
 		Delivery inserted = DeliveryDAO.get(ctx, f -> f.getIdProperty().eq(deliveryId));
 		Asserts.assertEqualsDelivery(delivery, inserted);

@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -20,8 +21,6 @@ public class DeliveryTest {
 	@Test
 	public void test() throws CanNotCreatePdfException, IOException {
 		
-		// TODO show company address ?
-		
 		Delivery delivery = AonFaker.getDelivery();
 		
 		Company company = AonFaker.getCompany();
@@ -32,11 +31,11 @@ public class DeliveryTest {
 		
 		byte[] logo = WarehouseTest.class.getResourceAsStream("kintama.png").readAllBytes();
 		
-		// TODO
-		Warehouse warehouse = new Warehouse();
+		Warehouse warehouse = AonFaker.getWarehouse();
+		Workplace workplace = AonFaker.getWorkplace();
 		
 		
-		try (DeliveryTemplate deliveryTemplate = new DeliveryTemplate(delivery, warehouse, companyFull, customerFull, logo)) {
+		try (DeliveryTemplate deliveryTemplate = new DeliveryTemplate(delivery, warehouse, workplace, companyFull, customerFull, logo)) {
 			deliveryTemplate.save(new FileOutputStream("./DeliveryTest.pdf"));
 		} catch (Exception e) {
 			e.printStackTrace();
