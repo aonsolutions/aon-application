@@ -103,6 +103,9 @@ public class JooqCRA {
 	private static List<CRA> getDomainCRAsDB(Integer domainId, Integer userId, DSLContext dslContext, long liquidDateTime) {
 		List<CRA> cras = new ArrayList<>();
 		Date endDate = getEndDate(liquidDateTime);
+		endDate.setHours(0);
+		endDate.setMinutes(0);
+		endDate.setSeconds(0);
 		
 		// Domain Childs
 		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
@@ -258,6 +261,9 @@ public class JooqCRA {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
+		startDate.setHours(0);
+		startDate.setMinutes(0);
+		startDate.setSeconds(0);
 		
 		// RECTIFICATIVO
 		if (craDocumentType.equals("R")) {
@@ -360,6 +366,10 @@ public class JooqCRA {
 	
 	public static boolean checkIfRectificative(Connection connection, Date findingDate, ArrayList<Integer> selectedCCCList) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		findingDate.setHours(0);
+		findingDate.setMinutes(0);
+		findingDate.setSeconds(0);
 		
 		Result<Record> craRecords = dslContext.select().from(CRA_BATCH)
 			.join(CRA_BATCH_DETAIL)

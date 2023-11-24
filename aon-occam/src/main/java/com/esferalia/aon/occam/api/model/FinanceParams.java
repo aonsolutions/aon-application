@@ -34,6 +34,8 @@ public class FinanceParams implements Serializable{
 	private Integer payMethod;
 	private int order;
 	
+	private boolean isPayroll;
+	
 	public int getDomain() {
 		return domain;
 	}
@@ -198,5 +200,13 @@ public class FinanceParams implements Serializable{
 		}
 		return this;
 	}
+	public boolean isPayroll() {
+		return isPayroll;
+	}
+	public FinanceParams setIsPayroll(boolean isPayroll) {
+		this.isPayroll = isPayroll;
+		return this;
+	}
+	
 	
 }

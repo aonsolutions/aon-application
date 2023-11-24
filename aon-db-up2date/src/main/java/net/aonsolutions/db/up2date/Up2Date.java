@@ -19,9 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.CraBatchResetDateUpdate;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
 import net.aonsolutions.db.up2date.warehouse.DeliveryInfoInsert;
+import net.aonsolutions.db.up2date.warehouse.SalesDetailAddDeliveryColumn;
 
 public class Up2Date {
 
@@ -394,10 +396,11 @@ public class Up2Date {
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
 	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-//	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-//	    DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-	    DeliveryInfoInsert.DELIVERY_INFO_INSERT
-	    
+	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE	    
 	};
 
     // ------------------------------------------------------------------------
@@ -478,15 +481,15 @@ public class Up2Date {
 	    System.out.println("Error: " + e.getLocalizedMessage());
 	} finally {
 	    try {
-		if (databasesRs != null)
-		    databasesRs.close();
-		if (statement != null)
-		    statement.close();
-		if (connection != null)
-		    connection.close();
+	    	if (databasesRs != null)
+	    		databasesRs.close();
+	    	if (statement != null)
+	    		statement.close();
+	    	if (connection != null)
+	    		connection.close();
 	    } catch (SQLException e) {
-		System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
-	    }
+	   		System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+	    }	
 	}
 
     }

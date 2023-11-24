@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -766,6 +767,14 @@ public class FinanceImpl implements IFinance {
 	public void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings) {
 		ctx.getDslContext().transaction(
 				configuration -> BookingCheckDAO.delete(ctx, selectedBookings));
+	}
+	
+	// ---------- VENCIMIENTO NOMINAS
+
+	@Override
+	public void createSettleSalaries(CloseableAONContext ctx, Date date) {
+		ctx.getDslContext().transaction(
+				configuration -> SettleSalariesDAO.createSettleSalaries(ctx, date));
 	}
 	
 }

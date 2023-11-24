@@ -31,14 +31,6 @@ export class AonCard extends AonElement {
 		this.setAttribute(CONSTANT.TITLE, title);
 	}
 
-	get titleCard() {
-		return this.getAttribute("titleCard");
-	}
-
-	set titleCard(titleCard) {
-		this.setAttribute("titleCard", titleCard);
-	}
-
 	get visible() {
 		return this.getAttribute(CONSTANT.VISIBLE);
 	}
@@ -112,7 +104,7 @@ export class AonCard extends AonElement {
 			section1.appendChild(arrowTitleSpan);
 		}
 		let titleSpan = this.createElement(TAG.DIV);
-		titleSpan.innerHTML = this.titleCard;
+		titleSpan.innerHTML = this.title;
 		section1.appendChild(titleSpan);
 
 		section1.addEventListener(EVENT.CLICK, () => this.dispatchEvent(new Event(EVENT.CLICK_TITLE)));

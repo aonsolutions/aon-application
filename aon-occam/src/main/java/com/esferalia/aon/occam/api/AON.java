@@ -8086,6 +8086,14 @@ public class AON {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			getWarehouse().deleteDeliveryInfo(ctx, deliveryId);
 		}
+	}
+	
+	// VENCIMIENTO NOMINAS
+
+	public static void createSettleSalaries(String domainName, int domainId, String user, Date date) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().createSettleSalaries(ctx, date);
+		}
 	}	
 	
 	
