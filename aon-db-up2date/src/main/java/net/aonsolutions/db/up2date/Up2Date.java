@@ -396,12 +396,11 @@ public class Up2Date {
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
 	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-//	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-//	    DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-//	    DeliveryInfoInsert.DELIVERY_INFO_INSERT,
-	    SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
-      CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE
-	    
+	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE	    
 	};
 
     // ------------------------------------------------------------------------
