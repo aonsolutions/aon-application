@@ -62,6 +62,10 @@ export class AonDashboardUploadButton extends AonElement {
     if(button) button.disabled = disabled;
   }
 
+  setMessage(message) {
+    this.message = message;
+  }
+
   setAccept(accept) {
       this.accept = accept;
   }
@@ -120,10 +124,10 @@ export class AonDashboardUploadButton extends AonElement {
         div.appendChild(icon);
       }
   
-      if(this.title) {
+      if(this.message) {
         let text = this.createElement(TAG.SPAN);
         text.id = this.TEXT;
-        text.innerHTML = this.title;
+        text.innerHTML = this.message;
         div.appendChild(text);
       }
       

@@ -48,12 +48,23 @@ public class SettleSalariesDAO {
 		boolean hasSettleSalaryModify = false;
 		
 		for(Record record : salaries) {
+			// Delete finance for this registry which status == 0 (Pediente)
+			ctx.getDslContext().deleteFrom(FINANCE)
+				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+				.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
+				.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
+				.and(FINANCE.PAYROLL.eq((byte)1))
+				.and(FINANCE.STATUS.eq((byte)0))
+				.execute();
+			
+			String concept = getSalaryType(record.get(SALARY.TYPE));
+			
 			Result<FinanceRecord> finances = ctx.getDslContext().selectFrom(FINANCE)
 					.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 					.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
 					.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
 					.and(FINANCE.PAYROLL.eq((byte)1))
-					.and(FINANCE.SOURCE_ID.eq(record.get(SALARY.ID)))
+					.and(FINANCE.CONCEPT.like(concept + "%"))
 					.fetch();
 			
 			if(finances.isEmpty()) {
@@ -67,7 +78,7 @@ public class SettleSalariesDAO {
 					.set(FINANCE.RDOCUMENT_COUNTRY, record.get(REGISTRY.DOCUMENT_COUNTRY))
 					.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 					.set(FINANCE.AMOUNT, record.get(SALARY.TOTAL_LIQUID))
-					.set(FINANCE.CONCEPT, "N\u00d3MINA - " + formatDate(date))
+					.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
 					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
 					.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 					.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
@@ -98,7 +109,7 @@ public class SettleSalariesDAO {
 						.set(FINANCE.RDOCUMENT_COUNTRY, record.get(REGISTRY.DOCUMENT_COUNTRY))
 						.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 						.set(FINANCE.AMOUNT, amountDiff)
-						.set(FINANCE.CONCEPT, "N\00d3MINA - " + formatDate(date))
+						.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
 						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
 						.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 						.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
@@ -117,6 +128,19 @@ public class SettleSalariesDAO {
 		}
 		
 		if(!hasSettleSalaryModify) throw new AonCoreException("No existen modificaciones en las n\u00f3minas sobre los vencimiento ya generados para el periodo " + formatDate(date));
+	}
+
+	private static String getSalaryType(Byte salaryType) {
+		switch (salaryType) {
+		case 1:
+			return "EXTRA";
+		case 2:
+			return "FINIQUITO";
+		case 3:
+			return "ATRASO";
+		default:
+			return "N\u00d3MINA";
+		}
 	}
 	
 }
