@@ -55,6 +55,14 @@ export class AonDashboardButton extends AonElement {
     this.setAttribute('disabled', disabled);
   }
 
+  get message() {
+    return this.getAttribute('message');
+  }
+
+  set message(message) {
+    this.setAttribute('message', message);
+  }
+
   constructor () {
 		super();
 	}
@@ -96,10 +104,10 @@ export class AonDashboardButton extends AonElement {
 		  button.appendChild(spanIcon);
     }
 
-    if(this.title) {
+    if(this.message) {
       let text = this.createElement(TAG.SPAN);
       text.id = this.TEXT;
-      text.innerHTML = this.title;
+      text.innerHTML = this.message;
       button.appendChild(text);
     }
   }
@@ -128,12 +136,8 @@ export class AonDashboardButton extends AonElement {
     this.logo = logo;
   }
 
-  getTitle() {
-    return this.title;
-  }
-
-  setTitle(title) {
-    this.title = title;
+  setMessage(message) {
+    this.message = message;
   }
   
   getColor() {
