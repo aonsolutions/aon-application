@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -202,10 +203,14 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	// ENVIAR ALBARÁN A SERES...
 	
 	private void seres(AonApiData api, Delivery delivery) {
-		System.out.println("SEND DELIVERY TO SERES - REGISTRY " + delivery.getCustomer().getId());
+		Delivery d = AON.getDelivery(api.getDomain(), api.getUser().getLogin(), f ->
+			f.getDomainProperty().eq(delivery.getDomain())
+			.and(f.getIdProperty().eq(delivery.getId())), new Options().setFull(true));
+		
+		System.out.println("SEND DELIVERY TO SERES - REGISTRY " + d.getCustomer().getId());
 		RegistryNote rNote = AON.getRegistryNote(api.getDomain(), api.getUser().getLogin(), f -> 
 			f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
-			.and(f.getRegistryProperty().eq(delivery.getCustomer().getId()))
+			.and(f.getRegistryProperty().eq(d.getCustomer().getId()))
 			.and(f.getDescriptionProperty().eq("SERES_AUTO_COMMIT_DELIVERY")));
 		
 		boolean autoSendDelivery = rNote!=null && rNote.getComments() != null 
@@ -214,16 +219,16 @@ public class DeliveryServlet extends AonApiHttpServlet {
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
-			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
-			delivery.setEdiCodes(codes);
+			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), d);
+			d.setEdiCodes(codes);
 			
 			Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getSourceTypeProperty().eq(DataAttachSource.DELIVERY.value()))
-					.and(f.getSourceBatchProperty().eq(delivery.getId()))
+					.and(f.getSourceBatchProperty().eq(d.getId()))
 				, AttachType.DATA, true);
-			delivery.setPackagingData(attach.getData());
-			du.uploadDelivery(delivery);
+			d.setPackagingData(attach.getData());
+			du.uploadDelivery(d);
 		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
 
 	}
