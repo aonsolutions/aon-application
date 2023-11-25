@@ -239,7 +239,7 @@ public class PackagingDAO {
 					.setDelivery(new Delivery().setId(deliveryId))
 					.setDomain(ctx.getDomainId())
 					.setDescription(ic.getDescription())
-					.setDiscountExpression(sd.getDiscountExpression())
+					.setDiscountExpression(sd.getDiscountExpression().getDiscountExpr())
 					.setPrice(sd.getPrice())
 					.setSalesDetail(sd.getId())
 					.setQuantity(ic.getQuantity())
