@@ -204,14 +204,24 @@
 				</aon:commandLink>
 			</aon:div-->
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
-				<aon:commandLink 
+				<!-- <aon:commandLink 
 					id="new_note-search" 
 					value="#{bundle.aon_notes}"
 					styleClass="aon-button-notes"
 					onclick="javascript:showMenuPortlet('notes', this); return;"
 					reRender="notesContainer"
 					>
+				</aon:commandLink> -->
+				
+				<aon:commandLink 
+					id="new_note-search" 
+					immediate="true"
+					action="portal_notes"
+					value="#{bundle.aon_notes}"
+					styleClass="aon-button-notes"
+					>
 				</aon:commandLink>
+				
 			</aon:div>
 		</aon:if>
 
