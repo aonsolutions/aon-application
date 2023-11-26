@@ -556,7 +556,7 @@ public class ToJSON {
 		.put(MSG.DESCRIPTION, detail.getDescription())
 		.put(MSG.QUANTITY, detail.getQuantity())
 		.put(MSG.PRICE, detail.getPrice())
-		.put(MSG.DISCOUNT_EXPR, detail.getDiscountExpression().getDiscountExpr())
+		.put(MSG.DISCOUNT_EXPR, detail.getDiscountExpression())
 		.put("taxes", detail.getTaxes())
 		.put(MSG.STATUS, new JSONObject()
 				.put(MSG.ID, detail.getStatus() != null ? detail.getStatus().ordinal() : "")

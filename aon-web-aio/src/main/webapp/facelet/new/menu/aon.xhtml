@@ -107,10 +107,10 @@
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
 				<aon:commandLink 
 					id="new_note-search" 
-					immediate="true"
-					action="portal_notes"
+					action="note_list"
 					value="#{bundle.aon_notes}"
 					styleClass="aon-button-notes"
+					actionListener="#{note.onSearch}" 
 					>
 				</aon:commandLink>
 			</aon:div>

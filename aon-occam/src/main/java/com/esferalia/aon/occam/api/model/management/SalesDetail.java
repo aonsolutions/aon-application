@@ -3,13 +3,11 @@ package com.esferalia.aon.occam.api.model.management;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.DiscountExpression;
-import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 
-public class SalesDetail implements Serializable, HasAudit {
+public class SalesDetail implements Serializable {
 	
 	/**
 	 * 
@@ -24,7 +22,7 @@ public class SalesDetail implements Serializable, HasAudit {
 	private String description;
 	private double quantity;
 	private double price;
-	private DiscountExpression discountExpression;
+	private String discountExpression;
 	private double taxes;
 	private SalesDetailStatus status;
 	private Integer offerDetail;
@@ -32,12 +30,6 @@ public class SalesDetail implements Serializable, HasAudit {
 	private Date deliveryDate;
 	private Carrier carrier;
 	private Integer carrierPacking;
-	private Integer delivery;
-	
-	private String creationUser;
-	private Date creationDate;
-	private String modificationUser;
-	private Date modificationDate;
 	
 	public Integer getId() {
 		return id;
@@ -113,28 +105,12 @@ public class SalesDetail implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public DiscountExpression getDiscountExpression() {
-		if(discountExpression == null)
-			discountExpression = new DiscountExpression("0.0");
+	public String getDiscountExpression() {
 		return discountExpression;
 	}
 	
-	public SalesDetail setDiscountExpression(DiscountExpression discountExpression) {
-		this.discountExpression = discountExpression;
-		return this;
-	}
-	
 	public SalesDetail setDiscountExpression(String discountExpression) {
-		this.discountExpression = new DiscountExpression(discountExpression);
-		return this;
-	}
-	
-	public double getDiscount() {
-		return getDiscountExpression().getPercentage();
-	}
-	
-	public SalesDetail setDiscount(double discount) {
-		setDiscountExpression(new DiscountExpression(discount));
+		this.discountExpression = discountExpression;
 		return this;
 	}
 	
@@ -203,57 +179,5 @@ public class SalesDetail implements Serializable, HasAudit {
 		this.carrierPacking = carrierPacking;
 		return this;
 	}
-	
-	public Integer getDelivery() {
-		return delivery;
-	}
-	
-	public SalesDetail setDelivery(Integer delivery) {
-		this.delivery = delivery;
-		return this;
-	}
 		
-	
-	// ---------------------------------------------------------- AUDIT
-	
-	@Override
-	public String getCreationUser() {
-		return creationUser;
-	}
-	
-	public SalesDetail setCreationUser(String creationUser) {
-		this.creationUser = creationUser;
-		return this;
-	}
-	
-	@Override
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	
-	public SalesDetail setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-		return this;
-	}
-	
-	@Override
-	public String getModificationUser() {
-		return modificationUser;
-	}
-	
-	public SalesDetail setModificationUser(String modificationUser) {
-		this.modificationUser = modificationUser;
-		return this;
-	}
-
-	@Override
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-	
-	public SalesDetail setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-		return this;
-	}
-	
 }

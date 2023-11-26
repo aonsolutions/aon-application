@@ -200,9 +200,8 @@ public class IngenetDeliveryManager {
 						.getId() : null);
 				detail.setItem(item);
 				detail.setDescription(item.getProduct().getName());
-				detail.setDiscountExpression(aonSalesDetail != null 
-					? aonSalesDetail.getDiscountExpression().getDiscountExpr()
-					: "0.0");
+				detail.setDiscountExpression(aonSalesDetail != null ? aonSalesDetail
+						.getDiscountExpression() : "0");
 				detail.setLine(Integer.valueOf(idx + 1).shortValue());
 				detail.setPrice(aonSalesDetail != null ? aonSalesDetail
 						.getPrice() : 0.0);
