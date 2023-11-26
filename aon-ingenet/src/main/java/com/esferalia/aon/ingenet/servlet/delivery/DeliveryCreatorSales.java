@@ -69,7 +69,7 @@ public class DeliveryCreatorSales extends AbstractDeliveryCreator {
 		} else {
 			detail.setSalesDetail(salesDetail.getId());
 			detail.setPrice(salesDetail.getPrice());
-			detail.setDiscountExpression(salesDetail.getDiscountExpression());
+			detail.setDiscountExpression(salesDetail.getDiscountExpression().getDiscountExpr());
 		}
 	}
 	

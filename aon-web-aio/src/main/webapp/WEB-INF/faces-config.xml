@@ -246,6 +246,10 @@
 			<to-view-id>/facelet/portal/invoice.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>portal_notes</from-outcome>
+			<to-view-id>/facelet/portal/notes.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>portal_comunica</from-outcome>
 			<to-view-id>/facelet/portal/comunica.xhtml</to-view-id>
 		</navigation-case>
