@@ -67,7 +67,7 @@ public class SalesDetailJSON {
 			.put(IJsonNames.DESCRIPTION, object.getDescription())
 			.put(IJsonNames.QUANTITY, object.getQuantity())
 			.put(IJsonNames.PRICE, object.getPrice())
-			.put(IJsonNames.DISCOUNT, object.getDiscount())
+			.put(IJsonNames.DISCOUNT, object.getDiscountExpression())
 			.put(IJsonNames.TAXES, object.getTaxes())
 			.put(IJsonNames.STATUS, object.getStatus().getName())
 			.put(IJsonNames.OFFER_DETAIL, object.getOfferDetail())

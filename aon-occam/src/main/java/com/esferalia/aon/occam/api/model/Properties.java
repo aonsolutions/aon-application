@@ -1217,7 +1217,7 @@ public interface Properties {
 		Property<Integer> getSalesDetailIdProperty();
 	}
 	
-	public interface SalesDetailProperties extends AuditProperties{
+	public interface SalesDetailProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getSalesProperty();
@@ -1226,15 +1226,11 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<Double> getQuantityProperty();
 		Property<Double> getPriceProperty();
-		Property<String> getDiscountExpressionProperty();
+		Property<String> getdiscountExpressionProperty();
 		Property<Double> getTaxesProperty();
 		Property<Byte> getStatusProperty();
 		Property<Integer> getOfferDetailProperty();
 		Property<Double> getDeliveredProperty();
-		Property<Date> getDeliveryDateProperty();
-		Property<Integer> getCarrierProperty();
-		Property<Integer> getCarrierPackingProperty();
-		Property<Integer> getDeliveryProperty();	
 	}
 	
 	public interface SalesInfoProperties {

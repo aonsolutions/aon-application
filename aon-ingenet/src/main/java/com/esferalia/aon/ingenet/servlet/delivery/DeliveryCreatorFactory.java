@@ -515,7 +515,7 @@ public class DeliveryCreatorFactory implements Serializable {
 								if(salesDetail!=null && salesDetail.getId()!=null){
 									detail.setSalesDetail(salesDetail.getId());
 									detail.setPrice(salesDetail.getPrice());
-									detail.setDiscountExpression(salesDetail.getDiscountExpression().getDiscountExpr());
+									detail.setDiscountExpression(salesDetail.getDiscountExpression());
 								} else {
 									String number = linea.getDATOSELABORACIONORIGEN().getSERIE()
 											+ "/" + linea.getDATOSELABORACIONORIGEN().getNUMERO();

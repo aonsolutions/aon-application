@@ -14,4 +14,3 @@ import './modules/laboral/aon-laboral.js';
 import './modules/note/aon-note.js';
 import './modules/office/aon-office-panel.js';
 import './modules/warehouse/aon-warehouse.js';
-import './modules/note/aon-notes.js';
