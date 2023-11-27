@@ -48,6 +48,7 @@ public class DeliveryDetailCRUDETest extends AbstractOccamTest {
 	/**
 	 * Tests the method getAmounth
 	 */
+	@Test
 	public void getAmounthTest() {
 		Delivery delivery = AonFaker.getDelivery(ctx);
 		delivery = DeliveryDAO.save(ctx, delivery);

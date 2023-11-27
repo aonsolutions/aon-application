@@ -73,7 +73,16 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private float maxLogoHeight;
 
 	
-	
+	/**
+	 * Constructor
+	 * @param delivery
+	 * @param warehouse
+	 * @param workplace
+	 * @param company
+	 * @param customer
+	 * @param logo
+	 * @throws CanNotCreatePdfException
+	 */
 	public DeliveryTemplate(Delivery delivery, Warehouse warehouse, Workplace workplace, CompanyFull company, CustomerFull customer,
 	byte[] logo) throws CanNotCreatePdfException {
 		try {
@@ -111,6 +120,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Call the methods that draw the pdf
+	 * @throws IOException
+	 */
 	private void draw() throws IOException {
 		x = initialX;
 		y = initialY;
@@ -126,6 +139,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		drawPayment();
 	}
 	
+	/**
+	 * Draws the company data
+	 * @throws IOException
+	 */
 	private void drawCompany() throws IOException {
 		drawLogo();
 		drawCompanyName();
@@ -133,16 +150,28 @@ public class DeliveryTemplate implements AutoCloseable  {
 		drawCompanyMedia();
 	}
 	
+	/**
+	 * Draws the delivery data
+	 * @throws IOException
+	 */
 	private void drawDelivery() throws IOException {
 		drawDeliveryTableFirstRow();
 		drawDeliveryTableSecondRow();
 		drawDeliveryTableOtherRows();
 	}
 	
+	/**
+	 * Draws the payment data
+	 * @throws IOException
+	 */
 	private void drawPayment() throws IOException {
 		drawPaymentTableFirstRow();
 	}
 	
+	/**
+	 * Draws the company's logo
+	 * @throws IOException
+	 */
 	private void drawLogo() throws IOException {
 		if (logo != null) {
 			
@@ -157,6 +186,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}		
 	}
 	
+	/**
+	 * Draws the company's name
+	 * @throws IOException
+	 */
 	private void drawCompanyName() throws IOException {
 		
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
@@ -174,6 +207,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the company's address
+	 * @throws IOException
+	 */
 	private void drawCompanyAddress() throws IOException {
 		y = initialY - TITLEFONTSIZE - TITLEFONTSIZE;
 		
@@ -209,6 +246,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draw the company's medias
+	 * @throws IOException
+	 */
 	private void drawCompanyMedia() throws IOException {
 		
 		List<RegistryMedia> medias = company.getMedias();
@@ -243,6 +284,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the reference and date of the delivery
+	 * @throws IOException
+	 */
 	private void drawReferenceAndDate() throws IOException {
 		this.x = (float) (maxLogoWidth*3.80 + marginText);
 		this.y = initialY - TITLEFONTSIZE;
@@ -262,6 +307,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the customer data
+	 * @throws IOException
+	 */
 	private void drawCustomer() throws IOException {
 		x = initialX;
 		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
@@ -316,6 +365,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the address's title
+	 * @throws IOException
+	 */
 	private void drawDestinyAddressTitle() throws IOException {
 		x = (initialX + getPageWidth()/2);
 		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
@@ -327,6 +380,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 	}
 	
+	/**
+	 * Draws the address direction to send the delivery
+	 * @throws IOException
+	 */
 	private void drawDestinyAddress() throws IOException {
 		x = (float) (initialX + getPageWidth()/3.15 + marginSide);
 		y = initialY - marginTop - maxLogoWidth - TITLEFONTSIZE;
@@ -372,6 +429,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the delivery title
+	 * @throws IOException
+	 */
 	private void drawDeliveryTitle() throws IOException {
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
 		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE);
@@ -388,6 +449,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the workplace and warehouse information
+	 * @throws IOException
+	 */
 	private void drawOriginInfo() throws IOException {
 		// Title
 		x = initialX;
@@ -443,6 +508,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draw the titles of the information of the delivery (description, quantity, price and amounth)
+	 * @throws IOException
+	 */
 	private void drawDeliveryTableFirstRow() throws IOException {
 		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE*2 - EXTRATITLEFONTSIZE - TITLEFONTSIZE - EXTRATITLEFONTSIZE*3 - 1);
 		float height = this.getPageWidth()-this.marginSide*4;
@@ -469,6 +538,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		PDFToolkit.drawText(contents,importe,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
 	}
 	
+	/**
+	 * Draws the delivery's number and date
+	 * @throws IOException
+	 */
 	private void drawDeliveryTableSecondRow() throws IOException {
 		x = initialX;
 		y -= TEXTFONTSIZE + TEXTFONTSIZE;
@@ -489,6 +562,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the delivery's data (description, quantity, price and amounth) for each delivery
+	 * @throws IOException
+	 */
 	private void drawDeliveryTableOtherRows() throws IOException {
 		x = initialX;
 		y -= TEXTFONTSIZE*2;
@@ -573,6 +650,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	private void drawPaymentTableFirstRow() throws IOException {
 		y -= TEXTFONTSIZE*3;
 		x = initialX + (float) (maxLogoWidth*0.25);
@@ -581,7 +662,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.GRAY);
 		
 		y += maxLogoWidth*0.065;
-		
+		 
 		String base = "Base Imponible";
 		
 		PDFToolkit.drawText(contents,base,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TEXTFONTSIZE);

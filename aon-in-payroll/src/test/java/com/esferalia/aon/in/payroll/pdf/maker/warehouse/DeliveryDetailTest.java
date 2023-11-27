@@ -16,8 +16,13 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 
-public class DeliveryTest {
+public class DeliveryDetailTest {
 
+	/**
+	 * Tests DeliveryTemplate creating a pdf called DeliveryTest.pdf in /aon.in.payroll/DeliveryTest.pdf
+	 * @throws CanNotCreatePdfException
+	 * @throws IOException
+	 */
 	@Test
 	public void test() throws CanNotCreatePdfException, IOException {
 		
@@ -33,7 +38,6 @@ public class DeliveryTest {
 		
 		Warehouse warehouse = AonFaker.getWarehouse();
 		Workplace workplace = AonFaker.getWorkplace();
-		
 		
 		try (DeliveryTemplate deliveryTemplate = new DeliveryTemplate(delivery, warehouse, workplace, companyFull, customerFull, logo)) {
 			deliveryTemplate.save(new FileOutputStream("./DeliveryTest.pdf"));
