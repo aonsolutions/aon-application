@@ -78,6 +78,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private Integer parentDomain;
 	private String domainName;
 	private String domainNameURL;
+	private String domainDocument;
 	private String filter;
 	private String modelFilter;
 	private String domainURL;
@@ -159,6 +160,17 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			assignDomainNameURL(getDomainId());
 		}
 		return domainNameURL;
+	}
+
+	public void setDomainDocument(String domainDocument) {
+		this.domainDocument = domainDocument;
+	}
+
+	public String getDomainDocument() {
+		if (domainDocument == null) {
+			assignDomainDocument(getDomainId());
+		}
+		return domainDocument;
 	}
 
 	public String getCurrentDomainNameURL() {
@@ -425,6 +437,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		setShowInactive(false);
 		setShowExpired(false);
 		System.gc();
+		
+		this.domainNameURL = null;
+		this.domainDocument = null;
 	}
 
 	private void assignDomainName(Integer domainId) {
@@ -450,6 +465,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 				.uniqueResult();
 		HibernateUtil.closeSession(sessionFactoryName, false);
 		setDomainNameURL(name);
+	}
+
+	private void assignDomainDocument(Integer domainId) {
+		String sessionFactoryName = HibernateUtil
+				.getSessionFactoryName(Domain.class.getName());
+		String q = "SELECT r.document FROM company c INNER JOIN registry r ON ( c.registry = r.id )  " + " WHERE c.domain = " + domainId;
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName)
+				.createSQLQuery(q);
+		String document = (String) query.addScalar("document", Hibernate.STRING)
+				.uniqueResult();
+		HibernateUtil.closeSession(sessionFactoryName, false);
+		setDomainDocument(document);
 	}
 
 	private boolean isRemovable(String key, String className) {
@@ -610,20 +637,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			return null;
 		}
 	}
+
 	public String getCurrentDomainURL() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			DomainData domainData = (DomainData) getModel().getRowData();
 			String name = IDN.toASCII(domainData.getName());
 			return name;
-		}
-		return null;
-	}
-
-	public String getCurrentDomainDocument() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			DomainData domainData = (DomainData) getModel().getRowData();
-			String document = domainData.getDocument();
-			return document;
 		}
 		return null;
 	}
@@ -748,6 +767,22 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public String getTrace() {
 		return String.valueOf(new Date(System.currentTimeMillis()));
 	}
+	
+	// 
+	
+	public String getCurrentDomainDocument() {
+		return getDomainDocument();
+	}
+
+	public String getCurrentDomainName() {
+		return getDomainNameURL();
+	}
+
+	public String getCurrentDomainDescription() {
+		return getDomainName();
+	}
+
+	
 
 	private static DomainType getSafeDomainType( Byte b ) {
 		if (b == null) return null;

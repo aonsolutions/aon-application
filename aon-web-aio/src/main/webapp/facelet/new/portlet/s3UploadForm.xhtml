@@ -7,21 +7,33 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 >
-	
 	<script type="text/javascript">
         //<![CDATA[
+        	
+        	var uploadCount = 0;
+        	
         	function upload(file, success, error ){
 				let formData = new FormData();
 				let xhr = new XMLHttpRequest();
-    			  
+				
+				const user = '#{domainSwitcher.currentUser}';  
+				const uploadId =  '#{uploadId}'
+				const domainName = '#{domainSwitcher.currentDomainName}';
+				const domainDocument = '#{domainSwitcher.currentDomainDocument}';
+				const domainDescription =  '#{domainSwitcher.currentDomainDescription}';
+				
+				const fileOrder = ('0' + uploadCount++ ).slice(-2);  
+				
     			formData.append('key', 
-    					'invoices'
-    					+'/#{domainSwitcher.currentDomainURL}'
-    					+'#{(empty domainSwitcher.currentDomainDocument) ? "" : "/".concat(domainSwitcher.currentDomainDocument)}'
-    					+'/#{domainSwitcher.currentUser}'
-    					+'#{(empty uploadJobId) ? "" : "/".concat(uploadJobId)}' 
-    					+ '/' + file.name);
+    					'facturas'
+//    					'invoices'
+    					+'/' + domainName
+    					+ ( domainDocument ? '/' + domainDocument : '' )
+    					+'/' + user
+    					+ ( uploadId ? '/' + uploadId : '' )
+    					+ '/' + fileOrder + '_' + file.name);
     			formData.append('success_action_status', '201');
+    			formData.append('x-amz-meta-company-name', domainDescription );
     			formData.append('Content-Type', file.type);
 				formData.append('file', file);
     			
@@ -61,7 +73,7 @@
 	    		  let dt = e.dataTransfer;
 	    		  let files = dt.files;
 	    		  ([...files]).forEach( (file) => upload(file,success, error ) );
-	       		}, false)
+	       		}, false);
 
 	       		document.forms.s3UploadForm.file.addEventListener('change', (e) => {
 	    		  let files = document.forms.s3UploadForm.file.files;
@@ -71,7 +83,8 @@
 	       		
 	       		el.addEventListener('click', (e) => {
 	       			document.forms.s3UploadForm.file.click();
-		       	}, false)
+		       	}, false);
+	       		
 	       	}
 
         	//]]>
