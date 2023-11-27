@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
-import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
@@ -12,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +24,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -40,7 +36,6 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
@@ -48,13 +43,9 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.TaskTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
-import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
-import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -67,8 +58,6 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.NotificationDAO.NotificationFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.NotificationPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
@@ -82,7 +71,6 @@ public class TaskDAO {
 		throw new IllegalStateException("Utility Class");
 	}
 	
-	private static final NotificationPropertiesDAO NOTIFICATION_PROPERTIES = new NotificationPropertiesDAO();
 	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
 	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
 	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
@@ -177,93 +165,6 @@ public class TaskDAO {
 	
 	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
 		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage));
-	}
-	
-	public static Stream<Object> getTaskAndNotification(AONContext ctx, TaskFilter taskFilter, NotificationFilter notificationFilter, Integer page, Integer perPage) {
-		List<Object> genericList = new ArrayList<>();
-		
-		Field<Byte> TASK_SOURCE = DSL.field("task_source", Byte.class);
-		Field<String> DESCRIPTION = DSL.field("description", String.class);
-		Field<String> COMMENTS = DSL.field("comments", String.class);
-		Field<Integer> TH_ID = DSL.field("th_id", Integer.class);
-		Field<String> TH_NAME = DSL.field("th_name", String.class);
-		Field<Integer> SENDER_ID = DSL.field("sender_id", Integer.class);
-		Field<String> SENDER_NAME = DSL.field("sender_name", String.class);
-		
-		SelectHavingStep<Record> notificationQuery = ctx.getDslContext()
-		.select(NOTIFICATION_RECEIVER.ID)
-		.select(NOTIFICATION.DATE)
-		.select(NOTIFICATION.TITLE)
-		.select(NOTIFICATION.BODY)
-		.select(DSL.inline(null, SQLDataType.VARCHAR).as(DESCRIPTION))
-		.select(DSL.inline(null, SQLDataType.VARCHAR).as(COMMENTS))
-		.select(NOTIFICATION_RECEIVER.STATUS)
-		.select(NOTIFICATION.SOURCE)
-		.select(DSL.inline(null, SQLDataType.TINYINT).as(TASK_SOURCE))
-		.select(DSL.inline(null, SQLDataType.INTEGER).as(TH_ID))
-		.select(DSL.inline(null, SQLDataType.VARCHAR).as(TH_NAME))
-		.select(DSL.inline(null, SQLDataType.INTEGER).as(SENDER_ID))
-		.select(DSL.inline(null, SQLDataType.VARCHAR).as(SENDER_NAME))
-		.from(NOTIFICATION)
-		.join(NOTIFICATION_RECEIVER).on(NOTIFICATION_RECEIVER.NOTIFICATION.eq(NOTIFICATION.ID))
-		.join(DOMAIN).on(DOMAIN.ID.eq(NOTIFICATION.DOMAIN))
-		.where(NOTIFICATION_PROPERTIES.getConditions(notificationFilter))
-		.groupBy(NOTIFICATION_RECEIVER.NOTIFICATION, NOTIFICATION_RECEIVER.ID, DOMAIN.ID);
-		
-		SelectHavingStep<Record> taskQuery = selects(ctx.getDslContext()
-				.select(TASK.ID)
-				.select(TASK.START_DATE)
-				.select(DSL.inline(null, SQLDataType.VARCHAR))
-				.select(DSL.inline(null, SQLDataType.VARCHAR))
-				.select(TASK.DESCRIPTION)
-				.select(TASK.COMMENTS)
-				.select(TASK.STATUS)
-				.select(DSL.inline(null, SQLDataType.VARCHAR))
-				.select(TASK.SOURCE)
-				.select(TH_REGISTRY.ID)
-				.select(TH_REGISTRY.NAME)
-				.select(SENDER_REGISTRY.ID)
-				.select(SENDER_REGISTRY.NAME)
-				) 
-		.where(TASK.ID.in(getTaskIds(ctx, Optional.of(page), Optional.of(perPage), TASK_PROPERTIES.getConditions(taskFilter))))
-		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
-		
-		notificationQuery.union(taskQuery)
-		.orderBy(NOTIFICATION.DATE.desc())
-		.limit(perPage).offset(perPage * (page -1))
-		.fetch().forEach(
-			result -> {
-				if(result.getValue("title") == null) {
-					genericList.add(new Task()
-						.setId(result.getValue(NOTIFICATION_RECEIVER.ID))
-						.setStartDate(result.getValue(NOTIFICATION.DATE))
-						.setTitle(result.getValue(DESCRIPTION))
-						.setDescription(result.indexOf(COMMENTS)!=-1 ? result.getValue(COMMENTS) : null)
-						.setStatus(TaskStatus.safeValueOf(result.getValue(TASK.STATUS)))
-						.setSource(TaskSource.safeValueOf(result.getValue(TASK_SOURCE)))
-						.setTaskHolder((TaskHolder) new TaskHolder()
-							.setId(result.getValue(TH_ID))
-							.setName(result.getValue(TH_NAME))
-						)
-						.setSender((TaskHolder) new TaskHolder()
-							.setId(result.getValue(SENDER_ID))
-							.setName(result.getValue(SENDER_NAME))
-						)
-					);
-				}else {
-					genericList.add(new Notification()
-						.setId(result.getValue(NOTIFICATION_RECEIVER.ID))
-						.setDate(result.getValue(NOTIFICATION.DATE))
-						.setTitle(result.getValue(NOTIFICATION.TITLE))
-						.setBody(result.getValue(NOTIFICATION.BODY))
-						.setStatus(NotificationStatus.safeValueOf(result.getValue(NOTIFICATION_RECEIVER.STATUS)))
-						.setSource(NotificationSource.safeValueOf(result.getValue(NOTIFICATION.SOURCE)))
-					);
-				}
-			}
-		);
-		
-		return genericList.stream();
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {

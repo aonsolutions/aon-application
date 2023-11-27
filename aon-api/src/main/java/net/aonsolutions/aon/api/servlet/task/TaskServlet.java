@@ -41,8 +41,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
-import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
-import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -80,9 +78,6 @@ public class TaskServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getTasks(api));
-					break;
-				case "/task-and-notification":
-					response(req, resp, getTaskAndNotification(api));
 					break;
 				case "/one":
 					response(req, resp, getTask(api));
@@ -191,47 +186,6 @@ public class TaskServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
-	}
-	
-	private JSONArray getTaskAndNotification(AonApiData api) {
-		JSONArray json = new JSONArray();		
-		AON_SOLUTIONS.getTaskAndNotification(api.getDomain(), api.getUser(), 
-				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()),
-				f -> f.getAuthProperty().eq(SECURITY.getAonToken(api.getToken()).getAuth()).and(f.getStatusProperty().eq(NotificationStatus.value(NotificationStatus.UNREAD))), 
-				api.getData().optInt(IJsonNames.PAGE), 
-				api.getData().optInt(IJsonNames.PER_PAGE)
-			).forEach(result -> {
-				if(result instanceof Task) {
-					JSONObject task = new JSONObject();
-					Task newTask = (Task) result;
-					task.put(IJsonNames.ID, newTask.getId());
-					task.put(IJsonNames.STATUS, newTask.getStatus().toString().toLowerCase());
-					task.put(IJsonNames.TITLE, newTask.getTitle());
-					task.put(IJsonNames.DESCRIPTION, newTask.getDescription());
-					task.put(IJsonNames.CREATION_DATE, newTask.getStartDate());
-					task.put(IJsonNames.SOURCE, newTask.getSource().toString().toLowerCase());
-					JSONObject task_holder = new JSONObject();
-					task_holder.put(IJsonNames.ID, newTask.getTaskHolder().getId());
-					task_holder.put(IJsonNames.NAME, newTask.getTaskHolder().getName());
-					task.put(IJsonNames.TASK_HOLDER, task_holder);
-					JSONObject sender = new JSONObject();
-					sender.put(IJsonNames.ID, newTask.getSender().getId());
-					sender.put(IJsonNames.NAME, newTask.getSender().getName());
-					task.put(IJsonNames.SENDER, sender);
-					json.put(task);
-				}else {
-					JSONObject notification = new JSONObject();
-					Notification newNotification = (Notification) result;
-					notification.put(IJsonNames.ID, newNotification.getId());
-					notification.put(IJsonNames.STATUS, newNotification.getStatus());
-					notification.put(IJsonNames.TITLE, newNotification.getTitle());
-					notification.put("body", newNotification.getBody());
-					notification.put(IJsonNames.DATE, newNotification.getDate());
-					notification.put(IJsonNames.SOURCE, newNotification.getSource());
-					json.put(notification);
-				}
-			});
-		return json;
 	}
 	
 	private JSONArray getTasks(AonApiData api) {

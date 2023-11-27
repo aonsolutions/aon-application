@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask2;
 import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
-import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
@@ -62,12 +61,6 @@ public class Task2Impl implements ITask2 {
 	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.getParentOrChildStream(ctx, filter, page, perPage));	
-	}
-	
-	@Override
-	public Stream<Object> getTaskAndNotification(AONContext ctx, TaskFilter taskFilter, NotificationFilter notificationFilter, Integer page, Integer perPage) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			TaskDAO.getTaskAndNotification(ctx, taskFilter, notificationFilter, page, perPage));	
 	}
 	
 	@Override

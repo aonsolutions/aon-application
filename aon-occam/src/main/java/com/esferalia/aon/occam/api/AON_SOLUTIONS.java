@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceRawDocFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -51,7 +50,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.news.News;
@@ -478,12 +476,6 @@ public class AON_SOLUTIONS {
 	}
 	
 	// INVOICE
-	
-	public static Stream<InvoiceAndRaw> getInvoiceAndRaw(String domainName, Integer domainId, String login, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getInvoiceAndRaw(ctx, filter,filterRawdoc);
-		} 
-	}
 	
 	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
@@ -975,12 +967,6 @@ public class AON_SOLUTIONS {
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter, page, perPage);
-		}
-	}
-	
-	public static Stream<Object> getTaskAndNotification(Domain domain, User user, TaskFilter taskFilter, NotificationFilter notificationFilter, Integer page, Integer perPage) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskAndNotification(ctx, taskFilter, notificationFilter, page, perPage);
 		}
 	}
 	
