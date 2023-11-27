@@ -1,9 +1,8 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.util.regex.Pattern;
 
-public class DiscountExpression implements Serializable, Comparable<DiscountExpression> {
+public class DiscountExpression implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -18,21 +17,22 @@ public class DiscountExpression implements Serializable, Comparable<DiscountExpr
 	private double[] discounts;
 
 	/**
-	 * Regular expression to obtain the discounts included in the String.
-	 */
-	private static Pattern PATTERN = Pattern.compile("\\+"); //$NON-NLS-1$
-
-	/**
 	 * Separator for discounts in the String.
 	 */
-	private static String SEPARATOR = "+"; //$NON-NLS-1$
+	private static final String SEPARATOR = "+";
+
+	/**
+	 * Discount Expression default value.
+	 */
+	private static final String ZERO = "0.0";
 
 	/**
 	 * Void constructor Default expression is a with no discount.
 	 *
 	 */
 	public DiscountExpression() {
-		discountExpr = "0.0";
+		discountExpr = ZERO;
+		discounts = new double[] { 0.0 };
 	}
 
 	/**
@@ -42,14 +42,24 @@ public class DiscountExpression implements Serializable, Comparable<DiscountExpr
 	 */
 	public DiscountExpression(double[] discounts) {
 		this.discounts = discounts;
-		discountExpr = "";
-		StringBuffer buf = new StringBuffer("");
+		StringBuilder buf = new StringBuilder("");
 		for (int i = 0; i < discounts.length; i++) {
 			if (i > 0) {
 				buf.append(SEPARATOR);
 			}
 			buf.append(discounts[i]);
 		}
+		setDiscountExpr(buf.toString());
+	}
+	
+	/**
+	 * Contructor with an array with the discounts.
+	 * 
+	 * @param discounts All discounts.
+	 */
+	public DiscountExpression(double discount) {
+		discountExpr = Double.toString(discount);
+		this.discounts = new double[] {discount};
 	}
 
 	/**
@@ -59,9 +69,10 @@ public class DiscountExpression implements Serializable, Comparable<DiscountExpr
 	 * @param discountExpr the discount expression.
 	 */
 	public DiscountExpression(String discountExpr) {
-		this.discountExpr = discountExpr;
+		this.discountExpr = discountExpr == null || (discountExpr.length()) == 0
+				? ZERO : discountExpr;
 
-		String[] arr = PATTERN.split(discountExpr);
+		String[] arr = getDiscountExpr().split(SEPARATOR);
 		discounts = new double[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			String discount = arr[i];
@@ -84,9 +95,10 @@ public class DiscountExpression implements Serializable, Comparable<DiscountExpr
 	 * @param discountExpr string with the expression.
 	 */
 	public void setDiscountExpr(String discountExpr) {
-		this.discountExpr = discountExpr;
+		this.discountExpr = discountExpr == null || (discountExpr.length()) == 0
+				? ZERO : discountExpr;
 
-		String[] arr = PATTERN.split(discountExpr);
+		String[] arr = getDiscountExpr().split(SEPARATOR);
 		discounts = new double[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			String discount = arr[i];
