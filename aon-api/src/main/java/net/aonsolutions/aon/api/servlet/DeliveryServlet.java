@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -218,6 +219,8 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
+			if(info.getSeresPath() == null)
+				info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
 			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), d);
 			d.setEdiCodes(codes);

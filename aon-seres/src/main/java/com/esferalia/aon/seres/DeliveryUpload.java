@@ -30,6 +30,8 @@ public class DeliveryUpload extends Seres {
 
 	public DeliveryUpload(Domain domain, String login, SeresInfo info) {
 		super(domain, login, info);
+		if(getInfo().getSeresPath() == null)
+			info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
 	}
 	
 	public void uploadDeliveries(List<Delivery> list) {
@@ -38,11 +40,10 @@ public class DeliveryUpload extends Seres {
 	
 	public void uploadDelivery(Delivery delivery) {
 		try {
-			SeresPath path = getInfo().getSeresPath() != null
-					? getInfo().getSeresPath() : SeresPath.ENVIO_DESADV_D96A;
+			String filename = delivery.getSeries()+"_"+delivery.getNumber() + ".edi";
 			FileOutput output = getEdiFile(delivery);
 			InputStream is = new BufferedInputStream(new ByteArrayInputStream(output.getContent()));
-			storeFile(path.getPath(), is);
+			storeFile(filename, is);
 			saveDeliveryInfo(delivery, DeliveryCommunicationStatus.ACCEPTED);
 		} catch (AonException | JSchException | SftpException e) {
 			e.printStackTrace();
