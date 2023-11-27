@@ -921,9 +921,6 @@ public class MainCRA extends MainEntryPoint {
 	public void onFilterDatesChange(ChangeEvent event) {
 		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()),
 				Integer.parseInt(yearTillT.getSelectedValue()));
-		findingDateCRA.setHours(0);
-		findingDateCRA.setMinutes(0);
-		findingDateCRA.setSeconds(0);
 		showLoading("Obteniendo CRAs generados...");
 		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
 			filterCRAs();
@@ -1047,9 +1044,6 @@ public class MainCRA extends MainEntryPoint {
 
 	private void onListCras() {
 		showLoading("Obteniendo CRAs generados...");
-		findingDateCRA.setHours(0);
-		findingDateCRA.setMinutes(0);
-		findingDateCRA.setSeconds(0);
 		this.mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
 			setDateLBSelected();
 			initCRATable();
