@@ -645,7 +645,9 @@ public class FiscalModelDAO {
 				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.asc(),FS_MODEL.ID.asc())
 				.fetch()
 				.stream()
-				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
+				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+				.map(mod -> fillModelDetails(ctx,mod)) // Necesito leer las lineas del modelo, para obtener el NRC				
+				;
 	}
 	
 	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceModelReportParams params) {

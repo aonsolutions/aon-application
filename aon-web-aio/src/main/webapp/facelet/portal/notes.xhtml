@@ -2,68 +2,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-		<meta name="gwt:property" content="locale=es_ES" />
-
-
-	<style>
-	body {
-		margin: 0px;
-	}
-	
-	#aonComunicaContent > div {
-		position: initial !important;
-	}
-	</style>
-
+	<ui:include src="/facelet/portal/loadPortal.xhtml" />
 
 	<script type="text/javascript">
-        //<![CDATA[
-      	delete Array.prototype.toJSON;
-      	
-		function isNewAONTheme (){
-			return #{userUtils.newAONTheme};
-		}
-
-        function getCurrentUser() {
-        	return '#{domainSwitcher.currentUser}';
-        }
-
-        function getCurrentDomainNameURL() {
-        	return '#{domainSwitcher.currentDomainNameURL}';
-        }
-        
-        function loadPanel(el, tag) {
-			el.innerHTML= '<' + tag + '></' + tag + '>';
-       	} 
-       	
-       	function loadStylesSheet( stylesheet ) {
-			var link = document.createElement( "link" );
-			link.type = "text/css";
-			link.rel = "stylesheet";
-			link.media = "screen,print";
-			link.href = stylesheet;
-
-			document.getElementsByTagName( "head" )[0].appendChild( link );
-       	}
-
-       	loadStylesSheet('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
-
-       	localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
-		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
-		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
-		localStorage.setItem('aon_session_id', "#{dur.token}");
+		//<![CDATA[ 
+		loadPanel(document.getElementById('rootPanel'), 'aon-notes');
 		//]]>
-    </script>
-    
-    <script type="text/javascript">
-      	loadStylesSheet('dist/aio.min.css');
-    </script>
-    
-    <script type="module" src="dist/aio.min.js"></script>
-    
-	<div id="notesDiv" style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;" ></div>
-	<script>
-		document.querySelector("#notesDiv").innerHTML = "";
-		document.querySelector("#notesDiv").appendChild(document.createElement("aon-note"));
 	</script>
 </ui:composition>

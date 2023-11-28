@@ -44,7 +44,6 @@ public class ModelMatrix extends MainEntryPoint {
 	
 	private Panel dataPanel;
 	
-
 	@Override
 	public void onModuleLoad() {
 		onModuleLoad((String) null);
@@ -105,6 +104,9 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 
 	private void search(MatrixModuleOptions options, FiscalMatrixParams params, AonSearchPanelButton refreshButton) {
+		if (!params.isMultiplePresentation()) {
+			options.getSelected().clear();
+		}
 		dataPanel.clear();
 		dataPanel.add(new ModelMatrixPanel(options, params, refreshButton));
 	}

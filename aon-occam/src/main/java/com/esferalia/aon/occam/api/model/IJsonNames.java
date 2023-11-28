@@ -348,6 +348,7 @@ public final class IJsonNames {
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
+	public static final String NRC = "nrc";
 	public static final String NRS = "nrs";
 	public static final String NULL = "null";
 	public static final String NUMBER = "number";

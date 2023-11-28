@@ -1,22 +1,43 @@
 package com.esferalia.aon.gwt.fiscal.client.matrix;
 
+import java.util.ArrayList;
+
 import com.esferalia.aon.gwt.fiscal.client.ModuleOptions;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 
 public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 
 	private static final long serialVersionUID = -1477889480738439699L;
 	
 	private boolean compactMode;
+	private ArrayList<String> selected; // Seleccionados para la presentación múltiple
 
 	public boolean isCompactMode() {
 		return compactMode;
 	}
-
 	public MatrixModuleOptions setCompactMode(boolean compactMode) {
 		this.compactMode = compactMode;
 		return this;
 	}
 	
+	// FALTA - AÑADIR Y BORRAR SELECCIONADO, POR AHORA SOLO SE GUARDA MODELO_ID
 	
+	public ArrayList<String> getSelected() {
+		if (selected == null)
+			selected = new ArrayList<>();
+		return selected;
+	}	
+	public String getSelectedKey(IFiscalModel model) {
+		return model.getModel().toString() + "_" + model.getId().toString();
+	}
+	public void addSelected(IFiscalModel model) {
+		getSelected().add(getSelectedKey(model));
+	}	
+	public void removeSelected(IFiscalModel model) {
+		getSelected().remove(getSelectedKey(model));
+	}
+	public boolean isSelected(IFiscalModel model) {
+		return getSelected().contains(getSelectedKey(model));  
+	}	
 
 }
