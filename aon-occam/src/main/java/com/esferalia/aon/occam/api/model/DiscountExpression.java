@@ -20,6 +20,12 @@ public class DiscountExpression implements Serializable {
 	 * Separator for discounts in the String.
 	 */
 	private static final String SEPARATOR = "+";
+	
+	/**
+	 * Separator pattern.
+	 */
+	private static final String PATTERN = "\\+";
+	
 
 	/**
 	 * Discount Expression default value.
@@ -72,7 +78,7 @@ public class DiscountExpression implements Serializable {
 		this.discountExpr = discountExpr == null || (discountExpr.length()) == 0
 				? ZERO : discountExpr;
 
-		String[] arr = getDiscountExpr().split(SEPARATOR);
+		String[] arr = getDiscountExpr().split(PATTERN);
 		discounts = new double[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			String discount = arr[i];
@@ -98,7 +104,7 @@ public class DiscountExpression implements Serializable {
 		this.discountExpr = discountExpr == null || (discountExpr.length()) == 0
 				? ZERO : discountExpr;
 
-		String[] arr = getDiscountExpr().split(SEPARATOR);
+		String[] arr = getDiscountExpr().split(PATTERN);
 		discounts = new double[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			String discount = arr[i];
