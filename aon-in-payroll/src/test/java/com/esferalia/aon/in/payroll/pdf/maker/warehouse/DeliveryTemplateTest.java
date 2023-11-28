@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 
-public class DeliveryDetailTest {
+public class DeliveryTemplateTest {
 
 	/**
 	 * Tests DeliveryTemplate creating a pdf called DeliveryTest.pdf in /aon.in.payroll/DeliveryTest.pdf

@@ -8,6 +8,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -21,12 +23,13 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -39,9 +42,9 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private static final PDFont DEFAULT_BOLD_FONT = PdfFonts.HELVETICA_BOLD;
 	private static final Color DEFAULT_FONT_COLOR = PdfColors.DARKEST;
 	
-	private static final float TITLEFONTSIZE = 7f;
-	private static final float TEXTFONTSIZE = 6f;
-	private static final float EXTRATITLEFONTSIZE = 10f;
+	private static final float TITLEFONTSIZE = 9f;
+	private static final float TEXTFONTSIZE = 8f;
+	private static final float EXTRATITLEFONTSIZE = 12f;
 	
 	OutputStream filename;
 	
@@ -54,7 +57,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 	public Workplace workplace;
 	private CompanyFull company;
 	private CustomerFull customer;
-	private Item item;
 	private byte[] logo;
 	
 	private float x;
@@ -98,7 +100,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 			this.logo = logo;
 			
 			this.document = new PDDocument();
-			this.page = new PDPage(PDRectangle.A5);
+			this.page = new PDPage(PDRectangle.A4);
 			this.document.addPage(this.page);
 			this.contents = new PDPageContentStream(this.document, this.page);
 			
@@ -146,6 +148,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private void drawCompany() throws IOException {
 		drawLogo();
 		drawCompanyName();
+		drawCustomerCIF();
 		drawCompanyAddress();
 		drawCompanyMedia();
 	}
@@ -156,7 +159,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 */
 	private void drawDelivery() throws IOException {
 		drawDeliveryTableFirstRow();
-		drawDeliveryTableSecondRow();
 		drawDeliveryTableOtherRows();
 	}
 	
@@ -165,7 +167,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 * @throws IOException
 	 */
 	private void drawPayment() throws IOException {
-		drawPaymentTableFirstRow();
+		drawPaymentTableSecondRow();
 	}
 	
 	/**
@@ -191,13 +193,12 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 * @throws IOException
 	 */
 	private void drawCompanyName() throws IOException {
-		
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
 		y -= TITLEFONTSIZE;
 		
 		final float nameWidth = maxLogoWidth*2;
 				
-		String companyName = AonStringUtils.trimToEmpty(this.company.getRegistry().getName());
+		String companyName = AonStringUtils.trimToEmpty(company.getRegistry().getName());
 		
 		List<String> nameLines = PDFToolkit.getLines(companyName, nameWidth, DEFAULT_BOLD_FONT, TITLEFONTSIZE);
 		
@@ -208,11 +209,23 @@ public class DeliveryTemplate implements AutoCloseable  {
 	}
 	
 	/**
+	 * Draws the customer's cif
+	 * @throws IOException
+	 */
+	private void drawCustomerCIF() throws IOException {
+		y -= TITLEFONTSIZE; 
+				
+		String cif = "CIF: " + AonStringUtils.trimToEmpty(delivery.getCustomer().getDocument());
+		
+		PDFToolkit.drawText(this.contents,cif,x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+	}
+	
+	/**
 	 * Draws the company's address
 	 * @throws IOException
 	 */
 	private void drawCompanyAddress() throws IOException {
-		y = initialY - TITLEFONTSIZE - TITLEFONTSIZE;
+		y -= TEXTFONTSIZE;
 		
 		RegistryAddress mainAddress = company.getMainAddress();
 		
@@ -435,7 +448,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 */
 	private void drawDeliveryTitle() throws IOException {
 		x = marginSide + initialX + maxLogoWidth + separateElementsMargin;
-		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE);
+		y = (float) (initialY - marginTop - maxLogoWidth*2.35);
 		
 		final float nameWidth = (float) (getPageWidth()/3.25);
 				
@@ -539,30 +552,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 	}
 	
 	/**
-	 * Draws the delivery's number and date
-	 * @throws IOException
-	 */
-	private void drawDeliveryTableSecondRow() throws IOException {
-		x = initialX;
-		y -= TEXTFONTSIZE + TEXTFONTSIZE;
-		
-		String order = "Pedido: ";
-		
-		float nameWidth = (maxLogoWidth*3);
-				
-		if (delivery != null) {
-			order = "Pedido: " + delivery.getNumber() + " del " + AonDateUtils.format(delivery.getDate(), "dd/MM/yyyy");
-		}
-		
-		List<String> nameLines = PDFToolkit.getLines(order, nameWidth, DEFAULT_BOLD_FONT, TEXTFONTSIZE);
-		
-		for (String line : nameLines) {
-			PDFToolkit.drawText(this.contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
-			this.y -= TEXTFONTSIZE + 1;
-		}
-	}
-	
-	/**
 	 * Draws the delivery's data (description, quantity, price and amounth) for each delivery
 	 * @throws IOException
 	 */
@@ -573,7 +562,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 		List<DeliveryDetail> details = delivery.getDetails();
 		
 		BigDecimal bigDecimal;
-		DecimalFormat format = new DecimalFormat("0");
 		List<String> nameLines;
 		
 		String description;
@@ -583,75 +571,117 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 		float nameWidth;
 		
-		for (DeliveryDetail detail : details) {
-			if (detail != null) {
+		TreeMap<Integer, List<DeliveryDetail>> deliveryDetailMap = getDeliveryDetailById(details);
+		
+        for (Entry<Integer, List<DeliveryDetail>> detail : deliveryDetailMap.entrySet()) {
+			if (detail != null && detail.getKey() != null && detail.getValue() != null) {
 				
-				if (detail.getDescription() != null) {
+				x = initialX;
+				
+				// Draw id of sales
+				
+				nameWidth = (maxLogoWidth*3);
+				
+				Integer id  = detail.getKey();
+				
+				if (id != -1) {
+					String date = StringUtils.EMPTY;
+					String reference = StringUtils.EMPTY;
 					
-					// description
-					x = initialX;
-					nameWidth = (maxLogoWidth*3);
-	
-					description = detail.getDescription();
+					if (detail.getValue().get(0) != null && detail.getValue().get(0).getCreationDate() != null) {
+						date = AonDateUtils.format(detail.getValue().get(0).getCreationDate(), "dd/MM/yyyy");
+					}
 					
-					nameLines = PDFToolkit.getLines(description, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+					if (detail.getValue().get(0) != null && detail.getValue().get(0).getPurchaseReference() != null) {
+						reference = detail.getValue().get(0).getPurchaseReference();
+					}
+					
+					String pedido = "Pedido: " + id.toString() + " del " + date + " Ref. compra: " + reference;
+					
+					nameLines = PDFToolkit.getLines(pedido, nameWidth, DEFAULT_BOLD_FONT, TEXTFONTSIZE);
 					
 					for (String line : nameLines) {
-						PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+						PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
+						this.y -= TEXTFONTSIZE + 1;
 					}
 				}
+				
+				// Draw sales' items
+				
+				List<DeliveryDetail> items = detail.getValue();
+				
+				if (items != null) {
+					
+					for (DeliveryDetail i : items) {
+						x = initialX;
+						DecimalFormat format = new DecimalFormat("0");
+					
+						// description
+						if (i.getDescription() != null) {
+							nameWidth = (maxLogoWidth*3);
 			
-				// quantity
-				if (detail != null) {
-					x = (float) (maxLogoWidth*3.25);
-					
-					nameWidth = (float) (maxLogoWidth*0.65);
-	
-					quantity = format.format(detail.getQuantity());
-					
-					nameLines = PDFToolkit.getLines(quantity, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
-					
-					for (String line : nameLines) {
-						PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
-					}
-				}
-				
-				format = new DecimalFormat("0.00");
+							description = i.getDescription();
+							
+							nameLines = PDFToolkit.getLines(description, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+							
+							for (String line : nameLines) {
+								PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+							}
+						}
 						
-				// price
-				x += (float) (maxLogoWidth*0.75);
+						// quantity
+						x = (float) (maxLogoWidth*3.25);
+							
+						nameWidth = (float) (maxLogoWidth*0.65);
+		
+						quantity = format.format(i.getQuantity());
+						
+						nameLines = PDFToolkit.getLines(quantity, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+						
+						for (String line : nameLines) {
+							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+						}
+						
+						format = new DecimalFormat("0.00");
+								
+						// price
+						x += (float) (maxLogoWidth*0.75);
+							
+						nameWidth = (float) (maxLogoWidth*0.65);
+			
+						bigDecimal = BigDecimal.valueOf(i.getPrice()).setScale(2, RoundingMode.HALF_UP);
+						price = format.format(bigDecimal.doubleValue());
+											
+						nameLines = PDFToolkit.getLines(price, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+							
+						for (String line : nameLines) {
+							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+						}
+			
+						// amounth
+						x += (maxLogoWidth);
+							
+						nameWidth = (float) (maxLogoWidth*0.90);
+						
+						bigDecimal = BigDecimal.valueOf(i.getAmount()).setScale(2, RoundingMode.HALF_UP);
+						amounth = format.format(bigDecimal.doubleValue());
+						
+						nameLines = PDFToolkit.getLines(amounth, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+						
+						for (String line : nameLines) {
+							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
+						}
+						y -= TEXTFONTSIZE + 1;
+					}
 					
-				nameWidth = (float) (maxLogoWidth*0.65);
-	
-				bigDecimal = BigDecimal.valueOf(detail.getPrice()).setScale(2, RoundingMode.HALF_UP);
-				price = format.format(bigDecimal.doubleValue());
-									
-				nameLines = PDFToolkit.getLines(price, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
-					
-				for (String line : nameLines) {
-					PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
-				}
-	
-				// amounth
-				x += (maxLogoWidth);
-					
-				nameWidth = (float) (maxLogoWidth*0.90);
-				
-				bigDecimal = BigDecimal.valueOf(detail.getAmount()).setScale(2, RoundingMode.HALF_UP);
-				amounth = format.format(bigDecimal.doubleValue());
-				
-				nameLines = PDFToolkit.getLines(amounth, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
-				
-				for (String line : nameLines) {
-					PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
 				}
 				y -= TEXTFONTSIZE + 1;
-			}
+			}		
 		}
 	}
 	
 	/**
-	 * 
+	 * Draws the payment's data
 	 * @throws IOException
 	 */
 	private void drawPaymentTableFirstRow() throws IOException {
@@ -677,6 +707,180 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 		PDFToolkit.drawText(contents,taxesCuote,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
 	}
+	
+	private void drawPaymentTableSecondRow() throws IOException {
+		Customer simpleCustomer = customer.getRegistry();
+		
+		if (simpleCustomer.getTransaction() != InvoiceTransactionType.NATIONAL) {
+			drawAmounthNotNational();
+		} else {
+			drawAmounthNational();
+		}
+	}
+		
+	private void drawAmounthNotNational() throws IOException {
+		Double amounth = getAmounthNotNational();
+		
+		// box
+		x = initialX + this.maxLogoWidth*4;
+		y -= TITLEFONTSIZE*3 + 1;
+		float height = (maxLogoWidth);
+		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.DARKEST);
+		
+		// title
+		String descripcion = "Total Albar\u00E1n";
+		x += (float) (maxLogoWidth*0.20);
+		y += (float) (maxLogoWidth*0.025);
+				
+		PDFToolkit.drawText(contents,descripcion,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		
+		// amounth
+		DecimalFormat format = new DecimalFormat("0.00");
+		
+		x += (float) (maxLogoWidth*0.40);
+		y -= TITLEFONTSIZE*2 + 1;
+
+		BigDecimal bigDecimal = BigDecimal.valueOf(amounth).setScale(2, RoundingMode.HALF_UP);
+		String amounthString = format.format(bigDecimal.doubleValue()) + " \u20AC";
+		
+		PDFToolkit.drawText(contents,amounthString,x,y,PdfColors.DARKEST,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+	}
+	
+	private void drawAmounthNational() throws IOException {
+		drawPaymentTableFirstRow();
+		
+		Double amounth = getAmounthNational();
+		
+		// box
+		x = initialX + this.maxLogoWidth*4;
+		y -= TITLEFONTSIZE*3 + 1;
+		float height = (maxLogoWidth);
+		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.DARKEST);
+		
+		// title
+		String descripcion = "Total Albar\u00E1n";
+		x += (float) (maxLogoWidth*0.20);
+		y += (float) (maxLogoWidth*0.05);
+				
+		PDFToolkit.drawText(contents,descripcion,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		
+		// amounth
+		DecimalFormat format = new DecimalFormat("0.00");
+		
+		x += (float) (maxLogoWidth*0.40);
+		y -= TITLEFONTSIZE*2 + 1;
+
+		BigDecimal bigDecimal = BigDecimal.valueOf(amounth).setScale(2, RoundingMode.HALF_UP);
+		String amounthString = format.format(bigDecimal.doubleValue()) + " \u20AC";
+		
+		PDFToolkit.drawText(contents,amounthString,x,y,PdfColors.DARKEST,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+	}
+	
+	private Double getAmounthNotNational() {
+		List<DeliveryDetail> details = delivery.getDetails();
+		Double totalAmounth = (double) 0;
+		
+		for(DeliveryDetail detail : details) {
+			totalAmounth += detail.getAmount();
+		}
+		
+		return totalAmounth;
+	}
+	
+	private Double getAmounthNational() {
+		TreeMap<Double,List<DeliveryDetail>> deliveryDetailMap = getDeliveryDetailByTax(delivery.getDetails());
+		Double totalAmounth = (double) 0;
+		
+        for (Entry<Double, List<DeliveryDetail>> detail : deliveryDetailMap.entrySet()) {
+			if (detail != null && detail.getKey() != null && detail.getValue() != null) {
+				for (DeliveryDetail d : detail.getValue()) {
+					totalAmounth += detail.getKey() * d.getAmount();
+				}
+			}
+        }
+		
+		return totalAmounth;
+	}
+	
+	/**
+	 * Returns a map with the DeliveryDetails and their id
+	 * @param details list of DeliveryDetail
+	 * @return map with the id and the deliveryDetail
+	 */
+	private TreeMap<Integer,List<DeliveryDetail>> getDeliveryDetailById(List<DeliveryDetail> details) {
+		TreeMap<Integer, List<DeliveryDetail>> map = new TreeMap<>();
+		List<DeliveryDetail> detailsById;
+		
+		for (DeliveryDetail detail : details) {
+			if (detail.getSalesDetail() != null) {
+				detailsById = getDetailsById(detail.getSalesDetail(),details);
+				map.put(detail.getSalesDetail(), detailsById);
+			} else {
+				detailsById = getDetailsById(-1,details);
+				map.put(-1, detailsById);
+			}
+		}
+		
+		return map;
+	}
+	
+	/**
+	 * Returns a list with the DeliveryDetails with the given salesDetail
+	 * @param id the salesDetail
+	 * @param details list of all DelivaryDetails
+	 * @return list of DeliveryDetails with that given id
+	 */
+	private LinkedList<DeliveryDetail> getDetailsById(Integer id, List<DeliveryDetail> details) {
+		LinkedList<DeliveryDetail> list = new LinkedList<>();
+		
+		for (DeliveryDetail detail : details) {
+			if ((detail.getSalesDetail() == null && id.equals(-1)) || id.equals(detail.getSalesDetail())) {
+				list.add(detail);
+			}
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Returns a map with the DeliveryDetails and their tax
+	 * @param details list of DeliveryDetail
+	 * @return map with the id and the deliveryDetail
+	 */
+	private TreeMap<Double,List<DeliveryDetail>> getDeliveryDetailByTax(List<DeliveryDetail> details) {
+		TreeMap<Double, List<DeliveryDetail>> map = new TreeMap<>();
+		List<DeliveryDetail> detailsByTax;
+		
+		for (DeliveryDetail detail : details) {
+			if (detail != null && detail.getItem() != null && detail.getItem().getProduct() != null && detail.getItem().getProduct().getVat() != null) {
+				double taxPercentage = detail.getItem().getProduct().getVat().getPercentage();
+				detailsByTax = getDetailsByTax(taxPercentage,details);
+				map.put(taxPercentage, detailsByTax);
+			}
+		}
+		
+		return map;
+	}
+	
+	/**
+	 * Returns a list with the DeliveryDetails with the given percentage
+	 * @param percentage the salesDetail
+	 * @param details list of all DelivaryDetails
+	 * @return list of DeliveryDetails with that given percentage
+	 */
+	private LinkedList<DeliveryDetail> getDetailsByTax(Double percentage, List<DeliveryDetail> details) {
+		LinkedList<DeliveryDetail> list = new LinkedList<>();
+		
+		for (DeliveryDetail detail : details) {
+			if ((detail != null && detail.getItem() != null && detail.getItem().getProduct() != null && detail.getItem().getProduct().getVat() != null)
+			&& detail.getItem().getProduct().getVat().getPercentage() == percentage) {
+				list.add(detail);
+			}
+		}
+		
+		return list;
+	}
+	
 	
 	private float getPageWidth() {
 		if (this.page != null)

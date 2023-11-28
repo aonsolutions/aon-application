@@ -927,7 +927,7 @@ public class AonFaker {
 				.setAlias(Faker.instance().zelda().character())
 				.setConfidential(random.nextBoolean())
 				.setDirty(random.nextBoolean())
-				.setDocument(Faker.instance().letterify("???????????????"))
+				.setDocument(Faker.instance().bothify("?########").toUpperCase())
 				.setDocumentCountry(country)
 				.setDocumentType(documentTypes[random.nextInt(documentTypes.length)])
 				.setDomain(getDomain())
@@ -1068,11 +1068,17 @@ public class AonFaker {
 	}
 	
 	public static DeliveryDetail getDeliveryDetail() {
+		Random random = new Random();
+		
 		return new DeliveryDetail()
+				.setSalesDetail(random.nextInt(0, 9))
 				.setDescription(Faker.instance().food().ingredient())
 				.setPrice(Double.parseDouble(Faker.instance().numerify("##.#").toString()))
 				.setDiscountExpression("0.0")
-				.setQuantity(Double.parseDouble(Faker.instance().numerify("#")));
+				.setQuantity(random.nextInt(1, 9))
+				.setPurchaseReference(Faker.instance().bothify("P##/######"))
+				.setCreationDate(new Date())
+				.setPurchaseReference(Faker.instance().numerify("##########"));
 	}
 	
 	public static Delivery getDelivery() {
@@ -1086,9 +1092,15 @@ public class AonFaker {
 		DeliveryDetail deliveryDetail1 = getDeliveryDetail();
 		DeliveryDetail deliveryDetail2 = getDeliveryDetail();
 		DeliveryDetail deliveryDetail3 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail4 = getDeliveryDetail();
+		deliveryDetail1.setSalesDetail(null);
+		deliveryDetail2.setSalesDetail(1);
+		deliveryDetail3.setSalesDetail(1);
+		deliveryDetail4.setSalesDetail(2);
 		details.add(deliveryDetail1);
 		details.add(deliveryDetail2);
 		details.add(deliveryDetail3);
+		details.add(deliveryDetail4);
 		
 		return new Delivery()
 				.setDomain(getDomain().getId())
