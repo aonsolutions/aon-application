@@ -7,29 +7,23 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.SelectHavingConditionStep;
-import org.jooq.SelectHavingStep;
-import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Rawdoc;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceRawDocFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -37,7 +31,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -47,73 +41,36 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoiceRawDocPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
-	private static final InvoiceRawDocPropertiesDAO INVOICE_RAWDOC_PROPERTIES = new InvoiceRawDocPropertiesDAO();
-	public static final Field<LocalDate> ISSUE_DATE =  DSL.field("issue_date", LocalDate.class);
-	public static final Field<Boolean> IS_RAWDOC =  DSL.field("is_inbox", Boolean.class);
-	public static final Field<Byte> TYPE = DSL.field("type", Byte.class);
-	public static final Field<String> REFERENCE_CODE = DSL.field("type", String.class);
-	public static final Field<String> REGISTRY_NAME = DSL.field("type", String.class);
-	public static final Field<Byte> STATUS = DSL.field("status", Byte.class);
-	public static final Field<Integer> MIME_TYPE = DSL.field("mime_type", Integer.class);
-	public static final Field<Byte> RAWDOC_STATUS = DSL.field("rawdoc_status", Byte.class);
 	
-	public static Stream<InvoiceAndRaw> getInvoiceAndRaw(AONContext ctx, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc) {
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
-		String switchSQL = " CASE ";
-		for(int i = 0; i < InvoiceType.values().length; i++) {
-			switchSQL += " WHEN REPLACE(JSON_EXTRACT(rawdoc.json, '$.type'), '\"', '') = \"" + InvoiceType.values()[i].getTediName() + "\" THEN " + i;
-		}
-		switchSQL += " ELSE 1 END";		
-		
-		SelectHavingStep<Record> query1 = ctx.getDslContext()
-				.select(INVOICE.ID)
-				.select(INVOICE.DOMAIN)
-				.select(INVOICE.TOTAL)
-				.select(INVOICE.REFERENCE_CODE)
-				.select(INVOICE.NUMBER)
-				.select(INVOICE.SERIES)
-				.select(INVOICE.ISSUE_DATE)
-				.select(INVOICE.RNAME)
-				.select(INVOICE.TYPE)
-				.select(INVOICE.STATUS)
-				.select(DSL.inline(false).as(IS_RAWDOC))
-				.select(DSL.inline(null, MIME_TYPE).as(MIME_TYPE))
-				.select(DSL.inline(null, RAWDOC_STATUS).as(RAWDOC_STATUS))
-				.from(INVOICE)
-				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
-				.where(INVOICE_PROPERTIES.getConditions(filter))
-				.groupBy(INVOICE.ID); 
-		SelectHavingConditionStep<Record> query2 = ctx.getDslContext()
-				.select(Rawdoc.RAWDOC.ID)
-				.select(Rawdoc.RAWDOC.DOMAIN)
-				.select(DSL.field("JSON_EXTRACT(rawdoc.json, '$.total')"))
-				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.reference'), '\"', '')"))
-				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.number'), '\"', '')"))
-				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.serie'), '\"', '')"))
-				.select(DSL.field("DATE_FORMAT(SUBSTRING(REPLACE(JSON_EXTRACT(rawdoc.json, '$.date'), '\"', ''),1,10),'%Y-%m-%d')").as(ISSUE_DATE))
-				.select(DSL.field("REPLACE(JSON_EXTRACT(rawdoc.json, '$.name'), '\"', '')"))
-				.select(DSL.field(switchSQL).as(TYPE))
-				.select(DSL.inline((byte) 0).as(STATUS))
-				.select(DSL.inline(true).as(IS_RAWDOC))
-				.select(Rawdoc.RAWDOC.MIME_TYPE)
-				.select(Rawdoc.RAWDOC.STATUS.as(RAWDOC_STATUS))
-				.from(Rawdoc.RAWDOC)
-				.groupBy(Rawdoc.RAWDOC.ID)
-				.having(INVOICE_RAWDOC_PROPERTIES.getConditions(filterRawdoc))
-				.and(Rawdoc.RAWDOC.STATUS.eq((byte) 0));
-		return query1.union(query2)
-				.orderBy(INVOICE.ISSUE_DATE.desc())
-				.limit(perPage)
-				.offset(perPage * (page -1))
-				.fetch().stream().map(new InvoiceAndRawFiller());
+		return ctx.getDslContext()
+			.select(INVOICE.ID)
+			.select(INVOICE.DOMAIN)
+			.select(INVOICE.TOTAL)
+			.select(INVOICE.REFERENCE_CODE)
+			.select(INVOICE.NUMBER)
+			.select(INVOICE.SERIES)
+			.select(INVOICE.ISSUE_DATE)
+			.select(INVOICE.RNAME)
+			.select(INVOICE.TYPE)
+			.select(INVOICE.STATUS)
+			.select(INVOICE_ATTACH.MIMETYPE)
+			.from(INVOICE)
+			.leftJoin(INVOICE_ATTACH).on(INVOICE.ID.eq(INVOICE_ATTACH.INVOICE))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.limit(perPage)
+			.offset(perPage * (page -1))
+			.fetch().stream().map(new InvoiceNewPortalFiller());
 	}
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
@@ -160,10 +117,10 @@ public class InvoiceApiDAO {
 				.fetch().stream().map(new InvoiceTaxFiller());
 	}
 	
-	public static class InvoiceAndRawFiller extends Filler implements Function<Record,InvoiceAndRaw> {
+	public static class InvoiceNewPortalFiller extends Filler implements Function<Record,InvoiceNewPortal> {
 		@Override
-		public InvoiceAndRaw apply(Record r) {
-			return new InvoiceAndRaw()
+		public InvoiceNewPortal apply(Record r) {
+			return new InvoiceNewPortal()
 				.setId(r.getValue(INVOICE.ID))
 				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
@@ -171,11 +128,9 @@ public class InvoiceApiDAO {
 				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
 				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )
-				.setIsInbox(r.getValue(IS_RAWDOC))
-				.setMimeType(r.getValue(MIME_TYPE))
 				.setNumber(r.getValue(INVOICE.NUMBER))
 				.setSeries(r.getValue(INVOICE.SERIES))
-				.setRawdocStatus(RawdocStatus.safeValueOf(r.getValue(RAWDOC_STATUS)));
+				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)));
 		}
 	}
 

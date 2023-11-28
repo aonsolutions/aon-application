@@ -59,17 +59,13 @@ import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.jooq.tables.ContractDoc;
 import com.esferalia.aon.jooq.tables.Raddinfo;
-import com.esferalia.aon.jooq.tables.Rawdoc;
-import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -95,7 +91,6 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceRawDocFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -170,8 +165,6 @@ import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRawDocProperties;
-import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
 
 public class PropertiesDAO {
 	
@@ -243,31 +236,6 @@ public class PropertiesDAO {
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
 		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}		
-	}
-	
-	public static class InvoiceRawDocPropertiesDAO implements InvoiceRawDocProperties {
-		
-		public Select<Record> build(SelectJoinStep<Record> select, InvoiceRawDocFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		public Condition[] getConditions(InvoiceRawDocFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(Rawdoc.RAWDOC.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(Rawdoc.RAWDOC.DOMAIN);}
-		@Override public Property<LocalDate> getDateProperty() {return new FilterDAO.PropertyDAO<>(InvoiceApiDAO.ISSUE_DATE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(InvoiceApiDAO.TYPE);}
-		@Override public Property<String> getReferenceCodeProperty() {return new FilterDAO.PropertyDAO<>(InvoiceApiDAO.REFERENCE_CODE);}
-		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(InvoiceApiDAO.REGISTRY_NAME);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(InvoiceApiDAO.STATUS);}
-		
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {

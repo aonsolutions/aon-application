@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -40,10 +39,9 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRawDocProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -183,8 +181,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/":
 				response(req, resp, getInvoiceObject(api));
 				break;
-			case "/invoice_and_raw_list":
-				response(req, resp, getInvoiceAndRawObject(api));
+			case "/invoice_new_portal":
+				response(req, resp, getInvoiceNewPortalObject(api));
 				break;
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
@@ -284,7 +282,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private Object getInvoiceAndRawObject(AonApiData api) {
+	private Object getInvoiceNewPortalObject(AonApiData api) {
 		InvoiceFilter filter = new InvoiceFilter()
 				.setDescription(api.getData().optString("description"))
 				.setStatus(api.getData().optString(IConstants.STATUS))
@@ -294,50 +292,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
 				.setPage(api.getData().optInt("page"))
 				.setPerPage(api.getData().optInt("per_page"))
-				.setRecorded(api.getData().optString("recorded") != "" ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
+				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
 		JSONArray jsArray = new JSONArray();
-		AON_SOLUTIONS.getInvoiceAndRaw(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter), f -> invoiceRawDocFilter(f, api.getDomain().getId(), filter, api))
+		AON_SOLUTIONS.getInvoiceNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
+				f -> invoiceFilter(f, api.getDomain().getId(), filter))
 		.forEach(invoice -> {
-			jsArray.put(InvoiceAndRawList2JSON(invoice, api));
+			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
 		}
 		);
 		return jsArray;
 	}
-	
-	public static Filter invoiceRawDocFilter(InvoiceRawDocProperties f, Integer domainId, InvoiceFilter invoiceFilter, AonApiData api) {
-    	Filter filter =  f.getDomainProperty().eq(domainId);
-    	
-    	if(invoiceFilter.getDescription() != null) {
-    		filter = filter.and(
-    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
-    	}
-
-    	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
-    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value())
-    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
-    		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
-    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
-   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
-    		}
-    		filter = filter.and(filter2); 
-    	}
-    	
-    	if(invoiceFilter.getFrom() != null) {
-    		filter = filter.and(f.getDateProperty().ge(invoiceFilter.getFrom().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
-    	}
-    	
-    	if(invoiceFilter.getTo() != null) {
-    		filter = filter.and(f.getDateProperty().le(invoiceFilter.getTo().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
-    	}
-    	
-    	if(invoiceFilter.getRecorded() != null) {
-    		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
-    	}
-    	
-		return filter;
-    }
 
 	private Object getInvoiceObject(AonApiData api) {
 		if(api.getData().opt(IConstants.ID) != null) {
@@ -642,7 +606,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private static JSONObject InvoiceAndRawList2JSON(InvoiceAndRaw invoice, AonApiData api) {
+	private static JSONObject InvoiceNewPortalList2JSON(InvoiceNewPortal invoice, AonApiData api) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.ID, invoice.getId());
 		json.put(IJsonNames.DATE, invoice.getIssueDate());
@@ -653,14 +617,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.STATUS, invoice.isRecorded() 
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
-		json.put("isInbox", invoice.getIsInbox());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
-		json.put("rawdocStatus", invoice.getRawdocStatus() != null ? invoice.getRawdocStatus().getName() : null);
-		if(Boolean.FALSE.equals(invoice.getIsInbox())) {
-			json.put(IJsonNames.FILE, invoice.getId());
-		}else if(invoice.getMimeType() != null) {
-			System.out.print("inside /file path");
+		if(invoice.getMimeType() != null) {
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
 			data.put("domain_id", api.getDomain().getId());
@@ -669,7 +628,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
 			String url =  "/ms/api/file/" +  result;
 			json.put(IJsonNames.FILE, url);
-		}else{
+			json.put(IJsonNames.CONTENT_TYPE, invoice.getMimeType().getName());
+		} else {
 			JSONObject data = new JSONObject();
 			data.put("id", invoice.getId());
 			data.put("source", "rawdoc");
@@ -679,6 +639,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
 			String url =  "/ms/api/download_invoice_pdf?json=" +  result;
 			json.put(IJsonNames.FILE, url);
+			json.put(IJsonNames.CONTENT_TYPE, MimeType.PDF.getName());
 		}
 		return json;
 	}

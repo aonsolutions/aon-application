@@ -6,19 +6,18 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IApi;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceRawDocFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceAndRaw;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceServalFixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
 
 public class ApiImpl implements IApi {
 
 	@Override
-	public Stream<InvoiceAndRaw> getInvoiceAndRaw(AONContext ctx, InvoiceFilter filter, InvoiceRawDocFilter filterRawdoc) {
+	public Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceApiDAO.getInvoiceAndRaw(ctx, filter, filterRawdoc));
+				configuration -> InvoiceApiDAO.getInvoiceNewPortal(ctx, filter));
 	}
 
 	@Override

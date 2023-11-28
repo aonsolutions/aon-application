@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.Properties.*;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRawDocProperties;
 import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.finance.Properties.Mod145Properties;
 
@@ -730,11 +729,6 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface InvoiceBatchDetailFilter{
 		Filter filter(InvoiceBatchDetailProperties properties);
-	}
-	
-	@FunctionalInterface
-	public interface InvoiceRawDocFilter{
-		Filter filter(InvoiceRawDocProperties properties);
 	}
 	
 	@FunctionalInterface
