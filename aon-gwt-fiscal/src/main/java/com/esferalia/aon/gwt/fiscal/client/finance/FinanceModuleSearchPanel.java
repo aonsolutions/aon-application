@@ -260,6 +260,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			@Override
 			public void onClick(ClickEvent event) {
 				initialize(opt);
+				search(opt);
 			}
 		});
 
@@ -449,7 +450,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		pending.setValue(true);
 		batched.setValue(false);
 		returned.setValue(this.isPayroll ? false : true);
-		paid.setValue(this.isPayroll ? true : false);
+		paid.setValue(false);
 		settled.setValue(false);
 	}
 	

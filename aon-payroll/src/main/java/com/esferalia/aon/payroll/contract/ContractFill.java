@@ -128,17 +128,10 @@ public class ContractFill {
 		
 		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			pdfDocument.setAllSecurityToBeRemoved(true);
-			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
 			
 			if(null != acroForm) {
-				PDResources resources = new PDResources();
-				PDFont font = new PDType1Font(FontName.HELVETICA);
-				resources.add(font);
-				
-				acroForm.setDefaultResources(resources);
-				
 				for(PDField field : acroForm.getFields()) {
 					defaultCheckBox(field);
 					
@@ -149,7 +142,8 @@ public class ContractFill {
 				}
 			}
 			
-	        pdfDocument.setAllSecurityToBeRemoved(true);
+			// TODO: if we want to remove form and export as a plain text, uncomment the line below
+//			acroForm.flatten();
 	        
 			pdfDocument.save(out);
 			pdfDocument.close();
@@ -662,6 +656,7 @@ public class ContractFill {
 	public static void defaultCheckBox(PDField field) throws IOException {
 	    if (field instanceof PDCheckBox) {
 	    	try {
+	    		((PDCheckBox) field).setActions(null);
 		        ((PDCheckBox) field).unCheck();
 	    	} catch (Exception e) {
 				System.out.println("Error default PDFCheckBox -> " + field.getPartialName());
@@ -672,18 +667,28 @@ public class ContractFill {
 	public static void setField(PDField field, String value) throws IOException {
 	    if (field instanceof PDTextField) {
 	    	try{
-		        field.setValue(value);
+	    		((PDTextField) field).setActions(null);
+	    		field.setValue(value);
+//		        ((PDTextField) field).setDefaultValue(value);
 		        ((PDTextField) field).setValue(value);
-		        ((PDTextField) field).setDefaultValue(value);
+//		        ((PDTextField) field).setDefaultAppearance("/Helv 8 Tf 0 g");
+//		        ((PDTextField) field).setDefaultStyleString("/Helv 8 Tf 0 g");
+//				field.getWidgets().get(0).setHidden(false);
 	    	} catch (Exception e) {
-				System.out.println("ERR : " + field.getValueAsString());
+				System.out.println("ERR TextField : " + field.getValueAsString() + " --> " + e.getMessage());
 			}
 	    } else if (field instanceof PDCheckBox) {
 	    	try{
-		        if(AonStringUtils.isBlank(value) || AonStringUtils.equals(value, "N")) ((PDCheckBox) field).unCheck();
-		        else ((PDCheckBox) field).check();
+	    		((PDCheckBox) field).setActions(null);
+		        if(AonStringUtils.isBlank(value) || AonStringUtils.equals(value, "N")) {
+		        	((PDCheckBox) field).unCheck();
+		    		((PDCheckBox) field).setValue("Off");
+		        } else {
+		        	((PDCheckBox) field).check();
+		    		((PDCheckBox) field).setValue("S\u00ed");
+		        }
 	    	} catch (Exception e) {
-				System.out.println("ERR : " + field.getValueAsString());
+				System.out.println("ERR CheckBoxField : " + field.getValueAsString() + " --> " + e.getMessage());
 			}
 	    } else {
 	        System.out.println("Tipo no identificado");

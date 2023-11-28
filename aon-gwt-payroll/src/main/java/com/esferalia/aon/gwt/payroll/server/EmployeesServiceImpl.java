@@ -6664,13 +6664,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 
 			// Parse coef
-			Double coefD = Double.parseDouble(coef);
-			if (coefD != null) {
-				coefD = coefD * 1000;
-				String coefStr = coefD.intValue() + "";
-				coef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
+			if(AonStringUtils.isNotBlank(coef)) {
+				Double coefD = Double.parseDouble(coef);
+				if (coefD != null) {
+					coefD = coefD * 1000;
+					String coefStr = coefD.intValue() + "";
+					coef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
+				}
 			}
-
+			
 			// cambioContratoCoef
 			SistemaRED.cambioContratoCoef(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
@@ -6708,13 +6710,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					+ "\n" + tc2 + "\n" + fecha);
 
 			// Get employee nafxipf
-			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
-					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
-					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
-					employeeContractInfo.getEmployeeInfo().getSurName(),
-					employeeContractInfo.getEmployeeInfo().getSecondSurName());
-
-			System.out.println(employeeAux.getNss());
+//			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+//					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
+//					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
+//					employeeContractInfo.getEmployeeInfo().getSurName(),
+//					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+//
+//			System.out.println(employeeAux.getNss());
 
 			// cambioContratoCoef
 			SistemaRED.cambioContratoCoef(new ByteArrayInputStream(certificate.getData()),
@@ -6723,7 +6725,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeAux.getNss(), fecha, Optional.of(tc2), null);
+					employeeContractInfo.getEmployeeInfo().getSsNumber(), fecha, Optional.of(tc2), null);
 
 		} catch (Exception e) {
 			e.printStackTrace();
