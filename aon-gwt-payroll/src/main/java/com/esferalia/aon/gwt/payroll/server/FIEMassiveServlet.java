@@ -458,8 +458,33 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		public void onDitItEndCause(String itEndCause) {
 			if(AonStringUtils.isNotBlank(itEndCause))
 				try {
-					it.setHightCause(Byte.parseByte(itEndCause));
+					it.setHightCause(parseAonHighCause(Byte.parseByte(itEndCause)));
 				} catch (Exception e) {}
+		}
+		
+		private Byte parseAonHighCause(byte hightCause) {
+			switch (hightCause) {
+				case 1: // Curacion
+					return 0;
+				case 2: // Fallecimiento
+					return 1;
+				case 3: // Inspeccion medica
+					return 2;
+				case 12: // Propuesta incapacida
+					return 3;
+				case 9: // Agotamiento de plazo
+					return 4;
+				case 6: // Mejoria que permite realizar el trabajo habitual
+					return 5;
+				case 7: // Incomparecencia
+					return 6;
+				case 17: // Recuperacion capacidad profesional
+					return 8;
+				case 18: // Incomparecencia contratos de formacion
+					return 9;
+				default:
+					return 0;
+			}
 		}
 
 		@Override
