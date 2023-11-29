@@ -916,7 +916,7 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFCODAFI").setValue(nss.substring(2));
 
 			form.getInputByName("txt_SDFTIPPFI_ayuda").setValue(ident.toString());
-			form.getInputByName("txt_SDFNUMPFI").setValue(ipf);
+			form.getInputByName("txt_SDFNUMPFI").setValue(ident == 6 ? Toolkit.fillStringLeft(ipf, "0", 10) : ipf);
 
 			form.getInputByName("txt_SDFREGAFI_ayuda").setValue(regimen);
 			form.getInputByName("txt_SDFTESCTACOT").setValue(ctaCti.substring(0, 2));

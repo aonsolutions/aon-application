@@ -111,6 +111,13 @@ public enum FiscalMenuItemJSON {
 			return json;
 		}
 	},
+	NRC{
+		@Override
+		public JSONObject to(IFiscalModel model, JSONObject json) {
+			json.put(IJsonNames.NRC, model.getNrc());
+			return json;
+		}
+	},
 	;
 
 	public abstract JSONObject to(IFiscalModel model, JSONObject json);

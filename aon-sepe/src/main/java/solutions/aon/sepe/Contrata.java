@@ -546,6 +546,7 @@ public class Contrata {
 
 				if (cto.getCodMunDom() != null) {
 					form.getInputByName("municipio").setValue(cto.getCodMunDom());
+					form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom());
 				}
 
 				form.getInputByName("nass1").setValue(nss.substring(0, 2));
@@ -682,24 +683,29 @@ public class Contrata {
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkInterinidad");
 					check.click();
-
+					
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 					handleSepeAlert(alertHandler.getCollectedAlerts());
 					handleSepeExceptions(htmlPage);
-
+					
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					
 					// Claves menores de 30
 					List<String> causaSustitucionMenor31 = new ArrayList<>(List.of("H", "G", "R", "F", "N", "I", "O"));
 					if(causaSustitucionMenor31.contains(interinidad.get())) {
-						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMenor31]")).click();
+						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMenor31]")).setAttribute("checked", "checked");
+						htmlPage = ((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMenor31]")).click();
 						
+						((HtmlSelect) htmlPage.getElementById("cauIntLMenor31")).setSelectedAttribute(interinidad.get(), true);
 						((HtmlSelect) form.querySelector("select[name=codobjetointerinidadMenor31]"))
 							.setSelectedAttribute(interinidad.get(), true);
 					} else {
 						// Mayores de 31
-						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMayor31]")).click();
+						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMayor31]")).setAttribute("checked", "checked");
+						htmlPage = ((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMayor31]")).click();
 						
+						
+						((HtmlSelect) htmlPage.getElementById("cauIntLMayor31")).setSelectedAttribute(interinidad.get(), true);
 						((HtmlSelect) form.querySelector("select[name=codobjetointerinidadMayor31]"))
 							.setSelectedAttribute(interinidad.get(), true);
 					}
@@ -813,7 +819,7 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
-
+			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			

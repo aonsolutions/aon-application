@@ -127,7 +127,9 @@ public class ConnectSaleInvoiceWriter {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sinclList = createSINCLList(detailList, ediCodes.getCustomerPackage());
+			String customerPackage = ediCodes.getCustomerInvoicePackage() != null
+					? ediCodes.getCustomerInvoicePackage() : ediCodes.getCustomerPackage();
+			rectl.sinclList = createSINCLList(detailList, customerPackage);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -243,8 +245,12 @@ public class ConnectSaleInvoiceWriter {
 			referenciaAdicional = ediCodes.getDepartment();
 		}
 		
+		String ediHeader = invoicingMainAddress 
+			? ediCodes.getMainEdiCodes().getCustomerEdiHeader() 
+			: ediCodes.getCustomerEdiHeader();
+		
 		String ediBY = isDia(customer) ? ediCodes.getCustomerEdiHeader() : ediCodes.getCustomerEdiInvoice();
-		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediCodes.getCustomerEdiHeader() ;
+		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediHeader;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
 				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));

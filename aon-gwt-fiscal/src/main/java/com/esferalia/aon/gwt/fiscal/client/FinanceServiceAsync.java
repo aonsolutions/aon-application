@@ -31,5 +31,8 @@ public interface FinanceServiceAsync {
 	
 	void getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit, AsyncCallback<LinkedList<Finance>> callback);
 	
+	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
+	void createSettleSalaries(String domainName, int domain, String user, Date date, AsyncCallback<Void> asyncCallback);
+	
 
 }

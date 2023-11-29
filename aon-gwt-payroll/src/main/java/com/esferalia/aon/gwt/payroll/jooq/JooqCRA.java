@@ -114,8 +114,8 @@ public class JooqCRA {
 							CRA_BATCH.DOMAIN.eq(domainId)
 						   .or(CRA_BATCH.DOMAIN.in(domainChilds))
 					)
-					.and(CRA_BATCH.OUTCOME_FILE_DATE.ge(new Timestamp(liquidDateTime)))
-					.and(CRA_BATCH.OUTCOME_FILE_DATE.le(new Timestamp(endDate.getTime())))
+					.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).ge(new java.sql.Date(liquidDateTime)))
+					.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).le(parseDateToSQL(endDate)))
 					.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc())
 					.fetch();
 		
@@ -125,8 +125,8 @@ public class JooqCRA {
 						CRA_BATCH.DOMAIN.eq(domainId)
 					   .or(CRA_BATCH.DOMAIN.in(domainChilds))
 				)
-				.and(CRA_BATCH.OUTCOME_FILE_DATE.ge(new Timestamp(liquidDateTime)))
-				.and(CRA_BATCH.OUTCOME_FILE_DATE.le(new Timestamp(endDate.getTime())))
+				.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).ge(new java.sql.Date(liquidDateTime)))
+				.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).le(parseDateToSQL(endDate)))
 				.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc()).getSQL()
 		);
 		
@@ -267,7 +267,7 @@ public class JooqCRA {
 							dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
 								.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(cccIdList))
 					))
-					.and(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(startDate.getTime())))
+					.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).eq(parseDateToSQL(startDate)))
 					.fetch();
 			
 			String resultStr = deleteLinesCRA(craBatchRecords, cccList);
@@ -364,7 +364,7 @@ public class JooqCRA {
 		Result<Record> craRecords = dslContext.select().from(CRA_BATCH)
 			.join(CRA_BATCH_DETAIL)
 			.on(CRA_BATCH_DETAIL.CRA_BATCH.eq(CRA_BATCH.ID))
-			.where(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(findingDate.getTime())))
+			.where((DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).eq(parseDateToSQL(findingDate))))
 			.and(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(selectedCCCList))
 			.fetch();
 		

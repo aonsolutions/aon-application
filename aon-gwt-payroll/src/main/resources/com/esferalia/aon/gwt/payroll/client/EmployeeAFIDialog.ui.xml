@@ -280,6 +280,10 @@
 			display: flex;
 			gap: 0.1rem;
 		}
+		
+		.width98{
+			width: 98%;
+		}
 
 	</ui:style>
 
@@ -295,6 +299,14 @@
 			<g:HTMLPanel styleName="{style.input}">
 				<g:Label text="Código de baja" styleName="{style.title}" />
 				<g:ListBox ui:field="settleReasonLB" styleName="{style.width100}" />
+				<g:HTMLPanel styleName="{style.input}" ui:field="settleHolidayData">
+					<g:Label text="Días vacaciones" styleName="{style.title}" />
+					<g:TextBox ui:field="holidaysTB" styleName="{style.width98}" />
+					<g:Label text="Fecha fin vacaciones" styleName="{style.title}" />
+					<a:DateBoxEx ui:field="holidaysEndDB" styleName="{style.width100}" />
+					<g:Label text="Tipo vacaciones" styleName="{style.title}" ui:field="holidaysTypeTitle" />
+					<g:ListBox ui:field="holidaysTypeLB" styleName="{style.width100}" />
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flexColumn}">

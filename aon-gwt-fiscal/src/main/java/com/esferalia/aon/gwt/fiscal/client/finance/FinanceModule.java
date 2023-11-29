@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.finance;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSettleDateDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
@@ -103,13 +105,14 @@ public class FinanceModule extends MainEntryPoint {
 	private LinkedHashMap<Integer,FinanceRow> finances = new LinkedHashMap<Integer,FinanceRow>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<Integer>();
 	
-	private  FinanceModuleSearchPanel searchPanel;
+	private FinanceModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
 	private AonToolbarButton searchButton;
 	private AonToolbarButton exportButton;
 	private AonToolbarButton settleAllButton;
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
+	private AonToolbarButton settleSalariesButton;
 	
 	private FlowPanel progressContainer = new FlowPanel();
 	private FlowPanel progress = new FlowPanel();
@@ -123,6 +126,13 @@ public class FinanceModule extends MainEntryPoint {
 	final private MutableInt moreData = new MutableInt(0);
 	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
+	
+	// Vencimiento nominas
+	private boolean isPayroll = false;
+	
+	public void setIsPayroll(boolean isPayroll) {
+		this.isPayroll = isPayroll;
+	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -167,7 +177,7 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private void loadModule( final FinanceModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
-		searchPanel = new FinanceModuleSearchPanel(opt);
+		searchPanel = new FinanceModuleSearchPanel(opt, this.isPayroll);
 		dockLayoutPanel.addNorth(searchPanel, FinanceModuleSearchPanel.HEIGHT);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
@@ -206,10 +216,21 @@ public class FinanceModule extends MainEntryPoint {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<FinanceParams> event) {
+				toolbar.hideMessages();
 				FinanceParams params = event.getValue();
 				search( opt, params );
 			}
 		});
+		
+		// Auto search first time
+		if(this.isPayroll) {
+			enableMoreData();
+			container.clear();
+			tab = getTable();
+			container.add(tab);
+			offset.setValue(0);
+			search(opt, searchPanel.getParams( opt ), offset.getValue());
+		}
 	}
 
 	private static enum COLS {
@@ -280,7 +301,7 @@ public class FinanceModule extends MainEntryPoint {
 	}
 
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
-		toolbar = new AonToolbar(AON.MSG.financeModule());
+		toolbar = new AonToolbar(this.isPayroll ? "Vencimientos N\u00f3minas" : AON.MSG.financeModule());
 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -300,6 +321,7 @@ public class FinanceModule extends MainEntryPoint {
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				toolbar.hideMessages();
 				enableMoreData();
 				container.clear();
 				tab = getTable();
@@ -410,6 +432,35 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		toolbar.add(settleAllButton);
+		
+		if(this.isPayroll) {
+			settleSalariesButton = new AonToolbarButton("Vencimiento de n\u00f3minas", AON.CSS.aonIconRebaseEdit());
+			settleSalariesButton.addClickHandler(e -> {
+				new AonSettleDateDialog("Generar vencimientos de n\u00f3minas") {
+					
+					@Override
+					protected void onAccept(Date date) {
+						FINANCE_SERVICE.createSettleSalaries(opt.getDomainName(), opt.getDomain(), opt.getUser(), date, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								showError(caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void arg0) {
+								enableMoreData();
+								container.clear();
+								tab = getTable();
+								container.add(tab);
+								offset.setValue(0);
+								search(opt, searchPanel.getParams( opt ), offset.getValue());
+							}});
+					}
+				};
+			});
+			toolbar.add(settleSalariesButton);
+		}
 	
 		return toolbar;
 	}
@@ -644,11 +695,16 @@ public class FinanceModule extends MainEntryPoint {
 			numDoc.setText(finance.getInvoice().getDocumentNumber());
 			invDate.setText(AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 			invReference.setText(finance.getInvoice().getReferenceCode());
+		} else {
+			numDoc.setText(finance.getRegistry().getDocument());
 		}
 		Label regDoc  = new Label( finance.getRegistryDocument());
 	
 		String rname = AonStringUtils.isBlank(finance.getRegistryName()) 
-				? finance.getRegistryName() : finance.getInvoice().getRegistryName(); 
+				? finance.getRegistryName() : (finance.getInvoice() != null ? finance.getInvoice().getRegistryName() : ""); 
+		
+		if(this.isPayroll) rname = finance.getRegistry().getName();
+		
 		Label regName = new Label(rname);
 		regName.setTitle(rname);
 		

@@ -212,6 +212,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_finance_pay")
 	String aonIconFinancePay();
+	
+	@ClassName("aon_icon_rebase_edit")
+	String aonIconRebaseEdit();
 
 	@ClassName("aon_icon_finance_group")
 	String aonIconFinanceGroup();
@@ -705,6 +708,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_width_150")
 	String aonWidth150();
+	
+	@ClassName("aon_width_170")
+	String aonWidth170();
 
 	@ClassName("aon_width_300")
 	String aonWidth300();

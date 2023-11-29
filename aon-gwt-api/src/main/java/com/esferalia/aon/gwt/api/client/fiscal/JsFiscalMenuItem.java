@@ -27,5 +27,8 @@ public class JsFiscalMenuItem extends JavaScriptObject {
 	public final native String  getBankAccount() /*-{return this.bankAccount;	}-*/;
 	public final native String getBankAlias() /*-{return this.bankAlias;	}-*/;
 	public final native String getBic() /*-{return this.bic;	}-*/;
+	public final native String getDeclarationResultType() /*-{return this.type;	}-*/;
+	public final native String getIban() /*-{return this.iban;	}-*/;
+	public final native String getNrc() /*-{return this.nrc;	}-*/;
 	
 }

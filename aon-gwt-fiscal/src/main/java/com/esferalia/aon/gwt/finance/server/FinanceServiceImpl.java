@@ -93,5 +93,12 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public LinkedList<Finance> getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit) {
 		return ACCOUNTING.getAccountFinances(domainName, domain, user, params, offset, limit);		
 	}
+
+	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
+	
+	@Override
+	public void createSettleSalaries(String domainName, int domainId, String user, Date date) throws AonCoreException {
+		AON.createSettleSalaries(domainName, domainId, user, date);
+	}
 	
 }
