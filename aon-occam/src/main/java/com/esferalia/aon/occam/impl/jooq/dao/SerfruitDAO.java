@@ -143,6 +143,10 @@ public class SerfruitDAO {
 			item = ItemDAO.save(ctx, item);
 			detail.setItem(item);
 			detail.setDescription(item.getDescription());
+			if(detail.getSalesDetail() != null) {
+				SalesDetail aux = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(detail.getSalesDetail()));
+				if(aux == null || aux.getId() == null) detail.setSalesDetail(null);
+			}
 		}
 		delivery = DeliveryDAO.save(ctx, delivery);
 		
