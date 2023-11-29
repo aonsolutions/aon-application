@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.jooq.tools.json.JSONArray;
@@ -88,6 +89,16 @@ public class JsonParser {
 		if (test != null) {
 			params.setTest(test==1);
 		}
+		
+		JSONArray jsonSelected = (JSONArray) jsonParams.get(IRequestParamsNames.SELECTED);
+		if (jsonSelected != null && jsonSelected.size() > 0) {
+			ArrayList<String> selected = new ArrayList<>();
+			for (int i = 0; i < jsonSelected.size(); i++) {
+				selected.add(jsonSelected.get(i).toString());
+			}
+			params.setSelected(selected);
+		}
+		
 		return params;
 	}
 

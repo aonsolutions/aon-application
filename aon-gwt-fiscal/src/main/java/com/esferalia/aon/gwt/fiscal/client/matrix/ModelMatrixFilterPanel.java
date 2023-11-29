@@ -2,21 +2,31 @@ package com.esferalia.aon.gwt.fiscal.client.matrix;
 
 import java.util.logging.Logger;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -24,12 +34,16 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHandlers<FiscalMatrixParams>, Focusable {
 	
@@ -51,7 +65,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	private AonSearchPanelButton sendButton;
 	private ListBox statusBox;
 	private ListBox periodBox;	
-	private CheckBox multiplePresentation;  
+	private CheckBox multiplePresentation;
+	private boolean sending;
 	
 	protected ModelMatrixFilterPanel(MatrixModuleOptions options) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -338,11 +353,98 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	private void send(MatrixModuleOptions options) {
 		// FALTA - TODO
 		
-		Window.alert("PRESENTACION MULTIPLE DE LOS MODELOS SELECCIONADOS: " + options.getSelected());
-		// ENVIAR PRESENTACION
-		// MOSTRAR RESULTADOS ERRONEOS
-		// REFRESCAR DATOS AL TERMINAR 
-		refreshButton.click();		
+		//Window.alert("PRESENTACION MULTIPLE DE LOS MODELOS SELECCIONADOS: " + options.getSelected());
+		// PEDIR CERTIFICADO
+		if (!sending) {
+			sending = true;
+			
+			API api = new API(GWT.getModuleBaseURL(), 
+					options.getConfiguration().getMd5(),
+					options.getConfiguration().getDomain().getName(), 
+					options.getConfiguration().getDomain().getId(),
+					options.getConfiguration().getUser().getLogin());
+			
+//			API api = new API(GWT.getHostPageBaseURL(), 
+//					options.getConfiguration().getMd5(),
+//					options.getConfiguration().getDomain().getName(), 
+//					options.getConfiguration().getDomain().getId(),
+//					options.getConfiguration().getUser().getLogin());
+
+			AonCertificationPopupParams params = new AonCertificationPopupParams()
+					.setDocument(options.getConfiguration().fiscal().getCertificateDocument())
+					.setName(options.getConfiguration().fiscal().getCertificateName())
+					.setTestEnvironment(options.getConfiguration().fiscal().isTestEnvironment())
+					.setShowNRC(false)									
+					.setInfoMessage("Presentaci\u00F3n m\u00FAltiple de los modelos seleccionados");
+
+			AonCertificationPopup certPopup = new AonCertificationPopup(api, params) {
+					
+				@Override
+				protected void onCancel() {
+					sending = false;
+				}
+				
+				@Override
+				protected void onAccept(AEATParams aeatParams) {
+					
+					// Pedir confirmación del envío de la presentación
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.confirmDeclarationsendAction(), new AonConfirmDialogCallback() {
+
+						@Override
+						public void onAccept() {
+							aeatParams.setDomainName(options.getDomainName())
+								  	  .setDomainId(options.getDomain())
+									  .setUser(options.getUser())
+									  .setMod(null)
+									  .setSelected(options.getSelected());
+							
+							sendAEAT(aeatParams);
+						}
+
+						@Override
+						public void onCancel() {
+							sending = false;
+						}
+					});
+				}
+			};
+			certPopup.center();
+		}				
+				
+	}
+	
+	private void sendAEAT(AEATParams params) {
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add( new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+
+//		cleanViewers();
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open(FormPanel.METHOD_POST, GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/MatrixSendAEAT");
+		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
+		xhr.setOnReadyStateChange(xhreq -> {
+			int state = xhreq.getReadyState();
+			if (state == XMLHttpRequest.DONE) {
+				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
+				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
+//				getCallback().sendSuccessfully(); // Siempre se recarga el modelo, por si se ha grabado el NRC
+//				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
+//					Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
+//				} else {
+//					showHtml( buff.toString() );
+//				}
+				Window.alert(buff.toString());
+				sending = false;
+				popup.hide();					
+			}
+		});	
+		StringBuilder requestData = new StringBuilder();
+		requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
+		xhr.send(requestData.toString());
+		
 	}
 
 }
