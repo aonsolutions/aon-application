@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -29,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -45,6 +48,31 @@ public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter) {
+		Integer page = INVOICE_PROPERTIES.getPage(filter);
+		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
+		return ctx.getDslContext()
+			.select(INVOICE.ID)
+			.select(INVOICE.DOMAIN)
+			.select(INVOICE.TOTAL)
+			.select(INVOICE.REFERENCE_CODE)
+			.select(INVOICE.NUMBER)
+			.select(INVOICE.SERIES)
+			.select(INVOICE.ISSUE_DATE)
+			.select(INVOICE.RNAME)
+			.select(INVOICE.TYPE)
+			.select(INVOICE.STATUS)
+			.select(INVOICE_ATTACH.MIMETYPE)
+			.from(INVOICE)
+			.leftJoin(INVOICE_ATTACH).on(INVOICE.ID.eq(INVOICE_ATTACH.INVOICE))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.limit(perPage)
+			.offset(perPage * (page -1))
+			.fetch().stream().map(new InvoiceNewPortalFiller());
+	}
+	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
@@ -58,7 +86,7 @@ public class InvoiceApiDAO {
 			.limit(perPage)
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
-	}
+	}	
 	
 	public static Date getInvoiceExpDate(AONContext ctx, Integer id) {
 		return ctx.getDslContext().select(INVOICE_FISCAL.EXP_DATE)
@@ -88,6 +116,23 @@ public class InvoiceApiDAO {
 				.where(INVOICE_TAX.ID.eq(invoiceDetailId))
 				.fetch().stream().map(new InvoiceTaxFiller());
 	}
+	
+	public static class InvoiceNewPortalFiller extends Filler implements Function<Record,InvoiceNewPortal> {
+		@Override
+		public InvoiceNewPortal apply(Record r) {
+			return new InvoiceNewPortal()
+				.setId(r.getValue(INVOICE.ID))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setTotal(r.getValue(INVOICE.TOTAL))
+				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)));
+		}
+	}
 
 	private static class InvoiceTaxFiller  implements Function<Record,InvoiceTax> {
 
@@ -106,8 +151,6 @@ public class InvoiceApiDAO {
 					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));	
 		}
 	}
-	
-
 
 	public static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
 		AONContext aonCtx;

@@ -34,36 +34,44 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.stream.Stream;
 
-import org.jooq.DSLContext;
-import org.jooq.Record1;
-import org.jooq.Result;
-import org.jooq.SelectConditionStep;
+import org.jooq.*;
+import org.jooq.impl.*;
 
+import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractExtendedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.AgreementLevelCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractExtendedDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
 
 public class ContractDAO {
 	
 	public static final ContractPropertiesDAO CONTRACT_PROPERTIES = new ContractPropertiesDAO();
+	public static final ContractExtendedDataPropertiesDAO CONTRACT_EXTENDED_DATA_PROPERTIES = new ContractExtendedDataPropertiesDAO();
 	public static final ContractDataPropertiesDAO CONTRACT_DATA_PROPERTIES = new ContractDataPropertiesDAO();
 	public static final IrpfDataPropertiesDAO IRPF_DATA_PROPERTIES = new IrpfDataPropertiesDAO();
 	public static final AgreementLevelCategoryPropertiesDAO AGREEMENT_LEVEL_CATEGORY_PROPERTIES = new AgreementLevelCategoryPropertiesDAO();
-
+	public static final Field<Double> SALARY_CGC_BASE = DSL.field("salary", Double.class);
+	public static final Field<Double> MARK_TOTAL_TIME = DSL.field("mark", Double.class);
+	public static final Field<String> CONTRACT_TYPE = DSL.field("contract_type", String.class);
+	public static final Field<String> PERSON_FULL_NAME = DSL.field("person_full_name", String.class);
 	
 	// -------------------- CONTRACT
 	
@@ -77,6 +85,47 @@ public class ContractDAO {
 			.innerJoin(REGISTRY).onKey()
 			.innerJoin(ENTERPRISE_CCC).onKey()
 			, filter).fetch().stream().map(new ContractFiller());		
+	}
+	
+	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
+		ctx.checkRead();
+		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);		
+		Table<?> registryTable = REGISTRY.as("registryTable");
+		return ctx.getDslContext()
+				.select(CONTRACT.fields())
+				.select(REGISTRY.fields())
+				.select(WORKPLACE.DESCRIPTION)
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+				.select(DSL.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class))
+						.from(SALARY)
+						.where(SALARY.CONTRACT.eq(CONTRACT.ID))
+						.and(SALARY.TYPE.eq((byte) 0))
+						.groupBy(SALARY.END_DATE)
+						.orderBy(SALARY.END_DATE.desc())
+						.limit(1).asField().as(SALARY_CGC_BASE)
+						)
+				.select(DSL.select(DSL.coalesce(DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 1), dateMiliseconds, dateMiliseconds.neg())).cast(Double.class), 0).cast(Double.class))
+						.from(Timecontrol.TIMECONTROL)
+						.innerJoin(registryTable).on(registryTable.field(REGISTRY.ID).eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+						.where("date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())")
+						.and(registryTable.field(REGISTRY.DOCUMENT).eq(REGISTRY.DOCUMENT))
+						.asField().as(MARK_TOTAL_TIME)
+						)
+				.select(DSL.select(CONTRACT_DATA.EXPRESSION)
+						.from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+						.and(CONTRACT_DATA.NAME.like("TC2"))
+						.orderBy(CONTRACT_DATA.START_DATE.desc())
+						.limit(1).asField().as(CONTRACT_TYPE)
+						)
+//				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
+				.from(CONTRACT)
+				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
+				.innerJoin(WORKPLACE).onKey()
+				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.orderBy(PERSON_FULL_NAME.asc())
+				.limit(perPage).offset(perPage * (page -1))
+				.fetch().stream().map(new ContractExtendedDataFiller());
 	}
 	
 	// -------------------- IRPF DATA
