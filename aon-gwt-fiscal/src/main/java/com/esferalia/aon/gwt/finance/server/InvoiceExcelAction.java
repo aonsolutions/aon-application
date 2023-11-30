@@ -140,8 +140,13 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	    sheet.setColumnWidth(cellCount++, 25*256);		    
 	    
 	    CellUtil.createCell(row, cellCount, "Ag. Comercial", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 20*256);
+	    sheet.setColumnWidth(cellCount++, 25*256);
 	    
+	    CellUtil.createCell(row, cellCount, "Ag. Soperte", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 25*256);
+	    
+	    CellUtil.createCell(row, cellCount, "Segmento", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 40*256);
 	    
 	    if (tags != null) {
 	    	int maxTagWidth = 0;
@@ -192,6 +197,15 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getWorkPlaceName() );
 		addCell( detail.getProjectName() );
 		addCell( detail.getSeller()!=null? detail.getSeller().getName() : null );
+		addCell( detail.getSellerSupport()!=null? detail.getSellerSupport() : null );
+		
+		String segments = "";
+		if(null != detail.getSegments()) {
+			for (String segment : detail.getSegments()) { segments += segment + ", "; }
+	        // Remove the trailing comma and space
+			if(AonStringUtils.isNotBlank(segments)) segments = segments.substring(0, segments.length() - 2);
+		}
+		addCell(segments);
 		
 		Integer productId = detail.getItem()!= null 
 				? detail.getItem().getProduct().getId() : null;

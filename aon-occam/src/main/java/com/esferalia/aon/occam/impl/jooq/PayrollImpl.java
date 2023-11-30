@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractAttachDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
@@ -116,6 +118,11 @@ public class PayrollImpl implements IPayroll {
 	public Stream<Contract> getContractStream(AONContext ctx, ContractFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ContractDAO.getContractStream(ctx, filter));
+	}
+	
+	public Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getContractExtendedDataStream(ctx, filter, page, perPage));
 	}
 
 	public void deleteContracts(AONContext ctx, Integer ...contractIds) {

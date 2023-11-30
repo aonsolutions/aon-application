@@ -19,5 +19,6 @@ public interface FinanceProperties {
 	Property<String> getInvoiceReferenceCodeProperty();
 	Property<Date> getInvoiceDateProperty();
 	Property<Integer> getPayMethodProperty();
+	Property<Byte> getPayrollProperty();
 
 }

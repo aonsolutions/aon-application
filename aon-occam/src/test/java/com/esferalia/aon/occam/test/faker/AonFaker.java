@@ -507,6 +507,7 @@ public class AonFaker {
 	}
 
 	public static Delivery getDelivery(AONContext ctx) {
+		
 		Customer customer = CustomerDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
 		
@@ -526,6 +527,87 @@ public class AonFaker {
 				.setWorkplace(workplace)
 				.setStatus(DeliveryStatus.PENDING)
 				.setScope(customer.getScope());		
+	}
+	
+	public static Delivery getDelivery() {
+		
+		Integer domain = Integer.parseInt(Faker.instance().numerify("#####"));
+		RegistryStatus[] valuesRegistryStatus = RegistryStatus.values();
+		InvoiceTransactionType[] valuesInvoiceTransactionType = InvoiceTransactionType.values();
+		byte[] bytes = {0,1};
+		
+		Random random = new Random();
+		
+		Scope scope = new Scope()
+				.setDescription(Faker.instance().gameOfThrones().quote())
+				.setDomain(domain)
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")));
+		
+		
+		
+		Customer customer = new Customer()
+				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setBillable(random.nextBoolean())
+				.setCreationDate(Faker.instance().date().birthday())
+				.setCreationUser(Faker.instance().zelda().character())
+				.setDeliveryGrouped(random.nextBoolean())
+				.setDeliveryValuated(random.nextBoolean())
+				.setEInvoice(random.nextBoolean())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setInvoicingGroup(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setModificationDate(Faker.instance().date().birthday())
+				.setModificationUser(Faker.instance().zelda().character())
+				.setProjectGrouped(random.nextBoolean())
+				.setRelationship(random.nextBoolean())
+				.setScope(scope)
+				.setStatus(valuesRegistryStatus[random.nextInt(valuesRegistryStatus.length)])
+				.setSurcharge(random.nextBoolean())
+				.setTariff(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setTransaction(valuesInvoiceTransactionType[random.nextInt(valuesInvoiceTransactionType.length)])
+				.setWithholding(random.nextBoolean())
+				;
+		
+		Workplace workplace = new Workplace()
+				.setActive(random.nextBoolean())
+				.setAddress(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setCustomer(customer.getId())
+				.setDescription(Faker.instance().zelda().game())
+				.setDomain(domain)
+				.setEconomicagreement(bytes[random.nextInt(bytes.length)])
+				.setEnterprise(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setScope(scope.getId())
+				;
+
+		Project project = new Project()
+				.setActive(random.nextBoolean())
+				.setAlias(Faker.instance().lordOfTheRings().character())
+				.setCommercial(random.nextBoolean())
+				.setDate(Faker.instance().date().birthday())
+				.setDirty(false)
+				.setDomain(new Domain())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setName(Faker.instance().cat().name())
+				.setProjectActivities(null)
+				.setProjectHolder(new ProjectHolder())
+				.setRegistry(new Registry())
+				.setReservation(random.nextBoolean())
+				.setTas(random.nextBoolean())
+				.setType(new ProjectType())
+				;
+				
+		
+		return new Delivery()
+				.setDomain(domain)
+				.setProject(project)
+				.setDate(Faker.instance().date().birthday())
+				.setSeries("TEST")
+				.setNumber(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setCustomer(customer)
+				.setWorkplace(workplace)
+				.setStatus(DeliveryStatus.PENDING)
+				.setScope(customer.getScope()) 
+				;
 	}
 	
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {
@@ -752,19 +834,39 @@ public class AonFaker {
 		return randomCountry;
 	}
 	
-	public static BankAccount getBankAccount(AONContext ctx) {
-		BankAccount bankAccount = new BankAccount(Faker.instance().finance().iban());
+	public static String getValidIban(AONContext ctx) {
+		String value = getCountry(ctx).toString() + Faker.instance().numerify("################################");
+
+		Country country = Country.safeValueOf(AonStringUtils.substring(value, 0, 2));
+		value = AonStringUtils.substring(value, 0, country.getIbanLength());
 		
-		if (bankAccount.getCountry() == null) { bankAccount.setCountry(AonFaker.getCountry(ctx)); }
-		if (bankAccount.getCheck() == null) { bankAccount.setCheck(faker.letterify("??")); }
-		if (bankAccount.getBban1() == null) { bankAccount.setBban1(faker.letterify("????")); }
-		if (bankAccount.getBban2() == null) { bankAccount.setBban2(faker.letterify("????")); }
-		if (bankAccount.getBban3() == null) { bankAccount.setBban3(faker.letterify("????")); }
-		if (bankAccount.getBban4() == null) { bankAccount.setBban4(faker.letterify("????")); }
-		if (bankAccount.getBban5() == null) { bankAccount.setBban5(faker.letterify("????")); }
-		if (bankAccount.getBban6() == null) { bankAccount.setBban6(faker.letterify("????")); }
-		if (bankAccount.getBban7() == null) { bankAccount.setBban7(faker.letterify("????")); }
-		if (bankAccount.getBban8() == null) { bankAccount.setBban8(faker.letterify("????")); }
+		BankAccount bankAccount = new BankAccount(value);
+		
+		if (country == Country.ES) {
+			// bban is valid
+			bankAccount = new BankAccount(value);
+			String controlDigit = bankAccount.calculateBbanControlDigit();
+			
+			value = AonStringUtils.substring(value, 0, 12) + controlDigit + AonStringUtils.substring(value, 14, 24);
+			
+			// iban is valid
+			bankAccount = new BankAccount(value);
+			controlDigit = bankAccount.calculateIbanControlDigit();
+			
+			value = AonStringUtils.substring(value, 0, 2) + controlDigit + AonStringUtils.substring(value, 4, 24);
+		}
+		
+		return value;
+	}
+	
+	public static BankAccount getBankAccount(AONContext ctx) {
+		BankAccount bankAccount = new BankAccount(AonFaker.getValidIban(ctx));
+		
+		if (bankAccount.getCountry() == Country.ES) {
+			bankAccount.setBban6(AonStringUtils.EMPTY);
+			bankAccount.setBban7(AonStringUtils.EMPTY);
+			bankAccount.setBban8(AonStringUtils.EMPTY);
+		}
 
 		return bankAccount;		
 	}

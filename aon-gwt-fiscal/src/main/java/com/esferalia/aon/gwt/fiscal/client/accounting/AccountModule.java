@@ -17,8 +17,6 @@ import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -67,27 +65,17 @@ public class AccountModule extends MainEntryPoint {
 		toolbar.add(diskForm);
 
 		final AonToolbarButton reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() ,AonButton.AON_ACCESSKEY_RESET);
-		reset.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				showAccountDialog( options, accountPanel );
-			}
-		});
+		reset.addClickHandler(event -> showAccountDialog( options, accountPanel ));
 		toolbar.add(reset);
 
 		final AonToolbarButton excel = new AonToolbarButton( AON.MSG.export() , AON.CSS.aonIconExcel());
-		excel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_ACCOUNT_REPORT_PRINT);
-				accountEntryParamsHidden.setValue(JsonParams.convert(accountPanel.getWidgetParams( options )));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
-				diskForm.submit();
-			}
+		excel.addClickHandler(event -> {
+			diskForm.setAction(GWT.getHostPageBaseURL() + ACC_ACCOUNT_REPORT_PRINT);
+			accountEntryParamsHidden.setValue(JsonParams.convert(accountPanel.getWidgetParams( options )));
+			domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+			domainNameHidden.setValue(getCurrentDomainName());
+			userHidden.setValue(getCurrentUser());
+			diskForm.submit();
 		});
 		toolbar.add(excel);
 		

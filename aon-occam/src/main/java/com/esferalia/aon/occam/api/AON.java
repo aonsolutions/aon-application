@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -1917,6 +1918,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getInvoiceDetailsList(ctx, filter);
 		}
 	}
 	
@@ -8078,6 +8085,14 @@ public class AON {
 	public static void deleteDeliveryInfo(String schema, Integer deliveryId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			getWarehouse().deleteDeliveryInfo(ctx, deliveryId);
+		}
+	}
+	
+	// VENCIMIENTO NOMINAS
+
+	public static void createSettleSalaries(String domainName, int domainId, String user, Date date) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().createSettleSalaries(ctx, date);
 		}
 	}	
 	

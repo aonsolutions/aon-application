@@ -200,8 +200,7 @@ export class AonBankCard extends AonElement {
   }
 
   formatDate(inputDate) {
-    inputDate = inputDate ? new Date(inputDate) : new Date(); 
-    inputDate.setHours(0, 0, 0, 0);
+    inputDate = inputDate ? new Date(inputDate) : new Date();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

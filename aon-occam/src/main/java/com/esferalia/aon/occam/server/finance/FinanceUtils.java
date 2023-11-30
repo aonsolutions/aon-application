@@ -32,9 +32,13 @@ public class FinanceUtils {
 
 	public static Filter getFilter(FinanceProperties p, FinanceParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
-		if (params.getPayment() != null) {
+		if (params.isPayroll()) {
+			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( true )));
+			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( true )));
+		} else if (params.getPayment() != null) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
 		}
+		
 		if (params.getFromInvoiceDate() != null) {
 			prop = prop.and(p.getInvoiceDateProperty().ge(params.getFromInvoiceDate()));
 		}

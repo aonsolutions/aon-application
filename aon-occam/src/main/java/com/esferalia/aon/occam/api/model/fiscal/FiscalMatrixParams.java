@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 
 public class FiscalMatrixParams implements Serializable{
 
@@ -16,6 +18,11 @@ public class FiscalMatrixParams implements Serializable{
 	
 	private boolean configuredVisible;
 	private boolean madeModelsVisible;
+	
+	private FiscalStatus status;
+	private Period period;
+	
+	private boolean multiplePresentation;
 	
 	public int getYear() {
 		return year;
@@ -71,6 +78,30 @@ public class FiscalMatrixParams implements Serializable{
 		return this;
 	}
 	
+	public FiscalStatus getStatus() {
+		return status;
+	}
+	public FiscalMatrixParams setStatus(FiscalStatus status) {
+		this.status = status;
+		return this;
+	}
+	
+	public Period getPeriod() {
+		return period;
+	}
+	public FiscalMatrixParams setPeriod(Period period) {
+		this.period = period;
+		return this;
+	}
+	
+	public boolean isMultiplePresentation() {
+		return multiplePresentation;
+	}
+	public FiscalMatrixParams setMultiplePresentation(boolean multiplePresentation) {
+		this.multiplePresentation = multiplePresentation;
+		return this;
+	}
+	
 	public boolean isFiscalModelTypePresent() {
 		return model != null; 
 	}
@@ -80,5 +111,6 @@ public class FiscalMatrixParams implements Serializable{
 	}
 	public boolean accept(FiscalModelType modelType) {
 		return (getModel() == null  || getModel() == modelType);
-	}
+	}	
+	
 }
