@@ -6,7 +6,11 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndChe
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -20,21 +24,36 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
+import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebResponse;
+import org.htmlunit.WebWindow;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
-import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlLabel;
-import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlParagraph;
@@ -42,7 +61,11 @@ import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.html.parser.HTMLParser;
+import org.htmlunit.javascript.host.xml.XSLTProcessor;
 import org.htmlunit.xml.XmlPage;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -588,8 +611,6 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			
-			webClient.getOptions().setUseInsecureSSL(true);
-			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA-CI.html");
 			
 			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
@@ -597,28 +618,38 @@ class SistemaREDI {
 				
 			handleSepeExceptions(htmlPage);
 			
-			//Aqui hay que seleccionar el ccc sobre el que se quiere hacer la consulta, pero ya se devuelve un XmlPage
-			HtmlAnchor cccAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc);
-			XmlPage xmlPage = cccAnchor.click();
+			htmlPage.getElementById("radio_Opcion3").click();
+			HtmlInput criBusCccNaf = (HtmlInput) htmlPage.getElementById("criBusCccNaf") ;
+			criBusCccNaf.setValue(regime+ccc);
+			XmlPage xmlPage  = htmlPage.getElementById("botBuscar").click();
+			htmlPage = transform(xmlPage);
+
+			xmlPage = htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc).click();
+			htmlPage = transform(xmlPage);
 			
-			// TODO: esto para obtener el documento en PDF cuando en el navegador se visualiza un PDF
-//			Page documentPage = htmlPage;
-//			if (documentPage.isHtmlPage()) {
-//				htmlPage = (HtmlPage) documentPage;
-//				handleSepeExceptions(htmlPage);
-//			} else {
-//				try {
-//					return documentPage.getWebResponse().getContentAsStream().readAllBytes();
-//				} catch (Exception e) {
-//					throw new UnfilledMandatory();
-//				}
-//			}	
+			xmlPage = htmlPage.getElementById("ENVIO_13").click();
+			htmlPage = transform(xmlPage);
+			
+			xmlPage = htmlPage.getElementById("ENVIO_15").click();
+			htmlPage = transform(xmlPage);
+
+			for (HtmlAnchor anchor : htmlPage.getAnchors()) {
+			    if ( "documento".equals(anchor.getAttribute("data-pc_tipo"))) {
+				Page pdfPage = anchor.click();
+				return pdfPage.getWebResponse().getContentAsStream().readAllBytes();
+			    }
+			} 
+			
+			
+			    
 		} catch (FailingHttpStatusCodeException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
 		} catch (IOException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
+		} catch (TransformerException e) {
+		    e.printStackTrace();
 		}
 		return null;
 	}
@@ -1639,6 +1670,72 @@ class SistemaREDI {
 		
 	}
 	
+	public static HtmlPage transform(XmlPage xmlPage) throws IOException, TransformerException {
+	    WebClient webClient = xmlPage.getWebClient();
+	    
+	    String xslStylesheet = getXslStylesheet(xmlPage);
 
+	    XmlPage xslPage = webClient.getPage(xslStylesheet);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new DOMSource(xmlPage.getXmlDocument());
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URL xslUrl = xslPage.getWebResponse().getWebRequest().getUrl();
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = xmlPage.getWebResponse().getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    HtmlPage htmlPage = loadHtmlCodeIntoCurrentWindow(webClient, out.toString(), xmlUrl);
+	    return htmlPage;
+	}
+	
+	public static HtmlPage loadHtmlCodeIntoCurrentWindow(final WebClient webClient,  final String htmlCode, final URL url) throws IOException {
+	    final HTMLParser htmlParser = webClient.getPageCreator().getHtmlParser();
+	    final WebWindow webWindow = webClient.getCurrentWindow();
+
+	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
+	    final HtmlPage page = new HtmlPage(webResponse, webWindow);
+	    webWindow.setEnclosedPage(page);
+
+	    htmlParser.parse(webResponse, page, false, false);
+	    return page;
+	}	
+	
+	public static String getXslStylesheet (XmlPage xmlPage) throws MalformedURLException {
+	    
+	    Matcher matcher = Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(xmlPage.getWebResponse().getContentAsString());
+	    matcher.find();
+	    String href = matcher.group("href");
+
+	    URL url = xmlPage.getWebResponse().getWebRequest().getUrl();
+	    return new URL(url, href).toString();
+	    
+	}
+	
 
 }
