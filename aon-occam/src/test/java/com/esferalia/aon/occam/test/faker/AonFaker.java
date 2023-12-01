@@ -1078,7 +1078,22 @@ public class AonFaker {
 				.setQuantity(random.nextInt(1, 9))
 				.setPurchaseReference(Faker.instance().bothify("P##/######"))
 				.setCreationDate(new Date())
-				.setPurchaseReference(Faker.instance().numerify("##########"));
+				.setPurchaseReference(Faker.instance().numerify("##########"))
+				.setItem(getItem());
+	}
+	
+	public static Item getItem() {
+		return new Item()
+				.setProduct(getProduct());
+	}
+	
+	public static Product getProduct() {
+		Random random = new Random();
+		Integer[] taxes = {4,10,21};
+		
+		return new Product()
+				.setVat(new Tax()
+						.setPercentage(taxes[random.nextInt(taxes.length)]));
 	}
 	
 	public static Delivery getDelivery() {
@@ -1093,14 +1108,43 @@ public class AonFaker {
 		DeliveryDetail deliveryDetail2 = getDeliveryDetail();
 		DeliveryDetail deliveryDetail3 = getDeliveryDetail();
 		DeliveryDetail deliveryDetail4 = getDeliveryDetail();
-		deliveryDetail1.setSalesDetail(null);
-		deliveryDetail2.setSalesDetail(1);
-		deliveryDetail3.setSalesDetail(1);
-		deliveryDetail4.setSalesDetail(2);
+		DeliveryDetail deliveryDetail5 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail6 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail7 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail8 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail9 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail10 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail11 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail12 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail13 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail14 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail15 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail16 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail17 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail18 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail19 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail20 = getDeliveryDetail();
 		details.add(deliveryDetail1);
 		details.add(deliveryDetail2);
 		details.add(deliveryDetail3);
 		details.add(deliveryDetail4);
+		details.add(deliveryDetail5);
+		details.add(deliveryDetail6);
+		details.add(deliveryDetail7);
+		details.add(deliveryDetail8);
+		details.add(deliveryDetail9);
+		details.add(deliveryDetail10);
+		details.add(deliveryDetail11);
+		details.add(deliveryDetail12);
+		details.add(deliveryDetail13);
+		details.add(deliveryDetail14);
+		details.add(deliveryDetail15);
+		details.add(deliveryDetail16);
+		details.add(deliveryDetail17);
+		details.add(deliveryDetail18);
+		details.add(deliveryDetail19);
+		details.add(deliveryDetail20);
+
 		
 		return new Delivery()
 				.setDomain(getDomain().getId())

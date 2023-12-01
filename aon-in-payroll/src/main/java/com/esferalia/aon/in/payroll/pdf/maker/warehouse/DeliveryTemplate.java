@@ -1,5 +1,9 @@
 package com.esferalia.aon.in.payroll.pdf.maker.warehouse;
 
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.createVerticalPage;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,6 +20,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+
 
 import org.apache.commons.lang.StringUtils;
 
@@ -73,6 +78,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 	
 	private float maxLogoWidth;
 	private float maxLogoHeight;
+	
+	private int pageNumber;
+	private int predictedPages;
+	int currentFirstPage;
 
 	
 	/**
@@ -108,6 +117,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 			this.marginSide = getPageWidth() * 0.036f;
 			this.separateElementsMargin = getPageWidth() * 0.075f;
 			this.marginText = getPageWidth() * 0.095f;
+			
+			this.pageNumber = 0;
 						
 			initialX = 0 + marginSide*2;
 			initialY = getPageHeight() - marginTop;
@@ -117,6 +128,7 @@ public class DeliveryTemplate implements AutoCloseable  {
 			
 			this.draw();
 			this.contents.close();
+			this.drawFooter();
 		} catch (Exception e) {
 			throw new CanNotCreatePdfException(e);
 		}
@@ -527,8 +539,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 */
 	private void drawDeliveryTableFirstRow() throws IOException {
 		y = (float) (initialY - marginTop - maxLogoWidth*2.5 - TITLEFONTSIZE*2 - EXTRATITLEFONTSIZE - TITLEFONTSIZE - EXTRATITLEFONTSIZE*3 - 1);
-		float height = this.getPageWidth()-this.marginSide*4;
-		PDFToolkit.drawBox(contents, initialX, y, height, 12, PdfColors.GRAY);
+		float width = this.getPageWidth()-this.marginSide*4;
+		PDFToolkit.drawBox(contents, initialX, y, width, 15, PdfColors.GRAY);
 		
 		String descripcion = "Descripci\u00F3n";
 		y += (float) (3.5);
@@ -559,6 +571,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 		x = initialX;
 		y -= TEXTFONTSIZE*2;
 		
+		pageNumber++;
+		
 		List<DeliveryDetail> details = delivery.getDetails();
 		
 		BigDecimal bigDecimal;
@@ -576,6 +590,16 @@ public class DeliveryTemplate implements AutoCloseable  {
         for (Entry<Integer, List<DeliveryDetail>> detail : deliveryDetailMap.entrySet()) {
 			if (detail != null && detail.getKey() != null && detail.getValue() != null) {
 				
+				if (y <= maxLogoWidth*2) {
+					contents.close();
+					PDPage newPage = createVerticalPage();
+					document.addPage(newPage);
+					pageNumber++;
+					contents = new PDPageContentStream(document,newPage);
+					
+					y = initialY;
+				}
+			
 				x = initialX;
 				
 				// Draw id of sales
@@ -613,9 +637,41 @@ public class DeliveryTemplate implements AutoCloseable  {
 				if (items != null) {
 					
 					for (DeliveryDetail i : items) {
+						
+						// page break
+						if (y <= maxLogoWidth*2) {
+							contents.close();
+							PDPage newPage = createVerticalPage();
+							document.addPage(newPage);
+							pageNumber++;
+							contents = new PDPageContentStream(document,newPage);
+							
+							y = (float) (initialY - maxLogoWidth*0.5);
+							x = initialX;
+							
+							drawLogo();
+							
+							y = initialY;
+							
+							drawCompanyName();							
+							drawCustomerCIF();
+							drawCompanyAddress();
+							drawCompanyMedia();
+							
+							drawReferenceAndDate();
+							drawCustomer();
+							drawDestinyAddressTitle();
+							drawDestinyAddress();
+							drawDeliveryTitle();
+							drawOriginInfo();
+							drawDeliveryTableFirstRow();
+							
+							y -= maxLogoWidth*0.15;
+						}
+						
 						x = initialX;
 						DecimalFormat format = new DecimalFormat("0");
-					
+						
 						// description
 						if (i.getDescription() != null) {
 							nameWidth = (maxLogoWidth*3);
@@ -631,46 +687,54 @@ public class DeliveryTemplate implements AutoCloseable  {
 						
 						// quantity
 						x = (float) (maxLogoWidth*3.25);
-							
-						nameWidth = (float) (maxLogoWidth*0.65);
-		
+									
 						quantity = format.format(i.getQuantity());
-						
-						nameLines = PDFToolkit.getLines(quantity, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
-						
-						for (String line : nameLines) {
-							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
-						}
+												
+						drawTextRight(contents
+							, new PDRectangle(x, y, 15, 15)
+							, quantity
+							, DEFAULT_FONT_COLOR
+							, DEFAULT_FONT
+							, TEXTFONTSIZE
+							, 0
+							, 0
+						);
 						
 						format = new DecimalFormat("0.00");
 								
 						// price
-						x += (float) (maxLogoWidth*0.75);
-							
-						nameWidth = (float) (maxLogoWidth*0.65);
-			
+						x += (float) (maxLogoWidth*0.85);
+									
 						bigDecimal = BigDecimal.valueOf(i.getPrice()).setScale(2, RoundingMode.HALF_UP);
 						price = format.format(bigDecimal.doubleValue());
 											
-						nameLines = PDFToolkit.getLines(price, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
-							
-						for (String line : nameLines) {
-							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
-						}
-			
+						drawTextRight(contents
+							, new PDRectangle(x, y, 15, 15)
+							, price
+							, DEFAULT_FONT_COLOR
+							, DEFAULT_FONT
+							, TEXTFONTSIZE
+							, 0
+							, 0
+						);
+						
 						// amounth
-						x += (maxLogoWidth);
+						x += (maxLogoWidth*1.05);
 							
-						nameWidth = (float) (maxLogoWidth*0.90);
 						
 						bigDecimal = BigDecimal.valueOf(i.getAmount()).setScale(2, RoundingMode.HALF_UP);
 						amounth = format.format(bigDecimal.doubleValue());
 						
-						nameLines = PDFToolkit.getLines(amounth, nameWidth, DEFAULT_FONT, TEXTFONTSIZE);
+						drawTextRight(contents
+							, new PDRectangle(x, y, 15, 15)
+							, amounth
+							, DEFAULT_FONT_COLOR
+							, DEFAULT_FONT
+							, TEXTFONTSIZE
+							, 0
+							, 0
+						);
 						
-						for (String line : nameLines) {
-							PDFToolkit.drawText(contents,AonStringUtils.trimToEmpty(line),x,y,DEFAULT_FONT_COLOR,DEFAULT_FONT,TEXTFONTSIZE);
-						}
 						y -= TEXTFONTSIZE + 1;
 					}
 					
@@ -685,29 +749,115 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 * @throws IOException
 	 */
 	private void drawPaymentTableFirstRow() throws IOException {
-		y -= TEXTFONTSIZE*3;
 		x = initialX + (float) (maxLogoWidth*0.25);
+		y -= TEXTFONTSIZE*3;
 		
-		float height = (float) (this.getPageWidth()-this.marginSide*6.5);
-		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.GRAY);
+		DecimalFormat format = new DecimalFormat("0.00");
 		
-		y += maxLogoWidth*0.065;
-		 
+		float width = (this.getPageWidth()-this.marginSide*15);
+		PDFToolkit.drawBox(contents, x, y, width, 15, PdfColors.GRAY);
+		
+		// base
+		float auxY = y + (float) (maxLogoWidth*0.05);
 		String base = "Base Imponible";
 		
-		PDFToolkit.drawText(contents,base,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
+		PDFToolkit.drawText(contents,base,x,auxY,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
 		
-		String taxes = "I.V.A.";
-		x = (float) (maxLogoWidth*3.25);
+		// tax
+		String tax = "I.V.A.";
+		x += (float) (maxLogoWidth*1.25);
 		
-		PDFToolkit.drawText(contents,taxes,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
-
+		PDFToolkit.drawText(contents,tax,x,auxY,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		
+		// tax coute
 		String taxesCuote = "Cuota I.V.A.";
 		x += (float) (maxLogoWidth*0.75);
+				
+		PDFToolkit.drawText(contents,taxesCuote,x,auxY,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
 		
-		PDFToolkit.drawText(contents,taxesCuote,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TEXTFONTSIZE);
+		auxY = y;
+		
+		TreeMap<Double,List<DeliveryDetail>> detailsByTax = getDeliveryDetailByTax(delivery.getDetails());
+		
+		for (Entry<Double, List<DeliveryDetail>> detail : detailsByTax.entrySet()) {
+			if (detail != null && detail.getKey() != null && detail.getValue() != null ) {
+				
+				// page break
+				if (y <= maxLogoWidth*2) {
+					contents.close();
+					PDPage newPage = createVerticalPage();
+					document.addPage(newPage);
+					pageNumber++;
+					contents = new PDPageContentStream(document,newPage);
+					
+					y = (float) (initialY - maxLogoWidth*0.5);
+					x = initialX;
+					
+					drawCompany();
+					drawReferenceAndDate();
+					drawCustomer();
+					drawDestinyAddressTitle();
+					drawDestinyAddress();
+					drawDeliveryTitle();
+					drawOriginInfo();
+					drawDeliveryTableFirstRow();
+				}
+				
+				x = initialX + (float) (maxLogoWidth*0.25);
+				
+				float pricesY = auxY - TITLEFONTSIZE*2 + 1;
+				float pricesX = x + TITLEFONTSIZE*3;
+				
+				float rectanguleX = (float) (initialX+maxLogoWidth*1.50);
+				float rectanguleY = (float) (initialY-maxLogoWidth*8.13);
+				float rectanguleWidth = (float) (maxLogoWidth*0.355);
+				float rectanguleHeight = (TEXTFONTSIZE);
+				
+				// base				
+				Double basePrice = getAmounthWithTax(detail.getKey());
+				BigDecimal bigDecimal = BigDecimal.valueOf(basePrice).setScale(2, RoundingMode.HALF_UP);
+				String basePriceString = format.format(bigDecimal.doubleValue());
+				
+				PDRectangle rectangule = new PDRectangle(rectanguleX,rectanguleY,rectanguleWidth,rectanguleHeight);
+				
+				PDFToolkit.drawTextRight(contents, rectangule, basePriceString, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE, pricesX, pricesY);
+				
+				// tax
+				Double taxPrice = detail.getKey();
+				bigDecimal = BigDecimal.valueOf(taxPrice).setScale(2, RoundingMode.HALF_UP);
+				String taxPriceString = format.format(bigDecimal.doubleValue());
+				pricesX += (maxLogoWidth*1);
+
+				rectanguleX += (float) (maxLogoWidth*1.80)+1;
+								
+				rectangule = new PDRectangle(rectanguleX,rectanguleY,rectanguleWidth,rectanguleHeight);
+				
+				PDFToolkit.drawTextRight(contents, rectangule, taxPriceString, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE, pricesX, pricesY);
+				
+
+				// tax coute
+				Double taxCuotePrice = basePrice * (taxPrice/100);
+				bigDecimal = BigDecimal.valueOf(taxCuotePrice).setScale(2, RoundingMode.HALF_UP);
+				String taxCuoteString = format.format(bigDecimal.doubleValue());
+				pricesX += (float) (maxLogoWidth*0.75);
+				
+				rectanguleX += (float) (maxLogoWidth*1.75)+1;
+								
+				rectangule = new PDRectangle(rectanguleX,rectanguleY,rectanguleWidth,rectanguleHeight);
+				
+				PDFToolkit.drawTextRight(contents, rectangule, taxCuoteString, DEFAULT_FONT_COLOR, DEFAULT_FONT, TEXTFONTSIZE, pricesX, pricesY);
+				
+				
+				x = initialX + (float) (maxLogoWidth*0.25);
+				auxY -= TEXTFONTSIZE+4;
+			}
+		}
 	}
 	
+	/**
+	 * Draws the base price, the taxes and the total price
+	 * @throws IOException
+	 */
 	private void drawPaymentTableSecondRow() throws IOException {
 		Customer simpleCustomer = customer.getRegistry();
 		
@@ -717,15 +867,13 @@ public class DeliveryTemplate implements AutoCloseable  {
 			drawAmounthNational();
 		}
 	}
-		
-	private void drawAmounthNotNational() throws IOException {
-		Double amounth = getAmounthNotNational();
-		
+	
+	private void drawAmounth(Double amounth) throws IOException {
 		// box
 		x = initialX + this.maxLogoWidth*4;
 		y -= TITLEFONTSIZE*3 + 1;
-		float height = (maxLogoWidth);
-		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.DARKEST);
+		float width = (maxLogoWidth);
+		PDFToolkit.drawBox(contents, x, y, width, 12, PdfColors.DARKEST);
 		
 		// title
 		String descripcion = "Total Albar\u00E1n";
@@ -737,46 +885,54 @@ public class DeliveryTemplate implements AutoCloseable  {
 		// amounth
 		DecimalFormat format = new DecimalFormat("0.00");
 		
-		x += (float) (maxLogoWidth*0.40);
-		y -= TITLEFONTSIZE*2 + 1;
+		x += maxLogoWidth*1;
+		y -= maxLogoWidth*1.715;
 
 		BigDecimal bigDecimal = BigDecimal.valueOf(amounth).setScale(2, RoundingMode.HALF_UP);
 		String amounthString = format.format(bigDecimal.doubleValue()) + " \u20AC";
 		
-		PDFToolkit.drawText(contents,amounthString,x,y,PdfColors.DARKEST,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		float rectanguleX = x;
+		float rectanguleY = y;
+		float rectanguleWidth = (float) (maxLogoWidth*5.50);
+		float rectanguleHeight = (TEXTFONTSIZE);
+		
+		float pricesY = y - TITLEFONTSIZE*2 + 1;
+		float pricesX = x + TITLEFONTSIZE*3;
+
+		PDRectangle rectangule = new PDRectangle(rectanguleX,rectanguleY,rectanguleWidth,rectanguleHeight);
+		
+		PDFToolkit.drawTextRight(contents, rectangule, amounthString, DEFAULT_FONT_COLOR, DEFAULT_BOLD_FONT, TEXTFONTSIZE, pricesX, pricesY);
+	}
+		
+	/**
+	 * Draws the amonunth if the customer is not national (it does not shows the taxes)
+	 * @throws IOException
+	 */
+	private void drawAmounthNotNational() throws IOException {
+		Double amounth = getAmounthWithoutTax();
+		
+		drawAmounth(amounth);
 	}
 	
+	/**
+	 * Draws the amonunth if the customer is not national (it shows the taxes)
+	 * @throws IOException
+	 */
 	private void drawAmounthNational() throws IOException {
 		drawPaymentTableFirstRow();
 		
-		Double amounth = getAmounthNational();
+		y += maxLogoWidth*0.30;
 		
-		// box
-		x = initialX + this.maxLogoWidth*4;
-		y -= TITLEFONTSIZE*3 + 1;
-		float height = (maxLogoWidth);
-		PDFToolkit.drawBox(contents, x, y, height, 12, PdfColors.DARKEST);
+		Double amounth = getTotalAmounthWithTax();
 		
-		// title
-		String descripcion = "Total Albar\u00E1n";
-		x += (float) (maxLogoWidth*0.20);
-		y += (float) (maxLogoWidth*0.05);
-				
-		PDFToolkit.drawText(contents,descripcion,x,y,PdfColors.WHITE,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
-		
-		// amounth
-		DecimalFormat format = new DecimalFormat("0.00");
-		
-		x += (float) (maxLogoWidth*0.40);
-		y -= TITLEFONTSIZE*2 + 1;
-
-		BigDecimal bigDecimal = BigDecimal.valueOf(amounth).setScale(2, RoundingMode.HALF_UP);
-		String amounthString = format.format(bigDecimal.doubleValue()) + " \u20AC";
-		
-		PDFToolkit.drawText(contents,amounthString,x,y,PdfColors.DARKEST,DEFAULT_BOLD_FONT,TITLEFONTSIZE);
+		drawAmounth(amounth);
 	}
 	
-	private Double getAmounthNotNational() {
+	/**
+	 * Calculates the total price without the taxes (base price)
+	 * @return
+	 */
+	private Double getAmounthWithoutTax() {
 		List<DeliveryDetail> details = delivery.getDetails();
 		Double totalAmounth = (double) 0;
 		
@@ -787,7 +943,31 @@ public class DeliveryTemplate implements AutoCloseable  {
 		return totalAmounth;
 	}
 	
-	private Double getAmounthNational() {
+	/**
+	 * Calculates the total price of all the items that have that given tax
+	 * @param tax
+	 * @return
+	 */
+	private Double getAmounthWithTax(Double tax) {
+		TreeMap<Double,List<DeliveryDetail>> deliveryDetailMap = getDeliveryDetailByTax(delivery.getDetails());
+		Double totalAmounth = (double) 0;
+		
+        for (Entry<Double, List<DeliveryDetail>> detail : deliveryDetailMap.entrySet()) {
+			if (detail != null && detail.getKey() != null && detail.getValue() != null && tax.equals(detail.getKey())) {
+				for (DeliveryDetail d : detail.getValue()) {
+					totalAmounth += detail.getKey() * d.getAmount();
+				}
+			}
+        }
+		
+		return totalAmounth;
+	}
+	
+	/**
+	 * Calculates the total price of all the items without the taxes
+	 * @return
+	 */
+	private Double getTotalAmounthWithTax() {
 		TreeMap<Double,List<DeliveryDetail>> deliveryDetailMap = getDeliveryDetailByTax(delivery.getDetails());
 		Double totalAmounth = (double) 0;
 		
@@ -881,6 +1061,75 @@ public class DeliveryTemplate implements AutoCloseable  {
 		return list;
 	}
 	
+	private void drawFooter() throws IOException {
+		for (int i = currentFirstPage ; i < this.pageNumber ; i++) {
+			contents = new PDPageContentStream(document, document.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
+			
+			float width = (this.getPageWidth()-this.marginSide*4);
+			PDFToolkit.drawBox(contents, initialX, maxLogoWidth, width, 1, PdfColors.DARKEST);
+			
+			String recibi = "Recib\u00ED: ";
+			String fecha = "Fecha: ";
+			String firma = "Firma y sello: ";
+			String nombre = "Nombre: ";
+			
+			drawTextRight(contents
+				, new PDRectangle((float) (initialX + maxLogoWidth*0.15), 15, 15, 15)
+				, recibi
+				, DEFAULT_FONT_COLOR
+				, DEFAULT_FONT
+				, TEXTFONTSIZE
+				, 0
+				, (float) (maxLogoWidth*0.65)
+			);
+			
+			drawTextRight(contents
+				, new PDRectangle((float) (initialX + maxLogoWidth*1.15), 15, 15, 15)
+				, fecha
+				, DEFAULT_FONT_COLOR
+				, DEFAULT_FONT
+				, TEXTFONTSIZE
+				, 0
+				, (float) (maxLogoWidth*0.65)
+			);
+			
+			drawTextRight(contents
+				, new PDRectangle((initialX + maxLogoWidth*3), 15, 15, 15)
+				, firma
+				, DEFAULT_FONT_COLOR
+				, DEFAULT_FONT
+				, TEXTFONTSIZE
+				, 0
+				, (float) (maxLogoWidth*0.65)
+			);
+			
+			drawTextRight(contents
+				, new PDRectangle((float) (initialX + maxLogoWidth*1.22), 15, 15, 15)
+				, nombre
+				, DEFAULT_FONT_COLOR
+				, DEFAULT_FONT
+				, TEXTFONTSIZE
+				, 0
+				, (float) (maxLogoWidth*0.30)
+			);
+			
+			
+
+			String pagina = "Pag. " + (i+1 - currentFirstPage) + " de " + (pageNumber - currentFirstPage);
+			
+			drawTextRight(contents
+				, new PDRectangle(560, 15, 15, 15)
+				, pagina
+				, DEFAULT_FONT_COLOR
+				, DEFAULT_FONT
+				, TEXTFONTSIZE
+				, (float) (maxLogoWidth*0.20)
+				, (float) (maxLogoWidth*0.20)
+			);
+		
+			contents.close();
+		}
+	}
 	
 	private float getPageWidth() {
 		if (this.page != null)
