@@ -1798,46 +1798,46 @@ aon-access-card{
 }
 
 .noteCard{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .noteTitleCard{
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 0 1rem;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  height: 3rem;
+  display: flex;
+  height: 2.5rem;
+  justify-content: space-between;
+  padding: 0 1rem;
+  width: 100%;
 }
 
 .noteTitle{
-  width: 100%;
-  border: medium;
   background: none;
-  font-size: 1rem;
+  border: none;
   color: #202124;
   cursor: pointer;
   font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  font-size: .8rem;
   font-weight: 700;
   text-transform: uppercase;
+  width: 100%;
 }
 
 .noteBodyContent{
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  padding: 1rem;
   align-items: end;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem 1rem;
+  width: 100%;
+  gap: .5rem;
 }
 
 .noteBody{
@@ -1853,13 +1853,6 @@ aon-access-card{
 }
 
 .noteDate{
-  width: 8rem;
-  border: none;
-  cursor: pointer;
-  font-family: Roboto,Helvetica,Arial,sans-serif !important;
-  line-height: normal !important;
-  font-size: 1rem;
-  color: #202124;
   font-weight: 500;
 }
 
@@ -2029,7 +2022,7 @@ aon-access-card{
   }
 
   .noteCard{
-    max-width: 24rem;
+    max-width: 21rem;
   }
 }
 
