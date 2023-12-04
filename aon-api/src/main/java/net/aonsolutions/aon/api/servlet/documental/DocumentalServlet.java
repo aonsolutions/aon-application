@@ -4,17 +4,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -26,6 +24,9 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -109,8 +110,15 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	private JSONArray getFiles(AonApiData api) {
 		JSONArray array = new JSONArray();
 		
+		Integer page = JsonUtils.getInteger(api.getData(), com.esferalia.aon.occam.api.model.IJsonNames.PAGE);
+		Integer perPage = JsonUtils.getInteger(api.getData(), "per_page");
+		Options options = new Options()
+				.setPage(page).setPerPage(perPage);
+		
 		AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> attachFilter(api, f),AttachType.REGISTRY, false).sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate())).forEach(a -> {
+				f -> attachFilter(api, f),AttachType.REGISTRY, false, options)
+//		.sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate()))
+		.forEach(a -> {
 			array.put(attachToJSON(a));
 		});
 		return array;

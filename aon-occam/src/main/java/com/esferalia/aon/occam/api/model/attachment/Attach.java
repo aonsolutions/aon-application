@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.attachment;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -56,7 +57,7 @@ public class Attach implements Serializable {
 
 	private Scope fullScope;
 	private Category fullCategory;
-	private LinkedList<Tag> tagList;
+	private List<Tag> tagList;
 	
 	//--------------------- Constructors
 	
@@ -319,10 +320,19 @@ public class Attach implements Serializable {
 		this.fullCategory = fullCategory;
 		return this;
 	}
-	public LinkedList<Tag> getTagList() {
+	public List<Tag> getTagList() {
+		if(tagList == null) {
+			tagList = new LinkedList<Tag>();
+		}
 		return tagList;
 	}
-	public Attach setTagList(LinkedList<Tag> tagList) {
+	
+	public Attach addTag(Tag tag) {
+		getTagList().add(tag);
+		return this;
+	}
+	
+	public Attach setTagList(List<Tag> tagList) {
 		this.tagList = tagList;
 		return this;
 	}
