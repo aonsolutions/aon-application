@@ -626,9 +626,15 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
+	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date, Integer userId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getNote().getNoteCountForDate(ctx, filter, date);
+			return getNote().getNoteCountForDate(ctx, filter, date, userId);
+		}
+	}
+	
+	public static HashMap<String, Integer> getNoteTagCount(Domain domain, String login, NoteFilter filter, Integer userId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteTagCount(ctx, filter, userId);
 		}
 	}
 	

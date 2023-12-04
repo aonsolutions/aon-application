@@ -8,6 +8,8 @@ export class Note {
   date;
   owner;
   note;
+  archive;
+  tag;
 
   constructor(note) {
     if(note) {
@@ -16,7 +18,9 @@ export class Note {
       this.subject     = note.subject || "";
       this.note        = note.note || "";
       this.owner       = note.owner || undefined;
+      this.archive     = note.archive || false;
       this.date        = note.date && !note.date.includes("0001-01-01") ? AonDateUtils.formatDateOrigin(note.date) : null;
+      this.tag         = note.tag || {};
     } else {
       this.id          = undefined;
       this.domain      = new Domain().getId(); 
@@ -24,6 +28,8 @@ export class Note {
       this.note        = undefined;
       this.owner       = undefined;
       this.date        = null;
+      this.archive     = false;
+      this.tag         = {};
     }
   }
 
@@ -73,6 +79,14 @@ export class Note {
 
   setDomain(domain) {
     this.domain = domain;
+  }
+
+  getArchive() {
+    return this.archive;
+  }
+
+  setArchive(archive) {
+    this.archive = archive;
   }
 
 }
