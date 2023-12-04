@@ -1843,17 +1843,21 @@ aon-access-card{
 .noteBody{
   resize: none;
   background: none;
+    background-color: rgba(0, 0, 0, 0);
   border: none;
   width: 100%;
   cursor: pointer;
   font-family: Roboto,Helvetica,Arial,sans-serif !important;
-  line-height: normal !important;
   color: #202124;
-  font-size: 1.1rem;
+  font-size: .9rem;
 }
 
 .noteDate{
   font-weight: 500;
+  border: none;
+  font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  color: #202124;
+  font-size: .9rem;
 }
 
 .emptyNote{

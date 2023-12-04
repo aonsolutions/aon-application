@@ -612,7 +612,6 @@ export class AonNotes extends AonElement {
       let date = new Date();
       let dateNote = new Date(note.getDate());
       if (dateNote.getTime() < date.getTime()) noteCardDate.style.color = "#e1444c";
-      else noteCardDate.style.color = "#787885";
     }
     bottomNoteDiv.appendChild(noteCardDate);
 
@@ -630,9 +629,6 @@ export class AonNotes extends AonElement {
           textAreaBody.style.backgroundColor = "#fff8b8";
           noteCardDate.style.backgroundColor = "#fff8b8";
         }
-
-        noteCardBodyDiv.style.color = "#202124";
-        textAreaBody.style.color = "#202124";
 
         buttonsNoteDiv.style.visibility = "visible";
       },
