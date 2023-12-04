@@ -284,6 +284,8 @@ public class DiaryImport extends ImportUtils {
 					diary.get(asiento).getEntry().setEntryType(AccountEntryType.OPENING); 
 				} else if("&CR".equals(o.toString())) {
 					diary.get(asiento).getEntry().setEntryType(AccountEntryType.CLOSING);
+				} else if("&PG".equals(o.toString())) {
+					diary.get(asiento).getEntry().setEntryType(AccountEntryType.OPERATING);
 				} else diary.get(asiento).getEntry().setEntryType(AccountEntryType.MANUAL);
 			}
 			return;
