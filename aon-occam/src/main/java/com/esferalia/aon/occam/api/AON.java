@@ -3039,13 +3039,13 @@ public class AON {
 	
 	public static Stream<Attach> getDocumentalAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType, Boolean withData) {
+			AttachType attachType, Boolean withData, Options...options) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attachType.equals(AttachType.REGISTRY))
-				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData);
+				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData, options);
 			
 			return null;
 		} finally {

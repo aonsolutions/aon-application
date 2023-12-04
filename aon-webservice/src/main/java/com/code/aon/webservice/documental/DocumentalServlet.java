@@ -236,6 +236,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		if(json.opt(IJsonNames.TAG) != null || json.opt("tags") != null) {
 			try {
 				JSONArray arr = json.optJSONArray("tags");
+				AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
 				for (Integer index = 0; index < arr.length(); index++) {
 					Integer tagId =	arr.getInt(index);
 					AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);

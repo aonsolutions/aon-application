@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -29,9 +30,9 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 	@Override
-	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
+	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData, Options...options) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getDocumentalRegistryAttachStream(ctx, filter, withData));
+				configuration -> AttachmentDAO.getDocumentalRegistryAttachStream(ctx, filter, withData, options));
 	}
 	@Override
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
