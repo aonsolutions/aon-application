@@ -32,7 +32,12 @@ public class NoteImpl implements INote {
 	}
 	
 	@Override
-	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd) {
-		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.countForDate(ctx, filter, dateEnd));
+	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd, Integer userId) {
+		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.countForDate(ctx, filter, dateEnd, userId));
+	}
+
+	@Override
+	public HashMap<String, Integer> getNoteTagCount(AONContext ctx, NoteFilter filter, Integer userId) {
+		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.getNoteTagCount(ctx, filter, userId));
 	}
 }

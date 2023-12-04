@@ -135,7 +135,9 @@ export const TASK_STATUS = {
 
 export const TAG_TYPE = {
     TASK_TYPE:"TASK_TYPE",
-    TASK_LABEL: "TASK_LABEL"
+    TASK_LABEL: "TASK_LABEL",
+    NOTE_TYPE:"NOTE_TYPE",
+    NOTE_LABEL: "NOTE_LABEL"
 }
 
 export const TASK_STATUS_VALUE  = [

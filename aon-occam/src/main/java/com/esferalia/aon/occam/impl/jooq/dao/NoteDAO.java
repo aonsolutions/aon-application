@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Note.NOTE;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -12,6 +14,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record2;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -19,8 +22,11 @@ import org.jooq.impl.SQLDataType;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Properties.NoteProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.FullTagFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class NoteDAO {
@@ -46,6 +52,8 @@ public class NoteDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(NOTE)
+				.leftOuterJoin(TAG)
+				.on(TAG.ID.eq(NOTE.TAG))
 				.where(NOTE_PROPERTIES.getConditions(filter));
 	}
 	
@@ -81,6 +89,8 @@ public class NoteDAO {
 			.set(NOTE.SUBJECT, note.getSubject()!=null?  note.getSubject() : "")
 			.set(NOTE.NOTE_, note.getNote())
 			.set(NOTE.DATE, new Timestamp(note.getDate().getTime()))
+			.set(NOTE.ARCHIVE, note.isArchive() ? (byte)1 : (byte)0)
+			.set(NOTE.TAG, null == note.getTag() ? null : note.getTag().getId())
 			.where(NOTE.ID.eq(note.getId()))
 			.execute();
 		ctx.log().debug("UPDATE NOTE id: " + note.getId());		
@@ -95,6 +105,8 @@ public class NoteDAO {
 				.set(NOTE.SUBJECT, note.getSubject()!=null?  note.getSubject() : "")
 				.set(NOTE.NOTE_, note.getNote())
 				.set(NOTE.DATE, new Timestamp(note.getDate().getTime()))
+				.set(NOTE.ARCHIVE, note.isArchive() ? (byte)1 : (byte)0)
+				.set(NOTE.TAG, null == note.getTag() ? null : note.getTag().getId())
 				.returning(NOTE.ID).fetchOne().getId();
 		note.setId(id);
 		ctx.log().debug("INSERT NOTE id: " + id);		
@@ -107,7 +119,7 @@ public class NoteDAO {
 		ctx.log().debug("DELETE NOTE id: " + id);		
 	}
 	
-	public static HashMap<String, Integer> countForDate(AONContext ctx, NoteFilter filter, Date dateEnd) {
+	public static HashMap<String, Integer> countForDate(AONContext ctx, NoteFilter filter, Date dateEnd, Integer userId) {
 		HashMap<String, Integer> map = new HashMap<>();
 
 		String dateStr = AonDateUtils.format(dateEnd, "yyyy-MM-dd");
@@ -119,16 +131,57 @@ public class NoteDAO {
 		Field<Integer> totalExpired = DSL.count( DSL.when(whenOne.and(whenTwo), DSL.inline(1)) ).as("total_expired");
 		
 		Record2<Integer, Integer> result = ctx.getDslContext()
-		.select(totalExpired, total)
-		.from(NOTE)
-		.where(NOTE_PROPERTIES.getConditions(filter)).fetchOne();
+			.select(totalExpired, total)
+			.from(NOTE)
+			.where(NOTE_PROPERTIES.getConditions(filter))
+			.fetchOne();
 		
 		map.put("total_expired", (Integer) result.get(DSL.name("total_expired")));
 		map.put("total", (Integer) result.get(DSL.name("total")));
+		
+		Integer archiveNotes = ctx.getDslContext().selectCount().from(NOTE)
+			.where(NOTE.DOMAIN.eq(ctx.getDomainId()))
+			.and(NOTE.ARCHIVE.eq((byte)1))
+			.and(NOTE.OWNER.eq(userId))
+			.fetchOne().value1();
+		
+		map.put("archive", archiveNotes);
+		
 		return map;
 	}
 	
-	private static class NoteFiller implements Function<Record, Note> {
+	public static HashMap<String, Integer> getNoteTagCount(AONContext ctx, NoteFilter filter, Integer userId) {
+		HashMap<String, Integer> map = new HashMap<>();
+
+		Field<Integer> total = DSL.count().as("total");
+		
+		Result<Record2<Integer, Integer>> result = ctx.getDslContext()
+				.select(NOTE.TAG, total)
+				.from(NOTE)
+				.where(NOTE_PROPERTIES.getConditions(filter))
+				.and(NOTE.TAG.isNotNull())
+				.groupBy(NOTE.TAG)
+				.fetch();
+		
+		result.forEach(r -> map.put(r.get(NOTE.TAG).toString(), (Integer) r.get(DSL.name("total"))));
+		
+		return map;
+	}
+	
+	public static List<Tag> getNoteTagsList(AONContext ctx, TagFilter filter, Integer userId) {
+		List<Tag> tags = TagDAO.getList(ctx, filter);
+		tags.forEach(tag -> {
+			Result<Record> noteTags = ctx.getDslContext().selectDistinct().from(NOTE)
+				.where(NOTE.DOMAIN.eq(ctx.getDomainId()))
+				.and(NOTE.OWNER.eq(userId))
+				.and(NOTE.TAG.eq(tag.getId()))
+				.fetch();
+			tag.setReference(!noteTags.isEmpty());
+		});
+		return tags;
+	}
+	
+	private static class NoteFiller extends Filler implements Function<Record, Note> {
 		@Override
 		public Note apply(Record r) {
 			return new Note()
@@ -138,7 +191,11 @@ public class NoteDAO {
 					.setSubject(r.getValue(NOTE.SUBJECT))
 					.setNote(r.getValue(NOTE.NOTE_))
 					.setDate(r.getValue(NOTE.DATE))
+					.setArchive(r.getValue(NOTE.ARCHIVE) != (byte)0)
+					.setTag(checkField(r, TAG.NAME) && null != r.getValue(TAG.NAME) ? FullTagFiller.build(r) : null)
 					;		
+			
+			//checkField(r, DOMAIN.ID
 		}
 	}
 	
