@@ -1,4 +1,4 @@
-FROM tomcat:10-jdk17
+FROM tomcat:11.0-jdk21-openjdk
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
