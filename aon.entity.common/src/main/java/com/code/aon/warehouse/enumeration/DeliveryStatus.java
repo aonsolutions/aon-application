@@ -22,7 +22,12 @@ public enum DeliveryStatus implements IResourceable {
     /**
      * Invoiced.
      */
-    INVOICED;
+    INVOICED,
+	
+    /**
+     * In Preparation.
+     */
+    IN_PREPARATION;
     
     /**
      * Message key prefix. 

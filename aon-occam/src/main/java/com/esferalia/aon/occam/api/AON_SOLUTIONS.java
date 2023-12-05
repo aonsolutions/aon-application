@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -483,6 +484,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoiceNewPortal(ctx, filter);
+		} 
+	}
+	
 	public static Date getInvoiceExpDate(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceExpDate(ctx, id);
@@ -626,9 +633,15 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
+	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date, Integer userId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getNote().getNoteCountForDate(ctx, filter, date);
+			return getNote().getNoteCountForDate(ctx, filter, date, userId);
+		}
+	}
+	
+	public static HashMap<String, Integer> getNoteTagCount(Domain domain, String login, NoteFilter filter, Integer userId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteTagCount(ctx, filter, userId);
 		}
 	}
 	

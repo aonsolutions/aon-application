@@ -430,7 +430,7 @@ public class ConnectSalesResponseOccam  implements Serializable {
 	
 	private ORSPE createORSPERegistry(SalesDetail salesDetail, int lineNumber) {
 		Double rawAmount = salesDetail.getQuantity() * salesDetail.getPrice();
-		Double discountAmount = AonNumberUtils.todouble(salesDetail.getDiscountExpression());
+		Double discountAmount = salesDetail.getDiscount();
 		ORSPE orspe = new ORSPE();
 		orspe.setNumeroDescuento_Cargo(lineNumber);
 		orspe.setIndicadorDescuento_Cargo_A_C_(ORSPE.ORSPU_3.DESCUENTO.getValue());

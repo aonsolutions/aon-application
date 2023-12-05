@@ -124,6 +124,8 @@ public class SerfruitDAO {
 		delivery.setShippingAlternativeRecipient(null);
 		delivery.setShippingAlternativeZip(null);
 		delivery.setShippingContact(null);
+		delivery.setDate(AonDateUtils.getDateWithoutTime(delivery.getDate()));
+
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
@@ -143,6 +145,10 @@ public class SerfruitDAO {
 			item = ItemDAO.save(ctx, item);
 			detail.setItem(item);
 			detail.setDescription(item.getDescription());
+			if(detail.getSalesDetail() != null) {
+				SalesDetail aux = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(detail.getSalesDetail()));
+				if(aux == null || aux.getId() == null) detail.setSalesDetail(null);
+			}
 		}
 		delivery = DeliveryDAO.save(ctx, delivery);
 		

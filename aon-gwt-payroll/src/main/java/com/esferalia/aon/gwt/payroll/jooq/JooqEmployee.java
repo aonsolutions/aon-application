@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
@@ -783,9 +784,9 @@ public class JooqEmployee {
 			
 			//ENTERPRISE DATA
 			Record enterpriseRecord = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(
-							dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivityId)).fetchOne(ENTERPRISE_ACTIVITY.ENTERPRISE)
-					)).fetchOne();
+					.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+					.where(ENTERPRISE.DOMAIN.eq(contractTable.get(CONTRACT.DOMAIN)))
+					.fetchOne();
 			
 			contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
 			contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));

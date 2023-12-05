@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractParams;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -14,6 +16,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -178,23 +181,51 @@ public class MainContrataContractObject {
 		this.employeesList.addAll(allEmployeesList);
 	}
 	
-	public void filterEmployeesList(Integer workplaceId) {
-		this.employeesList.clear();
-		
-		for(EmployeeContractInfo employee : allEmployeesList) {
-			Integer employeeWorkplaceId = employee.getContractInfo().getWorkplaceId();
-			if(null != employeeWorkplaceId && AonNumberUtils.equals(workplaceId, employeeWorkplaceId))
-				this.employeesList.add(employee);
+	public void filterEmployeeList(ContractParams params) {
+		if(AonStringUtils.isBlank(params.getEmployee()) && AonStringUtils.isBlank(params.getWorkplace()) && AonStringUtils.isBlank(params.getTc2()) && null == params.getFrom() && null == params.getTo())
+			resetEmployeesList();
+		else {
+			resetEmployeesList();
+			
+			// Employee
+			if(AonStringUtils.isNotBlank(params.getEmployee()) && params.getEmployee().length() >= 3) {
+				this.employeesList = this.employeesList.stream().filter(ec -> isEmployeeByPattern(ec, params.getEmployee())).collect(Collectors.toList());
+			}
+			
+			// Workplace
+			if(AonStringUtils.isNotBlank(params.getWorkplace())) {
+				Integer workplace = Integer.parseInt(params.getWorkplace());
+				this.employeesList = this.employeesList.stream().filter(ec -> null != ec.getContractInfo().getWorkplaceId() && AonNumberUtils.equals(workplace, ec.getContractInfo().getWorkplaceId())).collect(Collectors.toList());
+			}
+			
+			// Tc2
+			if(AonStringUtils.isNotBlank(params.getTc2())) {
+				this.employeesList = this.employeesList.stream().filter(ec -> 
+					(AonStringUtils.isBlank(ec.getContractInfo().getContractType()) && AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) ||
+					(AonStringUtils.isNotBlank(ec.getContractInfo().getContractType()) && AonStringUtils.equalsIgnoreCase(params.getTc2(), ec.getContractInfo().getContractType()))
+				).collect(Collectors.toList());
+			}
+			
+			// Date
+			this.employeesList = this.employeesList.stream().filter(ec -> filterFromToEmployeesList(ec.getContractInfo().getEndDate(), ec.getContractInfo().getStartDate(), params.getFrom(), params.getTo())).collect(Collectors.toList());
+			
 		}
 	}
 	
-	public void filterEmployeesList(String pattern) {
-		this.employeesList.clear();
-		
-		for(EmployeeContractInfo employee : allEmployeesList)
-			if(isEmployeeByPattern(employee, pattern))
-				this.employeesList.add(employee);
-			
+	public boolean filterFromToEmployeesList(Date endDate, Date startDate, Date fromDate, Date toDate) {
+		if(null == fromDate && null == toDate)
+			return true;
+		else if(null != fromDate && null == toDate && (startDate.after(fromDate) || startDate.equals(fromDate)))
+			return true;
+		else if(null == fromDate && null != toDate && (null != endDate && (endDate.before(toDate) || endDate.equals(toDate))))
+			return true;
+		else if(null != fromDate && null != toDate && (null != endDate && dateBetween(startDate, fromDate, toDate) && dateBetween(endDate, fromDate, toDate)))
+			return true;
+		else return false;
+	}
+
+	private boolean dateBetween(Date date, Date fromDate, Date toDate) {
+		return (date.after(fromDate) || date.equals(fromDate)) && (date.before(toDate) || date.equals(toDate));
 	}
 
 	private boolean isEmployeeByPattern(EmployeeContractInfo employee, String pattern) {
@@ -205,18 +236,6 @@ public class MainContrataContractObject {
 		return AonStringUtils.containsIgnoreCase(fullName, pattern) ||
 				(AonStringUtils.isNotBlank(document) && AonStringUtils.containsIgnoreCase(document, pattern)) ||
 				(AonStringUtils.isNotBlank(ssNumber) && AonStringUtils.containsIgnoreCase(ssNumber, pattern));
-	}
-	
-	public List<Integer> getEmployeesContractIdsByWorkplace(String workplaceIdStr) {
-		List<Integer> contractIds = new ArrayList<>();
-		Integer workplaceId = Integer.parseInt(workplaceIdStr);
-		
-		for(EmployeeContractInfo employee : allEmployeesList) {
-			if(employee.getContractInfo().getWorkplaceId().equals(workplaceId))
-				contractIds.add(employee.getContractInfo().getContractId());
-		}
-		
-		return contractIds;
 	}
 	
 	// ------------------------------------------ DataBase Methods Trash

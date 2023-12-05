@@ -393,10 +393,14 @@ export const EMPTY_NOTE = 'emptyNote';
 // Dialog
 export const DIALOG_OVERLAY = 'dialogOverlay';
 export const DIALOG_CONTENT = 'dialogContent';
+export const DIALOG_TITLE = 'dialogTitle';
 export const DIALOG_MESSAGE = 'dialogMessage';
 export const DIALOG_BUTTONS = 'dialogButtons';
 export const DIALOG_ACCEPT = 'dialogAccept';
 export const DIALOG_CANCEL = 'dialogCancel';
+
+// Color
+export const AON_COLOR_FULL = 'colorFull';
 
 /**
  * Name to CSS variable conversion.

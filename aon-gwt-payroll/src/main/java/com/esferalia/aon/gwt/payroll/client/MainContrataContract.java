@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -16,12 +18,14 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContractParams;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
@@ -226,6 +230,10 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private TextBox employeeSB;
 	private CheckBox inactiveContractsCB;
+	
+	private ListBox tc2LB;
+	private AonDateBox fromDB;
+	private AonDateBox toDB;
 	private ListBox workplaceLB;
 
 	private Task syncTask;
@@ -881,6 +889,7 @@ public class MainContrataContract extends MainEntryPoint {
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 				s -> {
 					initEnterpriseSB();
+					initTC2LB();
 					initContractTable();
 					setTableHeights();
 					checkStatus(this.mainContrataContractObject);
@@ -899,7 +908,7 @@ public class MainContrataContract extends MainEntryPoint {
 		);
 
 	}
-	
+
 	// ------------------------------------------ Initialize View
 
 	private void initWorkplaceLB() {
@@ -909,14 +918,7 @@ public class MainContrataContract extends MainEntryPoint {
 			workplaceLB.addItem(workplace.getDescription(), workplace.getId().toString());
 		
 		workplaceLB.addChangeHandler(e -> {
-			String workplaceIdStr = workplaceLB.getSelectedValue();
-			if (AonStringUtils.isBlank(workplaceIdStr))
-				mainContrataContractObject.resetEmployeesList();
-			else {
-				Integer workplaceId = Integer.parseInt(workplaceIdStr);
-				mainContrataContractObject.filterEmployeesList(workplaceId);
-			}
-
+			filterEmployeeList();
 			initContractTable();
 			employeeDataGrid.redraw();
 		});
@@ -925,12 +927,38 @@ public class MainContrataContract extends MainEntryPoint {
 	private void initEnterpriseSB() {
 		employeeSB.addKeyUpHandler(e -> {
 			String value = employeeSB.getValue();
-			if (AonStringUtils.isBlank(value) || value.length() < 3)
+			if (AonStringUtils.isBlank(value) || value.length() < 3) {
 				mainContrataContractObject.resetEmployeesList();
-			else
-				mainContrataContractObject.filterEmployeesList(value);
-
+			} 
+			
+			filterEmployeeList();
 			initContractTable();
+			employeeDataGrid.redraw();
+		});
+	}
+	
+	private void initTC2LB() {
+		tc2LB.clear();
+		tc2LB.addItem("-", "");
+		
+		List<String> aviableContractTypes = this.mainContrataContractObject.getEmployeesList().stream()
+				.map(ec -> ec.getContractInfo().getContractType())
+				.distinct()
+				.collect(Collectors.toList());
+		
+		TreeMap<String, String> contractTypeMap = new TreeMap<>();
+		
+		for (String contracType : aviableContractTypes)
+			if(AonStringUtils.isBlank(contracType)) contractTypeMap.put("RETA", "RETA");
+			else if(AonStringUtils.equalsIgnoreCase(contracType, "000")) contractTypeMap.put("BECARIO", "000");
+			else contractTypeMap.put(contracType, contracType);
+		
+		contractTypeMap.entrySet().forEach(entry -> tc2LB.addItem(entry.getKey(), entry.getValue()));
+		
+		tc2LB.addChangeHandler(e -> {
+			filterEmployeeList();
+			initContractTable();
+			employeeDataGrid.redraw();
 		});
 	}
 
@@ -1026,6 +1054,9 @@ public class MainContrataContract extends MainEntryPoint {
 		flowPanel.add(new Hidden("inactive", inactiveContractsCB.getValue().toString()));
 		flowPanel.add(new Hidden("workplace", workplaceLB.getSelectedValue()));
 		flowPanel.add(new Hidden("employee", employeeSB.getValue()));
+		flowPanel.add(new Hidden("tc2", tc2LB.getSelectedValue()));
+		flowPanel.add(new Hidden("from", null == fromDB.getValue() ? null : formatFullDate.format(fromDB.getValue())));
+		flowPanel.add(new Hidden("to",  null == toDB.getValue() ? null : formatFullDate.format(toDB.getValue())));
 		formPanel.add(flowPanel);
 		
 		formPanel.addSubmitCompleteHandler(e1 -> employeeToolbar.remove(formPanel));
@@ -1043,6 +1074,7 @@ public class MainContrataContract extends MainEntryPoint {
 		this.workplaceLB.setSelectedIndex(0);
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 			s -> {
+				initTC2LB();
 				initContractTable();
 				setTableHeights();
 			}, 
@@ -1085,6 +1117,41 @@ public class MainContrataContract extends MainEntryPoint {
 
 		HTMLPanel showPanel = new HTMLPanel("");
 		showPanel.addStyleName(style.flexPanel());
+		
+		Label tc2L = new Label("TC2 : ");
+		tc2L.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		tc2L.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		tc2LB = new ListBox();
+		tc2LB.setStyleName("aon-selectOneMenu");
+		tc2LB.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		tc2LB.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		Label fromL = new Label("Desde : ");
+		fromL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		fromL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		fromDB = new AonDateBox();
+		fromDB.addValueChangeHandler(e -> {
+			filterEmployeeList();
+			initContractTable();
+			employeeDataGrid.redraw();
+		});
+		fromDB.setStyleName("aon-selectOneMenu");
+		fromDB.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		fromDB.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		Label toL = new Label("Hasta : ");
+		toL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		toL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		toDB = new AonDateBox();
+		toDB.addValueChangeHandler(e -> {
+			filterEmployeeList();
+			initContractTable();
+			employeeDataGrid.redraw();
+		});
+		toDB.setStyleName("aon-selectOneMenu");
+		toDB.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		toDB.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
 		Label workplaceL = new Label("Centro Trabajo : ");
 		workplaceL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		workplaceL.getElement().getStyle().setMarginLeft(5, Unit.PX);
@@ -1101,6 +1168,8 @@ public class MainContrataContract extends MainEntryPoint {
 			this.mainContrataContractObject.getEmployeesInfo(e.getValue(), 
 				s -> {
 					initEnterpriseSB();
+					initTC2LB();
+					resetFilter();
 					initContractTable();
 					setTableHeights();
 				}, 
@@ -1108,6 +1177,12 @@ public class MainContrataContract extends MainEntryPoint {
 			)
 		);
 
+		showPanel.add(tc2L);
+		showPanel.add(tc2LB);
+		showPanel.add(fromL);
+		showPanel.add(fromDB);
+		showPanel.add(toL);
+		showPanel.add(toDB);
 		showPanel.add(workplaceL);
 		showPanel.add(workplaceLB);
 		showPanel.add(inactiveL);
@@ -1119,6 +1194,27 @@ public class MainContrataContract extends MainEntryPoint {
 		filterEmployeePanel.add(filterPanel);
 	}
 	
+	private void resetFilter() {
+		employeeSB.setValue("");
+		tc2LB.setSelectedIndex(0);
+		fromDB.setValue(null);
+		toDB.setValue(null);
+		workplaceLB.setSelectedIndex(0);
+	}
+
+	private void filterEmployeeList() {
+		ContractParams params = new ContractParams();
+		
+		params.setFrom(fromDB.getValue());
+		params.setTo(toDB.getValue());
+		
+		params.setEmployee(employeeSB.getValue());
+		params.setTc2(tc2LB.getSelectedValue());
+		params.setWorkplace(workplaceLB.getSelectedValue());
+		
+		mainContrataContractObject.filterEmployeeList(params);
+	}
+
 	// ------------------------------------------ Auxiliar Methods
 
 	private void initFootPanel() {
@@ -1218,6 +1314,7 @@ public class MainContrataContract extends MainEntryPoint {
 					showProgressPanel("Importando Trabajador/es");
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false, s -> {
 						MainContrataContract.this.initEnterpriseSB();
+						MainContrataContract.this.initTC2LB();
 						MainContrataContract.this.initContractTable();
 						MainContrataContract.this.setTableHeights();
 					}, f -> {});
@@ -1231,6 +1328,7 @@ public class MainContrataContract extends MainEntryPoint {
 					showProgressPanel("Importados todos los trabajadores.");
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false, s -> {
 						MainContrataContract.this.initEnterpriseSB();
+						MainContrataContract.this.initTC2LB();
 						MainContrataContract.this.initContractTable();
 						MainContrataContract.this.setTableHeights();
 					}, f -> {});

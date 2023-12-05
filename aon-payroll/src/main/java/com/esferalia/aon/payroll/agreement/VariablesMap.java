@@ -1276,6 +1276,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DE_LAVADO_HORAS", "PLUS_LAVADO_H");
 		variablesMap.put("PLUS_DE_PODA_DIARIO", "PLUS_PODA_D");
 		variablesMap.put("PLUS_DE_PODA_HORAS", "PLUS_PODA_H");
+		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_ANUAL", "NAVIDAD_AÑO_NUEVO_A");
 		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "NAVIDAD_AÑO_NUEVO_D");
 		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_HORAS", "NAVIDAD_AÑO_NUEVO_H");
 		variablesMap.put("PLUS_DISCAPACIDAD_DIARIO", "PLUS_DISCAPACIDAD");
@@ -1443,6 +1444,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_NOCTURNIDAD_RVOG_ANUAL", "P_NOCT_RVOG_A");
 		variablesMap.put("PLUS_NOCTURNIDAD_RVOG_MENSUAL", "P_NOCT_RVOG_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_TURNO_10_HORAS_DIARIO", "P_NOCTURNIDAD_10");
+		variablesMap.put("PLUS_NOCTURNIDAD_1_HORA_EN_2_TURNOS_ANUAL", "NOCTURNIDAD_1H_2T_A");
 		variablesMap.put("PLUS_ORDENADORES_HORAS", "PLUS_ORDENADORES_H");
 		variablesMap.put("PLUS_ORDENADORES_MENSUAL", "PLUS_ORDENADORES_M");
 		variablesMap.put("PLUS_LOGISTICA_DIARIO", "PLUS_LOGISTICA");
