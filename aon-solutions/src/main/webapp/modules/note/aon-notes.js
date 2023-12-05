@@ -11,6 +11,7 @@ import { AonNewDialog } from "../../components/aon-new-dialog.js";
 import { TAG_TYPE } from "../messenger/MessengerEnums.js";
 import { sortBy } from "../../services/utils.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
+import { AonNewColor } from "../../components/aon-new-color.js";
 
 export class AonNotes extends AonElement {
   NOTES;
@@ -124,7 +125,7 @@ export class AonNotes extends AonElement {
     notesOpts.push(
       {
         id: CONSTANT.NOTES.initCap() + "Open",
-        name: `Activas (${count.total - count.total_expired})`,
+        name: `Activas (${count.total - count.total_expired - count.archive})`,
         icon: MATERIAL_ICONS.NOTES,
         app: NOTES,
         fn: () => {
@@ -238,7 +239,7 @@ export class AonNotes extends AonElement {
   }
 
   deleteTag(tag) {
-    let aonDeleteTagDialog = new AonNewDialog("Eliminar etiqueta");
+    let aonDeleteTagDialog = new AonNewDialog();
     aonDeleteTagDialog.id = tag.id;
     this.getApplication().appendChild(aonDeleteTagDialog);
 
@@ -303,31 +304,9 @@ export class AonNotes extends AonElement {
     content.appendChild(nameInput);
 
     // Create color input
-    let colorDiv = this.createElement(TAG.DIV);
-    colorDiv.classList.add('clr-field');
-    colorDiv.style.height = "50px";
-    if (tag.color) colorDiv.style.color = tag.color;
-    else colorDiv.style.color = "#fff8b8";
-
-    let colorBtn = this.createElement(TAG.BUTTON);
-    colorBtn.style.width = "100%";
-    colorBtn.style.height = "100%";
-    colorBtn.style.borderRadius = "5px";
-    colorDiv.appendChild(colorBtn);
-    
-    let colorInput = this.createElement(TAG.INPUT);
-    colorInput.type = 'text';
-    colorInput.classList.add('coloris');
-    colorInput.classList.add('instance3');
-    colorInput.style.width = "100%";
-    colorInput.style.height = "100%";
-    colorInput.style.cursor = "pointer";
-    colorInput.style.borderRadius = "5px";
-    colorDiv.appendChild(colorInput);
-
-    Coloris({
-      el: '.coloris',
-      swatches: [
+    let aonNewColor = new AonNewColor(
+      tag.color ? tag.color : "#fff8b8", 
+      [
         '#faafa8',
         '#f39f76',
         '#fff8b8',
@@ -340,34 +319,26 @@ export class AonNotes extends AonElement {
         '#e9e3d4',
         '#efeff1'
       ]
-    });
-
-    Coloris.setInstance('.instance3', {
-      theme: 'polaroid',
-      swatchesOnly: true
-    });
-    content.appendChild(colorDiv);
+    );
+    aonNewColor.value = tag.color ? tag.color : "#fff8b8";
+    content.appendChild(aonNewColor);
 
     // Add dialog body
     aonCreateUpdateTagDialog.createBody(content);
 
     aonCreateUpdateTagDialog.createAcceptButton(async () => {
       tag.name = nameInput.value;
-      tag.color = colorInput.value;
+      tag.color = aonNewColor.value;
       tag.type = 14;
       await saveNoteTag(tag);
       this.getApplication().removeChild(aonCreateUpdateTagDialog);
       await this.loadTags();
       this.addColorTagSelectionSidenav();
+      this.aonNotes();
     });
 
     aonCreateUpdateTagDialog.createCancelButton(() => {
       this.getApplication().removeChild(aonCreateUpdateTagDialog);
-    });
-
-    this.waitForElementToExist(`colorInputLabel`).then((colorInputLabel) => {
-      colorInputLabel.firstElementChild.style.padding = ".5rem";
-      colorInputLabel.firstElementChild.style.backgroundColor = "white";
     });
   }
 
@@ -406,11 +377,11 @@ export class AonNotes extends AonElement {
     let currentDate = new Date().getTime();
     if (this.filter.active) {
       this.NOTES = this.NOTES.filter(
-        (note) => currentDate <= new Date(note.date).getTime()
+        (note) => note.archive === false && currentDate <= new Date(note.date).getTime()
       );
     } else if (this.filter.expired) {
       this.NOTES = this.NOTES.filter(
-        (note) => currentDate > new Date(note.date).getTime()
+        (note) => note.archive === false && currentDate > new Date(note.date).getTime()
       );
     } else if (this.filter.archived) {
       this.NOTES = this.NOTES.filter((note) => note.archive === true);
@@ -441,7 +412,7 @@ export class AonNotes extends AonElement {
     if(note.tag && note.tag.color){
       noteCardTitleDiv.style.backgroundColor = note.tag.color;
     } else {
-      noteCardTitleDiv.style.backgroundColor = "#fff8b8";
+      noteCardTitleDiv.style.backgroundColor = "white";
     }
     noteCard.appendChild(noteCardTitleDiv);
 
@@ -466,12 +437,18 @@ export class AonNotes extends AonElement {
     textAreaBody.value = note.getNote() ? note.getNote() : "";
     noteCardBodyDiv.appendChild(textAreaBody);
 
+    // Date
     let noteCardDate = this.createElement(TAG.INPUT);
     noteCardDate.type = "date";
     noteCardDate.id = note.getId() + "Date";
     noteCardDate.className = CSS.NOTE_DATE;
-    if(new Date(note.getDate()).getTime() !== new Date("9999-01-01").getTime())
+
+    console.log(note.getDate());
+    if(note.getDate() && new Date(note.getDate()).getTime() !== new Date("9999-01-01").getTime()){
       noteCardDate.value = note.getDate();
+    } else{
+      noteCardDate.style.display = "none";
+    }
 
     // Bottom
     let bottomNoteDiv = this.createElement(TAG.DIV);
@@ -494,7 +471,7 @@ export class AonNotes extends AonElement {
         aonDeleteDialog.id = note.getId();
         this.getApplication().appendChild(aonDeleteDialog);
 
-        aonDeleteDialog.createMessage("¿Desea eliminar este elemento?");
+        aonDeleteDialog.createMessage(`¿Desea eliminar la nota '${note.getSubject()}'?`);
 
         aonDeleteDialog.createAcceptButton(async () => {
           await deleteNote(note);
@@ -522,6 +499,7 @@ export class AonNotes extends AonElement {
       MATERIAL_ICONS.NOTIFICATION_ADD,
       "Fecha",
       () => {
+        noteCardDate.style.display = "block";
         const date = document.getElementById(note.getId() + "Date");
         date.showPicker();
       }
@@ -532,6 +510,7 @@ export class AonNotes extends AonElement {
       note.getArchive() ? MATERIAL_ICONS.OUTBOX : MATERIAL_ICONS.MOVE_TO_INBOX,
       note.getArchive() ? "Desarchivar" : "Archivar",
       async () => {
+        note.setDate(undefined);
         note.setArchive(!note.getArchive());
         await this.saveNote(note);
       }
@@ -615,21 +594,25 @@ export class AonNotes extends AonElement {
     }
     bottomNoteDiv.appendChild(noteCardDate);
 
+    if(note.getArchive()){
+      alarmButton.style.display = "none";
+    }
+
+    if(note.tag && note.tag.color){
+      noteCardBodyDiv.style.backgroundColor = note.tag.color;
+      textAreaBody.style.backgroundColor = note.tag.color;
+      noteCardDate.style.backgroundColor = note.tag.color;
+    }
+    else {
+      noteCardBodyDiv.style.backgroundColor = "white";
+      textAreaBody.style.backgroundColor = "white";
+      noteCardDate.style.backgroundColor = "white";
+    }
+
     // EVENTS
     noteCard.addEventListener(
       "mouseover",
       (event) => {
-        if(note.tag && note.tag.color){
-          noteCardBodyDiv.style.backgroundColor = note.tag.color;
-          textAreaBody.style.backgroundColor = note.tag.color;
-          noteCardDate.style.backgroundColor = note.tag.color;
-        }
-        else {
-          noteCardBodyDiv.style.backgroundColor = "#fff8b8";
-          textAreaBody.style.backgroundColor = "#fff8b8";
-          noteCardDate.style.backgroundColor = "#fff8b8";
-        }
-
         buttonsNoteDiv.style.visibility = "visible";
       },
       false,
@@ -638,9 +621,6 @@ export class AonNotes extends AonElement {
     noteCard.addEventListener(
       "mouseout",
       (event) => {
-        noteCardBodyDiv.style.backgroundColor = "white";
-        textAreaBody.style.backgroundColor = "white";
-        noteCardDate.style.backgroundColor = "white";
         buttonsNoteDiv.style.visibility = "hidden";
       },
       false,
@@ -656,7 +636,7 @@ export class AonNotes extends AonElement {
       await this.saveNote(note);
     });
 
-    noteCardDate.addEventListener("focusout", async ({ target }) => {
+    noteCardDate.addEventListener("change", async ({ target }) => {
       note.setDate(target.value);
 
       if (note.getDate()) {
@@ -714,7 +694,7 @@ export class AonNotes extends AonElement {
     const countTag = await getNoteTagsCount();
    
     document.getElementById("aon-notesSidenavNotesOpen").childNodes[1].innerText =
-      `Activas (${count.total - count.total_expired})`;
+      `Activas (${count.total - count.total_expired - count.archive})`;
 
     document.getElementById("aon-notesSidenavNotesExpired").childNodes[1].innerText =
       `Expiradas (${count.total_expired})`;
