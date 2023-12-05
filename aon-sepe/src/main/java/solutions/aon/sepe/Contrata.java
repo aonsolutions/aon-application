@@ -1991,8 +1991,6 @@ public class Contrata {
 		formDatos.getInputByName("meshasta").setValueAttribute(fre[1]);
 		formDatos.getInputByName("anniohasta").setValueAttribute(fre[2]);
 		
-		Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/pageContracOrCopybasic.html");
-
 		htmlPage = formDatos.getInputByName("aceptar").click();
 		handleSepeExceptions(htmlPage);
 
