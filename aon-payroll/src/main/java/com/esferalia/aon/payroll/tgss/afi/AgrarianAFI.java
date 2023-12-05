@@ -504,7 +504,9 @@ public class AgrarianAFI {
 	            .replace("é", "e")
 	            .replace("í", "i")
 	            .replace("ó", "o")
-	            .replace("ú", "u");
+	            .replace("ú", "u")
+	            .replace("\u00D1", "N")
+	            .replace("\u00F1", "n");
 	}
 	
 	private static Map<Integer, List<AgrarianJourney>> getAgrarianJourneyoDB(long findingDate, String cccList, DSLContext dslContext) {
