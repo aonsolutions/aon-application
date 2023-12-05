@@ -4737,7 +4737,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			byte[] cccLaboralLifeBytes = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			String authKey = JooqEmployeeAFI.getAuthKey(connection, domainId, parentDomainId);
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, authKey);
 			
 			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
 
@@ -4750,6 +4752,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			return dataUri;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
