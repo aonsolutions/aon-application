@@ -1,7 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.maker.warehouse;
 
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.createVerticalPage;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
 
 import java.awt.Color;
@@ -76,11 +75,12 @@ public class DeliveryTemplate implements AutoCloseable  {
 	private float initialX;
 	private float initialY;
 	
+	private float totalY;
+	
 	private float maxLogoWidth;
 	private float maxLogoHeight;
 	
 	private int pageNumber;
-	private int predictedPages;
 	int currentFirstPage;
 
 	
@@ -590,6 +590,7 @@ public class DeliveryTemplate implements AutoCloseable  {
         for (Entry<Integer, List<DeliveryDetail>> detail : deliveryDetailMap.entrySet()) {
 			if (detail != null && detail.getKey() != null && detail.getValue() != null) {
 				
+				// page break
 				if (y <= maxLogoWidth*2) {
 					contents.close();
 					PDPage newPage = createVerticalPage();
@@ -597,7 +598,27 @@ public class DeliveryTemplate implements AutoCloseable  {
 					pageNumber++;
 					contents = new PDPageContentStream(document,newPage);
 					
+					y = (float) (initialY - maxLogoWidth*0.5);
+					x = initialX;
+					
+					drawLogo();
+					
 					y = initialY;
+					
+					drawCompanyName();							
+					drawCustomerCIF();
+					drawCompanyAddress();
+					drawCompanyMedia();
+					
+					drawReferenceAndDate();
+					drawCustomer();
+					drawDestinyAddressTitle();
+					drawDestinyAddress();
+					drawDeliveryTitle();
+					drawOriginInfo();
+					drawDeliveryTableFirstRow();
+					
+					y -= maxLogoWidth*0.15;
 				}
 			
 				x = initialX;
@@ -742,6 +763,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 				y -= TEXTFONTSIZE + 1;
 			}		
 		}
+        
+        totalY = y -= TEXTFONTSIZE*2 + 1;
 	}
 	
 	/**
@@ -756,6 +779,8 @@ public class DeliveryTemplate implements AutoCloseable  {
 		
 		float width = (this.getPageWidth()-this.marginSide*15);
 		PDFToolkit.drawBox(contents, x, y, width, 15, PdfColors.GRAY);
+		
+		totalY = y;
 		
 		// base
 		float auxY = y + (float) (maxLogoWidth*0.05);
@@ -868,10 +893,15 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Draws the total amounth
+	 * @param amounth the total amounth, depending on if it's national or not
+	 * @throws IOException
+	 */
 	private void drawAmounth(Double amounth) throws IOException {
 		// box
 		x = initialX + this.maxLogoWidth*4;
-		y -= TITLEFONTSIZE*3 + 1;
+		y = totalY;
 		float width = (maxLogoWidth);
 		PDFToolkit.drawBox(contents, x, y, width, 12, PdfColors.DARKEST);
 		
@@ -885,23 +915,14 @@ public class DeliveryTemplate implements AutoCloseable  {
 		// amounth
 		DecimalFormat format = new DecimalFormat("0.00");
 		
-		x += maxLogoWidth*1;
-		y -= maxLogoWidth*1.715;
+		x += maxLogoWidth*0.15;
+		y -= maxLogoWidth*0.2;
 
 		BigDecimal bigDecimal = BigDecimal.valueOf(amounth).setScale(2, RoundingMode.HALF_UP);
 		String amounthString = format.format(bigDecimal.doubleValue()) + " \u20AC";
-		
-		float rectanguleX = x;
-		float rectanguleY = y;
-		float rectanguleWidth = (float) (maxLogoWidth*5.50);
-		float rectanguleHeight = (TEXTFONTSIZE);
-		
-		float pricesY = y - TITLEFONTSIZE*2 + 1;
-		float pricesX = x + TITLEFONTSIZE*3;
 
-		PDRectangle rectangule = new PDRectangle(rectanguleX,rectanguleY,rectanguleWidth,rectanguleHeight);
 		
-		PDFToolkit.drawTextRight(contents, rectangule, amounthString, DEFAULT_FONT_COLOR, DEFAULT_BOLD_FONT, TEXTFONTSIZE, pricesX, pricesY);
+		PDFToolkit.drawText(contents, amounthString, x, y, DEFAULT_FONT_COLOR, DEFAULT_BOLD_FONT, TEXTFONTSIZE);
 	}
 		
 	/**
@@ -920,8 +941,6 @@ public class DeliveryTemplate implements AutoCloseable  {
 	 */
 	private void drawAmounthNational() throws IOException {
 		drawPaymentTableFirstRow();
-		
-		y += maxLogoWidth*0.30;
 		
 		Double amounth = getTotalAmounthWithTax();
 		
@@ -1061,6 +1080,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		return list;
 	}
 	
+	/**
+	 * Draws the footer wich includes the page and other data
+	 * @throws IOException
+	 */
 	private void drawFooter() throws IOException {
 		for (int i = currentFirstPage ; i < this.pageNumber ; i++) {
 			contents = new PDPageContentStream(document, document.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
@@ -1131,6 +1154,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 		}
 	}
 	
+	/**
+	 * Gets the page width
+	 * @return width
+	 */
 	private float getPageWidth() {
 		if (this.page != null)
 			return page.getMediaBox().getWidth();
@@ -1138,6 +1165,10 @@ public class DeliveryTemplate implements AutoCloseable  {
 			return 0;
 	}
 	
+	/**
+	 * Gets the page height
+	 * @return height
+	 */
 	private float getPageHeight() {
 		if (this.page != null)
 			return page.getMediaBox().getHeight();
@@ -1145,12 +1176,20 @@ public class DeliveryTemplate implements AutoCloseable  {
 			return 0;
 	}
 
+	/**
+	 * Closes the document
+	 */
 	@Override
 	public void close() throws IOException {
 		this.document.close();
 		
 	}
 
+	/**
+	 * Saves the document
+	 * @param os
+	 * @throws IOException
+	 */
 	public void save(OutputStream os) throws IOException {
 		this.document.save(os);
 	}
