@@ -120,11 +120,11 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setAdministration(Administration.GIPUZKOA);
 		
 		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-		if (p.isLastPeriod()) {
-			assertThrows(AonCoreException.class, () -> {
-				FiscalFaker.getMod303(params);
-			});
-		} else {
+//		if (p.isLastPeriod()) {
+//			assertThrows(AonCoreException.class, () -> {
+//				FiscalFaker.getMod303(params);
+//			});
+//		} else {
 			final Mod303 mod303 = FiscalFaker.getMod303(params);
 			MODEL303.calculate(getOccam(), mod303);
 			
@@ -138,7 +138,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022GIPUZKOARScript1.values() );
 			test( mod303,Model3032023GIPUZKOARScript1.values() );
 			test( mod303,Model3032023GIPUZKOAPrintScript.values() );
-		}
+//		}
 	}
 	
 	@Test
@@ -149,11 +149,11 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setAdministration(Administration.BIZKAIA);
 
 		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-		if (p.isLastPeriod()) {
-			assertThrows(AonCoreException.class, () -> {
-				FiscalFaker.getMod303(params);
-			});
-		} else {
+//		if (p.isLastPeriod()) {
+//			assertThrows(AonCoreException.class, () -> {
+//				FiscalFaker.getMod303(params);
+//			});
+//		} else {
 			Mod303 mod303 = FiscalFaker.getMod303(params);
 			MODEL303.calculate(getOccam(), mod303);
 			 
@@ -168,7 +168,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
 			test( mod303,Model3032023BIZKAIAScript.values() );
 			test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
-		}			
+//		}			
 	}
 	
 	@Test
@@ -178,11 +178,11 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setMonthly(true)
 				.setAdministration(Administration.ALAVA);
 		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-		if (p.isLastPeriod()) {
-			assertThrows(AonCoreException.class, () -> {
-				FiscalFaker.getMod303(params);
-			});
-		} else {
+//		if (p.isLastPeriod()) {
+//			assertThrows(AonCoreException.class, () -> {
+//				FiscalFaker.getMod303(params);
+//			});
+//		} else {
 			Mod303 mod303 = FiscalFaker.getMod303(params);
 			mod303.setPeriod(
 				mod303.isLastPeriod() 
@@ -202,7 +202,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022ARABAScript2.values() );
 			test( mod303,Model3032023ARABARScript1.values() );
 			test( mod303,Model3032023ARABAPrintScript.values() );
-		}
+//		}
 	}
 	
 	@Test

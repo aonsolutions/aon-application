@@ -730,6 +730,23 @@ export class AonApplication extends AonElement {
     }
   }
 
+  removeBackgroundSidenav(id, color){
+    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const li =  this.getElement(sidenavId + id);
+    if(li){
+      li.style.removeProperty("background-color");
+      li.style.removeProperty("font-weight");
+      li.style.removeProperty("color");
+
+      if(LS.isNewTheme()) {
+        let icon = this.getElement(li.id + 'icon'); 
+        if(icon && color) icon.style.color = icon.color || color;
+        let aonIcon = this.getElement(li.id + 'AonIcon');
+        if(aonIcon && color) aonIcon.color = color;
+      }
+    }
+  }
+
   /**
    * 
    * @param {String} id  

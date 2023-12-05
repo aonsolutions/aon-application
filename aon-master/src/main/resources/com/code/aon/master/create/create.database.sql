@@ -5606,10 +5606,14 @@ CREATE TABLE `note` (
   `date` datetime NOT NULL COMMENT 'Fecha de la Nota',
   `owner` int DEFAULT NULL COMMENT 'Destinatario de la Nota',
   `note` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Texto de la Nota',
+  `archive` tinyint(4) DEFAULT 0 COMMENT 'Indica si la nota esta o no archivada',
+  `tag` int(11) DEFAULT NULL COMMENT 'Identificador de la etiqueta',
   PRIMARY KEY (`id`),
   KEY `IDX_NOTE_USER` (`owner`),
   KEY `IDX_NOTE_DOMAIN` (`domain`),
+  KEY `IDX_NOTE_TAG` (`tag`),
   CONSTRAINT `FK_NOTE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NOTE_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_NOTE_USER` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
 

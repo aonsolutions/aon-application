@@ -18,6 +18,8 @@ export class AonNewDialog extends AonElement {
 
 	MESSAGE;
 
+	DIALOG_TITLE;
+
 	static get observedAttributes() {
 		return ['width', 'autoclose', 'type'];
 	}
@@ -62,9 +64,9 @@ export class AonNewDialog extends AonElement {
 		this.setAttribute('autoclose', autoclose);
 	}
 
-	constructor(message) {
+	constructor(title) {
 		super();
-		this.MESSAGE = message;
+		this.DIALOG_TITLE = title
 	}
 
 	connectedCallback() {
@@ -103,11 +105,19 @@ export class AonNewDialog extends AonElement {
 		dialog.className = CSS.DIALOG_CONTENT;
 		this.appendChild(dialog);
 
-		let message = this.createElement(TAG.DIV);
-		message.id = this.CONTENT;
-		message.innerHTML = this.MESSAGE;
-		message.className = CSS.DIALOG_MESSAGE;
-		dialog.appendChild(message);
+		if(this.DIALOG_TITLE){
+			let title = this.createElement(TAG.DIV);
+			title.id = this.TITLE;
+			title.innerHTML = this.DIALOG_TITLE;
+			title.className = CSS.DIALOG_TITLE;
+			dialog.appendChild(title);
+		}
+
+		// Content
+		let content = this.createElement(TAG.DIV);
+		content.id = this.CONTENT;
+		content.style.width = "100%";
+		dialog.appendChild(content);
 
 		let buttons = this.createElement(TAG.DIV);
 		buttons.id = "dialogButtons";
@@ -121,6 +131,10 @@ export class AonNewDialog extends AonElement {
 		return this.getElement(this.DIALOG);
 	}
 
+	getContent(){
+		return this.getElement(this.CONTENT);
+	}
+
 	open() {
 		let dialog = this.getDialog();
 		dialog.style.display = 'flex';
@@ -128,6 +142,21 @@ export class AonNewDialog extends AonElement {
 
 	getButtons() {
 		return this.getElement("dialogButtons");
+	}
+
+	createBody(widget){
+		let content = this.getContent();
+		content.appendChild(widget);
+	}
+
+	createMessage(messageText){
+		let message = this.createElement(TAG.DIV);
+		message.id = this.CONTENT + "Message";
+		message.innerHTML = messageText;
+		message.className = CSS.DIALOG_MESSAGE;
+
+		let content = this.getContent();
+		content.appendChild(message);
 	}
 
 	createAcceptButton(fn){
@@ -145,6 +174,7 @@ export class AonNewDialog extends AonElement {
 		let buttons = this.getButtons();
 
 		let cancelButton = this.createElement(TAG.BUTTON);
+		cancelButton.id  = this.id + "CancelButton";
 		cancelButton.innerHTML = MSG.CANCEL;
 		cancelButton.className = CSS.DIALOG_CANCEL;
 		cancelButton.addEventListener(EVENT.CLICK, fn);

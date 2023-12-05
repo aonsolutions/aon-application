@@ -124,6 +124,8 @@ public class SerfruitDAO {
 		delivery.setShippingAlternativeRecipient(null);
 		delivery.setShippingAlternativeZip(null);
 		delivery.setShippingContact(null);
+		delivery.setDate(AonDateUtils.getDateWithoutTime(delivery.getDate()));
+
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
