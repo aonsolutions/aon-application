@@ -5606,10 +5606,14 @@ CREATE TABLE `note` (
   `date` datetime NOT NULL COMMENT 'Fecha de la Nota',
   `owner` int DEFAULT NULL COMMENT 'Destinatario de la Nota',
   `note` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Texto de la Nota',
+  `archive` tinyint(4) DEFAULT 0 COMMENT 'Indica si la nota esta o no archivada',
+  `tag` int(11) DEFAULT NULL COMMENT 'Identificador de la etiqueta',
   PRIMARY KEY (`id`),
   KEY `IDX_NOTE_USER` (`owner`),
   KEY `IDX_NOTE_DOMAIN` (`domain`),
+  KEY `IDX_NOTE_TAG` (`tag`),
   CONSTRAINT `FK_NOTE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NOTE_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_NOTE_USER` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
 
@@ -7878,6 +7882,7 @@ CREATE TABLE `sales_detail` (
   `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega',
   `carrier` int DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `carrier_packing` int DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
+  `delivery` int DEFAULT NULL COMMENT 'Identificador del Albaran de Venta',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -7889,8 +7894,10 @@ CREATE TABLE `sales_detail` (
   KEY `IDX_SALES_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_SALES_DETAIL_CARRIER` (`carrier`),
   KEY `IDX_SALES_DETAIL_CARRIER_PACKING` (`carrier_packing`),
+  KEY `IDX_SALES_DETAIL_DELIVERY` (`delivery`),
   CONSTRAINT `FK_SALES_DETAIL_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_SALES_DETAIL_CARRIER_PACKING` FOREIGN KEY (`carrier_packing`) REFERENCES `carrier_packing` (`id`),
+  CONSTRAINT `FK_SALES_DETAIL_DELIVERY` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`),

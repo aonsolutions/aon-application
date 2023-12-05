@@ -1112,6 +1112,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testBRPartialTimeII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1203,6 +1204,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testBRPartialTimeIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();

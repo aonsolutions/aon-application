@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
@@ -145,6 +147,18 @@ public class PAYROLL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPayroll().getContractStream(ctx, filter);
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+	
+	public static Stream<ContractExtendedData> getContractExtendedDataStream(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getContractExtendedDataStream(ctx, filter, page, perPage);
 		} finally {
 			if (ctx != null){
 				ctx.close();

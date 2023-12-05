@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showPrepareSaleWindow">
+		<aon:if test="#{sales.showPrepareSaleWindow}">
+			<rich:modalPanel id="prepareSalePanel" minHeight="650"
+				minWidth="800" rendered="#{sales.showPrepareSaleWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.prepare_sale}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showPrepareSaleWindow, salesForm" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{sales.showPrepareSaleWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="prepareSaleForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="prepareSale-accept"	
+											value="#{bundle.prepare_sale}"
+											actionListener="#{sales.onPrepareSale}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											reRender="showPrepareSaleWindow, salesForm">
+											<f:setPropertyActionListener target="#{sales.showPrepareSaleWindow}"
+												value="#{false}" />
+									</aon:commandButton>
+
+									<aon:commandButton id="prepareSale-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showPrepareSaleWindow, salesForm"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{sales.showPrepareSaleWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="4" dir="true" style="width: 100%;">
+										<aon:outputLabel for="Sales_chargeDate"
+											value="Fecha Carga" />
+										<aon:selectInputDate id="Sales_chargeDate"
+											value="#{sales.chargeDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="bottom-right"
+											verticalOffset="-100" />
+
+										<aon:outputLabel for="Sales_deliveryDate"
+											value="Fecha Entrega" />
+										<aon:selectInputDate id="Sales_deliveryDate"
+											value="#{sales.to.deliveryDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="bottom-right"
+											verticalOffset="-100" />
+
+										<aon:outputLabel for="Sales_carrier"
+											value="#{bundle.warehouse_delivery_carrier}" />
+										<aon:selectOneMenu id="Sales_carrier" 
+											value="#{sales.to.carrier}">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
+											<f:selectItems value="#{carrierCollections.carriers}" />
+										</aon:selectOneMenu>
+					
+										<aon:outputLabel for="Sales_numberPlate"
+											value="Matricula" />
+										<aon:inputText id="Sales_numberPlate"  
+											size="20" maxlength="128"
+											value="#{sales.numberPlate}" />
+											
+										<aon:outputLabel for="Sales_driverName"
+											value="Nombre Conductor" />
+										<aon:inputText id="Sales_driverName"  
+											size="20" maxlength="128"
+											value="#{sales.driverName}" />
+											
+										<aon:outputLabel for="Sales_driverDocument"
+											value="Document Conductor" />
+										<aon:inputText id="Sales_driverDocument"  
+											size="20" maxlength="128"
+											value="#{sales.driverDocument}" />
+									</aon:panelGrid>	
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

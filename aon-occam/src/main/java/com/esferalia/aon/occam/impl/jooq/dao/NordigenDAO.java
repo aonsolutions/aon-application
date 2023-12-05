@@ -8,17 +8,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jooq.AggregateFunction;
 import org.jooq.InsertValuesStep11;
-import org.jooq.exception.NoDataFoundException;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -31,118 +27,159 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenDAO {
 	
 //	public static final String NORDIGEN_R1 = "NORDIGEN";
 //	private static final String RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN = "NORDIGEN\\[(?<rbank>\\d+)\\]";
-	
+
 	private NordigenDAO() {
 	    throw new IllegalStateException("Utility class");
 	}
 
+	public static List<NordigenBankAccount> getAllAccounts(AONContext ctx) {
+		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+		return RegistryBankDAO.getStream(ctx
+			,f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
+				.and(f.getRegistryProperty().eq(company.getId())))
+			.map(rbank -> new NordigenBankAccount()
+				.setRbank(rbank)
+				.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+				.setBankAlias(rbank != null ? rbank.getAlias() : null)
+				.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+				.setRequisitionId(rbank.getRequisition())
+				.setLastMovementDate(  BankStatementDAO.getLastMovementDate(ctx, rbank.getId()) ))
+			.collect(Collectors.toList());
+	}
 	
-	public static NordigenBankAccount updateRegistryBank(Occam occam, NordigenBankAccount account) {
-		try (CloseableAONContext aonContext = AONContext.getAONContext(occam)) {
-			RegistryBank rb = account.getRbank();
-			Double balance = 0.0;
-			Double remainder = 0.0;
-			List<NordigenAccountBalance> balances = account.getBalances();
-			NordigenAccountBalance consolidado = filterConsolidado(balances);
-			NordigenAccountBalance real = filterReal(balances);
-			if (consolidado != null && consolidado.getBalanceAmount() != null) {
-				balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
-			}
-			if (real == null || real.getBalanceAmount() == null) {
-				real = consolidado;
-			}
-			if (real != null && real.getBalanceAmount() != null) {
-				remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
-			}
-			aonContext.getDslContext().update(RBANK)
-				.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
-				.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
-				.set(RBANK.BALANCE_DATE, new Timestamp(new Date().getTime()))
-				.where(RBANK.ID.eq(rb.getId()))
-				.execute();
-			return account;
+	public static NordigenBankAccount updateRegistryBank(AONContext ctx, NordigenBankAccount account) {
+		RegistryBank rb = account.getRbank();
+		Double balance = 0.0;
+		Double remainder = 0.0;
+		List<NordigenAccountBalance> balances = account.getBalances();
+		NordigenAccountBalance consolidado = filterConsolidado(balances);
+		NordigenAccountBalance real = filterReal(balances);
+		if (consolidado != null && consolidado.getBalanceAmount() != null) {
+			balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
 		}
+		if (real == null || real.getBalanceAmount() == null) {
+			real = consolidado;
+		}
+		if (real != null && real.getBalanceAmount() != null) {
+			remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
+		}
+		ctx.getDslContext().update(RBANK)
+			.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
+			.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
+			.set(RBANK.BALANCE_DATE, new Timestamp(new Date().getTime()))
+			.where(RBANK.ID.eq(rb.getId()))
+			.execute();
+		return account;
 	}
 
-	public static List<NordigenBankStatement> getBankStatements(Occam occam, RegistryBank rbank, Date dateFrom, Date dateTo) {
-		try (CloseableAONContext aonContext = AONContext.getAONContext(occam)) {
-			return getBankStatements(aonContext, rbank, dateFrom, dateTo);		
+	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance consolidado = balances.stream()
+			.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.findFirst().orElse(null);
+		if (consolidado == null && !balances.isEmpty()) {
+			return balances.get(0);
 		}
+		return consolidado;
 	}
 	
-	public static Integer insertStatements(Occam occam, NordigenBankAccount account) throws AonCoreException {
-		try (CloseableAONContext aonContext = AONContext.getAONContext(occam)) {
-			InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
-					aonContext.getDslContext()
-					.insertInto(
-							BANK_STATEMENT
-							, BANK_STATEMENT.DOMAIN
-							, BANK_STATEMENT.RBANK
-							, BANK_STATEMENT.LOT_NUMBER
-							, BANK_STATEMENT.OPERATION_DATE
-							, BANK_STATEMENT.COMMON_CONCEPT
-							, BANK_STATEMENT.PAYMENT
-							, BANK_STATEMENT.AMOUNT
-							, BANK_STATEMENT.DESCRIPTION
-							, BANK_STATEMENT.STATUS
-							, BANK_STATEMENT.REFERENCE1
-							, BANK_STATEMENT.REFERENCE2
-							);
-			
-			List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();
-			
-			if (bankStatements != null) {
-				
-				int lotNumber = getNextLotNumber(aonContext, occam.getDomain(), account.getRbank());
-				
-				for (NordigenBankStatement bankStatement : bankStatements) {
-					if (!bankStatement.isPending()) {						
-						bankStatement.setLotNumber(lotNumber);
-						// BankStatement Validation
-						BankStatementValidator.validate(aonContext, bankStatement);
-						
-						query = query.values(bankStatement.getDomain()
-							,bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
-							,bankStatement.getLotNumber()
-							,bankStatement.getOperationDate() != null
-								? new java.sql.Date(bankStatement.getOperationDate().getTime())
-								: null
-							,bankStatement.getCommonConcept().value()
-							,AonEnumUtils.getByte(bankStatement.isPayment())
-							,bankStatement.getAmount()
-							,bankStatement.getDescription()
-							,bankStatement.getStatus().value()
-							,bankStatement.getReference1()
-							,bankStatement.getReference2());
-					}
+	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance real = balances.stream()
+			.filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.findFirst().orElse(null);
+		if (real == null) {
+			return filterConsolidado(balances);
+		}
+		return real;
+	}
+
+	public static Integer insertStatements(AONContext ctx, NordigenBankAccount account) throws AonCoreException {
+		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
+			ctx.getDslContext().insertInto(
+				BANK_STATEMENT
+				, BANK_STATEMENT.DOMAIN
+				, BANK_STATEMENT.RBANK
+				, BANK_STATEMENT.LOT_NUMBER
+				, BANK_STATEMENT.OPERATION_DATE
+				, BANK_STATEMENT.COMMON_CONCEPT
+				, BANK_STATEMENT.PAYMENT
+				, BANK_STATEMENT.AMOUNT
+				, BANK_STATEMENT.DESCRIPTION
+				, BANK_STATEMENT.STATUS
+				, BANK_STATEMENT.REFERENCE1
+				, BANK_STATEMENT.REFERENCE2
+				);
+		
+		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();
+		
+		if (bankStatements != null) {
+			int lotNumber = BankStatementDAO.getNextLotNumber(ctx, ctx.getDomainId(), account.getRbank());
+			for (NordigenBankStatement bankStatement : bankStatements) {
+				if (!bankStatement.isPending() 
+					&& bankStatement.getOperationDate() != null
+					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()) ) {
 					
+					bankStatement.setLotNumber(lotNumber);
+					// BankStatement Validation
+					BankStatementValidator.validate(ctx, bankStatement);
+					
+					query = query.values(bankStatement.getDomain()
+						,bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
+						,bankStatement.getLotNumber()
+						,AonDateUtils.toSql( bankStatement.getOperationDate())
+						,bankStatement.getCommonConcept().value()
+						,AonEnumUtils.getByte(bankStatement.isPayment())
+						,bankStatement.getAmount()
+						,bankStatement.getDescription()
+						,bankStatement.getStatus().value()
+						,bankStatement.getReference1()
+						,bankStatement.getReference2());
 				}
+				
 			}
-			final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
-			return aonContext.getDslContext().transactionResult(cnf -> finalQuery.execute());
 		}
+		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
+		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
 	}
 
-	public static Date getLastMovementDate(Occam occam, Integer rbankId) {
-		try (CloseableAONContext aonContext = AONContext.getAONContext(occam)) {
-			java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
-			.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("maxdate"))
+	public static List<NordigenBankStatement> getBankStatements(AONContext ctx, RegistryBank rbank, Date dateFrom, Date dateTo) {
+		return ctx.getDslContext()
+			.select()
 			.from(BANK_STATEMENT)
-			.where(BANK_STATEMENT.RBANK.eq(rbankId))
-			.fetchSingle()
-			.get("maxdate");
-			if (date != null) {
-				return new Date(date.getTime());
-			}
-		} catch (NoDataFoundException e) {			
-			return null;
-		}
-		return null;
+			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+			.and(BANK_STATEMENT.OPERATION_DATE.ge(AonDateUtils.toSql(dateFrom)))
+			.and(BANK_STATEMENT.OPERATION_DATE.le(AonDateUtils.toSql(dateTo)))
+			.orderBy(BANK_STATEMENT.OPERATION_DATE.desc(), BANK_STATEMENT.ID.desc())
+			.fetchStreamInto(BANK_STATEMENT)
+			.map(bs -> dbToNordigenBankStatement(bs, rbank))
+			.collect(Collectors.toList());
+	}
+
+	private static NordigenBankStatement dbToNordigenBankStatement(BankStatementRecord rec, RegistryBank rbank) {
+		NordigenBankStatement bs = new NordigenBankStatement();
+		bs.setAmount(rec.getAmount());
+		bs.setComments(rec.getComments());
+		bs.setCommonConcept(AonEnumUtils.enumValue(StatementConcept.class, rec.getCommonConcept()));
+		bs.setDescription(rec.getDescription());
+		bs.setDocument(rec.getDocument());
+		bs.setDomain(rec.getDomain());
+		bs.setId(rec.getId());
+		bs.setLotNumber(rec.getLotNumber());
+		bs.setOperationDate(rec.getOperationDate());
+		bs.setOwnConcept(rec.getOwnConcept());
+		bs.setPayment(AonEnumUtils.getBoolean(rec.getPayment()));
+		bs.setReference1(rec.getReference1());
+		bs.setReference2(rec.getReference2());
+		bs.setRegistryBank(rbank);
+		bs.setReliability(AonEnumUtils.enumValue(StatementReliability.class, rec.getReliability()));
+		bs.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, rec.getSecurityLevel()));
+		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, rec.getStatus()));
+		return bs;
 	}
 
 	// ***********************************************************************************
@@ -264,71 +301,4 @@ public class NordigenDAO {
 	// *******************************************************************
 	// *******************************************************************
 	
-	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
-		NordigenAccountBalance consolidado = balances.stream()
-			.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
-			.findFirst().orElse(null);
-		if (consolidado == null && !balances.isEmpty()) {
-			return balances.get(0);
-		}
-		return consolidado;
-	}
-	
-	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
-		NordigenAccountBalance real = balances.stream()
-			.filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
-			.findFirst().orElse(null);
-		if (real == null) {
-			return filterConsolidado(balances);
-		}
-		return real;
-	}
-	
-	private static List<NordigenBankStatement> getBankStatements(AONContext aonContext, RegistryBank rbank, Date dateFrom, Date dateTo) {
-		return aonContext.getDslContext()
-			.select()
-			.from(BANK_STATEMENT)
-			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-			.and(BANK_STATEMENT.OPERATION_DATE.ge(AonDateUtils.toSql(dateFrom)))
-			.and(BANK_STATEMENT.OPERATION_DATE.le(AonDateUtils.toSql(dateTo)))
-			.orderBy(BANK_STATEMENT.OPERATION_DATE.desc(), BANK_STATEMENT.ID.desc())
-			.fetchStreamInto(BANK_STATEMENT)
-			.map(bs -> dbToNordigenBankStatement(bs, rbank))
-			.collect(Collectors.toList());
-	}
-	
-	private static NordigenBankStatement dbToNordigenBankStatement(BankStatementRecord rec, RegistryBank rbank) {
-		NordigenBankStatement bs = new NordigenBankStatement();
-		bs.setAmount(rec.getAmount());
-		bs.setComments(rec.getComments());
-		bs.setCommonConcept(AonEnumUtils.enumValue(StatementConcept.class, rec.getCommonConcept()));
-		bs.setDescription(rec.getDescription());
-		bs.setDocument(rec.getDocument());
-		bs.setDomain(rec.getDomain());
-		bs.setId(rec.getId());
-		bs.setLotNumber(rec.getLotNumber());
-		bs.setOperationDate(rec.getOperationDate());
-		bs.setOwnConcept(rec.getOwnConcept());
-		bs.setPayment(AonEnumUtils.getBoolean(rec.getPayment()));
-		bs.setReference1(rec.getReference1());
-		bs.setReference2(rec.getReference2());
-		bs.setRegistryBank(rbank);
-		bs.setReliability(AonEnumUtils.enumValue(StatementReliability.class, rec.getReliability()));
-		bs.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, rec.getSecurityLevel()));
-		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, rec.getStatus()));
-		return bs;
-	}
-
-	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		try  {			
-			AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-			return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
-					.from(BANK_STATEMENT)
-					.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-					.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-					.fetchSingle().get(lot)) + 1;
-		} catch (NoDataFoundException e) {
-			return 1;
-		}
-	}
 }

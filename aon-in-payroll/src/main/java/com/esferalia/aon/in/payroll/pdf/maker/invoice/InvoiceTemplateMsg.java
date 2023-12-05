@@ -1,12 +1,10 @@
 package com.esferalia.aon.in.payroll.pdf.maker.invoice;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
-import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 public class InvoiceTemplateMsg extends Properties implements Serializable{
 	
@@ -65,8 +63,20 @@ public class InvoiceTemplateMsg extends Properties implements Serializable{
 		return getProperty("number");
 	}
 	
+	public String invoiceNumber() {
+		return getProperty("invoiceNumber");
+	}
+	
 	public String date() {
 		return getProperty("date");
+	}
+	
+	public String operationDate() {
+		return getProperty("operationDate");
+	}
+
+	public String expeditionDate() {
+		return getProperty("expeditionDate");
 	}
 	
 	public String description() {
@@ -127,7 +137,14 @@ public class InvoiceTemplateMsg extends Properties implements Serializable{
 	
 	public String notes() {
 		return getProperty("notes");
-		
+	}
+	
+	public String nif() {
+		return getProperty("nif");
+	}
+	
+	public String customerNif() {
+		return getProperty("customerNif");
 	}
 	
 	private void getProperties(String path) {

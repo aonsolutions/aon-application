@@ -13,12 +13,11 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_SUPPORT_ALIAS;
 
 import java.sql.Date;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.Table;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -72,6 +70,8 @@ public class FeeDAO {
 	
 	public static final com.esferalia.aon.jooq.tables.Seller SELLER_COMERCIAL = SELLER.as("seller_comercial");
     public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_COMERCIAL_ALIAS = REGISTRY.as("registry_comercial_seller");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
 	
 	private static final FeePropertiesDAO FEE_PROPERTIES = new FeePropertiesDAO();
 	private static class FeePropertiesDAO implements FeeProperties {
@@ -119,8 +119,11 @@ public class FeeDAO {
 //				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 //				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.TYPE.eq((byte)1)))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
@@ -142,11 +145,22 @@ public class FeeDAO {
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
 		
-		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
-		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		
+		return fees;
 	}
 	
+	private static LinkedList<String> getCustomerFeeSegments(AONContext ctx, Integer id) {
+		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
+			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+			.where(RSEGMENT.REGISTRY.eq(id))
+			.fetch(SEGMENT.NAME);
+		
+		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		
@@ -297,6 +311,10 @@ public class FeeDAO {
 		if(null != customerFeeParams.getProject()) 
 			condition = condition.and(CUSTOMER_FEE.PROJECT.eq(customerFeeParams.getProject()));
 		
+		if(null != customerFeeParams.getFeeIds() && customerFeeParams.getFeeIds().length > 0) {
+			condition = condition.and(CUSTOMER_FEE.ID.in(customerFeeParams.getFeeIds()));
+		}
+		
 		return condition;
 	}
 
@@ -308,7 +326,7 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-//				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
+				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
 				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
@@ -362,10 +380,10 @@ public class FeeDAO {
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSeller(checkField(r, SELLER_COMERCIAL.REGISTRY)
-					? SellerFiller.build(r, true)
+					? SellerFiller.build(r, SELLER_COMERCIAL_ALIAS)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSellerSupport(checkField(r, SELLER_SUPPORT.REGISTRY)
-						? SellerFiller.build(r, false)
+						? SellerFiller.build(r, SELLER_SUPPORT_ALIAS)
 						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
@@ -651,7 +669,7 @@ public class FeeDAO {
 				.fetch();
 		
 		sellerRecords.forEach(r -> {
-			Seller seller = SellerFiller.build(r, true);
+			Seller seller = SellerFiller.build(r, REGISTRY);
 			suggestions.put(r.get(REGISTRY.NAME), seller);
 		});
 		

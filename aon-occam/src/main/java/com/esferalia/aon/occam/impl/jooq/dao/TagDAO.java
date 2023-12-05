@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -73,14 +74,31 @@ public class TagDAO {
 		ctx.getDslContext().delete(TAG).where(TAG_PROPERTIES.getConditions(filter)).execute();
 	}
 	
-	private static class FullTagFiller implements Function<TagRecord, Tag> {
+	public static class FullTagFiller implements Function<TagRecord, Tag> {
 		@Override
 		public Tag apply(TagRecord r) {
 			return new Tag().setId(r.getId())
 					.setColor(r.getColor())
 					.setDomain(r.getDomain())
 					.setName(r.getName())
-					.setType(r.getType());		
+					.setType(r.getType())
+					;		
+		}
+		
+		public static Tag build(Record r) {
+			return buildTag(r, TAG);
+		}
+		
+		private static Tag buildTag(Record r, com.esferalia.aon.jooq.tables.Tag tagTable) {
+			return fillTag(r, new Tag(), tagTable);
+		}
+
+		private static Tag fillTag(Record r, Tag tag, com.esferalia.aon.jooq.tables.Tag tagTable) {
+			return tag.setId(r.getValue(tagTable.ID))
+					.setColor(r.getValue(tagTable.COLOR))
+					.setDomain(r.getValue(tagTable.DOMAIN))
+					.setName(r.getValue(tagTable.NAME))
+					.setType(r.getValue(tagTable.TYPE));	
 		}
 	}
 }

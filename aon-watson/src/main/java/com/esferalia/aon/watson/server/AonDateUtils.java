@@ -83,7 +83,25 @@ public class AonDateUtils {
 		cal2.setTime(date2);
 		return isSameDay(cal1, cal2);
 	}
-
+	public static boolean isNotSameDay(Date date1, Date date2) {
+		return !isSameDay(date1, date2);
+	}
+	
+	public static boolean isToday(Date date) {
+		return isSameDay(date, new Date());
+	}
+	public static boolean isNotToday(Date date) {
+		return !isToday(date);
+	}
+	public static boolean isLessThanToday(Date date) {
+		return compare(date, new Date()) < 0 && isNotToday(date);
+	}
+	public static boolean isMoreThanToday(Date date) {
+		return compare(date, new Date()) > 0 && isNotToday(date);
+	}
+	public static Date todayIfNull( Date date) {
+		return date==null?new Date():date;
+	}
 	/**
 	 * Comprueba si las fecha pasadas por parámetros son el mismo dia. Si
 	 * cualquiera de las dos es NULL, devuelve false.
@@ -1317,4 +1335,10 @@ public class AonDateUtils {
         return result;
     }
     
+	public static int compare(Date a, Date b) {
+		if (a == null) {
+			return b == null ? 0 : 1;
+		}
+		return b == null ? -1 : a.compareTo(b);
+	}
 }

@@ -104,7 +104,11 @@ export class AonCard extends AonElement {
 			section1.appendChild(arrowTitleSpan);
 		}
 		let titleSpan = this.createElement(TAG.DIV);
-		titleSpan.innerHTML = this.title;
+		if(this.message){
+			titleSpan.innerHTML = this.message;
+		} else {
+			titleSpan.innerHTML = this.title;
+		}
 		section1.appendChild(titleSpan);
 
 		section1.addEventListener(EVENT.CLICK, () => this.dispatchEvent(new Event(EVENT.CLICK_TITLE)));

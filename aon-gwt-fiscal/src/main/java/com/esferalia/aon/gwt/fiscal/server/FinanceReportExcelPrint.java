@@ -48,7 +48,7 @@ public class FinanceReportExcelPrint extends HttpServlet {
 			
 			FinanceParams params = JsonParser.parseFinanceParams(financeParams);
 			ExcelAction action = new ExcelAction( );
-			String name = "Cartera de pagos y cobros";
+			String name = params.isPayroll() ? "Vencimientos n\u00f3minas" : "Cartera de pagos y cobros";
 			action.initialize(name);
 			Stream<Finance> stream =  AON.getFinancesStream(domainName,domainId,user, params,0,Integer.MAX_VALUE);
 			stream.forEach(action);
@@ -164,8 +164,8 @@ public class FinanceReportExcelPrint extends HttpServlet {
 			if (finance.getInvoice() == null) {
 				addEmptyCell();
 				addEmptyCell();
-				addEmptyCell();
-				addEmptyCell();
+				if(finance.isPayroll()) addCell(finance.getRegistry().getDocument()); else addEmptyCell();
+				if(finance.isPayroll()) addCell(finance.getRegistry().getName()); else addEmptyCell();
 			} else {
 				addCell(finance.getInvoice().getReferenceCode());
 				addCell(finance.getInvoice().getIssueDate());

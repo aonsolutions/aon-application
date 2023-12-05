@@ -117,7 +117,7 @@ export class AonDesktop extends AonElement {
 		this.innerHTML = /*html*/`
 			<input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
-			<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
+			<aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
@@ -381,7 +381,7 @@ export class AonDesktop extends AonElement {
 			let newInvoice = new AonDashboardButton();
 			newInvoice.setId('newInvoice');
 			newInvoice.setIcon('note_add');
-			newInvoice.setTitle('NUEVA FACTURA');
+			newInvoice.setMessage('NUEVA FACTURA');
 			newInvoice.addEventListener(EVENT.CLICK, () => {
 				this.addInvoice(newInvoice, dashboard);
 			});
@@ -392,14 +392,14 @@ export class AonDesktop extends AonElement {
 			let newDocument = new AonDashboardUploadButton();
 			newDocument.setId('newDocument');
 			newDocument.setIcon('post_add');
-			newDocument.setTitle('NUEVO DOCUMENTO');
+			newDocument.setMessage('NUEVO DOCUMENTO');
 			fastAccessButtons.appendChild(newDocument);
 		}
 
 		let newRequest = new AonDashboardButton();
 		newRequest.setId('newRequest');
 		newRequest.setIcon('add_comment');
-		newRequest.setTitle('CREAR CONSULTA')
+		newRequest.setMessage('CREAR CONSULTA');
 		newRequest.addEventListener(EVENT.CLICK, () => {
 			let aonMessengerChat = new AonMessenger();	
 			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
@@ -411,7 +411,7 @@ export class AonDesktop extends AonElement {
 			let newEmployee = new AonDashboardButton();
 			newEmployee.setId('newEmployee');
 			newEmployee.setIcon('person_add');
-			newEmployee.setTitle('NUEVO EMPLEADO')
+			newEmployee.setMessage('NUEVO EMPLEADO');
 			newEmployee.addEventListener(EVENT.CLICK, () => {
 				let aonMessengerChat = new AonMessenger();	
 				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
@@ -446,7 +446,8 @@ export class AonDesktop extends AonElement {
 			let timecontrolCard = new AonCard();
 			timecontrolCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
-			timecontrolCard.title = MSG.TIMECONTROL;
+			// timecontrolCard.title = MSG.TIMECONTROL;
+			timecontrolCard.message = MSG.TIMECONTROL;
 			timecontrolCard.setApp(Apps.TIMECONTROL);
 			timecontrolCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.TIMECONTROL.app));
 			cardsPanel.appendChild(timecontrolCard);	
@@ -473,7 +474,8 @@ export class AonDesktop extends AonElement {
 			let pygCard = new AonCard();
 			pygCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			pygCard.id = "pyg";
-			pygCard.title = "Pérdidas y Ganancias";
+			// pygCard.title = "Pérdidas y Ganancias";
+			pygCard.message = "Pérdidas y Ganancias";
 			pygCard.setApp(Apps.ACCOUNTING);
 			pygCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.ACCOUNTING.app));
 			cardsPanel.appendChild(pygCard);
@@ -493,7 +495,8 @@ export class AonDesktop extends AonElement {
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
-			payrollCard.title = MSG.LABORAL_COSTS;
+			// payrollCard.title = MSG.LABORAL_COSTS;
+			payrollCard.message = MSG.LABORAL_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -515,7 +518,8 @@ export class AonDesktop extends AonElement {
 			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = "payroll";
-			payrollCard.title = "Nóminas";
+			// payrollCard.title = "Nóminas";
+			payrollCard.message = "Nóminas";
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -533,7 +537,8 @@ export class AonDesktop extends AonElement {
 			let bankCard = new AonCard();
 			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			bankCard.id = "bank";
-			bankCard.title = "Bancos";
+			// bankCard.title = "Bancos";
+			bankCard.message = "Bancos";
 			bankCard.setApp(Apps.ACCOUNTING);
 			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.ACCOUNTING.app);
@@ -558,7 +563,8 @@ export class AonDesktop extends AonElement {
 			let fiscalCard = new AonCard();
 			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			fiscalCard.id = "fiscal";
-			fiscalCard.title = "Impuestos";
+			// fiscalCard.title = "Impuestos";
+			fiscalCard.message = "Impuestos";
 			fiscalCard.setApp(Apps.FISCAL);
 			fiscalCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.FISCAL.app));
 			cardsPanel.appendChild(fiscalCard);
@@ -580,6 +586,8 @@ export class AonDesktop extends AonElement {
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
 			fiscalCard.firstChild.style.margin = '0';
+
+			await this.filterFutureFiscal();
 		}
 
 		if(this.getDur().isDocumental()) {
@@ -587,7 +595,8 @@ export class AonDesktop extends AonElement {
 			let documentalCard = new AonCard();
 			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			documentalCard.id = "documental";
-			documentalCard.title = "Documental";
+			// documentalCard.title = "Documental";
+			documentalCard.message = "Documental";
 			documentalCard.setApp(Apps.DOCUMENTAL);
 			documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.DOCUMENTAL.app);
@@ -608,7 +617,8 @@ export class AonDesktop extends AonElement {
 			let messengerCard = new AonCard();
 			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			messengerCard.id = "messengerCard";
-			messengerCard.title = "Solicitudes";
+			// messengerCard.title = "Solicitudes";
+			messengerCard.message = "Solicitudes";
 			messengerCard.setApp(Apps.MESSENGER);
 			messengerCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.MESSENGER.app));
 			cardsPanel.appendChild(messengerCard);
@@ -844,6 +854,46 @@ export class AonDesktop extends AonElement {
 		
 		d.setMenuOptions(options, top, left);
 		d.open();
+	}
+
+	async filterFutureFiscal(){
+		let aonFiscalCard = document.getElementById('aonFiscalCard');
+		let result = await this.getFilterModels();
+
+		let lastPeriod;
+		let period;
+		let periodText;
+		let year;
+
+		if(result[0].period == "T1") {
+			period = "T2";
+			periodText = "2º Trim.";
+			year = result[0].year;
+			lastPeriod = new Date(result[0].year + "-" + "03-31");
+		} else if(result[0].period == "T2") {
+			period = "T3";
+			periodText = "3º Trim.";
+			year = result[0].year;
+			lastPeriod = new Date(result[0].year + "-" + "06-30");
+		} else if(result[0].period == "T3") {
+			period = "T4";
+			periodText = "4º Trim.";
+			year = result[0].year;
+			lastPeriod = new Date(result[0].year + "-" + "09-30");
+		} else {
+			period = "T1";
+			periodText = "1º Trim.";
+			year = result[0].year + 1;
+			lastPeriod = new Date(result[0].year + "-" + "12-31");
+		}
+
+		const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
+
+		if(dayDiff > 30){
+			setTimeout(() => {
+				aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+			}, 100);
+		}
 	}
 
 	addAccess(app, parent){

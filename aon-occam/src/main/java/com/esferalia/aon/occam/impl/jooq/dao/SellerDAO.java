@@ -14,6 +14,7 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -31,8 +32,8 @@ public class SellerDAO {
 
     }
 	
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_COMERCIAL_ALIAS = REGISTRY.as("registry_comercial_seller");
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = REGISTRY.as("registry_seller");
+    
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
 	
 	public static class SellerPropertiesDAO implements SellerProperties {
@@ -54,21 +55,21 @@ public class SellerDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.SCOPE);}
 		@Override public Property<Integer> getCommissionTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.COMMISSION_TYPE);}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.ID);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(SELLER_COMERCIAL_ALIAS.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.ID);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.SECURITY_LEVEL);}
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().select()
 				.from(SELLER)
-				.join(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL_ALIAS.ID.eq(SELLER.REGISTRY))
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
 	}
@@ -85,13 +86,13 @@ public class SellerDAO {
 	
 	public static Stream<Seller> getStream(AONContext ctx, SellerFilter filter){
 		return select(ctx, filter)
-			.orderBy(SELLER_COMERCIAL_ALIAS.NAME)
+			.orderBy(SELLER_ALIAS.NAME)
 			.fetch().stream().map(new SellerFiller());
 	}	
 	
 	public static Stream<Seller> getStream(AONContext ctx, SellerFilter filter, int offset, int limit){
 		return select(ctx, filter)
-				.orderBy(SELLER_COMERCIAL_ALIAS.NAME)
+				.orderBy(SELLER_ALIAS.NAME)
 				.offset(offset)
 				.limit(limit)
 				.fetch().stream().map(new SellerFiller());
@@ -145,31 +146,25 @@ public class SellerDAO {
 	
 		@Override
 		public Seller apply(Record r) {
-			return build(r, false);
+			return build(r);
+		}
+
+		public static Seller build(Record r) {
+			return build(r, SELLER_ALIAS);			
 		}
 		
-		public static Seller build(Record r, boolean isComercial) {
-			if(isComercial)
-				return  new Seller()
-						.copy(RegistryFiller.build(r, SELLER_COMERCIAL_ALIAS))
-						.setId(r.getValue(SELLER.REGISTRY))
-						.setDomain(r.getValue(SELLER.DOMAIN))
-						.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
-						.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-						.setScope(checkField(r, SCOPE.ID)
-							? ScopeFiller.buildScope(r)
-							: new Scope().setId(r.getValue(SELLER.SCOPE)));
-			else
-				return  new Seller()
-						.copy(RegistryFiller.build(r, SELLER_SUPPORT_ALIAS))
-						.setId(r.getValue(SELLER.REGISTRY))
-						.setDomain(r.getValue(SELLER.DOMAIN))
-						.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
-						.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-						.setScope(checkField(r, SCOPE.ID)
-							? ScopeFiller.buildScope(r)
-							: new Scope().setId(r.getValue(SELLER.SCOPE)));
+		public static Seller build(Record r, Registry registry) {
+			return  new Seller()
+				.copy(RegistryFiller.build(r, registry))
+				.setId(r.getValue(SELLER.REGISTRY))
+				.setDomain(r.getValue(SELLER.DOMAIN))
+				.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
+				.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
+				.setScope(checkField(r, SCOPE.ID)
+					? ScopeFiller.buildScope(r)
+					: new Scope().setId(r.getValue(SELLER.SCOPE)));
 		}
+
 	}
 	
 }

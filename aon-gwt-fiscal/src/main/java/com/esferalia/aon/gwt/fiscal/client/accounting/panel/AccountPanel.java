@@ -10,11 +10,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistrySelectionDialog;
@@ -44,19 +44,13 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -75,8 +69,11 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Account> {
 
-	private static final int CHANGE_DISPLAY_MILLIS = 1000;
-	private static CommonServiceAsync COMMON_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountPanel.class.getName());
 	static {
@@ -85,7 +82,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 	private static final String ACCOUNT_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountStreamServlet");
 	
-	private final int limit = 100;
+	private static final int LIMIT = 100;
+	private static final int CHANGE_DISPLAY_MILLIS = 1000;
+	
 	private final MutableInt row = new MutableInt(0);
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
@@ -96,7 +95,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	
 	private List<ApplicationParameter> costCenters = new ArrayList<>();
 	
-	private static enum COLS {
+	private enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px"  ,AON.CSS.aonTextCenter())
 		, COD(AON.MSG.code()			,"150px" ,null)
 		, DES(AON.MSG.description()		,"auto"  ,null)
@@ -110,15 +109,12 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		String colWidth;
 		String cellStyleClass;
 
-		private COLS(String headerLabel,String colWidth) {
-			this(headerLabel, colWidth, null);
-		}
-
 		private COLS(String headerLabel,String colWidth,String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
 		}
+		
 		public String getColWidth() {
 			return colWidth;
 		}
@@ -135,28 +131,22 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonPaddingBottom());
 		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
 		container = new SimplePanel();
 		setWidget(container);
 		
-		addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
-				int oldScrollPos = lastScrollPos;
-				lastScrollPos = getVerticalScrollPosition();
-				if (oldScrollPos >= lastScrollPos) {
-					return;
-				}
-				// -----------------------------------------------------
-				if (isSearchEnabled()) {
-					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
-					if (lastScrollPos >= maxScrollTop) {
-						disableSearch();
-						search(offset.getValue(),params);
-					}
+		addScrollHandler(event -> {
+			// ------------------------------------ Ignore scroll up.
+			int oldScrollPos = lastScrollPos;
+			lastScrollPos = getVerticalScrollPosition();
+			if (oldScrollPos >= lastScrollPos) {
+				return;
+			}
+			// -----------------------------------------------------
+			if (isSearchEnabled()) {
+				int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
+				if (lastScrollPos >= maxScrollTop) {
+					disableSearch();
+					search(offset.getValue(),params);
 				}
 			}
 		});
@@ -249,7 +239,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							paintRow(  params.getDomain(), account );
 						}
 						
-						if (array.length() < limit) {
+						if (array.length() < LIMIT) {
 							disableMoreData();
 						} else {
 							offset.setValue(ofs + count - 1);
@@ -304,7 +294,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				col++;
 				
 				Label codeLabel = new Label(account.getCode());
-				codeLabel.getElement().getStyle().setPaddingLeft( ((account.getLevel()-1)) , Unit.EM);
+				codeLabel.getElement().getStyle().setPaddingLeft( (account.getLevel()-1) , Unit.EM);
 				tab.setWidget(r, col, codeLabel);
 				col++;
 				
@@ -322,7 +312,6 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				activeCheck.setValue(account.isActive());
 				activeCheck.setEnabled(false);
 				tab.setWidget(r, col, activeCheck);
-				col++;
 			}
 
 			private void paintDeletedRow(final int r, int col, Account account) {
@@ -334,7 +323,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				
 				Label codeLabel = new Label(account.getCode());
 				codeLabel.setStyleName(AON.CSS.aonTextLineThrough());
-				codeLabel.getElement().getStyle().setPaddingLeft( ((account.getLevel()-1)) , Unit.EM);
+				codeLabel.getElement().getStyle().setPaddingLeft( (account.getLevel()-1) , Unit.EM);
 				tab.setWidget(r, col, codeLabel);
 				col++;
 				
@@ -363,43 +352,36 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				
 				FlowPanel buttonContainer = new FlowPanel();
 				AonTableButton undoButton = new AonTableButton(AON.MSG.restoreAction(), AON.CSS.aonIconUndo());
-				undoButton.addClickHandler( new ClickHandler() {
+				undoButton.addClickHandler( event -> {
+					undoButton.setEnabled(false);
+					AonConfirmDialog.showConfirm(AON.MSG.restoreAction(), new AonConfirmDialogCallback() {
+
+						@Override
+						public void onCancel() {
+							undoButton.setEnabled(true);
+						}
+
+						@Override
+						public void onAccept() {
+							account.setId(null);
+				        	COMMON_SERVICE.save(params.getDomainName(), params.getDomain(), params.getUser(), account, new AsyncCallback<Account>() {
+								
+								@Override
+								public void onSuccess(Account result) {
+									paintActiveRow(r, 0, result);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessageDialog.error(caught.getMessage());
+								}
+							});
+						}
+					});
 					
-					@Override
-					public void onClick(ClickEvent event) {
-						undoButton.setEnabled(false);
-						ConfirmDialog cd = new ConfirmDialog();
-						cd.confirm(AON.MSG.restoreAction(), new ConfirmDialogCallback() {
-
-							@Override
-							public void onCancel() {
-								undoButton.setEnabled(true);
-							}
-
-							@Override
-							public void onAccept() {
-								account.setId(null);
-					        	COMMON_SERVICE.save(params.getDomainName(), params.getDomain(), params.getUser(), account, new AsyncCallback<Account>() {
-									
-									@Override
-									public void onSuccess(Account result) {
-										paintActiveRow(r, 0, result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										MessageDialog.error(caught.getMessage());
-									}
-								});
-							}
-						});
-						
-					}
 				});
 				buttonContainer.add(undoButton);
 				tab.setWidget(r, col, buttonContainer);
-				col++;
-				
 			}
 
 			private void paintActiveRow(final int r, int col, Account account) {
@@ -410,17 +392,13 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				ListBox costCenterBox = new ListBox();
 				CheckBox activeCheck = new CheckBox();
 
-				ValueChangeHandler<String> valueChangeHandler = new ValueChangeHandler<String>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						account.setCode(codeBox.getValue());
-						account.setDescription(descriptionBox.getValue());
-						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getSelectedValue());
-						account.setActive(activeCheck.getValue());
-						saveAccount(params, account, msg);
-					}
+				ValueChangeHandler<String> valueChangeHandler = event -> {
+					account.setCode(codeBox.getValue());
+					account.setDescription(descriptionBox.getValue());
+					account.setAlias(aliasBox.getValue());
+					account.setCostCenter(costCenterBox.getSelectedValue());
+					account.setActive(activeCheck.getValue());
+					saveAccount(params, account, msg);
 				};
 				
 				codeBox.addValueChangeHandler(valueChangeHandler);
@@ -436,17 +414,13 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				});
 				
 				
-				activeCheck.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						account.setCode(codeBox.getValue());
-						account.setDescription(descriptionBox.getValue());
-						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getSelectedValue());
-						account.setActive(activeCheck.getValue());
-						saveAccount(params, account, msg);
-					}
+				activeCheck.addClickHandler(event -> {
+					account.setCode(codeBox.getValue());
+					account.setDescription(descriptionBox.getValue());
+					account.setAlias(aliasBox.getValue());
+					account.setCostCenter(costCenterBox.getSelectedValue());
+					account.setActive(activeCheck.getValue());
+					saveAccount(params, account, msg);
 				});
 				
 				msg.setStyleName(AON.CSS.aonTabIcon());
@@ -455,7 +429,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				
 				codeBox.setStyleName(AON.CSS.aonBorderNone());
 				codeBox.addStyleName(AON.CSS.aonWidthAll());
-				codeBox.getElement().getStyle().setPaddingLeft( ((account.getLevel()-1)) , Unit.EM);
+				codeBox.getElement().getStyle().setPaddingLeft( (account.getLevel()-1) , Unit.EM);
 				codeBox.setMaxLength(9);
 				codeBox.setValue(account.getCode());
 				tab.setWidget(r, col, codeBox);
@@ -497,37 +471,32 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				clientButton.addClickHandler(e -> registryDialog(account, clientButton, params, msg));
 				
 				AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-				deleteButton.addClickHandler( new ClickHandler() {
+				deleteButton.addClickHandler( event -> {
+					deleteButton.setEnabled(false);
+					AonConfirmDialog.showConfirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
+
+						@Override
+						public void onCancel() {
+							deleteButton.setEnabled(true);
+						}
+
+						@Override
+						public void onAccept() {
+				        	COMMON_SERVICE.delete(params.getDomainName(), params.getDomain(), params.getUser(), account, new AsyncCallback<Account>() {
+								
+								@Override
+								public void onSuccess(Account result) {
+					        		paintDeletedRow(r, 0, account);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessageDialog.error(caught.getMessage());
+								}
+							});
+						}
+					});
 					
-					@Override
-					public void onClick(ClickEvent event) {
-						deleteButton.setEnabled(false);
-						ConfirmDialog cd = new ConfirmDialog();
-						cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
-
-							@Override
-							public void onCancel() {
-								deleteButton.setEnabled(true);
-							}
-
-							@Override
-							public void onAccept() {
-					        	COMMON_SERVICE.delete(params.getDomainName(), params.getDomain(), params.getUser(), account, new AsyncCallback<Account>() {
-									
-									@Override
-									public void onSuccess(Account result) {
-						        		paintDeletedRow(r, 0, account);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										MessageDialog.error(caught.getMessage());
-									}
-								});
-							}
-						});
-						
-					}
 				});
 				
 				// Solo mostrar para Proveedores (40*), Acreedores (41*), Clientes (43*)
@@ -536,7 +505,6 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				
 				buttonContainer.add(deleteButton);
 				tab.setWidget(r, col, buttonContainer);
-				col++;
 			}
 
 			private Account newAccount(JsAccount account) {
@@ -554,11 +522,12 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			}
 			
 		});
-		StringBuffer requestData = new StringBuffer();
+		StringBuilder requestData = new StringBuilder();
 		params.setOffset(ofs);
-		params.setLimit(limit);
+		params.setLimit(LIMIT);
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_PARAMS +"=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
+		
 	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -583,8 +552,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 			@Override
 			public void onFailure(Throwable arg0) {
-				// TODO Auto-generated method stub
-				
+				// Nothing.
 			}
 
 			@Override
@@ -601,9 +569,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(options, supplierFull, new AonRegistryFullPanelCallback<SupplierFull>() {
 							
-							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							@Override public void setFocus(boolean b) { /* Nothimg */ }
 							
-							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 							
 							@Override public void onCancel() { dialog.hide(); }
 							
@@ -630,9 +598,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(options, creditorFull, new AonRegistryFullPanelCallback<CreditorFull>() {
 							
-							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							@Override public void setFocus(boolean b) { /* Nothing */ }
 							
-							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 							
 							@Override public void onCancel() { dialog.hide(); }
 							
@@ -659,9 +627,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(options, customerFull, new AonRegistryFullPanelCallback<CustomerFull>() {
 							
-							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							@Override public void setFocus(boolean b) { /* Nothing */ }
 							
-							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 							
 							@Override public void onCancel() { dialog.hide(); }
 							
@@ -686,7 +654,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						getSuppliers(account.getId(), options, suppliers -> {
 							if(suppliers.size() == 1) getSupplier(suppliers.get(0).getId(), options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
 							else {
-								new AonRegistrySelectionDialog(AON.MSG.supplier(), suppliers.stream().map(supplier -> supplier.get()).collect(Collectors.toList())) {
+								new AonRegistrySelectionDialog(AON.MSG.supplier(), suppliers.stream().map(Supplier::get).collect(Collectors.toList())) {
 									
 									@Override public void onAccept(Integer registry) {
 										getSupplier(registry, options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
@@ -701,7 +669,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						getCreditors(account.getId(), options, creditors -> {
 							if(creditors.size() == 1) getCreditor(creditors.get(0).getId(), options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
 							else {
-								new AonRegistrySelectionDialog(AON.MSG.creditor(), creditors.stream().map(creditor -> creditor.get()).collect(Collectors.toList())) {
+								new AonRegistrySelectionDialog(AON.MSG.creditor(), creditors.stream().map(Creditor::get).collect(Collectors.toList())) {
 									
 									@Override public void onAccept(Integer registry) {
 										getCreditor(registry, options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
@@ -716,7 +684,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						getCustomers(account.getId(), options, customers -> {
 							if(customers.size() == 1) getCustomer(customers.get(0).getId(), options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
 							else {
-								new AonRegistrySelectionDialog(AON.MSG.customer(), customers.stream().map(customer -> customer.get()).collect(Collectors.toList())) {
+								new AonRegistrySelectionDialog(AON.MSG.customer(), customers.stream().map(Customer::get).collect(Collectors.toList())) {
 									
 									@Override public void onAccept(Integer registry) {
 										getCustomer(registry, options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
@@ -738,9 +706,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		
 		AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(options, supplierFull, new AonRegistryFullPanelCallback<SupplierFull>() {
 			
-			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			@Override public void setFocus(boolean b) { /* nothing */ }
 			
-			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 			
 			@Override public void onCancel() { dialog.hide(); }
 			
@@ -763,9 +731,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 		AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(options, creditorFull, new AonRegistryFullPanelCallback<CreditorFull>() {
 			
-			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			@Override public void setFocus(boolean b) { /* Nothing */ }
 			
-			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 			
 			@Override public void onCancel() { dialog.hide(); }
 			
@@ -788,9 +756,9 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 		AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(options, customerFull, new AonRegistryFullPanelCallback<CustomerFull>() {
 			
-			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			@Override public void setFocus(boolean b) { /* Nothing */ }
 			
-			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ }
 			
 			@Override public void onCancel() { dialog.hide(); }
 			
@@ -821,11 +789,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	panel.setFocus(true);
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> panel.setFocus(true));		
 	}
 	
 	private void updateAccountRegistry(AccountParams params, Account account, Label msg, AonTableButton clientButton, boolean hasRegistry) {
@@ -961,7 +925,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				MessageDialog.error(caught.getMessage());
+				AonMessageDialog.error(caught.getMessage());
 			}
 		});
 	}

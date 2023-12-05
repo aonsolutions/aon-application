@@ -6,11 +6,14 @@ public class EdiCodes {
 	String customerEdiCode;
 	String deliveryPointEdiCode;
 	String customerPackage;
+	String customerInvoicePackage;
 	String companyEdiCode;
 	
 	String customerEdiHeader;
 	String customerEdiPoint;
 	String customerEdiInvoice;
+	
+	EdiCodes mainEdiCodes;
 	
 	String mscode;
 	String mrcode;
@@ -55,6 +58,15 @@ public class EdiCodes {
 
 	public EdiCodes setCustomerPackage(String customerPackage) {
 		this.customerPackage = customerPackage;
+		return this;
+	}
+	
+	public String getCustomerInvoicePackage() {
+		return customerInvoicePackage;
+	}
+
+	public EdiCodes setCustomerInvoicePackage(String customerInvoicePackage) {
+		this.customerInvoicePackage = customerInvoicePackage;
 		return this;
 	}
 
@@ -197,6 +209,15 @@ public class EdiCodes {
 
 	public EdiCodes setIvcode(String ivcode) {
 		this.ivcode = ivcode;
+		return this;
+	}
+	
+	public EdiCodes getMainEdiCodes() {
+		return mainEdiCodes;
+	}
+	
+	public EdiCodes setMainEdiCodes(EdiCodes mainEdiCodes) {
+		this.mainEdiCodes = mainEdiCodes;
 		return this;
 	}
 	

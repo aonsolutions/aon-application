@@ -1119,6 +1119,8 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
+				this.employeeDraftObject.getContractData().getHolidaysDate(),
+				this.employeeDraftObject.getContractData().getSAA(),
 				this.employeeDraftObject.getContractData().hasSettle(),
 				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				false){
@@ -1304,6 +1306,8 @@ public abstract class EmployeeDraft extends Composite {
 				this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
+				this.employeeDraftObject.getContractData().getHolidaysDate(),
+				this.employeeDraftObject.getContractData().getSAA(),
 				this.employeeDraftObject.getContractData().hasSettle(),
 				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				true) {

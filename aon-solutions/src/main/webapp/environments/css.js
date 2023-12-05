@@ -380,6 +380,28 @@ export const AON_AUTOSIZE_TEXTAREA = 'aonAutosizeTextarea';
 export const AON_AUTOSIZE_TEXTAREA_CONTENT = 'aonAutosizeTextareaContent';
 export const AON_AUTOSIZE_TEXTAREA_TITLE = 'aonAutosizeTextareaTitle';
 
+// Note
+export const NOTE_CONTAINER = 'noteContainer';
+export const NOTE_CARD = 'noteCard';
+export const NOTE_TITLE_CARD = 'noteTitleCard';
+export const NOTE_TITLE = 'noteTitle';
+export const NOTE_BODY_CONTENT = 'noteBodyContent';
+export const NOTE_BODY = 'noteBody';
+export const NOTE_DATE = 'noteDate';
+export const EMPTY_NOTE = 'emptyNote';
+
+// Dialog
+export const DIALOG_OVERLAY = 'dialogOverlay';
+export const DIALOG_CONTENT = 'dialogContent';
+export const DIALOG_TITLE = 'dialogTitle';
+export const DIALOG_MESSAGE = 'dialogMessage';
+export const DIALOG_BUTTONS = 'dialogButtons';
+export const DIALOG_ACCEPT = 'dialogAccept';
+export const DIALOG_CANCEL = 'dialogCancel';
+
+// Color
+export const AON_COLOR_FULL = 'colorFull';
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name

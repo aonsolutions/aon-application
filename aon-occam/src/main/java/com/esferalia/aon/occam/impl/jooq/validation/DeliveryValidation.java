@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -64,11 +65,25 @@ public class DeliveryValidation {
 		}
 	};
 	
+	public static final BiConsumer<AONContext, Delivery> COMPLETE_NUMBER = (ctx, delivery) -> {
+		if(delivery.getNumber() == 0) {
+			delivery.setNumber(DeliveryDAO.getNextNumber(ctx, delivery.getSeries()));
+		}
+	};
+	
+	public static final BiConsumer<AONContext, Delivery> COMPLETE_PYMNT_DAYS = (ctx, delivery) -> {
+		if(delivery.getPymntDays() == null) {
+			delivery.setPymntDays("");
+		}
+	};
+	
 	public static void autocomplete(AONContext ctx, Delivery delivery) throws AonCoreException{
 		COMPLETE_DATE
 		.andThen(COMPLETE_TOTAL_PACKAGES)
 		.andThen(COMPLETE_TOTAL_WEIGHT)
 		.andThen(COMPLETE_REGISTRY_ADDRESS)
+		.andThen(COMPLETE_NUMBER)
+		.andThen(COMPLETE_PYMNT_DAYS)
 		.accept(ctx, delivery);
 		
 	}

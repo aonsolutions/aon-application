@@ -12,13 +12,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -44,7 +47,7 @@ public class NordigenTestCase {
 		assertNotNull(requisition, "Null requisition");			
 		assertEquals(AonLanguage.SPANISH.getLanguage(), requisition.getUserLanguage());
 		assertNotNull(requisition.getAgreement(), "Null requisition agreement");			
-		assertEquals(NordigenRequisitionStatus.CR, requisition.getStatus());			
+		assertEquals(NordigenRequisitionStatus.CREATED, requisition.getStatus());			
 		assertNotNull(requisition.getRedirect(), "Null requisition redirect");
 		assertNotNull(requisition.getRedirectImmediate(), "Null requisition redirect inmediate");
 		assertNotNull(requisition.getCreated(), "Null requisition created date");
@@ -61,6 +64,12 @@ public class NordigenTestCase {
 	public static void initialize() throws Exception {
 		nordigenToken = AonNordigen.getNewAccessToken();
 	}
+	
+	@BeforeEach
+	public void beforeTest(TestInfo testInfo) throws NordigenException {
+		System.out.println( "Running test against AonNordigen .... " + testInfo.getDisplayName());
+	}
+	
 	
 	@Test
 	void testObtainNewAccessToken() {
@@ -80,28 +89,21 @@ public class NordigenTestCase {
 
 	@Test
 	void testRefreshAccessToken() {
-		try {
-			
-			String originalAccess = nordigenToken.getAccess();
-			Date originalRefreshDate = nordigenToken.getRefreshDate();
-			
-			AonNordigen.refreshToken(nordigenToken);
-			
-			assertNotNull(nordigenToken, "Null token");
-			assertNotNull(nordigenToken.getAccess(), "Null access");
-			assertNotNull(nordigenToken.getAccessExpires(), "Null access expires");
-			assertNotNull(nordigenToken.getRefresh(), "Null refresh");
-			assertNotNull(nordigenToken.getRefreshExpires(), "Null refresh expires");
-			assertNotNull(nordigenToken.getCreationDate(), "Null creation date");
-			assertNotNull(nordigenToken.getRefreshDate(), "Null refresh date");
-			assertNotEquals(originalRefreshDate, nordigenToken.getRefreshDate());
-			assertNotEquals(nordigenToken.getCreationDate(), nordigenToken.getRefreshDate());
-			assertNotEquals(originalAccess, nordigenToken.getAccess());
-			
-			
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		String originalAccess = nordigenToken.getAccess();
+		Date originalRefreshDate = nordigenToken.getRefreshDate();
+		
+		AonNordigen.refreshToken(nordigenToken);
+		
+		assertNotNull(nordigenToken, "Null token");
+		assertNotNull(nordigenToken.getAccess(), "Null access");
+		assertNotNull(nordigenToken.getAccessExpires(), "Null access expires");
+		assertNotNull(nordigenToken.getRefresh(), "Null refresh");
+		assertNotNull(nordigenToken.getRefreshExpires(), "Null refresh expires");
+		assertNotNull(nordigenToken.getCreationDate(), "Null creation date");
+		assertNotNull(nordigenToken.getRefreshDate(), "Null refresh date");
+		assertNotEquals(originalRefreshDate, nordigenToken.getRefreshDate());
+		assertNotEquals(nordigenToken.getCreationDate(), nordigenToken.getRefreshDate());
+		assertNotEquals(originalAccess, nordigenToken.getAccess());
 	}
 	
 	@Test
@@ -172,6 +174,12 @@ public class NordigenTestCase {
 		}
 	}
 	
+	@Test
+	void testAllRequisitionss() {
+		List<NordigenRequisition> requisitions = AonNordigen.getAllRequisitions(nordigenToken);
+		assertNotNull(requisitions);
+		assertTrue(requisitions.size() > 0 );
+	}
 	
 	
 }

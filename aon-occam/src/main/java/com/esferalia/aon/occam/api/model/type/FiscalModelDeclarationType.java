@@ -63,4 +63,13 @@ public enum FiscalModelDeclarationType {
 	public static boolean isToDeposit(FiscalModelDeclarationType type ) {
 		return type != null && (type == DEPOSIT || type == BANK || type == DEPOSIT_CCT);
 	}
+	
+	public static FiscalModelDeclarationType safeNameOf( String name ) {
+		if (AonStringUtils.isBlank(name)) return null;
+		for (FiscalModelDeclarationType t : FiscalModelDeclarationType.values()) {
+			if (t.name().equals(name)) return t;
+		}
+		return null;
+	}
+	
 }

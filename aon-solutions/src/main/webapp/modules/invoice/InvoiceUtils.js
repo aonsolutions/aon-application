@@ -39,23 +39,27 @@ export const uploadInvoice = async(file) => {
 
 export const uploadInvoice2 = (file, success, error) => {
     if (file) {
-        const data = {
-            file,
-            invoice: new Invoice().setType('recibida')
-        };
-        if (data.file.contentType.indexOf("image") >= 0) {
-            //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
-            downscaleImage(data.file, undefined, undefined, undefined).then(file => {
-                data.file = file;
+        getReader(file).then(f => {
+            let data = {
+                file: f,
+                invoice: new Invoice().setType('recibida')
+            };
+    
+            if (data.file.contentType.indexOf("image") >= 0) {
+                 //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+                 downscaleImage(data.file, undefined, undefined, undefined).then(img => {
+                     data.file = img;
+                     insertInvoice(data)
+                     .then(r => success(file))
+                     .catch((e) => error(file, e));
+                 });
+            } else {
                 insertInvoice(data)
                 .then(r => success(file))
                 .catch((e) => error(file, e));
-            });
-        } else {
-            insertInvoice(data)
-            .then(r => success(file))
-            .catch((e) => error(file, e));
-        }
+            }
+        }).catch((e) => error(file, e));
+
     }
 }
 

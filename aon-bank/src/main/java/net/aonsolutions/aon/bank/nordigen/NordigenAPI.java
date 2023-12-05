@@ -29,18 +29,43 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAccessTokenJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountBalanceJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountDetailJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountMetadataJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountTransactionsJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAgreementJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenAgreementsJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenInstitutionJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenRequisitionJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenRequisitionsJSON;
+import com.esferalia.aon.occam.api.json.nordigen.NordigenResponseJSON;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountDetail;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountTransactions;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreements;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitions;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenResponse;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
@@ -67,19 +92,39 @@ class NordigenAPI {
 	static final int[] CORRECT_STATUS_CODES = {200, 201};
 	
 	NordigenAPI() {
-		
 	}
-	
-	// ************************************* [UTILS METHDS]
+
+	// **********************************************************************************
+	// ******************************************************************* [HTTP METHODS]
+	// **********************************************************************************
+
 	@FunctionalInterface
 	private static interface HeaderSupplier {
 		public void addHeaders(HttpRequest.Builder reqBuilder);
 	}
-	private static boolean checkStatus(int statusCode) {
-		return !Arrays.stream(CORRECT_STATUS_CODES).anyMatch(code -> code == statusCode);
+
+	private static <T> T get(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
+		try {
+			HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
+				.uri( getURI(url, params) );
+			if (headerSupplier != null) {
+				headerSupplier.addHeaders(reqBuilder);				
+			}
+			HttpRequest request = reqBuilder.GET().build();
+			HttpResponse<String> resp = HttpClient.newBuilder()
+				.build()
+				.send(request, BodyHandlers.ofString());
+			checkResposeStatus(resp);
+			return responseBuilder.apply(resp.body());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new NordigenException(e.getMessage());
+		} catch (IOException  e) {
+			throw new NordigenException(e.getMessage());
+		}
 	}
-	
-	private static <T> T newPost(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
+
+	private static <T> T post(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
 		try {
 			HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
 				.uri( URI.create(BASE_URL + API_URL + url) );
@@ -101,34 +146,13 @@ class NordigenAPI {
 			throw new NordigenException(e.getMessage());
 		}
 	}
-	
-	private static <T> T newGet(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
+
+	private static <T> T delete(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
 		try {
 			HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
 				.uri( getURI(url, params) );
 			if (headerSupplier != null) {
-				headerSupplier.addHeaders(reqBuilder);				
-			}
-			HttpRequest request = reqBuilder.GET().build();
-			HttpResponse<String> resp = HttpClient.newBuilder()
-				.build()
-				.send(request, BodyHandlers.ofString());
-			checkResposeStatus(resp);
-			return responseBuilder.apply(resp.body());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new NordigenException(e.getMessage());
-		} catch (IOException  e) {
-			throw new NordigenException(e.getMessage());
-		}
-	}
-	
-	private static <T> T newDelete(String url, JSONObject params, HeaderSupplier headerSupplier, Function<String,T> responseBuilder) throws NordigenException {
-		try {
-			HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
-				.uri( getURI(url, params) );
-			if (headerSupplier != null) {
-				headerSupplier.addHeaders(reqBuilder);				
+				headerSupplier.addHeaders(reqBuilder);
 			}
 			HttpRequest request = reqBuilder.DELETE()
 				.build();
@@ -145,6 +169,19 @@ class NordigenAPI {
 		}
 	}
 
+	private static boolean checkStatus(int statusCode) {
+		return !Arrays.stream(CORRECT_STATUS_CODES).anyMatch(code -> code == statusCode);
+	}
+
+	private static void checkResposeStatus(HttpResponse<String> resp) {
+		if (checkStatus(resp.statusCode())) {
+			String errStr = resp.body();					
+			if (errStr != null && errStr.charAt(0) == '{') {
+				throw new NordigenException(NordigenResponseJSON.from(errStr));
+			}
+		}
+	}
+	
 	private static URI getURI(String url, JSONObject params) throws NordigenException {
 		try {
 			AonURIBuilder uriBuilder = new AonURIBuilder(BASE_URL + API_URL + url);
@@ -157,62 +194,74 @@ class NordigenAPI {
 		}
 	}
 
-	private static void checkResposeStatus(HttpResponse<String> resp) {
-		if (checkStatus(resp.statusCode())) {
-			String errStr = resp.body();					
-			if (errStr != null && errStr.charAt(0) == '{') {						
-				JSONObject errJson = new JSONObject(errStr);
-				throw new NordigenException(
-					errJson.optString("summary")
-					,errJson.optString("detail")
-					,errJson.optString("type")
-					,errJson.optString("country")
-					,errJson.optInt("status_code"));
-			}
-		}
+	public static boolean isNordigenAvailabilitySocketAlive() {
+        boolean isAlive = false;
+        int timeout = 2000;
+        try (Socket socket = new Socket()) {
+        	SocketAddress socketAddress = new InetSocketAddress(HOST, 80);
+            socket.connect(socketAddress, timeout);
+            isAlive = true;
+        } catch (SocketTimeoutException exception) {
+        	LOGGER.severe("SocketTimeoutException " + HOST + ":80. " + exception.getMessage() );
+        } catch (IOException exception) {
+        	LOGGER.severe("IOException - Unable to connect to " + HOST + ":80. " + exception.getMessage());
+        }
+        return isAlive;
 	}
 	
-	// ************************************* [OP METHDS]
-	public static JSONObject newAccessToken() throws NordigenException {
-		return newPost(TOKEN_URL + NEW_URL 
-			, new JSONObject()
-				.put(SECRET_ID_PARAM, SECRET_ID)
-				.put(SECRET_KEY_PARAM, SECRET_KEY)
-			, req -> req
-				.header(ACCEPT_PARAM, APPLICATION_JSON)
-				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
-			, JSONObject::new );
+	// ************************************************************************************
+	// ************************************************************************************
+	private static JSONObject getLoginJSON() {
+		return new JSONObject()
+			.put(SECRET_ID_PARAM, SECRET_ID)
+			.put(SECRET_KEY_PARAM, SECRET_KEY);
+	}
+	private static void fillRequestHeaders(Builder req) {
+		req
+			.header(ACCEPT_PARAM, APPLICATION_JSON)
+			.header(CONTENT_TYPE_PARAM, APPLICATION_JSON);
 	}
 	
-	public static JSONObject refreshAccessToken(String refreshToken) throws NordigenException {
-		return newPost(TOKEN_URL + REFRESH_URL 
+	static NordigenAccessToken newAccessToken() throws NordigenException {
+		return post(TOKEN_URL + NEW_URL 
+			, getLoginJSON()
+			, req -> fillRequestHeaders(req)
+			, NordigenAccessTokenJSON::from );
+	}
+	
+	static NordigenAccessToken refreshAccessToken(String refreshToken) throws NordigenException {
+		return post(TOKEN_URL + REFRESH_URL 
 			, new JSONObject().put(REFRESH_PARAM, refreshToken)
-			, req -> req
-				.header(ACCEPT_PARAM, APPLICATION_JSON)
-				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
-			, JSONObject::new );
+			, req -> fillRequestHeaders(req)
+			, NordigenAccessTokenJSON::from );
 	}
 	
-	public static JSONObject getEndUserAgreement(String token, String id) throws NordigenException {
-		return  newGet(AGREEMENTS_URL + ENDUSER_URL + id + "/" 
-			, null
+	static NordigenInstitution getInstitution(String token, String id) throws NordigenException {
+		return get(INSTITUTIONS_URL + (AonStringUtils.isBlank(id) ? "null" : id) + "/" 
+			, new JSONObject()
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			, JSONObject::new );
+			,NordigenInstitutionJSON::from);
 	}
 
-	public static JSONObject deleteEndUserAgreement(String token, String id) throws NordigenException {
-		return newDelete(AGREEMENTS_URL + ENDUSER_URL + id + "/" 
-			, null
+	static NordigenAgreements getEndUserAgreements(String token, Integer limit, Integer offset) throws NordigenException {
+		return  getEndUserAgreements(token
+			, new JSONObject()
+				.put(LIMIT_PARAM, limit)
+				.put(OFFSET_PARAM, offset));
+	}
+
+	static NordigenAgreements getEndUserAgreements(String token, JSONObject params) throws NordigenException {
+		return  get(AGREEMENTS_URL + ENDUSER_URL 
+			, params
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
-			, JSONObject::new );
+			,NordigenAgreementsJSON::from);
 	}
-
-	public static JSONObject createEndUserAgreement(String token, Integer maxHistoricalDays, Integer accessValidForDays
+	
+	static NordigenAgreement createEndUserAgreement(String token, Integer maxHistoricalDays, Integer accessValidForDays
 			,NordigenAccessScope[] accessScopes, String institutionId) throws NordigenException {
 		
 		JSONObject paramJson = new JSONObject()
@@ -227,132 +276,153 @@ class NordigenAPI {
 		return createEndUserAgreement(token, paramJson);
 	}
 
-	private static JSONObject createEndUserAgreement(String token, JSONObject params) throws NordigenException {
-		return newPost(AGREEMENTS_URL + ENDUSER_URL 
+	private static NordigenAgreement createEndUserAgreement(String token, JSONObject params) throws NordigenException {
+		return post(AGREEMENTS_URL + ENDUSER_URL 
 			, params
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
 				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
-		, JSONObject::new );
+			,NordigenAgreementJSON::from);
 	}
 
-	public static JSONObject getEndUserAgreements(String token, Integer limit, Integer offset) throws NordigenException {
-		return  getEndUserAgreements(token
-			, new JSONObject()
-				.put(LIMIT_PARAM, limit)
-				.put(OFFSET_PARAM, offset));
-	}
-
-	public static JSONObject getEndUserAgreements(String token, JSONObject params) throws NordigenException {
-		return  newGet(AGREEMENTS_URL + ENDUSER_URL 
-			, params
+	static NordigenAgreement getEndUserAgreement(String token, String id) throws NordigenException {
+		return  get(AGREEMENTS_URL + ENDUSER_URL + id + "/" 
+			, null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			, JSONObject::new );
+			,NordigenAgreementJSON::from);
 	}
 
-	public static JSONArray getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
+	public static NordigenResponse deleteEndUserAgreement(String token, String id) throws NordigenException {
+		return delete(AGREEMENTS_URL + ENDUSER_URL + id + "/" 
+			, null
+			, req -> req
+				.header(ACCEPT_PARAM, APPLICATION_JSON)
+				.header(AUTHORIZATION_PARAM, BEARER + token)
+				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
+			,NordigenResponseJSON::from);
+	}
+
+	static List<NordigenInstitution> getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
 		return  getInstitutions(token
 			, new JSONObject()
 				.put(COUNTRY_PARAM, country != null ? country.getIso2() : null)
 				.put(PAYMENTS_ENABLED_PARAM, paymentsEnabled));
 	}
 	
-	public static JSONArray getInstitutions(String token, JSONObject params) throws NordigenException {
-		return  newGet(INSTITUTIONS_URL 
+	static List<NordigenInstitution> getInstitutions(String token, JSONObject params) throws NordigenException {
+		return  get(INSTITUTIONS_URL 
 			, params
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONArray::new);
+			,NordigenInstitutionJSON::fromArray);
 	}
 
-	static JSONObject getInstitution(String token, String id) throws NordigenException {
-		return newGet(INSTITUTIONS_URL + (AonStringUtils.isBlank(id) ? "null" : id) + "/" 
-			, new JSONObject()
-			, req -> req
-				.header(ACCEPT_PARAM, APPLICATION_JSON)
-				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new);
-	}
-
-	static JSONObject getRequisitions(String token, Integer limit, Integer offset) throws NordigenException {
-		return  getRequisitions(token
-			, new JSONObject()
-				.put(LIMIT_PARAM, limit)
-				.put(OFFSET_PARAM, offset));
-	}
-
-	private static JSONObject getRequisitions(String token, JSONObject params) throws NordigenException {
-		return  newGet(REQUISITIONS_URL 
-			, params
-			, req -> req
-				.header(ACCEPT_PARAM, APPLICATION_JSON)
-				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new);
-	}
-
-	static JSONObject createRequisition(String token, RequisitionParams params) throws NordigenException {
+	static NordigenRequisition createRequisition(String token, RequisitionParams params) throws NordigenException {
 		return createRequisition(token, params.toJSON());
 	}
 	
-	private static JSONObject createRequisition(String token, JSONObject params) throws NordigenException {
-		return newPost(REQUISITIONS_URL 
+	private static NordigenRequisition createRequisition(String token, JSONObject params) throws NordigenException {
+		return post(REQUISITIONS_URL 
 			, params
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
 				.header(CONTENT_TYPE_PARAM, APPLICATION_JSON)
-		,JSONObject::new);
+			,NordigenRequisitionJSON::from);
 	}
 
-	static JSONObject getRequisition(String token, String id) throws NordigenException {
-		return newGet(REQUISITIONS_URL + id + "/"
+	static NordigenRequisition getRequisition(String token, String id) throws NordigenException {
+		return get(REQUISITIONS_URL + id + "/"
 			, null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new);
+			,NordigenRequisitionJSON::from);
 	}
 	
-	static JSONObject deleteRequisition(String token, String id) throws NordigenException {
-		return  newDelete(REQUISITIONS_URL + id + "/"
+	static NordigenResponse deleteRequisition(String token, String id) throws NordigenException {
+		return  delete(REQUISITIONS_URL + id + "/"
 			, null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new);
+			,NordigenResponseJSON::from);
 	}
 
-	static JSONObject getAccount(String token, String id) throws NordigenException {
-		return newGet(ACCOUNTS_URL + id + "/",
+	static NordigenRequisitions getRequisitions(String token, Integer limit, Integer offset) throws NordigenException {
+		return getRequisitions(token
+			, new JSONObject()
+				.put(LIMIT_PARAM, limit)
+				.put(OFFSET_PARAM, offset));
+	}
+
+	private static NordigenRequisitions getRequisitions(String token, JSONObject params) throws NordigenException {
+		return get(REQUISITIONS_URL 
+			, params
+			, req -> req
+				.header(ACCEPT_PARAM, APPLICATION_JSON)
+				.header(AUTHORIZATION_PARAM, BEARER + token)
+			,NordigenRequisitionsJSON::from);
+	}
+	
+	static NordigenAccountMetadata getAccountMetadata(String token, String id) throws NordigenException {
+		return get(ACCOUNTS_URL + id + "/",
 			null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new
+			,NordigenAccountMetadataJSON::from
 		);
 	}
 	
-	static JSONObject getBalances(String token, String id) throws NordigenException {
-		return newGet(ACCOUNTS_URL + id + "/balances/"
+	static LinkedList<NordigenAccountBalance> getBalances(String token, String id) throws NordigenException {
+		return get(ACCOUNTS_URL + id + "/balances/"
 			, null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			, JSONObject::new);
+			, NordigenAccountBalanceJSON::fromBalances);
 	}
 	
-	static JSONObject getDetails(String token, String id) throws NordigenException {
-		return newGet(ACCOUNTS_URL + id + "/details/"
+
+	static NordigenAccountDetail getDetail(String token, String id) throws NordigenException {
+		return get(ACCOUNTS_URL + id + "/details/"
 			, null
 			, req -> req
 				.header(ACCEPT_PARAM, APPLICATION_JSON)
 				.header(AUTHORIZATION_PARAM, BEARER + token)
-			, JSONObject::new);
+			, NordigenAccountDetailJSON::fromAccount);
 	}
+	
+	static NordigenAccountTransactions getTransactions(String token, String id, Date dateFrom, Date dateTo) throws NordigenException {
+		JSONObject jsonParams = new JSONObject();
+		if (dateFrom != null) {
+			jsonParams.putOnce(DATE_FROM_PARAM, AonDateUtils.format(dateFrom, SIMPLE_DATE_FORMAT4));
+		}
+		if (dateTo != null) {
+			jsonParams.putOnce(DATE_TO_PARAM, AonDateUtils.format(dateTo, SIMPLE_DATE_FORMAT4));			
+		}
+		return get(ACCOUNTS_URL + id + "/transactions/"
+			, jsonParams
+			, req -> req
+				.header(ACCEPT_PARAM, APPLICATION_JSON)
+				.header(AUTHORIZATION_PARAM, BEARER + token)
+			,NordigenAccountTransactionsJSON::fromTransactions);
+	}
+
+	// ************************************************************************************
+	// ************************************************************************************
+	// ************************************************************************************
+	// ************************************************************************************
+	// ************************************************************************************
+	// ************************************************************************************
+	// ************************************************************************************
+
+	// ************************************* [OP METHDS]
 	
 
 	// *******************************************************
@@ -481,36 +551,6 @@ class NordigenAPI {
 //		});
 //	}
 	
-	static JSONObject getTransactions(String token, String id, Date dateFrom, Date dateTo) throws NordigenException {
-		JSONObject jsonParams = new JSONObject();
-		if (dateFrom != null) {
-			jsonParams.putOnce(DATE_FROM_PARAM, AonDateUtils.format(dateFrom, SIMPLE_DATE_FORMAT4));
-		}
-		if (dateTo != null) {
-			jsonParams.putOnce(DATE_TO_PARAM, AonDateUtils.format(dateTo, SIMPLE_DATE_FORMAT4));			
-		}
-		return newGet(ACCOUNTS_URL + id + "/transactions/"
-			, jsonParams
-			, req -> req
-				.header(ACCEPT_PARAM, APPLICATION_JSON)
-				.header(AUTHORIZATION_PARAM, BEARER + token)
-			,JSONObject::new);
-	}
-
-	public static boolean isNordigenAvailabilitySocketAlive() {
-        boolean isAlive = false;
-        int timeout = 2000;
-        try (Socket socket = new Socket()) {
-        	SocketAddress socketAddress = new InetSocketAddress(HOST, 80);
-            socket.connect(socketAddress, timeout);
-            isAlive = true;
-        } catch (SocketTimeoutException exception) {
-        	LOGGER.severe("SocketTimeoutException " + HOST + ":80. " + exception.getMessage() );
-        } catch (IOException exception) {
-        	LOGGER.severe("IOException - Unable to connect to " + HOST + ":80. " + exception.getMessage());
-        }
-        return isAlive;
-	}
 
 	//-----------------------------
 	

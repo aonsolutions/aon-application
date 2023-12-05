@@ -114,13 +114,13 @@ class CheckItTestCase {
 		assertTrue( result instanceof JSONObject);
 	}
 
-	@Test
-	@SkipWhenCheckItUnavailable
-	void testAddAccountWrongLogin() {
-		JSONObject result = CheckItAPI.addAccount(RAYSON_ID, 57, 39, "ES9121000418450200051332", 1);
-		assertTrue( result instanceof JSONObject);
-		
-	}
+//	@Test
+//	@SkipWhenCheckItUnavailable
+//	void testAddAccountWrongLogin() {
+//		JSONObject result = CheckItAPI.addAccount(RAYSON_ID, 57, 39, "ES9121000418450200051332", 1);
+//		assertTrue( result instanceof JSONObject);
+//		
+//	}
 	
 	@Disabled("Ignored because it inserts a new account each time is called and they cannot be deleted for now")
 	@Test

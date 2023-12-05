@@ -222,6 +222,17 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("unemployment", 19.53);
 		assertText("job_training", 0.25);
 		assertText("mei", 1.26);
+		double totalDeduction = getText("totalDeductionLabel");
+		double totalEnterprise = getText("totalEnterpriseLabel");
+		calculate(Calendar.SEPTEMBER, 2023);
+		assertValue("cgcBaseLabel", 1260.00);
+		assertValue("cgpBaseLabel", 1260.00);
+		assertText("common_contingency", 10.18);
+		assertText("unemployment", 19.53);
+		assertText("job_training", 0.25);
+		assertText("mei", 1.26);
+		assertText("totalDeductionLabel", totalDeduction - 28.00 );
+		assertText("totalEnterpriseLabel", totalEnterprise - 91.00 );
 	}
 
 

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.IEdiSupport;
@@ -60,7 +61,7 @@ public class SeresDAO {
 				seresInfo.setPassword(r.getValue());
 			}
 			
-			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PASSWORD.toString())) {
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PORT.toString())) {
 				seresInfo.setPort(Integer.parseInt(r.getValue()));
 			}
 			
@@ -73,6 +74,8 @@ public class SeresDAO {
 	    Integer customerId = invoice.getRegistry();
         Integer addressId = invoice.getAddress().getId();
         Map<String, String> ediCodes = obtainEdiCodes(ctx, customerId, addressId);  
+        RegistryAddress main = RegistryAddressDAO.getMain(ctx, customerId);
+        Map<String, String> mainEdiCodes = obtainEdiCodes(ctx, customerId, main.getId());
         
         return new EdiCodes()
                 .setDepartment(ediCodes.get(IEdiSupport.DEPARTMENT))
@@ -80,7 +83,14 @@ public class SeresDAO {
                 .setCustomerEdiInvoice(ediCodes.get(IEdiSupport.FACTURA))
                 .setCustomerEdiPoint(ediCodes.get(IEdiSupport.PTO_ENTREGA))
                 .setCustomerPackage(obtainPackingTag(ctx, customerId, addressId))
-                .setCompanyEdiCode(obtainEdiCompanyCode(ctx));
+                .setCustomerInvoicePackage(obtainInvoicePackingTag(ctx, customerId, addressId))
+                .setCompanyEdiCode(obtainEdiCompanyCode(ctx))
+                .setMainEdiCodes(new EdiCodes()
+                        .setDepartment(mainEdiCodes.get(IEdiSupport.DEPARTMENT))
+                        .setCustomerEdiHeader(mainEdiCodes.get(IEdiSupport.CABECERA))
+                        .setCustomerEdiInvoice(mainEdiCodes.get(IEdiSupport.FACTURA))
+                        .setCustomerEdiPoint(mainEdiCodes.get(IEdiSupport.PTO_ENTREGA))
+                );
 	}
 	
 	public static EdiCodes getEdiCodes(AONContext ctx, Delivery delivery) {
@@ -147,6 +157,22 @@ public class SeresDAO {
 		String value = getRegistryNoteComments(ctx, rAddressId.toString(), registryId);
 		Matcher m;
 		Pattern p = Pattern.compile(MEDIDA + "=([^;]*);");
+		try {
+			if (value != null && (m = p.matcher(value)).find()) {
+				Integer tagId = Integer.valueOf(m.group(1));
+				com.esferalia.aon.occam.api.model.office.Tag tag = TagDAO.getTag(ctx, tagId);
+				return tag!=null ? tag.getName() : "";
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String obtainInvoicePackingTag(AONContext ctx, Integer registryId, Integer rAddressId) {
+		String value = getRegistryNoteComments(ctx, rAddressId.toString(), registryId);
+		Matcher m;
+		Pattern p = Pattern.compile(MEDIDA_FACTURA + "=([^;]*);");
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				Integer tagId = Integer.valueOf(m.group(1));
