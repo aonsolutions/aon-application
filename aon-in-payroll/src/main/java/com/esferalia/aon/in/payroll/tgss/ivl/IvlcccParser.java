@@ -1,5 +1,8 @@
 package com.esferalia.aon.in.payroll.tgss.ivl;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.replace;
+import static com.esferalia.aon.watson.util.AonStringUtils.trim;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +100,7 @@ class IvlcccParser {
         		    String nafNumber = getString(matcher,"nafNumber");
         		    String docType = getString(matcher,"docType");
         		    String docNumber = getString(matcher,"docNumber");
-        		    String employeeName = getString(matcher,"employeeName");
+        		    String employeeName = trim(replace(getString(matcher,"employeeName"),"---",""));
         		    listener.onEmployee(nafProvince, nafNumber, docType, docNumber, employeeName);
         		    
         		    for ( Matcher startEndMatcher = attempt(reader, EMPLOYEE_START_END_GC_TC); startEndMatcher != null; startEndMatcher = attempt(reader, EMPLOYEE_START_END_GC_TC) ) {
@@ -232,15 +235,15 @@ class IvlcccParser {
 		"^(?<enterpriseCNAENumber>\\d+)\\s*(?<enterpriseCNAEDescription>.*)$", Pattern.CASE_INSENSITIVE);	
 	
 	protected static final Pattern EMPLOYEE_NAF_NIF_NAME= Pattern.compile(
-		"^(?<nafProvince>\\d{2})\\s*(?<nafNumber>\\d+)\\s*(?<docType>\\d)\\s*(?<docNumber>[0-9A-Z]+)\\s*(?<employeeName>.*)---.*$", Pattern.CASE_INSENSITIVE);	
+		"^(?<nafProvince>\\d{2})\\s*(?<nafNumber>\\d+)\\s*(?<docType>\\d)\\s*0*(?<docNumber>[0-9A-Z]+)\\s*(?<employeeName>.*)\\s*(?<clv>[0-9A-Z]{3}).*$", Pattern.CASE_INSENSITIVE);	
 	protected static final Pattern EMPLOYEE_START_END_GC_TC = Pattern.compile(
-		"^\\s*(.*)\\s*"
+		"^\\s*(ALTA|BAJA)\\s*"
 		+ "(?<realStartDate>\\d{2}-\\d{2}-\\d{4})\\s*(?<efectiveStartDate>\\d{2}-\\d{2}-\\d{4})\\s*"
 		+ "((?<realEndDate>\\d{2}-\\d{2}-\\d{4})\\s*(?<efectiveEndDate>\\d{2}-\\d{2}-\\d{4})\\s*)?"
 		+ "(?<quoteGroup>\\d{2})\\s*(?<monthly>/S)?\\s*"
 		+ "(?<tc2>\\d{3})?\\s*"
-		+ "(?<partialFactor>\\d+(,\\d+)?)\\s*"
-		+ "(?<it>\\d+(,\\d+)?)\\s*(?<ims>\\d+(,\\d+)?)\\s*(?<total>\\d+(,\\d+)?)\\s*"
+		+ "(?<partialFactor>\\d+,\\d{3})?\\s*"
+		+ "((?<it>\\d+(,\\d+)?)\\s*(?<ims>\\d+(,\\d+)?)\\s*(?<total>\\d+(,\\d+)?)\\s*)?"
 		+ "(?<quoteDays>\\d+)"
 		+ ".*$"
 		, Pattern.CASE_INSENSITIVE);
@@ -249,5 +252,14 @@ class IvlcccParser {
 	    Matcher matcher = EMPLOYEE_START_END_GC_TC.matcher(" ALTA 12-06-2023 12-06-2023   08 100   3,35 3,35 6,70 149 D7K");
 	    if (!matcher.matches()) 
 		throw new AssertionError();
+	    matcher = EMPLOYEE_NAF_NIF_NAME.matcher("08 1330742864 6 0Y4553289Q CHARNJIT --- G56");
+	    if (!matcher.matches()) 
+		throw new AssertionError();
+	    System.out.println(matcher.group("employeeName"));
+	    matcher = EMPLOYEE_NAF_NIF_NAME.matcher("08 1330742864 6 0Y4553289Q CHARNJIT --- --- G56");
+	    if (!matcher.matches()) 
+		throw new AssertionError();
+	    System.out.println(matcher.group("employeeName"));
+	    
 	}
 }

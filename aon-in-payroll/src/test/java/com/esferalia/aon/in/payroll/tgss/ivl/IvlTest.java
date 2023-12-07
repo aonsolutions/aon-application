@@ -12,12 +12,18 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -70,6 +76,8 @@ public class IvlTest extends AbstractSQLTestCase {
 		public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
 			String employeeName) {
 		    personCount++;
+		    assertFalse(docNumber, docNumber.startsWith("0"));
+		    assertFalse(employeeName, employeeName.contains("---"));
 		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
 		    this.employeeName = employeeName;
 		}
@@ -77,6 +85,26 @@ public class IvlTest extends AbstractSQLTestCase {
 		@Override
 		public void onEmployeeContract(Date realStartDate, Date efectiveStartDate, Date realEndDate,
 			Date efectiveEndDate, String quoteGroup, String monthly, String tc2, Double partialFactor, Double it, Double ims, Integer quoteDays) {
+		    
+		    if ( "100".equals(tc2) ) {
+			assertNull(employeeName + " : 100- INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", partialFactor);
+		    }
+		    
+		    Map<String, Date> endDates = new HashMap<String, Date>();
+		    endDates.put("ZAZA KHURTSIDZE", parseDate("23-10-2023"));
+		    endDates.put("AFZAAL AKRAM", parseDate("16-10-2023"));
+		    endDates.put("ISRAEL CARMONA REY", parseDate("23-10-2023"));
+		    endDates.put("KHALID DAWOOD KHAN", parseDate("27-10-2023"));
+		    endDates.put("KAMRAN SARWAR", parseDate("27-10-2023"));
+		    
+		    
+		    endDates.forEach(( name, pdfDate ) -> {
+			if ( name.equalsIgnoreCase(employeeName) ) {
+			    assertEquals(name, pdfDate, realEndDate );
+			    assertEquals(name, pdfDate, efectiveEndDate);
+			}
+		    });
+			
 		    contractCount++;
 		    System.out.printf("persons : %d = contracts: %d\r\n", personCount , contractCount );
 		    this.employeeName = null;
@@ -90,6 +118,8 @@ public class IvlTest extends AbstractSQLTestCase {
 	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccII.pdf")) {
 	    IvlcccParser.parse(is, new IvlParserListener() {
 		
+		private int personCount = 0;
+		private int contractCount = 0;
 		private String employeeName = null ;
 		
 		@Override
@@ -114,16 +144,23 @@ public class IvlTest extends AbstractSQLTestCase {
 		@Override
 		public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
 			String employeeName) {
-		    //System.out.printf("%s[%s%s]: %s\r\n", employeeName, nafProvince, nafNumber, docNumber );
+		    
 		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
 		    this.employeeName = employeeName;
+		    personCount++;
 		}
 		
 		@Override
 		public void onEmployeeContract(Date realStartDate, Date efectiveStartDate, Date realEndDate,
 			Date efectiveEndDate, String quoteGroup, String monthly, String tc2, Double partialFactor, Double it, Double ims, Integer quoteDays) {
-		    //System.out.printf("%s,%s\r\n", quoteGroup, tc2);
+		    if ( "100".equals(tc2) ) {
+			assertNull(employeeName + " : 100 - INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", partialFactor);
+		    } else if ("501".equals(tc2) ) {
+			//assertNotNull(employeeName + " : 501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO", partialFactor);
+		    }
 		    this.employeeName = null;
+		    contractCount++;
+		    System.out.printf("persons : %d = contracts: %d\r\n", personCount , contractCount );
 		}
 	    });
 	}
@@ -170,7 +207,7 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .innerJoin(PAYROLL_WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY)
 	    .innerJoin(WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_WORKPLACE)
 	    .innerJoin(RADDRESS).onKey(Keys.FK_WORKPLACE_RADDRESS)
-	    .where(DOMAIN.NAME.eq("B66259516." + domainName))
+	    .where(DOMAIN.NAME.eq(/*"B66259516." +*/ domainName))
 	    .fetchOne();
 	    
 	    assertEquals("B66259516", record.get(REGISTRY.DOCUMENT));
@@ -240,6 +277,20 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .fetchOne(DSL.count());
 	    
 	    assertTrue("CONTRACTS : " + contractCount + ", PERSONS : " + personCount ,  contractCount >= personCount);
+	    
+	    
+	    dslContext
+	    .select()
+	    .from(REGISTRY)
+	    .where(REGISTRY.DOMAIN.eq(domainId))
+	    .and(REGISTRY.NAME.eq("HARSH"))
+	    .fetchOptionalInto(REGISTRY)
+	    .ifPresentOrElse(
+	    r -> {
+	    } , 
+	    () -> { 
+		fail("HARSH not found"); 
+	    });
 
 	}
 	
@@ -263,7 +314,7 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .innerJoin(PAYROLL_WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY)
 	    .innerJoin(WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_WORKPLACE)
 	    .innerJoin(RADDRESS).onKey(Keys.FK_WORKPLACE_RADDRESS)
-	    .where(DOMAIN.NAME.eq("B66259516." + domainName))
+	    .where(DOMAIN.NAME.eq(/*"B66259516." +*/ domainName))
 	    .fetchOne();
 	    
 	    assertEquals("B66259516", record.get(REGISTRY.DOCUMENT));
@@ -335,8 +386,6 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .limit(200)
 	    .map(Entry::getValue)
 	    .forEach( r -> {
-		System.out.println("DELETE : " + r.get(CONTRACT.ID) + ": " + r.get(PERSON.SOCIAL_SECURITY_NUM));
-
 		dslContext
 		.delete(CONTRACT_DATA)
 		.where(CONTRACT_DATA.ID.in(
@@ -403,5 +452,14 @@ public class IvlTest extends AbstractSQLTestCase {
 	settings.setRenderSchema(false);
 	settings.setParamType(ParamType.INLINED);
 	return DSL.using(getConnection(), settings);
+    }
+    
+    private static Date parseDate(String str) {
+	try {
+	    return new SimpleDateFormat("dd-MM-yyyy").parse(str);
+	} catch (ParseException e) {
+	    fail(e.getMessage());
+	    return null;
+	}	
     }
 }

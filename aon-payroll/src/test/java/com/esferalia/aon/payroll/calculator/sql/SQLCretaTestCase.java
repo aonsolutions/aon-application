@@ -115,6 +115,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.mchange.util.AssertException;
 
@@ -8555,6 +8556,56 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testCretaTrabajadoresYTramosJornadasReales()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C300, "10");
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		Date doDaysStartDate = add(startDate, Calendar.DAY_OF_MONTH, 5 );
+		Date doDaysEndDate = add(doDaysStartDate, Calendar.DAY_OF_MONTH, 1 );
+		addData(aonContext, contract, doDaysStartDate, doDaysEndDate, ContextVariable.DO_DAYS.getName(), 
+			Long.toString(new Period(doDaysStartDate, doDaysEndDate).getDays()));
+		
+		doDaysStartDate = add(doDaysEndDate, Calendar.DAY_OF_MONTH, 5 );
+		doDaysEndDate = add(doDaysStartDate, Calendar.DAY_OF_MONTH, 4 );
+		addData(aonContext, contract, doDaysStartDate, doDaysEndDate, ContextVariable.DO_DAYS.getName(), 
+			Long.toString(new Period(doDaysStartDate, doDaysEndDate).getDays()));
+
+		doDaysStartDate = add(doDaysEndDate, Calendar.DAY_OF_MONTH, 5 );
+		doDaysEndDate = add(doDaysStartDate, Calendar.DAY_OF_MONTH, 1 );
+		addData(aonContext, contract, doDaysStartDate, doDaysEndDate, ContextVariable.DO_DAYS.getName(), 
+			Long.toString(new Period(doDaysStartDate, doDaysEndDate).getDays()));
+
+		doDaysStartDate = add(doDaysEndDate, Calendar.DAY_OF_MONTH, 2 );
+		doDaysEndDate = add(doDaysStartDate, Calendar.DAY_OF_MONTH, 5 );
+		addData(aonContext, contract, doDaysStartDate, doDaysEndDate, ContextVariable.DO_DAYS.getName(), 
+			Long.toString(new Period(doDaysStartDate, doDaysEndDate).getDays()));
+		
+		addPayment(aonContext, contract, String.format("100.00 * %s ", ContextVariable.DO_DAYS.getName()));
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+		Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+
+	}
 	
 	private <T> void validate (Class<T> clazz, T t ) throws JAXBException, SAXException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
