@@ -7,104 +7,7 @@ import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext.split;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BACK;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_ERE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GROSS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_LENGTH;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKING;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.REDEFINE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.REGULATORY_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SELF;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SETTLE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRACT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TODAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORK_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
@@ -5564,8 +5467,62 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		}
 		
+		fixDoDaysContextVariable(ctx, leaves);
+		
 		overrideHolidaysContextVariable(ctx);
 		
+	}
+
+	/**
+	 * @param ctx
+	 * @param leaves
+	 */
+	private void fixDoDaysContextVariable(ContractExpressionContext ctx, List<Period> leaves) {
+	    List<Period> doDays = getPeriods(DO_DAYS);
+	    
+	    if ( doDays.isEmpty() ) {
+		return;
+	    }
+	    
+	    // QUOTE_DAYS = DO_DAYS 
+	    ctx.removeVariable(QUOTE_DAYS);
+	    doDays.forEach(p -> ctx.putVariable(QUOTE_DAYS, new ITimedVariable<Double>() {
+		@Override
+		public Period getPeriod() {
+		    return p;
+		}
+
+		@Override
+		public Double getValue(Period period) {
+		    return ( (Long) p.intersect(period).getDays()).doubleValue();
+		}
+
+	    }));
+	    // WORK_DAYS = DO_DAYS 
+	    ctx.removeVariable(WORKED_DAYS);
+	    doDays.forEach(p -> ctx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
+		@Override
+		public Period getPeriod() {
+		    return p;
+		}
+
+		@Override
+		public Double getValue(Period period) {
+		    return ( (Long) p.intersect(period).getDays()).doubleValue();
+		}
+
+	    }));
+
+	    if (leaves.isEmpty()) {
+		return;
+	    }
+
+	    // Clean DO_DAYS at IT
+	    List<Period> itDoDays = Period.intersect(doDays, leaves);
+	    itDoDays.forEach(p -> ctx.subVariable(DO_DAYS, p.getStart(), p.getEnd()));
+	    List<Period> activeDoDays = Period.sub(doDays, leaves);
+	    activeDoDays.forEach(p -> ctx.setVariable(DO_DAYS, p.getDays(), p.getStart(), p.getEnd()));
+	    
 	}
 
 	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var, Predicate<Object>  predicate) {
