@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -992,7 +993,7 @@ public class Asserts {
 		}
 	}
 	
-	private static void assertEqualsWorkplace(Workplace expected, Workplace actual) {
+	public static void assertEqualsWorkplace(Workplace expected, Workplace actual) {
 		assertEqualsNulls("Workplace", expected, actual);
 		
 		if (expected != null && actual != null) {
@@ -1167,6 +1168,24 @@ public class Asserts {
 			assertEquals("Requisition", expected.getRequisition(), actual.getRequisition());
 			assertEquals("SepaMandateRef", expected.getSepaMandateRef(), actual.getSepaMandateRef());
 			assertEquals("Suffix", expected.getSuffix(), actual.getSuffix());
+		}
+	}
+	
+	public static void assertEqualsCarrier(Carrier expected, Carrier actual) {
+		if (expected != null && actual != null) {
+			assertEquals("Alias", expected.getAlias(), actual.getAlias());
+			Asserts.assertEqualsRegistry(expected.get(), actual.get());
+			assertEquals("Document", expected.getDocument(), actual.getDocument());
+			assertEquals("Country", expected.getDocumentCountry().toString(), actual.getDocumentCountry().toString());
+			assertEquals("Document", expected.getDocumentType().toString(), actual.getDocumentType().toString());
+			Asserts.assertEqualsDomain(expected.getDomain(), actual.getDomain());
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Name", expected.getName(), actual.getName());
+			assertEquals("Document", expected.getDocument(), actual.getDocument());
+			assertEquals("Nationality", expected.getNationality().toString(), actual.getNationality().toString());
+			Asserts.assertEqualsScope(expected.getScope(), actual.getScope());
+			assertEquals("Security Level", expected.getSecurityLevel().toString(), actual.getSecurityLevel().toString());
+			assertEquals("Status", expected.getStatus().toString(), actual.getStatus().toString());
 		}
 	}
 }
