@@ -8,7 +8,9 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -17,15 +19,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class ModelMatrix extends MainEntryPoint {
-
 	
 	private static final Logger LOGGER = Logger.getLogger(ModelMatrix.class.getName());
 	static {
@@ -43,6 +48,9 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 	
 	private Panel dataPanel;
+	private SplitLayoutPanel splitLayoutPanel;
+	private AonMinimizePanel footPanel;	
+	private SimpleLayoutPanel aeatPanel;
 	
 	@Override
 	public void onModuleLoad() {
@@ -79,8 +87,7 @@ public class ModelMatrix extends MainEntryPoint {
 		AON.ensureInjected();
 		ModelMatrixFilterPanel filterPanel = new ModelMatrixFilterPanel(options);
 		filterPanel.addValueChangeHandler( event -> search( options, event.getValue(), filterPanel.getRefreshButton() ));
-		if (options.isCompactMode()) {
-			
+		if (options.isCompactMode()) {			
 			ScrollPanel mainScroll = new ScrollPanel();
 			FlowPanel contentPanel = new FlowPanel();
 			mainScroll.setWidget(contentPanel);
@@ -95,20 +102,86 @@ public class ModelMatrix extends MainEntryPoint {
 		} else {
 			DockLayoutPanel dockLayout = new DockLayoutPanel(Unit.PX);
 			dockLayout.addNorth(filterPanel, 100);
+			
+			splitLayoutPanel = new SplitLayoutPanel(2);
+			dockLayout.add(splitLayoutPanel);
+			
+			AonMinimizePanel minimizePanel = getMinimizePanel();
+			minimizePanel.addStyleName("aon-Model-Info");
+			splitLayoutPanel.addSouth(minimizePanel, 30);			
+			
 			dataPanel = new ScrollPanel();
-			dockLayout.add(dataPanel);
+			splitLayoutPanel.add(dataPanel);
+			
 			options.getParentWidget().add(dockLayout);
-		}
-		
+		}		
 		
 	}
 
 	private void search(MatrixModuleOptions options, FiscalMatrixParams params, AonSearchPanelButton refreshButton) {
+		
 		if (!params.isMultiplePresentation()) {
-			options.getSelected().clear();
+			options.getSelected().clear();			
+			options.setResultado(null);
 		}
+		
 		dataPanel.clear();
 		dataPanel.add(new ModelMatrixPanel(options, params, refreshButton));
+		
+		if (!options.isCompactMode()) {			
+			footPanel.setVisible(false);
+			splitLayoutPanel.setWidgetSize(footPanel, 0);
+			
+			if (options.getResultado() != null) {
+				showHtml(options.getResultado());
+				footPanel.setVisible(true);
+				maximizeFootPanel();
+			}			
+		}			
+		
 	}
+	
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();		
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> maximizeFootPanel());
+		footPanel.setStyleName(AON.CSS.aonSelector());
+
+		AonTabLayoutPanel tabLayout = new AonTabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
+		
+		aeatPanel = new SimpleLayoutPanel();
+		tabLayout.add(aeatPanel, "ERRORES PRESENTACION MULTIPLE");
+		tabLayout.setAnimationDuration(300);
+		
+		return footPanel; 
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+		splitLayoutPanel.animate(500);
+	}
+	
+	protected void showHtml(String dataURI) {
+		aeatPanel.clear();
+		Frame aeatFrame = new Frame( "data:text/html;base64," + dataURI);
+		aeatFrame.setWidth("100%");
+		aeatFrame.setHeight("100%");
+		aeatFrame.setStyleName(AON.CSS.aonWidthAll());
+		aeatFrame.addStyleName(AON.CSS.aonHeightAll());
+		aeatFrame.addStyleName(AON.CSS.aonBlockCenter());
+		aeatFrame.addStyleName(AON.CSS.aonBorderNone());
+		aeatFrame.addStyleName(AON.CSS.aonBorderTop());
+		aeatFrame.addStyleName(AON.CSS.aonMarginTop());
+		aeatPanel.add(aeatFrame);
+	}
+
+	
 	
 }

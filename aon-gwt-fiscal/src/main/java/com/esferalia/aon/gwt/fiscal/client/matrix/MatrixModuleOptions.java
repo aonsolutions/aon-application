@@ -11,6 +11,7 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 	
 	private boolean compactMode;
 	private ArrayList<String> selected; // Seleccionados para la presentación múltiple
+	private String resultado; // Resultado de la presentación multiple
 
 	public boolean isCompactMode() {
 		return compactMode;
@@ -19,8 +20,6 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 		this.compactMode = compactMode;
 		return this;
 	}
-	
-	// FALTA - AÑADIR Y BORRAR SELECCIONADO, POR AHORA SOLO SE GUARDA MODELO_ID
 	
 	public ArrayList<String> getSelected() {
 		if (selected == null)
@@ -38,6 +37,14 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 	}
 	public boolean isSelected(IFiscalModel model) {
 		return getSelected().contains(getSelectedKey(model));  
+	}
+	// FALTA - RESULTADO DE LA PRESENTACION MULTIPLE
+	public String getResultado() {
+		return resultado;
+	}
+	public MatrixModuleOptions setResultado(String resultado) {
+		this.resultado = resultado;
+		return this;
 	}	
 
 }

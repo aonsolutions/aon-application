@@ -277,6 +277,7 @@ public class ModelMatrixPanel extends FlowPanel {
 					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
 					// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
 					if (params.getPeriod() != null && options.getConfiguration().isBetaEnabled()) {
+						boolean checkBoxEnabled = true;
 						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
 						if (params.getPeriod() != Period.YEAR) {
 							Label ibanNrcLabel = new Label();
@@ -292,9 +293,11 @@ public class ModelMatrixPanel extends FlowPanel {
 										if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
 											ibanNrcLabel.setText("FALTA NRC");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+											checkBoxEnabled = false;
 										} else if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.BANK || cloned.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) {
 											ibanNrcLabel.setText("FALTA IBAN");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+											checkBoxEnabled = false;
 										}
 									}									 
 								}
@@ -308,7 +311,8 @@ public class ModelMatrixPanel extends FlowPanel {
 						if (params.isMultiplePresentation()) {
 							CheckBox markForSend = new CheckBox();
 							markForSend.setValue(options.isSelected(cloned));
-							if (options.isSelected(cloned)) {								
+							markForSend.setEnabled(checkBoxEnabled);
+							if (options.isSelected(cloned) && markForSend.isEnabled()) {								
 								selected.add(options.getSelectedKey(cloned));
 							} else {
 								markAllForSend.setValue(false,false);
@@ -575,9 +579,12 @@ public class ModelMatrixPanel extends FlowPanel {
 				markAllForSend = new CheckBox();			 
 				markAllForSend.setValue(true);
 				markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
-				markAllForSend.addClickHandler( event -> {
-					selectedCheckBox.forEach( cb -> cb.setValue(markAllForSend.getValue(),true) );
-				});
+				markAllForSend.addClickHandler( event -> 
+					selectedCheckBox.forEach( cb -> {
+						if (cb.isEnabled()) 
+							cb.setValue(markAllForSend.getValue(), true);	
+					}) 
+				);
 				AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
 				table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
 				table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						

@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsDate;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -107,7 +109,10 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
-		year.addChangeHandler(event -> fireValueChangeEvent());
+		year.addChangeHandler(event -> {
+			options.setResultado(null);
+			fireValueChangeEvent();	
+		});
 		
 		InlineLabel modelLabel = new InlineLabel(AON.MSG.fiscalModels());
 		modelLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -200,17 +205,51 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		for (Period p : Period.values()) {
 			periodBox.addItem(p.getDescription());
 		}
-		periodBox.addChangeHandler(event -> fireValueChangeEvent());
+		periodBox.addChangeHandler(event -> {
+			options.setResultado(null);
+			fireValueChangeEvent();
+		});
 		
 		// Check para habilitar presentacion múltiple
 		multiplePresentation = new CheckBox();
 		multiplePresentation.setVisible(options.getConfiguration().isBetaEnabled()); // FALTA - POR AHORA SOLO APARECE EN DOMINIOS BETA 		
 		multiplePresentation.setValue(false);
-		multiplePresentation.setEnabled(false);
+		//multiplePresentation.setEnabled(false);
 		multiplePresentation.setStyleName(AON.CSS.aonMarginRight());
 		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");		
-		multiplePresentation.setTitle("Esta casilla solo se puede marcar si se filtra por Administraci\u00F3n Territorio Com\u00FAn, Estado Finalizado y un solo Periodo.");
-		multiplePresentation.addClickHandler(event -> fireValueChangeEvent());
+		//multiplePresentation.setTitle("Esta casilla solo se puede marcar si se filtra por Administraci\u00F3n Territorio Com\u00FAn, Estado Finalizado y un solo Periodo.");
+		multiplePresentation.addClickHandler(event -> {
+			
+			// FALTA - Si se marca habilitar presentacion multiple, ponemos Territorio Comun, Estado Finalizado y Periodo por defecto (si no esta seleccionado periodo)
+			if (multiplePresentation.getValue()) {
+				admon.setSelectedIndex(Administration.COMMON_TERRITORY.ordinal() + 1);
+				statusBox.setSelectedIndex(FiscalStatus.FINISHED.ordinal() + 1);
+				
+				if (periodBox.getSelectedIndex() == 0) {
+					int m = JsDate.create().getMonth() + 1;					
+					Period p;
+					switch (m) {
+						case 1:
+							p = Period.T4;
+							break;
+						case 4:
+							p = Period.T1;
+							break;
+						case 7:
+							p = Period.T2;
+							break;
+						case 10:
+							p = Period.T3;
+							break;
+						default:
+							p = Period.values()[m-2];
+							break;
+					}					
+					periodBox.setSelectedIndex(p.ordinal() + 1); 
+				}		
+			}			
+			fireValueChangeEvent();	
+		});
 		
 		if (!options.isCompactMode()) {
 			addRow()
@@ -283,10 +322,14 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			period = Period.values()[periodBox.getSelectedIndex() - 1];		
 		}
 		
-		// Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y un Periodo seleccionado 
-		multiplePresentation.setEnabled(administration == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && period != null);
-		if (!multiplePresentation.isEnabled()) {
-			multiplePresentation.setValue(false,false);			
+		// FALTA - Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y un Periodo seleccionado 
+//		multiplePresentation.setEnabled(administration == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && period != null);
+//		if (!multiplePresentation.isEnabled()) {
+//			multiplePresentation.setValue(false,false);			
+//		}
+		
+		if (administration != Administration.COMMON_TERRITORY || status != FiscalStatus.FINISHED || period == null) {
+			multiplePresentation.setValue(false,false);
 		}
 		
 		sendButton.setVisible(multiplePresentation.getValue());
@@ -351,10 +394,15 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	}
 	
 	private void send(MatrixModuleOptions options) {
-		// FALTA - TODO
 		
-		//Window.alert("PRESENTACION MULTIPLE DE LOS MODELOS SELECCIONADOS: " + options.getSelected());
-		// PEDIR CERTIFICADO
+		// Comprobar si se ha seleccionado algún modelo
+		if (options.getSelected().size() == 0) {
+			AonMessageDialog.show("PRESENTACION MULTIPLE", "Debe seleccionar al menos un modelo.");
+			return;
+		}
+		// FALTA 
+
+		
 		if (!sending) {
 			sending = true;
 			
@@ -369,7 +417,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 //					options.getConfiguration().getDomain().getName(), 
 //					options.getConfiguration().getDomain().getId(),
 //					options.getConfiguration().getUser().getLogin());
-
+			
+			// Pedir Certificado 
 			AonCertificationPopupParams params = new AonCertificationPopupParams()
 					.setDocument(options.getConfiguration().fiscal().getCertificateDocument())
 					.setName(options.getConfiguration().fiscal().getCertificateName())
@@ -399,7 +448,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 									  .setMod(null)
 									  .setSelected(options.getSelected());
 							
-							sendAEAT(aeatParams);
+							sendAEAT(aeatParams, options);
 						}
 
 						@Override
@@ -414,12 +463,14 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				
 	}
 	
-	private void sendAEAT(AEATParams params) {
+	private void sendAEAT(AEATParams params, MatrixModuleOptions options) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add( new AonSplash());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
+		
+		options.setResultado(null);
 
 //		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
@@ -429,16 +480,19 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			int state = xhreq.getReadyState();
 			if (state == XMLHttpRequest.DONE) {
 				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
-				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
+//				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
 //				getCallback().sendSuccessfully(); // Siempre se recarga el modelo, por si se ha grabado el NRC
 //				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
 //					Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
 //				} else {
 //					showHtml( buff.toString() );
 //				}
-				Window.alert(buff.toString());
+//				Window.alert(buff.toString());
+				options.setResultado(buff.toString());
+				options.getSelected().clear();
 				sending = false;
 				popup.hide();					
+				refreshButton.click();
 			}
 		});	
 		StringBuilder requestData = new StringBuilder();
