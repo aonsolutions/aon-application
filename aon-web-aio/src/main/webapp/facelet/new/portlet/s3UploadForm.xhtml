@@ -9,7 +9,6 @@
 >
 	<script type="text/javascript">
         //<![CDATA[
-        	
         	var uploadCount = 0;
         	
         	function upload(file, success, error ){
@@ -25,8 +24,7 @@
 				const fileOrder = ('0' + uploadCount++ ).slice(-2);  
 				
     			formData.append('key', 
-    					'facturas'
-//    					'invoices'
+    					'#{s3Prefix}'
     					+'/' + domainName
     					+ ( domainDocument ? '/' + domainDocument : '' )
     					+'/' + user
@@ -37,7 +35,7 @@
     			formData.append('Content-Type', file.type);
 				formData.append('file', file);
     			
-    			xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
+    			xhr.open('POST', "https://#{s3Bucket}.s3.amazonaws.com/", true);
     			xhr.addEventListener('readystatechange', function(e) {
 				if (xhr.readyState == 4 && xhr.status == 201) {
 				      // Done. Inform the user
@@ -135,5 +133,66 @@
 	  <!-- The elements after this will be ignored -->
 	  <input type="submit" name="submit" value="Upload to Amazon S3" />
 	</form>
+	
+    <aon:div id="aonUploadToast" styleClass="aon-upload-toast" style="display:none;">
+		<aon:panelGrid columns="2" columnClasses="aon-width-all,aon" styleClass="aon-upload-toast-header" >
+			<aon:outputText id="aonUploadToastHeaderText" styleClass="aon-upload-toast-header-text" value="Se ha subido una factura" />
+			<aon:outputText id="aonUploadToastHeaderIcon" styleClass="material-icons aon-upload-toast-header-icon" value="check_circle"/>
+		</aon:panelGrid>
+		<aon:div styleClass="aon-scroll-area">
+			<aon:panelGrid id="aonUploadToastTable" columns="3" columnClasses="aon-width-40,aon-width-all,aon-width-40" styleClass="aon-upload-toast-body"  >
+				
+				<aon:outputText styleClass="material-icons aon-upload-toast-body-type" value="picture_as_pdf" />
+				<aon:outputText styleClass="aon-upload-toast-body-name" value="ARCHIVO.PDF" />
+				<aon:outputText styleClass="material-icons aon-upload-toast-body-icon" value="folder" />
+			
+			</aon:panelGrid>
+		</aon:div>
+    </aon:div>
   	
+	<script type='text/javascript' >
+    //<![CDATA[
+    	
+    	function getIcon(file) {
+    		const mimeType = file.type;
+    		if ( mimeType.match(/pdf/gi) ) 
+    			return 'picture_as_pdf';
+    		if ( mimeType.match(/image/g) ) 
+    			return 'image';
+    		return  'description'
+    	} 
+    	setupS3UploadPanel(
+    	#{rich:element(uploadPanel)}
+    	, (file) => {
+    		#{rich:element('aonUploadToast')}.style.display = 'block';
+    		const fileRow = #{rich:element('aonUploadToastTable')}.rows[0].cloneNode(true);
+    		
+    		const cells = fileRow.cells;
+
+    		const fileTypeCell = cells[0];
+    		const fileTypeElement = cells[0].firstChild;
+    		fileTypeElement.innerText = getIcon(file);
+
+    		const fileNameCell = cells[1];
+    		const fileNameElement = cells[1].firstChild;
+    		fileNameElement.innerText = file.name;
+    		
+    		
+    		#{rich:element('aonUploadToastTable')}.appendChild(fileRow);	
+    		
+    		const documents = #{rich:element('aonUploadToastTable')}.rows.length - 1 ;
+    		
+    		if ( #{rich:element('aonUploadToastTable')}.rows.length === 2 )
+    			#{rich:element('aonUploadToastHeaderText')}.innerText = '#{uploadOneTitle}' ;
+    		else 
+    			#{rich:element('aonUploadToastHeaderText')}.innerText = `#{uploadManyTitle}`;
+    		
+    	}
+    	, (file, xhr ) => {
+    		alert(xhr);
+    	}
+    	);
+    	
+    //]]>
+	</script>
 </ui:composition>

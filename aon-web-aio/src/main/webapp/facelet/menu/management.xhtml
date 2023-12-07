@@ -12,24 +12,14 @@
 		
 		<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
 			<ui:include src="/facelet/new/portlet/s3UploadForm.xhtml" >
+				<ui:param name="s3Prefix" value="facturas" />
+				<ui:param name="s3Bucket" value="aon-upload-post" />
 				<ui:param name="uploadId" value="#{desktop.getTime('yyyyMMddhhmmss')}" />
+				<ui:param name="uploadPanel" value="s3InvoiceUploadPanel" />
+				<ui:param name="uploadOneTitle" value="Se ha subido una factura" />
+				<ui:param name="uploadManyTitle" value="Se han subido \${documents} facturas" />
 			</ui:include>
 	
-		    <aon:div id="aonUploadToast" styleClass="aon-upload-toast" style="display:none;">
-				<aon:panelGrid columns="2" columnClasses="aon-width-all,aon" styleClass="aon-upload-toast-header" >
-					<aon:outputText id="aonUploadToastHeaderText" styleClass="aon-upload-toast-header-text" value="Se ha subido una factura" />
-					<aon:outputText id="aonUploadToastHeaderIcon" styleClass="material-icons aon-upload-toast-header-icon" value="check_circle"/>
-				</aon:panelGrid>
-				<aon:div styleClass="aon-scroll-area">
-					<aon:panelGrid id="aonUploadToastTable" columns="3" columnClasses="aon-width-40,aon-width-all,aon-width-40" styleClass="aon-upload-toast-body"  >
-						
-						<aon:outputText styleClass="material-icons aon-upload-toast-body-type" value="picture_as_pdf" />
-						<aon:outputText styleClass="aon-upload-toast-body-name" value="ARCHIVO.PDF" />
-						<aon:outputText styleClass="material-icons aon-upload-toast-body-icon" value="folder" />
-					
-					</aon:panelGrid>
-				</aon:div>
-		    </aon:div>
 		</aon:if>
 
 		<aon:form id="managementMenu">
@@ -351,53 +341,5 @@
 			</aon:div>
 		</aon:form>
 
-		<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
-			<script type='text/javascript' >
-		    //<![CDATA[
-		    	
-		    	function getIcon(file) {
-		    		const mimeType = file.type;
-		    		if ( mimeType.match(/pdf/gi) ) 
-		    			return 'picture_as_pdf';
-		    		if ( mimeType.match(/image/g) ) 
-		    			return 'image';
-		    		return  'description'
-		    	} 
-		    	setupS3UploadPanel(
-		    	#{rich:element('s3InvoiceUploadPanel')}
-		    	, (file) => {
-		    		#{rich:element('aonUploadToast')}.style.display = 'block';
-		    		const fileRow = #{rich:element('aonUploadToastTable')}.rows[0].cloneNode(true);
-		    		
-		    		const cells = fileRow.cells;
-		
-		    		const fileTypeCell = cells[0];
-		    		const fileTypeElement = cells[0].firstChild;
-		    		fileTypeElement.innerText = getIcon(file);
-		
-		    		const fileNameCell = cells[1];
-		    		const fileNameElement = cells[1].firstChild;
-		    		fileNameElement.innerText = file.name;
-		    		
-		    		
-		    		#{rich:element('aonUploadToastTable')}.appendChild(fileRow);	
-		    		
-		    		const invoices = #{rich:element('aonUploadToastTable')}.rows.length - 1 ;
-		    		
-		    		if ( #{rich:element('aonUploadToastTable')}.rows === 1 )
-		    			#{rich:element('aonUploadToastHeaderText')}.innerText = "Se ha subido una factura" ;
-		    		else 
-		    			#{rich:element('aonUploadToastHeaderText')}.innerText = "Se han subido " + invoices + " facturas" ;
-		    		
-		    	}
-		    	, (file, xhr ) => {
-		    		alert(xhr);
-		    	}
-		    	);
-		    	
-		    //]]>
-			</script>
-		</aon:if>
-		
 	</ui:define>
 </ui:composition>
