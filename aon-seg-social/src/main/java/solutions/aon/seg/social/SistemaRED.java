@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.htmlunit.FailingHttpStatusCodeException;
-import org.htmlunit.WebClient;
-import org.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -421,16 +419,16 @@ public class SistemaRED {
 	}
 
 	public static byte[] getUp2DateSS(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regimen, String ccc) throws SegSocialException {
+			final String certificateType, String regimen, String ccc, String authKey) throws SegSocialException {
 		return SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
-				certificateType, regimen, ccc);
+				certificateType, regimen, ccc, authKey);
 	}
 
 	public static byte[] getUp2DateSS(final byte certificateData[], final String certificatePassword,
-			final String certificateType, String regimen, String ccc) throws SegSocialException {
+			final String certificateType, String regimen, String ccc, String authKey) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
-					certificateType, regimen, ccc);
+					certificateType, regimen, ccc, authKey);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}

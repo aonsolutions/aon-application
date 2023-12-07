@@ -8,20 +8,21 @@ import java.io.Writer;
 import java.sql.Connection;
 import java.util.Base64;
 import java.util.Date;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -87,7 +88,11 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 
 			switch (requestType) {
 				case UPDATE_CERT:
-					data = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					Optional<ApplicationParameter> authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+					if(authCodeOpt.isEmpty())
+						authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(parentDomainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+					
+					data = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, authCodeOpt.isPresent() ? authCodeOpt.get().getValue() : null);
 					break;
 				case WORKING_EMPLOYEE:
 					data = SistemaRED.getReportAffiliateInAlta(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);

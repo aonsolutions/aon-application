@@ -20,6 +20,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.TransformerException;
+
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
@@ -29,12 +31,10 @@ import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
-import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlLabel;
-import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlParagraph;
@@ -580,7 +580,7 @@ class SistemaREDI {
 	
 
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String regime, String ccc)
+			final String certificatePassword, final String certificateType, String regime, String ccc, String authCode)
 			throws SegSocialException {
 		Object[] arrFields= {regime, ccc};
 		Toolkit.verifyData(arrFields);
@@ -597,32 +597,64 @@ class SistemaREDI {
 				
 			handleSepeExceptions(htmlPage);
 			
-			//Aqui hay que seleccionar el ccc sobre el que se quiere hacer la consulta, pero ya se devuelve un XmlPage
-			HtmlAnchor cccAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc);
-			XmlPage xmlPage = cccAnchor.click();
+			// Mirar si necesita autorizacion (Por ejemplo certificados como los de AyudaT)
+			DomElement selectAuth = htmlPage.getElementById("TITULO_SECCION_forSelAutori");
+			if(selectAuth != null) {
+				// Seleccione un Número de Autorización
+				String auth = removeLeftZeros(authCode);
+				HtmlAnchor authAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + auth);
+				if(null == authAnchor)
+					throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
+				
+				XmlPage authXmlPage = htmlPage.getElementById("enlace_" + auth).click();
+				htmlPage = HtmlUnitToolkit.tranformXmlPage(authXmlPage);
+			}
 			
-			// TODO: esto para obtener el documento en PDF cuando en el navegador se visualiza un PDF
-//			Page documentPage = htmlPage;
-//			if (documentPage.isHtmlPage()) {
-//				htmlPage = (HtmlPage) documentPage;
-//				handleSepeExceptions(htmlPage);
-//			} else {
-//				try {
-//					return documentPage.getWebResponse().getContentAsStream().readAllBytes();
-//				} catch (Exception e) {
-//					throw new UnfilledMandatory();
-//				}
-//			}	
+			htmlPage.getElementById("radio_Opcion3").click();
+			HtmlInput criBusCccNaf = (HtmlInput) htmlPage.getElementById("criBusCccNaf") ;
+			criBusCccNaf.setValue(regime+ccc);
+			XmlPage xmlPage  = htmlPage.getElementById("botBuscar").click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+
+			xmlPage = htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc).click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
+			xmlPage = htmlPage.getElementById("ENVIO_13").click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
+			xmlPage = htmlPage.getElementById("ENVIO_15").click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+
+			for (HtmlAnchor anchor : htmlPage.getAnchors()) {
+			    if ( "documento".equals(anchor.getAttribute("data-pc_tipo"))) {
+				Page pdfPage = anchor.click();
+				return pdfPage.getWebResponse().getContentAsStream().readAllBytes();
+			    }
+			} 
+				    
 		} catch (FailingHttpStatusCodeException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
 		} catch (IOException e1) {
-			e1.printStackTrace();
+		    e1.printStackTrace();
+		} catch (TransformerException e) {
+		    e.printStackTrace();
 		}
 		return null;
 	}
 	
+	private static String removeLeftZeros(String input) {
+		if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // Use regular expression to remove leading zeros
+        String result = input.replaceFirst("^0+", "");
+
+        return result;
+	}
+
 	private static void handleSepeExceptions(HtmlPage htmlPage) {
 		HtmlParagraph error = htmlPage.querySelector("#CONTENEDOR_SECCION_1 > div > div > p");
 		if(null != error) throw new IllegalArgumentException(error.getTextContent());		
@@ -1639,6 +1671,5 @@ class SistemaREDI {
 		
 	}
 	
-
 
 }
