@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class ConnectDeliveryWriterOccam  implements Serializable {
@@ -533,6 +534,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
 		
+		if(detail.getItem().getExpireDate() == null && detail.getItem().getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(detail.getItem().getSerialDate(), detail.getItem().getProduct().getDaysToExpire());
+			detail.getItem().setExpireDate(expireDate);			
+		}
 		Date fechaCaducidad = detail.getItem().getExpireDate() != null
 				? detail.getItem().getExpireDate()
 				: detail.getItem().getSerialDate();

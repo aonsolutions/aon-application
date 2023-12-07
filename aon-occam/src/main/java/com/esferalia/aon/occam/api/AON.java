@@ -3039,13 +3039,13 @@ public class AON {
 	
 	public static Stream<Attach> getDocumentalAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType, Boolean withData) {
+			AttachType attachType, Boolean withData, Options...options) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attachType.equals(AttachType.REGISTRY))
-				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData);
+				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData, options);
 			
 			return null;
 		} finally {
@@ -6050,6 +6050,14 @@ public class AON {
 	public static LinkedList<Tag> getTagList(String domainName, Integer domainId, String login,
 			TagFilter filter){
 		return getTagStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Tag> getNoteTagsList(String domainName, Integer domainId, String login,
+			TagFilter filter, Integer userId){
+		
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getNoteTagsList(ctx, filter, userId);
+		}
 	}
 	
 	public static Stream<Tag> getTagStream(String domainName, Integer domainId, String login,

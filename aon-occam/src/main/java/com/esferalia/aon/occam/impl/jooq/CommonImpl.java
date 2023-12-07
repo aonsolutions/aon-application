@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.NoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
@@ -331,6 +332,12 @@ public class CommonImpl implements ICommon {
 	public void deleteTag(AONContext ctx, TagFilter filter){
 		 ctx.getDslContext().transaction(configuration -> 
 		 	TagDAO.deleteTag(ctx, filter));
+	}
+	
+	@Override
+	public List<Tag> getNoteTagsList(AONContext ctx, TagFilter filter, Integer userId){
+		return ctx.getDslContext().transactionResult(
+				configuration -> NoteDAO.getNoteTagsList(ctx, filter, userId));
 	}
 
 	// ------------------ TAX

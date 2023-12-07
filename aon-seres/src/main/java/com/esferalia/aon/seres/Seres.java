@@ -29,6 +29,10 @@ public class Seres implements Serializable {
 		this.info = info;
 	}
 	
+	public Seres(SeresInfo info) {
+		this.info = info;
+	}
+	
 	public SeresInfo getInfo() {
 		return info;
 	}
@@ -79,7 +83,8 @@ public class Seres implements Serializable {
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		
 		channel.connect();
-		channel.cd(getInfo().getSeresPath().getPath());		
+		if(getInfo().getSeresPath() != null)
+			channel.cd(getInfo().getSeresPath().getPath());		
 		channel.put(localInputStream, fileName);
 		channel.exit();
 		channel.disconnect();
@@ -93,7 +98,8 @@ public class Seres implements Serializable {
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		
 		channel.connect();
-		channel.cd(info.getSeresPath().getPath());
+		if(getInfo().getSeresPath() != null)
+			channel.cd(info.getSeresPath().getPath());
 		ByteArrayOutputStream localOutputStream = new ByteArrayOutputStream();
 		channel.get(remoteFile, localOutputStream);
 		channel.exit();
@@ -108,7 +114,8 @@ public class Seres implements Serializable {
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 	
 		channel.connect();
-		channel.cd(getInfo().getSeresPath().getPath());	
+		if(getInfo().getSeresPath() != null)
+			channel.cd(getInfo().getSeresPath().getPath());	
 		Vector<ChannelSftp.LsEntry> vector =  channel.ls(getInfo().getSeresPath().getPath());
 		channel.exit();
 		channel.disconnect();

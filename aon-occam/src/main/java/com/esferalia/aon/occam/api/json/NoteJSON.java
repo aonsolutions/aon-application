@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
+import com.esferalia.aon.occam.api.model.office.Tag;
 
 public class NoteJSON {
 	
@@ -27,9 +28,11 @@ public class NoteJSON {
 			.setSubject(JsonUtils.getString(json, "subject"))
 			.setNote(JsonUtils.getString(json, "note"))
 			.setDate(JsonUtils.getDateFormat(json, "date", "yyyy-MM-dd"))
+			.setArchive(JsonUtils.getBoolean(json, "archive"))
+			.setTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, "tag")))
 			;
 	}
-	
+
 	public static JSONArray toJSON(LinkedList<Note> list) {
 		return toJSON(list.stream());
 	}
@@ -41,13 +44,20 @@ public class NoteJSON {
 	}
 	
 	public static JSONObject toJSON(Note note) {
-		return new JSONObject()
+		JSONObject json = new JSONObject()
 			.put(IJsonNames.ID, note.getId())
 			.put(IJsonNames.DOMAIN, note.getDomain())
 			.put("owner", note.getOwner())
 			.put("subject",note.getSubject())
 			.put("note",note.getNote())
-			.put("date",note.getDate());
+			.put("date",note.getDate())
+			.put("archive", note.isArchive());
+		
+		if(null != note.getTag()) {
+			json.put("tag", TagJSON.toJSON(note.getTag()));
+		}
+		
+		return json;
 	}
 
 }

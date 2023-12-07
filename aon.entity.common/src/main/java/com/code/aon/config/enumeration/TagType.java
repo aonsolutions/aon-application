@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import com.code.aon.common.enumeration.IResourceable;
 
 /**
- * Enumeración para identificar los diferentes tipos de impuestos.
+ * Enumeraci? para identificar los diferentes tipos de impuestos.
  * 
  * @author Consulting & Development. Eugenio Castellano - 31-ene-2005
  * @since 1.0
@@ -58,7 +58,8 @@ public enum TagType implements IResourceable {
 	TASK_PRIORITY,
 	TASK_LABEL,
 	TASK_DOCUMENT,
-	CERTIFICATE
+	CERTIFICATE,
+	NOTE
 	;
 
 	/**

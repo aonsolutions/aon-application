@@ -2,6 +2,7 @@ package solutions.aon.seg.social.toolkit;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,6 +11,15 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.LogFactory;
 import org.htmlunit.BrowserVersion;
@@ -20,11 +30,13 @@ import org.htmlunit.IncorrectnessListener;
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
+import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebClientOptions;
 import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
 import org.htmlunit.WebResponseData;
+import org.htmlunit.WebWindow;
 import org.htmlunit.cssparser.parser.CSSErrorHandler;
 import org.htmlunit.cssparser.parser.CSSException;
 import org.htmlunit.html.DomElement;
@@ -34,8 +46,10 @@ import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.parser.HTMLParser;
 import org.htmlunit.html.parser.HTMLParserListener;
 import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
@@ -440,5 +454,72 @@ public class HtmlUnitToolkit {
 				throw new OutOfServiceException("Página no disponible");
 			}
 		}
+	}
+
+	public static HtmlPage tranformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
+		WebClient webClient = xmlPage.getWebClient();
+	    
+	    String xslStylesheet = getXslStylesheet(xmlPage);
+
+	    XmlPage xslPage = webClient.getPage(xslStylesheet);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new DOMSource(xmlPage.getXmlDocument());
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URL xslUrl = xslPage.getWebResponse().getWebRequest().getUrl();
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = xmlPage.getWebResponse().getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    HtmlPage htmlPage = loadHtmlCodeIntoCurrentWindow(webClient, out.toString(), xmlUrl);
+	    return htmlPage;
+	}
+	
+	public static HtmlPage loadHtmlCodeIntoCurrentWindow(final WebClient webClient,  final String htmlCode, final URL url) throws IOException {
+	    final HTMLParser htmlParser = webClient.getPageCreator().getHtmlParser();
+	    final WebWindow webWindow = webClient.getCurrentWindow();
+
+	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
+	    final HtmlPage page = new HtmlPage(webResponse, webWindow);
+	    webWindow.setEnclosedPage(page);
+
+	    htmlParser.parse(webResponse, page, false, false);
+	    return page;
+	}	
+	
+	public static String getXslStylesheet (XmlPage xmlPage) throws MalformedURLException {
+	    
+	    Matcher matcher = Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(xmlPage.getWebResponse().getContentAsString());
+	    matcher.find();
+	    String href = matcher.group("href");
+
+	    URL url = xmlPage.getWebResponse().getWebRequest().getUrl();
+	    return new URL(url, href).toString();
+	    
 	}
 }

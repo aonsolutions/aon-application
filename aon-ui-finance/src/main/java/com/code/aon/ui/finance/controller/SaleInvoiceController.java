@@ -95,6 +95,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -828,7 +829,24 @@ public class SaleInvoiceController extends InvoiceController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
-	
+
+	public void anularInvoiceOnly() {
+		if(isTbaiInvoice()) {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			tbaiConfiguration.setCertificate(getCertData());
+			try {
+				TBAI.getInstance().cancel(tbaiConfiguration, company, invoice);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void anularInvoice() {
 		if(isTbaiInvoice()) {
 			Invoice inv = (Invoice) getTo();
@@ -997,6 +1015,10 @@ public class SaleInvoiceController extends InvoiceController {
 		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
 	}
 	
+	public boolean isAonUser() {
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return "aon".equalsIgnoreCase(login);
+	}
 	String codeAsignacion;
 	
 	public String getCodeAsignacion() {

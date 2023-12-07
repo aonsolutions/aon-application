@@ -19,6 +19,8 @@
 .aon_icon_prev { background-image: iconPrev;}
 @url iconNext aonIconNext;
 .aon_icon_next { background-image: iconNext;}
+@url iconRebaseEdit aonIconRebaseEdit;
+.aon_icon_rebase_edit { background-image: iconRebaseEdit;}
 @url iconDeleteList aonIconDeleteList;
 .aon_icon_delete_list { background-image: iconDeleteList;}
 @url iconEmit aonIconEmit;

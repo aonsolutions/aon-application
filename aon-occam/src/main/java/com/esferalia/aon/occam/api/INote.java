@@ -16,6 +16,8 @@ public interface INote {
 	
 	public void deleteNote(AONContext ctx, Integer id);
 
-	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd);
+	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd, Integer userId);
+	
+	public HashMap<String, Integer> getNoteTagCount(AONContext ctx, NoteFilter filter, Integer userId);
 
 }

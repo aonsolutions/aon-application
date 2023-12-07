@@ -1182,22 +1182,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Sales to = (Sales)this.getTo();
 		to.setStatus(SalesStatus.IN_PREPARATION);
 
-		
-		CarrierPacking cp = new CarrierPacking()
-				.setDomain(to.getDomain())
-				.setSeries(series)
-				.setType(CarrierPackingType.WAYBILL)
-				.setStatus(CarrierPackingStatus.PENDING)
-				.setCarrier(to.getCarrier().getId())
-				.setCarrierDocument(to.getCarrier().getRegistry().getDocument())
-				.setDriverDocument(getDriverDocument())
-				.setDriverName(getDriverName())
-				.setIssueDate(getChargeDate())
-				.setDeliveryDate(to.getDeliveryDate())
-				.setNumberPlate(getNumberPlate());
-		
-		Integer cpId = AON.insertCarrierPacking(domainName, to.getDomain(), login, cp);
-		to.setCarrierPacking(cpId);
 		com.esferalia.aon.occam.api.model.warehouse.Delivery delivery = new com.esferalia.aon.occam.api.model.warehouse.Delivery()
 				.setDomain(to.getDomain())
 				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
@@ -1208,11 +1192,17 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))
 				.setCarrier(to.getCarrier().getId())
-				.setCarrierPacking(cpId)
 				.setNumberPlate(getNumberPlate())
 				.setDriver(getDriverName())
 				.setDriverDocument(getDriverDocument());
-		AON.saveDelivery(domainName, to.getDomain(), login, delivery);
+		delivery = AON.saveDelivery(domainName, to.getDomain(), login, delivery);
+		Integer deliveryId = delivery.getId();
+		
+		AON.getSalesDetailStream(domainName, to.getDomain(), login, f -> f.getSalesProperty().eq(to.getId()))
+		.forEach(detail -> {
+			detail.setDelivery(deliveryId);
+			AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+		});
 		
 		accept(event);
 		

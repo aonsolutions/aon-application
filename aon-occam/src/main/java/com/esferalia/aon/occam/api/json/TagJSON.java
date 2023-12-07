@@ -28,10 +28,12 @@ public class TagJSON {
 	public static Tag fromJSON(JSONObject json) {
 		return new Tag()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-			.setName(JsonUtils.getString(json, IJsonNames.NAME))
+			.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
+			.setName(JsonUtils.optString(json, IJsonNames.NAME))
 			.setTagType(TagType.safeValueOf(JsonUtils.optString(json, "type"))) 
-			.setColor(JsonUtils.getString(json, "color"))
+			.setType(JsonUtils.getByte(json, "type"))
+			.setColor(JsonUtils.optString(json, "color"))
+			.setReference(null != JsonUtils.getBoolean(json, "reference") ? JsonUtils.getBoolean(json, "reference") : false)
 			;
 	}
 	
@@ -56,7 +58,8 @@ public class TagJSON {
 			.put(IJsonNames.NAME, tag.getName())
 			.put(IJsonNames.TYPE, tag.getType() )
 			.put("tag_type", tag.getTagType())
-			.put("color", tag.getColor());
+			.put("color", tag.getColor())
+			.put("reference", tag.hasReference());
 	}
 
 }

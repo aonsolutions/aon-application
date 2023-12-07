@@ -34,6 +34,7 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.function.Function;
 
@@ -42,6 +43,7 @@ import org.jooq.Record;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -582,6 +584,24 @@ public class FillerDAO {
 				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
 					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
 				//TODO	.setSsStatus(ContractStatus.values()[r.getValue(CONTRACT.SS_STATUS)]);
+		}
+	}
+	
+	public static class ContractExtendedDataFiller implements Function<Record, ContractExtendedData> {
+		@Override
+		public ContractExtendedData apply(Record r) {
+			return new ContractExtendedData()
+					.setGrossSalaryLastMonth(r.getValue(ContractDAO.SALARY_CGC_BASE))
+					.setTotalMarksLastMonth(r.getValue(ContractDAO.MARK_TOTAL_TIME))
+					.setId(r.getValue(CONTRACT.ID))
+					.setDomain(r.getValue(CONTRACT.DOMAIN))
+					.setPerson(r.getValue(CONTRACT.PERSON))
+					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
+					.setWorkplaceName(r.getValue(WORKPLACE.DESCRIPTION))
+					.setStartDate(r.getValue(CONTRACT.START_DATE))
+					.setEndDate(r.getValue(CONTRACT.END_DATE))
+					.setContractType(r.getValue(ContractDAO.CONTRACT_TYPE))
+					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME));
 		}
 	}
 	

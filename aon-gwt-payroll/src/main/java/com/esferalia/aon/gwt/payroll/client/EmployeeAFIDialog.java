@@ -828,9 +828,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					onEndContract(settleReasonLB.getSelectedValue());
 				if (isChangeContract()) {
 					onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
-					// For transform comunications
-					if(!isPartialityCoefContract() && afiChangesMap.getChangeValue("TC2").endsWith("9"))
-						onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+					// For transform comunications ¿why?
+//					if(!isPartialityCoefContract() && afiChangesMap.getChangeValue("TC2").endsWith("9"))
+//						onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
 				} if (isQuoteContract())
 					onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
 				if (isOcupationContract())

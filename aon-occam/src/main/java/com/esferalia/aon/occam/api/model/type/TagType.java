@@ -19,7 +19,8 @@ public enum TagType implements Serializable{
 	TASK_PRIORITY,
 	TASK_LABEL,
 	TASK_DOCUMENT,
-	CERTIFICATE
+	CERTIFICATE,
+	NOTE
 	; // Tipo de Aviso
 
 

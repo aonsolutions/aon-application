@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.office.Tag;
+
 public class Note implements Serializable {
 	
 	private static final long serialVersionUID = -6673378118872331822L;
@@ -15,6 +17,8 @@ public class Note implements Serializable {
 	private Date date;
 	private Integer owner;
 	private String note;
+	private boolean archive = false;
+	private Tag tag;
 	
 	public Integer getId() {
 		return id;
@@ -59,6 +63,20 @@ public class Note implements Serializable {
 		return this;
 	}
 	
+	public boolean isArchive() {
+		return archive;
+	}
+	public Note setArchive(boolean archive) {
+		this.archive = archive;
+		return this;
+	}
+	public Tag getTag() {
+		return tag;
+	}
+	public Note setTag(Tag tag) {
+		this.tag = tag;
+		return this;
+	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

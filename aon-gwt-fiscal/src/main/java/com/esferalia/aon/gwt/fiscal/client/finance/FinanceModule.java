@@ -216,10 +216,21 @@ public class FinanceModule extends MainEntryPoint {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<FinanceParams> event) {
+				toolbar.hideMessages();
 				FinanceParams params = event.getValue();
 				search( opt, params );
 			}
 		});
+		
+		// Auto search first time
+		if(this.isPayroll) {
+			enableMoreData();
+			container.clear();
+			tab = getTable();
+			container.add(tab);
+			offset.setValue(0);
+			search(opt, searchPanel.getParams( opt ), offset.getValue());
+		}
 	}
 
 	private static enum COLS {
@@ -290,7 +301,7 @@ public class FinanceModule extends MainEntryPoint {
 	}
 
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
-		toolbar = new AonToolbar(AON.MSG.financeModule());
+		toolbar = new AonToolbar(this.isPayroll ? "Vencimientos N\u00f3minas" : AON.MSG.financeModule());
 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -310,6 +321,7 @@ public class FinanceModule extends MainEntryPoint {
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				toolbar.hideMessages();
 				enableMoreData();
 				container.clear();
 				tab = getTable();
@@ -422,7 +434,7 @@ public class FinanceModule extends MainEntryPoint {
 		toolbar.add(settleAllButton);
 		
 		if(this.isPayroll) {
-			settleSalariesButton = new AonToolbarButton("Vencimiento de n\u00f3minas", AON.CSS.aonIconFinanceSettle());
+			settleSalariesButton = new AonToolbarButton("Vencimiento de n\u00f3minas", AON.CSS.aonIconRebaseEdit());
 			settleSalariesButton.addClickHandler(e -> {
 				new AonSettleDateDialog("Generar vencimientos de n\u00f3minas") {
 					
