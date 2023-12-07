@@ -34,104 +34,132 @@ public class DeliveryDetail implements Serializable {
 	public Integer getId() {
 		return id;
 	}
+	
 	public DeliveryDetail setId(Integer id) {
 		this.id = id;
 		return this;
 	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
+	
 	public DeliveryDetail setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
+	
 	public Delivery getDelivery() {
 		if(delivery == null) 
 			delivery = new Delivery();
 		return delivery;
 	}
+	
 	public DeliveryDetail setDelivery(Delivery delivery) {
 		this.delivery = delivery;
 		return this;
 	}
+	
 	public short getLine() {
 		return line;
 	}
+	
 	public DeliveryDetail setLine(short line) {
 		this.line = line;
 		return this;
 	}
+	
 	public Item getItem() {
 		if(item == null) 
 			item = new Item();
 		return item;
 	}
+	
 	public DeliveryDetail setItem(Item item) {
 		this.item = item;
 		return this;
 	}
+	
 	public String getDescription() {
 		return description;
 	}
+	
 	public DeliveryDetail setDescription(String description) {
 		this.description = description;
 		return this;
 	}
+	
 	public Double getPrice() {
 		return price;
 	}
+	
 	public DeliveryDetail setPrice(double price) {
 		this.price = price;
 		return this;
 	}
+	
 	public String getDiscountExpression() {
 		return discountExpression;
 	}
+	
 	public DeliveryDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = discountExpression;
 		return this;
 	}
+	
 	public Date getCreationDate() {
 		return creationDate;
 	}
+	
 	public DeliveryDetail setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 		return this;
 	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}
+	
 	public DeliveryDetail setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
 		return this;
 	}
+	
 	public Date getModificationDate() {
 		return modificationDate;
 	}
+	
 	public DeliveryDetail setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
 	public String getModificationUser() {
 		return modificationUser;
 	}
+	
 	public DeliveryDetail setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
 		return this;
 	}
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
 	public double getQuantity() {
 		return quantity;
 	}
+	
 	public DeliveryDetail setQuantity(double quantity) {
 		this.quantity = quantity;
 		return this;
 	}
+	
 	public Integer getSalesDetail() {
 		return salesDetail;
 	}
+	
 	public DeliveryDetail setSalesDetail(Integer salesDetail) {
 		this.salesDetail = salesDetail;
 		return this;
@@ -149,16 +177,23 @@ public class DeliveryDetail implements Serializable {
 	public String getPurchaseReference() {
 		return purchaseReference;
 	}
+	
 	public DeliveryDetail setPurchaseReference(String purchaseReference) {
 		this.purchaseReference = purchaseReference;
 		return this;
 	}
+	
 	public Integer getWarehouse() {
 		return warehouse;
 	}
+	
 	public DeliveryDetail setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
 		return this;
+	}
+	
+	public double getAmount() {
+		return (this.getQuantity() * this.getPrice()) - (this.getQuantity() * this.getPrice() * Double.parseDouble(this.getDiscountExpression()) / 100);
 	}
 	
 	@Deprecated
