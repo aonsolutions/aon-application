@@ -8,6 +8,11 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.Block;
@@ -20,6 +25,14 @@ import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.templates.Templates;
 
 public class InvoiceIMGParser {
+
+       	private static final String ACCESS_KEY = "AKIARG5OEKO7GGOK4NOG";
+        private static final String PRIVATE_KEY = "WiosXlQ3q1s18H39itwXRGG9USUk7/zUmqIqhvby";
+
+       	public static AWSCredentialsProvider getProvider() {
+                BasicAWSCredentials basic =  new BasicAWSCredentials(ACCESS_KEY, PRIVATE_KEY);
+                return new AWSStaticCredentialsProvider(basic);
+        }
 
 	public static void parse( File file , InvoiceBuilder<?> handler) throws InvoiceIMGException {
 		try (InputStream is = new FileInputStream(file)) {
@@ -59,7 +72,10 @@ public class InvoiceIMGParser {
 			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 5MB de tamaño");		
 		}
 
-		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
+		AmazonTextract client = AmazonTextractClientBuilder.standard()
+                                .withCredentials(getProvider())
+                                .withRegion("eu-west-1")
+                                .build();
 		DetectDocumentTextRequest detectDocumentTextRequest = 
 		new DetectDocumentTextRequest().withDocument(doc);
 		
@@ -138,6 +154,6 @@ public class InvoiceIMGParser {
 		return false;
 	}
 	
-	
+
 
 }
