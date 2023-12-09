@@ -21,8 +21,6 @@ public class Tag implements Serializable, HasId {
 	private Date startDate;
 	private Date endDate;
 	private User user;
-	
-	private boolean hasReference;
 
 	public Tag() {
      // TODO document why this constructor is empty
@@ -105,15 +103,6 @@ public class Tag implements Serializable, HasId {
 	
 	public User getUser() {
 		return user;
-	}
-	
-	public boolean hasReference() {
-		return hasReference;
-	}
-
-	public Tag setReference(boolean hasReference) {
-		this.hasReference = hasReference;
-		return this;
 	}
 
 	public boolean isTagType() {

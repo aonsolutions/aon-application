@@ -3,19 +3,18 @@ import { AonApplication } from "../../components/aon-application.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import Apps, { NOTES } from "../../services/app.js";
 import { AON_NOTES } from "../../environments/aonTag.js";
-import { getNotes, saveNote, deleteNote, getNoteCount, getNoteTagsCount, getNoteTags, saveNoteTag, deleteNoteTag } from "../../services/noteService.js";
+import { getNotes, saveNote, deleteNote, saveNoteTag, deleteNoteTag } from "../../services/noteService.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { Note } from "../../models/note/Note.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { AonNewDialog } from "../../components/aon-new-dialog.js";
-import { TAG_TYPE } from "../messenger/MessengerEnums.js";
-import { sortBy } from "../../services/utils.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
-import { AonNewColor } from "../../components/aon-new-color.js";
+import { sortBy } from "../../services/utils.js";
 
 export class AonNotes extends AonElement {
   NOTES;
   NOTES_TAG;
+  NOTES_STATUS;
 
   notesContainer;
   filter;
@@ -23,6 +22,7 @@ export class AonNotes extends AonElement {
   constructor() {
     super();
     this.filter = {};
+    this.filter.order = 'pinUp';
   }
 
   connectedCallback() {
@@ -33,11 +33,13 @@ export class AonNotes extends AonElement {
   initialize() {}
 
   async build() {
-    this.createApplication(AON_NOTES, "", new AonApplication());
+    this.createApplication(AON_NOTES, MSG.NOTES, new AonApplication());
     this.buildToolbar();
+
+    await this.getNotes();
     
-    await this.buildSidenav();
-    await this.buildTagSidenav();
+    this.buildSidenav();
+    this.buildTagSidenav();
 
     this.waitForElementToExist("aon-notesSidenavNotesOpen").then(
       (noteSidenavOpt) => {
@@ -60,6 +62,17 @@ export class AonNotes extends AonElement {
   buildToolbar() {
     this.getApplication().addToolbarOption2(
       {
+        name: "Odernar",
+        icon: MATERIAL_ICONS.FILTER_LIST,
+        id: "Order",
+      },
+      () => {
+        this.showOrderDialog();
+      }
+    );
+
+    this.getApplication().addToolbarOption2(
+      {
         name: "Nueva Nota",
         icon: MATERIAL_ICONS.ADD,
         id: MATERIAL_ICONS.ADD,
@@ -71,46 +84,141 @@ export class AonNotes extends AonElement {
         });
       }
     );
+
+    let orderOpt = new AonDialogMenu();
+    orderOpt.id = "orderOptDialog";
+    this.getApplication().appendChild(orderOpt);
+
+  }
+
+  showOrderDialog(){
+
+    this.waitForElementToExist("aon-notesToolbarHeaderToolSectionOrderButtonIconButton").then(
+      (button) => {
+
+        let height = window.innerHeight;
+        let top  = button.getBoundingClientRect().top;
+        const left = button.getBoundingClientRect().left;
+
+        if((height - top) < (height / 2)) {
+          top = top - (ayudat ? 205 : 170);
+        }
+
+        let d = document.getElementById('orderOptDialog');
+
+        const defaultOrder = {
+          name: 'Por defecto',
+          title:"Por defecto",
+          icon: 'filter_list',
+          fn: () => {
+            this.filter.order = 'pinUp';
+            this.aonNotes();
+          }
+        };
+
+        const updateOrder = {
+          name: 'Fecha modif.',
+          title:"Fecha modificación",
+          icon: 'filter_list',
+          fn : () => {
+            this.filter.order = 'modificationDate';
+            this.aonNotes();
+          }
+        };
+
+        const creationOrder = {
+          name: "Fecha creación",
+          title: "Fecha creación",
+          icon: 'filter_list',
+          fn :  () => {
+            this.filter.order = 'creationDate';
+            this.aonNotes();
+          }
+        };
+        
+        let options = [defaultOrder, updateOrder, creationOrder];
+        d.setMenuOptions(options, top, left);
+        d.open();
+      });    
+  }
+
+  // ----------------------------- GET NOTES
+
+  async getNotes(){
+    await getNotes().then((notes) => {
+      this.NOTES = notes;
+      this.NOTES = sortBy(this.NOTES, 'subject');
+
+      this.NOTES_TAG = {};
+      this.NOTES.forEach((note) => {
+        if(note.noteTag){
+          var valor = note.noteTag;
+          if (this.NOTES_TAG[valor]) {
+            this.NOTES_TAG[valor]++;
+          } else {
+            this.NOTES_TAG[valor] = 1;
+          }
+        }
+      });
+
+      this.NOTES_TAG = Object.keys(this.NOTES_TAG) 
+        .sort().reduce((temp_obj, key) => {
+          temp_obj[key] = this.NOTES_TAG[key];
+          return temp_obj;
+        }, {});
+
+      if(this.NOTES_TAG.length === 0 || !this.NOTES_TAG[this.filter.tag]){
+        this.filter.tag = undefined;
+      }
+
+      let currentDate = new Date().getTime();
+      this.NOTES_STATUS = {};
+      this.NOTES_STATUS.all = this.NOTES.length;
+      this.NOTES_STATUS.active = this.NOTES.filter((note) => note.archive === false && currentDate <= new Date(note.date).getTime()).length;
+      this.NOTES_STATUS.expired = this.NOTES.filter((note) => note.archive === false && currentDate > new Date(note.date).getTime()).length;
+      this.NOTES_STATUS.archived = this.NOTES.filter((note) => note.archive === true).length;
+    });
   }
 
   // ----------------------------- SIDENAV
 
-  async buildSidenav() {
-    if (this.isMobile()) {
-      this.getApplication().addMobileSidenavHeader(Apps.NOTES);
-    }
+  buildSidenav() {
     this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) =>
       this.selectOption(e.detail)
     );
 
-    await this.buildUtilitiesOptions();
+    this.buildUtilitiesOptions();
   }
 
   async selectOption(option) {
     switch (option.id) {
+      case "NotesAll":
+        this.filter.all = true;
+        this.filter.active = false;
+        this.filter.expired = false;
+        this.filter.archived = false;
+        this.aonNotes();
+        break;
       case "NotesOpen":
+        this.filter.all = false;
         this.filter.active = true;
         this.filter.expired = false;
         this.filter.archived = false;
-        await this.aonNotes();
-        this.addColorSelectionSidenav();
-        this.addColorTagSelectionSidenav();
+        this.aonNotes();
         break;
       case "NotesExpired":
+        this.filter.all = false;
         this.filter.active = false;
         this.filter.expired = true;
         this.filter.archived = false;
-        await this.aonNotes();
-        this.addColorSelectionSidenav();
-        this.addColorTagSelectionSidenav();
+        this.aonNotes();
         break;
       case "NotesArchived":
+        this.filter.all = false;
         this.filter.active = false;
         this.filter.expired = false;
         this.filter.archived = true;
-        await this.aonNotes();
-        this.addColorSelectionSidenav();
-        this.addColorTagSelectionSidenav();
+        this.aonNotes();
         break;
       default:
         break;
@@ -119,13 +227,21 @@ export class AonNotes extends AonElement {
 
   // ----------------------------- SIDENAV (NOTES)
 
-  async buildUtilitiesOptions() {
-    let count = await getNoteCount();
+  buildUtilitiesOptions() {
     let notesOpts = [];
     notesOpts.push(
       {
+        id: CONSTANT.NOTES.initCap() + "All",
+        name: `Todas (${this.NOTES_STATUS.all})`,
+        icon: MATERIAL_ICONS.ALL_INBOX,
+        app: NOTES,
+        fn: () => {
+          // Filter selectOption method
+        },
+      },
+      {
         id: CONSTANT.NOTES.initCap() + "Open",
-        name: `Activas (${count.total - count.total_expired - count.archive})`,
+        name: `Activas (${this.NOTES_STATUS.active})`,
         icon: MATERIAL_ICONS.NOTES,
         app: NOTES,
         fn: () => {
@@ -134,7 +250,7 @@ export class AonNotes extends AonElement {
       },
       {
         id: CONSTANT.NOTES.initCap() + "Expired",
-        name: `Expiradas (${count.total_expired})`,
+        name: `Expiradas (${this.NOTES_STATUS.expired})`,
         icon: MATERIAL_ICONS.SCHEDULE,
         app: NOTES,
         fn: () => {
@@ -143,8 +259,8 @@ export class AonNotes extends AonElement {
       },
       {
         id: CONSTANT.NOTES.initCap() + "Archived",
-        name: `Archivadas (${count.archive})`,
-        icon: MATERIAL_ICONS.ALL_INBOX,
+        name: `Archivadas (${this.NOTES_STATUS.archived})`,
+        icon: MATERIAL_ICONS.INBOX,
         app: NOTES,
         fn: () => {
           // Filter selectOption method
@@ -154,7 +270,7 @@ export class AonNotes extends AonElement {
 
     let options = {
       id: CONSTANT.NOTES.initCap(),
-      name: MSG.NOTES.toUpperCase(),
+      name: MSG.STATUS.toUpperCase(),
       app: NOTES,
     };
 
@@ -164,232 +280,165 @@ export class AonNotes extends AonElement {
   // ----------------------------- SIDENAV (TAG)
 
   async buildTagSidenav() {
-    this.getApplication().addSidenavOptions2(
-      {
-        id: TAG_TYPE.NOTE_LABEL,
-        name: MSG.TAG,
-        app: Apps.NOTES,
-      },
-      [],
-      () => this.dialogTag({})
-    );
-
-    await this.loadTags();
-  }
-
-  async loadTags() {
-    const type = TAG_TYPE.NOTE_LABEL;
-    await this.getTags();
-
-    this.clearElementById(this.getApplication().SIDENAV + type + "List");
-
-    const tagCount = await getNoteTagsCount();
-    
-    this.NOTES_TAG.forEach((item) => {
-      let tagId = item.id;
-      let option = {
-        id: item.id,
-        name: `${item.name} (${tagCount[tagId] || '0'})`,
+    let notesOpts = [];
+    Object.keys(this.NOTES_TAG).forEach(key => {
+      notesOpts.push({
+        id: key,
+        name: `${key} (${this.NOTES_TAG[key] || '0'})`,
         icon: MATERIAL_ICONS.LABEL,
         actions: [
           {
             id: "Delete",
             icon: MATERIAL_ICONS.DELETE,
-            action: () => {
-              if(item.reference){
-                this.deleteDialog(item);
-              } else {
-                this.deleteTag(item);
-              }
-            },
+            action: () => this.deleteTag(key)
           },
           {
             id: "Edit",
             icon: MATERIAL_ICONS.EDIT,
-            action: () => this.dialogTag(item),
+            action: () => this.dialogTag(key)
           },
         ],
         fn: async () => {
           // Filter notes by tag
-          if(this.filter.tag && this.filter.tag === item.id){
+          if(this.filter.tag && this.filter.tag === key){
             this.filter.tag = undefined;
           } else {
-            this.filter.tag = item.id;
+            this.filter.tag = key;
           }
-          await this.aonNotes();
-          this.addColorSelectionSidenav();
-          this.addColorTagSelectionSidenav();
+          this.aonNotes();
         },
-      };
-
-      this.getApplication().addSidenavOptionsListValue(
-        {
-          id: type,
-          name: MSG.TYPE.toUpperCase(),
-          app: NOTES,
-        },
-        option
-      );
+      });
     });
+
+    let options = {
+      id: "Tags",
+      name: MSG.TAG,
+       app: NOTES,
+    };
+
+    this.getApplication().addSidenavOptions2(options, notesOpts);
   }
 
-  async getTags() {
-    this.NOTES_TAG = await getNoteTags();
-    this.NOTES_TAG = sortBy(this.NOTES_TAG, "name", "asc");
-  }
-
-  deleteTag(tag) {
+  deleteTag(noteTag) {
     let aonDeleteTagDialog = new AonNewDialog();
-    aonDeleteTagDialog.id = tag.id;
+    aonDeleteTagDialog.id = noteTag + "Delete";
     this.getApplication().appendChild(aonDeleteTagDialog);
 
     aonDeleteTagDialog.createMessage(
-      "¿Realmente desea eliminar la etiqueta '" + tag.name + "'?"
+      `Existe al menos una nota con esta etiqueta asignada. ¿Realmente desea eliminar la etiqueta '${noteTag}'?`
     );
 
     aonDeleteTagDialog.createAcceptButton(async () => {
-      await deleteNoteTag(tag);
+      let data = {};
+      data.noteTag = noteTag;
+      await deleteNoteTag(data);
       this.getApplication().removeChild(aonDeleteTagDialog);
-      if(this.filter.tag && this.filter.tag === tag.id){
+      if(this.filter.tag && this.filter.tag === noteTag){
         this.filter.tag = undefined;
       }
-      await this.loadTags();
-      this.addColorTagSelectionSidenav();
-      this.aonNotes();
-      
+      await this.reloadNotes();
     });
 
     aonDeleteTagDialog.createCancelButton(() => {
       this.getApplication().removeChild(aonDeleteTagDialog);
     });
 
-    this.waitForElementToExist(`${tag.id}AcceptButton`).then((acceptButton) => {
+    this.waitForElementToExist(`${noteTag}DeleteAcceptButton`).then((acceptButton) => {
       acceptButton.focus();
     });
   }
 
-  deleteDialog(tag) {
-    let aonDeleteTagDialog = new AonNewDialog("Etiqueta referenciada");
-    aonDeleteTagDialog.id = tag.id;
-    this.getApplication().appendChild(aonDeleteTagDialog);
-
-    aonDeleteTagDialog.createMessage(
-      `La etiqueta '${tag.name}' no puede ser eliminada, ya que existe al menos una nota con esta etiqueta asignada.`
-    );
-
-    aonDeleteTagDialog.createCancelButton(() => {
-      this.getApplication().removeChild(aonDeleteTagDialog);
-    });
-
-    this.waitForElementToExist(`${tag.id}CancelButton`).then((cancelButton) => {
-      cancelButton.focus();
-    });
-  }
-
-  dialogTag(tag) {
+  dialogTag(noteTag) {
     let aonCreateUpdateTagDialog = new AonNewDialog("Etiqueta");
     aonCreateUpdateTagDialog.id = "createUpdateTagDialog";
     this.getApplication().appendChild(aonCreateUpdateTagDialog);
 
-    // Create content
-    let content = this.createElement(TAG.DIV);
-    content.style.display = "flex";
-    content.style.flexDirection = "column";
-    content.style.gap = ".5rem";
-
     // Create name input
     let nameInput = this.createAonElement(new AonNewInput(), 'nameInput', 'Nombre');
     nameInput.type = 'text';
-    if (tag.name) nameInput.value = tag.name;
-    content.appendChild(nameInput);
-
-    // Create color input
-    let aonNewColor = new AonNewColor(
-      tag.color ? tag.color : "#fff8b8", 
-      [
-        '#faafa8',
-        '#f39f76',
-        '#fff8b8',
-        '#e2f6d3',
-        '#b4ddd3',
-        '#d4e4ed',
-        '#aeccdc',
-        '#d3bfdb',
-        '#f6e2dd',
-        '#e9e3d4',
-        '#efeff1'
-      ]
-    );
-    aonNewColor.value = tag.color ? tag.color : "#fff8b8";
-    content.appendChild(aonNewColor);
+    nameInput.setAttribute("maxLength", 11);
+    nameInput.id = "dialogTag"
+    if (noteTag) nameInput.value = noteTag;
 
     // Add dialog body
-    aonCreateUpdateTagDialog.createBody(content);
+    aonCreateUpdateTagDialog.createBody(nameInput);
+    nameInput.focus();
 
     aonCreateUpdateTagDialog.createAcceptButton(async () => {
-      tag.name = nameInput.value;
-      tag.color = aonNewColor.value;
-      tag.type = 14;
-      await saveNoteTag(tag);
+      let data = {};
+      data.noteTagOld = noteTag;
+      data.noteTagNew = nameInput.value;
+      await saveNoteTag(data);
       this.getApplication().removeChild(aonCreateUpdateTagDialog);
-      await this.loadTags();
-      this.addColorTagSelectionSidenav();
-      this.aonNotes();
+      await this.reloadNotes();
     });
 
     aonCreateUpdateTagDialog.createCancelButton(() => {
       this.getApplication().removeChild(aonCreateUpdateTagDialog);
     });
+
+    this.waitForElementToExist(`dialogTagInput`).then((input) => {
+      input.setAttribute("maxLength", 11);
+      input.focus();
+    });
   }
 
   // ----------------------------- NOTES
 
-  async aonNotes() {
+  aonNotes() {
     this.notesContainer = this.createElement(TAG.DIV);
     this.notesContainer.id = "notesContainer";
     this.notesContainer.className = CSS.NOTE_CONTAINER;
     this.getApplication().setContent(this.notesContainer);
 
-    await getNotes().then((notes) => {
-      this.NOTES = notes;
+    let emptyNotes = this.createElement(TAG.DIV);
+    emptyNotes.id = "notesEmpty";
+    emptyNotes.className = CSS.EMPTY_NOTE;
+    emptyNotes.innerHTML = "No existen notas disponibles";
+    this.notesContainer.appendChild(emptyNotes);
+    emptyNotes.style.display = "none";
 
-      let emptyNotes = this.createElement(TAG.DIV);
-      emptyNotes.id = "notesEmpty";
-      emptyNotes.className = CSS.EMPTY_NOTE;
-      emptyNotes.innerHTML = "No existen notas disponibles";
-      this.notesContainer.appendChild(emptyNotes);
-      emptyNotes.style.display = "none";
+    let filteredNotes = this.filterNotes();
+    filteredNotes = filteredNotes.sort((a, b) => 
+      (a[this.filter.order] > b[this.filter.order]) ? 1 : 
+      (a[this.filter.order] === b[this.filter.order]) ? ((a.modificationDate > b.modificationDate) ? 1 : (a.modificationDate === b.modificationDate) ? ((a.subject > b.subject) ? -1 : 1) : -1) : -1 );
 
-      this.filterNotes();
+    if (!filteredNotes || filteredNotes.length === 0) {
+      emptyNotes.style.display = "block";
+    } else {
+      filteredNotes.forEach((noteJson) => {
+        let note = new Note(noteJson);
+        this.addNote(note);
+      });
+    }
 
-      if (!this.NOTES || this.NOTES.length === 0) {
-        emptyNotes.style.display = "block";
-      } else {
-        this.NOTES.forEach((noteJson) => {
-          let note = new Note(noteJson);
-          this.addNote(note);
-        });
-      }
-    });
+    this.addFilterSelection();
+    if(this.filter.tag){ this.updateTagSideNavCount(); } 
+    else { this.updateSideNavCount(); }
   }
 
   filterNotes() {
     let currentDate = new Date().getTime();
+    let filteredNotes;
     if (this.filter.active) {
-      this.NOTES = this.NOTES.filter(
-        (note) => note.archive === false && currentDate <= new Date(note.date).getTime()
+      filteredNotes = this.NOTES.filter(
+        (note) => !note.archive && currentDate <= new Date(note.date).getTime()
       );
     } else if (this.filter.expired) {
-      this.NOTES = this.NOTES.filter(
-        (note) => note.archive === false && currentDate > new Date(note.date).getTime()
+      filteredNotes = this.NOTES.filter(
+        (note) => !note.archive && currentDate > new Date(note.date).getTime()
       );
     } else if (this.filter.archived) {
-      this.NOTES = this.NOTES.filter((note) => note.archive === true);
+      filteredNotes = this.NOTES.filter((note) => note.archive);
+    } else {
+      filteredNotes = this.NOTES;
     }
 
     if(this.filter.tag){
-      this.NOTES = this.NOTES.filter((note) => note.tag && note.tag.id === this.filter.tag);
+      filteredNotes = filteredNotes.filter((note) => note.noteTag === this.filter.tag);
     }
+
+    return filteredNotes;
   }
 
   addNote(note) {
@@ -400,6 +449,7 @@ export class AonNotes extends AonElement {
     if (!note) {
       note = new Note();
       note.setId(Math.floor((Math.random() - 1) * 100));
+      note.setCreationDate(new Date());
     }
 
     let noteCard = this.createElement(TAG.DIV);
@@ -409,8 +459,8 @@ export class AonNotes extends AonElement {
     // Title
     let noteCardTitleDiv = this.createElement(TAG.DIV);
     noteCardTitleDiv.className = CSS.NOTE_TITLE_CARD;
-    if(note.tag && note.tag.color){
-      noteCardTitleDiv.style.backgroundColor = note.tag.color;
+    if(note.color){
+      noteCardTitleDiv.style.backgroundColor = note.color;
     } else {
       noteCardTitleDiv.style.backgroundColor = "white";
     }
@@ -424,6 +474,20 @@ export class AonNotes extends AonElement {
     noteCardTitle.className = CSS.NOTE_TITLE;
     noteCardTitle.value = note.getSubject() ? note.getSubject() : "";
     noteCardTitleDiv.appendChild(noteCardTitle);
+
+    let pinUpTitleButton = this.createNoteButton(
+      MATERIAL_ICONS.PUSH_PIN,
+      "Liberar",
+      async () => {
+        note.setPinUp(!note.getPinUp());
+        await this.saveNote(note);
+        await this.reloadNotes();
+      }
+    );
+    if(note.getPinUp()){
+      noteCardTitleDiv.appendChild(pinUpTitleButton);
+    }
+
 
      // Body
     let noteCardBodyDiv = this.createElement(TAG.DIV);
@@ -442,24 +506,32 @@ export class AonNotes extends AonElement {
     noteCardDate.type = "date";
     noteCardDate.id = note.getId() + "Date";
     noteCardDate.className = CSS.NOTE_DATE;
-
-    console.log(note.getDate());
-    if(note.getDate() && new Date(note.getDate()).getTime() !== new Date("9999-01-01").getTime()){
-      noteCardDate.value = note.getDate();
-    } else{
-      noteCardDate.style.display = "none";
-    }
+    noteCardDate.style.display = "none";
 
     // Bottom
     let bottomNoteDiv = this.createElement(TAG.DIV);
     bottomNoteDiv.style.width = "100%";
     bottomNoteDiv.style.display = "flex";
     bottomNoteDiv.style.justifyContent = "space-between";
+    bottomNoteDiv.style.alignItems = "center";
     noteCardBodyDiv.appendChild(bottomNoteDiv);
 
+    let noteTagDiv = this.createElement(TAG.DIV);
+    noteTagDiv.style.display = "none";
+    noteTagDiv.style.padding = ".5rem";
+    noteTagDiv.style.backgroundColor = "#ddd";
+    noteTagDiv.style.borderRadius = "15px";
+    noteTagDiv.style.height = "30px";
+    noteTagDiv.style.display = "block";
+    noteTagDiv.style.fontSize = ".7rem";
+    bottomNoteDiv.appendChild(noteTagDiv);
+
+    if(note.getNoteTag()){
+      noteTagDiv.innerHTML = note.getNoteTag();
+    } else noteTagDiv.style.visibility = "hidden";
+
     let buttonsNoteDiv = this.createElement(TAG.DIV);
-    buttonsNoteDiv.style.display = "flex";
-    buttonsNoteDiv.style.visibility = "hidden";
+    buttonsNoteDiv.style.display = "none";
     bottomNoteDiv.appendChild(buttonsNoteDiv);
 
     // Delete
@@ -476,10 +548,7 @@ export class AonNotes extends AonElement {
         aonDeleteDialog.createAcceptButton(async () => {
           await deleteNote(note);
           this.getApplication().removeChild(aonDeleteDialog);
-          await this.updateSideNavCount();
-          await this.loadTags();
-          this.addColorTagSelectionSidenav();
-          this.aonNotes();
+          await this.reloadNotes();
         });
 
         aonDeleteDialog.createCancelButton(() => {
@@ -494,6 +563,26 @@ export class AonNotes extends AonElement {
       }
     )
     buttonsNoteDiv.appendChild(deleteButton);
+
+    let pinUpButton = this.createNoteButton(
+      MATERIAL_ICONS.PUSH_PIN,
+      note.getPinUp() ? "Liberar" : "Fijar",
+      async () => {
+        note.setPinUp(!note.getPinUp());
+        await this.saveNote(note);
+        await this.reloadNotes();
+      }
+    );
+    buttonsNoteDiv.appendChild(pinUpButton);
+
+    let colorButton = this.createNoteButton(
+      MATERIAL_ICONS.PALETTE,
+      "Color",
+      (ev) => {
+        this.createColorsSelection(ev, note, buttonsNoteDiv);
+      }
+    );
+    buttonsNoteDiv.appendChild(colorButton);
 
     let alarmButton = this.createNoteButton(
       MATERIAL_ICONS.NOTIFICATION_ADD,
@@ -512,7 +601,9 @@ export class AonNotes extends AonElement {
       async () => {
         note.setDate(undefined);
         note.setArchive(!note.getArchive());
+        note.setArchiveDate(note.getArchive() ? new Date() : null);
         await this.saveNote(note);
+        await this.reloadNotes();
       }
     );
     buttonsNoteDiv.appendChild(archiveButton);
@@ -532,24 +623,29 @@ export class AonNotes extends AonElement {
         tagInputDiv.style.borderRadius = "3px";
         tagInputDiv.style.position = "relative";
 
-        let selectInputDic = this.createElement("select");
+        let selectInputDic = this.createElement(TAG.INPUT);
+        selectInputDic.type = "text";
+        selectInputDic.placeholder = "Introduce la etiqueta";
+        selectInputDic.setAttribute("list", "tagDatalist");
         selectInputDic.style.width = "100%";
         selectInputDic.style.height = "100%";
         selectInputDic.style.background = "none";
         selectInputDic.style.border = "none";
         selectInputDic.style.paddingLeft = "1rem";
+        selectInputDic.setAttribute("maxLength", 11);
+        selectInputDic.id = "tagInputDialog";
+        selectInputDic.value = note.getNoteTag();
         tagInputDiv.appendChild(selectInputDic);
 
-        let optionSelectDic = this.createElement("option");
-        optionSelectDic.innerText = "Sin etiqueta";
-        optionSelectDic.value = -1;
-        selectInputDic.appendChild(optionSelectDic);
+        let datalist = this.createElement("datalist");
+        datalist.id = "tagDatalist";
+        tagInputDiv.appendChild(datalist);
 
-        this.NOTES_TAG.forEach(tag => {
+        Object.keys(this.NOTES_TAG).forEach(tag => {
           let optionSelectDic = this.createElement("option");
-          optionSelectDic.innerText = tag.name;
-          optionSelectDic.value = tag.id;
-          selectInputDic.appendChild(optionSelectDic);
+          optionSelectDic.innerText = tag;
+          optionSelectDic.value = tag;
+          datalist.appendChild(optionSelectDic);
         });
 
         let tagSpantDic = this.createElement(TAG.SPAN);
@@ -566,20 +662,18 @@ export class AonNotes extends AonElement {
 
         aonTagDialog.createAcceptButton(async () => {
           this.getApplication().removeChild(aonTagDialog);
-          if(selectInputDic.value === "-1") note.tag = {};
-          else note.tag.id = selectInputDic.value;
+          note.noteTag = selectInputDic.value;
           await this.saveNote(note);
-          await this.loadTags();
-          this.addColorTagSelectionSidenav();
+          await this.reloadNotes();
         });
 
         aonTagDialog.createCancelButton(() => {
           this.getApplication().removeChild(aonTagDialog);
         });
 
-        this.waitForElementToExist(`${note.getId()}TagAcceptButton`).then(
-          (acceptButton) => {
-            acceptButton.focus();
+        this.waitForElementToExist(`tagInputDialog`).then(
+          (input) => {
+            input.focus();
           }
         );
       }
@@ -587,21 +681,30 @@ export class AonNotes extends AonElement {
     buttonsNoteDiv.appendChild(tagButton);
 
     // Check if its expired
+    if(note.getDate() && !note.getArchive() && new Date(note.getDate()).getTime() !== new Date("9999-01-01").getTime()){
+      noteCardDate.value = note.getDate();
+      noteCardDate.style.display = "block";
+    } else if(note.getArchive() && new Date(note.getArchiveDate()).getTime() !== new Date("9999-01-01").getTime()){
+      noteCardDate.value = note.getArchiveDate();
+      noteCardDate.style.display = "block";
+    } 
+
     if (note.getDate()) {
       let date = new Date();
       let dateNote = new Date(note.getDate());
       if (dateNote.getTime() < date.getTime()) noteCardDate.style.color = "#e1444c";
     }
+    
     bottomNoteDiv.appendChild(noteCardDate);
 
     if(note.getArchive()){
       alarmButton.style.display = "none";
     }
 
-    if(note.tag && note.tag.color){
-      noteCardBodyDiv.style.backgroundColor = note.tag.color;
-      textAreaBody.style.backgroundColor = note.tag.color;
-      noteCardDate.style.backgroundColor = note.tag.color;
+    if(note.getColor()){
+      noteCardBodyDiv.style.backgroundColor = note.getColor();
+      textAreaBody.style.backgroundColor = note.getColor();
+      noteCardDate.style.backgroundColor = note.getColor();
     }
     else {
       noteCardBodyDiv.style.backgroundColor = "white";
@@ -613,7 +716,8 @@ export class AonNotes extends AonElement {
     noteCard.addEventListener(
       "mouseover",
       (event) => {
-        buttonsNoteDiv.style.visibility = "visible";
+        buttonsNoteDiv.style.display = "flex";
+        noteTagDiv.style.display = "none";
       },
       false,
     );
@@ -621,7 +725,8 @@ export class AonNotes extends AonElement {
     noteCard.addEventListener(
       "mouseout",
       (event) => {
-        buttonsNoteDiv.style.visibility = "hidden";
+        buttonsNoteDiv.style.display = "none";
+        noteTagDiv.style.display = "block";
       },
       false,
     );
@@ -629,11 +734,13 @@ export class AonNotes extends AonElement {
     noteCardTitle.addEventListener("change", async ({ target }) => {
       note.setSubject(target.value);
       await this.saveNote(note);
+      await this.reloadNotes();
     });
 
     textAreaBody.addEventListener("change", async ({ target }) => {
       note.setNote(target.value);
       await this.saveNote(note);
+      await this.reloadNotes();
     });
 
     noteCardDate.addEventListener("change", async ({ target }) => {
@@ -648,6 +755,7 @@ export class AonNotes extends AonElement {
       }
 
       await this.saveNote(note);
+      await this.reloadNotes();
     });
 
     let aonDialogMenu = new AonDialogMenu();
@@ -657,6 +765,66 @@ export class AonNotes extends AonElement {
     this.notesContainer.prepend(noteCard);
 
     return note.getId() + "Title";
+  }
+
+  createColorsSelection(ev, note, buttonsPanel){
+    let colorsDiv = this.createElement(TAG.DIV);
+    colorsDiv.style.backgroundColor = "white";
+    colorsDiv.style.borderRadius = "15px";
+    colorsDiv.style.display = "flex";
+    colorsDiv.style.gap = ".5rem";
+    colorsDiv.style.flexWrap = "wrap";
+    colorsDiv.style.width = "10rem";
+    colorsDiv.style.position = "absolute";
+    colorsDiv.style.top = ev.clientY - 135;
+    colorsDiv.style.left = ev.clientX - 310;
+    colorsDiv.style.zIndex = "1";
+    colorsDiv.style.padding = ".5rem";
+    colorsDiv.style.cursor = "pointer";
+    buttonsPanel.appendChild(colorsDiv);
+
+    colorsDiv.addEventListener("mouseleave", (event) => {
+      event.preventDefault();
+      buttonsPanel.removeChild(colorsDiv);
+    });
+
+    let aviableColors = [
+      '#faafa8',
+      '#f39f76',
+      '#fff8b8',
+      '#e2f6d3',
+      '#b4ddd3',
+      '#d4e4ed',
+      '#aeccdc',
+      '#d3bfdb',
+      '#f6e2dd',
+      '#e9e3d4',
+      '#efeff1',
+      '#fff'
+    ]
+
+    aviableColors.forEach(color => {
+      let colorDiv = this.createElement(TAG.DIV);
+      colorDiv.style.width = "1rem";
+      colorDiv.style.height = "1rem";
+      colorDiv.style.borderRadius = "50%";
+      colorDiv.style.borderColor = color;
+      colorDiv.style.backgroundColor = color;
+
+      if(color === "#fff"){
+        colorDiv.style.border = "1px solid #ddd";
+      }
+
+      colorDiv.addEventListener("click", async (event) => {
+        event.preventDefault();
+        buttonsPanel.removeChild(colorsDiv);
+        note.color = color;
+        await this.saveNote(note);
+        await this.reloadNotes();
+      });
+
+      colorsDiv.appendChild(colorDiv);
+    });
   }
 
   createNoteButton(icon, title, fn){
@@ -675,100 +843,100 @@ export class AonNotes extends AonElement {
     
     button.addEventListener(EVENT.CLICK, (ev)=>{
       ev.stopPropagation();
-      fn();
+      fn(ev);
     });
 
     return button;
   }
 
   async saveNote(note) {
+    note.setModificationDate(new Date());
+    if(note.getId() < 0){
+      note.setCreationDate(new Date());
+    }
     const { id } = await saveNote(note);
-    await this.updateSideNavCount();
-    this.aonNotes();
   }
 
   // ----------------------------- SIDENAV (COUNTS)
 
   async updateSideNavCount(){
-    const count = await getNoteCount();
-    const countTag = await getNoteTagsCount();
-   
+    let currentDate = new Date().getTime();
+
+    document.getElementById("aon-notesSidenavNotesAll").childNodes[1].innerText =
+      `Todas (${
+        this.NOTES.length
+      })`;
+
     document.getElementById("aon-notesSidenavNotesOpen").childNodes[1].innerText =
-      `Activas (${count.total - count.total_expired - count.archive})`;
+      `Activas (${
+        this.NOTES.filter((note) => !note.archive && currentDate <= new Date(note.date).getTime()).length
+      })`;
 
     document.getElementById("aon-notesSidenavNotesExpired").childNodes[1].innerText =
-      `Expiradas (${count.total_expired})`;
+      `Expiradas (${
+        this.NOTES.filter((note) => !note.archive && currentDate > new Date(note.date).getTime()).length
+      })`;
     
     document.getElementById("aon-notesSidenavNotesArchived").childNodes[1].innerText =
-      `Archivadas (${count.archive})`;
-
-    if(countTag){
-      Object.keys(countTag).forEach(key => {
-        document.getElementById("aon-notesSidenav" + key).childNodes[1].innerText =
-          this.updateTagLabel(document.getElementById("aon-notesSidenav" + key).childNodes[1].innerText, countTag[key]);
-      });
-    }
+      `Archivadas (${
+        this.NOTES.filter((note) => note.archive).length
+      })`;
   }
 
-  updateTagLabel(originalString, newText){
-    // Use a regular expression to find and replace text inside parentheses
-    var regex = /\((.*?)\)/g;
-    var replacedString = originalString.replace(regex, '(' + newText + ')');
-    return replacedString;
+  async updateTagSideNavCount(){
+    let currentDate = new Date().getTime();
+
+    document.getElementById("aon-notesSidenavNotesAll").childNodes[1].innerText =
+      `Todas (${
+        this.NOTES.filter((note) => note.noteTag === this.filter.tag).length
+      })`;
+
+    document.getElementById("aon-notesSidenavNotesOpen").childNodes[1].innerText =
+      `Activas (${
+        this.NOTES.filter((note) => !note.archive && currentDate <= new Date(note.date).getTime() && note.noteTag === this.filter.tag).length
+      })`;
+
+    document.getElementById("aon-notesSidenavNotesExpired").childNodes[1].innerText =
+      `Expiradas (${
+        this.NOTES.filter((note) => !note.archive && currentDate > new Date(note.date).getTime() && note.noteTag === this.filter.tag).length
+      })`;
+    
+    document.getElementById("aon-notesSidenavNotesArchived").childNodes[1].innerText =
+      `Archivadas (${
+        this.NOTES.filter((note) => note.archive && note.noteTag === this.filter.tag).length
+      })`;
   }
 
   // ----------------------------- SIDENAV (COLORS)
 
-  addColorSelectionSidenav(){
-    if(this.filter.active){
-      this.waitForElementToExist(`aon-notesSidenavNotesOpen`).then((typeLi) => {
-        typeLi.style.fontWeight = "bold";
-        typeLi.style.color = "white";
-        typeLi.style.backgroundColor = "rgb(255, 192, 0)";
-      });
-      this.waitForElementToExist(`aon-notesSidenavNotesOpenicon`).then((typeIcon) => {
-        typeIcon.style.color = "white";
-      });
+  addFilterSelection(){
+    this.getApplication().removeBackgroundSidenavAll(NOTES.color);
+
+    if(this.filter.all){
+      this.getApplication().addBackgroundSidenav('NotesAll', NOTES.color);
+    } else if(this.filter.active){
+      this.getApplication().addBackgroundSidenav('NotesOpen', NOTES.color);
     } else if(this.filter.expired){
-      this.waitForElementToExist(`aon-notesSidenavNotesExpired`).then((typeLi) => {
-        typeLi.style.fontWeight = "bold";
-        typeLi.style.color = "white";
-        typeLi.style.backgroundColor = "rgb(255, 192, 0)";
-      });
-      this.waitForElementToExist(`aon-notesSidenavNotesExpiredicon`).then((typeIcon) => {
-        typeIcon.style.color = "white";
-      });
+      this.getApplication().addBackgroundSidenav('NotesExpired', NOTES.color);
     } else if(this.filter.archived){
-      this.waitForElementToExist(`aon-notesSidenavNotesArchived`).then((typeLi) => {
-        typeLi.style.fontWeight = "bold";
-        typeLi.style.color = "white";
-        typeLi.style.backgroundColor = "rgb(255, 192, 0)";
-      });
-      this.waitForElementToExist(`aon-notesSidenavNotesArchivedicon`).then((typeIcon) => {
-        typeIcon.style.color = "white";
-      });
+      this.getApplication().addBackgroundSidenav('NotesArchived', NOTES.color);
+    }
+
+    if(this.filter.tag){
+      this.getApplication().addBackgroundSidenav(this.filter.tag, NOTES.color);
     }
   }
 
-  addColorTagSelectionSidenav(){
-    this.NOTES_TAG.forEach(tag => {
-      if(this.filter.tag && this.filter.tag === tag.id){
-        this.getApplication().addBackgroundSidenav(tag.id, this.NOTES_TAG.filter(note => note.id === tag.id).map(note => note.color));
-        this.waitForElementToExist(`aon-notesSidenav${tag.id}icon`).then((tagIcon) => {
-          tagIcon.style.color = "white";
-        });
+  // ----------------------------- RELOAD NOTES
+  async reloadNotes(){
+    await this.getNotes();
 
-        this.waitForElementToExist(tag.id).then((tagLi) => {
-          tagLi.style.fontWeight = "bold";
-          tagLi.style.color = "white";
-        });
-      } else {
-        this.getApplication().removeBackgroundSidenav(tag.id,this.NOTES_TAG.filter(note => note.id === tag.id).map(note => note.color));
-        this.waitForElementToExist(`aon-notesSidenav${tag.id}icon`).then((tagIcon) => {
-          tagIcon.style.color = this.NOTES_TAG.filter(note => note.id === tag.id).map(note => note.color);
-        });
-      }
-    });
+    this.getApplication().removeSidenavById("Notes");
+    this.getApplication().removeSidenavById("Tags");
+
+    this.buildSidenav();
+    this.buildTagSidenav();
+    this.aonNotes();
   }
 
   waitForElementToExist(selector) {

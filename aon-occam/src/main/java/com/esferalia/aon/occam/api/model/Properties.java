@@ -1646,6 +1646,12 @@ public interface Properties {
 		Property<String> getSubjectProperty();
 		Property<String> getNoteProperty();
 		Property<Timestamp> getDateProperty();
+		Property<Byte> getArchiveProperty();
+		Property<Byte> getPinUpProperty();
+		Property<String> getNoteTagProperty();
+		Property<String> getColorProperty();
+		Property<Timestamp> getArchiveDateProperty();
+		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	
