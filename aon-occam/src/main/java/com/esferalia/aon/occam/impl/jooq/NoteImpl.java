@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Stream;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.INote;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
@@ -32,12 +33,17 @@ public class NoteImpl implements INote {
 	}
 	
 	@Override
+	public void deleteNoteTag(AONContext ctx, NoteFilter filter) {
+		ctx.getDslContext().transaction(configuration -> NoteDAO.deleteNoteTag(ctx, filter));
+	}
+	
+	@Override
+	public void updateNoteTag(AONContext ctx, String noteTag, NoteFilter filter) {
+		ctx.getDslContext().transaction(configuration -> NoteDAO.updateNoteTag(ctx, noteTag, filter));
+	}
+	
+	@Override
 	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd, Integer userId) {
 		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.countForDate(ctx, filter, dateEnd, userId));
-	}
-
-	@Override
-	public HashMap<String, Integer> getNoteTagCount(AONContext ctx, NoteFilter filter, Integer userId) {
-		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.getNoteTagCount(ctx, filter, userId));
 	}
 }

@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
-import com.esferalia.aon.occam.api.model.office.Tag;
 
 public class NoteJSON {
 	
@@ -29,7 +28,12 @@ public class NoteJSON {
 			.setNote(JsonUtils.getString(json, "note"))
 			.setDate(JsonUtils.getDateFormat(json, "date", "yyyy-MM-dd"))
 			.setArchive(JsonUtils.getBoolean(json, "archive"))
-			.setTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, "tag")))
+			.setPinpUp(JsonUtils.getBoolean(json, "pinUp"))
+			.setNoteTag(JsonUtils.getString(json, "noteTag"))
+			.setColor(JsonUtils.getString(json, "color"))
+			.setArchiveDate(JsonUtils.getDateFormat(json, "archiveDate", "yyyy-MM-dd"))
+			.setModificationDate(JsonUtils.getDateFormat(json, "modificationDate", "yyyy-MM-dd"))
+			.setCreationDate(JsonUtils.getDateFormat(json, "creationDate", "yyyy-MM-dd"))
 			;
 	}
 
@@ -51,11 +55,14 @@ public class NoteJSON {
 			.put("subject",note.getSubject())
 			.put("note",note.getNote())
 			.put("date",note.getDate())
-			.put("archive", note.isArchive());
-		
-		if(null != note.getTag()) {
-			json.put("tag", TagJSON.toJSON(note.getTag()));
-		}
+			.put("archive", note.isArchive())
+			.put("pinUp", note.isPinpUp())
+			.put("noteTag", note.getNoteTag())
+			.put("color", note.getColor())
+			.put("archiveDate",note.getArchiveDate())
+			.put("modificationDate",note.getModificationDate())
+			.put("creationDate",note.getCreationDate())
+			;
 		
 		return json;
 	}

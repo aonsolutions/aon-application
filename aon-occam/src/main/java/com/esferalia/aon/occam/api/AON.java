@@ -6052,14 +6052,6 @@ public class AON {
 		return getTagStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static List<Tag> getNoteTagsList(String domainName, Integer domainId, String login,
-			TagFilter filter, Integer userId){
-		
-		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getCommon().getNoteTagsList(ctx, filter, userId);
-		}
-	}
-	
 	public static Stream<Tag> getTagStream(String domainName, Integer domainId, String login,
 			TagFilter filter){
 		CloseableAONContext ctx = null;

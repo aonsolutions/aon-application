@@ -19,9 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.note.AlterNoteDropNoteTag;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
-import net.aonsolutons.db.up2date.note.AlterNoteArchiveTag;
 
 public class Up2Date {
 
@@ -400,7 +400,8 @@ public class Up2Date {
 	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
 	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
 	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
-	    AlterNoteArchiveTag.ALTERNOTEARCHIVETAG
+	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
+	    AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG
 	};
 
     // ------------------------------------------------------------------------
