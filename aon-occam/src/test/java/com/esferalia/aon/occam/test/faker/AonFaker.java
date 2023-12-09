@@ -39,23 +39,28 @@ import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
@@ -67,12 +72,14 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SalesType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
@@ -83,6 +90,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
@@ -505,109 +513,94 @@ public class AonFaker {
 			.setName(faker.beer().name())
 			.setActive(true);
 	}
-
-	public static Delivery getDelivery(AONContext ctx) {
-		
-		Customer customer = CustomerDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
-		
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
-		
-		
-		String series = "TEST";
-		int number = DeliveryDAO.getNextNumber(ctx, series);
-		return new Delivery()
-				.setDomain(ctx.getDomainId())
-				.setProject(new Project())
-				.setDate(new Date())
-				.setSeries(series)
-				.setNumber(number)
-				.setCustomer(customer)
-				.setWorkplace(workplace)
-				.setStatus(DeliveryStatus.PENDING)
-				.setScope(customer.getScope());		
+	
+	public static EdiCodes getEdiCodes(AONContext ctx) {
+		return new EdiCodes()
+				.setBycode(Faker.instance().letterify("?????????"))
+				.setCompanyEdiCode(Faker.instance().letterify("?????????"))
+				.setCustomerEdiCode(Faker.instance().letterify("?????????"))
+				.setCustomerEdiHeader(Faker.instance().letterify("?????????"))
+				.setCustomerEdiInvoice(Faker.instance().letterify("?????????"))
+				.setCustomerEdiPoint(Faker.instance().letterify("?????????"))
+				.setCustomerPackage(Faker.instance().book().title())
+				.setDeliveryPointEdiCode(Faker.instance().letterify("?????????"))
+				.setDepartment(Faker.instance().job().field())
+				.setDpcode(Faker.instance().letterify("?????????"))
+				.setIvcode(Faker.instance().letterify("?????????"))
+				.setMrcode(Faker.instance().letterify("?????????"))
+				.setMscode(Faker.instance().letterify("?????????"))
+				.setPwcode(Faker.instance().letterify("?????????"))
+				.setShcode(Faker.instance().letterify("?????????"))
+				.setSucode(Faker.instance().letterify("?????????"))
+				.setUccode(Faker.instance().letterify("?????????"));
 	}
 	
-	public static Delivery getDelivery() {
-		
-		Integer domain = Integer.parseInt(Faker.instance().numerify("#####"));
-		RegistryStatus[] valuesRegistryStatus = RegistryStatus.values();
-		InvoiceTransactionType[] valuesInvoiceTransactionType = InvoiceTransactionType.values();
-		byte[] bytes = {0,1};
-		
+	public static Delivery getDelivery(AONContext ctx) {
 		Random random = new Random();
-		
-		Scope scope = new Scope()
-				.setDescription(Faker.instance().gameOfThrones().quote())
-				.setDomain(domain)
-				.setId(Integer.parseInt(Faker.instance().numerify("#####")));
-		
-		
-		
-		Customer customer = new Customer()
-				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setBillable(random.nextBoolean())
-				.setCreationDate(Faker.instance().date().birthday())
-				.setCreationUser(Faker.instance().zelda().character())
-				.setDeliveryGrouped(random.nextBoolean())
-				.setDeliveryValuated(random.nextBoolean())
-				.setEInvoice(random.nextBoolean())
-				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setInvoicingGroup(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setModificationDate(Faker.instance().date().birthday())
-				.setModificationUser(Faker.instance().zelda().character())
-				.setProjectGrouped(random.nextBoolean())
-				.setRelationship(random.nextBoolean())
-				.setScope(scope)
-				.setStatus(valuesRegistryStatus[random.nextInt(valuesRegistryStatus.length)])
-				.setSurcharge(random.nextBoolean())
-				.setTariff(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setTransaction(valuesInvoiceTransactionType[random.nextInt(valuesInvoiceTransactionType.length)])
-				.setWithholding(random.nextBoolean())
-				;
-		
-		Workplace workplace = new Workplace()
-				.setActive(random.nextBoolean())
-				.setAddress(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setCustomer(customer.getId())
-				.setDescription(Faker.instance().zelda().game())
-				.setDomain(domain)
-				.setEconomicagreement(bytes[random.nextInt(bytes.length)])
-				.setEnterprise(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setScope(scope.getId())
-				;
 
-		Project project = new Project()
-				.setActive(random.nextBoolean())
-				.setAlias(Faker.instance().lordOfTheRings().character())
-				.setCommercial(random.nextBoolean())
-				.setDate(Faker.instance().date().birthday())
-				.setDirty(false)
-				.setDomain(new Domain())
-				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setName(Faker.instance().cat().name())
-				.setProjectActivities(null)
-				.setProjectHolder(new ProjectHolder())
-				.setRegistry(new Registry())
-				.setReservation(random.nextBoolean())
-				.setTas(random.nextBoolean())
-				.setType(new ProjectType())
-				;
-				
+		Registry registry = AonFaker.getRegistry(ctx);
+		
+		RegistryAddress registryAddress = AonFaker.getRegistryAddress(ctx);
+		registryAddress.setRegistry(registry.getId());
+		
+		BankAccount bankAccount = AonFaker.getBankAccount(ctx);
+		
+		SecurityLevel[] securityLevelValues = SecurityLevel.values();
+		ShipmentPeriod[] shipmentPeriodValues = ShipmentPeriod.values();
+		ShipmentStatus[] shipmentStatusValues = ShipmentStatus.values();
+		DeliveryStatus[] deliveryStatusValues = DeliveryStatus.values();
+		
+		Integer domain = ctx.getDomainId();
+		
+		Carrier carrier = CarrierDAO.get(ctx, f -> f.getDomainProperty().eq(domain));
 		
 		return new Delivery()
-				.setDomain(domain)
-				.setProject(project)
-				.setDate(Faker.instance().date().birthday())
-				.setSeries("TEST")
-				.setNumber(Integer.parseInt(Faker.instance().numerify("#####")))
-				.setCustomer(customer)
-				.setWorkplace(workplace)
-				.setStatus(DeliveryStatus.PENDING)
-				.setScope(customer.getScope()) 
-				;
+				.setAddress(registryAddress)
+				.setBankAccount(bankAccount.getIban())
+				.setBankAlias(Faker.instance().zelda().character())
+				.setBic(Faker.instance().finance().bic())
+				.setCarrier(carrier.getId())
+				.setComments(Faker.instance().gameOfThrones().quote())
+				.setConfidential(random.nextBoolean())
+				.setCreationDate(new Date())
+				.setCreationUser(ctx.getUser())
+				.setCustomer(AonRandom.getCustomer(ctx))
+				.setDate(new Date())
+				.setDaysBetweenPymnt((short) random.nextInt(0, 9))
+				.setDaysToFirstPymnt((short) random.nextInt(0, 9))
+				.setDetails(new LinkedList<>())
+				.setDomain(ctx.getDomainId())
+				.setDriver(Faker.instance().lordOfTheRings().character())
+				.setDriverDocument(Faker.instance().letterify("?????????"))
+				.setEdiCodes(AonFaker.getEdiCodes(ctx))
+				.setModificationDate(new Date())
+				.setModificationUser(ctx.getUser())
+				.setNumber(Integer.parseInt(Faker.instance().numerify("#####").toString()))
+				.setNumberOfPymnts((short) random.nextInt(0, 9))
+				.setNumberPlate(Faker.instance().numerify("#####").toString())
+				.setPackaging(new LinkedList<>())
+				.setPayMethod(AonFaker.getPayMethod(ctx))
+				.setProject(AonFaker.getProject(ctx))
+				.setPymntDays(Faker.instance().numerify("##"))
+				.setRemarks(Faker.instance().zelda().game())
+				.setScope(SecurityDAO.getAvailableScopes(ctx).getFirst())
+				.setSecurityLevel(securityLevelValues[random.nextInt(securityLevelValues.length)])
+				.setSeries(Faker.instance().numerify("#####").toString())
+				.setShippingAlternativeAddress(Faker.instance().address().fullAddress())
+				.setShippingAlternativeAddress2(Faker.instance().address().fullAddress())
+				.setShippingAlternativeCity(Faker.instance().address().cityName())
+				.setShippingAlternativePhone(Faker.instance().phoneNumber().toString())
+				.setShippingAlternativeRecipient(Faker.instance().address().secondaryAddress())
+				.setShippingAlternativeZip(Faker.instance().address().zipCode())
+				.setShippingContact(Faker.instance().friends().character())
+				.setShippingPeriod(shipmentPeriodValues[random.nextInt(shipmentPeriodValues.length)])
+				.setShippingStatus(shipmentStatusValues[random.nextInt(shipmentStatusValues.length)])
+				.setStatus(deliveryStatusValues[random.nextInt(deliveryStatusValues.length)])
+				.setStatusModificationDate(new Date())
+				.setTotalPackages(Double.parseDouble(Faker.instance().numerify("#####")))
+				.setTotalWeight(Double.parseDouble(Faker.instance().numerify("#####").toString()))
+				.setTrackingNumber(Faker.instance().numerify("#####").toString())
+				.setWorkplace(AonFaker.getWorkplace(ctx));
 	}
 	
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {
@@ -617,16 +610,26 @@ public class AonFaker {
 		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(warehouse == null || warehouse.getId() == null) warehouse = WarehouseDAO.save(ctx, getWarehouse(ctx));
 		
+		SalesDetail salesDetail = SalesDetailDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		
+		Random random = new Random();
+		
 		return new DeliveryDetail()
+				.setCreationDate(new Date())
+				.setCreationUser(ctx.getUser())
 				.setDelivery(delivery)
+				.setDescription(Faker.instance().gameOfThrones().quote())
+				.setDiscountExpression("0.0")
 				.setDomain(ctx.getDomainId())
 				.setItem(item)
-				.setLine((short) 1)
-				.setDescription(faker.beer().name())
-				.setWarehouse(warehouse.getId())
-				.setQuantity(1.0)
-				.setPrice(1.0)
-				.setDiscountExpression("0.0");	
+				.setLine((short) random.nextInt(0, 9))
+				.setModificationDate(new Date())
+				.setModificationUser(ctx.getUser())
+				.setPrice(Double.parseDouble(Faker.instance().numerify("#####")))
+				.setPurchaseReference(Faker.instance().letterify("?????????"))
+				.setQuantity(Double.parseDouble(Faker.instance().numerify("#####")))
+				.setSalesDetail(salesDetail.getId())
+				.setWarehouse(warehouse.getId());	
 	}
 	
 	public static Sales getSales(AONContext ctx) {
@@ -895,6 +898,335 @@ public class AonFaker {
 				.setRequisition(requisition)
 				.setSepaMandateRef(sepaMandateRef)
 				.setSuffix(suffix);
+	}
+	
+	/** Methods independent from AONContext **/
+	
+	public static Domain getDomain() {
+		return new Domain()
+			.setId(Integer.parseInt(Faker.instance().numerify("#####")));
+	}
+	
+	public static Scope getScope() {
+		return new Scope()
+				.setDescription(Faker.instance().gameOfThrones().quote())
+				.setDomain(getDomain().getId())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")));
+	}
+	
+	public static Registry getRegistry() {
+		Random random = new Random();
+		
+		Country[] countries = Country.values();
+		DocumentType[] documentTypes = DocumentType.values();
+		SecurityLevel[] securityLevels = SecurityLevel.values();
+		
+		Country country = countries[random.nextInt(countries.length)];
+		
+		return new Registry()
+				.setAlias(Faker.instance().zelda().character())
+				.setConfidential(random.nextBoolean())
+				.setDirty(random.nextBoolean())
+				.setDocument(Faker.instance().bothify("?########").toUpperCase())
+				.setDocumentCountry(country)
+				.setDocumentType(documentTypes[random.nextInt(documentTypes.length)])
+				.setDomain(getDomain())
+				.setGlobal(random.nextBoolean())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setLegalPerson(random.nextBoolean())
+				.setName(Faker.instance().friends().character())
+				.setNationality(country)
+				.setSecurityLevel(securityLevels[random.nextInt(securityLevels.length)])
+				.setSelected(random.nextBoolean());
+	}
+	
+	public static Workplace getWorkplace() {
+		Random random = new Random();
+		
+		byte[] bytes = {0,1};
+		
+		return new Workplace()
+				.setActive(random.nextBoolean())
+				.setAddress(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setCustomer(getCustomer().getId())
+				.setDescription(Faker.instance().zelda().game())
+				.setDomain(getDomain().getId())
+				.setEconomicagreement(bytes[random.nextInt(bytes.length)])
+				.setEnterprise(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setScope(getScope().getId())
+				;
+	}
+	
+	public static Warehouse getWarehouse() {
+	
+		return new Warehouse()
+				.setActive(true)
+				.setDepartment(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setDomain(getDomain().getId())
+				.setName(Faker.instance().job().field() + " S.A")
+				.setWorkplace(getWorkplace().getId());
+	}
+	
+	public static Project getProject() {
+		Random random = new Random();
+		
+		return new Project()
+				.setActive(random.nextBoolean())
+				.setAlias(Faker.instance().lordOfTheRings().character())
+				.setCommercial(random.nextBoolean())
+				.setDate(Faker.instance().date().birthday())
+				.setDirty(false)
+				.setDomain(new Domain())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setName(Faker.instance().cat().name())
+				.setProjectActivities(null)
+				.setProjectHolder(new ProjectHolder())
+				.setRegistry(new Registry())
+				.setReservation(random.nextBoolean())
+				.setTas(random.nextBoolean())
+				.setType(new ProjectType())
+				;
+	}
+	
+	public static RegistryAddress getRegistryAddress(Registry registry) {
+		Random random = new Random();
+		
+		Country[] countries = Country.values();
+		
+		return new RegistryAddress()
+				.setAddress(Faker.instance().address().streetAddress())
+				.setAddress2(Faker.instance().address().streetAddress())
+				.setAddress3(Faker.instance().address().streetAddress())
+				.setCity(Faker.instance().address().city())
+				.setProvince(Faker.instance().address().country())
+				.setZip(Faker.instance().address().zipCode())
+				.setCountry(countries[random.nextInt(countries.length)])
+				.setRegistry(registry.getId())
+				.setMain(true)
+				;
+	}
+	
+	public static RegistryMedia getRegistryMedia(Registry registry) {
+		Random random = new Random();
+		
+		MediaType[] mediaType = MediaType.values();
+		MediaType media = mediaType[random.nextInt(mediaType.length)];
+		String value;
+		
+		switch(media) {
+			case FIXED_PHONE:
+				value = Faker.instance().phoneNumber().phoneNumber(); break;
+			case CELLULAR:
+				value = Faker.instance().phoneNumber().cellPhone(); break;
+			case FAX:
+				value = Faker.instance().phoneNumber().phoneNumber(); break;
+			case EMAIL:
+				value = Faker.instance().internet().emailAddress(); break;
+			case WEB:
+				value = Faker.instance().internet().url(); break;
+			default:
+				value = Faker.instance().phoneNumber().phoneNumber();
+		}
+		
+		return new RegistryMedia()
+				.setMedia(media)
+				.setValue(value)
+				.setRegistry(registry.getId());
+	}
+	
+	public static LinkedList<RegistryMedia> getRegistryMediaList(Registry registry) {
+		RegistryMedia registryMedia1 = new RegistryMedia()
+				.setMedia(MediaType.FIXED_PHONE)
+				.setValue(Faker.instance().phoneNumber().phoneNumber());
+		
+		RegistryMedia registryMedia2 = new RegistryMedia()
+				.setMedia(MediaType.CELLULAR)
+				.setValue(Faker.instance().phoneNumber().cellPhone());
+		
+		RegistryMedia registryMedia3 = new RegistryMedia()
+				.setMedia(MediaType.FAX)
+				.setValue(Faker.instance().phoneNumber().phoneNumber());
+		
+		RegistryMedia registryMedia4 = new RegistryMedia()
+				.setMedia(MediaType.EMAIL)
+				.setValue(Faker.instance().internet().emailAddress());
+		
+		RegistryMedia registryMedia5 = new RegistryMedia()
+				.setMedia(MediaType.WEB)
+				.setValue(Faker.instance().internet().url());
+		
+		LinkedList<RegistryMedia> list = new LinkedList<>();
+		
+		list.add(registryMedia1);
+		list.add(registryMedia2);
+		list.add(registryMedia3);
+		list.add(registryMedia4);
+		list.add(registryMedia5);
+		
+		return list;
+	}
+	
+	public static DeliveryDetail getDeliveryDetail() {
+		Random random = new Random();
+		
+		return new DeliveryDetail()
+				.setSalesDetail(random.nextInt(0, 9))
+				.setDescription(Faker.instance().food().ingredient())
+				.setPrice(Double.parseDouble(Faker.instance().numerify("##.#").toString()))
+				.setDiscountExpression("0.0")
+				.setQuantity(random.nextInt(1, 9))
+				.setPurchaseReference(Faker.instance().bothify("P##/######"))
+				.setCreationDate(new Date())
+				.setPurchaseReference(Faker.instance().numerify("##########"))
+				.setItem(getItem());
+	}
+	
+	public static Item getItem() {
+		return new Item()
+				.setProduct(getProduct());
+	}
+	
+	public static Product getProduct() {
+		Random random = new Random();
+		Integer[] taxes = {4,10,21};
+		
+		return new Product()
+				.setVat(new Tax()
+						.setPercentage(taxes[random.nextInt(taxes.length)]));
+	}
+	
+	public static Delivery getDelivery() {
+		Random random = new Random();
+		
+		Registry registry = getRegistry();
+		
+		DeliveryStatus[] deliveryStatus = DeliveryStatus.values();
+		
+		LinkedList<DeliveryDetail> details = new LinkedList<>();
+		DeliveryDetail deliveryDetail1 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail2 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail3 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail4 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail5 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail6 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail7 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail8 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail9 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail10 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail11 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail12 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail13 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail14 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail15 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail16 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail17 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail18 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail19 = getDeliveryDetail();
+		DeliveryDetail deliveryDetail20 = getDeliveryDetail();
+		details.add(deliveryDetail1);
+		details.add(deliveryDetail2);
+		details.add(deliveryDetail3);
+		details.add(deliveryDetail4);
+		details.add(deliveryDetail5);
+		details.add(deliveryDetail6);
+		details.add(deliveryDetail7);
+		details.add(deliveryDetail8);
+		details.add(deliveryDetail9);
+		details.add(deliveryDetail10);
+		details.add(deliveryDetail11);
+		details.add(deliveryDetail12);
+		details.add(deliveryDetail13);
+		details.add(deliveryDetail14);
+		details.add(deliveryDetail15);
+		details.add(deliveryDetail16);
+		details.add(deliveryDetail17);
+		details.add(deliveryDetail18);
+		details.add(deliveryDetail19);
+		details.add(deliveryDetail20);
+
+		
+		return new Delivery()
+				.setDomain(getDomain().getId())
+				.setProject(getProject())
+				.setDate(Faker.instance().date().birthday())
+				.setDetails(details)
+				.setSeries(Faker.instance().letterify("????????"))
+				.setNumber(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setCustomer(AonFaker.getCustomer())
+				.setStatus(deliveryStatus[random.nextInt(deliveryStatus.length)])
+				.setScope(AonFaker.getScope()) 
+				.setAddress(getRegistryAddress(registry))
+				.setShippingContact(Faker.instance().zelda().character())
+				.setWorkplace(getWorkplace());
+	}
+	
+	public static Customer getCustomer() {
+		Random random = new Random();
+		
+		RegistryStatus[] valuesRegistryStatus = RegistryStatus.values();
+		InvoiceTransactionType[] valuesInvoiceTransactionType = InvoiceTransactionType.values();
+		
+		return new Customer()
+				.copy(getRegistry())
+				.setAccount(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setBillable(random.nextBoolean())
+				.setCreationDate(Faker.instance().date().birthday())
+				.setCreationUser(Faker.instance().zelda().character())
+				.setDeliveryGrouped(random.nextBoolean())
+				.setDeliveryValuated(random.nextBoolean())
+				.setEInvoice(random.nextBoolean())
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setInvoicingGroup(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setModificationDate(Faker.instance().date().birthday())
+				.setModificationUser(Faker.instance().zelda().character())
+				.setProjectGrouped(random.nextBoolean())
+				.setRelationship(random.nextBoolean())
+				.setScope(AonFaker.getScope())
+				.setStatus(valuesRegistryStatus[random.nextInt(valuesRegistryStatus.length)])
+				.setSurcharge(random.nextBoolean())
+				.setTariff(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setTransaction(valuesInvoiceTransactionType[random.nextInt(valuesInvoiceTransactionType.length)])
+				.setWithholding(random.nextBoolean())
+				;
+	}
+	
+	public static CustomerFull getCustomerFull(Customer customer) {
+		RegistryAddress registryAddress = getRegistryAddress(customer);
+		LinkedList<RegistryAddress> addresses = new LinkedList<>();
+		addresses.add(registryAddress);
+		
+		LinkedList<RegistryMedia> medias = getRegistryMediaList(customer);
+		
+		return (CustomerFull) new CustomerFull()
+				.setRegistry(customer)
+				.setAddresses(addresses)
+				.setMedias(medias)
+				.setBanks(new LinkedList<>())
+				.setRecordDatas(new LinkedList<>());
+	}
+	
+	public static Company getCompany() {
+		Registry registry = getRegistry();
+		registry.setName(Faker.instance().job().field() + " S.A.");
+		
+		return new Company()
+				.copy(registry);
+	}
+	
+	public static CompanyFull getCompanyFull(Company company) {
+		RegistryAddress registryAddress = getRegistryAddress(company);
+		LinkedList<RegistryAddress> addresses = new LinkedList<>();
+		addresses.add(registryAddress);
+		
+		LinkedList<RegistryMedia> medias = getRegistryMediaList(company);
+		
+		return (CompanyFull) new CompanyFull()
+				.setRegistry(company)
+				.setAddresses(addresses)
+				.setMedias(medias)
+				.setBanks(new LinkedList<>())
+				.setRecordDatas(new LinkedList<>());
 	}
 }
 

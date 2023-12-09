@@ -32,6 +32,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod390DAO {
+	
+	private Mod390DAO() {
+		
+	}
 
 	public static Stream<Mod390> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);
@@ -134,37 +138,26 @@ public class Mod390DAO {
 	private static class Mod390Filler implements Function<Record, Mod390> {
 		
 		@Override
-		public Mod390 apply(Record record) {
+		public Mod390 apply(Record rec) {
 			Mod390 mod390 = new Mod390()
-				.setId(record.getValue(FS_MODEL390.ID))
-				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL390.ADMINISTRATION)))
-				.setReplacement( record.getValue(FS_MODEL390.REPLACEMENT)==1 )
-				.setComplementary(record.getValue(FS_MODEL390.COMPLEMENTARY)==1 )
-				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL390.STATUS)))
-				.setYear(record.getValue(FS_MODEL390.YEAR))
-				.setDomain(record.getValue(FS_MODEL390.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE))
-				.setDocument(record.getValue(FS_MODEL390.DOCUMENT))
-				.setName(record.getValue(FS_MODEL390.NAME))
-				.setEnterpriseName(record.getValue(FS_MODEL390.NAME))
+				.setId(rec.getValue(FS_MODEL390.ID))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,rec.getValue(FS_MODEL390.ADMINISTRATION)))
+				.setReplacement( rec.getValue(FS_MODEL390.REPLACEMENT)==1 )
+				.setComplementary(rec.getValue(FS_MODEL390.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,rec.getValue(FS_MODEL390.STATUS)))
+				.setYear(rec.getValue(FS_MODEL390.YEAR))
+				.setDomain(rec.getValue(FS_MODEL390.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setEnterprise(rec.getValue(FS_MODEL390.ENTERPRISE))
+				.setDocument(rec.getValue(FS_MODEL390.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL390.NAME))
+				.setEnterpriseName(rec.getValue(FS_MODEL390.NAME))
 				;
 			if (mod390.getYear() < 2015) mod390.setStatus(FiscalStatus.BLOCKED); 
 			return mod390;
 		}
 		
 	}
-
-//	public static Mod390 create(AONContext ctx, Mod390 mod390) {
-//		if (mod390.getYear() < 2015) {
-//			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
-//		} else if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
-//			return Mod3902015DAO.create(ctx, mod390);
-//		} else if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
-//			return Mod3902018DAO.create(ctx, mod390);
-//		} 
-//		return Mod3902018DAO.create(ctx, mod390);
-//	}
 
 	public static Mod390 initialize(AONContext ctx, int year) {
 		if (year == 0) {

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.Block;
@@ -41,7 +42,10 @@ class ImageExtracter implements IPersonDocumentExtracter {
 
 	private String extract(Document doc) {
 
-		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
+		AmazonTextract client = AmazonTextractClientBuilder
+			.standard()
+			.withRegion(Regions.EU_WEST_1)
+			.build();
 
 		PersonDocumentParserValidation.validateDoc(doc);
 
