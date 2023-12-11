@@ -101,14 +101,14 @@ phases:
       #  || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
-        ]' $REPOSITORIO_URI ${TAG:=snapshot} > snapshotimgdef.json
-      - cat snapshotimgdef.json
+        {"name":"%s","imageUri":"%s/aon-application:%s"}
+        ]' ${APPLICATION_TASK:=SNAPSH0T} $REPOSITORIO_URI ${TAG:=snapshot} > applicationimgdef.json
+      - cat applicationimgdef.json
       - |
         printf '[
-        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-        ]' $REPOSITORIO_URI ${TAG:=snapshot} > snapshotsolutionsimgdef.json
-      - cat snapshotsolutionsimgdef.json
+        {"name":"%s","imageUri":"%s/aon-solutions:%s"}
+        ]' ${SOLUTIONS_TASK:=SNAPSHOT-SOLUTIONS} $REPOSITORIO_URI ${TAG:=snapshot} > solutionsimgdef.json
+      - cat solutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
@@ -131,8 +131,8 @@ artifacts:
   files:
     - aon-oauth2.jar
     - aon-in-payroll.jar
-    - snapshotimgdef.json
-    - snapshotsolutionsimgdef.json
+    - applicationimgdef.json
+    - solutionsimgdef.json
     # - location
   #name: $(date +%Y-%m-%d)
   #discard-paths: yes
