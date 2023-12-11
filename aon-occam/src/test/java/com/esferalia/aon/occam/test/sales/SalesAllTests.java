@@ -63,12 +63,12 @@ public class SalesAllTests extends AbstractOccamTest {
 		Asserts.assertEqualsSales(sales, inserted);
 		
 		sales = SalesDAO.update(ctx, sales);
-//		Sales updated = SalesDAO.get(ctx, f -> f.getIdProperty().eq(salesId));
-//		Asserts.assertEqualsSales(sales, updated);
+		Sales updated = SalesDAO.get(ctx, f -> f.getIdProperty().eq(salesId));
+		Asserts.assertEqualsSales(sales, updated);
 		
-//		SalesDAO.delete(ctx, f -> f.getIdProperty().eq(salesId));
-//		Sales deleted = SalesDAO.get(ctx, f -> f.getIdProperty().eq(salesId));
-//		assertNull(deleted.getId());
+		SalesDAO.delete(ctx, f -> f.getIdProperty().eq(salesId));
+		Sales deleted = SalesDAO.get(ctx, f -> f.getIdProperty().eq(salesId));
+		assertNull(deleted.getId());
 	}
 	
 	private void hasIdTest() {

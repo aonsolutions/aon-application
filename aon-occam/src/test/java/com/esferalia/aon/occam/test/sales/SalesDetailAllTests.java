@@ -18,7 +18,7 @@ public class SalesDetailAllTests extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		//crudeSalesDetailDAO();
+		crudeSalesDetailDAO();
 		getItemTest();
 		getDiscountExpressionTest();
 		getCarrierTest();
