@@ -5608,7 +5608,7 @@ CREATE TABLE `note` (
   `note` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Texto de la Nota',
   `archive` tinyint(1) DEFAULT 0 COMMENT 'Indica si la nota esta o no archivada',
   `pin_up` tinyint(1) DEFAULT 0 COMMENT 'Indica si la nota esta o no fijada',
-  `note_tag` varchar(11) DEFAULT NULL COMMENT 'Nombre de la etiqueta',
+  `note_tag` varchar(17) DEFAULT NULL COMMENT 'Nombre de la etiqueta',
   `color` varchar(8) DEFAULT NULL COMMENT 'Color de la nota',
   `archive_date` datetime DEFAULT NULL COMMENT 'Fecha de archivacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
