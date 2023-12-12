@@ -284,7 +284,8 @@ export class AonNotes extends AonElement {
     Object.keys(this.NOTES_TAG).forEach(key => {
       notesOpts.push({
         id: key,
-        name: `${key} (${this.NOTES_TAG[key] || '0'})`,
+        name: `${this.truncateKey(key)} (${this.NOTES_TAG[key] || '0'})`,
+        title: `${key} (${this.NOTES_TAG[key] || '0'})`,
         icon: MATERIAL_ICONS.LABEL,
         actions: [
           {
@@ -317,6 +318,13 @@ export class AonNotes extends AonElement {
     };
 
     this.getApplication().addSidenavOptions2(options, notesOpts);
+  }
+
+  truncateKey(value){
+    if(value && value.length > 10){
+      value = `${value.substring(0, 10)}...`
+    }
+    return value;
   }
 
   deleteTag(noteTag) {
@@ -356,7 +364,7 @@ export class AonNotes extends AonElement {
     // Create name input
     let nameInput = this.createAonElement(new AonNewInput(), 'nameInput', 'Nombre');
     nameInput.type = 'text';
-    nameInput.setAttribute("maxLength", 11);
+    nameInput.setAttribute("maxLength", 17);
     nameInput.id = "dialogTag"
     if (noteTag) nameInput.value = noteTag;
 
@@ -378,7 +386,7 @@ export class AonNotes extends AonElement {
     });
 
     this.waitForElementToExist(`dialogTagInput`).then((input) => {
-      input.setAttribute("maxLength", 11);
+      input.setAttribute("maxLength", 17);
       input.focus();
     });
   }
@@ -475,19 +483,22 @@ export class AonNotes extends AonElement {
     noteCardTitle.value = note.getSubject() ? note.getSubject() : "";
     noteCardTitleDiv.appendChild(noteCardTitle);
 
-    let pinUpTitleButton = this.createNoteButton(
-      MATERIAL_ICONS.PUSH_PIN,
-      "Liberar",
-      async () => {
-        note.setPinUp(!note.getPinUp());
-        await this.saveNote(note);
-        await this.reloadNotes();
-      }
-    );
+    let pinUpTitleButton = this.createElement(TAG.IMG);
+		pinUpTitleButton.src = '../assets/pin-off.svg';
+		pinUpTitleButton.style.height = "20px";
+    pinUpTitleButton.style.width = "20px";
+    pinUpTitleButton.style.cursor = "pointer";
+    pinUpTitleButton.title = "Liberar";
+    pinUpTitleButton.addEventListener(EVENT.CLICK, async (ev)=>{
+      ev.stopPropagation();
+      note.setPinUp(!note.getPinUp());
+      await this.saveNote(note);
+      await this.reloadNotes();
+    });
+
     if(note.getPinUp()){
       noteCardTitleDiv.appendChild(pinUpTitleButton);
     }
-
 
      // Body
     let noteCardBodyDiv = this.createElement(TAG.DIV);
@@ -532,6 +543,7 @@ export class AonNotes extends AonElement {
 
     let buttonsNoteDiv = this.createElement(TAG.DIV);
     buttonsNoteDiv.style.display = "none";
+    buttonsNoteDiv.style.width = "12rem";
     bottomNoteDiv.appendChild(buttonsNoteDiv);
 
     // Delete
@@ -573,7 +585,9 @@ export class AonNotes extends AonElement {
         await this.reloadNotes();
       }
     );
-    buttonsNoteDiv.appendChild(pinUpButton);
+    if(!note.getPinUp()){
+      buttonsNoteDiv.appendChild(pinUpButton);
+    }
 
     let colorButton = this.createNoteButton(
       MATERIAL_ICONS.PALETTE,
@@ -632,7 +646,7 @@ export class AonNotes extends AonElement {
         selectInputDic.style.background = "none";
         selectInputDic.style.border = "none";
         selectInputDic.style.paddingLeft = "1rem";
-        selectInputDic.setAttribute("maxLength", 11);
+        selectInputDic.setAttribute("maxLength", 17);
         selectInputDic.id = "tagInputDialog";
         selectInputDic.value = note.getNoteTag();
         tagInputDiv.appendChild(selectInputDic);
