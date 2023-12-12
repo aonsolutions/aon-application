@@ -98,11 +98,11 @@ enum Mod190File2023Aeat {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDepositIL()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned( getComplementoInfancia(detail),1,0))
 	   
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(0.0,13,2)) // HACIENDA ESTATAL
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(0.0,13,2)) // COMUNIDAD FORAL DE NAVARRA.
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(0.0,13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(0.0,13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(0.0,13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCommonRetention()),13,2)) // HACIENDA ESTATAL
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getNavarraRetention()),13,2)) // COMUNIDAD FORAL DE NAVARRA.
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getArabaRetention()),13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getGipuzkoaRetention()),13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getBizkaiaRetention()),13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
 	   
 	   
 	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 113))
