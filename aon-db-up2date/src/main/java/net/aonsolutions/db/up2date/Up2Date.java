@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
 import net.aonsolutions.db.up2date.note.AlterNoteDropNoteTag;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
@@ -394,14 +395,16 @@ public class Up2Date {
 	    // InsertIAE1516.INSERT_IAE_1516,
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
-	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
+	    // AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
 	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
 	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
 	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
 	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
 	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
 	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
-	    AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG
+	    AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
+
 	};
 
     // ------------------------------------------------------------------------
