@@ -30,6 +30,9 @@ public class ItemCompositionJSON {
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setItemId(JsonUtils.getInteger(json, IJsonNames.ITEM))
 			.setCompositionItemId(JsonUtils.getInteger(json, IJsonNames.COMPOSITION_ITEM))
+			
+			.setComposition(ItemJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.COMPOSITION)))
+
 			.setSequence(JsonUtils.getInteger(json, IJsonNames.SEQUENCE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setQuantity(JsonUtils.getDouble(json, IJsonNames.QUANTITY))
@@ -52,6 +55,7 @@ public class ItemCompositionJSON {
 			.put(IJsonNames.DOMAIN, object.getDomain())
 			.put(IJsonNames.ITEM, object.getItemId())
 			.put(IJsonNames.COMPOSITION_ITEM, object.getCompositionItemId())
+			.put(IJsonNames.COMPOSITION, ItemJSON.toJSON(object.getComposition()))
 			.put(IJsonNames.SEQUENCE, object.getSequence())
 			.put(IJsonNames.DESCRIPTION, object.getDescription())
 			.put(IJsonNames.QUANTITY, object.getQuantity())

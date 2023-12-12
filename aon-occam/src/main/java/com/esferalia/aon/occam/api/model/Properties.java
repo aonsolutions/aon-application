@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api.model;
 
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
 public interface Properties {
 	
@@ -1234,7 +1237,8 @@ public interface Properties {
 		Property<Date> getDeliveryDateProperty();
 		Property<Integer> getCarrierProperty();
 		Property<Integer> getCarrierPackingProperty();
-		Property<Integer> getDeliveryProperty();	
+		Property<Integer> getDeliveryProperty();
+		Property<Integer> getProductProperty();
 	}
 	
 	public interface SalesInfoProperties {

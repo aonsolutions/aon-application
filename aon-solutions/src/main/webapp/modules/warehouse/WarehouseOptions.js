@@ -41,7 +41,7 @@ export const WarehouseSidenav = {
     id: CONSTANT.ELABORATION.initCap(),
     name: MSG.ELABORATION.toUpperCase(),
     app: WAREHOUSE,
-    options: [ELABORATION, PACKAGING, SALES_PREPARATION, DELIVERY, TAGS]
+    options: [ELABORATION, PACKAGING, DELIVERY, TAGS]
   }
 }
 export const WarehouseOptions = {
