@@ -26,6 +26,8 @@ export class AonGraphicsTrial extends AonElement {
     byMonth: true,
   };
 
+  cardFilter;
+
   set id(id) {
     this.setAttribute("id", id);
   }
@@ -34,10 +36,11 @@ export class AonGraphicsTrial extends AonElement {
     return this.getAttribute("id");
   }
 
-  constructor() {
+  constructor(cardFilter) {
     super();
     this.id = this.id || "aonGraphicsTrial";
     this.applicationEl = this.getApplication();
+    this.cardFilter = cardFilter;
   }
 
   connectedCallback() {
@@ -79,6 +82,19 @@ export class AonGraphicsTrial extends AonElement {
     this.buildToolbar();
     this.buildPyGToolbar();
     await this.buildFilter();
+
+   if(this.cardFilter){
+      //Object { event: "click", search: "", year: "6215", show: "yearly", detail: "5" }
+      let period = this.PERIODS.filter(period => period.name == this.cardFilter.year);
+      this.filter = {};
+      this.filter.event = "click";
+      this.filter.search = "";
+      this.filter.show = this.cardFilter.show;
+      this.filter.detail = "5";
+      this.filter.year = period[0].id;
+      this.selectedPeriod = period[0];
+      this.cardFilter = undefined;
+    }
 
     this.draw();
     if (this.selectedPeriod){

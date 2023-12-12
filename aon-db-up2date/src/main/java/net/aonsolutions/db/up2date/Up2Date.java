@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
 import net.aonsolutions.db.up2date.note.AlterNoteDropNoteTag;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
@@ -402,9 +403,9 @@ public class Up2Date {
 	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
 	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
 	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
-	    AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    //AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    AlterNoteTagLength.ALTERNOTETAGLENGTH,
 	    AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
-
 	};
 
     // ------------------------------------------------------------------------
