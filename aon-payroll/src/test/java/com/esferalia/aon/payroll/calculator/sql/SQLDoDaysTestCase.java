@@ -463,7 +463,7 @@ public class SQLDoDaysTestCase extends AbstractSQLTestCase {
 			contract.getEndDate(), 
 			addConcept(aonContext, "FIX_BASE_CGC_MIN"), 
 			"COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES :-)", 
-			"/*default*/(/*user*/BASE_CGC/**/)", 
+			"/*default*/(/*user*/0.00/**/)", 
 			"/*fixBaseCgcMin*/BASE_CGP_BRUTA=BASE_CGP=MAX(_B,_A);_P", 
 			"/*fixBaseCgcMin*/_A=BASE_CGP;_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC - BASE_CGC_BRUTA))", 
 			PaymentType.CRA_0001 
