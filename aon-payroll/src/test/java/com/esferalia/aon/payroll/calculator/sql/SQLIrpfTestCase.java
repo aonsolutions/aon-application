@@ -4671,12 +4671,6 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ctx.getIrpf();
 	}
 
-	private static int calculateAndSave(Connection connection,
-			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
-		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
-		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
-		return jooqSalaryBuilder.execute();
-	}
 	
 	private static void newIrpfSalary(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, Double irpfBase, Double totalIrpf , com.esferalia.aon.occam.api.model.type.SalaryType salaryType) {
 

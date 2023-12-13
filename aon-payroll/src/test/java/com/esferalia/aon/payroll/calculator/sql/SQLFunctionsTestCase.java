@@ -2004,14 +2004,5 @@ public class SQLFunctionsTestCase extends
 		return contract;
 	}
 	
-	private static int calculateAndSave(Connection connection,
-			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
-		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
-		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
-		return jooqSalaryBuilder.execute();
-	}
-	
-	
-	
 	
 }
