@@ -1395,6 +1395,44 @@ public class SQLFunctionsTestCase extends
 	}
 	
 	@Test
+	public void testSumFunctionIV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		double sum = 0.00;
+		for ( Date date = startDate; date.compareTo(endDate) <= 0 ; date = add(date, DAY_OF_MONTH,3)) {
+		    sum++;
+		    addData(aonContext, contract, date, date, "UNA_VARIABLE", "1");
+		    
+		}
+		
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("SUM(UNA_VARIABLE)", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(sum, results.get(0).getValue());
+		
+	}
+
+	@Test
 	public void testOnAccountAgreement() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
