@@ -202,5 +202,7 @@ public class NoteDAO {
 	private static void autoComplete(Note note) {
 		if(note.getDate()==null) 
 			note.setDate(AonDateUtils.parse(DATE_DEFAULT, "yyyy-MM-dd"));
+		if(note.getCreationDate() == null)
+			note.setCreationDate(new Date());
 	}
 }
