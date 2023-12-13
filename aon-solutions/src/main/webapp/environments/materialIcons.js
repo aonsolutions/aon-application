@@ -223,6 +223,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SAVED_SEARCH = 'saved_search';
 export const SHARE = 'share';
 export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';

@@ -37,7 +37,6 @@ export const generateXml = (printer, tag, datos)  => {
     texto.push('</Print>\n');
     texto.push('</Command>\n');
     texto.push('</XMLScript>\n');
-
     return new Blob(texto, {
         type: 'application/xml'
     });
@@ -57,7 +56,8 @@ export const writeXml = (cadena) => {
 
 export const printDeliveryTag = (printer, tag, data) => {
     let xml = generateXml(printer, tag, data);
-    postXml('https://192.168.1.252/Integration/BartenderTecnipesa/execute', xml);
+    let url = 'https://192.168.1.189/Integration/IntegracionWebService/Execute';
+    postXml(url, xml);
 };
 
 

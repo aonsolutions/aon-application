@@ -95,14 +95,13 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -150,6 +149,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private String numberPlate;
 	private String driverName;
 	private String driverDocument;
+	private com.esferalia.aon.occam.api.model.warehouse.Delivery delivery;
+	private boolean newDelivery;
 
 
 	private EdiSalesImporterHandler ediImporter;
@@ -413,6 +414,22 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void setDriverDocument(String driverDocument) {
 		this.driverDocument = driverDocument;
+	}
+	
+	public com.esferalia.aon.occam.api.model.warehouse.Delivery getDelivery() {
+		return delivery;
+	}
+	
+	public void setDelivery(com.esferalia.aon.occam.api.model.warehouse.Delivery delivery) {
+		this.delivery = delivery;
+	}
+	
+	public boolean isNewDelivery() {
+		return newDelivery;
+	}
+	
+	public void setNewDelivery(boolean newDelivery) {
+		this.newDelivery = newDelivery;
 	}
 	
 	public boolean isShowPurchaseReferenceWindow() {
@@ -1188,7 +1205,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setSeries(series)
 				.setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(to.getShippingAddress().getId()))
 				.setDate(new Date())
-				.setStatus(DeliveryStatus.PENDING)
+				.setStatus(DeliveryStatus.IN_PREPARATION)
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))
 				.setCarrier(to.getCarrier().getId())
@@ -1219,4 +1236,24 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
+	
+	public List<SelectItem> getDeliveries() {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales to = (Sales)this.getTo();
+		List<com.esferalia.aon.occam.api.model.warehouse.Delivery> deliveryList = 
+			AON.getDeliveryStream(new Domain().setId(to.getDomain()).setName(domainName),
+				login, f -> f.getDomainProperty().eq(to.getDomain())
+				.and(f.getStatusProperty().eq(DeliveryStatus.IN_PREPARATION.value())))
+		.toList();
+		LinkedList<SelectItem> deliveries = new LinkedList<>();
+		for (com.esferalia.aon.occam.api.model.warehouse.Delivery delivery : deliveryList) {
+			SelectItem item = new SelectItem(delivery, delivery.getReferenceCode());
+			deliveries.add(item);
+		}
+		
+		return deliveries;
+	}
+
 }
+
