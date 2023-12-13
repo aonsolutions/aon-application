@@ -288,7 +288,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	@Override
 	protected void assertAnnualRemuneration(double expected,
 			double annualRemuneration, int months, double delta) {
-		super.assertAnnualRemuneration(expected + 66666.00 /*+ (66666.00 / (6.00 * 12 ) * 12)*/, annualRemuneration, delta);
+		super.assertAnnualRemuneration(expected + 66666.00 / 12 * months /*+ (66666.00 / (6.00 * 12 ) * 12)*/, annualRemuneration, delta);
 	}
 
 	@Override
