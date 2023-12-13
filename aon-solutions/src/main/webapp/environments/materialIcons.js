@@ -126,6 +126,7 @@ export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
+export const FILTER_LIST = 'filter_list';
 export const FOLDER = 'folder';
 export const FORK_LEFT = "fork_left";
 export const FORMAT_INDENT_INCREASE = "format_indent_increase";
@@ -190,6 +191,7 @@ export const NOTIFICATION_ADD = "notification_add";
 // ----- P
 
 export const PALLET = 'pallet';
+export const PALETTE = 'palette';
 export const PASSWORD = 'password';
 export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
@@ -204,6 +206,7 @@ export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
 export const PEOPLE = 'people';
 export const PRIVACY_TIP = 'privacy_tip';
+export const PUSH_PIN = 'push_pin';
 
 // ----- Q
 
@@ -220,6 +223,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SAVED_SEARCH = 'saved_search';
 export const SHARE = 'share';
 export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';

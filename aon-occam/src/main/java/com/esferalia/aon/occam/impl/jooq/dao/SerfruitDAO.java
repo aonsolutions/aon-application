@@ -78,7 +78,7 @@ public class SerfruitDAO {
 		return getFullStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getStatusProperty().eq(SalesStatus.BLOCKED.value()))
 				.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(from)))
-				.and(f.getIssueDateProperty().le(AonDateUtils.toSql(date)))
+//				.and(f.getIssueDateProperty().le(AonDateUtils.toSql(date)))
 		);
 	}
 	

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -479,10 +480,10 @@ public class Contrata {
 				String cif = cto.getCifEnterprise();
 				
 				if (cif!= null) {
+					((HtmlSelect) form.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(cif), true);
+					
 					form.getInputByName("cifnif").setValueAttribute(cif);
 					form.getInputByName("cifnif").setValue(cif);
-					
-					((HtmlSelect) form.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(cif), true);
 				}
 
 				form.getInputByName("regimen").setValue(regimen);
@@ -819,9 +820,28 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
-			
+
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+			
+			// For contract 502 check if duration equals or less than 90 days
+			try {
+				if(contract.equals("502") && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
+					htmlPage = htmlPage.getElementById("volver").click();
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					if(null != cto.getDateFinContract()) {
+						long daysBetween = ChronoUnit.DAYS.between(cto.getDateIniContract().toInstant(), cto.getDateFinContract().toInstant());
+						((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute(daysBetween <= 90 ? "S" : "N", true);
+					} else ((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute("N", true);
+					
+					setOccupation(cto, form);
+					
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+				}
+			} catch (Exception e) {}
+			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
+			handleSepeExceptions(htmlPage);
 			
 			String message = null;
 			for (int i = 0; i < 3; i++) {
@@ -1970,15 +1990,24 @@ public class Contrata {
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodoc2]>option").get(ident);
 		option.click();
+		
 		formDatos.getInputByName("nifnietrabajador").setValue(Toolkit.appendStringLeft(ipf, " ", 2));
+		formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
+		
 		formDatos.getInputByName("diadesde").setValue(fri[0]);
 		formDatos.getInputByName("mesdesde").setValue(fri[1]);
 		formDatos.getInputByName("anniodesde").setValue(fri[2]);
+		formDatos.getInputByName("diadesde").setValueAttribute(fri[0]);
+		formDatos.getInputByName("mesdesde").setValueAttribute(fri[1]);
+		formDatos.getInputByName("anniodesde").setValueAttribute(fri[2]);
 
 		formDatos.getInputByName("diahasta").setValue(fre[0]);
 		formDatos.getInputByName("meshasta").setValue(fre[1]);
 		formDatos.getInputByName("anniohasta").setValue(fre[2]);
-
+		formDatos.getInputByName("diahasta").setValueAttribute(fre[0]);
+		formDatos.getInputByName("meshasta").setValueAttribute(fre[1]);
+		formDatos.getInputByName("anniohasta").setValueAttribute(fre[2]);
+		
 		htmlPage = formDatos.getInputByName("aceptar").click();
 		handleSepeExceptions(htmlPage);
 

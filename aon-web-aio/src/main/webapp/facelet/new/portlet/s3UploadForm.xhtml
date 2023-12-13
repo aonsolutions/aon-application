@@ -7,25 +7,35 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 >
-	
 	<script type="text/javascript">
         //<![CDATA[
+        	var uploadCount = 0;
+        	
         	function upload(file, success, error ){
 				let formData = new FormData();
 				let xhr = new XMLHttpRequest();
-    			  
+				
+				const user = '#{domainSwitcher.currentUser}';  
+				const uploadId =  '#{uploadId}'
+				const domainName = '#{domainSwitcher.currentDomainName}';
+				const domainDocument = '#{domainSwitcher.currentDomainDocument}';
+				const domainDescription =  '#{domainSwitcher.currentDomainDescription}';
+				
+				const fileOrder = ('0' + uploadCount++ ).slice(-2);  
+				
     			formData.append('key', 
-    					'invoices'
-    					+'/#{domainSwitcher.currentDomainURL}'
-    					+'#{(empty domainSwitcher.currentDomainDocument) ? "" : "/".concat(domainSwitcher.currentDomainDocument)}'
-    					+'/#{domainSwitcher.currentUser}'
-    					+'#{(empty uploadJobId) ? "" : "/".concat(uploadJobId)}' 
-    					+ '/' + file.name);
+    					'#{s3Prefix}'
+    					+'/' + domainName
+    					+ ( domainDocument ? '/' + domainDocument : '' )
+    					+'/' + user
+    					+ ( uploadId ? '/' + uploadId : '' )
+    					+ '/' + fileOrder + '_' + file.name);
     			formData.append('success_action_status', '201');
+    			formData.append('x-amz-meta-company-name', domainDescription );
     			formData.append('Content-Type', file.type);
 				formData.append('file', file);
     			
-    			xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
+    			xhr.open('POST', "https://#{s3Bucket}.s3.amazonaws.com/", true);
     			xhr.addEventListener('readystatechange', function(e) {
 				if (xhr.readyState == 4 && xhr.status == 201) {
 				      // Done. Inform the user
@@ -61,7 +71,7 @@
 	    		  let dt = e.dataTransfer;
 	    		  let files = dt.files;
 	    		  ([...files]).forEach( (file) => upload(file,success, error ) );
-	       		}, false)
+	       		}, false);
 
 	       		document.forms.s3UploadForm.file.addEventListener('change', (e) => {
 	    		  let files = document.forms.s3UploadForm.file.files;
@@ -71,7 +81,8 @@
 	       		
 	       		el.addEventListener('click', (e) => {
 	       			document.forms.s3UploadForm.file.click();
-		       	}, false)
+		       	}, false);
+	       		
 	       	}
 
         	//]]>
@@ -122,5 +133,66 @@
 	  <!-- The elements after this will be ignored -->
 	  <input type="submit" name="submit" value="Upload to Amazon S3" />
 	</form>
+	
+    <aon:div id="aonUploadToast" styleClass="aon-upload-toast" style="display:none;">
+		<aon:panelGrid columns="2" columnClasses="aon-width-all,aon" styleClass="aon-upload-toast-header" >
+			<aon:outputText id="aonUploadToastHeaderText" styleClass="aon-upload-toast-header-text" value="Se ha subido una factura" />
+			<aon:outputText id="aonUploadToastHeaderIcon" styleClass="material-icons aon-upload-toast-header-icon" value="check_circle"/>
+		</aon:panelGrid>
+		<aon:div styleClass="aon-scroll-area">
+			<aon:panelGrid id="aonUploadToastTable" columns="3" columnClasses="aon-width-40,aon-width-all,aon-width-40" styleClass="aon-upload-toast-body"  >
+				
+				<aon:outputText styleClass="material-icons aon-upload-toast-body-type" value="picture_as_pdf" />
+				<aon:outputText styleClass="aon-upload-toast-body-name" value="ARCHIVO.PDF" />
+				<aon:outputText styleClass="material-icons aon-upload-toast-body-icon" value="folder" />
+			
+			</aon:panelGrid>
+		</aon:div>
+    </aon:div>
   	
+	<script type='text/javascript' >
+    //<![CDATA[
+    	
+    	function getIcon(file) {
+    		const mimeType = file.type;
+    		if ( mimeType.match(/pdf/gi) ) 
+    			return 'picture_as_pdf';
+    		if ( mimeType.match(/image/g) ) 
+    			return 'image';
+    		return  'description'
+    	} 
+    	setupS3UploadPanel(
+    	#{rich:element(uploadPanel)}
+    	, (file) => {
+    		#{rich:element('aonUploadToast')}.style.display = 'block';
+    		const fileRow = #{rich:element('aonUploadToastTable')}.rows[0].cloneNode(true);
+    		
+    		const cells = fileRow.cells;
+
+    		const fileTypeCell = cells[0];
+    		const fileTypeElement = cells[0].firstChild;
+    		fileTypeElement.innerText = getIcon(file);
+
+    		const fileNameCell = cells[1];
+    		const fileNameElement = cells[1].firstChild;
+    		fileNameElement.innerText = file.name;
+    		
+    		
+    		#{rich:element('aonUploadToastTable')}.appendChild(fileRow);	
+    		
+    		const documents = #{rich:element('aonUploadToastTable')}.rows.length - 1 ;
+    		
+    		if ( #{rich:element('aonUploadToastTable')}.rows.length === 2 )
+    			#{rich:element('aonUploadToastHeaderText')}.innerText = '#{uploadOneTitle}' ;
+    		else 
+    			#{rich:element('aonUploadToastHeaderText')}.innerText = `#{uploadManyTitle}`;
+    		
+    	}
+    	, (file, xhr ) => {
+    		alert(xhr);
+    	}
+    	);
+    	
+    //]]>
+	</script>
 </ui:composition>

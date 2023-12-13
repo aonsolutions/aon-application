@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showPrepareSaleWindow">
 		<aon:if test="#{sales.showPrepareSaleWindow}">
-			<rich:modalPanel id="prepareSalePanel" minHeight="650"
+			<rich:modalPanel id="prepareSalePanel" minHeight="400"
 				minWidth="800" rendered="#{sales.showPrepareSaleWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -68,6 +68,21 @@
 											direction="bottom-right"
 											verticalOffset="-100" />
 
+										<aon:outputLabel for="Sales_Delivery"
+											value="Albarán" />
+										<aon:div>
+											<aon:selectOneMenu id="Sales_delivery" 
+												value="#{sales.delivery}">
+												<f:selectItem itemLabel=" - " itemValue="#{null}" />
+												<f:selectItems value="#{sales.deliveries}" />
+											</aon:selectOneMenu>
+											
+											<aon:selectBooleanCheckbox id="Sales_newDelivery" styleClass="aon-margin-left"
+												value="#{sales.newDelivery}" />
+											<aon:outputLabel for="Sales_newDelivery" styleClass="aon-italic"
+												value="Crear Nuevo Albarán" />
+										</aon:div>
+										
 										<aon:outputLabel for="Sales_deliveryDate"
 											value="Fecha Entrega" />
 										<aon:selectInputDate id="Sales_deliveryDate"
@@ -85,6 +100,7 @@
 											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{carrierCollections.carriers}" />
 										</aon:selectOneMenu>
+										
 					
 										<aon:outputLabel for="Sales_numberPlate"
 											value="Matricula" />
@@ -99,7 +115,7 @@
 											value="#{sales.driverName}" />
 											
 										<aon:outputLabel for="Sales_driverDocument"
-											value="Document Conductor" />
+											value="Documento Conductor" />
 										<aon:inputText id="Sales_driverDocument"  
 											size="20" maxlength="128"
 											value="#{sales.driverDocument}" />

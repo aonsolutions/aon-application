@@ -7,8 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	SalesCRUDETest.class,
-	SalesDetailCRUDETest.class
+	SalesAllTests.class,
+	SalesDetailAllTests.class
 })
 public class SalesTest {
 

@@ -23,14 +23,14 @@ export class AonMobileDeliveryList extends AonMobileList {
     };
 
     disconnectedCallback() {
-        this.removeEventListener(EVENT.MORE, this.moreFn);
+        this.removeEventListener('more', this.moreFn);
     }
 
     initialize() {
         this.filter = this.filter || {
             page: 1,
             perPage: 30,
-            status: 'PENDING'
+            status: 'IN_PREPARATION'
         };
         this.more = true;
     }

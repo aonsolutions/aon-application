@@ -68,6 +68,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL3902015;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902023;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -95,6 +96,7 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902023;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -733,6 +735,10 @@ public class ModelAdmonUtils {
 				if (fm instanceof Mod3902022) {
 					Mod3902022 mod = (Mod3902022) fm;
 					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
+				}
+				if (fm instanceof Mod3902023) {
+					Mod3902023 mod = (Mod3902023) fm;
+					MODEL3902023.aeatPresentation(occam, mod , aeatResponse);
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}

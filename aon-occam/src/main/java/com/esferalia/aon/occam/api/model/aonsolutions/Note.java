@@ -3,8 +3,6 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.office.Tag;
-
 public class Note implements Serializable {
 	
 	private static final long serialVersionUID = -6673378118872331822L;
@@ -18,7 +16,12 @@ public class Note implements Serializable {
 	private Integer owner;
 	private String note;
 	private boolean archive = false;
-	private Tag tag;
+	private boolean pinpUp = false;
+	private String noteTag;
+	private String color;
+	private Date archiveDate;
+	private Date modificationDate;
+	private Date creationDate;
 	
 	public Integer getId() {
 		return id;
@@ -62,7 +65,6 @@ public class Note implements Serializable {
 		this.note = note;
 		return this;
 	}
-	
 	public boolean isArchive() {
 		return archive;
 	}
@@ -70,15 +72,47 @@ public class Note implements Serializable {
 		this.archive = archive;
 		return this;
 	}
-	public Tag getTag() {
-		return tag;
+	public boolean isPinpUp() {
+		return pinpUp;
 	}
-	public Note setTag(Tag tag) {
-		this.tag = tag;
+	public Note setPinpUp(boolean pinpUp) {
+		this.pinpUp = pinpUp;
 		return this;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getNoteTag() {
+		return noteTag;
+	}
+	public Note setNoteTag(String noteTag) {
+		this.noteTag = noteTag;
+		return this;
+	}
+	public String getColor() {
+		return color;
+	}
+	public Note setColor(String color) {
+		this.color = color;
+		return this;
+	}
+	public Date getArchiveDate() {
+		return archiveDate;
+	}
+	public Note setArchiveDate(Date archiveDate) {
+		this.archiveDate = archiveDate;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public Note setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public Note setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
 	}
 	
 }

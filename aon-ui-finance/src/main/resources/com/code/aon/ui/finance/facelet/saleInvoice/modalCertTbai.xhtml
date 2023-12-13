@@ -77,6 +77,19 @@
 													target="#{saleInvoice.showCertTbaiWindow}"
 													value="#{false}" />
 										</aon:commandButton>
+										<aon:commandButton id="certTbaiAnular2"	
+											rendered="#{domainSwitcher.udapa and saleInvoice.aonUser}"
+											value="Anular"
+											action="#{saleInvoice.anularInvoiceOnly}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
 									</aon:div>
 									
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">

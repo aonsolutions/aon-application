@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.watson.server.AonDateUtils.addDays;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Stream;
@@ -403,7 +405,14 @@ public class TrabajadoresTramos {
 								return incapacidadTemporalPagoDelegado;
 							}
 							
+							@Override
+							public void endVisit() {
+							}
 
+							@Override
+							public void startVisit() {
+							}
+							
 							@Override
 							public void visitFormacionNormal() {
 							}
@@ -416,6 +425,10 @@ public class TrabajadoresTramos {
 							public void visitTiempoCompletoNormal() {
 							}
 							
+							@Override
+							public void visitJornadasRealesNormal() {
+							}
+
 							@Override
 							public void visitRegimenArtistasNormal() {
 							}
@@ -513,6 +526,14 @@ public class TrabajadoresTramos {
 						class DefaultSalaryVisitor implements SalaryVisitor {
 							
 							@Override
+							public void endVisit() {
+							}
+
+							@Override
+							public void startVisit() {
+							}
+							
+							@Override
 							public void visitFormacionNormal() {
 								// 3.1 Contratos para la formación (TRL 087)  
 								// 3.1.1 Tramo en situación de activo "normal"  
@@ -577,6 +598,23 @@ public class TrabajadoresTramos {
 																
 							}
 							
+							@Override
+							public void visitJornadasRealesNormal() {
+							    	// PEC: 40 Tipo cotización especial.SEA
+                        					
+							    	// Base de contingencias comunes
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("500");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Accidentes de Trabajo
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("601");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							    
+							}
+
 							@Override
 							public void visitRegimenArtistasNormal() {
 								// 5 Régimen Especial de Artistas 
@@ -1127,9 +1165,17 @@ public class TrabajadoresTramos {
 	private static List<Period> merge(Salary salary, List<Period> periods) {
 		LinkedList<Period> cretaPeriods = new LinkedList<Period>();
 		
-		class Visitor implements  SalaryVisitor {
+		class Visitor implements  SalaryVisitor{
 			
 			SalaryVisitor standard = new SalaryVisitor(){
+				
+				@Override
+				public void endVisit() {
+				}
+
+				@Override
+				public void startVisit() {
+				}
 				
 				@Override
 				public void visitFormacionNormal() {
@@ -1144,6 +1190,12 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitTiempoCompletoNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
+				@Override
+				public void visitJornadasRealesNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = jornadasReales;
 				}
 				
 				@Override
@@ -1244,6 +1296,14 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void endVisit() {
+				}
+
+				@Override
+				public void startVisit() {
+				}
+				
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
@@ -1258,6 +1318,10 @@ public class TrabajadoresTramos {
 					visitOthers();
 				}
 				
+				@Override
+				public void visitJornadasRealesNormal() {
+					visitOthers();
+				}
 				@Override
 				public void visitRegimenArtistasNormal() {
 					visitOthers();
@@ -1356,18 +1420,31 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void endVisit() {
+				}
+
+				@Override
+				public void startVisit() {
+				}
+				
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
 				
 				@Override
 				public void visitTiempoParcialNormal() {
-					visitOthers();
+				    visitOthers();
 				}
 
 				@Override
 				public void visitTiempoCompletoNormal() {
-					visitOthers();
+				    visitOthers();
+				}
+				
+				@Override
+				public void visitJornadasRealesNormal() {
+				    visitOthers();	
 				}
 				
 				@Override
@@ -1463,12 +1540,144 @@ public class TrabajadoresTramos {
 				}
 			};
 
+			SalaryVisitor jornadasReales = new SalaryVisitor(){
+				
+				private void visitOthers(){
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = standard;
+				}
+				
+				@Override
+				public void startVisit() {
+				}
+				
+				@Override
+				public void endVisit() {
+				    cretaPeriods.clear();
+				    cretaPeriods.add(new Period( salary.getStartDate() , salary.getEndDate()));
+				}
+				
+				@Override
+				public void visitFormacionNormal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitTiempoParcialNormal() {
+				}
+
+				@Override
+				public void visitTiempoCompletoNormal() {
+				}
+				
+				@Override
+				public void visitJornadasRealesNormal() {
+				}
+				@Override
+				public void visitRegimenArtistasNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitFormacionEnAlternanciaNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitGrupoCotizacionDiario() {
+					// noop
+				}
+				
+				@Override
+				public void visitGrupoCotizacionMensual() {
+				}
+
+				@Override
+				public void visitIncapacidadTemporal15PrimerosDias() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegado() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDirecto() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegado() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoCompleto() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcial() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoTotal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcial() {
+					//visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+					visitOthers();					
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
+			};
+
 			private Period period ;
 			private SalaryVisitor state = standard;
 			
 			
 			public void setPeriod(Period period) {
 				this.period = period;
+			}
+			
+			@Override
+			public void startVisit() {
+			    state.startVisit();
+			}
+			
+			@Override
+			public void endVisit() {
+			    state.endVisit();
 			}
 			
 			@Override
@@ -1484,6 +1693,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitTiempoCompletoNormal() {
 				state.visitTiempoCompletoNormal();
+			}
+			
+			@Override
+			public void visitJornadasRealesNormal() {
+				state.visitJornadasRealesNormal();
 			}
 
 			@Override
@@ -1580,10 +1794,14 @@ public class TrabajadoresTramos {
 		
 		Visitor visitor = new Visitor();
 
+		visitor.startVisit();
+
 		for ( Period p: periods ) {
 			visitor.setPeriod(p);
 			visit(salary, p.getStart(), p.getEnd(), visitor );
 		}
+		
+		visitor.endVisit();
 		
 		return cretaPeriods;
 		
@@ -1641,9 +1859,12 @@ public class TrabajadoresTramos {
 	}
 
 	private static interface SalaryVisitor {
+	    	void endVisit();
+	    	void startVisit();
 		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
+		void visitJornadasRealesNormal();
 		void visitRegimenArtistasNormal();
 		void visitFormacionEnAlternanciaNormal();
 		void visitGrupoCotizacionDiario();
@@ -1744,6 +1965,7 @@ public class TrabajadoresTramos {
 		
 		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
 		
+		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
 		if ( becarios )
 			if ( iTPagoDelegado )
@@ -1818,6 +2040,8 @@ public class TrabajadoresTramos {
 			visitor.visitExpedienteRegulacionEmpleoTotal();
 //		else if ( ereParcial )
 //			visitor.visitExpedienteRegulacionEmpleoParcial();
+		else if ( jornadasReales )
+			visitor.visitJornadasRealesNormal();
 		else if ( artistas )
 			visitor.visitRegimenArtistasNormal();
 		else if (tiempoCompleto)
@@ -1832,6 +2056,8 @@ public class TrabajadoresTramos {
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( formacionEnAlternancia )
 		    	grupoCotizacion = visitor::visitGrupoCotizacionMensual;
+		else if ( jornadasReales )
+		        grupoCotizacion = () -> {} ; // do nothing
 		else if ( Integer.parseInt(quoteGroup ) >= 8 )
 			grupoCotizacion = visitor::visitGrupoCotizacionDiario;
 		else
@@ -1950,6 +2176,7 @@ public class TrabajadoresTramos {
 		return data == null ? def : data ;
 	}
 	
+
 	
 	private static Collection<ContextData> filterValid(String tipo, Collection<ContextData> contextDatas) {
 		return visit(tipo
@@ -1987,6 +2214,15 @@ public class TrabajadoresTramos {
 			
 		}
 		, Collections.emptyList());
+	}
+	
+	private static Period merge (Period p1, Period p2) {
+	    Date p2Start = AonDateUtils.addDays(p1.getEnd(), 1);
+	    if ( p2Start.compareTo(p2.getStart()) < 0 ) {
+		return p1;
+	    } else {
+		return new Period ( p1.getStart(), p2.getEnd());
+	    }
 	}
 	 
 	

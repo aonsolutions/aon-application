@@ -146,8 +146,6 @@ public interface ICommon {
 	public Tag updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, TagFilter filter);
 	
-	public List<Tag> getNoteTagsList(AONContext ctx, TagFilter filter, Integer userId);
-	
 	//TAX
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
 

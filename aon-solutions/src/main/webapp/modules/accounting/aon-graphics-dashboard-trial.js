@@ -49,6 +49,10 @@ export class AonDashboardGraphicsTrial extends AonElement {
     return this.getAttribute("id");
   }
 
+  getFilter(){
+    return this.filter;
+  }
+
   constructor(period) {
     super();
     this.id = this.id || "aonGraphicsDashboardTrial";
