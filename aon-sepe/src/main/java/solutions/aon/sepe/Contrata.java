@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -819,9 +820,25 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
-			
 
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+			
+			// For contract 502 check if duration equals or less than 90 days
+			try {
+				if(contract.equals("502") && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
+					htmlPage = htmlPage.getElementById("volver").click();
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					if(null != cto.getDateFinContract()) {
+						long daysBetween = ChronoUnit.DAYS.between(cto.getDateIniContract().toInstant(), cto.getDateFinContract().toInstant());
+						((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute(daysBetween <= 90 ? "S" : "N", true);
+					} else ((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute("N", true);
+					
+					setOccupation(cto, form);
+					
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+				}
+			} catch (Exception e) {}
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);

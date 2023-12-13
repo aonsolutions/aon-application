@@ -2,27 +2,20 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.NoteJSON;
-import com.esferalia.aon.occam.api.json.TagJSON;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
-import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.type.TagType;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -49,12 +42,6 @@ public class NoteServlet extends AonApiHttpServlet{
 				break;
 			case "/note-count":
 				response(req, resp, getNoteCount(api));
-				break;
-			case "/note-tag-count":
-				response(req, resp, getNoteTagCount(api));
-				break;
-			case "/tags":
-				response(req, resp, getNoteTags(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -155,56 +142,28 @@ public class NoteServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	// ---------- NOTES TAG COUNT
-	
-	private JSONObject getNoteTagCount(AonApiData api) {
-	    JSONObject json = new JSONObject();
-		
-	    HashMap<String, Integer> map = AON_SOLUTIONS.getNoteTagCount(api.getDomain(), "", f->f.getDomainProperty().eq(api.getDomain().getId())
-				.and(f.getOwnerProperty().eq(api.getUser().getId())),
-				api.getUser().getId()
-		);
-
-		for (Entry<String, Integer> entry : map.entrySet()) 
-			json.put(entry.getKey(), entry.getValue());
-
-		return json;
-	}
-	
-	// ---------- TAG
-	
-	private JSONArray getNoteTags(AonApiData api) {
-		System.out.println("User: " + api.getUser().getId());
-		List<Tag> tags = AON.getNoteTagsList(
-				api.getDomain().getName(),
-				api.getDomain().getId(), 
-				api.getUser().getLogin(), 
-				f -> f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getTypeProperty().eq(TagType.NOTE.value())),
-				api.getUser().getId());
-		
-		return TagJSON.toJSON(tags);
-	}
-	
 	private JSONObject saveTag(AonApiData api) {
-		Domain domain = api.getDomain();
-		Tag tag = TagJSON.fromJSON(api.getData());
+		String noteTagOld = JsonUtils.optString(api.getData(), "noteTagOld");
+		String noteTagNew = JsonUtils.optString(api.getData(), "noteTagNew");
 		
-		if(tag.getId() != null) {
-			AON.updateTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag); 
-		} else {
-			tag = AON.insertTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag);
-		}
-
-		return TagJSON.toJSON(tag);
+		AON_SOLUTIONS.updateNoteTag(api.getDomain(), api.getUser().getLogin(), noteTagNew, 
+				f-> f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getOwnerProperty().eq(api.getUser().getId()))
+				.and(f.getNoteTagProperty().eq(noteTagOld.toUpperCase()))
+		);
+		
+		return new JSONObject();
 	}
 	
 	private JSONObject deleteTag(AonApiData api) {
-		AON.deleteTag(
-				api.getDomain().getName(), 
-				api.getDomain().getId(), 
-				api.getUser().getLogin(), 
-				TagJSON.fromJSON(api.getData()));
+		String noteTag = JsonUtils.getString(api.getData(), "noteTag");
+		
+		AON_SOLUTIONS.deleteNoteTag(api.getDomain(), api.getUser().getLogin(), 
+				f-> f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getOwnerProperty().eq(api.getUser().getId()))
+				.and(f.getNoteTagProperty().eq(noteTag.toUpperCase()))
+		);
+		
 		return new JSONObject();
 	}
 	

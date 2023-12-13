@@ -5,14 +5,8 @@ import { API_URL } from "../environments/environments.js";
 export const getNotes = (data) => get(`${API_URL}/note`, data);
 export const getNote = (data) => get(`${API_URL}/note/one`, data);
 
-// Tag
-export const getNoteTags = (data) => get(`${API_URL}/note/tags`, data);
-
 // Notes count
 export const getNoteCount = (data) => get(`${API_URL}/note/note-count`, data);
-
-// Notes count
-export const getNoteTagsCount = (data) => get(`${API_URL}/note/note-tag-count`, data);
 
 // Note
 export const saveNote = (data) => post(`${API_URL}/note`, data);

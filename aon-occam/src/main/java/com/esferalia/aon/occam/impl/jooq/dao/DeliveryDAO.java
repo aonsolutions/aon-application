@@ -244,8 +244,10 @@ public class DeliveryDAO {
 				new DeliveryDetailFiller()::apply
 			);
 		map.forEach((object, details) -> details.forEach(detail -> {
-			detail.setItem(completeItemPackingTag(detail.getItem(), tagList));
-			object.addDetail(detail);
+			if(!detail.isEmpty()) {
+				detail.setItem(completeItemPackingTag(detail.getItem(), tagList));
+				object.addDetail(detail);
+			}
 		}));
 		return map.keySet().stream(); 
 	}

@@ -49,7 +49,6 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
-import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -58,6 +57,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -82,7 +82,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
@@ -675,8 +674,8 @@ public class AonFaker {
 				.setQuantity(1.0)
 				.setPrice(1.0)
 				.setDiscountExpression("0.0")
-				.setStatus(SalesDetailStatus.PENDING);		
-	}
+				.setStatus(SalesDetailStatus.PENDING);
+		}
 	
 	public static Offer getOffer(AONContext ctx) {
 		Target target = TargetDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
@@ -898,6 +897,17 @@ public class AonFaker {
 				.setRequisition(requisition)
 				.setSepaMandateRef(sepaMandateRef)
 				.setSuffix(suffix);
+	}
+	
+	public static Carrier getCarrier(AONContext ctx) {
+		Random random = new Random();
+		CarrierStatus[] status = CarrierStatus.values();
+		
+		return new Carrier()
+				.copy(getRegistry(ctx))
+				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setScope(getScope())
+				.setStatus(status[random.nextInt(status.length)]);
 	}
 	
 	/** Methods independent from AONContext **/

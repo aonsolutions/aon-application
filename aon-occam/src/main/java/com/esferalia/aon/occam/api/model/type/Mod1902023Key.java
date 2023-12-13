@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum Mod1902022Key {
+public enum Mod1902023Key {
 	 A ("A - Rendimientos del trabajo: Empleados por cuenta ajena en general."
 		 ,null
 	 )
@@ -8,7 +8,7 @@ public enum Mod1902022Key {
 		,new String[] { "01", "02", "03"}
 	)
 	,C ("C - Rendimientos del trabajo: Prestaciones o subsidios por desempleo."
-		,null
+			,new String[] { "01", "02", "03", "04", "05", "06", "07"}
 	)
 	,D ("D - Rendimientos del trabajo: Prestaciones por desempleo abonadas en la modalidad de pago \u00FAnico."
 		,null
@@ -17,16 +17,16 @@ public enum Mod1902022Key {
 		,new String[] { "01", "02", "03", "04"  }
 	)
 	,F ("F - Rendimientos del trabajo: Cursos, conferencias, seminarios y similares y elaboraci\u00F3n de obras literarias, art\u00EDsticas o cient\u00EDficas."
-		,new String[] { "01", "02" }
+		,new String[] { "01", "02", "03", "04", "05", "06", "07"}
 	) 
 	,G ("G - Rendimientos de actividades econ\u00F3micas: Actividades profesionales."
-		,new String[] { "01", "02", "03"}
+		,new String[] { "01", "02", "03", "04", "05", "06", "07", "08"}
 	)
 	,H ("H - Rendimientos de actividades econ\u00F3micas: actividades agr\u00EDcolas, ganaderas y forestales ..."
 		,new String[] { "01", "02", "03", "04" }
 	)
 	,I ("I - Rendimientos de actividades econ\u00F3micas: rendimientos a que se refiere el art\u00EDculo 75.2, letra b), del Reglamento del Impuesto."
-		,new String[] { "01", "02" }
+		,new String[] { "01", "02" , "03" }
 	)
 	,J ("J - Imputaci\u00F3n de rentas por la cesi\u00F3n de derechos de imagen"
 		,null
@@ -38,14 +38,15 @@ public enum Mod1902022Key {
 		,new String[] { 
 			"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
 			"11", "12", "13", "14", "15", "16", "17", "18" , "19", "20", 
-			"21", "22", "23", "24", "25", "26", "27", "28" , "29", "30", }
+			"21", "22", "23", "24", "25", "26", "27", "28" , "29", "30",
+			"31", "99"}
 	)
 	;
 
 	private String description;
 	private String[] subKeys;
 
-	private Mod1902022Key(String description, String[] subKeys) {
+	private Mod1902023Key(String description, String[] subKeys) {
 		this.description = description;
 		this.subKeys = subKeys;
 	}

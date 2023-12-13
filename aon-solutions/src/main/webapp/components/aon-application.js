@@ -470,7 +470,7 @@ export class AonApplication extends AonElement {
       let id = sidenavId + (option.id || Math.random().toString(36).substring(7));
       let li = this.createElement(TAG.LI);
       li.id = id;
-      li.title = option.name;
+      li.title = option.title || option.name;
 
       li.className = LS.isNewTheme() 
           ? `aonAppMenuSidenavListBeta aonOpacity ${data.app ? data.app.hover : 'sidenavHover'}`
@@ -504,7 +504,7 @@ export class AonApplication extends AonElement {
 
       let span = this.createElement(TAG.SPAN);
       span.className = "aonMenuItemSpan";
-      span.title =  option.name;
+      span.title =  option.title || option.name;
       if (option.count) {
         span.innerHTML = option.name + " (" + option.count + ")";
         span.style.fontWeight = "bold";

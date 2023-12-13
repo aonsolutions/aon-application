@@ -259,6 +259,30 @@ export class AonComunicaUtils extends AonElement {
     });
   }
 
+  showViewFilter(view, cardFilter) {
+    return new Promise(async (resolve) => {
+      let aonView = undefined;
+      switch (view) {
+        case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
+          if(LS.isNewTheme()){
+            aonView = new AonCompanyCostsListNew(cardFilter);
+          } else {
+            aonView = new AonCompanyCostsList();
+          }
+          break;
+      }
+      if (aonView) {
+        aonView.id = view;
+        this.getApplication().setContent(aonView);
+        
+        if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
+          await paintCompanyCostPieChart();
+        }
+      }
+      resolve(aonView);
+    });
+  }
+
   goContractDesk() {
     this.getApplication().removeToolbarOptions();
 

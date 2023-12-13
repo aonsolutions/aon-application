@@ -1,4 +1,4 @@
-package net.aonsolutons.db.up2date.note;
+package net.aonsolutions.db.up2date.note;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

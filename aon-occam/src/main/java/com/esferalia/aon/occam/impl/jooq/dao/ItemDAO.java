@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.COMPOSITION_ALIAS;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -29,10 +30,10 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -122,12 +123,13 @@ public class ItemDAO {
 	}
 	
 	private static SelectConditionStep<Record> selectFull(AONContext ctx, ItemFilter filter) {
-		 return ctx.getDslContext().select()
+		return ctx.getDslContext().select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
 			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 			.leftOuterJoin(ITEM_COMPOSITION).on(ITEM.ID.equal(ITEM_COMPOSITION.ITEM))
+			.leftOuterJoin(COMPOSITION_ALIAS).on(ITEM_COMPOSITION.COMPOSITION_ITEM.eq(COMPOSITION_ALIAS.ID))
 			.where(ITEM_PROPERTIES.getConditions(filter));
 	}
 	
@@ -150,9 +152,7 @@ public class ItemDAO {
 		Map<Item, List<ItemComposition>> map =  selectFull(ctx, filter)
 				.groupBy(ITEM.ID, ITEM_COMPOSITION.ID)
 				.fetchGroups(new ItemFiller()::apply, new ItemCompositionFiller()::apply);
-		map.forEach((object, composition) -> composition.forEach(c-> {
-			object.addItemComposition(c);
-		}));
+		map.forEach((object, composition) -> composition.forEach(c -> object.addItemComposition(c)));
 		return map.keySet().stream(); 
 	}
 	
@@ -451,37 +451,43 @@ public class ItemDAO {
 		}
 		
 		public static Item build(Record r) {
-			return new Item()
-				.setId(getValue(r, ITEM.ID))
-				.setDomain(new Domain().setId(getValue(r, ITEM.DOMAIN)))
+			return build(r, ITEM)
 				.setProduct(checkField(r, PRODUCT.ID)
 					? ProductFiller.buildProduct(r)
-					: new Product().setId(getValue(r, ITEM.PRODUCT)))
-				.setDetail(getValue(r, ITEM.DETAIL))
-				.setDetail2(getValue(r, ITEM.DETAIL2))
-				.setDetail3(getValue(r, ITEM.DETAIL3))
-				.setDescription(getValue(r, ITEM.DESCRIPTION))
-				.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
-				.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
-				.setExpireDate(getValue(r, ITEM.EXPIRE_DATE))
-				.setPrice(getDouble(r, ITEM.PRICE))
-				.setStatus(ProductStatus.safeValueOf(getValue(r, ITEM.STATUS)))
-				.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))
-				.setExpensesFixed(getDouble(r, ITEM.EXPENSES_FIXED))
-				.setProfitPercent(getDouble(r, ITEM.PROFIT_PERCENT))
-				.setPurchasePrice(getDouble(r, ITEM.PURCHASE_PRICE))				
-				.setInternet(getBoolean(r, ITEM.INTERNET))
-				.setBarcode(getValue(r, ITEM.BARCODE))
-				.setPackFormatTag(new Tag().setId(getValue(r, ITEM.PACK_FORMAT_TAG)))
-				.setPackUnits(getInteger(r, ITEM.PACK_UNITS))
-				.setPackUnitsTag(new Tag().setId(getValue(r, ITEM.PACK_UNITS_TAG)))
-				.setPackMeasurement(getDouble(r, ITEM.PACK_MEASUREMENT))
-				.setPackMeasurementTag(new Tag().setId(getValue(r, ITEM.PACK_MEASUREMENT_TAG)))
-				.setStockUnitTag(new Tag().setId(getValue(r, ITEM.STOCK_UNIT_TAG)))
-				.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
-				.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
-				.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER))
-				.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE));
+					: new Product().setId(getValue(r, ITEM.PRODUCT)));
+			
+		}
+		
+		public static Item build(Record r, com.esferalia.aon.jooq.tables.Item alias) {
+			return new Item()
+				.setId(getValue(r, alias.ID))
+				.setDomain(new Domain().setId(getValue(r, alias.DOMAIN)))
+				.setProduct(new Product().setId(getValue(r, alias.PRODUCT)))
+				.setDetail(getValue(r, alias.DETAIL))
+				.setDetail2(getValue(r, alias.DETAIL2))
+				.setDetail3(getValue(r, alias.DETAIL3))
+				.setDescription(getValue(r, alias.DESCRIPTION))
+				.setSerialNumber(getValue(r, alias.SERIAL_NUMBER))
+				.setSerialDate(getValue(r, alias.SERIAL_DATE))
+				.setExpireDate(getValue(r, alias.EXPIRE_DATE))
+				.setPrice(getDouble(r, alias.PRICE))
+				.setStatus(ProductStatus.safeValueOf(getValue(r, alias.STATUS)))
+				.setExpensesPercent(getDouble(r, alias.EXPENSES_PERCENT))
+				.setExpensesFixed(getDouble(r, alias.EXPENSES_FIXED))
+				.setProfitPercent(getDouble(r, alias.PROFIT_PERCENT))
+				.setPurchasePrice(getDouble(r, alias.PURCHASE_PRICE))				
+				.setInternet(getBoolean(r, alias.INTERNET))
+				.setBarcode(getValue(r, alias.BARCODE))
+				.setPackFormatTag(new Tag().setId(getValue(r, alias.PACK_FORMAT_TAG)))
+				.setPackUnits(getInteger(r, alias.PACK_UNITS))
+				.setPackUnitsTag(new Tag().setId(getValue(r, alias.PACK_UNITS_TAG)))
+				.setPackMeasurement(getDouble(r, alias.PACK_MEASUREMENT))
+				.setPackMeasurementTag(new Tag().setId(getValue(r, alias.PACK_MEASUREMENT_TAG)))
+				.setStockUnitTag(new Tag().setId(getValue(r, alias.STOCK_UNIT_TAG)))
+				.setCreationUser(getValue(r, alias.CREATION_USER))
+				.setCreationDate(getValue(r, alias.CREATION_DATE))
+				.setModificationUser(getValue(r, alias.MODIFICATION_USER))
+				.setModificationDate(getValue(r, alias.MODIFICATION_DATE));
 		}
 	}
 }

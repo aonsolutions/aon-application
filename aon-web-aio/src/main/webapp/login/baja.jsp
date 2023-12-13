@@ -96,7 +96,7 @@
 									</div>
 		
 									<div class="aon-bold">
-										902 121 009 · 945 121 010
+										900 831 205
 									</div>
 									
 									<div>
@@ -121,7 +121,7 @@
 													es una marca registrada de  
 												</span>
 												<span class="aon-footer-company-label">
-													ESFERALIA Networks S.A.
+													AON SOLUTIONS, S.L.
 												</span>
 											
 								    	

@@ -142,7 +142,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	    CellUtil.createCell(row, cellCount, "Ag. Comercial", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 25*256);
 	    
-	    CellUtil.createCell(row, cellCount, "Ag. Soperte", headerCellStyle);
+	    CellUtil.createCell(row, cellCount, "Ag. Soporte", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 25*256);
 	    
 	    CellUtil.createCell(row, cellCount, "Segmento", headerCellStyle);

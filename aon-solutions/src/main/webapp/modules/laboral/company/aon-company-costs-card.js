@@ -29,6 +29,10 @@ export class AonCompanyCostsCard extends AonElement {
     await this.paintPieChar();
   }
 
+  getFilter(){
+    return filterPeriod;
+  }
+
   async paintPieChar() {
     const main = document.createElement(TAG.DIV);
     main.style.height = "100%";

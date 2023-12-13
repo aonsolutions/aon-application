@@ -33,7 +33,6 @@ public class TagJSON {
 			.setTagType(TagType.safeValueOf(JsonUtils.optString(json, "type"))) 
 			.setType(JsonUtils.getByte(json, "type"))
 			.setColor(JsonUtils.optString(json, "color"))
-			.setReference(null != JsonUtils.getBoolean(json, "reference") ? JsonUtils.getBoolean(json, "reference") : false)
 			;
 	}
 	
@@ -58,8 +57,7 @@ public class TagJSON {
 			.put(IJsonNames.NAME, tag.getName())
 			.put(IJsonNames.TYPE, tag.getType() )
 			.put("tag_type", tag.getTagType())
-			.put("color", tag.getColor())
-			.put("reference", tag.hasReference());
+			.put("color", tag.getColor());
 	}
 
 }

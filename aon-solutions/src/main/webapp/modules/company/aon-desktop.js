@@ -471,23 +471,30 @@ export class AonDesktop extends AonElement {
 		
 		if(this.getDur().isAccounting()) {
 			// PyG Card
+			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+			aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
+
 			let pygCard = new AonCard();
 			pygCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			pygCard.id = "pyg";
 			// pygCard.title = "Pérdidas y Ganancias";
 			pygCard.message = "Pérdidas y Ganancias";
 			pygCard.setApp(Apps.ACCOUNTING);
-			pygCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.ACCOUNTING.app));
 			cardsPanel.appendChild(pygCard);
 			pygCard.getCardTitle1().style.cursor = 'pointer';
 			pygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPyGOption'> </aon-dialog-menu>" );
 
-			pygCard.setContent(new AonDashboardGraphicsTrial("yearly"));
+			pygCard.setContent(aonDashboardGraphicsTrial);
 			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPyG(pygCard));
 			pygCard.firstChild.style.marginLeft = '0';
 			pygCard.firstChild.style.minHeight = "420px";
 			pygCard.firstChild.children.item(1).style.height = "315px";
 			pygCard.firstChild.style.margin = '0';
+
+			pygCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				let dashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
+				this.appSelectionFilter(Apps.ACCOUNTING.app, dashboardGraphicsTrial.getFilter());
+			});
 		}
 
 		if(this.getDur().isPayrollManager()) {
@@ -498,7 +505,9 @@ export class AonDesktop extends AonElement {
 			// payrollCard.title = MSG.LABORAL_COSTS;
 			payrollCard.message = MSG.LABORAL_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
-			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
+			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => {
+				this.appSelectionFilter(Apps.PAYROLL.app, this.getElement('aon-company-costs-card').getFilter());
+			});
 			cardsPanel.appendChild(payrollCard);
 			payrollCard.getCardTitle1().style.cursor = 'pointer';
 			payrollCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>" );
@@ -678,6 +687,8 @@ export class AonDesktop extends AonElement {
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
+		let aonDashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
+
 		if((height - top) < (height / 2)) {
 				top = top - (ayudat ? 205 : 170);
 		}
@@ -691,7 +702,9 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				pygCard.setContent(new AonDashboardGraphicsTrial("yearly"));
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
+				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
 		};
 
@@ -702,7 +715,9 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				pygCard.setContent(new AonDashboardGraphicsTrial("quarterly"));
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("quarterly");
+				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
+				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
 		};
 
@@ -713,7 +728,9 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				pygCard.setContent(new AonDashboardGraphicsTrial("monthly"));
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly");
+				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
+				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
 		};
 	
@@ -1174,8 +1191,8 @@ export class AonDesktop extends AonElement {
 		if(!this.appOption)
 			switch(app){
 				case Apps.DOCUMENTAL.app:
-					this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
-					break;
+                    this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
+                    break;
 				case Apps.ACCOUNTING.app:
 					this.rootPanel(new AonAccounting());
 					break;
@@ -1222,6 +1239,20 @@ export class AonDesktop extends AonElement {
 					break;
 				case ClassicApps.SELFCONTA.app:
 					open('https://mispapeles.es/selfconta/')
+					break;
+			}
+	}
+
+	appSelectionFilter(app, filter) {
+		if(!this.appOption)
+			switch(app){
+				case Apps.ACCOUNTING.app:
+					this.rootPanel(new AonAccounting(filter));
+					break;
+				case Apps.PAYROLL.app:
+					const payroll = new AonLaboral(filter);
+					payroll.title = MSG.PAYROLL;
+					this.rootPanel(payroll);
 					break;
 			}
 	}

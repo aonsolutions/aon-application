@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 
 import java.util.LinkedList;
@@ -16,13 +17,17 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ItemCompositionProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 
 public class ItemCompositionDAO {
 	
 	private ItemCompositionDAO() {
 		
 	}
+	
+	public static final com.esferalia.aon.jooq.tables.Item COMPOSITION_ALIAS = ITEM.as("composition_item");
 	
 	private static final ItemCompositionPropertiesDAO ITEM_COMPOSITION_PROPERTIES = new ItemCompositionPropertiesDAO();
 
@@ -114,7 +119,10 @@ public class ItemCompositionDAO {
 				.setSequence(getValue(r, ITEM_COMPOSITION.SEQUENCE))
 				.setDescription(getValue(r, ITEM_COMPOSITION.DESCRIPTION))
 				.setQuantity(getValue(r, ITEM_COMPOSITION.QUANTITY))
-				.setDiscountExpression(getValue(r, ITEM_COMPOSITION.DISCOUNT_EXPR));
+				.setDiscountExpression(getValue(r, ITEM_COMPOSITION.DISCOUNT_EXPR))
+				.setComposition(checkField(r, COMPOSITION_ALIAS.ID)
+						? ItemFiller.build(r, COMPOSITION_ALIAS)
+						: new Item().setId(getValue(r, ITEM_COMPOSITION.COMPOSITION_ITEM)));
 		}
 	}
 	
