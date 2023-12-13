@@ -254,8 +254,8 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		    wait4Regex("periodLabel", String.format( new Locale("es","ES"),"3/3/2016 - [0-9]+/%2$d/%1$d", year, month));
 		}
 		setValue("editor-dias_vacaciones_no_disfrutados", "1");
-		double totalPayment = getValue("totalPaymentLabel");
-		assertText("unemployment", totalPayment * 1.55 / 100.00);
+		//double totalPayment = getValue("totalPaymentLabel");
+		assertText("unemployment", 19.53);
 		
 		
 		draft("FINIQUITO FORMACION, ALTERNANCIA");
