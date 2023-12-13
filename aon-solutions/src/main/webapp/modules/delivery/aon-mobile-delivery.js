@@ -138,7 +138,6 @@ export class AonMobileDelivery extends AonElement {
 		card.setContent(table);
 		this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
 
-
 		for(let i = 0; i < this.delivery.details.length; i++) {
 			table.addRow(); // ----- ROW i
 		
@@ -380,7 +379,9 @@ export class AonMobileDelivery extends AonElement {
 		table.addCell(pButton);
 
 		let productFilter = {
-			type: 'AUXILIARY'
+			type: 'AUXILIARY',
+			mode: 'CUSTOMER',
+			registry: this.delivery.customer.id
 		};
 		getProducts(productFilter).then(products => {
 			envaseSelect.setOptions(products.map(p => {

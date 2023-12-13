@@ -228,5 +228,8 @@ public class DeliveryDetail implements Serializable {
 		getItem().getProduct().setId(productId);
 		return this;
 	}	
-
+	
+	public boolean isEmpty() {
+		return getId() == null;
+	}
 }

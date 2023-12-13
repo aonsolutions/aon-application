@@ -602,6 +602,9 @@ public interface Properties {
 		Property<Byte> getPriorityProperty();
 		Property<Integer> getWorkplaceProperty();
 		Property<Byte> getStatusProperty();
+		
+		// PRODUCT
+		Property<Byte> getProductTypeProperty();		
 	}
 	
 	public interface RegistryBankProperties{
