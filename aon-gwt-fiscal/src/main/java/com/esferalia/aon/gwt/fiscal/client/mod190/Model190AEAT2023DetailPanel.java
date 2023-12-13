@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEATDetail2023.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902022Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902023Key;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -124,7 +124,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod1902022Key k : Mod1902022Key.values()) {
+		for (Mod1902023Key k : Mod1902023Key.values()) {
 			key.addItem(k.getDescription(), k.getValue());
 		}
 
@@ -132,7 +132,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 		key.addChangeHandler(event -> {
 			subkey.clear();
-			Mod1902022Key keyEnum = Mod1902022Key.values()[key.getSelectedIndex()];
+			Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
 			detail.setKey(keyEnum.toString());
 			if (keyEnum.hasSubkeys()) {
 				subkey.setEnabled(true);
@@ -153,7 +153,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.getFlexCellFormatter().setRowSpan(0, 1, 4);
 
 		subkey.addChangeHandler(event -> {
-			Mod1902022Key keyEnum = Mod1902022Key.values()[key.getSelectedIndex()];
+			Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
 			if (keyEnum.hasSubkeys()) {
 				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
 				detail.setSubKey(keyEnum.getSubKeys()[idx]);
@@ -260,7 +260,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
 		tab3.setWidget(0, 0, new InlineLabel(
-				"Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01)"));
+				"Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A)"));
 
 		tab3.setWidget(1, 0, new Label());
 		tab3.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perceptionValoration()));
@@ -501,7 +501,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		contract.addItem(
 				"2 - Contrato o relaci\u00F3n de duraci\u00F3n inferior al a\u00F1o ...(consulte instrucciones).");
 		contract.addItem(
-				"3 - Contrato o relaci\u00F3n laboral especial de car\u00E1cter dependiente ... (consulte instrucciones)");
+				"3 - Otras relaciones laborales especiales ... (consulte instrucciones)");
 		contract.addItem(
 				"4 - Relaci\u00F3n espor\u00E1dica propia de los trabajadores manuales ... (consulte instrucciones)");
 		contract.setSelectedIndex(detail.getContract());
@@ -945,9 +945,9 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 	private static void setValue(ListBox key, ListBox subKey, Mod190Detail detail) {
 		if (AonStringUtils.isBlank(detail.getKey())) {
-			detail.setKey(Mod1902022Key.A.toString());
+			detail.setKey(Mod1902023Key.A.toString());
 		}
-		Mod1902022Key keyEnum = Mod1902022Key.valueOf(detail.getKey());
+		Mod1902023Key keyEnum = Mod1902023Key.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		subKey.clear();
 		if (keyEnum.hasSubkeys()) {
@@ -965,24 +965,25 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 	}
 
 	private static void enableOrDisableAdditionalDataPanel(ListBox key, ListBox subKey, Panel panel) {
-		Mod1902022Key keyEnum = Mod1902022Key.values()[key.getSelectedIndex()];
+		Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
 		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
-		panel.setVisible(Mod1902022Key.A == keyEnum || (Mod1902022Key.B == keyEnum && "01".equals(subk))
-				|| (Mod1902022Key.B == keyEnum && "02".equals(subk))
-				|| (Mod1902022Key.B == keyEnum && "04".equals(subk)) || Mod1902022Key.C == keyEnum
-				|| (Mod1902022Key.E == keyEnum && "01".equals(subk))
-				|| (Mod1902022Key.E == keyEnum && "02".equals(subk))
-				|| (Mod1902022Key.L == keyEnum && "29".equals(subk)));
+		panel.setVisible(Mod1902023Key.A == keyEnum 
+				|| (Mod1902023Key.B == keyEnum && "01".equals(subk))
+				|| (Mod1902023Key.B == keyEnum && "03".equals(subk))
+				|| (Mod1902023Key.C == keyEnum)
+				|| (Mod1902023Key.E == keyEnum && "01".equals(subk))
+				|| (Mod1902023Key.E == keyEnum && "02".equals(subk))
+				|| (Mod1902023Key.L == keyEnum && "29".equals(subk)));
 	}
 
 	private static void enableOrDisableIlPanel(ListBox key, ListBox subKey, Panel panel) {
-		Mod1902022Key keyEnum = Mod1902022Key.values()[key.getSelectedIndex()];
+		Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
 		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
-		panel.setVisible(Mod1902022Key.A == keyEnum || (Mod1902022Key.B == keyEnum && "01".equals(subk)));
+		panel.setVisible(Mod1902023Key.A == keyEnum || (Mod1902023Key.B == keyEnum && "01".equals(subk)));
 	}
 
 	private static void enableOrDisableAdministrationPanel(ListBox key, Panel panel) {
-		Mod1902022Key keyEnum = Mod1902022Key.values()[key.getSelectedIndex()];
-		panel.setVisible(Mod1902022Key.E == keyEnum);
+		Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
+		panel.setVisible(Mod1902023Key.E == keyEnum);
 	}
 }
