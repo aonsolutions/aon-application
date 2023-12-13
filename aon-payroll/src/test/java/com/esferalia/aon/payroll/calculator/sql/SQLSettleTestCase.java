@@ -3660,7 +3660,84 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testSettleTotalBasesVariables() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				getToday(),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"402\"");
+						put(QUOTE_GROUP.getName(), "\"08\"");
+						put(MONTH_DAYS.getName(), format("%d", 30));
+					}
+				}, 
+				new String[] { 
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TOTAL_BASE_CGC_E; TOTAL_BASE_CGP_E;  TOTAL_BASE_CGC; TOTAL_BASE_CGP*(INDEFINIDO?1.55:1.60)/100"
+				}, 
+				null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+
+		setData(aonContext, contract, 
+				add(getToday(), Calendar.DAY_OF_MONTH,1)
+				, null
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 4));
+			}
+		});
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		double br = (1750.00) * 12 / 365; 
+		
+		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
+		
+		for ( ContextVariable ctxVar: new ContextVariable [] {
+			ContextVariable.CGC_BASE, 
+			ContextVariable.CGP_BASE,
+			ContextVariable.TOTAL_CGC_BASE,
+			ContextVariable.TOTAL_CGP_BASE,
+			ContextVariable.TOTAL_CGC_BASE_ENTERPRISE,
+			ContextVariable.TOTAL_CGP_BASE_ENTERPRISE
+			}
+			) {
+        		SalaryData salaryData = getSalaryData(settle, ctxVar);
+        		org.junit.Assert.assertEquals(ctxVar.getName(), add(getToday(), Calendar.DAY_OF_MONTH,1), salaryData.getStartDate());
+        		org.junit.Assert.assertEquals(ctxVar.getName(), add(getToday(), Calendar.DAY_OF_MONTH,4), salaryData.getEndDate());
+		}
+
+		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		Assert.assertEquals( br * 4 , settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
+	
+		
+	}
+
 	// ------------------------------------------------------------------------
+	
+	public SalaryData getSalaryData(Salary salary, ContextVariable var) {
+		return 
+	    	salary.getSalaryDatas()
+		.stream().filter( d -> d.getName().equals(var.getName()))
+		.findAny().orElseThrow(AssertionError::new);
+	}
 
 	public  void addSSRegimeStuff(AONContext aonContext) {
 		
