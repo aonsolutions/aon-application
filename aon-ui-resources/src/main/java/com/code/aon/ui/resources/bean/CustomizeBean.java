@@ -109,8 +109,9 @@ public class CustomizeBean implements Serializable {
 	public ResourceBundle initMessages( Locale locale ) {
 		ResourceBundle bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);
 		this.applicationTitle = bundle.getString( ICommonMessages.APPLICATION_TITLE );
-		this.supportTelephone = bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER) +
-				" · " + bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER2);
+		this.supportTelephone = bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER) 
+//			+ " · " + bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER2)
+			;
 		this.supportEmail = bundle.getString(ICommonMessages.SUPPORT_SEND_EMAIL);
 		return bundle;
 	}	
