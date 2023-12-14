@@ -45,6 +45,7 @@ import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
+import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 
 export class AonDesktop extends AonElement {
 
@@ -497,6 +498,29 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
+		if(this.getDur().isInvoice() || this.getDur().isAccounting()) {
+			// Cobros y Pagos Card
+			let cypCard = new AonCard();
+			cypCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			cypCard.id = "cyp";
+			cypCard.message = "Cobros y Pagos";
+			cypCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
+			cardsPanel.appendChild(cypCard);
+			cypCard.getCardTitle1().style.cursor = 'pointer';
+			cypCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>" );
+
+			cypCard.setContent(new AonDashboardChargePayments("current_month"));
+			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
+			cypCard.firstChild.style.marginLeft = '0';
+			cypCard.firstChild.style.minHeight = "420px";
+			cypCard.firstChild.children.item(1).style.height = "315px";
+			cypCard.firstChild.style.margin = '0';
+
+			cypCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
+			});
+		}
+
 		if(this.getDur().isPayrollManager()) {
 			// LABORAL
 			let payrollCard = new AonCard();
@@ -736,6 +760,79 @@ export class AonDesktop extends AonElement {
 		};
 	
 		let options = [anual, trimestral, mensual];
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	filterCyP(cypCard){
+		let button = this.getElement('cypTitleSection2OpcionesButtonIconButton');
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		if((height - top) < (height / 2)) {
+				top = top - (ayudat ? 205 : 170);
+		}
+
+		let d = document.getElementById('aonCardCyPOption');
+
+		const currentMonth = {
+			name: 'Mes Actual',
+			title: "Mes Actual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				cypCard.clear();
+				cypCard.setContent(new AonDashboardChargePayments("current_month"));
+			}
+		};
+
+		const nextMonth = {
+			name: 'Hasta próximo mes',
+			title: "Hasta próximo mes",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				cypCard.clear();
+				cypCard.setContent(new AonDashboardChargePayments("next_month"));
+			}
+		};
+
+		const next3Month = {
+			name: 'Próximos 3 meses',
+			title: "Próximos 3 meses",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				cypCard.clear();
+				cypCard.setContent(new AonDashboardChargePayments("next_3month"));
+			}
+		};
+
+		const next6Month = {
+			name: 'Próximos 6 meses',
+			title: "Próximos 6 meses",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				cypCard.clear();
+				cypCard.setContent(new AonDashboardChargePayments("next_6month"));
+			}
+		};
+
+		const yearly = {
+			name: 'Año Actual',
+			title: "Año Actual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				cypCard.clear();
+				cypCard.setContent(new AonDashboardChargePayments("yearly"));
+			}
+		};
+	
+		let options = [currentMonth, nextMonth, next3Month, next6Month, yearly];
 		
 		d.setMenuOptions(options, top, left);
 		d.open();
