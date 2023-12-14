@@ -358,12 +358,12 @@ export class AonDashboardGraphicsTrial extends AonElement {
           data: [this.income, null, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Cpas.",
           backgroundColor: "rgb(220, 57, 18, 0.7)",
           data: [null, this.purchases, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Gtos.",
           backgroundColor: "rgb(255, 153, 0, 0.7)",
           data: [null, this.outgoings, null, null, null, null],
         },
