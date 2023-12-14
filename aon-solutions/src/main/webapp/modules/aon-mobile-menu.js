@@ -406,12 +406,13 @@ export class AonMobileMenu extends AonElement {
 
 			const {text, format, cancelled} = barcodeStr;
 			if(!cancelled) {
-        alert(text);
+        console.log("delivery: " + text);
 
-        // let aonComponent = new  AonWarehouse();
-        // aonComponent.setOption(WAREHOUSE_OPTION.PACKAGING);
-        // this.rootPanel(aonComponent);
-
+        let aonComponent = new  AonWarehouse();
+        let option = WAREHOUSE_OPTION.DELIVERY;
+        option.delivery = text;
+        aonComponent.setOption(option);
+        this.rootPanel(aonComponent);
 			}
 		} catch (error) {
 			this.showError(error);
