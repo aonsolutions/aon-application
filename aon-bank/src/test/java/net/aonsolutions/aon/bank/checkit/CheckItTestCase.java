@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-@Ignore("ignore until CheckIt is aviable")
 class CheckItTestCase {
 	
 	private static final Integer AON_ID = 11413;
