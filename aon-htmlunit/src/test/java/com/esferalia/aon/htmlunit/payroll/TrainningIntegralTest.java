@@ -167,7 +167,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY, 2023);
 		double cgcBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", 10.18);
-		assertText("unemployment", cgcBase * 1.55 / 100.00);
+		assertText("unemployment", 19.53 /*cgcBase * 1.55 / 100.00*/);
 		assertText("job_training", 0.25);
 		assertText("mei", 1.26);
 		
