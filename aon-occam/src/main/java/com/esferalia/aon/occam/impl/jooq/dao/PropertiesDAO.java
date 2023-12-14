@@ -235,7 +235,12 @@ public class PropertiesDAO {
 
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}		
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
+		
+		// INVOICE COMMUNICATION
+		@Override public Property<Integer> getRSellerIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
+		@Override public Property<Date> getRSellerStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
+		@Override public Property<Date> getRSellerEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}	
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -524,6 +529,9 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(RITEM.PRIORITY);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(RITEM.WORKPLACE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RITEM.STATUS);}
+
+		// PRODUCT
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
 
 	}
 	

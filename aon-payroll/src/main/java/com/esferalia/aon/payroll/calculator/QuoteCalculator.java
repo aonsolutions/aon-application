@@ -1137,19 +1137,18 @@ public abstract class QuoteCalculator {
 			Date end, 
 			ContextVariable... otherVars) {
 
-		List<ITimedResult<Double>> results = new ArrayList<ITimedResult<Double>>();
+		List<ITimedResult<Double>> results = new ArrayList<>();
 		
 		
 		List<ITimedVariable<Double>> raws = ctx.getVariables(rawVar, start,
 				end);
 
+		List<Period> definedPeriods = new LinkedList<>();
+		List<Period> limitedPeriods = new LinkedList<>();
+		
 		for (ITimedVariable<Double> raw : raws) {
 			Period rawPeriod = raw.getPeriod();
-			Double rawValue = raw.getValue(raw.getPeriod());
 
-			Double othersValue = 0.00;
-			for (ContextVariable other : otherVars)
-				othersValue += sum(other, rawPeriod, ctx);
 
 			try {
 				List<ITimedResult<Double>> minValues = getLimit(
@@ -1158,20 +1157,26 @@ public abstract class QuoteCalculator {
 						rawPeriod.getStart(), 
 						rawPeriod.getEnd());
 
-				double minValue = 0.00;
 				for ( ITimedResult<Double> minResult: minValues ) {
 					results.add(minResult);
-					minValue += minResult.getValue();
-				}
-				
-				minValue -= othersValue;
+					double minValue = minResult.getValue();
+					
+					Period minPeriod = minResult.getPeriod();
 
-				if (rawValue <= minValue) {
-					ctx.putVariable(limitVar,
-							new BaseVariable(minValue, rawPeriod));
-					continue;
+					Double rawValue = eval(rawVar, minPeriod, ctx);
+
+					Double othersValue = sum(otherVars, minPeriod, ctx);
+
+					minValue -= othersValue;
+
+					ctx.putVariable(limitVar, new BaseVariable(
+						Math.max(rawValue, minValue), minPeriod));
+					
+					definedPeriods.add(minPeriod);
+					if ( rawValue <= minValue ) {
+					    limitedPeriods.add(minPeriod);
+					}
 				}
-				
 				
 			} catch (UndefinedVariablesException e) {
 				results.add(new TimedResult<Double>(0.00, new Period(start, end),null){
@@ -1185,20 +1190,34 @@ public abstract class QuoteCalculator {
 			}
 
 			try {
-				List<ITimedResult<Double>> maxValues = getLimit(maxVar,
-						ctx, rawPeriod.getStart(), rawPeriod.getEnd());
+			    
+			    	List<ITimedResult<Double>> maxValues = new LinkedList<>();
+			    	List<Period> unlimitedPeriods = Period.sub(rawPeriod, limitedPeriods);
+			    	for (Period unlimitedPeriod : unlimitedPeriods) {
+			    	    maxValues.addAll(
+					getLimit(maxVar, ctx, unlimitedPeriod.getStart(), unlimitedPeriod.getEnd()));
+			    	}				
 
-				double maxValue = 0.00;
-				for ( ITimedResult<Double> maxResult: maxValues ) {
+			    	for ( ITimedResult<Double> maxResult: maxValues ) {
 					results.add(maxResult);
-					maxValue += maxResult.getValue();
+					double maxValue = maxResult.getValue();
+
+					Period maxPeriod = maxResult.getPeriod();
+
+					Double rawValue = eval(rawVar, maxPeriod, ctx);
+					
+					Double othersValue = sum(otherVars, maxPeriod, ctx);
+					
+					maxValue -= othersValue;
+					
+					
+					ctx.putVariable(limitVar, new BaseVariable(
+						Math.min(rawValue, maxValue), maxPeriod));
+					
+					definedPeriods.add(maxPeriod);
 				}
+				
 
-				maxValue -= othersValue;
-
-				ctx.putVariable(limitVar, new BaseVariable(
-						Math.min(rawValue, maxValue), rawPeriod));
-				continue;
 			} catch (UndefinedVariablesException e) {
 				results.add(new TimedResult<Double>(0.00, new Period(start, end),null){
 					@Override
@@ -1208,12 +1227,24 @@ public abstract class QuoteCalculator {
 				});
 			} catch (Exception e) {
 			}
-			ctx.putVariable(limitVar,
-					new BaseVariable(rawValue, rawPeriod));
+			
+			List<Period> undefinedPeriods = Period.sub(Collections.singletonList(rawPeriod), definedPeriods);
+			for (Period undefinedPeriod : undefinedPeriods) {
+				Double rawValue = eval(rawVar, undefinedPeriod, ctx);
+				ctx.putVariable(limitVar, new BaseVariable(rawValue, undefinedPeriod));
+			}
 		}
 		
 		return results;
 
+	}
+
+	private static Double sum(ContextVariable [] ctxVars, Period p, ExpressionContext ctx) {
+        	Double sum = 0.00;
+        	for (ContextVariable ctxVar : ctxVars) {
+        		sum += sum(ctxVar, p, ctx);
+        	}
+        	return sum;
 	}
 
 	private static Double sum(ContextVariable ctxVar, Period p, ExpressionContext ctx) {
@@ -1228,6 +1259,10 @@ public abstract class QuoteCalculator {
 		}
 
 		return sum;
+	}
+
+	private static Double eval(ContextVariable ctxVar, Period period, ExpressionContext ctx) {
+	    return eval(ctxVar, period.getStart(), period.getEnd(), ctx, 0.00);
 	}
 
 	private static Double eval(ContextVariable ctxVar, Date start, Date end, ExpressionContext ctx) {

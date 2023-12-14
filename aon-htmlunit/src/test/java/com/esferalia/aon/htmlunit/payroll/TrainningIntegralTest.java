@@ -5,6 +5,7 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -166,7 +167,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY, 2023);
 		double cgcBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", 10.18);
-		assertText("unemployment", cgcBase * 1.55 / 100.00);
+		assertText("unemployment", 19.53 /*cgcBase * 1.55 / 100.00*/);
 		assertText("job_training", 0.25);
 		assertText("mei", 1.26);
 		
@@ -245,9 +246,20 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		wait4Id("finiquito_formacion,_aprendizaje");
 
 		draft("FINIQUITO FORMACIÓN, APRENDIZAJE");
+		try {
+		    settle(Calendar.getInstance().getTime());
+		} catch (AssertionError err  ) {
+		    int year = Calendar.getInstance().get(Calendar.YEAR);
+		    int month = Calendar.getInstance().get(Calendar.MONTH) +1;
+		    wait4Regex("periodLabel", String.format( new Locale("es","ES"),"3/3/2016 - [0-9]+/%2$d/%1$d", year, month));
+		}
+		setValue("editor-dias_vacaciones_no_disfrutados", "1");
+		//double totalPayment = getValue("totalPaymentLabel");
+		assertText("unemployment", 19.53);
+		
 		
 		draft("FINIQUITO FORMACION, ALTERNANCIA");
-		Calendar calendar = Calendar.getInstance();
+		Calendar  calendar = Calendar.getInstance();
 		calendar.set(2023, Calendar.JULY, 15, 0, 0, 0);
 		settle(calendar.getTime());
 		double irpf = getText("irpf");

@@ -150,17 +150,21 @@ public class ProductServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getProducts(AonApiData api) {
-		if(api.getData().opt(IJsonNames.PAGE) !=null) {
+		List<Product> products = new LinkedList<>();
+		Integer registry = JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY);
+		if(registry != null) {
+			products = AON.getRItemStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> ritemProductFilter(api, f)).map(r -> r.getItem().getProduct()).toList();
+		}
+		
+		if(products.isEmpty() && api.getData().opt(IJsonNames.PAGE) !=null) {
 			int page = api.getData().optInt(IJsonNames.PAGE);
 			int perPage = api.getData().optInt(IJsonNames.PER_PAGE);
-			return ProductJSON.toJSON(
-				AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> 
-				productFilter(api, f), page, perPage)
-			);
-		} 
-		
-		return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> 
-				productFilter(api, f));
+			products = AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> productFilter(api, f), page, perPage).toList();
+		} else if(products.isEmpty()) {
+			return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> productFilter(api, f));
+		}
+
+		return ProductJSON.toJSON(products);
 	}
 	
 	private JSONObject getItem(AonApiData api) {
@@ -363,7 +367,7 @@ public class ProductServlet extends AonApiHttpServlet {
 			filter = filter.and(valueFilter);
 		}
 		
-		if(api.getData().opt("type") !=null) {
+		if(api.getData().opt(IJsonNames.TYPE) !=null) {
 			ProductType type = ProductType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
 			filter = filter.and(f.getTypeProperty().eq(type.value()));
 		}
@@ -414,6 +418,33 @@ public class ProductServlet extends AonApiHttpServlet {
 			RegistryMode rm = api.getData().getEnum(RegistryMode.class, IJsonNames.TYPE);
 			if (rm != null) {
 				filter = filter.and(f.getTypeProperty().eq(rm.value()));
+			}
+		}
+		
+		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
+			Integer registry = AonNumberUtils.zeroIfNull(api.getData().optInt(IJsonNames.REGISTRY));
+			if (registry > 0) {
+				filter = filter.and(f.getRegistryProperty().eq(registry));
+			}
+		}
+		
+		return filter;
+	}
+	
+	private Filter ritemProductFilter(AonApiData api, RegistryItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+
+		if(api.getData().opt(IJsonNames.MODE) != null) {
+			RegistryMode rm = api.getData().getEnum(RegistryMode.class, IJsonNames.MODE);
+			if (rm != null) {
+				filter = filter.and(f.getTypeProperty().eq(rm.value()));
+			}
+		}
+		
+		if(JsonUtils.has(api.getData(), IJsonNames.TYPE)) {
+			ProductType type = ProductType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+			if (type != null) {
+				filter = filter.and(f.getProductTypeProperty().eq(type.value()));
 			}
 		}
 		

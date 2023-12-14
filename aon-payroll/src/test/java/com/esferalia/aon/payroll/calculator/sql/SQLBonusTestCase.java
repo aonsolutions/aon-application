@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -55,6 +56,7 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -1180,8 +1182,14 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
-
+		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
+		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()));
+		
+		salaries.forEach( s -> {
+		    org.junit.Assert.assertEquals(1, s.getBonuses().size());
+		});
 
 	}
 
@@ -1312,6 +1320,14 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
+		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()));
+		
+		salaries.forEach( s -> {
+		    org.junit.Assert.assertEquals(1, s.getBonuses().size());
+		});
 
 		
 
@@ -1689,4 +1705,6 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				+ ": HIDE(HORAS_TUTORIA_MSG)"
 				);
 	}
+	
+	
 }

@@ -510,7 +510,25 @@ export class AonHeader extends AonElement {
 
 		let contactDiv = this.createElement(TAG.DIV);
 		contactDiv.style.marginTop = '10px';
-		contactDiv.innerHTML = '<div id="aonContent:j_id36:j_id49"><span class="aon-outputText" style="font-weight: bold; font-size: 11px; color: #666;">Datos de contacto:</span></div><div id="aonContent:j_id36:j_id51" style="margin-left: 5%"><div id="aonContent:j_id36:j_id52"><span class="aon-outputText" style="font-size: 11px; color: #666;">Teléfono: (+34) 945 121 010</span></div><div id="aonContent:j_id36:j_id54"><span class="aon-outputText" style="font-size: 11px; color: #666;">Correos:</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· soporte@aonSolutions.es / Atención a usuarios</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· comercial@aonSolutions.es / Ventas y contratación</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· administración@aonSolutions.es / Facturación, cobros y pagos</span></div><div id="aonContent:j_id36:j_id59"><span class="aon-outputText" style="font-size: 11px; color: #666;">Horario:</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Lunes a jueves de 8:30 a 14:00 / 15:30 a 18:30</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Viernes de 8:30 a 14:00</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· Verano de 8:00 a 15:00</span></div></div>';
+		contactDiv.innerHTML = `<div id="aonContent:j_id36:j_id49">
+				<span class="aon-outputText" style="font-weight: bold; font-size: 11px; color: #666;">Datos de contacto:</span>
+				</div>
+				<div id="aonContent:j_id36:j_id51" style="margin-left: 5%">
+				<div id="aonContent:j_id36:j_id52">
+				<span class="aon-outputText" style="font-size: 11px; color: #666;">Teléfono: (+34) 900 831 205</span>
+				</div>
+				<div id="aonContent:j_id36:j_id54"><span class="aon-outputText" style="font-size: 11px; color: #666;">Correos:</span>
+				<span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· soporte@aonSolutions.es / Atención a usuarios</span>
+				<span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· comercial@aonSolutions.es / Ventas y contratación</span>
+				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· administración@aonSolutions.es / Facturación, cobros y pagos</span>
+				</div>
+				<div id="aonContent:j_id36:j_id59">
+	
+				<span class="aon-outputText" style="font-size: 11px; color: #666;">Horario:</span>
+				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Lunes a jueves de 8:00 a 15:00</span>
+				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Viernes de 8:00 a 14:00</span>
+				</div>
+				</div>`;
 		aboutContent.appendChild(contactDiv);
 
 		let divInfo = this.createElement(TAG.DIV);

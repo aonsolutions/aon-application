@@ -868,9 +868,9 @@ public class CretaServlet extends HttpServlet
 		TrabajadoresTramosCallback employeesCallback = new EmployeesCallback(employees);
 		
 		
-		Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tyt ;
+		Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tyts ;
 		try {
-			tyt = getIdcplccc(certificate, date, ccc, nafs)
+			tyts = getIdcplccc(certificate, date, ccc, nafs)
 			.map(idcplnss -> {
 				try {
 					return Idcplccc.getTrabajadoresTramos(idcplnss, employeesCallback);				
@@ -880,7 +880,7 @@ public class CretaServlet extends HttpServlet
 			})
 			.filter(Objects::nonNull);
 		} catch ( Exception e ) {
-			tyt = getIdcplnss(certificate, date, ccc, nafs)
+			tyts = getIdcplnss(certificate, date, ccc, nafs)
 			.map(idcplnss -> {
 				try {
 					return Idcplnss.getTrabajadoresTramos(idcplnss, employeesCallback);				
@@ -891,15 +891,38 @@ public class CretaServlet extends HttpServlet
 			.filter(Objects::nonNull);
 		}
 
-		
-		return tyt.reduce((tyt1,tyt2) -> {
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos tyt = 
+		tyts.reduce((tyt1,tyt2) -> {
 			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores1 = tyt1.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
 			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores2 = tyt2.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
 			trabajadores1.addAll(trabajadores2);
 			return tyt1;
 		})
 		.orElseThrow(SegSocialException::new);
-				
+		
+		checkTrabajadoresTramos(tyt, nafs);
+		
+		return tyt;
+	}
+	private static void checkTrabajadoresTramos(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresyTramos, String[] nafs) throws SegSocialException {
+	    if ( nafs == null || nafs.length == 0) {
+		return;
+	    }
+	    
+	    List<String> nafsList = Arrays.asList(nafs);
+	    
+	    boolean anyMatch =
+	    trabajadoresyTramos.getLiquidacion().getLiquidacionMes().stream()
+	    .map(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes::getTrabajadores)
+	    .map(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores::getTrabajador)
+	    .flatMap(List::stream).map(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador::getNaf)
+	    .anyMatch(nafsList::contains);
+	    
+	    if ( !anyMatch )  {
+		throw new SegSocialException();
+	    }
+	    
+	    
 	}
 	
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,

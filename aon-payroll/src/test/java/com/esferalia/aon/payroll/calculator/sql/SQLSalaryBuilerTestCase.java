@@ -157,7 +157,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 	}
 	// -------------------------------------------------------------------------
 
-	private static int calculateAndSave(Connection connection,
+	public static int calculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,

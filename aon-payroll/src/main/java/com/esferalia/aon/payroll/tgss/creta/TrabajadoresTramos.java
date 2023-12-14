@@ -1195,7 +1195,6 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitJornadasRealesNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					jornadasReales.visitJornadasRealesNormal();
 					state = jornadasReales;
 				}
 				
@@ -1554,8 +1553,8 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void endVisit() {
-				    Period last = cretaPeriods.removeLast();
-				    cretaPeriods.add(new Period( last.getStart() , salary.getEndDate()));
+				    cretaPeriods.clear();
+				    cretaPeriods.add(new Period( salary.getStartDate() , salary.getEndDate()));
 				}
 				
 				@Override
@@ -1565,18 +1564,14 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitTiempoParcialNormal() {
-					visitOthers();
 				}
 
 				@Override
 				public void visitTiempoCompletoNormal() {
-					visitOthers();
 				}
 				
 				@Override
 				public void visitJornadasRealesNormal() {
-				    Period last = cretaPeriods.removeLast();
-				    cretaPeriods.add(new Period( cretaPeriods.isEmpty() ? salary.getStartDate() : last.getStart() , period.getEnd()));
 				}
 				@Override
 				public void visitRegimenArtistasNormal() {
@@ -1970,7 +1965,7 @@ public class TrabajadoresTramos {
 		
 		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
 		
-		boolean jornadasReales = isDefinedAlways(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate);
+		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
 		if ( becarios )
 			if ( iTPagoDelegado )
@@ -2061,6 +2056,8 @@ public class TrabajadoresTramos {
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( formacionEnAlternancia )
 		    	grupoCotizacion = visitor::visitGrupoCotizacionMensual;
+		else if ( jornadasReales )
+		        grupoCotizacion = () -> {} ; // do nothing
 		else if ( Integer.parseInt(quoteGroup ) >= 8 )
 			grupoCotizacion = visitor::visitGrupoCotizacionDiario;
 		else
@@ -2217,15 +2214,6 @@ public class TrabajadoresTramos {
 			
 		}
 		, Collections.emptyList());
-	}
-	
-	private static boolean isDefinedAlways(String name, Salary salary, Date startDate, Date endDate) {
-	    Optional<Period> period =  
-	    salary.getContextData(name, startDate, endDate).stream()
-	    .map(d -> new Period(d.getStartDate(), d.getEndDate()))
-	    .sorted().reduce(TrabajadoresTramos::merge)
-	    ;
-	    return period.filter( p -> p.getStart().equals(startDate) && p.getEnd().equals(endDate)).isPresent();
 	}
 	
 	private static Period merge (Period p1, Period p2) {

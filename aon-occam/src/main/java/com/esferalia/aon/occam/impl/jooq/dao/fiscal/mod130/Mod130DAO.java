@@ -57,7 +57,7 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod130 saveComments(AONContext ctx, Mod130 mod130) {
-		saveComments(ctx, mod130);
+		FiscalModelDAO.saveComments(ctx, mod130);
 		return mod130;
 	}
 	

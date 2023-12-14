@@ -100,7 +100,12 @@ export class AonModule extends AonElement {
 				username: user,
 				password: password,
 			};
-			await login(data);
+
+			try {
+				await login(data);
+			} catch (e) {
+				alert(e);
+			}
 			window.location = window.location.origin;
 		}
 

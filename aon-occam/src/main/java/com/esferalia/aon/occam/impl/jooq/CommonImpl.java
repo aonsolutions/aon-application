@@ -333,12 +333,6 @@ public class CommonImpl implements ICommon {
 		 ctx.getDslContext().transaction(configuration -> 
 		 	TagDAO.deleteTag(ctx, filter));
 	}
-	
-	@Override
-	public List<Tag> getNoteTagsList(AONContext ctx, TagFilter filter, Integer userId){
-		return ctx.getDslContext().transactionResult(
-				configuration -> NoteDAO.getNoteTagsList(ctx, filter, userId));
-	}
 
 	// ------------------ TAX
 	

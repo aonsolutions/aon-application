@@ -467,7 +467,7 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CompanyDAO.save(ctx, company));
 	}
 	
-	// ------------------------------------- RNOTE
+	// ------------------------------------- RITEM
 	
 	@Override
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter) {

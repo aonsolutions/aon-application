@@ -12,6 +12,7 @@ public class ItemComposition implements Serializable {
 	private int domain;
 	private int itemId;
 	private int compositionItemId;
+	private Item composition;
 	private int sequence;
 	private String description;
 	private double quantity;
@@ -44,6 +45,16 @@ public class ItemComposition implements Serializable {
 		this.compositionItemId = compositionItemId;
 		return this;
 	}
+	
+	public Item getComposition() {
+		return composition;
+	}
+	
+	public ItemComposition setComposition(Item composition) {
+		this.composition = composition;
+		return this;
+	}
+	
 	public Integer getSequence() {
 		return sequence;
 	}
