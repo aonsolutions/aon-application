@@ -373,13 +373,50 @@ export class AonMobileMenu extends AonElement {
         }
       }
     };
+
+    const deliveryPreparation = {
+      title:'Preparación Albaran',
+      icon: MATERIAL_ICONS.QR_CODE_SCANNER,
+      permission: isUdapa,
+      backgroundColor: "#002469",
+      fn :  () => {
+        if(isUdapa){
+          dialog.close();
+          this.openBarcode();
+        }
+      }
+    };
     
     let buttons = [newInvoice, uploadInvoice, photoInvoice, newMessenger, uploadDocument, photoDocument];
     if(isUdapa) {
-      buttons = [newInvoice, uploadInvoice, photoInvoice, newPackaging, uploadDocument, photoDocument];
+      buttons = [newInvoice, uploadInvoice, photoInvoice, newPackaging, deliveryPreparation, uploadDocument];
     }
     dialog.addButtons(buttons);
   }
+
+  openBarcode() {
+		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_MENU });
+	}
+
+	setBarcodeData(barcodeStr) {
+		try {
+			if(typeof barcodeStr === 'string') {
+				barcodeStr = JSON.parse(barcodeStr);
+			}
+
+			const {text, format, cancelled} = barcodeStr;
+			if(!cancelled) {
+        alert(text);
+
+        // let aonComponent = new  AonWarehouse();
+        // aonComponent.setOption(WAREHOUSE_OPTION.PACKAGING);
+        // this.rootPanel(aonComponent);
+
+			}
+		} catch (error) {
+			this.showError(error);
+		}
+	}
 
 
   add() {
