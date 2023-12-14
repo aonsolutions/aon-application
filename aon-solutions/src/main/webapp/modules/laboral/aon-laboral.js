@@ -7,6 +7,13 @@ import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 
 export class AonLaboral extends AonComunicaUtils {
 
+  cardFilter;
+
+  constructor(cardFilter) {
+    super();
+    this.cardFilter = cardFilter;
+  }
+
   initialize(){
     this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
     this.title = this.title || MSG.PAYROLL;
@@ -22,7 +29,11 @@ export class AonLaboral extends AonComunicaUtils {
     } else if(this.isComunicaNotPayroll() ){
       this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     } else if(this.isPayroll() && !this.isEmployee()) {
-      this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
+      if(this.cardFilter){
+        this.showViewFilter(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST, this.cardFilter);
+      } else {
+        this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
+      }
     }
   }
 

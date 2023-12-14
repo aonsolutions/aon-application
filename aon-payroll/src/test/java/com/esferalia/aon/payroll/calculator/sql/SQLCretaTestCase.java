@@ -8475,13 +8475,6 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
     }
 
-    private static int calculateAndSave(Connection connection, ISQLContractSalaryCalculatorContext ctx)
-	    throws SalaryException {
-	JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
-	new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
-	return jooqSalaryBuilder.execute();
-    }
-
     private static Tramo clone(Tramo tramo) {
 	Tramo clone = new Tramo();
 

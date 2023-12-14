@@ -1106,16 +1106,19 @@ public class ContextFunctions {
 		try {
 			Method _fractionate = ContextFunctions.class.getMethod("fractionate", ExpressionContext.class, Double.class);
 			MethodStub _FractionateStub = new MethodStub(_fractionate);
-			context.setVariable(_FRACTIONATE, _FractionateStub, startDate, endDate);
 			Method fractionate = ContextFunctions.class.getMethod("fractionate", Double.class);
 			MethodStub fractionateStub = new  MethodStub(fractionate);
 			
 			List<Period> workedPeriods = context.getPeriods(ContextVariable.WORKED_DAYS);
-			for ( Period p: context.getPeriods(ContextVariable.WORKED_DAYS))
+			for ( Period p: context.getPeriods(ContextVariable.WORKED_DAYS)) {
+				context.setVariable(_FRACTIONATE, _FractionateStub, p.getStart(), p.getEnd());
 				context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
+			}
 				
-			for ( Period p: Period.sub(new Period(startDate,endDate), workedPeriods ))
+			for ( Period p: Period.sub(new Period(startDate,endDate), workedPeriods )) {
+				context.setVariable(_FRACTIONATE, _FractionateStub, p.getStart(), p.getEnd());
 				context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
+			}
 
 //			context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, startDate, endDate);
 			

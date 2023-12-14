@@ -505,7 +505,9 @@ export class AonDesktop extends AonElement {
 			// payrollCard.title = MSG.LABORAL_COSTS;
 			payrollCard.message = MSG.LABORAL_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
-			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
+			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => {
+				this.appSelectionFilter(Apps.PAYROLL.app, this.getElement('aon-company-costs-card').getFilter());
+			});
 			cardsPanel.appendChild(payrollCard);
 			payrollCard.getCardTitle1().style.cursor = 'pointer';
 			payrollCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>" );
@@ -1246,6 +1248,11 @@ export class AonDesktop extends AonElement {
 			switch(app){
 				case Apps.ACCOUNTING.app:
 					this.rootPanel(new AonAccounting(filter));
+					break;
+				case Apps.PAYROLL.app:
+					const payroll = new AonLaboral(filter);
+					payroll.title = MSG.PAYROLL;
+					this.rootPanel(payroll);
 					break;
 			}
 	}

@@ -84,7 +84,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -128,7 +127,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.protobuf.TypeOrBuilder;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 
@@ -1612,6 +1610,13 @@ public abstract class AbstractSQLTestCase {
 	}
 	
 	
+	public static int calculateAndSave(Connection connection, ISQLContractSalaryCalculatorContext ctx)
+		throws SalaryException {
+	    JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+	    new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+	    return jooqSalaryBuilder.execute();
+	}
+
 	public static final void cleanSalaries(AONContext aonContext) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 		

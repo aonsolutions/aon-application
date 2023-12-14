@@ -19,11 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
-import net.aonsolutions.db.up2date.note.AlterNoteDropNoteTag;
-import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
+import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
+import net.aonsolutions.db.up2date.tgss.TrainingUnemployment2023Fix;
 
 public class Up2Date {
 
@@ -343,7 +341,7 @@ public class Up2Date {
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
-        // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
+	    // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
 	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
 	    // Bases2023Update.BASES2023UPDATE,
 	    // HomeBases2023UpdateII.HOMEBASES2023UPDATEII,
@@ -354,7 +352,7 @@ public class Up2Date {
 	    // MEIUpdate.MEIUPDATE,
 	    // Art1512023Update.ART1512023UPDATE,
 	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
-		// TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+	    // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
 	    // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
@@ -372,7 +370,8 @@ public class Up2Date {
 	    // NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
-	    RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
+	    // RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
+		TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
 
 		
 	    // ----------------------------------------------------------------
