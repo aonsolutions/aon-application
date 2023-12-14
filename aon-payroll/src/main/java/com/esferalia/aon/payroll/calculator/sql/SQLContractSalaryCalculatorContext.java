@@ -1966,7 +1966,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
-				return expr.replaceAll(ContextVariable.GUARANTEE, "SELF.guarantee");
+				return expr.replaceAll(ContextVariable.GUARANTEE, String.format("/*%s*/ SELF.guarantee", ContextVariable.GUARANTEE));
 			}
 		};
 	}
@@ -3898,6 +3898,33 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					}));
 		
 		return sum;
+	}
+	
+	public Double sum(Number amount) throws MacroException {
+	    throw new MacroException() {
+
+		@Override
+		public String doMacro(String expr) {
+		    Matcher matcher = Pattern.compile("SUM\\s*\\((?<expression>.*?)\\)" ).matcher(expr);
+		    while ( matcher.find() ) {
+			String sum = matcher.group();
+			String expression = matcher.group("expression");
+			Double value = eval(expression);
+			expr = AonStringUtils.replace(expr, sum, value.toString());
+		    }
+		    return expr;
+		}
+		
+		private Double eval(String expression) {
+		    try {
+			return getExpressionContext().eval(expression, contractStartDate, contractEndDate, Number.class)
+			.stream().map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+		    } catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		    }		    
+		}
+
+	    };
 	}
 
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {

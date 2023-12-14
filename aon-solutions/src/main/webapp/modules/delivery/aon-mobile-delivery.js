@@ -18,6 +18,9 @@ import { AonTabs } from '../../components/aon-tabs.js';
 import { getDeliveries } from '../../services/warehouseService.js';
 import { getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonMobilePackageList } from '../warehouse/elaboration/aon-mobile-package-list.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { getSalesDetails } from '../../services/salesService.js';
+import { A } from '../../environments/aonTag.js';
 
 export class AonMobileDelivery extends AonElement {
 
@@ -27,9 +30,11 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
-
+	PACKAGING_PRODUCT
+	PACKAGING_SOURCE_PRODUCT
 	delivery;
 	packaging;
+	salesDetails;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -46,6 +51,8 @@ export class AonMobileDelivery extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
+		getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
+		.then(r => this.salesDetails = r);
     }
 
 	initialize() {
@@ -56,7 +63,8 @@ export class AonMobileDelivery extends AonElement {
 		this.delivery = this.delivery || {};
 		this.packaging = {};
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
-
+		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
+		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -74,24 +82,13 @@ export class AonMobileDelivery extends AonElement {
 
 	build() {
 		let toolbar = new AonToolbar();
-		toolbar.id = this.SALE_TOOLBAR;
-		toolbar.type = ToolbarType.SECONDARY;
-		toolbar.title = this.sale.id
-            ? this.sale.reference : MSG.NEW_SALE.toUpperCase(); 
-		this.appendChild(toolbar);
-		toolbar.addButton2(ACTION.BACK, () => this.back());
-
-		this.buildSale();
-	}
-
-	build() {
-		let toolbar = new AonToolbar();
 		toolbar.id = this.DELIVERY_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
+		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
 
 		let div = this.createElement(TAG.DIV);
 		div.style.width = "100%";
@@ -141,7 +138,6 @@ export class AonMobileDelivery extends AonElement {
 		card.setContent(table);
 		this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
 
-
 		for(let i = 0; i < this.delivery.details.length; i++) {
 			table.addRow(); // ----- ROW i
 		
@@ -175,6 +171,11 @@ export class AonMobileDelivery extends AonElement {
 		this.getApplication().getParent().aonDelivery();
 	}
 
+	backToDelivery() {
+		this.clear();
+		this.build();
+	}
+
 	// Create Components
 
 	createCard(id, title) {
@@ -204,6 +205,292 @@ export class AonMobileDelivery extends AonElement {
 		number.description = title;
 		return number;
 	}
+
+	addPackaging() {
+		this.getApplication().removeFloatOption();
+		this.clear();
+		let toolbar = new AonToolbar();
+		toolbar.id = this.DELIVERY_TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = 'Seleccionar Envase'; // this.delivery.reference; 
+		this.appendChild(toolbar);
+		toolbar.addButton2(ACTION.BACK, () => this.backToDelivery());
+
+		let div = this.createDiv(TAG.DIV);
+		this.appendChild(div);
+
+		let packagingCard = new AonCard();
+		packagingCard.id = this.id  + 'PackagingCard';
+		packagingCard.title = 'Envase';
+		div.appendChild(packagingCard);
+
+		let packagingDiv = this.createDiv();
+		packagingCard.setContent(packagingDiv);
+		let table = new AonBasicTable();
+		table.id = this.id + 'Envasesss';
+		packagingDiv.appendChild(table);
+		
+		let table2 = new AonBasicTable();
+		table2.id = this.id + 'Envasesss22';
+		packagingDiv.appendChild(table2);
+
+		this.buildProductPackaging(table, table2);
+
+
+		let pendingCard = new AonCard();
+		pendingCard.id = this.id  + 'PendingCard';
+		pendingCard.title = 'Pendiente';
+		div.appendChild(pendingCard);
+		let pendingTable = new AonBasicTable();
+		pendingTable.id = this.id + 'PendingTable';
+		pendingCard.setContent(pendingTable);
+		this.buildPendingTable(pendingTable);
+
+		let saveButton = new AonButton();
+		saveButton.id = this.DELIVERY_SAVE_BUTTON;
+		saveButton.title = 'Añadir al Albarán';
+		saveButton.disabled = true;
+		saveButton.style.margin = '10px';	
+		saveButton.style.right = '0px';
+		saveButton.style.position = 'absolute';
+
+		div.appendChild(saveButton);	
+		saveButton.addEventListener(EVENT.CLICK, () => {
+			this.packaging.delivery = this.delivery.id;
+			saveDeliveryPackaging(this.packaging);
+			this.backToDelivery();
+		});
+	}
+
+	buildProductPackaging(table, table2) {
+		table.addRow();
+		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
+		product.id = this.DELIVERY_PRODUCT;
+		table.addCell(product);
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());	
+		
+		
+		product.addEventListener(EVENT.CHANGE, () => {
+			// buscar palet (item) y su contenido.
+			// si existe albaran comprobar que esté en el albaran. 
+			//		si está en el albaran. añadir nuevos productos al palet 
+			//   	si no esta en ningun albaran añadir el palet con lo que tenga al albarán 
+			//			comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+			//  	si está en otro albarán ERROR
+			// si no existe albarán 
+			//   	si no esta en ningun albaran añadir el palet con lo que tenga al albarán 
+			//			comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+			//  	si está en otro albarán ERROR
+			
+			let data = { 
+				sscc: product.value,
+				delivery: this.delivery.id,
+				// product: detail.item.product.id
+			};
+			getDeliveryPackaging(data).then(r => {
+				// si r.delivery no esta vacio. añadir nuevos productos al palet 
+				// si r.delivery está vacio. añadir el palet con lo que tenga al albarán.
+				//		comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+				product.setDisabled(true);
+				product.value = r.item.name;
+				this.packaging.container = {
+					item: r.item.id
+				};
+
+				Array.prototype.forEach.call(r.item.itemComposition, i => {
+					table2.addRow();
+					let span = this.createSpan();
+					span.innerHTML = i.description;
+					table2.addCell(span);
+					let span2 = this.createSpan();
+					span2.innerHTML = i.quantity;
+					table2.addCell(span2);
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					saveButton.setDisabled(false);
+					if(!r.delivery || !r.delivery.id) {	
+						for(let j = 0; j < this.salesDetails.length; j++) {
+							if(this.salesDetails[j].item.product.id === i.composition.product.id) {
+								this.salesDetails[j].delivered = this.salesDetails[j].delivered + i.quantity;
+							}
+						}						
+					}
+				});
+
+				if(!r.delivery || !r.delivery.id) {	
+					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+
+				}
+
+			}).catch(e => {
+				product.value = '';
+				this.showError(e)
+			});
+		});
+		
+
+		let addButton = new AonIconButton();
+		addButton.id = this.id + 'AddButton';
+		addButton.title = MSG.ADD;
+		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addButton.addEventListener(EVENT.CLICK, () => {
+			let cont = 1;
+			
+			while(table.rows >= cont) {
+				table.removeRow(table.rows);
+			}
+			this.buildNewPackaging(table);
+			let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+			saveButton.setDisabled(true);
+		});
+		table.addCell(addButton);
+	}
+
+	buildNewPackaging(table, table2) {
+		table.addRow();
+		let envaseSelect = new AonSelect();
+		envaseSelect.id = this.id + 'DialogEnvase';
+		envaseSelect.title = 'Nuevo Envase';
+		envaseSelect.addEventListener(EVENT.SELECT, () => {
+			let cont = 1;
+			while(table.rows > cont) {
+				table.removeRow(table.rows);
+			}
+			this.packaging.container = {
+				product: envaseSelect.value
+			};
+			// this.buildNewPackagingContent(table, detail);
+		});
+		
+		let td = table.addCell(envaseSelect);
+		td.style.width = '100%';
+
+		let pButton = new AonIconButton();
+		pButton.id = this.id + 'ProductButton';
+		pButton.title = MSG.ADD;
+		pButton.icon = MATERIAL_ICONS.QR_CODE_SCANNER;
+		pButton.addEventListener(EVENT.CLICK, () => {
+			let cont = 1;
+
+			while(table.rows >= cont) {
+				table.removeRow(table.rows);
+			}
+			this.buildProductPackaging(table, table2);
+		});
+		table.addCell(pButton);
+
+		let productFilter = {
+			type: 'AUXILIARY',
+			mode: 'CUSTOMER',
+			registry: this.delivery.customer.id
+		};
+		getProducts(productFilter).then(products => {
+			envaseSelect.setOptions(products.map(p => {
+				return {
+					value: p.id,
+					name: p.code + ' - ' + p.name
+				  }
+			}))
+		});
+	}
+
+	buildPendingTable(pendingTable) {
+		pendingTable.removeRows();
+		for(let i = 0; i < this.salesDetails.length; i++) {
+			let pending =  this.salesDetails[i].quantity - this.salesDetails[i].delivered;
+			if(pending > 0) {
+				pendingTable.addRow();
+				
+				let span = this.createSpan();
+				span.innerHTML = this.salesDetails[i].item.product.code;
+				pendingTable.addCell(span);
+
+				let span2 = this.createSpan();
+				span2.innerHTML = pending;
+				pendingTable.addCell(span2)
+
+				let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
+				aonIconButton.icon = MATERIAL_ICONS.ADD;
+				aonIconButton.addEventListener(EVENT.CLICK, () => {
+					this.sourceDialog(this.salesDetails[i]);
+				});
+				pendingTable.addCell(aonIconButton);
+			}	
+		}
+	}
+
+
+	sourceDialog(detail) {
+		let id = this.id + 'SourceDialog';
+		let dialog = this.getElement(id);
+		if(!dialog) {
+			dialog = new AonDialog();
+			dialog.id = this.id + 'SourceDialog';
+			this.appendChild(dialog);
+		} else {
+			dialog.clear();
+		}
+		dialog.setTitle('Origen');
+		
+		let table = new AonBasicTable();
+		table.id = this.id + 'SourceTable';
+		dialog.setContent(table);
+	
+		table.addRow();
+	
+		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
+		product.id = id + 'Envase';
+		table.addCell(product);
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+	
+		
+		product.addEventListener(EVENT.CHANGE, () => {
+			product.setDisabled(true);
+			let data = { 
+				sscc: product.value,
+				product: detail.item.product.id
+			};
+			getDeliveryPackaging(data).then(r => {
+				// si no esta en ningun albaran  
+					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+					//añadir cantidad 
+				let composition = [];
+				Array.prototype.forEach.call(r.item.itemComposition, i => {
+					
+
+					
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					saveButton.setDisabled(false);
+
+					composition.put({
+						item: i.item,
+						quantity: quantityValue
+					})
+				});
+					
+				if(r.item.itemComposition.length > 0) {
+					
+				}				
+
+				this.packaging.content = {
+					source: r.item.serialNumber,
+					composition
+				}
+			}).catch(e => this.showError(e));
+		});
+
+		let magicButton = new AonIconButton();
+		magicButton.id = this.id + 'MagicButton';
+		magicButton.title = "magia";
+		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
+		magicButton.addEventListener(EVENT.CLICK, () => {
+			alert("MAGIA")
+		});
+		table.addCell(magicButton);
+
+		dialog.addAcceptAction(() => {});
+		dialog.open();
+	}
+
 }
 
 if(!window.customElements.get(TAG.AON_MOBILE_DELIVERY)){

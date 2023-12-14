@@ -530,6 +530,9 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(RITEM.WORKPLACE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RITEM.STATUS);}
 
+		// PRODUCT
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
+
 	}
 	
 	protected static class PurchaseDetailPropertiesDAO implements PurchaseDetailProperties {

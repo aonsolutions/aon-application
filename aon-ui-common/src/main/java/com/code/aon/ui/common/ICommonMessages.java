@@ -140,7 +140,6 @@ public interface ICommonMessages {
 	String SUPPLIER = "aon_supplier";
 	String SUPPORT_SEND_EMAIL = "aon_support_send_email";
 	String SUPPORT_TELEPHONE_NUMBER = "aon_support_telephone_number";
-	String SUPPORT_TELEPHONE_NUMBER2 = "aon_support_telephone_number2";
 	String SURCHARGE = "aon_surcharge";
 	String SURCHARGE_QUOTA = "aon_surcharge_quota";	
 	String TARGET = "aon_target";

@@ -50,6 +50,7 @@ public class ExpressionContext {
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		public abstract String doMacro(String expr);
+		
 	}
 
 	public abstract static class DeferredException extends ExpressionException {
@@ -790,7 +791,7 @@ public class ExpressionContext {
 					return eval(script, bindingsList, toType);
 				} catch (MacroException e) {
 					script = e.doMacro(script);
-					inputs.addAll(getVarNames(script));
+					inputs = getVarNames(script);
 					bindingsList = variables.getBindings(inputs, start, end);
 				}
 			} while (true);
@@ -826,7 +827,7 @@ public class ExpressionContext {
 					return eval(script, bindingsList, toType);
 				} catch (MacroException e) {
 					script = e.doMacro(script);
-					inputs.addAll(getVarNames(script));
+					inputs = getVarNames(script);
 					bindingsList = variables.getBindings(inputs, start, end);
 				}
 			} while (true);
@@ -940,7 +941,7 @@ public class ExpressionContext {
 					return eval(script, bindingsList, toType);
 				} catch (MacroException e) {
 					script = e.doMacro(script);
-					inputs.addAll(getVarNames(script));
+					inputs = getVarNames(script);
 					bindingsList = variables.getBindings(inputs, start, end);
 				}
 			} while (true);
