@@ -122,7 +122,7 @@ public class ModelMatrix extends MainEntryPoint {
 		
 		if (!params.isMultiplePresentation()) {
 			options.getSelected().clear();			
-			options.setResultado(null);
+			options.setResult(null);
 		}
 		
 		dataPanel.clear();
@@ -132,8 +132,8 @@ public class ModelMatrix extends MainEntryPoint {
 			footPanel.setVisible(false);
 			splitLayoutPanel.setWidgetSize(footPanel, 0);
 			
-			if (options.getResultado() != null) {
-				showHtml(options.getResultado());
+			if (options.getResult() != null) {
+				showHtml(options.getResult());
 				footPanel.setVisible(true);
 				maximizeFootPanel();
 			}			

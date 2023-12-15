@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificatio
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -110,7 +111,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			}
 		}
 		year.addChangeHandler(event -> {
-			options.setResultado(null);
+			options.setResult(null);
 			fireValueChangeEvent();	
 		});
 		
@@ -120,7 +121,9 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
 		for (FiscalModelType m : FiscalModelType.values()) {
-			if (m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+			// FALTA - POR AHORA TAMPOCO APARECE EL MODELO 200 EN LA MATRIZ 
+			//if (m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+			if (m != FiscalModelType.M200 && m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
@@ -206,7 +209,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			periodBox.addItem(p.getDescription());
 		}
 		periodBox.addChangeHandler(event -> {
-			options.setResultado(null);
+			options.setResult(null);
 			fireValueChangeEvent();
 		});
 		
@@ -220,7 +223,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		//multiplePresentation.setTitle("Esta casilla solo se puede marcar si se filtra por Administraci\u00F3n Territorio Com\u00FAn, Estado Finalizado y un solo Periodo.");
 		multiplePresentation.addClickHandler(event -> {
 			
-			// FALTA - Si se marca habilitar presentacion multiple, ponemos Territorio Comun, Estado Finalizado y Periodo por defecto (si no esta seleccionado periodo)
+			// Si se marca "Habilitar Presentacion Múltiple", ponemos Territorio Común, Estado Finalizado y Periodo por defecto (si no esta seleccionado periodo)
 			if (multiplePresentation.getValue()) {
 				admon.setSelectedIndex(Administration.COMMON_TERRITORY.ordinal() + 1);
 				statusBox.setSelectedIndex(FiscalStatus.FINISHED.ordinal() + 1);
@@ -322,19 +325,13 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			period = Period.values()[periodBox.getSelectedIndex() - 1];		
 		}
 		
-		// FALTA - Check Habilitar Presentación Múltiple, solo se habilita si AEAT y Estado Finalizado y un Periodo seleccionado 
-//		multiplePresentation.setEnabled(administration == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && period != null);
-//		if (!multiplePresentation.isEnabled()) {
-//			multiplePresentation.setValue(false,false);			
-//		}
-		
 		if (administration != Administration.COMMON_TERRITORY || status != FiscalStatus.FINISHED || period == null) {
 			multiplePresentation.setValue(false,false);
 		}
 		
 		sendButton.setVisible(multiplePresentation.getValue());
 		
-		// Si habilitar multiple, desmarcamos mostrar los configurados, solo se actua sobre los realizados 
+		// Si está marcado "Habilitar presentación múltiple", desmarcamos "Mostrar los configurados", solo se actua sobre los realizados 
 		if (multiplePresentation.getValue()) {
 			showConfigurated.setValue(false,false);
 		}			
@@ -400,8 +397,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			AonMessageDialog.show("PRESENTACION MULTIPLE", "Debe seleccionar al menos un modelo.");
 			return;
 		}
-		// FALTA 
-
 		
 		if (!sending) {
 			sending = true;
@@ -411,12 +406,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 					options.getConfiguration().getDomain().getName(), 
 					options.getConfiguration().getDomain().getId(),
 					options.getConfiguration().getUser().getLogin());
-			
-//			API api = new API(GWT.getHostPageBaseURL(), 
-//					options.getConfiguration().getMd5(),
-//					options.getConfiguration().getDomain().getName(), 
-//					options.getConfiguration().getDomain().getId(),
-//					options.getConfiguration().getUser().getLogin());
 			
 			// Pedir Certificado 
 			AonCertificationPopupParams params = new AonCertificationPopupParams()
@@ -470,7 +459,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		options.setResultado(null);
+		options.setResult(null);
 
 //		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
@@ -488,7 +477,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 //					showHtml( buff.toString() );
 //				}
 //				Window.alert(buff.toString());
-				options.setResultado(buff.toString());
+				options.setResult(buff.toString());
 				options.getSelected().clear();
 				sending = false;
 				popup.hide();					

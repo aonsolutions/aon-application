@@ -11,7 +11,7 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 	
 	private boolean compactMode;
 	private ArrayList<String> selected; // Seleccionados para la presentación múltiple
-	private String resultado; // Resultado de la presentación multiple
+	private String result; // Resultado de la presentación multiple
 
 	public boolean isCompactMode() {
 		return compactMode;
@@ -39,11 +39,11 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 		return getSelected().contains(getSelectedKey(model));  
 	}
 	// FALTA - RESULTADO DE LA PRESENTACION MULTIPLE
-	public String getResultado() {
-		return resultado;
+	public String getResult() {
+		return result;
 	}
-	public MatrixModuleOptions setResultado(String resultado) {
-		this.resultado = resultado;
+	public MatrixModuleOptions setResult(String result) {
+		this.result = result;
 		return this;
 	}	
 

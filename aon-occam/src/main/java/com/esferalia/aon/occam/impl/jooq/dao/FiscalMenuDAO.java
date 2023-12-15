@@ -82,11 +82,8 @@ public class FiscalMenuDAO {
 					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
 						.map(fm -> fm.setModel((fm.getModel() == FiscalModelType.M390)?FiscalModelType.M390_HF:fm.getModel()))
 						.filter( fm -> fm.getModel() != FiscalModelType.M349 )  // No se coge de fs_model el modelo 349, pues no todos los datos están actualizados, se coge más abajo de su tabla
-						.filter(fm -> fm.getModel() != FiscalModelType.M390_HF 
-							|| (fm.getModel() == FiscalModelType.M390_HF
-								&& ( params.getModel() == null 
-								  || params.getModel() == FiscalModelType.M390_HF))
-								)
+						.filter( fm -> fm.getModel() != FiscalModelType.M200 )  // Tampoco se coge el modelo 200 de fs_model
+						.filter( fm -> fm.getModel() != FiscalModelType.M390_HF || (fm.getModel() == FiscalModelType.M390_HF && (params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)) )
 						.peek( fm -> {
 							// FALTA - AUN NO ESTA HECHO EL REFACTOR DEL MODELO 131 POR AHORA LES ASIGNO AQUI ESTAS PROPIEDADES 
 							if (fm.getModel() == FiscalModelType.M131) {
@@ -205,15 +202,16 @@ public class FiscalMenuDAO {
 				public void visitM200() {
 					if (params.accept( FiscalModelType.M200 )) {
 						//Mod200DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						getHeadersMod200(ctx, domain.getId(), params.getScope())
-							.filter( mod -> mod.getYear()== params.getYear())
-							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
-							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
-							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.map( FiscalMenuItemJSON::toJSON )
-							.forEach( allModels::put );
+						// FALTA - POR AHORA EL MODELO 200 NO APARECE EN LA MATRIZ, PORQUE NO SE PUEDE HACER NADA CON EL DESDE LA MATRIZ
+//						getHeadersMod200(ctx, domain.getId(), params.getScope())
+//							.filter( mod -> mod.getYear()== params.getYear())
+//							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
+//							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
+//									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+//							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+//							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
+//							.map( FiscalMenuItemJSON::toJSON )
+//							.forEach( allModels::put );
 					}
 				}
 			};

@@ -287,7 +287,7 @@ public class ModelMatrixPanel extends FlowPanel {
 								} else {									
 									ibanNrcLabel.setText(cloned.getIban());
 								}								
-								// Si está habilitada la presentación múltiple, comprobar si falta IBAN o NRC
+								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo
 								if (params.isMultiplePresentation()) {
 									if (AonStringUtils.isBlank(ibanNrcLabel.getText())) {
 										if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
@@ -320,7 +320,13 @@ public class ModelMatrixPanel extends FlowPanel {
 							markForSend.addValueChangeHandler( event -> {
 								if (markForSend.getValue()) {
 									options.addSelected(cloned);
-									if (options.getSelected().size() == selectedCheckBox.size())
+									
+									int totalEnabled = 0;									
+									for (CheckBox cb : selectedCheckBox) {
+										if (cb.isEnabled()) 
+											totalEnabled++;										
+									}									
+									if (options.getSelected().size() == totalEnabled)
 										markAllForSend.setValue(true,false);										
 								} else {
 									options.removeSelected(cloned);

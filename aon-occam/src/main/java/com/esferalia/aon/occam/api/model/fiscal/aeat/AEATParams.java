@@ -19,6 +19,7 @@ public class AEATParams implements Serializable {
 	private String nrc;
 	private boolean test;
 	private ArrayList<String> selected; // Seleccionados para la presentación múltiple desde la matriz
+	private ArrayList<String> errores;  // FALTA - Mensajes de error de la presentación de cada modelo, en la presentación múltiple desde la matriz
 	
 	public int getDomainId() {
 		return domainId;
@@ -111,6 +112,13 @@ public class AEATParams implements Serializable {
 	}
 	public AEATParams setSelected(ArrayList<String> selected) {
 		this.selected = selected;
+		return this;
+	}
+	public ArrayList<String> getErrores() {
+		return errores;
+	}
+	public AEATParams setErrores(ArrayList<String> errores) {
+		this.errores = errores;
 		return this;
 	}
 	
