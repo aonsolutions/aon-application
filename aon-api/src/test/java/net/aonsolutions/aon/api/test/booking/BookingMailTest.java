@@ -32,8 +32,7 @@ public class BookingMailTest {
 				.setFrom("booking@aon.solutions")
 				.setReplyTo("admin@aonsolutions.es")
 				.setSubject(subject)
-				.setBody(body)
-				.setFile(BookingUtils.getTermsOfServiceData());
+				.setBody(body);
 		SES.sendEmailWithAttachment(msg);
 	}
 	
