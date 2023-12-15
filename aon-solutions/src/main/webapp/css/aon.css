@@ -1965,9 +1965,12 @@ aon-access-card{
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
+  /*
+  POR ESTO NO SE PINTA LA EMPRESA EN LA APP MOVIL ...
+
   #aonHeaderCompany{
       display: none !important;
-  }
+  } */
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */

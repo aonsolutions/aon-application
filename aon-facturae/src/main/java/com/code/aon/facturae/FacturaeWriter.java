@@ -546,10 +546,10 @@ public class FacturaeWriter {
 		InvoiceIssueDataType invoiceIssueData = new InvoiceIssueDataType();
 		XMLGregorianCalendar issuedDate = Util.toXMLCalendar(invoice.getIssueDate());
 		invoiceIssueData.setIssueDate( issuedDate );
-		PeriodDates period = new PeriodDates();
-		period.setStartDate(issuedDate);
-		period.setEndDate(issuedDate);
-		invoiceIssueData.setInvoicingPeriod(period);
+		//PeriodDates period = new PeriodDates();
+		//period.setStartDate(issuedDate);
+		//period.setEndDate(issuedDate);
+		//invoiceIssueData.setInvoicingPeriod(period);
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);

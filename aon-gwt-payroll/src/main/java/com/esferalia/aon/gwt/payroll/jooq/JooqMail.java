@@ -54,24 +54,28 @@ public class JooqMail {
 	
 	// ---------------------------------------------- Mail accounts
 	
-	public static List<MailAccount> getMailAccounts(Connection connection, Integer userId, Integer domainId) {
-		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), userId, domainId);
+	public static List<MailAccount> getMailAccounts(Connection connection, Integer userId, Integer domainId, Integer parentDomainId) {
+		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), userId, domainId, parentDomainId);
 	}
 	
-	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId, Integer domainId) {
+	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId, Integer domainId, Integer parentDomainId) {
 		List<MailAccount> mailAccounts = new LinkedList<MailAccount>();
+		List<String> visitedEmails = new LinkedList<String>();
 		
 		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
 		
 		Integer userDomain = userRecord.get(USER.DOMAIN);
 		
 		Result<Record> mailAccountRecords = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.USER_ID.eq(userId))
+				.where(MAIL_ACCOUNT.USER_ID.eq(userId).and(MAIL_ACCOUNT.DOMAIN.eq(domainId).or(MAIL_ACCOUNT.DOMAIN.eq(parentDomainId))))
 				.or(MAIL_ACCOUNT.DOMAIN.eq(userDomain).and(MAIL_ACCOUNT.USER_ID.isNull()))
 				.or(MAIL_ACCOUNT.DOMAIN.eq(domainId).and(MAIL_ACCOUNT.USER_ID.isNull()))
+				.orderBy(MAIL_ACCOUNT.USER_ID.desc(), MAIL_ACCOUNT.DOMAIN.desc())
 				.fetch();
 		
 		for(Record r : mailAccountRecords) {
+			if(visitedEmails.contains(r.get(MAIL_ACCOUNT.EMAIL))) continue;
+			
 			MailAccount mailAccount = new MailAccount();
 			
 			mailAccount.setId(r.get(MAIL_ACCOUNT.ID));
@@ -99,6 +103,8 @@ public class JooqMail {
 			mailAccount.setType(MailAccountType.safeValueOf(r.get(MAIL_ACCOUNT.TYPE)));
 			
 			mailAccounts.add(mailAccount);
+			
+			visitedEmails.add(r.get(MAIL_ACCOUNT.EMAIL));
 		}
 		
 		return mailAccounts;
