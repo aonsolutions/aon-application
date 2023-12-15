@@ -22,6 +22,8 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { A } from '../../environments/aonTag.js';
 
+import * as WAREHOUSE_OPTION from '../warehouse/WarehouseOptions.js';
+
 export class AonMobileDelivery extends AonElement {
 
 	DELIVERY_TOOLBAR;
@@ -258,7 +260,12 @@ export class AonMobileDelivery extends AonElement {
 		saveButton.addEventListener(EVENT.CLICK, () => {
 			this.packaging.delivery = this.delivery.id;
 			saveDeliveryPackaging(this.packaging);
-			this.backToDelivery();
+
+			//RELOAD DELIVERY
+			let option = WAREHOUSE_OPTION.DELIVERY;
+			option.delivery = this.delivery.id;
+			this.getApplication().selectOption(option)
+			// this.backToDelivery();
 		});
 	}
 
@@ -267,7 +274,7 @@ export class AonMobileDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
 		product.id = this.DELIVERY_PRODUCT;
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());	
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));	
 		
 		
 		product.addEventListener(EVENT.CHANGE, () => {
@@ -300,7 +307,7 @@ export class AonMobileDelivery extends AonElement {
 				Array.prototype.forEach.call(r.item.itemComposition, i => {
 					table2.addRow();
 					let span = this.createSpan();
-					span.innerHTML = i.description;
+					span.innerHTML = i.composition.product.code;
 					table2.addCell(span);
 					let span2 = this.createSpan();
 					span2.innerHTML = i.quantity;
@@ -440,7 +447,7 @@ export class AonMobileDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
 	
 		
 		product.addEventListener(EVENT.CHANGE, () => {
@@ -490,6 +497,30 @@ export class AonMobileDelivery extends AonElement {
 		dialog.addAcceptAction(() => {});
 		dialog.open();
 	}
+
+	barcodeId;
+	openBarcode(element) {
+		this.barcodeId = element.id;
+		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY });
+	}
+
+	setBarcodeData(barcodeStr) {
+		try {
+			if(typeof barcodeStr === 'string') {
+				barcodeStr = JSON.parse(barcodeStr);
+			}
+
+			const {text, format, cancelled} = barcodeStr;
+			if(!cancelled) {
+				const element = this.getElement(this.barcodeId);
+				element.value = text;
+			}
+		} catch (error) {
+			this.showError(error);
+		}
+	}
+
+
 
 }
 
