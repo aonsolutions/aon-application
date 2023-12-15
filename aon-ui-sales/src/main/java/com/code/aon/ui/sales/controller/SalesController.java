@@ -1244,7 +1244,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		List<com.esferalia.aon.occam.api.model.warehouse.Delivery> deliveryList = 
 			AON.getDeliveryStream(new Domain().setId(to.getDomain()).setName(domainName),
 				login, f -> f.getDomainProperty().eq(to.getDomain())
-				.and(f.getStatusProperty().eq(DeliveryStatus.IN_PREPARATION.value())))
+				.and(f.getStatusProperty().eq(DeliveryStatus.IN_PREPARATION.value()))
+				.and(f.getCustomerProperty().eq(to.getCustomer().getId()))
+				.and(f.getAddressProperty().eq(to.getShippingAddress().getId())))
 		.toList();
 		LinkedList<SelectItem> deliveries = new LinkedList<>();
 		for (com.esferalia.aon.occam.api.model.warehouse.Delivery delivery : deliveryList) {

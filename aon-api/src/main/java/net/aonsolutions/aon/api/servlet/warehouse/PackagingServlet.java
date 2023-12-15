@@ -92,6 +92,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 	
 	private JSONObject getDeliveryPackaging(AonApiData api) {
 		String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+		else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+
 		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
 		Integer product = JsonUtils.getInteger(api.getData(), IJsonNames.PRODUCT);
 		DeliveryPackaging deliveryPackaging = AON.getDeliveryPackaging(api.getDomain(), api.getUser(), sscc, delivery, product);
