@@ -2,13 +2,11 @@ package net.aonsolutions.aon.api.servlet.booking;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
@@ -24,15 +22,12 @@ import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
 public class BookingUtils {
-
-	private static final String LEGAL_WARNING_PATH = "/net/aonsolutions/aon/api/servlet/avisoLegal.pdf";
 	
 	public static BookingUtils getInstance() {
 		return new BookingUtils();
@@ -43,6 +38,7 @@ public class BookingUtils {
 		String body = content(domain, user, newBooking);
 
 		SESMessage msg = new SESMessage()
+				.setAlias("AON Solutions | Contrataciones")
 				.setTo(domain.getOwner())
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
@@ -60,34 +56,9 @@ public class BookingUtils {
 		LinkedList<File> list = new LinkedList<>();
 		File file = getDiffFile(oldBooking, newBooking);
 		if(file != null) list.add(file);
-		
-		File file2 = getTermsOfServiceData();
-		if(file2 != null) list.add(file2);
 		return list;
 	}
-	
-	public static File getTermsOfServiceData() {
-		InputStream in = null;
-		byte[] data = null;
-		try {
-			in = BookingUtils.class.getResourceAsStream(LEGAL_WARNING_PATH);
-			data = IOUtils.toByteArray(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			AonIOUtils.closeQuietly(in);
-		}	
-		File file = null;
-		if(data != null) {
-			try {
-				file = File.createTempFile("avisoLegal", ".pdf");
-				AonFileUtils.writeByteArrayToFile(file, data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return file;
-	}
+
 	
 	private File getDiffFile(Booking oldBooking, Booking newBooking) {
 		File file = null;
