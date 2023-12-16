@@ -116,7 +116,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		tab.addRow()
 			.addCell( new Label(AON.MSG.titular()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
 			.addCell( new Label(invoice.getRegistryName()),AON.CSS.aonWidth300())
-			.addCell( new Label(invoice.getRegistryDocumentType().getDescription()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			.addCell( new Label(invoice.getRegistryDocumentType() == null ? "" : invoice.getRegistryDocumentType().getDescription()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
 			.addCell( new Label(document),AON.CSS.aonWidth150())
 			.addCell( new Label(AON.MSG.issueDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
 			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getIssueDate())),AON.CSS.aonWidth150())
