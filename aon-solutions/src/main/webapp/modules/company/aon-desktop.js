@@ -708,15 +708,10 @@ export class AonDesktop extends AonElement {
 
 	filterPyG(pygCard){
 		let button = this.getElement('pygTitleSection2OpcionesButtonIconButton');
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let aonDashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
-
-		if((height - top) < (height / 2)) {
-				top = top - (ayudat ? 205 : 170);
-		}
 
 		let d = document.getElementById('aonCardPyGOption');
 
@@ -767,13 +762,8 @@ export class AonDesktop extends AonElement {
 
 	filterCyP(cypCard){
 		let button = this.getElement('cypTitleSection2OpcionesButtonIconButton');
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
-
-		if((height - top) < (height / 2)) {
-				top = top - (ayudat ? 205 : 170);
-		}
 
 		let d = document.getElementById('aonCardCyPOption');
 
@@ -840,13 +830,8 @@ export class AonDesktop extends AonElement {
 
 	filterPayrollStatics(payrollCard){
 		let button = this.getElement('payrollTitleSection2OpcionesButtonIconButton');
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
-
-		if((height - top) < (height / 2)) {
-				top = top - (ayudat ? 205 : 170);
-		}
 
 		let d = document.getElementById('aonCardPayrollOption');
  
@@ -909,13 +894,8 @@ export class AonDesktop extends AonElement {
 
 	filterFiscal(){
 		let button = this.getElement('fiscalTitleSection2OpcionesButtonIconButton');
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
-
-		if((height - top) < (height / 2)) {
-				top = top - 170;
-		}
 
 		let d = document.getElementById('aonCardFiscalOption');
 
