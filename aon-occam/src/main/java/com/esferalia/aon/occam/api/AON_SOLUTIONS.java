@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
@@ -1160,6 +1161,14 @@ public class AON_SOLUTIONS {
 	public static void deleteRegistryRelationship(Domain domain, User user, RRelationshipFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			getRelationship().deletetRegistryRelationship(ctx, filter);
+		}
+	}
+	
+	// COBROS Y PAGOS CARD
+
+	public static Double getFinanceGroupStatus(Domain domain, User user, FinanceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			return getFinance().getFinanceGroupStatus(ctx, filter);
 		}
 	}
 }
