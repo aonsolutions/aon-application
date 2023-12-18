@@ -250,6 +250,12 @@ public interface IFinance {
 	// 	***********************************************
 	
 	void createSettleSalaries(CloseableAONContext ctx, Date date);
+	
+	// 	***********************************************
+	// 	*********** COBROS Y PAGOS CARD ***************
+	// 	***********************************************
+	
+	Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter);
 
 }
 	

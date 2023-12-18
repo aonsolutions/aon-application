@@ -4,6 +4,7 @@ import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { getChargePayments } from "../../services/invoiceService.js";
 
 export class AonDashboardChargePayments extends AonElement {
   filter;
@@ -43,16 +44,31 @@ export class AonDashboardChargePayments extends AonElement {
   async draw() {
     this.innerHTML = "";
 
+    let contentDiv = this.createElement(TAG.DIV);
+    contentDiv.style.width = "100%";
+    contentDiv.style.display = "flex";
+    contentDiv.style.gap = ".5rem";
+    contentDiv.style.flexDirection = "column";
+    this.appendChild(contentDiv);
+
+    let titleDiv = this.createElement(TAG.SPAN);
+    titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.period);
+    titleDiv.style.color = "grey";
+    titleDiv.style.fontWeight = "500";
+    titleDiv.style.textAlign = "center";
+    contentDiv.appendChild(titleDiv);
+
     let canvasDiv = this.createElement(TAG.DIV);
     canvasDiv.id = "pygCardCanvasDiv";
     canvasDiv.style.width = "100%";
-    this.appendChild(canvasDiv);
+    canvasDiv.style.height = "100%";
+    contentDiv.appendChild(canvasDiv);
 
     let canvas = this.createElement(TAG.CANVAS);
     canvas.id = "pygCardCanvas";
     canvasDiv.appendChild(canvas);
 
-    this.cypData = this.getData();
+    this.cypData = await this.getDataDB();
 
     this.drawBarLineChart(canvas, this.cypData);
   }
@@ -151,9 +167,6 @@ export class AonDashboardChargePayments extends AonElement {
             stacked: true,
           },
         },
-        interaction: {
-          intersect: false,
-        },
         plugins: {
           legend: {
             display: false, // This hides all text in the legend and also the labels.
@@ -171,42 +184,28 @@ export class AonDashboardChargePayments extends AonElement {
     this.stackedChart = new Chart(canvas, config);
   }
   
+  async getDataDB(){
+    try {
+      let chargePayments = await getChargePayments({period: this.filter.period});
+      console.log(chargePayments);
+      return chargePayments;
+    } catch(e){
+      console.log(e);
+    }
+  }
 
-  getData(){
-    return {
-      charges: {
-        previous: {
-          pending: 7000.00,
-          returns: 3000.00
-        },
-        period: {
-          pending: 14000.00,
-          returns: 6000.00
-        },
-        accumulate: {
-          pending: 21000.00,
-          returns: 9000.00
-        }
-      },
-      payments: {
-        previous: {
-          pending: -7000.00,
-          returns: -4000.00
-        },
-        period: {
-          pending: -5000.00,
-          returns: -1000.00
-        },
-        accumulate: {
-          pending: -12000.00,
-          returns: -5000.00
-        }
-      },
-      cashFlow: {
-        previous: -1000.00,
-        period: 14000.00,
-        accumulate: 13000.00
-      }
+  getTitlePeriod(period){
+     switch (period) {
+      case 'current_month':
+        return 'Mes actual';
+      case 'next_month':
+        return 'Hasta próximo mes';
+      case 'next_3month':
+        return 'Hasta próximos 3 meses';
+      case 'next_6month':
+        return 'Hasta próximos 6 meses';
+      default:
+        return 'Año actual';
     }
   }
 }
