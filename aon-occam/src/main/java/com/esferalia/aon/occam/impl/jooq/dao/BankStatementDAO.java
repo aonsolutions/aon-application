@@ -7,7 +7,6 @@ import java.util.Date;
 import org.jooq.AggregateFunction;
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -41,6 +40,7 @@ public class BankStatementDAO {
 			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
 			.fetch()
 			.stream()
+			.filter( rec -> rec.getValue(lot) != null)
 			.mapToInt( rec -> rec.getValue(lot))
 			.findFirst()
 			.orElse(1);
