@@ -41,6 +41,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
@@ -1131,9 +1132,19 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	private ITimedVariable<Object> join(ITimedVariable<Object> current, ITimedVariable<Object> prev) {
-		double value = add(current.getValue(current.getPeriod()) ,prev.getValue(prev.getPeriod()));
-		current = new TimedObject<>(value, prev.getPeriod().getStart(), current.getPeriod().getEnd());
-		return current;
+		Period joinPeriod = new Period(prev.getPeriod().getStart(), current.getPeriod().getEnd());
+		return 
+		new ITimedVariable<Object>() {
+		    @Override
+		    public Period getPeriod() {
+		        return joinPeriod;
+		    }
+		    
+		    @Override
+		    public Object getValue(Period period) {
+			return add(current.getValue(period) ,prev.getValue(period));
+		    }
+		};
 	}
 	
 	private boolean isDropDays(Period p) {
