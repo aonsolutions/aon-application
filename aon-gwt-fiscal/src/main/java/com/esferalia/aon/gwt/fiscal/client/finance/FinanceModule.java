@@ -711,7 +711,7 @@ public class FinanceModule extends MainEntryPoint {
 		Label payMethod = new Label(finance.getPayMethodName());
 		Label amount = new Label(AON.FMT.format(finance.getAmount()));
 		
-		FinanceActionsPanel actionsPanel = new FinanceActionsPanel(finance, new FinanceModuleCallback() {
+		FinanceActionsPanel actionsPanel = new FinanceActionsPanel(finance, this.isPayroll, new FinanceModuleCallback() {
 			
 			@Override
 			public FinanceModuleOptions getOptions() {
@@ -731,6 +731,17 @@ public class FinanceModule extends MainEntryPoint {
 			@Override
 			public FinanceServiceAsync getFinanceService() {
 				return FinanceModule.FINANCE_SERVICE;
+			}
+			
+			@Override
+			public void refresh() {
+				toolbar.hideMessages();
+				enableMoreData();
+				container.clear();
+				tab = getTable();
+				container.add(tab);
+				offset.setValue(0);
+				search(opt, searchPanel.getParams( opt ), offset.getValue());
 			}
 		});
 

@@ -100,5 +100,10 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public void createSettleSalaries(String domainName, int domainId, String user, Date date) throws AonCoreException {
 		AON.createSettleSalaries(domainName, domainId, user, date);
 	}
+
+	@Override
+	public void deleteFinance(String domainName, int domainId, String user, Integer financeId) throws AonCoreException {
+		AON.deleteFinance(domainName, domainId, user, financeId);
+	}
 	
 }
