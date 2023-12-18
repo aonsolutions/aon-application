@@ -12,4 +12,5 @@ public interface FinanceModuleCallback {
 
 	void updateAndRefresh(Finance finance);
 	void addExtraInfo(Widget widget);
+	void refresh();
 }

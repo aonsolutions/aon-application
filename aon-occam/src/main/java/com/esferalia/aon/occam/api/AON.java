@@ -8096,5 +8096,11 @@ public class AON {
 		}
 	}	
 	
+	public static void deleteFinance(String domainName, int domainId, String user, Integer financeId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().deleteFinance(ctx, financeId);
+		}
+	}	
+	
 	
 }

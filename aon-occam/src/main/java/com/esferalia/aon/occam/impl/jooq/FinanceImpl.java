@@ -776,6 +776,14 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(
 				configuration -> SettleSalariesDAO.createSettleSalaries(ctx, date));
 	}
+	
+
+	@Override
+	public void deleteFinance(CloseableAONContext ctx, Integer financeId) {
+		ctx.getDslContext().transaction(
+				configuration -> FinanceDAO.delete(ctx, financeId));
+	}
+
 
 	// ---------- COBROS Y PAGOS CARD
 	
