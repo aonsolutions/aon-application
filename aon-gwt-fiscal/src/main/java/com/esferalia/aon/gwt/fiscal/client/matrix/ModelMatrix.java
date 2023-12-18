@@ -24,6 +24,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -145,14 +146,18 @@ public class ModelMatrix extends MainEntryPoint {
 		footPanel = new AonMinimizePanel();		
 		footPanel.addMinimizeHandler( event -> closeFootPanel() );
 		footPanel.addMaximizeHandler( event -> maximizeFootPanel());
-		footPanel.setStyleName(AON.CSS.aonSelector());
+		footPanel.setStyleName(AON.CSS.aonSelector());		
 
-		AonTabLayoutPanel tabLayout = new AonTabLayoutPanel(26, Unit.PX);
+		AonTabLayoutPanel tabLayout = new AonTabLayoutPanel(30, Unit.PX);
 		tabLayout.setWidth("100%");
 		footPanel.add(tabLayout);
 		
 		aeatPanel = new SimpleLayoutPanel();
-		tabLayout.add(aeatPanel, "ERRORES PRESENTACION MULTIPLE");
+
+		Label labelResult = new Label("RESULTADO DE LA PRESENTACION MULTIPLE");
+		labelResult.setStyleName(AON.CSS.aonFontMedium());
+		tabLayout.add(aeatPanel, labelResult);
+		
 		tabLayout.setAnimationDuration(300);
 		
 		return footPanel; 
@@ -178,7 +183,7 @@ public class ModelMatrix extends MainEntryPoint {
 		aeatFrame.addStyleName(AON.CSS.aonBlockCenter());
 		aeatFrame.addStyleName(AON.CSS.aonBorderNone());
 		aeatFrame.addStyleName(AON.CSS.aonBorderTop());
-		aeatFrame.addStyleName(AON.CSS.aonMarginTop());
+//		aeatFrame.addStyleName(AON.CSS.aonMarginTop());
 		aeatPanel.add(aeatFrame);
 	}
 

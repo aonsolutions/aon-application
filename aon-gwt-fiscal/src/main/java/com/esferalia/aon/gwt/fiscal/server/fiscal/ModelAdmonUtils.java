@@ -149,7 +149,7 @@ public class ModelAdmonUtils {
 				 +"background-position: 3px 2px;"
 				 +"background-repeat: no-repeat;"
 				 +"background-size: auto auto;"
-				 +"background-color: #ffd0d0;"
+				 +"background-color: #f5e3e3;"
 				 +"border: solid black 1px;"
 				 +"font-size: small;"
 				 +"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
@@ -1460,7 +1460,7 @@ public class ModelAdmonUtils {
 		}
 	}
 
-	// FALTA - PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
+	// PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
 	public static void sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
 		
 //		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
@@ -1472,9 +1472,8 @@ public class ModelAdmonUtils {
 //		//   NOMBRE DE LA DECLARACION
 //		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
 		
-		// FALTA - ERRORES DE TODOS LOS MODELOS
+		// Errores de todos los modelos
 		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
-		//errores = new ArrayList<>();
 		
 		for (String s : aeatParams.getSelected()) {
 			String name = s.split("_")[0];
@@ -1492,7 +1491,7 @@ public class ModelAdmonUtils {
 					IFiscalModel model = getModel(aeatParams, modelType);			    
 				    if (model != null) {
 				    	aeatParams.setErrores(new ArrayList<>());
-				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getPeriod().getDescription() + " - " + model.getDocument() + " - " + model.getFullName());						
+				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + ( model.getPeriod() == Period.YEAR ? "" : " - " + model.getPeriod().getDescription() ) + " - " + model.getDocument() + " - " + model.getFullName());
 				    	
 						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
 							sendOnlineTGVI(resp, aeatParams, model);
@@ -1501,20 +1500,13 @@ public class ModelAdmonUtils {
 					    	send(resp, aeatParams, model);
 						}
 						
-				    	// FALTA - PRUEBA
-//				    	cadena = cadena + " " + model.getModel() + " " + model.getId();
-				    	
-				    	if (aeatParams.getErrores().size() > 1)
-				    		erroresGlobal.add(aeatParams.getErrores());				    	
+				    	erroresGlobal.add(aeatParams.getErrores());				    	
 				    }
 				}
 			}
 		}
 		
-		// FALTA - PRUEBA
-		//giveExceptionBack(resp, true, "PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ", cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena, cadena);
-		if (erroresGlobal.size() > 0) 
-			giveMultipleResult(resp, erroresGlobal);
+		giveMultipleResult(resp, erroresGlobal);
 		
 	}	
 	
@@ -1594,15 +1586,22 @@ public class ModelAdmonUtils {
 		buff.append(ERROR_TEMPLATE_BEFORE);
 		for (ArrayList<String> al : erroresGlobal) {
 			buff.append("<li>");
-			buff.append(al.get(0));			
-			buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;'>");
-			for (int i = 1; i < al.size(); i++) {
-				if ("keystore password was incorrect".equals(al.get(i))) {
-					buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
-				} else {
-					buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
+			buff.append(al.get(0));
+			
+			if (al.size() == 1) {
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal'>");
+				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
+			} else {			
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
+				for (int i = 1; i < al.size(); i++) {
+					if ("keystore password was incorrect".equals(al.get(i))) {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
+					} else {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
+					}
 				}
-			}
+			}			
+			
 			buff.append("</ul>");
 			buff.append("</li>");
 		}

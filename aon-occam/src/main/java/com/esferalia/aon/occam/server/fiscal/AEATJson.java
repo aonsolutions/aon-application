@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.server.fiscal;
 
-import java.io.UnsupportedEncodingException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,15 +35,7 @@ public class AEATJson {
 	
 	
 	public static AEATResponse toJSON(byte[] body) throws JSONException {
-		// FALTA
-		//JSONObject json = new JSONObject( new String(body) );
-		JSONObject json;
-		try {
-			json = new JSONObject( new String(body,"UTF-8") );
-		}
-		catch (UnsupportedEncodingException e) {
-			json = new JSONObject( new String(body) );
-		}
+		JSONObject json = new JSONObject( new String(body) );
 		System.out.println( " ------ AEAT Response ----" );
 		System.out.println( json.toString(1) );
 		System.out.println( " -------------------------" );

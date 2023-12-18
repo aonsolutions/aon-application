@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificatio
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -121,8 +120,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
 		for (FiscalModelType m : FiscalModelType.values()) {
-			// FALTA - POR AHORA TAMPOCO APARECE EL MODELO 200 EN LA MATRIZ 
-			//if (m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+			// FALTA - POR AHORA NO APARECE EL MODELO 200 EN LA MATRIZ 
 			if (m != FiscalModelType.M200 && m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
@@ -217,10 +215,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		multiplePresentation = new CheckBox();
 		multiplePresentation.setVisible(options.getConfiguration().isBetaEnabled()); // FALTA - POR AHORA SOLO APARECE EN DOMINIOS BETA 		
 		multiplePresentation.setValue(false);
-		//multiplePresentation.setEnabled(false);
 		multiplePresentation.setStyleName(AON.CSS.aonMarginRight());
 		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");		
-		//multiplePresentation.setTitle("Esta casilla solo se puede marcar si se filtra por Administraci\u00F3n Territorio Com\u00FAn, Estado Finalizado y un solo Periodo.");
 		multiplePresentation.addClickHandler(event -> {
 			
 			// Si se marca "Habilitar Presentacion Múltiple", ponemos Territorio Común, Estado Finalizado y Periodo por defecto (si no esta seleccionado periodo)

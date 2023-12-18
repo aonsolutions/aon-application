@@ -38,7 +38,7 @@ public class MatrixModuleOptions extends  ModuleOptions<MatrixModuleOptions> {
 	public boolean isSelected(IFiscalModel model) {
 		return getSelected().contains(getSelectedKey(model));  
 	}
-	// FALTA - RESULTADO DE LA PRESENTACION MULTIPLE
+
 	public String getResult() {
 		return result;
 	}
