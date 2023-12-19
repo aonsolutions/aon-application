@@ -1781,7 +1781,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		return fm;
 	}
 
-	public static Mod131 getMod131(AONContext ctx,int id) {
+	public static Mod131 get(AONContext ctx,int id) {
 		ctx.checkRead();
 		final Mod131 mod = getModelRecord(ctx, id)
 				.map( record -> map131(new Mod131(),record));
@@ -1792,15 +1792,15 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod;
 	}
 	
-	public static Mod131 saveMod131(AONContext ctx, Mod131 mod) {
-		calculateMod131(ctx, mod);
+	public static Mod131 save(AONContext ctx, Mod131 mod) {
+		calculate(ctx, mod);
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			if( key.getMapFiller() != null) {
 				key.getMapFiller().fill(mod,key.getKey());
 			}
 		}
-		FiscalModel fm = save(ctx, mod);
-		return getMod131(ctx, fm.getId());
+		FiscalModel fm = FiscalModelDAO.save(ctx, mod);
+		return get(ctx, fm.getId());
 	}
 	
 	public static Mod131 saveCommentsMod131(AONContext ctx, Mod131 mod) {
@@ -1822,7 +1822,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mvelCtx;
 	}
 	
-	public static Mod131 calculateMod131(AONContext ctx, Mod131 mod) {
+	public static Mod131 calculate(AONContext ctx, Mod131 mod) {
 		Mod131MVELContext mvelCtx = getMVELcontext(ctx,mod);
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) && key.acceptModel(mod)) {
@@ -1835,7 +1835,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod; 
 	}
 	
-	public static Mod131Activity calculateMod131Activity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
+	public static Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
 		if ( mod131.getYear() > 2022) {
 			return Mod131Aeat2023Calculator.calculate(ctx, activity);
 		} else if (mod131.getYear() == 2022 && mod131.getPeriod() == Period.T4) {
@@ -1850,7 +1850,7 @@ public class Mod131DAO extends FiscalModelDAO {
 	
 	
 	
-	public static Mod131 initializeMod131(AONContext ctx,Mod131 mod) {
+	public static Mod131 initialize(AONContext ctx,Mod131 mod) {
 		if (mod == null) {
 			mod = new Mod131();
 			mod.setDomain(ctx.getDomainId());
@@ -1875,14 +1875,14 @@ public class Mod131DAO extends FiscalModelDAO {
 		
 	}
 
-	public static Mod131 resetMod131(AONContext ctx,Mod131 mod131) {
+	public static Mod131 reset(AONContext ctx,Mod131 mod131) {
 		mod131.setMap(null);
 		initializeIdentificationData(ctx, mod131);
-		createMod131(ctx,mod131);
+		create(ctx,mod131);
 		return mod131;
 	}
 
-	public static Mod131 createMod131(AONContext ctx,Mod131 mod) {
+	public static Mod131 create(AONContext ctx,Mod131 mod) {
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			if (key.acceptModel(mod)) {
 				FiscalModelDetail detail = mod.ensureDetail(key.getKey());
@@ -1937,21 +1937,21 @@ public class Mod131DAO extends FiscalModelDAO {
 						
 			}
 		}
-		calculateMod131(ctx, mod);
+		calculate(ctx, mod);
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			key.initialize(ctx, mod);
 		}
 		for (Mod131Activity activity : mod.getActivities()) {
 			// Solo se recalculan los datos de la actividad, si hay epígrafe
 			if (activity.getEpigraph() != null)
-				calculateMod131Activity(ctx, mod, activity);
+				calculateActivity(ctx, mod, activity);
 		}
-		calculateMod131(ctx, mod);
+		calculate(ctx, mod);
 		mod.ensureDetail( Mod131Key.C11).setAmount(getInitialC11(ctx,mod));
-		return calculateMod131(ctx, mod);
+		return calculate(ctx, mod);
 	}
 
-	public static String getMod131Info(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
 		Mod131KeyInfoDAO k = Mod131KeyInfoDAO.valueOf(infoKey.toString());
 		for (Mod131KeyDAO keyDAO : Mod131KeyDAO.values()) {
 			if (keyDAO.getKey().equals( script.getKeys()[0].getValue())) {
@@ -2037,17 +2037,17 @@ public class Mod131DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- UTIL
 	public static Mod131 markAsFinished(AONContext ctx,Mod131 mod) {
 		mod = FiscalModelDAO.finish(ctx, mod);
-		return saveMod131(ctx, mod);
+		return save(ctx, mod);
 	}
 	public static Mod131 markAsSent(AONContext ctx,Mod131 mod131) {
 		mod131.setStatus(FiscalStatus.SENT);
-		mod131 = saveMod131(ctx, mod131);
+		mod131 = save(ctx, mod131);
 		return mod131;
 	}
 	public static Mod131 markAsCustomerCheck(AONContext ctx,Mod131 mod131) {
 		mod131 = FiscalModelDAO.finish(ctx, mod131);		
 		mod131.setStatus(FiscalStatus.CUSTOMER_CHECK);
-		mod131 = saveMod131(ctx, mod131);
+		mod131 = save(ctx, mod131);
 		return mod131;
 	}
 	
@@ -2056,7 +2056,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		mod.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod.getFinance();
 		mod.setFinance(null);
-		mod= saveMod131(ctx, mod);
+		mod= save(ctx, mod);
 		if (finance != null) {
 			FinanceDAO.delete(ctx, finance.getId());
 		}
@@ -2067,7 +2067,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {
 			DataResponseDAO.insertAEATResponse(ctx, mod131, aeatResponse);
 			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
-			Mod131 changed = getMod131(ctx, mod131.getId());
+			Mod131 changed = get(ctx, mod131.getId());
 			if (changed != null) {
 				changed.setNumber(response.getJustificante());
 				return markAsSent(ctx, changed);
@@ -2088,7 +2088,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			}
 			mod131.setComments( comments );
 		}
-		mod131 = saveMod131(ctx, mod131);
+		mod131 = save(ctx, mod131);
 		return mod131;
 	}
 	

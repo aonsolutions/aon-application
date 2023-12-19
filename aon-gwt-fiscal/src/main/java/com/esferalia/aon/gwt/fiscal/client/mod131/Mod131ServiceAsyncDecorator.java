@@ -21,9 +21,9 @@ public class Mod131ServiceAsyncDecorator implements Mod131ServiceAsync {
 	}
 
 	@Override
-	public void getMod131(Occam occam, int id, AsyncCallback<Mod131> callback) {
+	public void get(Occam occam, int id, AsyncCallback<Mod131> callback) {
 		AON.start();
-		fsa.getMod131(occam, id, new AsyncCallbackWrapper<>(callback));
+		fsa.get(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

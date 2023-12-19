@@ -1532,7 +1532,7 @@ public class ModelAdmonUtils {
 				model = MODEL130.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
 				break;
 			case M131:
-				model = MODEL131.getMod131(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+				model = MODEL131.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
 				break;
 			case M202:
 				model = MODEL202.getMod202(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));

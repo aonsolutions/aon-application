@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.type.Mod131Key;
 
 public interface IMODEL131 {
 
-	public Mod131 getMod131(AONContext ctx, int id);
+	public Mod131 get(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
 	public Mod131 calculate(AONContext ctx, Mod131 mod131);
 	public Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity);
