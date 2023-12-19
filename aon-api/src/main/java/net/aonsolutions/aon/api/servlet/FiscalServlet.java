@@ -90,11 +90,11 @@ import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod130.Mod130DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
@@ -515,7 +515,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				model = Mod130DAO.get(ctx, id);	
 				break;
 			case M131:
-				model = Mod131DAO.getMod131(ctx, id);	
+				model = Mod131DAO.get(ctx, id);	
 				break;
 			case M202:
 				model = Mod202DAO.getMod202(ctx, id);
