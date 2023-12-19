@@ -4,7 +4,9 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -25,6 +27,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -494,4 +497,65 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
 		
 	}
+	
+	
+	@Test
+	public void testDeductionPeriods() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+                		    {
+                			put("PORCENTAJE_CGC", "10.00");
+                			put(ContextVariable.TC2.getName(), "100");
+                		    }
+				}, new String[] { 
+						"1250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+						}
+				, new String[] {
+						"VARIABLE;BASE_CGC * PORCENTAJE_CGC/100", 
+				}, null);
+		//@formatter:on
+		
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		
+		// January
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date itStartDate = add(startDate, Calendar.DAY_OF_MONTH, 18);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, itStartDate, null, null);
+		
+		addData(aonContext, contract, startDate, add(itStartDate, DAY_OF_MONTH, -1 ), "VARIABLE", "\"1.00\"");
+		addData(aonContext, contract, itStartDate, add(itStartDate, DAY_OF_MONTH, 2 ), "VARIABLE", "\"2.00\"");
+		addData(aonContext, contract, add(itStartDate, DAY_OF_MONTH, 3 ), add(itStartDate, DAY_OF_MONTH, 5 ), "VARIABLE", "\"3.00\"");
+		addData(aonContext, contract, add(itStartDate, DAY_OF_MONTH, 6 ), endDate, "VARIABLE", "\"4.00\"");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) )).calculate(ctx);
+		//Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType() + ","+ s.getExpression());
+
+		for ( SalaryDeduction s : salary.getSalaryDeductions() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+		
+		List<SalaryData> salaryData = 
+		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
+		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
+		
+		salaryData.forEach( d -> System.out.println(d.getName() +" = " + d.getExpression() + ", " + d.getStartDate()));
+		
+		
+		Assert.assertEquals(1250.00 * 10.00 / 100.00  , salary.getSocialSecurityContributions(), 0.015);
+		
+	}
+	
 }
