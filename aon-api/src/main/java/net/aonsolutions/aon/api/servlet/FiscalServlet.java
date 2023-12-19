@@ -560,7 +560,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	}
 
-	// METODOS PARA LA PRESENTACION DEL MODELO
+	// METODOS PARA LA PRESENTACION DEL MODELO DESDE EL PORTAL
 	
 	private void send(AEATParams aeatParams, IFiscalModel model) {
 		try {			

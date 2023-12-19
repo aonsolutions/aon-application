@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -37,8 +38,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -64,6 +63,9 @@ import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL347;
 import com.esferalia.aon.occam.api.fiscal.MODEL349;
+import com.esferalia.aon.occam.api.fiscal.MODEL390;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902015;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902023;
@@ -114,6 +116,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902023Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -122,6 +125,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class ModelAdmonUtils {
@@ -144,7 +149,7 @@ public class ModelAdmonUtils {
 				 +"background-position: 3px 2px;"
 				 +"background-repeat: no-repeat;"
 				 +"background-size: auto auto;"
-				 +"background-color: #ffd0d0;"
+				 +"background-color: #f5e3e3;"
 				 +"border: solid black 1px;"
 				 +"font-size: small;"
 				 +"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
@@ -320,12 +325,21 @@ public class ModelAdmonUtils {
 		}
 	}
 
-	private static AEATResponse manageWrongResponse(HttpServletResponse resp, AEATResponse response) {
+	private static AEATResponse manageWrongResponse(HttpServletResponse resp, AEATResponse response, AEATParams aeatParams) {
+		
 		if (response.getErrores() == null || response.getErrores().isEmpty()) {
-			ModelAdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");			
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp, "La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");
+			else 
+				aeatParams.getErrores().add("La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");
 		} else {
-			String[] array = response.getErrores().toArray(new String[0]);
-			ModelAdmonUtils.giveExceptionBack(resp, true, array);
+			if (aeatParams.getSelected() == null) {			
+				String[] array = response.getErrores().toArray(new String[0]);
+				ModelAdmonUtils.giveExceptionBack(resp, true, array);
+			} else {
+				aeatParams.getErrores().addAll(response.getErrores());				
+			}			
+			
 		}
 		return response;
 	}
@@ -530,7 +544,11 @@ public class ModelAdmonUtils {
 			@Override 
 			public void visitM390() { 
 				try {
-					if (fm instanceof Mod3902022) {
+					if (fm instanceof Mod3902023) {
+						Mod3902023 mod = (Mod3902023) fm;
+						Mod3902023Writer.fillWriter( mod , writer);
+					}
+					else if (fm instanceof Mod3902022) {
 						Mod3902022 mod = (Mod3902022) fm;
 						Mod3902022Writer.fillWriter( mod , writer);
 					} else  if (fm instanceof Mod3902021) {
@@ -672,7 +690,7 @@ public class ModelAdmonUtils {
 
 				});
 			}			
-			manageWrongResponse(resp, response);
+			manageWrongResponse(resp, response, aeatParams);
 		}
 	}
 	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
@@ -760,7 +778,9 @@ public class ModelAdmonUtils {
 			}
 			
 		});
-		giveDataResponseDataBack(resp, aeatParams, fm);
+		// Se muestra el PDF solo si no es presentación multiple
+		if (aeatParams.getSelected() == null)
+			giveDataResponseDataBack(resp, aeatParams, fm);
 	}
 
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
@@ -774,7 +794,9 @@ public class ModelAdmonUtils {
 			if ( model.getModel() == FiscalModelType.M390) {
 				period = "0A";	
 			}
+			
 			byte[] fileContent = getModelFile(model);
+			
 			JSONObject params = new JSONObject();
 			params.put("MODELO", FiscalModelUtils.getModelName(model));
 			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
@@ -809,23 +831,35 @@ public class ModelAdmonUtils {
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
-			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
+			if (response.statusCode() == 302) {				
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient );
+				else 
+					aeatParams.getErrores().add("Redirect code"); 
 			} else {
 				String ct = ModelAdmonUtils.getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
-					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model ,response.body() );
-				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
-					ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
-				} else {	
-					ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model, response.body() );					
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {					
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+					else 
+						aeatParams.getErrores().add(new String(response.body()));  
+				} else {					 
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					else 
+						aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");						
 				}
 			}
 		} catch (InterruptedException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else
+				aeatParams.getErrores().add(e.getMessage());
 		}
 	}
 
@@ -886,7 +920,7 @@ public class ModelAdmonUtils {
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.POST(HttpRequest.BodyPublishers.ofString(urlParameters.toString()))
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
 				.build();
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
@@ -942,7 +976,10 @@ public class ModelAdmonUtils {
 			}
 		
 		} catch (AonCoreException e) {
-			ModelAdmonUtils.giveExceptionBack(resp, e.getMessage());
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp, e.getMessage());
+			else 
+				aeatParams.getErrores().add(e.getMessage());
 		}
 	}
 	
@@ -984,7 +1021,10 @@ public class ModelAdmonUtils {
 			// Devuelve, entre otras cosas: idenvio, codigo y mensaje			
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				else 
+					aeatParams.getErrores().add("Redirect code");
 				return null;
 			} else {								 
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
@@ -999,8 +1039,11 @@ public class ModelAdmonUtils {
 				if ("0".equals(codigo) || ("8888".equals(codigo) && aeatParams.isTest())) {
 					return idenvio;
 				} else {
-					// codigo <> 0 indica que la operación ha generado algun error					
-					ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					// codigo <> 0 indica que la operación ha generado algun error
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					else 
+						aeatParams.getErrores().add(mensaje);
 					return null;
 				}							
 			}
@@ -1009,7 +1052,10 @@ public class ModelAdmonUtils {
 			Thread.currentThread().interrupt();
 			return null;
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			if (aeatParams.getSelected() == null) 
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else 
+				aeatParams.getErrores().add(e.getMessage());			
 			return null;
 		}
 	}
@@ -1091,7 +1137,10 @@ public class ModelAdmonUtils {
 			// Devuelve, entre otras cosas: codigo, mensaje			
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				else 
+					aeatParams.getErrores().add("Redirect code");
 				return -1; 
 			} else {			
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();				
@@ -1107,8 +1156,11 @@ public class ModelAdmonUtils {
 						return 1; // Indica que uno o varios registros presentan errores
 					}
 				} else {
-					// codigo <> 0 indica que la operación ha generado algun error					
-					ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					// codigo <> 0 indica que la operación ha generado algun error
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					else
+						aeatParams.getErrores().add(mensaje);
 					return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
 				}							
 			}
@@ -1117,7 +1169,10 @@ public class ModelAdmonUtils {
 			Thread.currentThread().interrupt();
 			return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else 
+				aeatParams.getErrores().add(e.getMessage());
 			return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
 		}
 	}
@@ -1155,7 +1210,10 @@ public class ModelAdmonUtils {
 			// Devuelve, entre otras cosas: codigo, mensaje, en el BODY están los mensajes de error			
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);				
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				else 
+					aeatParams.getErrores().add("Redirect code");
 			} else {			
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();				
 				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();				
@@ -1192,14 +1250,20 @@ public class ModelAdmonUtils {
 										
 				} else {
 					// codigo <> 0 indica que la operación ha generado algun error
-					ModelAdmonUtils.giveExceptionBack(resp, mensaje);					
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					else 
+						aeatParams.getErrores().add(mensaje);
 				}							
 			}
 		} catch (InterruptedException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();			
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else
+				aeatParams.getErrores().add(e.getMessage());
 		}
 	}
 	
@@ -1252,7 +1316,10 @@ public class ModelAdmonUtils {
 			// Devuelve, entre otras cosas: codigo, mensaje, csv			
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);				
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				else
+					aeatParams.getErrores().add("Redirect code");
 			} else {
 				
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
@@ -1294,14 +1361,20 @@ public class ModelAdmonUtils {
 				} else {
 					// codigo <> 0 indica que la operación ha generado algun error
 					String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
-					ModelAdmonUtils.giveExceptionBack(resp, mensaje);					
+					if (aeatParams.getSelected() == null)
+						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					else
+						aeatParams.getErrores().add(mensaje);
 				}							
 			}
 		} catch (InterruptedException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();			
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
+			if (aeatParams == null)
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else 
+				aeatParams.getErrores().add(e.getMessage());
 		}
 	}	
 	
@@ -1358,7 +1431,10 @@ public class ModelAdmonUtils {
 			// Devuelve, entre otras cosas: codigo, mensaje			
 			
 			if (response.statusCode() == 302) {
-				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				if (aeatParams.getSelected() == null)
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				else
+					aeatParams.getErrores().add("Redirect code");
 				return false;
 			} else {
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
@@ -1376,10 +1452,162 @@ public class ModelAdmonUtils {
 			Thread.currentThread().interrupt();
 			return false;
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			if (aeatParams.getSelected() == null)
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else 
+				aeatParams.getErrores().add(e.getMessage());
 			return false;
 		}
+	}
+
+	// PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
+	public static void sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
+		
+//		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
+//		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
+//		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
+//		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
+//		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
+//		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
+//		//   NOMBRE DE LA DECLARACION
+//		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
+		
+		// Errores de todos los modelos
+		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
+		
+		for (String s : aeatParams.getSelected()) {
+			String name = s.split("_")[0];
+			FiscalModelType modelType = null;
+			if (AonStringUtils.isNotBlank(name)) {
+				for (FiscalModelType t : FiscalModelType.values()) {
+					if (AonStringUtils.equals(name, t.name()))
+						modelType = t;
+				}				
+				
+				int idModel = AonNumberUtils.toint(s.split("_")[1]);
+				
+				if (modelType != null && idModel != 0) {
+					aeatParams.setMod(idModel);
+					IFiscalModel model = getModel(aeatParams, modelType);			    
+				    if (model != null) {
+				    	aeatParams.setErrores(new ArrayList<>());
+				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + ( model.getPeriod() == Period.YEAR ? "" : " - " + model.getPeriod().getDescription() ) + " - " + model.getDocument() + " - " + model.getFullName());
+				    	
+						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
+							sendOnlineTGVI(resp, aeatParams, model);
+						} else {
+					    	aeatParams.setNrc(model.getNrc());
+					    	send(resp, aeatParams, model);
+						}
+						
+				    	erroresGlobal.add(aeatParams.getErrores());				    	
+				    }
+				}
+			}
+		}
+		
+		giveMultipleResult(resp, erroresGlobal);
+		
 	}	
 	
+	private static IFiscalModel getModel(AEATParams aeatParams, FiscalModelType modelType) {
+		
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		
+		IFiscalModel model = null;
+		switch (modelType) {
+			case M111:
+				model = MODEL111.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));			
+				break;
+			case M115:
+				model = MODEL115.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));			
+				break;
+			case M123:
+				model = MODEL123.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+				break;
+			case M130:
+				model = MODEL130.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+				break;
+			case M131:
+				model = MODEL131.getMod131(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+				break;
+			case M202:
+				model = MODEL202.getMod202(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;
+			case M303:
+				model = MODEL303.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;
+			case M390:
+				IFiscalModel model390 = MODEL390.getMod390(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				if (model390 != null) {
+					if (model390.getYear() >= 2023) 
+						model = MODEL3902023.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));					
+					else if (model390.getYear() == 2022) 
+						model = MODEL3902022.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+					else if ((model390.getYear() == 2021))
+						model = MODEL3902021.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+					else if ((model390.getYear() >= 2018))
+						model = MODEL3902018.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+					else if ((model390.getYear() >= 2015))
+						model = MODEL3902015.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				}
+				break;
+			case M347:
+				model = MODEL347.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams)); 
+				break;
+			case M349:
+				model = MODEL349.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;
+			case M180:
+				model = MODEL180.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;
+			case M184:
+				model = MODEL184.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams)); 
+				break;
+			case M190:
+				model = MODEL190.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;
+			case M193:
+				model = MODEL193.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+				break;					
+			default:
+				break;
+		}
+		return model;
+		
+	}
+	
+	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
+		StringBuilder buff = new StringBuilder();
+		buff.append(ERROR_TEMPLATE_START);		
+		buff.append(ERROR_TEMPLATE_BEFORE);
+		for (ArrayList<String> al : erroresGlobal) {
+			buff.append("<li>");
+			buff.append(al.get(0));
+			
+			if (al.size() == 1) {
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal'>");
+				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
+			} else {			
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
+				for (int i = 1; i < al.size(); i++) {
+					if ("keystore password was incorrect".equals(al.get(i))) {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
+					} else {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
+					}
+				}
+			}			
+			
+			buff.append("</ul>");
+			buff.append("</li>");
+		}
+		buff.append(ERROR_TEMPLATE_AFTER);
+		buff.append(ERROR_TEMPLATE_END);
+		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+	}		
 
 }
