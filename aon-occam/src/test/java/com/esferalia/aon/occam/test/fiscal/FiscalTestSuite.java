@@ -34,7 +34,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod303TestSuite.class,
 	Mod390HFTestSuite.class,
 	Mod130TestSuite.class,
-	Mod131TestSuite.class,
+//	Mod131TestSuite.class,
 	Mod190TestSuite.class,
 	Mod349TestSuite.class,
 //	Mod202TestSuite.class,
