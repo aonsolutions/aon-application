@@ -310,9 +310,9 @@ public class ModelMatrixPanel extends FlowPanel {
 						// Si está habilitada la presentacion múltiple, se añade un checkbox para poder seleccionar la fila
 						if (params.isMultiplePresentation()) {
 							CheckBox markForSend = new CheckBox();
-							markForSend.setValue(options.isSelected(cloned));
 							markForSend.setEnabled(checkBoxEnabled);
-							if (options.isSelected(cloned) && markForSend.isEnabled()) {								
+							markForSend.setValue(options.isSelected(cloned) && markForSend.isEnabled());							
+							if (markForSend.getValue()) {
 								selected.add(options.getSelectedKey(cloned));
 							} else {
 								markAllForSend.setValue(false,false);
