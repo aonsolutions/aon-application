@@ -42,7 +42,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class Mod131DAO extends FiscalModelDAO {
+public class OLDMod131DAO extends FiscalModelDAO {
 	
 
 	@FunctionalInterface
@@ -1834,11 +1834,24 @@ public class Mod131DAO extends FiscalModelDAO {
 		}
 		return mod; 
 	}
-	
 	public static Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
-		Mod131Declaration dec = Mod131Declaration.getInstance(mod131);
-		return dec.calculateActivity(ctx,activity);
+		return activity;
 	}
+	
+//	public static Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
+//		if ( mod131.getYear() > 2022) {
+//			return Mod131Aeat2023Calculator.calculate(ctx, activity);
+//		} else if (mod131.getYear() == 2022 && mod131.getPeriod() == Period.T4) {
+//			return Mod131Aeat20224TCalculator.calculate(ctx, activity);
+//		} else if ( mod131.getYear() == 2020 && mod131.getPeriod() == Period.T4) {
+//			return Mod131Aeat20204TCalculator.calculate(ctx, activity);
+//		} else if ( mod131.getYear() == 2021 && mod131.getPeriod() == Period.T1) {
+//			return Mod131Aeat20204TCalculator.calculate(ctx, activity);
+//		}
+//		return Mod131Aeat2016Calculator.calculate(ctx, activity);
+//	}
+	
+	
 	
 	public static Mod131 initialize(AONContext ctx,Mod131 mod) {
 		if (mod == null) {

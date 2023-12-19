@@ -1,20 +1,29 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod131Aeat2016Calculator  {
-	
+class Mod131AEAT20204TDeclaration extends Mod131Declaration{
+
 	private static final double DEFAULT_YEAR_HOURS = 1800;
-	
-	public static Mod131Activity calculate(AONContext ctx, Mod131Activity act) {
+
+	static boolean accept(Mod131 mod131) {
+		return mod131.isAEAT() 
+			&& mod131.getYear() == 2020
+			&& mod131.getPeriod() == Period.T4; 
+	}
+
+	@Override
+	Mod131Activity calculateActivity(AONContext ctx, Mod131Activity act) {
 		calculateModules(ctx,act);
 		calcRendimientoNetoPrevio(ctx,act);
 		calcIncentivosAlEmpleo(ctx,act);
@@ -415,9 +424,60 @@ public class Mod131Aeat2016Calculator  {
 		//	Los contribuyentes que determinen el rendimiento neto de sus actividades
 		//	econ?micas por el m?todo de estimaci?n objetiva, podr?n reducir el rendimiento 
 		//	neto de m?dulos obtenido en 2013 en un 5 por 100.
-		rpf = rpf - (rpf * 5 / 100);
+		double prc = 5;
+		if ("419.1".equals(act.getEpigraph()) || "419.2".equals(act.getEpigraph()) ||
+			"419.3".equals(act.getEpigraph()) || "423.9".equals(act.getEpigraph()) ||
+			"641".equals(act.getEpigraph())   || "642.1".equals(act.getEpigraph()) ||
+			"642.2".equals(act.getEpigraph()) || "642.3".equals(act.getEpigraph()) ||
+			"642.4".equals(act.getEpigraph()) || "642.5".equals(act.getEpigraph()) ||
+			"642.6".equals(act.getEpigraph()) || "643.1".equals(act.getEpigraph()) ||
+			"643.2".equals(act.getEpigraph()) || "644.1".equals(act.getEpigraph()) ||
+			"644.2".equals(act.getEpigraph()) || "644.3".equals(act.getEpigraph()) ||
+			"644.6".equals(act.getEpigraph()) || "647.1".equals(act.getEpigraph()) ||
+			"647.2".equals(act.getEpigraph()) || "647.3".equals(act.getEpigraph()) ||
+			"659.4".equals(act.getEpigraph()) || "691.1".equals(act.getEpigraph()) ||
+			"691.2".equals(act.getEpigraph()) || "691.9".equals(act.getEpigraph()) ||
+			"691.9".equals(act.getEpigraph()) || "692".equals(act.getEpigraph()) ||
+			"699".equals(act.getEpigraph())   || "721.2".equals(act.getEpigraph()) ||
+			"722".equals(act.getEpigraph())   || "751.5".equals(act.getEpigraph()) ||
+			"757".equals(act.getEpigraph())   || "849.5".equals(act.getEpigraph()) ||
+			"933.1".equals(act.getEpigraph()) || "933.9".equals(act.getEpigraph()) ||
+			"967.2".equals(act.getEpigraph()) || "971.1".equals(act.getEpigraph()) ||
+			"972.1".equals(act.getEpigraph()) || "972.2".equals(act.getEpigraph()) ||
+			"973.3".equals(act.getEpigraph())) {
+				prc = 20;
+		}
 		
 		
+		if ("651.1".equals(act.getEpigraph()) || "651.2".equals(act.getEpigraph()) || 
+			"651.3".equals(act.getEpigraph()) || "651.5".equals(act.getEpigraph()) || 
+			"651.4".equals(act.getEpigraph()) || "651.6".equals(act.getEpigraph()) || 
+			"652.2".equals(act.getEpigraph()) || "652.3".equals(act.getEpigraph()) || 
+			"653.1".equals(act.getEpigraph()) || "653.2".equals(act.getEpigraph()) || 
+			"653.3".equals(act.getEpigraph()) || "653.4".equals(act.getEpigraph()) || 
+			"653.5".equals(act.getEpigraph()) || "653.9".equals(act.getEpigraph()) || 
+			"654.2".equals(act.getEpigraph()) || "654.5".equals(act.getEpigraph()) || 
+			"654.6".equals(act.getEpigraph()) || "659.2".equals(act.getEpigraph()) || 
+			"659.3".equals(act.getEpigraph()) || "659.4".equals(act.getEpigraph()) || 
+			"659.6".equals(act.getEpigraph()) || "659.7".equals(act.getEpigraph()) || 
+			"662.2".equals(act.getEpigraph()) || "663.1".equals(act.getEpigraph()) || 
+			"663.2".equals(act.getEpigraph()) || "663.3".equals(act.getEpigraph()) || 
+			"663.4".equals(act.getEpigraph()) || "663.9".equals(act.getEpigraph()) || 
+			"671.4".equals(act.getEpigraph()) || "671.5".equals(act.getEpigraph()) || 
+			"672.1".equals(act.getEpigraph()) || "672.2".equals(act.getEpigraph()) || 
+			"672.3".equals(act.getEpigraph()) || "673.1".equals(act.getEpigraph()) || 
+			"673.2".equals(act.getEpigraph()) || "675".equals(act.getEpigraph()) || 
+			"676".equals(act.getEpigraph())   || "681".equals(act.getEpigraph()) || 
+			"682".equals(act.getEpigraph())   || "683".equals(act.getEpigraph()) || 
+			"721.1".equals(act.getEpigraph()) || "721.3".equals(act.getEpigraph())) {
+			prc = 35;
+		}
+		if (act.getEpi() == com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph.E_659_4B) {
+			prc = 20;
+		}
+		
+		rpf = rpf - (rpf * prc / 100);
+
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.
 		if (AonMathUtils.isNotZero(act.getCom())) {
 			rpf = (rpf * act.getCom() / 100);
@@ -484,7 +544,6 @@ public class Mod131Aeat2016Calculator  {
 		
 		double res = AonMathUtils.round(net *  por / 100 );
 		act.setRes(res);
-
 	}
 	
 }
