@@ -509,7 +509,7 @@ public class AonFaker {
 		return new Warehouse()
 			.setDomain(ctx.getDomainId())	
 			.setWorkplace(workplace.getId())
-			.setName(faker.beer().name())
+			.setName(AonRandom.string(0, 1, 30))
 			.setActive(true);
 	}
 	
