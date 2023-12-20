@@ -146,7 +146,7 @@ public class Mod1802023Bizkaia {
 		return amount;
 	}
 	
-	public void setModel(String text) {
+	public String setModel(String text) {
 		String model = "";
 		String modelRegex = "180";
 		Pattern pattern = Pattern.compile(modelRegex);
@@ -155,7 +155,7 @@ public class Mod1802023Bizkaia {
 		if (matcher.find()) {
 			model = matcher.group().trim();
 		}
-		System.out.println("MODELO : " + model);
+		return model;
 	}
 	
 }

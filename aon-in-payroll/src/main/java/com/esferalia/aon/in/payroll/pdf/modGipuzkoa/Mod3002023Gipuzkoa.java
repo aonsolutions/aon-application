@@ -85,7 +85,7 @@ public class Mod3002023Gipuzkoa {
 		Matcher matcher = pattern.matcher(text);
 		
 		if ( matcher.find()) {
-			period = matcher.group(1).trim() + "Trimestre";
+			period = matcher.group(1).trim() + " Trimestre";
 		}
 		return period;
 	}

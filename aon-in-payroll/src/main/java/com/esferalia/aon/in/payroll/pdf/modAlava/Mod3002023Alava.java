@@ -114,7 +114,7 @@ public class Mod3002023Alava {
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
-			exercise = matcher.group().trim();
+			exercise = matcher.group(1).trim();
 		}
 		return exercise;
 	}

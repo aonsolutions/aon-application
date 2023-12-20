@@ -83,7 +83,7 @@ public class Mod1302023Navarra {
 		return phoneNumber;
 	}
 	
-	public void setPeriodAndYear(String text) {
+	public String setPeriodAndYear(String text) {
 		String period = "";
 		String year = "";
 		String periodYearRegex ="Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
@@ -98,9 +98,11 @@ public class Mod1302023Navarra {
 			System.out.println("period : " +period);
 			
 		}
+		
+		return year +" "+ period;
 	}
 	
-	public void setAmount(String text) {
+	public String setAmount(String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -136,15 +138,19 @@ public class Mod1302023Navarra {
 			}
 		
 		}
+		
+		return amount;
 	}
 	
-	public void setHacienda(String text) {
+	public String setHacienda(String text) {
 		ParserUtils pu = new ParserUtils();
 		String hacienda ="";
 		if (pu.haciendaSearch(text)) {
 			hacienda = "Hacienda Navarra";
 		}
 		System.out.println(hacienda);
+		return hacienda;
+		
 	}
 	
 	public void setModel(String text) {

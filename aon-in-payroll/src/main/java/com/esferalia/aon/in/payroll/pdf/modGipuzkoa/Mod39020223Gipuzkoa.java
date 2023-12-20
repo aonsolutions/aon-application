@@ -86,6 +86,33 @@ public class Mod39020223Gipuzkoa {
 		}
 		
 		return issueDate;
+	}
+	
+	public String setAmount(String text) {
+		String amount = "";
+		String amountRegex = "([0-9]{1,}.[0-9]{1,}.[0-9]{1,})\\s.*\\s.*Aurkezpen data";
 		
+		Pattern pattern = Pattern.compile(amountRegex);
+		Matcher matcher = pattern.matcher(text);
+
+		if (matcher.find()) {
+			amount = matcher.group(1).trim();
+		}
+		
+		return amount;
+	}
+	
+	public String setHacienda(String text) {
+		String hacienda = "";
+		String haciendaRegex = "gipuzkoa";
+		
+		Pattern pattern = Pattern.compile(haciendaRegex);
+		Matcher matcher = pattern.matcher(text);
+		
+		if (matcher.find()) {
+			hacienda = "Diputacion Foral de Gipuzkoa";
+		}
+		
+		return hacienda;
 	}
 }

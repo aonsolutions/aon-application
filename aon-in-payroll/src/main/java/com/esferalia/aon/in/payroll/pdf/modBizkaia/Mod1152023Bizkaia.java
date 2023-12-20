@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class Mod1152023Bizkaia  {
 
 	
-	public void setEmail(String text) {
+	public String setEmail(String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 		
@@ -16,6 +16,8 @@ public class Mod1152023Bizkaia  {
 			email = matcher.group().trim();
 			System.out.println("Email : " + email);
 		}
+		
+		return email;
 	}
 	
 	public String setNif(String text) {
@@ -76,10 +78,9 @@ public class Mod1152023Bizkaia  {
 		return nif;
 	}
 	
-	
-	public void setYearAndPeriod(String text) {
+	public String setYear(String text) {
 		String year ="";
-		String period ="";
+		
 		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
 		
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
@@ -87,12 +88,27 @@ public class Mod1152023Bizkaia  {
 		
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
-			period = matcher.group(2).trim();
-			System.out.println("Año : " + year + " Periodo : " + period);
+			System.out.println("Año : " + year );
 		}
+		return year ;
 	}
 	
-	public void setAmount(String text) {
+	
+	public String setPeriod(String text) {
+		String period ="";
+		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
+		
+		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(text);
+		
+		if (matcher.find()) {
+			period = matcher.group(2).trim();
+			System.out.println(" Periodo : " + period);
+		}
+		return period;
+	}
+	
+	public String setAmount(String text) {
 		String amount = "";
 		String amountRegex = "ingresar\\s.*\\s([\\d]+)(,[\\d]+)";
 		String wholeNumbers ="";
@@ -108,9 +124,11 @@ public class Mod1152023Bizkaia  {
 			amount = wholeNumbers + decimalNumbers;
 			System.out.println("A ingresar : " + amount);
 		}
+		
+		return amount;
 	}
 	
-	public void setDeclarant(String text) {
+	public String setDeclarant(String text) {
 		String declarant = "";
 		String declarantRegex = "(Declarante\\s.*)(\\s.*)([A-Z]{1,}[0-9]{7,}[A-Z].)([A-Za-z].+)";
 
@@ -121,9 +139,11 @@ public class Mod1152023Bizkaia  {
 			declarant = matcher.group(4).trim();
 			System.out.println("Declarante : " +declarant);
 		}
+		
+		return declarant;
 	}
 	
-	public void setPresenter(String text) {
+	public String setPresenter(String text) {
 		String presenter = "";
 		String presenterRegex = "(Presentador/a\\s.*)(\\s.*)([0-9]{8,}[A-Z]{1,})(\\s.*)";
 		
@@ -133,15 +153,17 @@ public class Mod1152023Bizkaia  {
 			presenter = matcher.group(4).trim();
 			System.out.println("Presentador : " + presenter);
 		}
+		return presenter;
 	}
 	
-	public void setHacienda(String text) {
+	public String setHacienda(String text) {
 		ParserUtils pu = new ParserUtils();
 		String hacienda ="";
 		if (pu.haciendaSearch(text)) {
 			hacienda = "Diputacion foral de Bizkaia";
 		}
 		System.out.println("Hacienda : " + hacienda);
+		return hacienda;
 	}
 	
 //	public void setModel(String text) {
@@ -163,7 +185,6 @@ public class Mod1152023Bizkaia  {
 //		setModel(text);
 		setPresenter(text);
 		setDeclarant(text);
-		setYearAndPeriod(text);
 		setAmount(text);
 		System.out.println("\n");
 	}

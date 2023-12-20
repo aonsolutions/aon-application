@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Mod1152023Gipuzkoa {
 
-	public void setPeriod(String text) {
+	public String setPeriod(String text) {
 		String period ="";
 		String periodRegex ="Periodo:(\\s.*)";
 		
@@ -16,9 +16,11 @@ public class Mod1152023Gipuzkoa {
 			period = matcher.group(1).trim();
 			System.out.println("PERIODO: " + period);
 		}
+		
+		return period;
 	}
 	
-	public void setExercise(String text) {
+	public String setExercise(String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio\\s.*([0-9]{4})";
 		
@@ -29,9 +31,11 @@ public class Mod1152023Gipuzkoa {
 			exercise = matcher.group(1).trim();
 			System.out.println("EJERCICIO: " + exercise);
 		}
+		
+		return exercise;
 	}
 	
-	public void setNif(String text) {
+	public String setNif(String text) {
 		String nif = "";
 		String nifRegex ="("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -81,9 +85,10 @@ public class Mod1152023Gipuzkoa {
 			nif = matcher.group().trim();
 			System.out.println("NIF: " + nif);
 		}
+		return nif;
 	}
 	
-	public void setSocialReason(String text) {
+	public String setSocialReason(String text) {
 		String name ="";
 		String nameRegex ="nombre o razón social\\s+([A-Z]{1}[0-9]{8})\\s([A-Z].*)";
 		
@@ -93,9 +98,11 @@ public class Mod1152023Gipuzkoa {
 			name = matcher.group(2).trim();
 			System.out.println("NOMBRE: " + name);
 		}
+		
+		return name;
 	}
 	
-	public void setAmount(String text) {
+	public String setAmount(String text) {
 		String amount ="";
 		String amountRegex ="ORDAINTZEKOA\\s+([^\\n]+)";
 		
@@ -106,9 +113,11 @@ public class Mod1152023Gipuzkoa {
 			amount = matcher.group(1).trim();
 			System.out.println("Pago: " + amount);
 		}
+		
+		return amount;
 	}
 	
-	public void setPresentationDate(String text) {
+	public String setPresentationDate(String text) {
 		String presentationDate ="";
 		String presentationDateRegex = "Aurkezpen data / Fecha de presentación:\\s+([0-9]{2}[/][0-9]{2}[/][0-9]{4})";
 		
@@ -119,15 +128,18 @@ public class Mod1152023Gipuzkoa {
 			presentationDate= matcher.group(1).trim();
 			System.out.println("Fecha de presentacion :" + presentationDate);
 		}
+		
+		return presentationDate;
 	}
 	
-	public void setHacienda(String text) {
+	public String setHacienda(String text) {
 		ParserUtils pu = new ParserUtils();
 		String hacienda ="";
 		if (pu.haciendaSearch(text)) {
 			hacienda = "Diputacion foral de Gipuzkoa";
 		}
 		System.out.println("Hacienda : " + hacienda);
+		return hacienda;
 	}
 	
 //	public void setModel(String text) {

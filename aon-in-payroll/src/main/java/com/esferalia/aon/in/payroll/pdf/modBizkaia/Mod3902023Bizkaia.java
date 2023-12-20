@@ -142,9 +142,8 @@ public class Mod3902023Bizkaia {
 		return amount;
 	}
 	
-	public void setYearAndPeriod(String text) {
+	public String setYear(String text) {
 		String year ="";
-		String period ="";
 		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
 		
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
@@ -152,9 +151,25 @@ public class Mod3902023Bizkaia {
 		
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
-			period = matcher.group(2).trim();
-			System.out.println("Año : " + year + " Periodo : " + period);
+			System.out.println( year );
 		}
+		
+		return year;
+	}
+	
+	public String setPeriod(String text) {
+		String period ="";
+		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
+		
+		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(text);
+		
+		if (matcher.find()) {
+			period = matcher.group(2).trim();
+			System.out.println( period);
+		}
+		
+		return period;
 	}
 	
 	//MAYBE CONTINUE

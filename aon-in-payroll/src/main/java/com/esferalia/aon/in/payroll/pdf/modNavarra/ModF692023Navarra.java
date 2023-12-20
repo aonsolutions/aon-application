@@ -108,7 +108,7 @@ public class ModF692023Navarra {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
 			
-			yearAndPeriod = year + period;
+			yearAndPeriod = year +" "+period;
 			System.out.println("year : " +year);
 			System.out.println("period : " +period);
 			

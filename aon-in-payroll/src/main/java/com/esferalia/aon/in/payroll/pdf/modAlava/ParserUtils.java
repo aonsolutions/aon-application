@@ -102,7 +102,7 @@ public class ParserUtils {
 	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
 	            String nombreMes = nombresMeses[mesNumero - 1];
 
-	            return nombreMes + "\n" + nombreTrimestre;
+	            return  nombreTrimestre;
 	        } else if (dato.startsWith("T")) {
 	            // Procesar dato de trimestre (T1, T2, T3, T4)
 	            int trimestre;

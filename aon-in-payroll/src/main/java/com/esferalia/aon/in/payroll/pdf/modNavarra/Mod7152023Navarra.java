@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class Mod7152023Navarra {
 
 	
-	public void setSocialReasonName(String text) {
+	public String setSocialReasonName(String text) {
 		String name = "";
 		String nameSocialReasonRegex = " Nombre o razón social.+\\s+([^0-9])([0-9]+)([^\\n]+)";
 
@@ -19,10 +19,12 @@ public class Mod7152023Navarra {
 			System.out.println("Name : " + name);
 		}
 		
+		return name;
+		
 	}
 	
 	
-	public void setRegistryNumber(String text) {
+	public String setRegistryNumber(String text) {
 		String registry = "";
 		String registryRegex = "([0-9]{5})";
 		Pattern pattern = Pattern.compile(registryRegex, Pattern.CASE_INSENSITIVE);
@@ -32,11 +34,13 @@ public class Mod7152023Navarra {
 			registry = matcher.group().trim();
 			System.out.println("Registry number : " + registry);
 		}
+		
+		return registry;
 	}
 	
 	
 	//Implementar patron para cualquier nif nie dni 
-	public void setNif(String text) {
+	public String setNif(String text) {
 		String nif = "";
 		String nifRegex = "("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -85,9 +89,11 @@ public class Mod7152023Navarra {
 			nif = matcher.group().trim();
 			System.out.println("NIF : " + nif);
 		}
+		
+		return nif;
 	}
 	
-	public void setEmail(String text) {
+	public String setEmail(String text) {
 		String email = "";
 //		String emailRegex = ".*[A-Z]@[A-Za-z0-9.-].*[A-Z]";
         String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
@@ -98,10 +104,11 @@ public class Mod7152023Navarra {
 			email = matcher.group().trim();
 			System.out.println("Email : " + email);
 		}
+		return email;
 	}
 	
 	
-	public void setPhoneNumber(String text) {
+	public String setPhoneNumber(String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -111,9 +118,11 @@ public class Mod7152023Navarra {
 			phoneNumber = matcher.group().trim();
 			System.out.println("Phone number : " + phoneNumber);
 		}
+		
+		return phoneNumber;
 	}
 	
-	public void setIBAN (String text) {
+	public String setIBAN (String text) {
 		String iban = "";
 		//Cambiar ES por for que recorra nacionalidades
 		String IBANRegex = "ES+([^A-Z]{26})";
@@ -124,9 +133,11 @@ public class Mod7152023Navarra {
 			iban = matcher.group().trim();
 			System.out.println("IBAN : " + iban);
 		}
+		
+		return iban;
 	}
 	
-	public void setPeriodAndYear(String text) {
+	public String setPeriodAndYear(String text) {
 		String period = "";
 		String year = "";
 		String periodYearRegex ="Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
@@ -141,9 +152,11 @@ public class Mod7152023Navarra {
 			System.out.println("period : " +period);
 			
 		}
+		
+		return period + " " + year;
 	}
 	
-	public void setIssueDate(String text) {
+	public String setIssueDate(String text) {
 		String issueDay = "";
 		String issueMonth = "";
 		String issueYear = "";
@@ -158,9 +171,11 @@ public class Mod7152023Navarra {
 			System.out.println("Issue date : " + issueDay +"/"+ issueMonth +"/"+ issueYear);
 		}
 		
+		return issueDay +"/"+ issueMonth +"/"+ issueYear;
+		
 	}
 	
-	public void setSign(String text) {
+	public String setSign(String text) {
 		String sign = "";
 		String signRegex = "Firma\\s+([^\\n]+)";
 		Pattern pattern = Pattern.compile(signRegex, Pattern.CASE_INSENSITIVE);
@@ -169,9 +184,11 @@ public class Mod7152023Navarra {
 			sign = matcher.group(1).trim();
 			System.out.println("Signature : " +sign);
 		}
+		
+		return sign;
 	}
 	
-	public void setCsv (String text) {
+	public String setCsv (String text) {
 		String csv = "";
 		String csvRegex = "CSV:\\s+([^\\n]+)";
 		Pattern pattern = Pattern.compile(csvRegex, Pattern.CASE_INSENSITIVE);
@@ -180,9 +197,11 @@ public class Mod7152023Navarra {
 			csv = matcher.group(1).trim();
 			System.out.println("CSV : " + csv);
 		}
+		
+		return csv;
 	}
 	
-	public void setAmount(String text) {
+	public String setAmount(String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -218,15 +237,18 @@ public class Mod7152023Navarra {
 			}
 		
 		}
+		
+		return amount;
 	}
 	
-	public void setHacienda(String text) {
+	public String setHacienda(String text) {
 		ParserUtils pu = new ParserUtils();
 		String hacienda ="";
 		if (pu.haciendaSearch(text)) {
 			hacienda = "Hacienda Navarra";
 		}
 		System.out.println(hacienda);
+		return hacienda;
 	}
 	
 	public void setModel(String text) {

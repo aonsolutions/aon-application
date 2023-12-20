@@ -125,7 +125,6 @@ public class Mod2002023Gipuzkoa {
 					legalRepresentator ="NOTARIA : " + legalRepresentator ;
 				}
 				lista.add(legalRepresentator);
-				System.out.println(lista.get(i));
 				i++;
 				
 			}
