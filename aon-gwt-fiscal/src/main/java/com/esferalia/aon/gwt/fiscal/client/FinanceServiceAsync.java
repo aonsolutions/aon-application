@@ -33,6 +33,6 @@ public interface FinanceServiceAsync {
 	
 	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
 	void createSettleSalaries(String domainName, int domain, String user, Date date, AsyncCallback<Void> asyncCallback);
-	
+	void deleteFinance(String domainName, int domain, String user, Integer financeId, AsyncCallback<Void> asyncCallback);
 
 }

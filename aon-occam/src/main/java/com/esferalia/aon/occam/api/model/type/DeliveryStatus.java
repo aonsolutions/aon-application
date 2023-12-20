@@ -6,7 +6,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum DeliveryStatus implements Serializable {
 	PENDING,
-	INVOICED;
+	INVOICED,
+	IN_PREPARATION;
 
 	public byte value(){
 		return (byte) this.ordinal();

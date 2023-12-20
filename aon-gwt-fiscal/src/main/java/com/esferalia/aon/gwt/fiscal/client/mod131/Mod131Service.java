@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/Mod131")
 public interface Mod131Service extends RemoteService {
 
-	Mod131 getMod131(Occam occam, int id) throws AonCoreException;
+	Mod131 get(Occam occam, int id) throws AonCoreException;
 	LinkedList<Mod131> getMod131s(Occam occam) throws AonCoreException;
 	Mod131 calculate(Occam occam, Mod131 mod131) throws AonCoreException;
 	Mod131Activity calculateActivity(Occam occam, Mod131 mod131, Mod131Activity activity) throws AonCoreException;

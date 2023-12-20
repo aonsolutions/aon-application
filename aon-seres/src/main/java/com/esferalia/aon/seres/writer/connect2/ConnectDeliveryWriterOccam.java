@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class ConnectDeliveryWriterOccam  implements Serializable {
@@ -489,6 +490,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity, EdiCodes codes) {
+		if(detail.getItem().getExpireDate() == null && detail.getItem().getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(detail.getItem().getSerialDate(), detail.getItem().getProduct().getDaysToExpire());
+			detail.getItem().setExpireDate(expireDate);			
+		}
+		
 		Integer customerId = delivery.getCustomer().getId();
 		String productCustomerCode = obtainProductCustomerCode(detail.getItem(), customerId);
 		
@@ -563,8 +569,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
 		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
-			seh1l.setUnidadDeMedidaPeso(
-					StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
@@ -605,6 +610,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * Información de lotes
 	 */
 	private SEH1B createSEH1BRecord(DeliveryDetail deliveryDetail) {
+		if(deliveryDetail.getItem().getExpireDate() == null && deliveryDetail.getItem().getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(deliveryDetail.getItem().getSerialDate(), deliveryDetail.getItem().getProduct().getDaysToExpire());
+			deliveryDetail.getItem().setExpireDate(expireDate);			
+		}
+		
 		Date fechaCaducidad = deliveryDetail.getItem().getExpireDate() != null	
 				? deliveryDetail.getItem().getExpireDate()
 				: deliveryDetail.getItem().getSerialDate();
@@ -966,8 +976,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return "A28017895".equalsIgnoreCase(document);
 	}
 	
-	private boolean isEroski(String document) {
-		return "F20033361".equalsIgnoreCase(document);
-	}
+    private boolean isEroski(String document) {
+        return "F20033361".equalsIgnoreCase(document)
+                || "B88512975".equalsIgnoreCase(document)
+                || "A08115032".equalsIgnoreCase(document)
+                || "A36651313".equalsIgnoreCase(document);
+    }
 
 }

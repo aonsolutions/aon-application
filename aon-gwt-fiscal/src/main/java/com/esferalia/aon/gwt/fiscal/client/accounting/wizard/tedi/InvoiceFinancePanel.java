@@ -532,6 +532,11 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					public void addExtraInfo(Widget widget) {
 						callback.getModule().addExtraInfo(widget);					
 					}
+
+					@Override
+					public void refresh() {
+						InvoiceFinancePanel.this.updateAndRefresh(callback,finance);
+					}
 				});
 			}			
 			final FinanceActionsPanel actionsPanel = actionsPanel0;

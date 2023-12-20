@@ -7,6 +7,7 @@ import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environmen
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 let chartCanva;
+let cardFilter;
 
 export class AonCompanyCostsListNew extends AonElement {
   TABLE_ID;
@@ -34,8 +35,9 @@ export class AonCompanyCostsListNew extends AonElement {
     if (CONSTANT.FILTER === name) this.getTable();
   }
 
-  constructor() {
+  constructor(cardFilterIn) {
     super();
+    cardFilter = cardFilterIn;
   }
 
   connectedCallback() {
@@ -68,8 +70,6 @@ export class AonCompanyCostsListNew extends AonElement {
     let btnSearch = this.getApplication().addSearchOption();
     btnSearch.disabled = true;
     const searchValueFn = ({ detail }) => {
-      console.log("Search");
-      console.log(detail);
       if (detail) getApplicationParent().setDataFilter(detail);
       paintCompanyCostPieChart();
     };
@@ -367,6 +367,17 @@ const getData = async () => {
     try {
       filter = { ...getApplicationParent()._filter };
     } catch (error) {}
+
+    if(cardFilter){
+      filter = {};
+      filter.period = cardFilter.period;
+      filter.startDate = cardFilter.startDate;
+      filter.endDate = cardFilter.endDate;
+      filter.event = "click";
+      filter.search = "";
+      cardFilter = undefined;
+    }
+
     let datos = await getCompanyCosts(filter);
     if (!isEmptyObject(datos)) {
       if (datos[0] && datos[0].startDate) {

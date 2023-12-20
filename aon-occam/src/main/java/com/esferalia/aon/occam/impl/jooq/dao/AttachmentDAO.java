@@ -2,8 +2,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.AuthAttach.AUTH_ATTACH;
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
@@ -11,12 +13,14 @@ import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATT
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +32,7 @@ import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectSelectStep;
 import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.AuthAttachRecord;
@@ -45,15 +50,22 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RattachTagFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.AuthAttachType;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachTagPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CategoryDAO.CategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -130,10 +142,44 @@ public class AttachmentDAO {
 				.findFirst().orElse(new AuthAttach());
 	}
 	
-	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
-		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD).from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		if(withData) select = ctx.getDslContext().selectDistinct().from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullDocumentalRattachFiller(ctx));		
+	private static SelectConditionStep<Record> selectRegistryAttach(AONContext ctx, AttachFilter filter, boolean withData) {
+		SelectSelectStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD)
+				.select(DOMAIN.fields())
+				.select(CATEGORY.fields())
+				.select(SCOPE.fields());
+		if(withData) select = ctx.getDslContext().select();
+
+		return select.from(RATTACH)
+			.join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
+			.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+			.leftOuterJoin(RATTACH_TAG).on(RATTACH_TAG.RATTACH.eq(RATTACH.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE))
+			.where(RATTACH_PROPERTIES.getConditions(filter));
+	}
+	
+	
+	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, boolean withData, Options...options){					;
+		List<Attach> attachList;
+		if(options.length > 0 && options[0].isPagination()) {
+			attachList = selectRegistryAttach(ctx, filter, withData)
+					.orderBy(RATTACH.ATTACH_DATE.desc())
+					.limit(options[0].getPerPage()).offset(options[0].getPerPage() * (options[0].getPage() -1))
+					.fetch().stream().map( r-> {
+						Attach attach =  RegistryAttachFiller.build(r);
+						attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
+						return attach;
+					}).toList();
+		} else {
+			attachList = selectRegistryAttach(ctx, filter, withData) 
+			.orderBy(RATTACH.ATTACH_DATE.desc())
+			.fetch().stream().map( r-> {
+				Attach attach =  RegistryAttachFiller.build(r);
+				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
+				return attach;
+			}).toList();
+		}
+
+		return attachList.stream();
 	}
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
@@ -831,6 +877,44 @@ public class AttachmentDAO {
 		}
 	}
 	
+	private static class RegistryAttachFiller extends Filler implements Function<Record, Attach> {
+		@Override
+		public Attach apply(Record r) {
+			return build(r);
+		}
+		
+		public static Attach build(Record r) {
+			return new Attach()
+				.setId(getValue(r, RATTACH.ID))
+				.setDomain(checkField(r, DOMAIN.ID)
+						? DomainFiller.build(r)
+						: new Domain().setId(getValue(r, RATTACH.DOMAIN)))
+				.setAttachModule(getValue(r, RATTACH.REGISTRY))
+				.setAttachType(AttachType.REGISTRY)
+				.setCategory(getValue(r, RATTACH.CATEGORY))
+				.setFullCategory(checkField(r, CATEGORY.ID)
+					? CategoryFiller.build(r)
+					: new Category().setId(getValue(r, RATTACH.CATEGORY)))
+				.setConfidential(getBoolean(r, RATTACH.SECURITY_LEVEL))
+				.setData(checkField(r, RATTACH.DATA) ? getValue(r, RATTACH.DATA) : null)
+				.setDate(getValue(r, RATTACH.ATTACH_DATE))
+				.setDescription(getValue(r, RATTACH.DESCRIPTION))
+				.setDparentId(getValue(r, RATTACH.DPARENT_ID))
+				.setDriveId(getValue(r, RATTACH.DRIVE_ID))
+				.setMimeType(MimeType.safeValueOf(getValue(r, RATTACH.MIMETYPE))) // TODO IF NULL OCTECT OSTREM
+				.setScope(getValue(r, RATTACH.SCOPE))
+				.setFullScope(checkField(r, SCOPE.ID)
+					? ScopeFiller.buildScope(r)
+					: new Scope().setId(getValue(r, RATTACH.SCOPE)))
+				.setType(getValue(r, RATTACH.TYPE))
+				.setCreationDate(getValue(r, RATTACH.CREATION_DATE))
+				.setCreationUser(getValue(r, RATTACH.CREATION_USER))
+				.setModificationDate(getValue(r, RATTACH.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, RATTACH.MODIFICATION_USER))
+				;
+		}
+		
+	}
 	private static class FullDocumentalRattachFiller implements Function<RattachRecord, Attach> {
 		AONContext ctx;
 		public FullDocumentalRattachFiller(AONContext ctx) {
@@ -1072,22 +1156,7 @@ public class AttachmentDAO {
 	}
 	
 	
-	private static class TagFiller implements Function<Record, Tag> {
-		
-		@Override
-		public Tag apply(Record r) {
-			return buildTag(r);
-		}
-		
-		public static Tag buildTag(Record r) {
-			return new Tag().setId(r.getValue(TAG.ID))
-					.setColor(r.getValue(TAG.COLOR))
-					.setDomain(r.getValue(TAG.DOMAIN))
-					.setName(r.getValue(TAG.NAME))
-					.setType(r.getValue(TAG.TYPE));
-		}
-	}
-	
+
 	
 	private static class RattachTagFiller implements Function<Record, RattachTag> {
 		
@@ -1101,7 +1170,7 @@ public class AttachmentDAO {
 					.setId(r.getValue(RATTACH_TAG.ID))
 					.setDomain(r.getValue(RATTACH_TAG.DOMAIN))
 					.setRattach(r.getValue(RATTACH_TAG.RATTACH))
-					.setTag(TagFiller.buildTag(r));
+					.setTag(TagFiller.build(r));
 		}
 	}
 

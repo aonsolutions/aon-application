@@ -48,7 +48,11 @@
 		<div class="divb">
 			<table class="tableA">
 				<tr>
-					<td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;" ><img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="300px"></a></td>
+					<td style="text-align: center;">
+						<a href="https://aonsolutions.es" target="_blank" alt="AON SOLUTIONS">
+							<img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="200px">
+						</a>
+					</td>
 					<td></td>
 				</tr>
 				
@@ -72,15 +76,17 @@
 						
 						Aplicaciones y Servicios Contratados:
 						#foreach($app in $booking.getApps())
-							$app 
+							$app |
 						#end
 						<br><br>
-						Esperamos que la información detallada sea correcta, en caso contrario contacte con su administrador para corregirla en la opción de "Funcionalidad contratada" dentro del apartado de CONFIGURACIÓN.<br><br>
+						Esperamos que la información detallada sea correcta, en caso contrario contacte con su administrador para corregirla en la opción de "Funcionalidad contratada" dentro del apartado de CONFIGURACIÓN. <br><br>
+						
+						Acceda al enlace de <a href="https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf" target="_blank">términos y condiciones</a> para consultar las Condiciones generales del contrato de licencia de software.<br><br>
 
 						Sin otro particular reciba un cordial saludo.<br><br>
 
-						Dpto. de Administración | www.aonSolutions.es<br>
-						t.902 121 009 · 945 121 010 | f. 945 121 011
+						Dpto. de Contrataciones<br>
+						Atención al Cliente | 900 831 205
     				</td>
 				</tr>
 				
@@ -92,8 +98,12 @@
 				
 				<tr class="label">
 					<td>
-						<div style="text-align:center; margin: 0 0 1em 0;" >Copyright 2022 AON SOLUTIONS, S.L.</div>
-						<div style="text-align:center" >Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a este correo.</div>
+						<div style="text-align:center">Este es un mensaje generado automáticamente. Por favor, no conteste a este correo.</div>
+						<div style="text-align:center">Si quiere saber más sobre nuestras prácticas relativas a la privacidad, consulte nuestro:</div>
+						<div style="text-align:center">
+							<a href="https://aonsolutions.es/politicas-legales/aviso-legal/" style="font-weight:700;color:rgb(26,24,27)" target="_blank">aviso legal</a> |
+							<a href="https://aonsolutions.es/politicas-legales/politica-privacidad/" style="font-weight:700;color:rgb(26,24,27)" target="_blank">política de privacidad</a> 
+						</div>						
 					</td>
 				</tr>
 			</table>

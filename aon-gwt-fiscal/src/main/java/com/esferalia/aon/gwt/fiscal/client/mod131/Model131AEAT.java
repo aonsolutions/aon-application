@@ -99,7 +99,7 @@ public class Model131AEAT extends Model131Base {
 
 				@Override
 				public void sendSuccessfully() {
-					Model131.SERVICE.getMod131(getCallback().getOptions().getOccam(), 
+					Model131.SERVICE.get(getCallback().getOptions().getOccam(), 
 							getModel().getId(), new AsyncCallback<Mod131>() {
 						@Override
 						public void onSuccess(Mod131 selected) {

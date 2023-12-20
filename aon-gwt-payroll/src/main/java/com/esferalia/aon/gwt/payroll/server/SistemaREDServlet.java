@@ -24,14 +24,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-
 import org.jooq.Record;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -48,10 +40,11 @@ import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -59,6 +52,13 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
@@ -198,10 +198,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
+			Optional<ApplicationParameter> authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			if(authCodeOpt.isEmpty())
+				authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(parentDomainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
 			for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {		
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-				byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
+				byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode(), authCodeOpt.isPresent() ? authCodeOpt.get().getValue() : null );
 				
 				resp.setStatus(HttpServletResponse.SC_OK);
 				String base64 = Base64.getEncoder().encodeToString(data);
@@ -262,7 +266,12 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String ccc = req.getParameter(Parameter.CCC.name());
 	
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-			byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			
+			Optional<ApplicationParameter> authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			if(authCodeOpt.isEmpty())
+				authCodeOpt = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(parentDomainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
+			byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, authCodeOpt.isPresent() ? authCodeOpt.get().getValue() : null);
 			
 			
 			resp.setStatus(HttpServletResponse.SC_OK);

@@ -389,6 +389,7 @@ public enum ContextVariable implements IResourceable {
 	
 	EXTRA_PAYMENT("EXTRA_DEVENGADO", VariableType.DOUBLE),
 
+	IRPF_START("INICIO_IRPF", VariableType.DATE, false),
 	
 	;
 

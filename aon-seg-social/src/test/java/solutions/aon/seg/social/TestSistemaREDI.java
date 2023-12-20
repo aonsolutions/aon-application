@@ -1025,7 +1025,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12",
-					"0111", "01105360062");
+					"0111", "01105360062", null);
 			if (!(pdf.length > 0))
 				fail("Should have returned a pdf");
 		} catch (StatusCodeException | OutOfServiceException e) {
@@ -1045,7 +1045,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12",
-					"0111", "01105367062");
+					"0111", "01105367062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (WrongIdentifierException e) {
 			assertTrue(true);
@@ -1066,7 +1066,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "",
-					"01105360062");
+					"01105360062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
@@ -1087,7 +1087,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12",
-					"sdsa", "01105360062");
+					"sdsa", "01105360062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (StatusCodeException | OutOfServiceException e) {
 			assertTrue(true);
@@ -1104,7 +1104,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT2")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12",
-					"0111", "01105360062");
+					"0111", "01105360062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (CertificateNotFoundException e) {
 			assertTrue(true);
@@ -1125,7 +1125,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNoT", "pkcs12",
-					"0111", "01105360062");
+					"0111", "01105360062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (InvalidCertificateException e) {
 			assertTrue(true);
@@ -1146,7 +1146,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR");
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte[] pdf = SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pk4s12",
-					"0111", "01105360062");
+					"0111", "01105360062", null);
 			fail("Shouldn't have returned a pdf");
 		} catch (StatusCodeException | OutOfServiceException e) {
 			assertTrue(true);

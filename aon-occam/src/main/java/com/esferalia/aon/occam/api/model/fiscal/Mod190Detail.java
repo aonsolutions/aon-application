@@ -2,6 +2,12 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+/**
+ * 
+ */
+/**
+ * 
+ */
 public class Mod190Detail implements Serializable {
 
 	private static final long serialVersionUID = 7374076019343100903L;
@@ -86,6 +92,12 @@ public class Mod190Detail implements Serializable {
 	
 	private double salaryPerception;
 	private double salaryRetention;
+	
+	private double commonRetention;
+	private double navarraRetention;
+	private double arabaRetention;
+	private double bizkaiaRetention;
+	private double gipuzkoaRetention;
 
 	public Integer getId() {
 		return id;
@@ -594,6 +606,46 @@ public class Mod190Detail implements Serializable {
 	}
 	public Mod190Detail setSalaryRetention(double salaryRetention) {
 		this.salaryRetention = salaryRetention;
+		return this;
+	}
+
+	public double getCommonRetention() {
+		return commonRetention;
+	}
+	public Mod190Detail setCommonRetention(double commonRetention) {
+		this.commonRetention = commonRetention;
+		return this;
+	}
+
+	public double getNavarraRetention() {
+		return navarraRetention;
+	}
+	public Mod190Detail setNavarraRetention(double navarraRetention) {
+		this.navarraRetention = navarraRetention;
+		return this;
+	}
+
+	public double getArabaRetention() {
+		return arabaRetention;
+	}
+	public Mod190Detail setArabaRetention(double arabaRetention) {
+		this.arabaRetention = arabaRetention;
+		return this;
+	}
+
+	public double getBizkaiaRetention() {
+		return bizkaiaRetention;
+	}
+	public Mod190Detail setBizkaiaRetention(double bizkaiaRetention) {
+		this.bizkaiaRetention = bizkaiaRetention;
+		return this;
+	}
+
+	public double getGipuzkoaRetention() {
+		return gipuzkoaRetention;
+	}
+	public Mod190Detail setGipuzkoaRetention(double gipuzkoaRetention) {
+		this.gipuzkoaRetention = gipuzkoaRetention;
 		return this;
 	}
 

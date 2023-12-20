@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.NoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;

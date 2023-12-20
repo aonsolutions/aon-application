@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.Block;
@@ -59,7 +60,10 @@ public class InvoiceIMGParser {
 			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 5MB de tamaño");		
 		}
 
-		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
+		AmazonTextract client = AmazonTextractClientBuilder
+			.standard()
+			.withRegion(Regions.EU_WEST_1)
+			.build();
 		DetectDocumentTextRequest detectDocumentTextRequest = 
 		new DetectDocumentTextRequest().withDocument(doc);
 		

@@ -64,25 +64,4 @@ public enum Mod1902022Key {
 		return toString();
 	}
 	
-	public static Mod1902022Key getDefaultKeyForProfessionalRetentions() {
-		return Mod1902022Key.G;
-	}
-	public static String getDefaultSubkeyForProfessionalRetentions() {
-		return Mod1902022Key.G.subKeys[0];
-	}
-	public static String getDefaultSubkeyForNewProfessionalRetentions() {
-		return Mod1902022Key.G.subKeys[2];
-	}
-	public static Mod1902022Key getDefaultKeyForFarmerRetentions() {
-		return Mod1902022Key.H;
-	}
-	public static String getDefaultSubkeyForFarmerRetentions() {
-		return Mod1902022Key.H.subKeys[0];
-	}
-	public static Mod1902022Key getDefaultKeyForTransportRetentions() {
-		return Mod1902022Key.H;
-	}
-	public static String getDefaultSubkeyForTransportRetentions() {
-		return Mod1902022Key.H.subKeys[3];
-	}
 }

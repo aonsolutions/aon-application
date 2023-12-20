@@ -417,7 +417,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		
-	    return SistemaRED.getUp2DateSS(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc);	
+		Optional<ApplicationParameter> authCodeOpt = AON.getApplicationParameterStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+		if(authCodeOpt.isEmpty())
+			authCodeOpt = AON.getApplicationParameterStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+		
+	    return SistemaRED.getUp2DateSS(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, authCodeOpt.isPresent() ? authCodeOpt.get().getValue() : null);	
 	}
 	
 	private byte[] getIdcCcc(AonApiData api) throws Exception {

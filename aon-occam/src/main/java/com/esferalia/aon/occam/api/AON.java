@@ -3039,13 +3039,13 @@ public class AON {
 	
 	public static Stream<Attach> getDocumentalAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType, Boolean withData) {
+			AttachType attachType, Boolean withData, Options...options) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attachType.equals(AttachType.REGISTRY))
-				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData);
+				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData, options);
 			
 			return null;
 		} finally {
@@ -8093,6 +8093,12 @@ public class AON {
 	public static void createSettleSalaries(String domainName, int domainId, String user, Date date) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
 			getFinance().createSettleSalaries(ctx, date);
+		}
+	}	
+	
+	public static void deleteFinance(String domainName, int domainId, String user, Integer financeId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().deleteFinance(ctx, financeId);
 		}
 	}	
 	

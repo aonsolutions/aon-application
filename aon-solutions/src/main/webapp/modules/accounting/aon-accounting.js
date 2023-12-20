@@ -21,8 +21,11 @@ export class AonAccounting extends AonElement {
 
 	dur;
 	AON_ACCOUNTING;
-	constructor() {
+	filter;
+	
+	constructor(filter) {
 		super();
+		this.filter = filter;
 	}
 
 	connectedCallback () {
@@ -127,7 +130,7 @@ export class AonAccounting extends AonElement {
 	}
 	
 	aonGraphicsTrialView () {
-		this.getApplication().setContent(new AonGraphicsTrial());
+		this.getApplication().setContent(new AonGraphicsTrial(this.filter));
 	}
 }
 if(!window.customElements.get('aon-accounting')){

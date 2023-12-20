@@ -22,10 +22,6 @@ public class Tag implements Serializable, HasId {
 	private Date endDate;
 	private User user;
 
-	public Tag() {
-     // TODO document why this constructor is empty
-    }
-
 	public Tag setId(Integer id) {
 		this.id = id;
 		return this;
@@ -104,7 +100,7 @@ public class Tag implements Serializable, HasId {
 	public User getUser() {
 		return user;
 	}
-	
+
 	public boolean isTagType() {
 		return this.type == TagType.OFFICE_TYPE.value();
 	}
@@ -116,4 +112,9 @@ public class Tag implements Serializable, HasId {
 	public boolean isTagStatus() {
 		return this.type == TagType.OFFICE_STATUS.value();
 	}	
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null 
+			&& getName() == null && getColor() == null;
+	}
 }

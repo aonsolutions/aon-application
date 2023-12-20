@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.AonJSFiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -79,7 +80,7 @@ public class Model180 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {
-			newModel(getOptions(), 2022);
+			newModel(getOptions(), AonJSFiscalModelUtils.guessModelYear());
 		}
 		
 		@Override

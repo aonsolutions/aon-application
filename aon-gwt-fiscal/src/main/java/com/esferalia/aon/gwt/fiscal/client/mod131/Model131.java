@@ -230,7 +230,7 @@ public class Model131 extends MainEntryPoint {
 
 	private void onSelect(Integer id ) {
 		LOGGER.info("OnSelect Model131 with a ID: " + getOptions().getFiscalModelId());
-		SERVICE.getMod131(getOptions().getOccam(), id , new AsyncCallback<Mod131>() {
+		SERVICE.get(getOptions().getOccam(), id , new AsyncCallback<Mod131>() {
 			@Override
 			public void onSuccess(Mod131 selected) {
 				if (selected == null) {
@@ -298,7 +298,7 @@ public class Model131 extends MainEntryPoint {
 
 	private void onSelectionChange(SelectionEvent<Mod131> event) {
 		Mod131 sel = event.getSelectedItem();
-		SERVICE.getMod131(getOptions().getOccam(),sel.getId(), new AsyncCallback<Mod131>() {
+		SERVICE.get(getOptions().getOccam(),sel.getId(), new AsyncCallback<Mod131>() {
 			@Override
 			public void onSuccess(Mod131 selected) {
 				if (selected == null) {

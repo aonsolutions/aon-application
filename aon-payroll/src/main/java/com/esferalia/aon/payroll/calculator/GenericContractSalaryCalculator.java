@@ -943,12 +943,24 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			expressionContext.setVariable(PAY_PRORRATED, AonNumberUtils.equals(quoteCalculator.getProExtBase(), Double.valueOf(0.00)), start, end);
 			
 			if ( cgcBase != null && cgcBase > 0.00 ) {
-        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase, start, end);
-        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			    Period cgcBasePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
+				    new Period(start, end));
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase,
+				    cgcBasePeriod.getStart(), cgcBasePeriod.getEnd());
+			    Period cgcBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
+				    new Period(start, end));
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase,
+				    cgcBaseEnterprisePeriod.getStart(), cgcBaseEnterprisePeriod.getEnd());
 			}
 			if ( cgpBase != null && cgpBase > 0.00 ) {
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase, start, end);
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase, start, end);
+			    Period cgpBasePeriod = getPeriod(expressionContext, ContextVariable.CGP_BASE,
+				    new Period(start, end));
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase,
+				    cgpBasePeriod.getStart(), cgpBasePeriod.getEnd());
+			    Period cgpBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
+				    new Period(start, end));
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase,
+				    cgpBaseEnterprisePeriod.getStart(), cgpBaseEnterprisePeriod.getEnd());
 			}
 			
 			return taxCalculator.getTotalPayment();
@@ -2087,6 +2099,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 	}
 
+	private static Period getPeriod(ExpressionContext expressionContext, ContextVariable var, Period def) {
+	    
+	    return expressionContext.getVariables(var).stream().map(ITimedVariable::getPeriod)
+		    .reduce( (p1,p2) -> new Period(Period.min(p1.getStart(), p2.getStart()), Period.max(p1.getEnd(),  p2.getEnd())))
+		    .orElse(def);
+	}
+
+
 	private static Double getValue(ExpressionContext expressionContext, ContextVariable var) {
 	    return expressionContext.getVariables(var).stream().collect(Collectors.summingDouble(v -> ((Number)v.getValue(v.getPeriod())).doubleValue()));
 	}
@@ -2562,5 +2582,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static boolean notITCompesation(IContractCost cost) {
 		return !isITCompesation(cost);
 	}
+	
 }
 

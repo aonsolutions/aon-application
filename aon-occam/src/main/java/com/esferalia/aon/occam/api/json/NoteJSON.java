@@ -27,9 +27,16 @@ public class NoteJSON {
 			.setSubject(JsonUtils.getString(json, "subject"))
 			.setNote(JsonUtils.getString(json, "note"))
 			.setDate(JsonUtils.getDateFormat(json, "date", "yyyy-MM-dd"))
+			.setArchive(JsonUtils.getBoolean(json, "archive"))
+			.setPinpUp(JsonUtils.getBoolean(json, "pinUp"))
+			.setNoteTag(JsonUtils.getString(json, "noteTag"))
+			.setColor(JsonUtils.getString(json, "color"))
+			.setArchiveDate(JsonUtils.getDateFormat(json, "archiveDate", "yyyy-MM-dd"))
+			.setModificationDate(JsonUtils.getDateFormat(json, "modificationDate", "yyyy-MM-dd"))
+			.setCreationDate(JsonUtils.getDateFormat(json, "creationDate", "yyyy-MM-dd"))
 			;
 	}
-	
+
 	public static JSONArray toJSON(LinkedList<Note> list) {
 		return toJSON(list.stream());
 	}
@@ -41,13 +48,23 @@ public class NoteJSON {
 	}
 	
 	public static JSONObject toJSON(Note note) {
-		return new JSONObject()
+		JSONObject json = new JSONObject()
 			.put(IJsonNames.ID, note.getId())
 			.put(IJsonNames.DOMAIN, note.getDomain())
 			.put("owner", note.getOwner())
 			.put("subject",note.getSubject())
 			.put("note",note.getNote())
-			.put("date",note.getDate());
+			.put("date",note.getDate())
+			.put("archive", note.isArchive())
+			.put("pinUp", note.isPinpUp())
+			.put("noteTag", note.getNoteTag())
+			.put("color", note.getColor())
+			.put("archiveDate",note.getArchiveDate())
+			.put("modificationDate",note.getModificationDate())
+			.put("creationDate",note.getCreationDate())
+			;
+		
+		return json;
 	}
 
 }

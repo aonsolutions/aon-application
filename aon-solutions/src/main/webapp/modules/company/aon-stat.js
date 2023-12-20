@@ -35,7 +35,7 @@ export class AonStat extends AonElement {
     span2.className = CSS.AON_COMPANY_LOGO_SPAN;
     span2.style.top = '50px';
     span2.style.fontWeight = '400';
-    span2.innerHTML = pi.fixed_phone || '902 121 009 · 945 121 010';
+    span2.innerHTML = pi.fixed_phone || '900 831 205';
     div1.appendChild(span2);
 
     let span3 = this.createElement(TAG.SPAN);
