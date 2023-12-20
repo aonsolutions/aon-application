@@ -25,7 +25,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
+@Deprecated
 public class RegistryOldDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
@@ -601,7 +602,7 @@ public class RegistryOldDAO {
 	public static Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter){
 		return ctx.getDslContext().select().from(RSELLER)
 				.join(SELLER).on(RSELLER.SELLER.eq(SELLER.REGISTRY))
-				.join(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL_ALIAS.ID.eq(SELLER.REGISTRY))
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.where(RSELLER_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new SellerFiller());
 	}

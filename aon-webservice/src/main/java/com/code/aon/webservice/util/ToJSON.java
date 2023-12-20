@@ -417,7 +417,7 @@ public class ToJSON {
 			.put(MSG.REMARKS, elaboration.getRemarks() != null ? elaboration.getRemarks() : " ")
 			.put("source", new JSONObject()
 					.put(MSG.ID, elaboration.getSource() != null ? elaboration.getSourceValue() : "")
-					.put(MSG.NAME, elaboration.getSource() != null ? elaboration.getSource().getName(): ""))
+					.put(MSG.NAME, "Sales"))
 			.put("source_id", elaboration.getSourceId())
 			.put(MSG.CREATION_DATE, elaboration.getCreationDate() != null ? AonDateUtils.simpleFormat(elaboration.getCreationDate()): "")
 			.put(MSG.CREATION_USER, elaboration.getCreationUser())

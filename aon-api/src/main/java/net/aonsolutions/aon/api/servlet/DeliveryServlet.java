@@ -186,6 +186,11 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(customer != null) {
 			filter = filter.and(f.getCustomerProperty().eq(customer));
 		}
+		
+		Integer carrierPacking = JsonUtils.getInteger(api.getData(), IJsonNames.CARRIER_PACKING);
+		if(carrierPacking != null) {
+			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+		}
 
 		return filter;
 	}

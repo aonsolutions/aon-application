@@ -32,7 +32,7 @@ export class AonMobileSalesList extends AonMobileList {
             perPage: 30,
             full: true,
             to: new Date(),
-            status: 'PENDING'
+            status: 'IN_PREPARATION'
         };
         this.more = true;
     }

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
 
-public class NordigenAccountDetails implements Serializable {
+public class NordigenAccountDetail implements Serializable {
 	
 	private static final long serialVersionUID = -3879480833728917316L;
 	
@@ -19,7 +19,7 @@ public class NordigenAccountDetails implements Serializable {
 	public String getResourceId() {
 		return resourceId;
 	}
-	public NordigenAccountDetails setResourceId(String resourceId) {
+	public NordigenAccountDetail setResourceId(String resourceId) {
 		this.resourceId = resourceId;
 		return this;
 	}	
@@ -27,7 +27,7 @@ public class NordigenAccountDetails implements Serializable {
 	public String getIban() {
 		return iban;
 	}
-	public NordigenAccountDetails setIban(String iban) {
+	public NordigenAccountDetail setIban(String iban) {
 		this.iban = iban;
 		return this;
 	}
@@ -35,7 +35,7 @@ public class NordigenAccountDetails implements Serializable {
 	public String getCurrency() {
 		return currency;
 	}
-	public NordigenAccountDetails setCurrency(String currency) {
+	public NordigenAccountDetail setCurrency(String currency) {
 		this.currency = currency;
 		return this;
 	}
@@ -43,7 +43,7 @@ public class NordigenAccountDetails implements Serializable {
 	public String getOwnerName() {
 		return ownerName;
 	}
-	public NordigenAccountDetails setOwnerName(String ownerName) {
+	public NordigenAccountDetail setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
 		return this;
 	}
@@ -51,35 +51,35 @@ public class NordigenAccountDetails implements Serializable {
 	public String getName() {
 		return name;
 	}
-	public NordigenAccountDetails setName(String name) {
+	public NordigenAccountDetail setName(String name) {
 		this.name = name;
 		return this;
 	}
 	public NordigenCashAccountType getCashAccountType() {
 		return cashAccountType;
 	}
-	public NordigenAccountDetails setCashAccountType(NordigenCashAccountType cashAccountType) {
+	public NordigenAccountDetail setCashAccountType(NordigenCashAccountType cashAccountType) {
 		this.cashAccountType = cashAccountType;
 		return this;
 	}
 	public String getProduct() {
 		return product;
 	}
-	public NordigenAccountDetails setProduct(String product) {
+	public NordigenAccountDetail setProduct(String product) {
 		this.product = product;
 		return this;
 	}
 	public String getStatus() {
 		return status;
 	}
-	public NordigenAccountDetails setStatus(String status) {
+	public NordigenAccountDetail setStatus(String status) {
 		this.status = status;
 		return this;
 	}
 	public String getBic() {
 		return bic;
 	}
-	public NordigenAccountDetails setBic(String bic) {
+	public NordigenAccountDetail setBic(String bic) {
 		this.bic = bic;
 		return this;
 	}

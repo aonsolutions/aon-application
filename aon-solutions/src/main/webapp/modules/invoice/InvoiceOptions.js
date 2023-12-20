@@ -47,7 +47,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const RAWDOC_OCR = {
     id: CONSTANT.RAWDOC_OCR.initCap(),
     name: 'OCR',
-    icon: MATERIAL_ICONS.INBOX
+    icon: 'find_in_page'
   }
 
   export const RAWDOC_REJECT = {

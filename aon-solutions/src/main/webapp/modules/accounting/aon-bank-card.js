@@ -201,23 +201,28 @@ export class AonBankCard extends AonElement {
 
   formatDate(inputDate) {
     inputDate = inputDate ? new Date(inputDate) : new Date(); 
+    inputDate.setHours(0, 0, 0, 0);
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
     const sixDaysAgo = new Date(today);
     sixDaysAgo.setDate(today.getDate() - 7);
+    sixDaysAgo.setHours(0, 0, 0, 0);
   
     if (this.isSameDay(inputDate, today)) {
-      return `Hoy, ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
+      return `Actualizado hoy. ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
     } else if (this.isSameDay(inputDate, yesterday)) {
-      return `Ayer, ${this.getDayName(inputDate)}`;
+      return `Actualizado ayer, ${this.getDayName(inputDate)}`;
     } else if (inputDate > sixDaysAgo) {
-      return this.getDayName(inputDate);
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      return `Actualizado el ${this.getDayName(inputDate)} (Hace ${dayDiff} días)`
     } else {
       const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
       const formattedDate = `${this.padWithZero(inputDate.getDate())} ${this.getMonthName(inputDate)}`;
-      return `${formattedDate} (Hace ${dayDiff} días)`;
+      return `Actualizado el ${formattedDate} (Hace ${dayDiff} días)`;
     }
   }
   
@@ -230,8 +235,8 @@ export class AonBankCard extends AonElement {
   }
   
   formatTime(date) {
-    const hours = padWithZero(date.getHours());
-    const minutes = padWithZero(date.getMinutes());
+    const hours = this.padWithZero(date.getHours());
+    const minutes = this.padWithZero(date.getMinutes());
     return `${hours}:${minutes}`;
   }
   
