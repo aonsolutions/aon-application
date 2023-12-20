@@ -9,11 +9,21 @@ public class ContractExtendedData extends Contract {
 	Double grossSalaryLastMonth;
 	Double totalMarksLastMonth;
 	String personName;
+	String personDocument;
 	String contractType;
 	String workplaceName;
 	
 	public ContractExtendedData(){
 		super();
+	}
+	
+	public String getPersonDocument() {
+		return personDocument;
+	}
+	
+	public ContractExtendedData setPersonDocument(String value) {
+		personDocument = value;
+		return this;
 	}
 	
 	public String getWorkplaceName() {
