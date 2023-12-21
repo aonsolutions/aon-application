@@ -834,6 +834,7 @@
 		</primary-key>
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
 		<column name="vat_regime" type="com.code.aon.fiscal.enumeration.VatRegime"/>
+		<column name="vat_exemption_cause" type="com.code.aon.fiscal.enumeration.VatExemptionCause"/>
 		<column name="retention_regime" type="com.code.aon.fiscal.enumeration.RetentionRegime"/>
 		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_CNAE">
 			<many-to-one property="cnae" />
