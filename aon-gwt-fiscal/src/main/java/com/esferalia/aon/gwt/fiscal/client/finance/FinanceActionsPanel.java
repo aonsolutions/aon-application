@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class FinanceActionsPanel extends FlowPanel {
 	
 	public FinanceActionsPanel(Finance finance, FinanceModuleCallback cbk) {
-		new FinanceActionsPanel(finance, false, cbk);
+		this(finance, false, cbk);
 	}
 
 	public FinanceActionsPanel(Finance finance, boolean isPayroll, FinanceModuleCallback cbk) {
