@@ -36,7 +36,7 @@ public class OCRDocumentJSON {
 			.setEnvironment(OCRJSONUtils.getString(json, OCRNames.ENVIRONMENT))
 			.setCompany(OCRJSONUtils.getString(json, OCRNames.COMPANY))
 			.setCreator(OCRJSONUtils.getString(json, OCRNames.CREATOR))
-			.setClientData(OCRClientJSON.from(OCRJSONUtils.getArray(json, OCRNames.CLIENT_DATA)))
+			.setClientData(OCRClientJSON.from(OCRJSONUtils.getObject(json, OCRNames.CLIENT_DATA)))
 			.setType( OCRType.safeValueOf(OCRJSONUtils.getString(json, OCRNames.TYPE)).orElse(null) )
 			.setName(OCRJSONUtils.getString(json, OCRNames.NAME))
 			.setCreation(OCRJSONUtils.getString(json, OCRNames.CREATION))
@@ -52,6 +52,7 @@ public class OCRDocumentJSON {
 			.setImportData(OCRImportDataJSON.from(OCRJSONUtils.getObject(json, OCRNames.IMPORT)))
 			.setGeometry(OCRGeometryJSON.from(OCRJSONUtils.getObject(json, OCRNames.GEOMETRY)))
 			.setData(OCRInvoiceJSON.from(OCRJSONUtils.getObject(json, OCRNames.DATA)))
+			.setOriginal(OCRJSONUtils.getString(json, OCRNames.ORIGINAL))
 		;
 	}
 	

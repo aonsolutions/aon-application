@@ -41,7 +41,10 @@ public class OCRInvofox {
 	private static final String COMPANY = COMPANIES + "/{0}";
 	private static final String DOCUMENTS = BASE_URL + "/documents";
 	private static final String DOCUMENT = DOCUMENTS + "/{0}";
-	private static final String TOKEN = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
+	//private static final String TOKEN = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
+	private static final String TOKEN = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+
+	
 
 	private static final int STATUS_OK = 200;
 

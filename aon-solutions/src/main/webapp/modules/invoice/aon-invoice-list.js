@@ -3,7 +3,7 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates, getInvofoxDocuments } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates, getInvofoxDocuments, getInvofoxDocument } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -152,6 +152,10 @@ export class AonInvoiceList extends AonElement {
 						iframe.style.height = '100%';
 						iframe.style.width = '100%';
 						iframe.style.border = '0';
+						console.log("load");
+						console.log(JSON.stringify(invoice));
+						let document = getInvofoxDocument(invoice.id); 
+						console.log(JSON.stringify(document));
 						this.getApplication().setContent(iframe);
 					},() => {});
 				});
@@ -190,12 +194,9 @@ export class AonInvoiceList extends AonElement {
  						} else invoice.icon_color = "#5f6368";
 
 						aonInvoiceTable.addRow(invoice, () => {
-							let iframe = this.createElement(TAG.IFRAME);
-							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
-							iframe.style.height = '100%';
-							iframe.style.width = '100%';
-							iframe.style.border = '0';
-							this.getApplication().setContent(iframe);
+							getInvofoxDocument(invoice.id).then( doc => {
+								this.aonInvoice(doc, i);
+							}); 
 						},() => {});
 					});
 				});
