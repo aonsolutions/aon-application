@@ -160,7 +160,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private void viewInvoice() {
 		LOGGER.info("Viewing invoice as management source");
 		centerContainer.clear();
-		centerContainer.setWidget( new InvoiceViewer(getWrapper().getInvoice()));
+		centerContainer.setWidget( new AonInvoiceViewer(getWrapper().getInvoice()));
 	}
 	
 	public void select(AccountingInvoice ai,final ISelectionCallback cbk) {

@@ -825,7 +825,7 @@ public class Contrata {
 			
 			// For contract 502 check if duration equals or less than 90 days
 			try {
-				if(contract.equals("502") && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
+				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
 					htmlPage = htmlPage.getElementById("volver").click();
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					
@@ -836,6 +836,13 @@ public class Contrata {
 					
 					setOccupation(cto, form);
 					
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+				}
+			} catch (Exception e) {}
+			
+			// For contract 402 check if has writen contract
+			try {
+				if(contract.equals("402")) {
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {}
@@ -2384,6 +2391,8 @@ public class Contrata {
 		try {
 			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
 			if (error != null && !error.getVisibleText().isEmpty()) {
+				if(error.getVisibleText().contains("contrato escrito"))
+					throw new SepeException(error.getVisibleText() + "Por favor comunique este contrato a traves de Contrata.");
 				throw new SepeException(error.getVisibleText());
 			} else {
 				String body = htmlPage.asNormalizedText();

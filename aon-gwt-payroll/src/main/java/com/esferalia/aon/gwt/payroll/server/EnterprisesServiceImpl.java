@@ -2147,7 +2147,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);
-			return JooqMail.getMailAccounts(connection, userId, domainId);
+			return JooqMail.getMailAccounts(connection, userId, domainId, parentDomainId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

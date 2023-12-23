@@ -112,5 +112,11 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		fsa.createSettleSalaries(domainName, domain, user, date, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void deleteFinance(String domainName, int domain, String user, Integer financeId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteFinance(domainName, domain, user, financeId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 	
 }

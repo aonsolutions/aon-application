@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.aeat;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class AEATParams implements Serializable {
 	
@@ -17,6 +18,8 @@ public class AEATParams implements Serializable {
 	private String document;
 	private String nrc;
 	private boolean test;
+	private ArrayList<String> selected; // Seleccionados para la presentación múltiple desde la matriz
+	private ArrayList<String> errores;  // Mensajes de error de la presentación de cada modelo, en la presentación múltiple desde la matriz
 	
 	public int getDomainId() {
 		return domainId;
@@ -102,6 +105,20 @@ public class AEATParams implements Serializable {
 	}
 	public AEATParams setTest(boolean test) {
 		this.test = test;
+		return this;
+	}
+	public ArrayList<String> getSelected() {
+		return selected;
+	}
+	public AEATParams setSelected(ArrayList<String> selected) {
+		this.selected = selected;
+		return this;
+	}
+	public ArrayList<String> getErrores() {
+		return errores;
+	}
+	public AEATParams setErrores(ArrayList<String> errores) {
+		this.errores = errores;
 		return this;
 	}
 	

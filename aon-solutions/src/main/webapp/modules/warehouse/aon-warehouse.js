@@ -6,10 +6,11 @@ import Apps from '../../services/app.js';
 import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
-import { getWarehouses } from '../../services/warehouseService.js';
+import { getDelivery, getWarehouses } from '../../services/warehouseService.js';
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
 import { AonMobileSalesList } from '../sales/aon-mobile-sales-list.js';
 import { AonMobileDeliveryList } from '../delivery/aon-mobile-delivery-list.js';
+import { AonMobileDelivery } from '../delivery/aon-mobile-delivery.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -85,7 +86,7 @@ export class AonWarehouse extends AonElement {
 			this.aonPackaging();
 			break;
 		case DELIVERY.id:
-			this.aonDelivery();
+			this.aonDelivery(option);
 			break;
 		case TAGS.id:
 			this.aonDeliveryTag();
@@ -122,10 +123,20 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().setContent(new AonMobilePackaging());
 	}
 
-	aonDelivery() {
+	aonDelivery(option) {
 		this.getApplication().getToolbar().option = MSG.DELIVERY;
 		this.getApplication().removeFloatOption();
-		this.getApplication().setContent(new AonMobileDeliveryList());
+		if(option && option.delivery) {
+			let data = {
+				id: option.delivery,
+				full: true
+			}
+			getDelivery(data).then(r => {
+				let aonDelivery = new AonMobileDelivery();
+				aonDelivery.setDelivery(r);
+				this.getApplication().setContent(aonDelivery);
+			});
+		} else this.getApplication().setContent(new AonMobileDeliveryList());
 	}
 
 	aonDeliveryTag() {

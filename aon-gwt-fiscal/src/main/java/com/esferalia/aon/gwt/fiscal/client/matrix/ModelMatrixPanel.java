@@ -277,6 +277,7 @@ public class ModelMatrixPanel extends FlowPanel {
 					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
 					// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
 					if (params.getPeriod() != null && options.getConfiguration().isBetaEnabled()) {
+						boolean checkBoxEnabled = true;
 						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
 						if (params.getPeriod() != Period.YEAR) {
 							Label ibanNrcLabel = new Label();
@@ -286,15 +287,17 @@ public class ModelMatrixPanel extends FlowPanel {
 								} else {									
 									ibanNrcLabel.setText(cloned.getIban());
 								}								
-								// Si está habilitada la presentación múltiple, comprobar si falta IBAN o NRC
+								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo
 								if (params.isMultiplePresentation()) {
 									if (AonStringUtils.isBlank(ibanNrcLabel.getText())) {
 										if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
 											ibanNrcLabel.setText("FALTA NRC");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+											checkBoxEnabled = false;
 										} else if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.BANK || cloned.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) {
 											ibanNrcLabel.setText("FALTA IBAN");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+											checkBoxEnabled = false;
 										}
 									}									 
 								}
@@ -307,8 +310,9 @@ public class ModelMatrixPanel extends FlowPanel {
 						// Si está habilitada la presentacion múltiple, se añade un checkbox para poder seleccionar la fila
 						if (params.isMultiplePresentation()) {
 							CheckBox markForSend = new CheckBox();
-							markForSend.setValue(options.isSelected(cloned));
-							if (options.isSelected(cloned)) {								
+							markForSend.setEnabled(checkBoxEnabled);
+							markForSend.setValue(options.isSelected(cloned) && markForSend.isEnabled());							
+							if (markForSend.getValue()) {
 								selected.add(options.getSelectedKey(cloned));
 							} else {
 								markAllForSend.setValue(false,false);
@@ -316,7 +320,13 @@ public class ModelMatrixPanel extends FlowPanel {
 							markForSend.addValueChangeHandler( event -> {
 								if (markForSend.getValue()) {
 									options.addSelected(cloned);
-									if (options.getSelected().size() == selectedCheckBox.size())
+									
+									int totalEnabled = 0;									
+									for (CheckBox cb : selectedCheckBox) {
+										if (cb.isEnabled()) 
+											totalEnabled++;										
+									}									
+									if (options.getSelected().size() == totalEnabled)
 										markAllForSend.setValue(true,false);										
 								} else {
 									options.removeSelected(cloned);
@@ -575,9 +585,12 @@ public class ModelMatrixPanel extends FlowPanel {
 				markAllForSend = new CheckBox();			 
 				markAllForSend.setValue(true);
 				markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
-				markAllForSend.addClickHandler( event -> {
-					selectedCheckBox.forEach( cb -> cb.setValue(markAllForSend.getValue(),true) );
-				});
+				markAllForSend.addClickHandler( event -> 
+					selectedCheckBox.forEach( cb -> {
+						if (cb.isEnabled()) 
+							cb.setValue(markAllForSend.getValue(), true);	
+					}) 
+				);
 				AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
 				table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
 				table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						

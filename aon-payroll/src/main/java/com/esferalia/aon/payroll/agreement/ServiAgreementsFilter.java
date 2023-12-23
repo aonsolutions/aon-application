@@ -49,6 +49,7 @@ public class ServiAgreementsFilter {
 		serviAgreementsMap.put("00000000000000 - AON SOLUTIONS CONVENIO GENERAL",  "a0000000");
 		serviAgreementsMap.put("00000000000000 - AON SOLUTIONS CONVENIO B" + String.valueOf("\u00C1") +"SICO",  "a0000001");
 		serviAgreementsMap.put("00000000000000 - AON SOLUTIONS CONVENIO EST" + String.valueOf("\u00C1") + "NDAR",  "a0000002");
+		serviAgreementsMap.put("00000000000000 - AON SOLUTIONS CONVENIO HOSTELERIA TENERIFE (RESTAURACION Y OCIO)",  "a0000802");
 		
 		if(isConvenios) {
 		

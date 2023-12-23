@@ -21,8 +21,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FinanceActionsPanel extends FlowPanel {
-
+	
 	public FinanceActionsPanel(Finance finance, FinanceModuleCallback cbk) {
+		this(finance, false, cbk);
+	}
+
+	public FinanceActionsPanel(Finance finance, boolean isPayroll, FinanceModuleCallback cbk) {
 		
 		AON.ensureInjected();
 		
@@ -279,6 +283,56 @@ public class FinanceActionsPanel extends FlowPanel {
 		ensureAdd(returnButton);
 		ensureAdd(undoButton);
 		ensureAdd(groupedButton);
+		
+		if(isPayroll && finance.isPending()) {
+			// *************************************************************************
+			// *******															 *******
+			// *******				DELETE BUTTON		 				 		 *******
+			// *******															 *******
+			// *************************************************************************
+			AonTableButton  deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(e -> {
+				
+				cbk.getFinanceService().getFinanceTracking(cbk.getOptions().getDomainName()
+						,cbk.getOptions().getDomain()
+						,cbk.getOptions().getUser(), finance.getId()
+						,new AsyncCallback<LinkedList<FinanceTracking>>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								Label label = new Label("Se ha producido un error al recuperar el historial del vencimiento para el borrado. ["+caught.getMessage()+"]"); 
+								cbk.addExtraInfo( label );
+							}
+
+							@Override
+							public void onSuccess(LinkedList<FinanceTracking> list) {
+								if (list == null || list.size() == 0) {
+									cbk.getFinanceService().deleteFinance(cbk.getOptions().getDomainName()
+											,cbk.getOptions().getDomain()
+											,cbk.getOptions().getUser()
+											,finance.getId()
+											,new AsyncCallback<Void>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessageDialog.error("Se ha producido un error al borrar el vencimiento. ["+caught.getMessage()+"]");
+												}
+
+												@Override
+												public void onSuccess(Void success) {
+													cbk.refresh();
+												}
+											});
+								} else {
+									AonMessageDialog.error("No se puede borrar un vencimiento que tiene movimientos.");
+								}
+							}
+					
+				});	
+				
+			});
+			
+			ensureAdd(deleteButton);
+		}
 	}
 	
 	private void ensureAdd(Widget widget) {

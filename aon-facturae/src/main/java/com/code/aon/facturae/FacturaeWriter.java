@@ -89,7 +89,6 @@ import es.mityc.facturae32.LegalLiteralsType;
 import es.mityc.facturae32.ModalityType;
 import es.mityc.facturae32.OverseasAddressType;
 import es.mityc.facturae32.PartiesType;
-import es.mityc.facturae32.PeriodDates;
 import es.mityc.facturae32.PersonTypeCodeType;
 import es.mityc.facturae32.RegistrationDataType;
 import es.mityc.facturae32.ResidenceTypeCodeType;
@@ -546,10 +545,10 @@ public class FacturaeWriter {
 		InvoiceIssueDataType invoiceIssueData = new InvoiceIssueDataType();
 		XMLGregorianCalendar issuedDate = Util.toXMLCalendar(invoice.getIssueDate());
 		invoiceIssueData.setIssueDate( issuedDate );
-		PeriodDates period = new PeriodDates();
-		period.setStartDate(issuedDate);
-		period.setEndDate(issuedDate);
-		invoiceIssueData.setInvoicingPeriod(period);
+		//PeriodDates period = new PeriodDates();
+		//period.setStartDate(issuedDate);
+		//period.setEndDate(issuedDate);
+		//invoiceIssueData.setInvoicingPeriod(period);
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
@@ -791,8 +790,11 @@ public class FacturaeWriter {
 		}
 		String issuerContractReferenceOption = FACeUtil.getValue(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, invoice);
 		if (! StringUtils.isEmpty(issuerContractReferenceOption)) {
-			String issuerContractReference = getIssuerContractReference(line, Boolean.parseBoolean(issuerContractReferenceOption));
-			if (! StringUtils.isEmpty(issuerContractReference) ) {
+			boolean purchaseReference = Boolean.parseBoolean(issuerContractReferenceOption);
+			String issuerContractReference = getIssuerContractReference(line, purchaseReference);
+			if (!StringUtils.isEmpty(issuerContractReference) && purchaseReference ) {
+				invoiceLine.setReceiverTransactionReference(Util.toTextMax20Type(issuerContractReference));
+			} else if(!StringUtils.isEmpty(issuerContractReference) ) {
 				invoiceLine.setIssuerContractReference(Util.toTextMax20Type(issuerContractReference));
 			}		
 		}

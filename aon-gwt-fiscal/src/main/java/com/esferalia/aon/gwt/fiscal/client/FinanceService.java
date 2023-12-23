@@ -37,6 +37,6 @@ public interface FinanceService extends RemoteService {
 	
 	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
 	void createSettleSalaries(String domainName, int domain, String user, Date date) throws AonCoreException;
-	
+	void deleteFinance(String domainName, int domain, String user, Integer financeId) throws AonCoreException;
 
 }
