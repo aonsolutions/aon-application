@@ -26,6 +26,7 @@ import com.code.aon.fiscal.enumeration.Mod349Status;
 import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RetentionRegime;
+import com.code.aon.fiscal.enumeration.VatExemptionCause;
 import com.code.aon.fiscal.enumeration.VatRegime;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
@@ -43,6 +44,7 @@ public class FiscalCollectionsController implements Serializable {
 	private List<SelectItem> vatTaxDeclarationStatuses;
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatRegimes;
+	private List<SelectItem> vatExemptionCauses;
 	private List<SelectItem> retentionRegimes;
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
@@ -56,7 +58,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getWithholdingStatuses() {
 		if (withholdingStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			withholdingStatuses = new LinkedList<SelectItem>();
+			withholdingStatuses = new LinkedList<>();
 			for (WithholdingStatus status:WithholdingStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -69,7 +71,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getVatTaxStatuses() {
 		if (vatTaxStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxStatuses = new LinkedList<SelectItem>();
+			vatTaxStatuses = new LinkedList<>();
 			for (VatTaxStatus status:VatTaxStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -82,7 +84,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getMod349Statuses() {
 		if (mod349Statuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Statuses = new LinkedList<SelectItem>();
+			mod349Statuses = new LinkedList<>();
 			for (Mod349Status  status:Mod349Status.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -95,7 +97,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getVatTaxDeclarationStatuses() {
 		if (vatTaxDeclarationStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxDeclarationStatuses = new LinkedList<SelectItem>();
+			vatTaxDeclarationStatuses = new LinkedList<>();
 			for (VatTaxDeclarationStatus declarationStatus:VatTaxDeclarationStatus.values()) {
 				String name = declarationStatus.getName(locale);
 				SelectItem item = new SelectItem(declarationStatus, name);
@@ -108,7 +110,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getVatTypes() {
 		if (vatTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTypes = new LinkedList<SelectItem>();
+			vatTypes = new LinkedList<>();
 			for (VatType type:VatType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
@@ -121,7 +123,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getVatRegimes() {
 		if (vatRegimes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatRegimes = new LinkedList<SelectItem>();
+			vatRegimes = new LinkedList<>();
 			for (VatRegime regime : VatRegime.values()) {
 				SelectItem item = new SelectItem(regime, regime.getName(locale));
 				vatRegimes.add(item);
@@ -129,11 +131,23 @@ public class FiscalCollectionsController implements Serializable {
 		}
 		return vatRegimes;
 	}
+	
+	public List<SelectItem> getVatExemptionCauses() {
+		if (vatExemptionCauses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatExemptionCauses = new LinkedList<>();
+			for (VatExemptionCause exemptionCause : VatExemptionCause.values()) {
+				SelectItem item = new SelectItem(exemptionCause, exemptionCause.getName(locale));
+				vatExemptionCauses.add(item);
+			}
+		}
+		return vatExemptionCauses;
+	}
 
 	public List<SelectItem> getRetentionRegimes() {
 		if (retentionRegimes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			retentionRegimes = new LinkedList<SelectItem>();
+			retentionRegimes = new LinkedList<>();
 			for (RetentionRegime regime : RetentionRegime.values()) {
 				SelectItem item = new SelectItem(regime, regime.getName(locale));
 				retentionRegimes.add(item);
@@ -145,7 +159,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getInvoiceReportOrders() {
 		if (invoiceOrders == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			invoiceOrders = new LinkedList<SelectItem>();
+			invoiceOrders = new LinkedList<>();
 			for (InvoiceReportOrder order:InvoiceReportOrder.values()) {
 				String name = order.getName(locale);
 				SelectItem item = new SelectItem(order, name);
@@ -158,7 +172,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getPeriods() {
 		if (periods == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			periods = new LinkedList<SelectItem>();
+			periods = new LinkedList<>();
 			for (Period period:Period.values()) {
 				String name = period.getName(locale);
 				SelectItem item = new SelectItem(period, name);
@@ -171,7 +185,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getQuarterPeriods() {
 		if (quarterPeriods == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			quarterPeriods = new LinkedList<SelectItem>();
+			quarterPeriods = new LinkedList<>();
 			quarterPeriods.add( new SelectItem(Period.T1, Period.T1.getName(locale)) );
 			quarterPeriods.add( new SelectItem(Period.T2, Period.T2.getName(locale)) );
 			quarterPeriods.add( new SelectItem(Period.T3, Period.T3.getName(locale)) );
@@ -182,7 +196,7 @@ public class FiscalCollectionsController implements Serializable {
 
 	public List<SelectItem> getMod347Formats() {
 		if (mod347Formats == null) {
-			mod347Formats = new LinkedList<SelectItem>();
+			mod347Formats = new LinkedList<>();
 			for (MOD347Format format : MOD347Format.values()) {
 				String name = format.getDescription();
 				SelectItem item = new SelectItem(format, name);
@@ -195,7 +209,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getMod347Types() {
 		if (mod347Types == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod347Types = new LinkedList<SelectItem>();
+			mod347Types = new LinkedList<>();
 			for (Mod347Type type : Mod347Type.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
@@ -208,7 +222,7 @@ public class FiscalCollectionsController implements Serializable {
 	public List<SelectItem> getMod349Types() {
 		if (mod349Types == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Types = new LinkedList<SelectItem>();
+			mod349Types = new LinkedList<>();
 			for (Mod349Type type : Mod349Type.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
@@ -220,7 +234,7 @@ public class FiscalCollectionsController implements Serializable {
 	
 	public List<SelectItem> getFiscalModelStatuses() {
 		if (fiscalModelStatuses == null) {
-			fiscalModelStatuses = new LinkedList<SelectItem>();
+			fiscalModelStatuses = new LinkedList<>();
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			for (FiscalModelStatus status : FiscalModelStatus.values()) {
 				String name = status.getName(locale);
@@ -232,7 +246,7 @@ public class FiscalCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getModelPayMethods() throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		List<SelectItem> payMethods = new LinkedList<>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
@@ -275,7 +289,7 @@ public class FiscalCollectionsController implements Serializable {
 		return FiscalModelType.M131;
 	}
 
-	private static List<SelectItem> streetTypes = new LinkedList<SelectItem>(); 
+	private static List<SelectItem> streetTypes = new LinkedList<>(); 
 	static {
 		streetTypes.add(new SelectItem("ACCE ","ACCES"));
 		streetTypes.add(new SelectItem("ACCES","ACCESO"));
