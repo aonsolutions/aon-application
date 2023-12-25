@@ -18,6 +18,12 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-tgss.png")
 	ImageResource aonIconTgss();
 	
+	@Source("icons/aon-icon-xml.png")
+	ImageResource aonIconXml();
+	
+	@Source("icons/aon-icon-delete-file.png")
+	ImageResource aonIconDeleteFile();
+	
 	@Source("icons/aon-icon-tgss-cra.png")
 	ImageResource aonIconTgssCra();
 	

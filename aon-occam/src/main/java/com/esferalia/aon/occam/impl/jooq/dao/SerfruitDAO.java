@@ -244,7 +244,8 @@ public class SerfruitDAO {
 			detail.setDescription(description);
 			detail.setWarehouse(w.getId());
 			detail.setDiscountExpression("0");
-			detail.setQuantity(dp.getQuantity());
+			detail.setQuantity(p.getProduct().getCode().equalsIgnoreCase("BOX")
+					? 0.0 : dp.getQuantity());
 			detail.setCreationUser(ctx.getUser());
 			detail.setCreationDate(new Date());
 			delivery.getDetails().add(detail);
@@ -386,7 +387,8 @@ public class SerfruitDAO {
     public static boolean isEroski(String document) {
         return "F20033361".equalsIgnoreCase(document)
                 || "B88512975".equalsIgnoreCase(document)
-                || "A08115032".equalsIgnoreCase(document);
+                || "A08115032".equalsIgnoreCase(document)
+                || "A36651313".equalsIgnoreCase(document);
    }
 }
 

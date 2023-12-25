@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.test.fiscal.mod111.Mod111TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod115.Mod115TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod123.Mod123TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod130.Mod130TestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod131.Mod131TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod190.Mod190TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod303.Mod303TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod349.Mod349TestSuite;
@@ -33,12 +34,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod303TestSuite.class,
 	Mod390HFTestSuite.class,
 	Mod130TestSuite.class,
-	
-	Mod190TestSuite.class,
-	
-	Mod349TestSuite.class,
-	
 //	Mod131TestSuite.class,
+	Mod190TestSuite.class,
+	Mod349TestSuite.class,
 //	Mod202TestSuite.class,
 })
 public class FiscalTestSuite {

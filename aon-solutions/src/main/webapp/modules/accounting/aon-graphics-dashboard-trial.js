@@ -105,10 +105,25 @@ export class AonDashboardGraphicsTrial extends AonElement {
   async draw() {
     this.innerHTML = "";
 
+    let contentDiv = this.createElement(TAG.DIV);
+    contentDiv.style.width = "100%";
+    contentDiv.style.display = "flex";
+    contentDiv.style.gap = ".5rem";
+    contentDiv.style.flexDirection = "column";
+    this.appendChild(contentDiv);
+
+    let titleDiv = this.createElement(TAG.SPAN);
+    titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
+    titleDiv.style.color = "grey";
+    titleDiv.style.fontWeight = "500";
+    titleDiv.style.textAlign = "center";
+    contentDiv.appendChild(titleDiv);
+
     let canvasDiv = this.createElement(TAG.DIV);
     canvasDiv.id = "pygCardCanvasDiv";
     canvasDiv.style.width = "100%";
-    this.appendChild(canvasDiv);
+    canvasDiv.style.height = "100%";
+    contentDiv.appendChild(canvasDiv);
 
     let canvas = this.createElement(TAG.CANVAS);
     canvas.id = "pygCardCanvas";
@@ -358,12 +373,12 @@ export class AonDashboardGraphicsTrial extends AonElement {
           data: [this.income, null, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Cpas.",
           backgroundColor: "rgb(220, 57, 18, 0.7)",
           data: [null, this.purchases, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Gtos.",
           backgroundColor: "rgb(255, 153, 0, 0.7)",
           data: [null, this.outgoings, null, null, null, null],
         },
@@ -518,6 +533,20 @@ export class AonDashboardGraphicsTrial extends AonElement {
       this.stackedChart = new Chart(canvas, config);
     }
   }
+
+  getTitlePeriod(period){
+    switch (period) {
+     case 'yearly':
+       return 'Vista anual';
+     case 'quarterly':
+       return 'Vista trimestral';
+     case 'monthly':
+       return 'Vista mensual';
+     default:
+       return '';
+   }
+ }
+
 }
 
 window.customElements.define(

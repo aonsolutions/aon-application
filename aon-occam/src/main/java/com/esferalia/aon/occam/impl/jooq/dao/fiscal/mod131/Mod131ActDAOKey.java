@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131;
 
 public enum Mod131ActDAOKey {
 	

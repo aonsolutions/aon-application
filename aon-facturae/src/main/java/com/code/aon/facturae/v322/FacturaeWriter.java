@@ -788,8 +788,11 @@ public class FacturaeWriter {
 		}
 		String issuerContractReferenceOption = FACeUtil.getValue(getDomain(), getUser(), FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, invoice);
 		if (! StringUtils.isEmpty(issuerContractReferenceOption)) {
-			String issuerContractReference = getIssuerContractReference(line, Boolean.parseBoolean(issuerContractReferenceOption));
-			if (! StringUtils.isEmpty(issuerContractReference) ) {
+			boolean purchaseReference = Boolean.parseBoolean(issuerContractReferenceOption);
+			String issuerContractReference = getIssuerContractReference(line, purchaseReference);
+			if (! StringUtils.isEmpty(issuerContractReference) && purchaseReference) {
+				invoiceLine.setReceiverTransactionReference(Util.toTextMax20Type(issuerContractReference));
+			} else if(!StringUtils.isEmpty(issuerContractReference)) {
 				invoiceLine.setIssuerContractReference(Util.toTextMax20Type(issuerContractReference));
 			}		
 		}

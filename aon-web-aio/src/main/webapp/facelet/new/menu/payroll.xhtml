@@ -386,6 +386,14 @@
 												value="#{bundle.payroll_finance_payment_module} (new)" />
 										</aon:div>
 									</aon:if>
+									<aon:if test="#{domainSwitcher.alphaUser}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_fbatchPaymentPayroll"
+												action="gwt_fbatchPaymentPayroll"
+												title="#{bundle.payroll_fbatch_payment_module} (new)"
+												value="#{bundle.payroll_fbatch_payment_module} (new)" />
+										</aon:div>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>

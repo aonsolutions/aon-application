@@ -9,7 +9,10 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -71,6 +74,11 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 
 	@Override
+	public void deleteFinance(String domainName, int domainId, String user, Integer financeId) throws AonCoreException {
+		AON.deleteFinance(domainName, domainId, user, financeId);
+	}
+
+	@Override
 	public LinkedList<RegistryBank> getCompanyBanks(String domainName, int domainId, String user) throws AonCoreException {
 		try {
 			return AON.getCompanyRegistryBanks(domainName, domainId,user);
@@ -99,6 +107,31 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public void createSettleSalaries(String domainName, int domainId, String user, Date date) throws AonCoreException {
 		AON.createSettleSalaries(domainName, domainId, user, date);
+	}
+
+	@Override
+	public Integer createSepaFile(String domainName, int domainId, String user, Integer fbatchId) throws AonCoreException {
+		return AON.createSepaFile(domainName, domainId, user, fbatchId);
+	}
+
+	@Override
+	public LinkedList<FBatch> getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit) throws AonCoreException {
+		return AON.getFBatches(domainName, domain, user, params, offset, limit);
+	}
+
+	@Override
+	public void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds) throws AonCoreException {
+		AON.deleteFBatches(domainName, domain, user, fBatchIds);
+	}
+
+	@Override
+	public FBatch createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch) throws AonCoreException {
+		return AON.createUpdateFBatch(domainName, domain, user, fBatch);
+	}
+
+	@Override
+	public void deleteSepaFile(String domainName, int domain, String user, Integer rattachId) throws AonCoreException {
+		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(rattachId), AttachType.REGISTRY);
 	}
 	
 }

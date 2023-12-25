@@ -84,7 +84,10 @@ public class InvoiceViewer extends SimpleLayoutPanel {
 		
 		
 		tab.getCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 2, new Label(invoice.getRegistryDocumentType().getDescription()));
+		tab.setWidget(row, 2, new Label(invoice.getRegistryDocumentType() == null
+				?""
+				:invoice.getRegistryDocumentType().getDescription())
+		);
 
 		String document = "";
 		if (invoice.getRegistryDocumentCountry() != Country.ES) {

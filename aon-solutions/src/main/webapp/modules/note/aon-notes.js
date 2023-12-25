@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonApplication } from "../../components/aon-application.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { AON_ICONS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import Apps, { NOTES } from "../../services/app.js";
 import { AON_NOTES } from "../../environments/aonTag.js";
 import { getNotes, saveNote, deleteNote, saveNoteTag, deleteNoteTag } from "../../services/noteService.js";
@@ -10,6 +10,7 @@ import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { AonNewDialog } from "../../components/aon-new-dialog.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 import { sortBy } from "../../services/utils.js";
+import { AonIcon } from "../../components/aon-icon.js";
 
 export class AonNotes extends AonElement {
   NOTES;
@@ -483,12 +484,12 @@ export class AonNotes extends AonElement {
     noteCardTitle.value = note.getSubject() ? note.getSubject() : "";
     noteCardTitleDiv.appendChild(noteCardTitle);
 
-    let pinUpTitleButton = this.createElement(TAG.IMG);
-		pinUpTitleButton.src = '../assets/pin-off.svg';
-		pinUpTitleButton.style.height = "20px";
-    pinUpTitleButton.style.width = "20px";
+    let pinUpTitleButton = new AonIcon();
+    pinUpTitleButton.icon = AON_ICONS.AON_PIN_OFF;
+    pinUpTitleButton.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
     pinUpTitleButton.style.cursor = "pointer";
     pinUpTitleButton.title = "Liberar";
+    pinUpTitleButton.id = "pinUpTitleButton";
     pinUpTitleButton.addEventListener(EVENT.CLICK, async (ev)=>{
       ev.stopPropagation();
       note.setPinUp(!note.getPinUp());
@@ -498,6 +499,13 @@ export class AonNotes extends AonElement {
 
     if(note.getPinUp()){
       noteCardTitleDiv.appendChild(pinUpTitleButton);
+      this.waitForElementToExist(`pinUpTitleButton`).then(
+        (button) => {
+          let svg = document.querySelector("#pinUpTitleButton svg");
+          svg.setAttribute("width", "20");
+          svg.setAttribute("height", "20");
+        }
+      );
     }
 
      // Body

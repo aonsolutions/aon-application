@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePayPanel.FinancePayPanelCallback;
@@ -17,12 +19,17 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FinanceActionsPanel extends FlowPanel {
-
+	
 	public FinanceActionsPanel(Finance finance, FinanceModuleCallback cbk) {
+		this(finance, false, cbk);
+	}
+
+	public FinanceActionsPanel(Finance finance, boolean isPayroll, FinanceModuleCallback cbk) {
 		
 		AON.ensureInjected();
 		
@@ -279,6 +286,71 @@ public class FinanceActionsPanel extends FlowPanel {
 		ensureAdd(returnButton);
 		ensureAdd(undoButton);
 		ensureAdd(groupedButton);
+		
+		if(isPayroll && finance.isPending()) {
+			// *************************************************************************
+			// *******															 *******
+			// *******				DELETE BUTTON		 				 		 *******
+			// *******															 *******
+			// *************************************************************************
+			AonTableButton  deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(e -> {
+				
+				cbk.getFinanceService().getFinanceTracking(cbk.getOptions().getDomainName()
+						,cbk.getOptions().getDomain()
+						,cbk.getOptions().getUser(), finance.getId()
+						,new AsyncCallback<LinkedList<FinanceTracking>>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								Label label = new Label("Se ha producido un error al recuperar el historial del vencimiento para el borrado. ["+caught.getMessage()+"]"); 
+								cbk.addExtraInfo( label );
+							}
+
+							@Override
+							public void onSuccess(LinkedList<FinanceTracking> list) {
+								if (list == null || list.size() == 0) {
+									AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Vencimiento",
+											new HTML("Se va a proceder a eliminar el vencimiento <b>" + finance.getRegistryDocument() + " - " + AON.DATE_FORMAT.format(finance.getDueDate()) + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+
+									deleteDialog.confirm(new AonAcceptDialogCallback() {
+
+										@Override
+										public void onCancel() {
+											// Nothing to do here
+										}
+
+										@Override
+										public void onAccept() {
+											cbk.getFinanceService().deleteFinance(cbk.getOptions().getDomainName()
+													,cbk.getOptions().getDomain()
+													,cbk.getOptions().getUser()
+													,finance.getId()
+													,new AsyncCallback<Void>() {
+
+														@Override
+														public void onFailure(Throwable caught) {
+															AonMessageDialog.error("Se ha producido un error al borrar el vencimiento. ["+caught.getMessage()+"]");
+														}
+
+														@Override
+														public void onSuccess(Void success) {
+															cbk.refresh();
+														}
+													});
+										}
+									});
+									
+								} else {
+									AonMessageDialog.error("No se puede borrar un vencimiento que tiene movimientos.");
+								}
+							}
+					
+				});	
+				
+			});
+			
+			ensureAdd(deleteButton);
+		}
 	}
 	
 	private void ensureAdd(Widget widget) {

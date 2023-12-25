@@ -5,7 +5,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -99,6 +101,12 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 	}
 
 	@Override
+	public void deleteFinance(String domainName, int domain, String user, Integer financeId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteFinance(domainName, domain, user, financeId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
 	public void getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit, AsyncCallback<LinkedList<Finance>> callback) {
 		AON.start();
 		fsa.getAccountFinances(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
@@ -110,6 +118,36 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 	public void createSettleSalaries(String domainName, int domain, String user, Date date, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.createSettleSalaries(domainName, domain, user, date, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void createSepaFile(String domainName, int domain, String user, Integer fbatchId, AsyncCallback<Integer> callback) {
+		AON.start();
+		fsa.createSepaFile(domainName, domain, user, fbatchId, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit, AsyncCallback<LinkedList<FBatch>> callback) {
+		AON.start();
+		fsa.getFBatches(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<FBatch>>(callback));
+	}
+
+	@Override
+	public void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteFBatches(domainName, domain, user, fBatchIds, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch, AsyncCallback<FBatch> callback) {
+		AON.start();
+		fsa.createUpdateFBatch(domainName, domain, user, fBatch, new AsyncCallbackWrapper<FBatch>(callback));
+	}
+
+	@Override
+	public void deleteSepaFile(String domainName, int domain, String user, Integer rattachId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteSepaFile(domainName, domain, user, rattachId, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	

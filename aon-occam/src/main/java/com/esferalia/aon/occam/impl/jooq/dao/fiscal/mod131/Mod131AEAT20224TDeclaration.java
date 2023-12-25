@@ -1,20 +1,29 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod131Aeat2023Calculator  {
-	
+class Mod131AEAT20224TDeclaration extends Mod131Declaration{
+
 	private static final double DEFAULT_YEAR_HOURS = 1800;
-	
-	public static Mod131Activity calculate(AONContext ctx, Mod131Activity act) {
+
+	static boolean accept(Mod131 mod131) {
+		return mod131.isAEAT() 
+			&& mod131.getYear() == 2022
+			&& mod131.getPeriod() == Period.T4; 
+	}
+
+	@Override
+	Mod131Activity calculateActivity(AONContext ctx, Mod131Activity act) {
 		calculateModules(ctx,act);
 		calcRendimientoNetoPrevio(ctx,act);
 		calcIncentivosAlEmpleo(ctx,act);
@@ -415,7 +424,7 @@ public class Mod131Aeat2023Calculator  {
 		//	Los contribuyentes que determinen el rendimiento neto de sus actividades
 		//	econ?micas por el m?todo de estimaci?n objetiva, podr?n reducir el rendimiento 
 		//	neto de m?dulos obtenido en 2013 en un 5 por 100.
-		rpf = rpf - (rpf * 10 / 100);
+		rpf = rpf - (rpf * 15 / 100);
 		
 		
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.

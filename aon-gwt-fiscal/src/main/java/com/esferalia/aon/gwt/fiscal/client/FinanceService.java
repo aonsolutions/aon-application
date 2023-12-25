@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -32,11 +34,17 @@ public interface FinanceService extends RemoteService {
 	Finance undoFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException;
 	FinanceTracking payFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
 	FinanceTracking returnFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
+	void deleteFinance(String domainName, int domain, String user, Integer financeId) throws AonCoreException;
 	
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit) throws AonCoreException;
 	
 	// --------------------------------------------------------------- VENCIMIENTO NOMINAS
 	void createSettleSalaries(String domainName, int domain, String user, Date date) throws AonCoreException;
+	Integer createSepaFile(String domainName, int domain, String user, Integer fbatchId) throws AonCoreException;
 	
-
+	LinkedList<FBatch> getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit) throws AonCoreException;
+	void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds) throws AonCoreException;
+	FBatch createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch) throws AonCoreException;
+	void deleteSepaFile(String domainName, int domain, String user, Integer rattachId) throws AonCoreException;
+	
 }

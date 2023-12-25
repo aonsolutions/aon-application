@@ -748,6 +748,9 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		public String toMapKey() {
 			return document + "|" + key + "|" + subKey;
 		}
+		public boolean hasKey() {
+			return AonStringUtils.isNotBlank(this.key);
+		}
 	}
 	
 	private static class Mod190WithholdingTypeVisitor implements IWithholdingTypeVisitor<Mod190DetailKey> {
@@ -890,22 +893,24 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 						rec -> {
 							WithholdingType withholding = WithholdingType.safeValueOf(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE));
 							Mod190DetailKey detailKey = withholding.visit( visitor , new Mod190DetailKey().setDocument( rec.getValue(INVOICE.RDOCUMENT) ));
-							String mapKey = detailKey.toMapKey();
-							Mod190Detail detail = null; 
-							if (!map.containsKey(mapKey)) {
-								detail = new Mod190Detail();
-								detail.setDomain(mod190.getDomain());
-								detail.setMod190(mod190.getId());
-								detail.setDocument(detailKey.getDocument());
-								detail.setName(rec.getValue(INVOICE.RNAME));
-								detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
-								detail.setKey(detailKey.getKey());
-								detail.setSubKey(detailKey.getSubKey());
-								map.put(mapKey, detail);
+							if ( detailKey.hasKey() ) {
+								String mapKey = detailKey.toMapKey();
+								Mod190Detail detail = null; 
+								if (!map.containsKey(mapKey)) {
+									detail = new Mod190Detail();
+									detail.setDomain(mod190.getDomain());
+									detail.setMod190(mod190.getId());
+									detail.setDocument(detailKey.getDocument());
+									detail.setName(rec.getValue(INVOICE.RNAME));
+									detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+									detail.setKey(detailKey.getKey());
+									detail.setSubKey(detailKey.getSubKey());
+									map.put(mapKey, detail);
+								}
+								detail = map.get(mapKey);
+								detail.setPerception(AonMathUtils.round(detail.getPerception() + rec.getValue(sumBase).doubleValue()));
+								detail.setRetention(AonMathUtils.round(detail.getRetention() + rec.getValue(quotaOp).doubleValue()));
 							}
-							detail = map.get(mapKey);
-							detail.setPerception(AonMathUtils.round(detail.getPerception() + rec.getValue(sumBase).doubleValue()));
-							detail.setRetention(AonMathUtils.round(detail.getRetention() + rec.getValue(quotaOp).doubleValue()));
 						});
 		mod190.getDetails().addAll(map.values());
 		return mod190;

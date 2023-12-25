@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -122,4 +124,12 @@ public interface CommonServiceAsync {
 	void deleteQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveQuestion(String domainName, int domain, String user, Question question, AsyncCallback<Question> asyncCallback) throws AonCoreException;
 	void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// **************************** [REMESA VENCIMIENTOS]
+	// **************************************************
+	
+	void getFBatch(String domainName, Integer domainId, String user, Integer fbatchId, AsyncCallback<FBatch> asyncCallback) throws AonCoreException;
+	void createUpdateFBatch(String domainName, Integer domainId, String user, FBatch fbatch, AsyncCallback<FBatch> asyncCallback) throws AonCoreException;
+	void getCompanyBanks(String domainName, Integer domainId, String user, AsyncCallback<LinkedList<RegistryBank>> asyncCallback) throws AonCoreException;
 }
