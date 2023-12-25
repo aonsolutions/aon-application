@@ -23,20 +23,10 @@ public class OCRAddressJSON {
 			.map(OCRAddressJSON::from)
 			.toList();		
 	}
-	
 	public static OCRAddress from(JSONObject json) {
-		if (json == null) return null; 
-		return new OCRAddress()
-			.setText(OCRJSONUtils.getString(json, OCRNames.TEXT))
-			.setAddressNumber(OCRJSONUtils.getString(json, OCRNames.ADDRESS_NUMBER))
-			.setCountry(OCRJSONUtils.getString(json, OCRNames.COUNTRY))
-			.setMunicipality(OCRJSONUtils.getString(json, OCRNames.MUNICIPALITY))
-			.setNeighborhood(OCRJSONUtils.getString(json, OCRNames.NEIGHBORHOOD))
-			.setPostalCode(OCRJSONUtils.getString(json, OCRNames.POSTAL_CODE))
-			.setRegion(OCRJSONUtils.getString(json, OCRNames.REGION))
-			.setStreet(OCRJSONUtils.getString(json, OCRNames.STREET))
-			.setSubRegion(OCRJSONUtils.getString(json, OCRNames.SUB_REGION))
-		;
+		if (json == null) return null;
+		JSONObject jsonValue = OCRJSONUtils.getObject(json, OCRNames.VALUE);
+		return jsonValue != null ?  fromImpl(jsonValue) : fromImpl(json);
 	}
 	
 	public static JSONArray to(List<OCRAddress> list) {
@@ -64,4 +54,21 @@ public class OCRAddressJSON {
 			.putOpt(OCRNames.SUB_REGION, address.getSubRegion().orElse(null))
 		;
 	}
+	
+	private static OCRAddress fromImpl(JSONObject json) {
+		if (json == null) return null; 
+		return new OCRAddress()
+			.setText(OCRJSONUtils.getString(json, OCRNames.TEXT))
+			.setAddressNumber(OCRJSONUtils.getString(json, OCRNames.ADDRESS_NUMBER))
+			.setCountry(OCRJSONUtils.getString(json, OCRNames.COUNTRY))
+			.setMunicipality(OCRJSONUtils.getString(json, OCRNames.MUNICIPALITY))
+			.setNeighborhood(OCRJSONUtils.getString(json, OCRNames.NEIGHBORHOOD))
+			.setPostalCode(OCRJSONUtils.getString(json, OCRNames.POSTAL_CODE))
+			.setRegion(OCRJSONUtils.getString(json, OCRNames.REGION))
+			.setStreet(OCRJSONUtils.getString(json, OCRNames.STREET))
+			.setSubRegion(OCRJSONUtils.getString(json, OCRNames.SUB_REGION))
+		;
+	}
+	
+	
 }
