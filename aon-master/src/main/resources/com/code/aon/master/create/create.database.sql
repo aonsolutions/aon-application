@@ -2981,6 +2981,7 @@ CREATE TABLE `enterprise_activity` (
   `vat_tax` int DEFAULT NULL COMMENT 'Identificador del IVA por defecto',
   `retention_tax` int DEFAULT NULL COMMENT 'Identificador del IRPF por defecto',
   `vat_regime` tinyint DEFAULT NULL COMMENT 'Regimen de IVA',
+  `vat_exemption_cause` tinyint DEFAULT NULL COMMENT 'Causa de exencion de IVA',
   `retention_regime` tinyint DEFAULT NULL COMMENT 'Regimen de IRPF',
   `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de fin',

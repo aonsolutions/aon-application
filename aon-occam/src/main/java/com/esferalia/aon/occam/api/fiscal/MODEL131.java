@@ -28,9 +28,9 @@ public class MODEL131 {
 		}
 	}
 
-	public static Mod131 getMod131(Occam occam, int id) {
+	public static Mod131 get(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod131(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -87,25 +87,25 @@ public class MODEL131 {
 		}
 	}
 
-	public static void deleteMod131(Occam occam, Mod131 mod131) {
+	public static void delete(Occam occam, Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod131);
 		}
 	}
 
-	public static Mod131 initializeMod131(Occam occam,Mod131 mod131) {
+	public static Mod131 initialize(Occam occam,Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod131);
 		}
 	}
 
-	public static Mod131 createMod131(Occam occam,Mod131 mod131) {
+	public static Mod131 create(Occam occam,Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod131);
 		}
 	}
 
-	public static String getMod131Info(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod131, script, infoKey);
 		}
@@ -117,7 +117,7 @@ public class MODEL131 {
 		}
 	}
 
-	public static Mod131 resetMod131(Occam occam, Mod131 mod131) {
+	public static Mod131 reset(Occam occam, Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().reset(ctx, mod131);
 		}

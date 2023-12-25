@@ -182,8 +182,8 @@ public abstract class QuoteCalculator {
 		}
 		
 		@Override
-		public Double getValue(Period period) {
-			return value / getValueDays() * getPeriodDays(period);
+		public Double getValue(Period p) {
+			return value / getValueDays() * getPeriodDays(period.intersect(p));
 		}
 		
 		private long getValueDays() {
@@ -191,7 +191,7 @@ public abstract class QuoteCalculator {
 		}
 
 		private long getPeriodDays(Period p) {
-			return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd())+1;
+		    	return p == null ? 0L : AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd())+1;
 		}
 
 	}
