@@ -5,13 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -21,6 +14,12 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
@@ -35,6 +34,30 @@ public class DownloadAttachmentServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -7638560042733639057L;
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String userName = req.getParameter("user");
+		String domainId = req.getParameter("domainId");
+		String domainName = req.getParameter("domainName");
+		String rattach = req.getParameter("rattach");
+		String attachType = req.getParameter("attachType");
+		
+		try {
+			
+			Domain domain = AON.getDomain(domainName, Integer.parseInt(domainId), userName);	
+			Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(Integer.parseInt(rattach)), AttachType.getAttachType(attachType), true);
+
+			resp.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension()+"\"");
+	        resp.setContentType(attach.getMimeType().getName());
+			
+	        ServletOutputStream output = resp.getOutputStream();
+	        output.write(attach.getData());
+	        resp.flushBuffer();
+		}catch (IOException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		}
+	}
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{

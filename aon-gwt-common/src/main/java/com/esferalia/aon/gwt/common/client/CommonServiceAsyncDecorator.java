@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -301,6 +303,28 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getQuestion(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// **************************** [REMESA VENCIMIENTOS]
+	// **************************************************
+
+	@Override
+	public void getFBatch(String domainName, Integer domain, String user, Integer fbatchId, AsyncCallback<FBatch> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getFBatch(domainName, domain, user, fbatchId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createUpdateFBatch(String domainName, Integer domain, String user, FBatch fbatch, AsyncCallback<FBatch> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createUpdateFBatch(domainName, domain, user, fbatch, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCompanyBanks(String domainName, Integer domain, String user, AsyncCallback<LinkedList<RegistryBank>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanyBanks(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

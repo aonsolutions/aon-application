@@ -29,6 +29,8 @@ import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -58,6 +60,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
@@ -782,6 +785,36 @@ public class FinanceImpl implements IFinance {
 	public void deleteFinance(CloseableAONContext ctx, Integer financeId) {
 		ctx.getDslContext().transaction(
 				configuration -> FinanceDAO.delete(ctx, financeId));
+	}
+	
+	@Override
+	public Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SettleSalariesDAO.createSepaFile(ctx, fbatchId));
+	}
+
+	@Override
+	public LinkedList<FBatch> getFBatches(CloseableAONContext ctx, FBatchFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.getList(ctx, filter, offset, limit));	
+	}
+	
+	@Override
+	public FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.get(ctx, fbatchId));	
+	}
+
+	@Override
+	public void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds) {
+		ctx.getDslContext().transaction(
+				configuration -> FBatchDAO.delete(ctx, fBatchIds));
+	}
+
+	@Override
+	public FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.save(ctx, fBatch));	
 	}
 
 

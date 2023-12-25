@@ -182,6 +182,10 @@
 .aon_icon_delete_forever_red { background-image: iconDeleteForeverRed;}
 @url iconTgss aonIconTgss;
 .aon_icon_tgss { background-image: iconTgss;}
+@url iconXml aonIconXml;
+.aon_icon_xml { background-image: iconXml;}
+@url iconDeleteFile aonIconDeleteFile;
+.aon_icon_delete_file { background-image: iconDeleteFile;}
 @url iconTgssCra aonIconTgssCra;
 .aon_icon_tgss_cra { background-image: iconTgssCra;}
 @url iconTgssIdc aonIconTgssIdc;
