@@ -27,8 +27,8 @@
 			    <testExcludes>
 			      <testExclude>com/esferalia/aon/in/payroll/aws/**</testExclude>
 			    </testExcludes>
-			    <source>11</source>
-			    <target>11</target>
+			    <source>17</source>
+			    <target>17</target>
                             </configuration>
 			</plugin>
 	    </plugins>
@@ -198,8 +198,8 @@
 			    <testExcludes>
 			      <testExclude>com/esferalia/aon/in/payroll/aws/**</testExclude>
 			    </testExcludes>
-			    <source>11</source>
-			    <target>11</target>
+			    <source>17</source>
+			    <target>17</target>
 				<encoding>ISO-8859-1</encoding>
               </configuration>
 			</plugin>
@@ -231,12 +231,73 @@
 		  <artifactId>mail</artifactId>
 		  <version>1.4</version>
 		</dependency>
-				<dependency>
-                        <groupId>com.amazonaws</groupId>
-                        <artifactId>aws-java-sdk-textract</artifactId>
-                        <version>1.11.935</version>
-                        <scope>compile</scope>
-                </dependency>
+		<dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-textract</artifactId>
+            <version>1.11.935</version>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.payroll</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.htmlunit</groupId>
+					<artifactId>htmlunit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-tools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.google.apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.esferalia.aon</groupId>
+					<artifactId>aon.sepe.api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+        <dependency>
+            <groupId>solutions.aon</groupId>
+            <artifactId>aon.aws</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+				<exclusion>
+					<groupId>com.sun.mail</groupId>
+					<artifactId>jakarta.mail</artifactId>
+				</exclusion>
+				<exclusion>
+				    <groupId>com.fasterxml.jackson.core</groupId>
+		    		<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+		    		<groupId>com.amazonaws</groupId>
+		    		<artifactId>aws-java-sdk-dynamodb</artifactId>
+				</exclusion>
+				<exclusion>
+		    		<groupId>com.amazonaws</groupId>
+		    		<artifactId>aws-java-sdk-ses</artifactId>
+				</exclusion>
+			</exclusions>
+        </dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.api.sdk</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- Exclude from jar -->
 		<dependency>
@@ -264,46 +325,21 @@
 		    <scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>3.5.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>net.sourceforge.htmlunit</groupId>
+					<groupId>org.htmlunit</groupId>
 					<artifactId>htmlunit</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.payroll</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>net.sourceforge.htmlunit</groupId>
-					<artifactId>htmlunit</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-tools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.google.apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.esferalia.aon</groupId>
-					<artifactId>aon.sepe.api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

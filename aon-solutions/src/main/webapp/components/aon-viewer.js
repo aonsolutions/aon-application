@@ -236,17 +236,19 @@ export class AonViewer extends AonElement {
 			//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
 			// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 	
-			const loadingTask = pdfjsLib.getDocument({
-				url: this.file,
-				httpHeaders: {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE, HEAD',
-					'Access-Control-Allow-Headers': 'X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept',
-					'Access-Control-Max-Age': '1728000'
-				},
-				withCredentials: true
-			});
+			//const loadingTask = pdfjsLib.getDocument({
+			//	url: this.file
+			//	,httpHeaders: {
+			//		'Access-Control-Allow-Origin': '*',
+			//		'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE, HEAD',
+			//		'Access-Control-Allow-Headers': 'X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept',
+			//		'Access-Control-Max-Age': '1728000'
+			//	}
+			//	,withCredentials: true
+			// ))});
 	
+			const loadingTask = pdfjsLib.getDocument(this.file);
+			
 			loadingTask.promise.then( (pdf) =>  {
 				this.PDF = pdf;
 				console.log('PDF loaded');

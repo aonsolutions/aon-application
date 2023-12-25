@@ -30,6 +30,7 @@ public class OCRClientJSON {
 			.setFilename(OCRJSONUtils.getString(json, OCRNames.FILENAME))
 			.setKey(OCRJSONUtils.getString(json, OCRNames.KEY))
 			.setValue(OCRJSONUtils.getString(json, OCRNames.VALUE))
+			.setS3Object(OCRS3ObjectJSON.from(OCRJSONUtils.getObject(json, OCRNames.LOAD_S3)))
 		;
 	}
 	
