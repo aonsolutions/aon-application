@@ -180,7 +180,8 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
-			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause().value())
+			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null
+					? activity.getVatExemptionCause().value() : null)
 			.returning(ENTERPRISE_ACTIVITY.ID).fetchOne().getId();
 			ctx.log().debug("INSERT ENTERPRISE ACTIVITY id: " + id);	
 		
@@ -206,7 +207,8 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
-			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause().value())
+			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null 
+				? activity.getVatExemptionCause().value() : null)
 			.where(ENTERPRISE_ACTIVITY.ID.eq(activity.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE ENTERPRISE ACTIVITY id: " + activity.getId());	
