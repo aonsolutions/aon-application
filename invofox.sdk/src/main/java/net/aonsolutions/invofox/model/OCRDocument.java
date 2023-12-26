@@ -13,7 +13,7 @@ public class OCRDocument implements Serializable {
 	private String environment;
 	private String company;
 	private String creator;
-	private List<OCRClientData> clientData;
+	private OCRClientData clientData;
 	private OCRType type;
 	private String name;
 	private String creation;
@@ -28,6 +28,7 @@ public class OCRDocument implements Serializable {
 	private OCRImportData importData;
 	private String[] exports;
 	private OCRGeometry geometry;
+	private String original;
 	
 	private OCRInvoice data;
 	
@@ -71,10 +72,10 @@ public class OCRDocument implements Serializable {
 		return this;
 	}
 	
-	public Optional<List<OCRClientData>> getClientData() {
+	public Optional<OCRClientData> getClientData() {
 		return Optional.ofNullable(clientData);
 	}
-	public OCRDocument setClientData(List<OCRClientData> clientData) {
+	public OCRDocument setClientData(OCRClientData clientData) {
 		this.clientData = clientData;
 		return this;
 	}
@@ -119,6 +120,14 @@ public class OCRDocument implements Serializable {
 		return this;
 	}
 	
+	public Optional<String> getOriginal() {
+		return Optional.ofNullable(original);
+	}
+	public OCRDocument setOriginal(String original) {
+		this.original = original;
+		return this;
+	}
+
 	public Optional<OCRInvoice> getData() {
 		return Optional.ofNullable(data);
 	}

@@ -249,6 +249,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_tgss")
 	String aonIconTgss();
 	
+	@ClassName("aon_icon_xml")
+	String aonIconXml();
+	
+	@ClassName("aon_icon_delete_file")
+	String aonIconDeleteFile();
+	
 	@ClassName("aon_icon_tgss_cra")
 	String aonIconTgssCra();
 	

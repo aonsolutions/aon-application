@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -123,4 +125,12 @@ public interface CommonService extends RemoteService {
 	void deleteQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	Question saveQuestion(String domainName, int domain, String user, Question question) throws AonCoreException;
 	Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	
+	// **************************************************
+	// **************************** [REMESA VENCIMIENTOS]
+	// **************************************************
+	
+	FBatch getFBatch(String domainName, Integer domainId, String user, Integer fbatchId) throws AonCoreException;
+	FBatch createUpdateFBatch(String domainName, Integer domainId, String user, FBatch fbatch) throws AonCoreException;
+	LinkedList<RegistryBank> getCompanyBanks(String domainName, Integer domainId, String user) throws AonCoreException;
 }

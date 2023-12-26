@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -30,37 +31,19 @@ class OCRInvoiceBuilderRegistry {
 	abstract static class RegistryFiller implements IRegistryFiller {
 	
 		protected boolean fillRegistry(OCRContext ocr, Predicate<AccountingRegistry> filterExpression) {
-			Invoice invoice = ocr.getInvoice();
-			LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
-					.getAccountingRegistries(ocr.getCtx(), f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
-					.filter(filterExpression)
-					.collect(Collectors.toCollection(LinkedList::new));
-			if (registries != null && !registries.isEmpty()) {
-				if (registries.size() == 1) {
-					AccountingRegistry ar = registries.get(0);
-					ocr.getInvoice()
-						.setRegistry(ar.getId())
-						.setTransaction(ar.getTransaction())
-						.setRegistryData( new Registry( )
-							.setId(ar.getId())
-							.setDocument(ar.getDocument())
-							.setDocumentType(ar.getDocumentType())
-							.setDocumentCountry(ar.getDocumentCountry())
-							.setName(ar.getName())
-							.setAlias(ar.getAlias())
-							.setNationality(ar.getNationality())
-						);
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ocr.getCtx(), ocr.getInvoice(), ocr.getConfig()));
-					return true;
-				} else {
-					ocr.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
-				}
-			}
-			if (ocr.getInvoice().getRegistryDocumentCountry() == null) {
-				ocr.getInvoice().setRegistryDocumentCountry(Country.ES);
-				ocr.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
-			}
-			return false;
+		    try {
+			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), filterExpression, ocr.getInvoice());
+			return true;
+		    } catch (OCRTooManyOwnersException e) {
+			ocr.add(TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+		    } catch (OCROwnerNotFoundException e) {
+		    }
+		    if (ocr.getInvoice().getRegistryDocumentCountry() == null) {
+			ocr.getInvoice().setRegistryDocumentCountry(Country.ES);
+			ocr.add(TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,
+				TediContextKey.RDOCUMENT_COUNTRY.getDescription(), Country.ES.getIso2()));
+		    }
+		    return false;
 		}		
 	}		
 
@@ -117,6 +100,41 @@ class OCRInvoiceBuilderRegistry {
 		,new RecibidaFiller()
 		,new TicketFiller() 
 	};
-
+	
+	public static final void fillRegistry (AONContext aonCtx,  Predicate<AccountingRegistry> filterExpression, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException  {
+		LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
+				.getAccountingRegistries(aonCtx, f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
+				.filter(filterExpression)
+				.collect(Collectors.toCollection(LinkedList::new));
+		if (registries != null && !registries.isEmpty()) {
+			if (registries.size() == 1) {
+				AccountingRegistry ar = registries.get(0);
+				invoice
+					.setRegistry(ar.getId())
+					.setTransaction(ar.getTransaction())
+					.setRegistryData( new Registry( )
+						.setId(ar.getId())
+						.setDocument(ar.getDocument())
+						.setDocumentType(ar.getDocumentType())
+						.setDocumentCountry(ar.getDocumentCountry())
+						.setName(ar.getName())
+						.setAlias(ar.getAlias())
+						.setNationality(ar.getNationality())
+					);
+				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, null));
+				
+				return;
+			} else {
+			    	throw new OCRTooManyOwnersException ();
+			}
+		} else {
+		    throw new OCROwnerNotFoundException();
+		}
+//		if (invoice.getRegistryDocumentCountry() == null) {
+//			invoice.setRegistryDocumentCountry(Country.ES);
+//			throw new OCRUndefinedDocumentCountryException();
+//		}
+		
+	}
 }
  

@@ -1,6 +1,9 @@
 package solutions.aon.aws.s3;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,6 +12,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -46,6 +50,27 @@ public class S3 {
 		if(!s3.doesBucketExistV2(bucket)) s3.createBucket(bucket);
 		s3.putObject(new PutObjectRequest(bucket, key, file));
 		return key;
+	}
+
+	public static String upload(String bucket, String key, byte [] bytes) throws IOException {
+		AmazonS3 s3 = connect();
+		if(!s3.doesBucketExistV2(bucket)) s3.createBucket(bucket);
+		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
+		    ObjectMetadata metadata = new ObjectMetadata();
+		    metadata.setContentLength(bytes.length);
+		    s3.putObject(new PutObjectRequest(bucket, key, is, metadata));
+		    return key;
+		} 
+	}
+
+	public static URL getURL(String bucketName, String key) {
+	    AmazonS3 s3 = connect();
+	    return s3.getUrl(bucketName, key);
+	}
+
+	public static String getContentType(String bucketName, String key) {
+	    AmazonS3 s3 = connect();
+	    return s3.getObjectMetadata(bucketName, key).getContentType();
 	}
 
 	public static String getPresignedURL(String key, Date expireDate) {
