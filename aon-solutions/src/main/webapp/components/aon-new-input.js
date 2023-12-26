@@ -14,7 +14,7 @@ export class AonNewInput extends AonElement {
     TITLE;
     MSG;
     MSG_SPAN;
-
+    
     
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -54,6 +54,14 @@ export class AonNewInput extends AonElement {
     
     set required(value) {
         this.setAttribute(CONSTANT.REQUIRED, value);
+    }
+
+    get maxlength() {
+        return this.getAttribute(CONSTANT.MAXLENGTH);
+    }
+    
+    set maxlength(maxlength) {
+       this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
     }
 
     connectedCallback() {
@@ -100,11 +108,16 @@ export class AonNewInput extends AonElement {
         input.id = this.INPUT;
         input.value = this.getValue();
         input.type = this.getType();
+        
         input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
         input.addEventListener(EVENT.BLUR, this.onBlur);
+        input.addEventListener(EVENT.INPUT, this.onInput);
 
         input.placeholder = this.getTitle();
         label.appendChild(input);
+        if(this.maxlength) {
+            input.setAttribute("maxlength", this.maxlength);
+        }
 
         let span = this.createElement(TAG.SPAN);
         span.id = this.TITLE;
@@ -146,6 +159,10 @@ export class AonNewInput extends AonElement {
         this.dispatchEvent(new Event(EVENT.BLUR));
     };
 
+    onInput = () => {
+        this.dispatchEvent(new Event(EVENT.INPUT));
+    };
+
     checkRequired() {
         if(this.isRequired() && this.getValue().isEmpty()) {
             this.addError(this.getTitle() + " " + MSG.IS_REQUIRED);
@@ -173,7 +190,7 @@ export class AonNewInput extends AonElement {
         if(fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
         iconLabel.appendChild(aonIconButton);
         
-        iconLabel.color = color;
+        if(color) iconLabel.color = color;
         this.getElement(this.INPUT).style.paddingRight = '40px';
     }
 
