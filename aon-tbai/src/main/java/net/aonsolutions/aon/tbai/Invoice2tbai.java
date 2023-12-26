@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -449,6 +450,12 @@ public class Invoice2tbai {
 				DetalleExentaType detalleExenta = new DetalleExentaType();
 				detalleExenta.setBaseImponible(doubleToString(AonMathUtils.round(r.getBase())));
 				detalleExenta.setCausaExencion(CausaExencionType.E_6);
+				
+				if(invoice.getActivity().getVatExemptionCause() != null) {
+					VATExemptionCause cause = invoice.getActivity().getVatExemptionCause();
+					detalleExenta.setCausaExencion(CausaExencionType.fromValue(cause.name()));
+				}
+				
 				if(invoice.isIntracommunity())
 					detalleExenta.setCausaExencion(CausaExencionType.E_5);
 				if(invoice.isExtracommunity())

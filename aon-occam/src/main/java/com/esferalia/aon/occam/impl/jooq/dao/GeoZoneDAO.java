@@ -135,15 +135,24 @@ public class GeoZoneDAO {
 			.getValue(GEOZONE.ID);
 		return geozone.setId(id);
 	}
-
+	
+	
 	public static void bind(AONContext ctx, Integer domain, Integer parentId, Integer childId) {
 		ctx.checkWrite();
-		ctx.getDslContext()
-			.insertInto(GEOTREE)
-			.set(GEOTREE.DOMAIN, domain)
-			.set(GEOTREE.PARENT,parentId)
-			.set(GEOTREE.CHILD,childId)
-			.execute();
+		long count = ctx.getDslContext().select()
+			.from(GEOTREE)
+			.where(GEOTREE.DOMAIN.eq(domain))
+			.and(GEOTREE.PARENT.eq(parentId))
+			.and(GEOTREE.CHILD.eq(childId))
+			.fetch().stream().count();
+		if(count <= 0) {
+			ctx.getDslContext()
+				.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, domain)
+				.set(GEOTREE.PARENT,parentId)
+				.set(GEOTREE.CHILD,childId)
+				.execute();
+		}
 	}
 
 	// *************************************************

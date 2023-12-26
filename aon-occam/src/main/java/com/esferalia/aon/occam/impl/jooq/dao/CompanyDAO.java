@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -128,7 +129,8 @@ public class CompanyDAO {
 				.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
 				.setCnaeCode(getValue(r, CNAE2009.CODE))
 				.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
-				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)));
+				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
+				.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
 		}
 	}
 	

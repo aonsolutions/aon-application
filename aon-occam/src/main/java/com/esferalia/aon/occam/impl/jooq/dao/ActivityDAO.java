@@ -22,10 +22,10 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.Properties.EnterpriseActivityProperties;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.IaeFiller;
-import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class ActivityDAO {
 	
@@ -87,7 +87,8 @@ public class ActivityDAO {
 					.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
 					.setCnaeCode(getValue(r, CNAE2009.CODE))
 					.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
-					.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)));
+					.setVatRegime(VATRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_REGIME)))
+					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
 			
 			activity.setDomain(getValue(r, ENTERPRISE_ACTIVITY.DOMAIN));
 			activity.setEnterprise(getValue(r, ENTERPRISE_ACTIVITY.ENTERPRISE));
@@ -178,6 +179,8 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
+			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause().value())
 			.returning(ENTERPRISE_ACTIVITY.ID).fetchOne().getId();
 			ctx.log().debug("INSERT ENTERPRISE ACTIVITY id: " + id);	
 		
@@ -202,6 +205,8 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
+			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause().value())
 			.where(ENTERPRISE_ACTIVITY.ID.eq(activity.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE ENTERPRISE ACTIVITY id: " + activity.getId());	
