@@ -37,7 +37,7 @@ public enum VATExemptionCause implements Serializable {
 	}
 	
 	public static VATExemptionCause safeValueOf( String i ) {
-		if(i == null || i.isBlank()) return null;
+		if(i == null || "".equals(i)) return null;
 		for (VATExemptionCause rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
