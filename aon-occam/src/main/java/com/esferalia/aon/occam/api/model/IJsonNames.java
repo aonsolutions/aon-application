@@ -606,6 +606,7 @@ public final class IJsonNames {
 	public static final String VAT_PARAMS = "vatParams";
 	public static final String VAT_PERCENT = "vatPercent";
 	public static final String VAT_REGIME = "vatRegime";
+	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
 	public static final String VOLUME = "volume";

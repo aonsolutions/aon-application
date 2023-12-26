@@ -538,12 +538,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			seh1l.setUnidadDeMedidaCantidadEnviada(null);
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		
-		Date fechaCaducidad = detail.getItem().getExpireDate() != null
-				? detail.getItem().getExpireDate()
-				: detail.getItem().getSerialDate();
-		if(fechaCaducidad != null)
-			seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(fechaCaducidad));
+
+//		Date fechaCaducidad = detail.getItem().getExpireDate() != null
+//				? detail.getItem().getExpireDate()
+//				: detail.getItem().getSerialDate();
+//		if(fechaCaducidad != null)
+//			seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(fechaCaducidad));
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
 		seh1l.setFecha_horaReferencia1_102_203_(null);
