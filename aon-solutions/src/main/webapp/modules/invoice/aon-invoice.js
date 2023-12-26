@@ -789,9 +789,10 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
 		});
+
 		date.value = this.invoice.date;
 		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
-
+		date.value = this.invoice.date;
 		
 		// ----- TOTAL
 

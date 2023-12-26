@@ -476,8 +476,7 @@ public class CompanyDAO {
 
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID, IAE.SECTION, IAE.EPIGRAPH)
+				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
@@ -504,8 +503,7 @@ public class CompanyDAO {
 	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx,Integer id) {
 		if (id == null) return null;
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH, IAE.SECTION)
+				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
