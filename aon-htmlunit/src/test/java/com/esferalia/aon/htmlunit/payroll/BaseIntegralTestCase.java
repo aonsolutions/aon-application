@@ -252,6 +252,15 @@ public abstract class BaseIntegralTestCase {
 
 	protected static void settle(Date date) throws IOException, InterruptedException, ParseException {
 		
+	    	Calendar calendar =  Calendar.getInstance();
+	    	calendar.setTime(date);
+	    	calendar.set(Calendar.HOUR_OF_DAY, 0);
+	    	calendar.set(Calendar.MINUTE, 0);
+	    	calendar.set(Calendar.SECOND, 0);
+	    	calendar.set(Calendar.MILLISECOND, 0);
+	    	
+	    	date = calendar.getTime();
+	    
 		HtmlSelect typeSelect = getElementById("typeListBox");
 		typeSelect.click();
 		HtmlOption settleOption = typeSelect.getOptionByValue("SETTLE");
@@ -264,7 +273,7 @@ public abstract class BaseIntegralTestCase {
 
 		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", date)+"']")).click();
 		
-		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar = Calendar.getInstance(new Locale("es","ES"));
 		calendar.setTime(date);
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH)+1;

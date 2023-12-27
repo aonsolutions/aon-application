@@ -19,7 +19,7 @@ import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, T
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonDate } from '../../components/aon-date.js';
+import { AonNewDate } from '../../components/aon-new-date.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -34,6 +34,8 @@ import { AonEmail } from '../../components/aon-email.js';
 import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
 
 import {INVOICE} from  '../../services/app.js';
+import { AonDate } from '../../components/aon-date.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -739,9 +741,10 @@ export class AonInvoice extends AonElement {
 
 			// ----- NUMBER
 
-			let number = new AonInput();
+			let number = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
+			number.title = MSG.NUMBER;
 			number.value = this.invoice.number;
 
 			table.addCell(number);
@@ -777,7 +780,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.DATE;
 		date.title = MSG.DATE;
 		if(this.invoice.isReadonly())
@@ -786,6 +789,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
 		});
+
+		date.value = this.invoice.date;
 		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
 		date.value = this.invoice.date;
 		
@@ -1049,6 +1054,8 @@ export class AonInvoice extends AonElement {
 		activity.setAlias("id", "description");
 		activity.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setActivity(activity.getValueObject());
+			this.setFocus(activity.id);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(activity, '2');
@@ -1113,14 +1120,14 @@ export class AonInvoice extends AonElement {
 			// this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
 		}
 
-		if(this.invoice.isNacional()){
+		if(this.invoice.isNacional() && !this.invoice.isExempt()){
 			for(let i = 0; i < this.invoice.taxes.length; i++) {
 				let tax = this.invoice.taxes[i];
 				if(TaxType.IVA === tax.tax)
 					this.printTax(taxesTable, tax, i);
 			}
 		}
-		if(this.invoice.isNacional() || this.invoice.isCcm()){
+		if(this.invoice.isNacional() || this.invoice.isCcm()) {
 			for(let i = 0; i < this.invoice.taxes.length; i++) {
 				let tax = this.invoice.taxes[i];
 				if(TaxType.IRPF === tax.tax) {
@@ -1159,9 +1166,9 @@ export class AonInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				if(!this.invoice.isNacional()) {
+				if(!this.invoice.isNacional() || this.invoice.isExempt()) {
 					// TODO
-				} else { 
+				} else {
 					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 					this.invoice.addTax();
 					this.reload();
@@ -1169,7 +1176,7 @@ export class AonInvoice extends AonElement {
 				}
 			});
 			irpfTable.addCell(addButton);
-			if(!this.invoice.isNacional()) {
+			if(!this.invoice.isNacional() || this.invoice.isExempt()) {
 				addButton.setDisabled(true);
 			}
 		}
@@ -1868,7 +1875,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + 'Dialog' + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
@@ -1949,7 +1956,7 @@ export class AonInvoice extends AonElement {
 		
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
@@ -2001,7 +2008,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();

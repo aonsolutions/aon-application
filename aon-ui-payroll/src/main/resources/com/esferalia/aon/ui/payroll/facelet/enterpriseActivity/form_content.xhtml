@@ -37,6 +37,15 @@
 					value="#{controller.to.surcharge}" />
 				<aon:outputLabel for="EnterpriseActivity_surcharge" styleClass="aon-italic"
 					value="#{bundle.aon_surcharge_full}" />
+					
+				<aon:selectOneMenu id="EnterpriseActivity_vatExemptionCause"
+					style="margin-left:10px"
+					rendered="#{controller.to.vatRegime.exempt}"
+					value="#{controller.to.vatExemptionCause}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{fiscalCollections.vatExemptionCauses}" />
+				</aon:selectOneMenu>	
+				
 			</aon:div>
 
 			<aon:outputLabel for="EnterpriseActivity_retentionRegime"

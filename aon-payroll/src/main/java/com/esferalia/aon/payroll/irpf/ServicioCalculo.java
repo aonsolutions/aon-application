@@ -26,6 +26,9 @@ import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesSalida2022;
 import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesEntrada2023;
 import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesError2023;
 import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesSalida2023;
+import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesEntrada2024;
+import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesError2024;
+import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesSalida2024;
 
 class ServicioCalculo {
 
@@ -154,6 +157,34 @@ class ServicioCalculo {
 	    }
     }
 
+    public static  AEATRetencionesSalida2024 procesarFicheroXML(AEATRetencionesEntrada2024 entrada2024) throws JAXBException, IrpfCalculateException, IOException {
+	    Marshaller marshaller = JAXBContext.newInstance(
+		    AEATRetencionesEntrada2024.class).createMarshaller();
+	    StringWriter writer = new StringWriter();
+	    marshaller.marshal(entrada2024, writer);
+	    
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2024);
+	    
+	    try {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesSalida2024.class).createUnmarshaller();
+		    AEATRetencionesSalida2024 salida2024 = 
+			    (AEATRetencionesSalida2024)unmarshaller.unmarshal(reader);
+		    System.out.println("Retenciones IRPF."
+		    	+ "Servicio de Módulo de Cálculo de Retenciones "
+		    	+ "EJERCICIOS 2024 y SIGUIENTES");
+		    return salida2024;
+	    } catch (JAXBException | IllegalArgumentException e ) {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesError2024.class).createUnmarshaller();
+		    AEATRetencionesError2024 error2024 = 
+			    (AEATRetencionesError2024)unmarshaller.unmarshal(reader);
+		    throw new IrpfCalculateException(error2024);
+	    }
+    }
+
     public static void main(String[] args) throws IOException, JAXBException, IrpfCalculateException {
 //	String ejemploSalida2022 = procesarFicheroXml(EJEMPLOENTRADA2022, 2022);
 //	StringReader reader = new StringReader(ejemploSalida2022);
@@ -168,14 +199,21 @@ class ServicioCalculo {
 //	    JAXBContext.newInstance(AEATRetencionesSalida2022.class).createMarshaller().marshal(salida2022, System.out);
 //	}
 
-	try ( StringReader ejemploEntrada2023Reader = new StringReader(EJEMPLOENTRADA2023) ) {
-	    AEATRetencionesEntrada2023 entrada2023 = (AEATRetencionesEntrada2023)
-	    JAXBContext.newInstance(AEATRetencionesEntrada2023.class).createUnmarshaller().unmarshal( ejemploEntrada2023Reader );
-    	
-	    AEATRetencionesSalida2023 salida2023 = procesarFicheroXML(entrada2023);
-	    JAXBContext.newInstance(AEATRetencionesSalida2023.class).createMarshaller().marshal(salida2023, System.out);
-	}
+//	try ( StringReader ejemploEntrada2023Reader = new StringReader(EJEMPLOENTRADA2023) ) {
+//	    AEATRetencionesEntrada2023 entrada2023 = (AEATRetencionesEntrada2023)
+//	    JAXBContext.newInstance(AEATRetencionesEntrada2023.class).createUnmarshaller().unmarshal( ejemploEntrada2023Reader );
+//    	
+//	    AEATRetencionesSalida2023 salida2023 = procesarFicheroXML(entrada2023);
+//	    JAXBContext.newInstance(AEATRetencionesSalida2023.class).createMarshaller().marshal(salida2023, System.out);
+//	}
 	
+	try ( StringReader ejemploEntrada2024Reader = new StringReader(EJEMPLOENTRADA2024) ) {
+	    AEATRetencionesEntrada2024 entrada2024 = (AEATRetencionesEntrada2024)
+	    JAXBContext.newInstance(AEATRetencionesEntrada2024.class).createUnmarshaller().unmarshal( ejemploEntrada2024Reader );
+    	
+	    AEATRetencionesSalida2024 salida2024 = procesarFicheroXML(entrada2024);
+	    JAXBContext.newInstance(AEATRetencionesSalida2024.class).createMarshaller().marshal(salida2024, System.out);
+	}
     }
     
     private static final String EJEMPLOENTRADA2022 = 
@@ -221,4 +259,26 @@ class ServicioCalculo {
 	    	+ "</Retenido>\n"
 	    	+ "</Retenedor>"
 	    	+ "</AEATRetencionesEntrada2023>";
+
+    private static final String EJEMPLOENTRADA2024 = 
+	    	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+	    	+ "<AEATRetencionesEntrada2024>\n"
+	    	+ "<IdDoc>\n"
+	    	+ "<CodModelo>RET</CodModelo>\n"
+	    	+ "<Ejercicio>2024</Ejercicio>\n"
+	    	+ "</IdDoc>\n"
+	    	+ "<Retenedor>\n"
+	    	+ "<Nif>Z7896423E</Nif>\n"
+	    	+ "<ApellidosNombre>LINUX FOUNDATION</ApellidosNombre>\n"
+	    	+ "<Retenido>\n"
+	    	+ "<Nif>87449445H</Nif>\n"
+	    	+ "<ApellidosNombre>TORVALDS BENEDICT LINUS</ApellidosNombre>\n"
+	    	+ "<Nacimiento>1982</Nacimiento>\n"
+	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>\n"
+	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>\n"
+	    	+ "<RetribAnuales>17594.52</RetribAnuales>\n"
+	    	+ "<Cotizaciones>1153.08</Cotizaciones>\n"
+	    	+ "</Retenido>\n"
+	    	+ "</Retenedor>"
+	    	+ "</AEATRetencionesEntrada2024>";
 }
