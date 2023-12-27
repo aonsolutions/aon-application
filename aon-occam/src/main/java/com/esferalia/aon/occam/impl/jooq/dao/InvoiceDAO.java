@@ -479,8 +479,9 @@ public class InvoiceDAO {
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getIdProperty().eq(id)));
-			
+//			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getIdProperty().eq(id)));
+			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
+			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
