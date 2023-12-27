@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -24,7 +25,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -37,6 +37,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FBatchParams>{
 	
+	// Variables
+	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 
 	private TextBox description;
@@ -48,7 +50,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	private ListBox type;
 	
 	private ListBox status;
-	private CheckBox confidential;
+	private ListBox confidential;
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
@@ -56,6 +58,10 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	public static interface IFBatchPanelCallback {
 		boolean isSelected(FBatch finance);
 	}
+	
+	// -------------------------------------------------------------------
+	// -----------------------  CONSTRUCTOR  -----------------------------
+	// -------------------------------------------------------------------
 	
 	public FBatchPaymentPayrollModuleSearchPanel(final FinanceModuleOptions opt) {
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -142,11 +148,14 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 			}
 		});
 		
-		confidential = new CheckBox("Confidencial") ;
-		confidential.addClickHandler(new ClickHandler() {
+		confidential = new ListBox();
+		confidential.addItem("Todo", "");
+		confidential.addItem("No Confidencial", "0");
+		confidential.addItem("Confidencial", "1");
+		confidential.addChangeHandler(new ChangeHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onChange(ChangeEvent event) {
 				search(opt);
 			}
 		});
@@ -282,6 +291,10 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 		fromIssueDate.setTabIndex(index);
 	}
 	
+	// -------------------------------------------------------------------
+	// ---------------------  SEARCH & PARAMS  ---------------------------
+	// -------------------------------------------------------------------
+
 	private void search(final FinanceModuleOptions opt) {
 		ValueChangeEvent.<FBatchParams>fire( FBatchPaymentPayrollModuleSearchPanel.this, getParams( opt ) ); 
 	}
@@ -293,7 +306,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 		bank.setSelectedIndex(0);
 		type.setSelectedIndex(0);
 		status.setSelectedIndex(0);
-		confidential.setValue(false);
+		confidential.setSelectedIndex(0);
 	}
 	
 	@Override
@@ -311,7 +324,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 			.setRbank(bank.getSelectedIndex() == 0 ? null : Integer.parseInt(bank.getSelectedValue()))
 			.setType((byte) Integer.parseInt(type.getSelectedValue()))
 			.setStatus(status.getSelectedIndex() == 0 ? null : (byte) Integer.parseInt(status.getSelectedValue()))
-			.setConfidential(confidential.getValue())
+			.setConfidential(confidential.getSelectedIndex() == 0 ? null : AonStringUtils.equalsIgnoreCase(confidential.getSelectedValue(), "1"))
 			;
 	}
 	

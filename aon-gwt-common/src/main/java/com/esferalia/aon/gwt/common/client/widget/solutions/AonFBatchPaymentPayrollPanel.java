@@ -48,12 +48,14 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 	private AonDateBox issueDate = new AonDateBox();
 	private ListBox bank = new ListBox();
 	private ListBox type = new ListBox();
+	private AonTableButton confidential = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
 	private Label totalAmount = new Label();
 	
 	private String domainName;
 	private Integer domainId;
 	private String user;
 	
+	private boolean isConfidential = false;
 	
 	public AonFBatchPaymentPayrollPanel(final String domainName, final int domain, final String user, final AonFBatchPaymentPayrollPanelCallback callback) {
 		initializeCommonService();
@@ -135,11 +137,24 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 		});
 		table.setWidget(3,1,bank);
 		
+		table.setWidget(4,0,new InlineLabel(AON.MSG.confidential()));
+		confidential.addClickHandler(e -> {
+			isConfidential = !isConfidential;
+			if (isConfidential) {
+				confidential.addStyleName(AON.CSS.aonIconChecked());
+				confidential.removeStyleName(AON.CSS.aonIconCheck());
+			} else {
+				confidential.addStyleName(AON.CSS.aonIconCheck());
+				confidential.removeStyleName(AON.CSS.aonIconChecked());
+			}
+		});
+		table.setWidget(4,1,confidential);
+		
 		if(fbatch.getBatchDetails() != null && !fbatch.getBatchDetails().isEmpty()) {
-			table.setWidget(4,0,new InlineLabel(AON.MSG.amount() + " " + AON.MSG.total()));
+			table.setWidget(5,0,new InlineLabel(AON.MSG.amount() + " " + AON.MSG.total()));
 			String amountSum = null == fbatch.getBatchDetails() || fbatch.getBatchDetails().isEmpty() ? "0.00 \u20ac" : AON.FMT.format(fbatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount()).reduce(0.00, (a, b) -> a + b)) + " \u20ac";
 			totalAmount.setText(amountSum);
-			table.setWidget(4,1,totalAmount);
+			table.setWidget(5,1,totalAmount);
 		}
 		
 		// Apply Styles
@@ -147,7 +162,7 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 			table.getCellFormatter().setStyleName(i, 0, AON.CSS.aonTableLabel());
 			table.getCellFormatter().getElement(i, 0).setPropertyString("min-width", "135px");
 			
-			table.getWidget(i, 1).setStyleName(AON.CSS.aonInputText());
+			if(i != 5 && i != 4) table.getWidget(i, 1).setStyleName(AON.CSS.aonInputText());
 		}
 		
 		tablePanel.add( table );
@@ -171,6 +186,7 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 				fbatch.setIssueDate(issueDate.getValue());
 				fbatch.setType((byte) Integer.parseInt(type.getSelectedValue()));
 				fbatch.setRbank(bank.getSelectedIndex() == 0 ? null : new RegistryBank().setId(Integer.parseInt(bank.getSelectedValue())));
+				fbatch.setConfidential(isConfidential);
 				
 				if (fbatch.getId() == null) {
 					fbatch.setDomain(domainId);
