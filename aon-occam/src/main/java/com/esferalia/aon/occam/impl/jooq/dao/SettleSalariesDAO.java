@@ -16,10 +16,6 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -394,20 +390,6 @@ public class SettleSalariesDAO {
 			default:
 				return "No Censado";
 		}
-	}
-
-	private static void buildFile(byte[] arr_bytes, String docName) {
-		File f = new File(docName);
-		try {
-			FileOutputStream fos = new FileOutputStream(f);
-			fos.write(arr_bytes);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Archivo no encontrado");
-		} catch (IOException e) {
-			System.err.println("Error al escribir");
-		}
-
 	}
 	
 	public static String removeSpecialCharacters(String input) {

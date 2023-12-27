@@ -76,6 +76,8 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		
 	}
 	
+	// Variables
+	
 	private DeckLayoutPanel deckLayoutPanel;
 	private FBatchPaymentPayrollEntryModule fBatchPaymentPayrollEntryModule;
 	
@@ -109,6 +111,10 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	final private MutableInt moreData = new MutableInt(0);
 	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
+	
+	// -------------------------------------------------------------------
+	// ----------------------  ON MODULE LOAD  ---------------------------
+	// -------------------------------------------------------------------
 	
 	@Override
 	public void onModuleLoad() {
@@ -231,6 +237,10 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		search(opt, searchPanel.getParams( opt ), offset.getValue());
 	}
 
+	// -------------------------------------------------------------------
+	// --------------------------  COLUMNS  ------------------------------
+	// -------------------------------------------------------------------
+
 	private static enum COLS {
 		  SEL(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		, CHK(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
@@ -267,6 +277,10 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			return cellStyleClass;
 		}
 	}
+	
+	// -------------------------------------------------------------------
+	// ---------------------------  TABLE  -------------------------------
+	// -------------------------------------------------------------------
 
 	protected FlexTable getTable() {
 		tab = new FlexTable();
@@ -295,6 +309,242 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		}
 		return tab;
 	}
+	
+	private void paintRow(final FinanceModuleOptions opt, FBatch fBatch) {
+		int row = tab.getRowCount();
+		fBatches.put(fBatch.getId(), new FBatchRow(row, fBatch));
+		paintRow(opt, fBatch, row);
+	}
+	
+	private void paintRow(final FinanceModuleOptions opt, FBatch fBatch, int row) {
+		int col = 0;
+		
+		AonTableButton selectionButton = new AonTableButton("Ir a la remesa", AON.CSS.aonIconRight()); 
+		selectionButton.addClickHandler(e -> {
+			deckLayoutPanel.showWidget(1);
+			fBatchPaymentPayrollEntryModule.onModuleLoad(opt, fBatch);
+		});
+		
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(fBatch.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
+		checkButton.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (selectedItems.contains(fBatch.getId())) {
+					fBatch.setSelected(false);
+					manageSelection( fBatch );
+					checkButton.addStyleName(AON.CSS.aonIconCheck());
+					checkButton.removeStyleName(AON.CSS.aonIconChecked());
+				} else {
+					fBatch.setSelected(true);
+					manageSelection( fBatch );
+					checkButton.addStyleName(AON.CSS.aonIconChecked());
+					checkButton.removeStyleName(AON.CSS.aonIconCheck());
+				}
+			}
+		});
+		
+		Label description = new Label(fBatch.getDescription());
+		description.setTitle(fBatch.getDescription());
+		
+		Label issueDate = new Label(AON.DATE_FORMAT.format(fBatch.getIssueDate()));
+		
+		Label bank = new Label(null == fBatch.getRbank() ? "" : fBatch.getRbank().getAlias());
+		Label bankAccount = new Label(null == fBatch.getRbank() ? "" : fBatch.getRbank().getBankAccount().toString());
+		
+		Label status = new Label(null == fBatch.getStatus() ? "" : fBatch.getStatus().getDescription());
+		fBatch.getStatus().visit(new IFBatchStatusVisitor() {
+			
+			@Override
+			public void visitUnknown() {
+				// TODO Auto-generated method stub	
+			}
+			
+			@Override
+			public void visitPending() {
+				status.setStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitGenerated() {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void visitAccounted() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+				status.addStyleName(AON.CSS.aonBold());
+			}
+		});
+		
+		Label registries = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0" :  String.valueOf(fBatch.getBatchDetails().size()));
+		registries.addStyleName(AON.CSS.aonTextRight());
+		Label amount = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0.00 \u20ac" : AON.FMT.format(fBatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount()).reduce(0.00, (a, b) -> a + b)) + " \u20ac");
+		amount.addStyleName(AON.CSS.aonTextRight());
+		
+		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete()); 
+		deleteButton.setEnabled(fBatch.isPending());
+		deleteButton.setVisible(fBatch.isPending());
+		deleteButton.addClickHandler(e -> {
+			AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Remesa",
+					new HTML("Se va a proceder a eliminar la remesa '<b>" + fBatch.getDescription() + "</b>'.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					LinkedList<Integer> fbatchIds = new LinkedList<>();
+					fbatchIds.add(fBatch.getId());
+					FINANCE_SERVICE.deleteFBatches(opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchIds, new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void arg0) {
+							toolbar.hideMessages();
+							enableMoreData();
+							container.clear();
+							tab = getTable();
+							container.add(tab);
+							offset.setValue(0);
+							search(opt, searchPanel.getParams( opt ), offset.getValue());
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							showError(caught.getMessage());
+						}
+					});
+				}
+			});
+		});
+
+		tab.setWidget(row, col, selectionButton);
+		++col;
+		tab.setWidget(row, col, checkButton);
+		++col;
+		tab.setWidget(row, col, description);
+		description.setWidth(autoWidth + "px");
+		description.setStyleName(AON.CSS.aonTruncate());
+		++col;
+		tab.setWidget(row, col, issueDate);
+		++col;
+		tab.setWidget(row, col, bank);
+		++col;
+		tab.setWidget(row, col, bankAccount);
+		++col;
+		tab.setWidget(row, col, status);
+		++col;
+		tab.setWidget(row, col, registries);
+		++col;
+		tab.setWidget(row, col, amount);
+		++col;
+		tab.setWidget(row, col, deleteButton);
+	}
+	
+	private void clearSelection() {
+		selectedItems.clear();
+	}
+	
+	private void manageSelection(FBatch fBatch) {
+		if (fBatch.isSelected()) {
+			selectedItems.add(fBatch.getId());
+		} else {
+			selectedItems.remove(fBatch.getId());
+		}
+		refreshIcons();
+	}
+	
+	private void refreshIcons() {
+		deleteButton.setEnabled(selectedItems.size() > 0);
+		selectedCount.setText(selectedItems.size() > 0 ?  AonNumberUtils.toString(selectedItems.size()) : ""); 
+	}
+	
+	// -------------------------------------------------------------------
+	// ---------------------------  SEARCH  ------------------------------
+	// -------------------------------------------------------------------
+
+	public void disableMoreData() {
+		moreData.setValue(-1);
+	}
+	
+	public void enableMoreData() {
+		moreData.setValue(0);
+	}
+	
+	public boolean isMoreData() {
+		return (moreData.getValue() == 0 );
+	}
+	
+	public void enableSearch() {
+		searchEnabled.setValue(0);
+	}
+	
+	public boolean isSearchEnabled() {
+		return (searchEnabled.getValue() == 0 );
+	}
+	
+	public void disableSearch() {
+		searchEnabled.setValue(-1);
+	}
+
+	protected void search(final FinanceModuleOptions opt, FBatchParams params) {
+		enableMoreData();
+		fBatches.clear();
+		clearSelection();
+		container.clear();
+		tab = getTable();
+		container.add(tab);
+		offset.setValue(0);
+		search(opt, params, offset.getValue());
+	}
+
+	private void search(final FinanceModuleOptions opt, FBatchParams params, final int ofs) {
+		if (!isMoreData()) return; 
+		FINANCE_SERVICE.getFBatches(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
+				, new AsyncCallback<LinkedList<FBatch>>() {
+					
+					@Override
+					public void onSuccess(LinkedList<FBatch> result) {
+						checkAll.setEnabled(false);
+						uncheckAll.setEnabled(false);
+						if (result != null && !result.isEmpty()) {
+							result.forEach( fBatch -> paintRow(opt,fBatch));
+							offset.setValue(ofs + result.size());
+							enableMoreData();
+						} else {
+							Label label = new Label(AON.MSG.noData());
+							label.setStyleName(AON.CSS.aonBlockMessage());
+							label.addStyleName(AON.CSS.aonBlockInfoMessage());
+							label.addStyleName(AON.CSS.aonMarginTop());
+							container.add(label);
+							disableMoreData();
+						}
+						checkAll.setEnabled(true);
+						uncheckAll.setEnabled(true);
+						enableSearch();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showError(caught.getMessage());
+					}
+				});
+		
+	}
+
+	private void showError(String msg) {
+		if (AonStringUtils.isBlank(msg)) {
+			msg = "Se ha producido un error no codificado.";
+		}
+		toolbar.showErrorMessage(msg);
+	}
+	
+	// -------------------------------------------------------------------
+	// --------------------------  TOOLBAR  ------------------------------
+	// -------------------------------------------------------------------
 
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
 		toolbar = new AonToolbar("Remesa Transferencias N\u00f3minas");
@@ -444,225 +694,5 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			}
 		}
 	}
-
-	public void disableMoreData() {
-		moreData.setValue(-1);
-	}
-	public void enableMoreData() {
-		moreData.setValue(0);
-	}
-	public boolean isMoreData() {
-		return (moreData.getValue() == 0 );
-	}
-	public void enableSearch() {
-		searchEnabled.setValue(0);
-	}
-	public boolean isSearchEnabled() {
-		return (searchEnabled.getValue() == 0 );
-	}
-	public void disableSearch() {
-		searchEnabled.setValue(-1);
-	}
-
-	protected void search(final FinanceModuleOptions opt, FBatchParams params) {
-		enableMoreData();
-		fBatches.clear();
-		clearSelection();
-		container.clear();
-		tab = getTable();
-		container.add(tab);
-		offset.setValue(0);
-		search(opt, params, offset.getValue());
-	}
-
-	private void search(final FinanceModuleOptions opt, FBatchParams params, final int ofs) {
-		if (!isMoreData()) return; 
-		FINANCE_SERVICE.getFBatches(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
-				, new AsyncCallback<LinkedList<FBatch>>() {
-					
-					@Override
-					public void onSuccess(LinkedList<FBatch> result) {
-						checkAll.setEnabled(false);
-						uncheckAll.setEnabled(false);
-						if (result != null && !result.isEmpty()) {
-							result.forEach( fBatch -> paintRow(opt,fBatch));
-							offset.setValue(ofs + result.size());
-							enableMoreData();
-						} else {
-							Label label = new Label(AON.MSG.noData());
-							label.setStyleName(AON.CSS.aonBlockMessage());
-							label.addStyleName(AON.CSS.aonBlockInfoMessage());
-							label.addStyleName(AON.CSS.aonMarginTop());
-							container.add(label);
-							disableMoreData();
-						}
-						checkAll.setEnabled(true);
-						uncheckAll.setEnabled(true);
-						enableSearch();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());
-					}
-				});
-		
-	}
-
-	private void showError(String msg) {
-		if (AonStringUtils.isBlank(msg)) {
-			msg = "Se ha producido un error no codificado.";
-		}
-		toolbar.showErrorMessage(msg);
-	}
-
-	private void paintRow(final FinanceModuleOptions opt, FBatch fBatch) {
-		int row = tab.getRowCount();
-		fBatches.put(fBatch.getId(), new FBatchRow(row, fBatch));
-		paintRow(opt, fBatch, row);
-	}
 	
-	private void paintRow(final FinanceModuleOptions opt, FBatch fBatch, int row) {
-		int col = 0;
-		
-		AonTableButton selectionButton = new AonTableButton("Ir a la remesa", AON.CSS.aonIconRight()); 
-		selectionButton.addClickHandler(e -> {
-			deckLayoutPanel.showWidget(1);
-			fBatchPaymentPayrollEntryModule.onModuleLoad(opt, fBatch);
-		});
-		
-		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(fBatch.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
-		checkButton.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (selectedItems.contains(fBatch.getId())) {
-					fBatch.setSelected(false);
-					manageSelection( fBatch );
-					checkButton.addStyleName(AON.CSS.aonIconCheck());
-					checkButton.removeStyleName(AON.CSS.aonIconChecked());
-				} else {
-					fBatch.setSelected(true);
-					manageSelection( fBatch );
-					checkButton.addStyleName(AON.CSS.aonIconChecked());
-					checkButton.removeStyleName(AON.CSS.aonIconCheck());
-				}
-			}
-		});
-		
-		Label description = new Label(fBatch.getDescription());
-		description.setTitle(fBatch.getDescription());
-		
-		Label issueDate = new Label(AON.DATE_FORMAT.format(fBatch.getIssueDate()));
-		
-		Label bank = new Label(null == fBatch.getRbank() ? "" : fBatch.getRbank().getAlias());
-		Label bankAccount = new Label(null == fBatch.getRbank() ? "" : fBatch.getRbank().getBankAccount().toString());
-		
-		Label status = new Label(null == fBatch.getStatus() ? "" : fBatch.getStatus().getDescription());
-		fBatch.getStatus().visit(new IFBatchStatusVisitor() {
-			
-			@Override
-			public void visitUnknown() {
-				// TODO Auto-generated method stub	
-			}
-			
-			@Override
-			public void visitPending() {
-				status.setStyleName(AON.CSS.aonColorRed());
-			}
-			
-			@Override
-			public void visitGenerated() {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void visitAccounted() {
-				status.setStyleName(AON.CSS.aonColorGreen());
-				status.addStyleName(AON.CSS.aonBold());
-			}
-		});
-		
-		Label registries = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0" :  String.valueOf(fBatch.getBatchDetails().size()));
-		registries.addStyleName(AON.CSS.aonTextRight());
-		Label amount = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0.00 \u20ac" : AON.FMT.format(fBatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount()).reduce(0.00, (a, b) -> a + b)) + " \u20ac");
-		amount.addStyleName(AON.CSS.aonTextRight());
-		
-		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete()); 
-		deleteButton.setEnabled(fBatch.isPending());
-		deleteButton.setVisible(fBatch.isPending());
-		deleteButton.addClickHandler(e -> {
-			AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Remesa",
-					new HTML("Se va a proceder a eliminar la remesa '<b>" + fBatch.getDescription() + "</b>'.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
-
-				@Override
-				public void onCancel() {
-					// Nothing to do here
-				}
-
-				@Override
-				public void onAccept() {
-					LinkedList<Integer> fbatchIds = new LinkedList<>();
-					fbatchIds.add(fBatch.getId());
-					FINANCE_SERVICE.deleteFBatches(opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchIds, new AsyncCallback<Void>() {
-						
-						@Override
-						public void onSuccess(Void arg0) {
-							toolbar.hideMessages();
-							enableMoreData();
-							container.clear();
-							tab = getTable();
-							container.add(tab);
-							offset.setValue(0);
-							search(opt, searchPanel.getParams( opt ), offset.getValue());
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							showError(caught.getMessage());
-						}
-					});
-				}
-			});
-		});
-
-		tab.setWidget(row, col, selectionButton);
-		++col;
-		tab.setWidget(row, col, checkButton);
-		++col;
-		tab.setWidget(row, col, description);
-		description.setWidth(autoWidth + "px");
-		description.setStyleName(AON.CSS.aonTruncate());
-		++col;
-		tab.setWidget(row, col, issueDate);
-		++col;
-		tab.setWidget(row, col, bank);
-		++col;
-		tab.setWidget(row, col, bankAccount);
-		++col;
-		tab.setWidget(row, col, status);
-		++col;
-		tab.setWidget(row, col, registries);
-		++col;
-		tab.setWidget(row, col, amount);
-		++col;
-		tab.setWidget(row, col, deleteButton);
-	}
-	
-	private void clearSelection() {
-		selectedItems.clear();
-	}
-	private void manageSelection(FBatch fBatch) {
-		if (fBatch.isSelected()) {
-			selectedItems.add(fBatch.getId());
-		} else {
-			selectedItems.remove(fBatch.getId());
-		}
-		refreshIcons();
-	}
-	private void refreshIcons() {
-		deleteButton.setEnabled(selectedItems.size() > 0);
-		selectedCount.setText(selectedItems.size() > 0 ?  AonNumberUtils.toString(selectedItems.size()) : ""); 
-	}
 }		
