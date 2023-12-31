@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -128,7 +129,8 @@ public class CompanyDAO {
 				.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
 				.setCnaeCode(getValue(r, CNAE2009.CODE))
 				.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
-				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)));
+				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
+				.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
 		}
 	}
 	
@@ -474,8 +476,7 @@ public class CompanyDAO {
 
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID, IAE.SECTION, IAE.EPIGRAPH)
+				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
@@ -502,8 +503,7 @@ public class CompanyDAO {
 	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx,Integer id) {
 		if (id == null) return null;
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH, IAE.SECTION)
+				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))

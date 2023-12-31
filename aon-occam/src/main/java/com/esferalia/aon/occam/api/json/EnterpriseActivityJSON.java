@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Iae;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 
 public class EnterpriseActivityJSON {
@@ -39,6 +40,7 @@ public class EnterpriseActivityJSON {
 			.setCnaeCode(JsonUtils.getString(json, IJsonNames.CNAE_CODE))
 			.setCnaeDescription(JsonUtils.getString(json, IJsonNames.CNAE_DESCRIPTION))
 			.setVatRegime(VATRegime.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_REGIME)))
+			.setVatExemptionCause(VATExemptionCause.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_EXEMPTION_CAUSE)))
 			;
 	}
 	
@@ -66,6 +68,7 @@ public class EnterpriseActivityJSON {
 			.put(IJsonNames.CNAE_CODE, object.getCnaeCode())
 			.put(IJsonNames.CNAE_DESCRIPTION, object.getCnaeDescription())
 			.put(IJsonNames.VAT_REGIME, object.getVatRegime().name())
+			.put(IJsonNames.VAT_EXEMPTION_CAUSE, object.getVatExemptionCause() != null ? object.getVatExemptionCause().name() : null)
 			;
 	}
 }

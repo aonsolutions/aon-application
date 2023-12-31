@@ -210,6 +210,7 @@
 
 		<!-- API -->
 		<module>aon-api</module>
+		<module>aon-api-sdk</module>
 		<module>aon-tests</module>
 
 		<!-- GENERATED -->
