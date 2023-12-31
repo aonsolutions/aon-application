@@ -98,6 +98,9 @@ public class FinanceUtils {
 		if (params.getPayMethod() != null) {
 			prop = prop.and(p.getPayMethodProperty().eq(params.getPayMethod()));
 		}
+		if (params.getPayMethodType() != null) {
+			prop = prop.and(p.getPayMethodTypeProperty().eq((byte)params.getPayMethodType().ordinal()));
+		}
 		return prop;
 	}
 
