@@ -68,7 +68,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 	
 	private void setGridHeight() {
-		this.salaryDG.setHeight((Window.getClientHeight() - 250) + "px");
+		this.salaryDG.setHeight((Window.getClientHeight() - (250 + 75 )) + "px");
 	}
 
 	// ------------------------------------------ Provied DataGrid
