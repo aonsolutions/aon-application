@@ -432,30 +432,30 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("1989 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentLabel",
-				15454.46 / 14 							// SALARIO_BASE
+				15454.46 / 14 						// SALARIO_BASE
 						+ 15454.46 / 14 * 5 / 100 		// ANTIGUEDAD 1989-1992 ( 1 TRIENIO 5%)
 						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1992-1995 ( 1 TRIENIO 4%)
-						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1995-2016 ( 6 CUATRIENIOS 4% ) 
+						+ 15454.46 / 14 * 7 * 4 / 100 		// ANTIGUEDAD 1995-2024 ( 7 CUATRIENIOS 4% ) 
 		);
 
 		draft("1991 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentLabel",
 				15454.46 / 14 							// SALARIO_BASE
-						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1991-1994 ( 1 TRIENIO 4%)
-						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1994-2016 ( 6 CUATRIENIOS 4% )
+						+ 15454.46 / 14 * 4 / 100 			// ANTIGUEDAD 1991-1994 ( 1 TRIENIO 4%)
+						+ 15454.46 / 14 * 7 * 4 / 100 			// ANTIGUEDAD 1994-2024 ( 7 CUATRIENIOS 4% )
 		);
 
 		draft("1993 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentLabel",
-				15454.46 / 14 							// SALARIO_BASE
-						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1993-1996 ( 1 TRIENIO 4%)
-						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1996-2016 ( 6 CUATRIENIOS 4% )
+				15454.46 / 14 					// SALARIO_BASE
+						+ 15454.46 / 14 * 4 / 100 	// ANTIGUEDAD 1993-1996 ( 1 TRIENIO 4%)
+						+ 15454.46 / 14 * 7 * 4 / 100 	// ANTIGUEDAD 1996-2024 ( 7 CUATRIENIOS 4% )
 		);
 
 		draft("2012 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentLabel", 
-				15454.46 / 14 // SALARIO_BASE
-						+ 15454.46 / 14 * 2 * 4 / 100 				// ANTIGUEDAD 2012-2016 ( 2 CUATRIENIOS 4% )
+						15454.46 / 14 // SALARIO_BASE
+						+ 15454.46 / 14 * 3 * 4 / 100 				// ANTIGUEDAD 2012-2024 ( 3 CUATRIENIOS 4% )
 		);
 
 		// + CONCEPTO ANTIGUEDAD, DESCRIPCION ?
@@ -1545,9 +1545,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("EXTRA, REDEFINIDAS");
 		calculate(Calendar.JANUARY);
-		assertText("prorationBaseLabel", ( 1027.65 * 1.04 / 6 ) / 12.00 * 2.00 );
+		assertText("prorationBaseLabel", ( 1027.65 * 1.08 / 6 ) / 12.00 * 2.00 );
 		calculate(Calendar.MAY);
-		assertText("prorationBaseLabel", ( 1027.65 * 1.04 / 6 ) / 12.00 * 2.00 );
+		assertText("prorationBaseLabel", ( 1027.65 * 1.08 / 6 ) / 12.00 * 2.00 );
 		
 		draft("EXTRAS PRORRATEAR, CONSTANTES");
 		double salarioBase = getValue("db-amount-label-1");
