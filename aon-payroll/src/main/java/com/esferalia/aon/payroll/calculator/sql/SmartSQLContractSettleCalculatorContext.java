@@ -611,9 +611,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, extra.getMonth());
-		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.add(Calendar.MONTH,1);
 		calendar.add(Calendar.YEAR,-1);
-		calendar.add(Calendar.DAY_OF_MONTH,1);
 		return calendar.getTime();
 	}
 	
