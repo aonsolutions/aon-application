@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.AddColumnActivityExemptionCause;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
 import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
@@ -375,7 +376,8 @@ public class Up2Date {
 	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
 	    //RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
 	    //TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
-		Holidays2024Insert.HOLIDAYS2024INSERT
+		Holidays2024Insert.HOLIDAYS2024INSERT,
+		IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT
 
 		
 	    // ----------------------------------------------------------------
