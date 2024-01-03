@@ -62,7 +62,6 @@ public class ModelMatrixPanel extends FlowPanel {
 	
 	private FiscalMatrixParams params;
 	private AonSearchPanelButton refreshButton;
-	private boolean isBetaEnabled; // FALTA - POR AHORA PARA PODER MOSTRAR DETERMINADOS DATOS SI EL DOMINIO ES BETA
 	
 	private ArrayList<String> selected = new ArrayList<>();
 	private ArrayList<CheckBox> selectedCheckBox = new ArrayList<>();
@@ -72,7 +71,6 @@ public class ModelMatrixPanel extends FlowPanel {
 		
 		this.params = params;
 		this.refreshButton = refreshButton;
-		this.isBetaEnabled = options.getConfiguration().isBetaEnabled();
 		
 		final PopupPanel pop = new PopupPanel(false, true);
 		if (!options.isCompactMode()) {
@@ -275,8 +273,7 @@ public class ModelMatrixPanel extends FlowPanel {
 					paintViewModelCell(options, cell, cloned );
 					
 					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
-					// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
-					if (params.getPeriod() != null && options.getConfiguration().isBetaEnabled()) {
+					if (params.getPeriod() != null) {
 						boolean checkBoxEnabled = true;
 						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
 						if (params.getPeriod() != Period.YEAR) {
@@ -574,29 +571,26 @@ public class ModelMatrixPanel extends FlowPanel {
 	}
 	
 	private void addOnePeriodCells(AonDisplayTableRow row) {
-		// FALTA - POR AHORA SOLO PARA DOMINIOS BETA
-		if (isBetaEnabled) {
-			if (params.getPeriod() != Period.YEAR) {
-				row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
-				   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
-	               .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170());
-			}
-			if (params.isMultiplePresentation()) {					
-				markAllForSend = new CheckBox();			 
-				markAllForSend.setValue(true);
-				markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
-				markAllForSend.addClickHandler( event -> 
-					selectedCheckBox.forEach( cb -> {
-						if (cb.isEnabled()) 
-							cb.setValue(markAllForSend.getValue(), true);	
-					}) 
-				);
-				AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
-				table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
-				table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						
-				row.addCell(table, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
-			}	
+		if (params.getPeriod() != Period.YEAR) {
+			row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
+			   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
+               .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170());
 		}
+		if (params.isMultiplePresentation()) {					
+			markAllForSend = new CheckBox();			 
+			markAllForSend.setValue(true);
+			markAllForSend.setTitle("Pulse para marcar o desmarcar todos");					
+			markAllForSend.addClickHandler( event -> 
+				selectedCheckBox.forEach( cb -> {
+					if (cb.isEnabled()) 
+						cb.setValue(markAllForSend.getValue(), true);	
+				}) 
+			);
+			AonDisplayTable table = new AonDisplayTable(AON.CSS.aonWidthAll());
+			table.addRow().addCell(new InlineLabel("Presentar"), AON.CSS.aonTextCenter());
+			table.addRow().addCell(markAllForSend, AON.CSS.aonTextCenter());						
+			row.addCell(table, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth60());
+		}	
 	}
 
 	private Label getEmptyLabel() {
