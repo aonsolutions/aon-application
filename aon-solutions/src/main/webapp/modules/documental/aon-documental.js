@@ -19,6 +19,8 @@ import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 import '../../css/aon-mobile.css';
 import '../../css/aon.css';
+import { uploadOption } from './DocumentalUtils.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
 
 export class AonDocumental extends AonElement {
     _filter;
@@ -431,156 +433,27 @@ export class AonDocumental extends AonElement {
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.UPLOAD_FILE);
-      d.setContent(this.uploadOption(files.length === 1));
-      let selType = this.getElement("aonDocumentalUploadType");
-      selType.value = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()
-        ? 'enterprise' : 'employee';
-      d.addAcceptAction(async () => {
-        let data = {
-          category: this.getElement("aonDocumentalUploadCategory").value,
-          scope: this.getElement("aonDocumentalUploadScope").value,
-          tag: this.getElement("aonDocumentalUploadTag").value,
-          type: this.getElement("aonDocumentalUploadType").value
-        }
-        // for(let i = 0; i < files.length; i++) {
-        //   const READER = new FileReader();
-        //   READER.readAsDataURL(files[i]);
-        //   READER.onload = (_event) => {
-        //     this.attach(READER.result, files[i], data);
-        //   }
-        // }
-
-        const application = this.getApplication();
-        application.startLoader();
-        for await (const file of files) {
-          const reader = await getReader(file).catch(e=>null);
-          if(reader) await this.attach(reader, data).catch(e=>null);
-        }
-        this.getElement(this.INPUTFILE).value = "";
-        application.stopLoader();
+      d.setContent(uploadOption(this.getDur()));
+      d.addAcceptAction(async() => {
+          let data = {
+            category: document.getElementById("aonDocumentalUploadCategory").value,
+            scope: document.getElementById("aonDocumentalUploadScope").value,
+            tag: document.getElementById("aonDocumentalUploadTag").value,
+            type: document.getElementById("aonDocumentalUploadType").value
+          }
+    
+          let uploadToast = this.getElement('aonUploadToast');
+          if(!uploadToast){ 
+            uploadToast = new AonUploadToast();
+            uploadToast.setDur(this.getDur());
+            this.appendChild(uploadToast);
+          }
+          for (let file of files) {
+            uploadToast.addFile("documental", file, data, () =>  this.aonDocumentalList());
+          }
       });
       d.open();
     }
-    
-    uploadOption(one){
-      let table = document.createElement('table');
-      table.style.width = '100%';
-
-      // if(one) {
-      //   let tr1 = document.createElement('tr');
-      //   table.appendChild(tr2);
-      //
-      //   let tdName = document.createElement('td');
-      //   tdName.setAttribute('colspan', '1');
-  		//   tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
-  		//   tr1.appendChild(tdName);
-  		//   let name = this.getElement('name');
-      //   name.value = this.document.title;
-      // }
-      let tr2 = document.createElement('tr');
-      table.appendChild(tr2);
-
-      // CATEGORY
-      let tdCategory = document.createElement('td');
-      tdCategory.setAttribute('colspan', '1');
-
-      let selCat = new AonSelect();
-      selCat.id = "aonDocumentalUploadCategory";
-      selCat.title = MSG.CATEGORY;
-      selCat.options = JSON.stringify(this._categories);
-      tdCategory.appendChild(selCat);
-
-      tr2.appendChild(tdCategory);
-
-      let tr3 = document.createElement('tr');
-      table.appendChild(tr3);
-      // SCOPE
-      let tdScope = document.createElement('td');
-      tdScope.setAttribute('colspan', '1');
-
-      let selScp = new AonSelect();
-      selScp.id = "aonDocumentalUploadScope";
-      selScp.title = MSG.SCOPE;
-      selScp.options = JSON.stringify(this._scopes);
-      tdScope.appendChild(selScp);
-
-      tr3.appendChild(tdScope);
-
-      let tr4 = document.createElement('tr');
-      table.appendChild(tr4);
-
-      // TAG
-
-      let tdTag = document.createElement('td');
-      tdTag.setAttribute('colspan', '1');
-      let selTag = new AonSelect();
-      selTag.id = "aonDocumentalUploadTag";
-      selTag.title = MSG.TAG;
-      selTag.options = JSON.stringify(this._tags);
-      tdTag.appendChild(selTag);
-
-      tr4.appendChild(tdTag);
-
-      let tr5 = document.createElement('tr');
-      table.appendChild(tr5);
-
-      // TYPE
-
-      let tdType = document.createElement('td');
-      tdType.setAttribute('colspan', '1');
-      let selType = new AonSelect();
-      selType.id = "aonDocumentalUploadType";
-      selType.title = MSG.TYPE;
-      tdType.appendChild(selType);
-
-      let typeOptions = EMPLOYEE_TYPE_OPTION;
-      if(this.getDur().isDocumentalManager()) {
-        typeOptions = ASESOR_TYPE_OPTION;
-      } else if(this.getDur().isDocumentalPortal()){
-        typeOptions = ENTERPRISE_TYPE_OPTION;
-      }
-      selType.setOptions(typeOptions);
-
-      tr5.appendChild(tdType);
-      return table;
-    }
-
-    // attach(fileDataUri,  file, d){
-    //   if (fileDataUri.length > 0) {
-    //     const base64File = fileDataUri.split(',')[1];
-    //     const data = {
-    //       content: base64File,
-    //       contentType: file.type,
-    //       contentEncoding: 'base64',
-    //       contentName: file.name,
-    //       contentSize: file.size,
-    //       category: d.category,
-    //       tag: d.tag,
-    //       scope: d.scope,
-    //       type: d.type
-    //     };
-
-    //     const application = this.getApplication();
-    //     application.startLoader();
-
-    //     uploadFileDocumental(data).then((r) => {
-    //       application.stopLoader();
-    //       this.aonDocumentalList()
-    //     });
-    //   }
-    // }
-
-    async attach(reader, d){
-      const data = {
-        ...reader,
-        contentName: reader.name,
-        contentSize: reader.size,
-        category: d.category,
-        tag: d.tag,
-        scope: d.scope,
-        type: d.type
-      };
-      await uploadFileDocumental(data).then(() =>  this.aonDocumentalList()).catch(e=>null);
-    }
+  
 }
 window.customElements.define('aon-documental', AonDocumental);
