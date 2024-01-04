@@ -1042,6 +1042,9 @@ public interface AonSolutionsCSS extends CssResource {
 	/* TABLE */
 	@ClassName("aon_grid_header")
 	String aonGridHeader();
+	
+	@ClassName("aon_fixed_header")
+	String aonFixedHeader();
 
 	/* TABLE */
 	@ClassName("aon_table")

@@ -973,6 +973,12 @@
 	text-transform: uppercase;
 	background-image: linear-gradient(#FFF, #EEE);
 }
+.aon_fixed_header {
+	position: sticky;
+	top: -1px;
+	height: 1.5rem;
+	z-index: 1;
+}
 .aon_align_items_baseline {
 	align-items: baseline;
 }
