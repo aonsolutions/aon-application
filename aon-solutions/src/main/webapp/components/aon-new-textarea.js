@@ -1,14 +1,14 @@
 import { AonElement } from "./AonElement.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG} from '../environments/environments.js'
-import '../css/aon-new-input.css';
+import '../css/aon-new-textarea.css';
 import { AonIconButton } from "./aon-icon-button.js";
 
-export class AonNewInput extends AonElement {
+export class AonNewTextarea extends AonElement {
 
     ROOT;
     BOX;
     LABEL;
-    INPUT;
+    TEXTAREA;
     ICON;
     ICON_BUTTON;
     TITLE;
@@ -22,14 +22,6 @@ export class AonNewInput extends AonElement {
     
     set id(id) {
         this.setAttribute(CONSTANT.ID, id);
-    }
-
-    get type() {
-        return this.getAttribute(CONSTANT.TYPE);
-    }
-    
-    set type(type) {
-        this.setAttribute(CONSTANT.TYPE, type);
     }
 
     get name() {
@@ -97,15 +89,13 @@ export class AonNewInput extends AonElement {
         this.ROOT = this.id + CONSTANT.ROOT.initCap();
         this.BOX = this.id + CONSTANT.BOX.initCap();
         this.LABEL = this.id + CONSTANT.LABEL.initCap();
-        this.INPUT = this.id + CONSTANT.INPUT.initCap();
+        this.TEXTAREA = this.id + CONSTANT.TEXTAREA.initCap();
         this.TITLE = this.id + CONSTANT.TITLE.initCap();
         this.MSG = this.id + CONSTANT.MSG.initCap();
         this.MSG_SPAN = this.id + CONSTANT.MSG.initCap() + CONSTANT.SPAN.initCap();
         this.ICON = this.id + CONSTANT.ICON.initCap();
         this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
         this.value = this.value || CONSTANT.EMPTY;
-        this.type = this.type || CONSTANT.TEXT;
-
     }
 
     build() {
@@ -121,32 +111,31 @@ export class AonNewInput extends AonElement {
     buildBox(parent) {
         let boxDiv = this.createElement(TAG.DIV);
         boxDiv.id = this.BOX;
-        boxDiv.className = CSS.AON_INPUT_BOX;
+        boxDiv.className = CSS.AON_TEXTAREA_BOX;
         parent.appendChild(boxDiv);
 
         let label = this.createElement(TAG.LABEL);
         label.id = this.LABEL;
-        label.className = CSS.AON_INPUT_BOX_LABEL;  
+        label.className = CSS.AON_TEXTAREA_BOX_LABEL;  
         boxDiv.appendChild(label);
 
-        let input = this.createElement(TAG.INPUT);
-        input.id = this.INPUT;
-        input.value = this.getValue();
-        input.type = this.getType();
-        input.className = CSS.AON_NEW_INPUT;
+        let textarea = this.createElement(TAG.TEXTAREA)
+        textarea.id = this.TEXTAREA;
+        textarea.className = CSS.AON_NEW_TEXTAREA;
+        textarea.value = this.getValue();
 
-        if (this.isDisabled()) input.setAttribute("disabled", "true");
-        if (this.isReadonly())  input.setAttribute("readonly", "true");
+        if (this.isDisabled()) textarea.setAttribute("disabled", "true");
+        if (this.isReadonly())  textarea.setAttribute("readonly", "true");
     
         
-        input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
-        input.addEventListener(EVENT.BLUR, this.onBlur);
-        input.addEventListener(EVENT.INPUT, this.onInput);
+        textarea.addEventListener(EVENT.CHANGE, () => this.setValue(textarea.value));
+        textarea.addEventListener(EVENT.BLUR, this.onBlur);
+        textarea.addEventListener(EVENT.INPUT, this.onInput);
 
-        input.placeholder = this.getTitle();
-        label.appendChild(input);
+        // textarea.placeholder = this.getTitle();
+        label.appendChild(textarea);
         if(this.maxlength) {
-            input.setAttribute("maxlength", this.maxlength);
+            textarea.setAttribute("maxlength", this.maxlength);
         }
 
         let span = this.createElement(TAG.SPAN);
@@ -154,20 +143,12 @@ export class AonNewInput extends AonElement {
         let requiredText = this.isRequired() ? " *" : "";
         span.innerHTML = this.getTitle() + requiredText;
         label.appendChild(span);
-
-        if(this.isPassword()) {
-            this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                this.getElement(this.ICON_BUTTON).icon =  type === 'password' ? 'visibility' : 'visibility_off';
-                input.type = type;
-            })
-        }
     }
 
     buildMsg(parent) {
         let msgDiv = this.createElement(TAG.DIV)
         msgDiv.id = this.MSG;
-        msgDiv.className = CSS.AON_INPUT_MSG
+        msgDiv.className = CSS.AON_TEXTAREA_MSG
         parent.appendChild(msgDiv);
         msgDiv.style.display = 'none';
     }
@@ -179,7 +160,7 @@ export class AonNewInput extends AonElement {
         
         let span = this.createElement(TAG.SPAN);
         span.id = this.MSG_SPAN;
-        span.className = CSS.AON_INPUT_MSG_ERROR;
+        span.className = CSS.AON_TEXTAREA_MSG_ERROR;
         span.innerHTML = message;
         div.appendChild(span);
     }
@@ -212,7 +193,7 @@ export class AonNewInput extends AonElement {
         iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
         iconLabel.style.top = '5px';
         iconLabel.id = this.ICON;
-        iconLabel.setAttribute("for", this.INPUT);
+        iconLabel.setAttribute("for", this.TEXTAREA);
         let aonIconButton = new AonIconButton();
         aonIconButton.id = this.ICON_BUTTON;
         aonIconButton.icon = icon;
@@ -221,14 +202,14 @@ export class AonNewInput extends AonElement {
         iconLabel.appendChild(aonIconButton);
         
         if(color) iconLabel.color = color;
-        this.getElement(this.INPUT).style.paddingRight = '40px';
+        this.getElement(this.TEXTAREA).style.paddingRight = '40px';
     }
 
     addError(message) {
         let span = this.getElement(this.TITLE);
-        span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
-        let input = this.getElement(this.INPUT);
-        input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
+        span.classList.add(CSS.AON_TEXTAREA_BOX_LABEL_SPAN_ERROR);
+        let textarea = this.getElement(this.TEXTAREA);
+        textarea.classList.add(CSS.AON_TEXTAREA_BOX_LABEL_TEXTAREA_ERROR);
         
         if(message) {
             this.buildErrorMessage(message);
@@ -238,9 +219,9 @@ export class AonNewInput extends AonElement {
 
     removeError() {
         let span = this.getElement(this.TITLE);
-        span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
-        let input = this.getElement(this.INPUT);
-        input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
+        span.classList.remove(CSS.AON_TEXTAREA_BOX_LABEL_SPAN_ERROR);
+        let textarea = this.getElement(this.TEXTAREA);
+        textarea.classList.remove(CSS.AON_TEXTAREA_BOX_LABEL_TEXTAREA_ERROR);
 
         let div = this.getElement(this.MSG);
         this.clearElement(div);
@@ -261,18 +242,6 @@ export class AonNewInput extends AonElement {
 
     setTitle(title) {
         this.title = title;
-    }
-
-    getType() {
-        return this.type;
-    }
-
-    setType(type) {
-        this.type = type;
-    }
-
-    isPassword() {
-        return this.type === CONSTANT.PASSWORD;
     }
 
     getValue() {
@@ -308,7 +277,7 @@ export class AonNewInput extends AonElement {
         this.disabled = disabled;
     }
 }
-if(!window.customElements.get(TAG.AON_NEW_INPUT)){
-    window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);
+if(!window.customElements.get(TAG.AON_NEW_TEXTAREA)){
+    window.customElements.define(TAG.AON_NEW_TEXTAREA, AonNewTextarea);
 }
   

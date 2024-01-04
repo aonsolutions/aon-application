@@ -11,6 +11,10 @@ import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { Address } from '../../../models/registry/Address.js';
 
+import * as LS from '../../../services/localStorageService.js';
+import { AonNewSuggestion } from '../../../components/aon-new-suggestion.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
+
 export class AonCustomerSuggestion extends AonElement {
 
   OPTIONS;
@@ -174,7 +178,9 @@ export class AonCustomerSuggestion extends AonElement {
     span1.style.marginRight = "2px";
     div.appendChild(span1);
 
-    let document = this.createAonElement(new AonSuggestion(), this.DOCUMENT, MSG.NIF);
+    
+
+    let document = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.DOCUMENT, MSG.NIF);
     document.readonly = this.isReadonly();
     document.value = this.customer.document;
     document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
@@ -186,7 +192,7 @@ export class AonCustomerSuggestion extends AonElement {
     span2.style.width="75%";
     div.appendChild(span2);
 
-    let name = this.createAonElement(new AonSuggestion(), this.NAME, MSG.BUSINESS_NAME);
+    let name = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.NAME, MSG.BUSINESS_NAME);
     name.name = CONSTANT.NAME;
     name.value = this.customer.name;
     name.readonly = this.isReadonly();
@@ -250,7 +256,7 @@ export class AonCustomerSuggestion extends AonElement {
 
         table.addRow();
         
-        let addressList = new AonSelect();
+        let addressList = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
         addressList.id = this.ADDRESS_LIST;
         addressList.title = MSG.ADDRESS;
         addressList.setAlias('id', 'fullAddress');
