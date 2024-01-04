@@ -1,17 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2023;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2023.Model3902023.Model3902023Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902023;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
 class Page12 extends ResizeComposite {
+	
+	FiscalModelAdmonPanel<Mod390, Model390ModuleOptions> admonPanel;
 
-	public Page12(final Mod3902023 m390, final Model390Callback callback) {
+	public Page12(final Model390Callback callback, final Model3902023Callback cbk2023) {
 		super();
 		
 		IFiscalModelAdmonPanelCallback<Mod390, Model390ModuleOptions> cbk = 
@@ -24,7 +29,7 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public Mod390 getModel() {
-					return m390;
+					return cbk2023.getModel();
 				}
 
 				@Override
@@ -34,8 +39,7 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public String getValidatePrintAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902023ValidatePrintAEAT";
-					
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902023ValidatePrintAEAT";					
 				}
 
 				@Override
@@ -50,7 +54,23 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public void sendSuccessfully() {
-					callback.reload( getModel().getId() );
+					Model3902023.MOD3902023_SERVICE.get(callback.getOptions().getOccam(), getModel(), new AsyncCallback<Mod3902023>() {
+						@Override
+						public void onSuccess(Mod3902023 selected) {
+							if (selected == null) {
+								callback.showError(AON.MSG.unableToFindDeclaration());
+							} else {
+								cbk2023.setModel(selected);
+								cbk2023.refreshDeclarationToolbarPanel();
+								admonPanel.manageLinks();								
+							}
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+						}
+					});
 				}
 
 				@Override
@@ -68,7 +88,7 @@ class Page12 extends ResizeComposite {
 					return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/G412.shtml";
 				}
 		};
-		FiscalModelAdmonPanel<Mod390, Model390ModuleOptions> admonPanel = new FiscalModelAdmonPanel<>(cbk);
+		admonPanel = new FiscalModelAdmonPanel<>(cbk);
 		initWidget(admonPanel);
 	}
 	
