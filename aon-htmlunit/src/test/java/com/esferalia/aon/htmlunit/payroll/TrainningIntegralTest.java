@@ -283,6 +283,11 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("mei_cost", "6,30");
 		click("costsCheck-input");
 		
+		calculate(Calendar.JANUARY, 2024);
+		assertText("mei", "1,51");
+		click("costsCheck-input");
+		assertText("mei_cost", "7,31");
+		click("costsCheck-input");
 		
 		
 		
