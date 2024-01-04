@@ -50,7 +50,10 @@ public class Mod390HFDAO extends FiscalModelDAO {
 	}
 	public static Mod390HF get(AONContext ctx,int id) {
 		ctx.checkRead();
-		return FiscalModelDAO.get(ctx,Mod390HF::new,id);
+		Mod390HF mod = FiscalModelDAO.get(ctx,Mod390HF::new,id); 
+		Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
+		dec.ensureDetails( mod );
+		return mod; 
 	}
 	
 	public static Stream<Mod390HF> getSamePeriodFiscalModels(AONContext ctx,Mod390HF fm) {
@@ -78,7 +81,12 @@ public class Mod390HFDAO extends FiscalModelDAO {
 	
 	public static Mod390HF calculate(Mod390HF mod, Mod390HFDeclaration dec) {
 		Mod390HFMVELContext mvelCtx = getMvelContext( mod );
+		System.out.println( "MvelContext ------------" 
+				+ mod.getAmount( Mod390Key.GP_C120)
+				+ " --- " + mvelCtx.get("GP_C120")  );
+		
 		for (IMod390KeyDAO key : dec.getKeys()) {
+//			System.out.println( key.getKey().toString() + " ---> " + mvelCtx.get( key.getKey().toString() ) );
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
 				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
 				Double amount = (Double) ret;
@@ -86,6 +94,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 				mod.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
 			}
 		}
+//		System.out.println( " ------------ MvelContext" );
 		mod.setDeclarationResult(dec.getResult(mod));
 		return mod; 
 	}

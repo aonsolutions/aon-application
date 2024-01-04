@@ -31,7 +31,8 @@ public class Mod390HFWriter {
 		 ARABA_2021		(mod -> (mod.isAraba() && mod.getYear() >= 2021), Mod390HFWriterARABA2021::new)
 		,ARABA_2019		(mod -> (mod.isAraba() && mod.getYear() >= 2019 && mod.getYear() < 2021), Mod390HFWriterARABA2019::new)
 		,ARABA_2017		(mod -> (mod.isAraba() && mod.getYear() >= 2017 && mod.getYear() < 2019), Mod390HFWriterARABA2017::new)
-		,GIPUZKOA_2021	(mod -> (mod.isGipuzkoa() && mod.getYear() >= 2021), Mod390HFWriterGIPUZKOA2021::new)
+		,GIPUZKOA_2023	(mod -> (mod.isGipuzkoa() && mod.getYear() >= 2023), Mod390HFWriterGIPUZKOA2023::new)
+		,GIPUZKOA_2021	(mod -> (mod.isGipuzkoa() && mod.getYear() >= 2021 && mod.getYear() < 2023), Mod390HFWriterGIPUZKOA2021::new)
 		,GIPUZKOA_2017	(mod -> (mod.isGipuzkoa() && mod.getYear() >= 2015 && mod.getYear() < 2021), Mod390HFWriterGIPUZKOA2017::new)
 		;
 		private IModelAccepter accepter;
