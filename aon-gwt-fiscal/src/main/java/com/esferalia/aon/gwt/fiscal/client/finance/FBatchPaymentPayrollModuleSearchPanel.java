@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -63,7 +64,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	// -----------------------  CONSTRUCTOR  -----------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentPayrollModuleSearchPanel(final FinanceModuleOptions opt) {
+	public FBatchPaymentPayrollModuleSearchPanel(final FinanceModuleOptions opt, FBATCH_TYPE fbatchType) {
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
 		
@@ -127,7 +128,12 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 		});
 		
 		type = new ListBox();
-		type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
+			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		else if(FBATCH_TYPE.PAYMENT == fbatchType) {
+			type.addItem("VISA", "0");
+			type.addItem("SEPA 34-14 (XML)", "9");
+		}
 		type.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {

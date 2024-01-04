@@ -51,6 +51,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	
+	public static enum FBATCH_TYPE {
+		  CHARGE
+		, PAYMENT
+		, PAYROLL_PAYMENT
+		;
+	}
+	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
 	
@@ -112,10 +119,16 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
 	
+	private FBATCH_TYPE fbatchType;
+	
 	// -------------------------------------------------------------------
 	// ----------------------  ON MODULE LOAD  ---------------------------
 	// -------------------------------------------------------------------
 	
+	public FBatchPaymentPayrollModule(FBATCH_TYPE fbatchType) {
+		this.fbatchType = fbatchType;
+	}
+
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -141,7 +154,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		deckLayoutPanel.add(dockLayoutPanel);
 		
-		fBatchPaymentPayrollEntryModule = new FBatchPaymentPayrollEntryModule() {
+		fBatchPaymentPayrollEntryModule = new FBatchPaymentPayrollEntryModule(fbatchType) {
 			
 			@Override
 			public void back(boolean refresh) {
@@ -184,7 +197,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	
 	private void loadModule( final FinanceModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
-		searchPanel = new FBatchPaymentPayrollModuleSearchPanel(opt);
+		searchPanel = new FBatchPaymentPayrollModuleSearchPanel(opt, this.fbatchType);
 		dockLayoutPanel.addNorth(searchPanel, 100.00);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
@@ -547,7 +560,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	// -------------------------------------------------------------------
 
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
-		toolbar = new AonToolbar("Remesa Transferencias N\u00f3minas");
+		toolbar = new AonToolbar(getToolbarTitle());
 
 		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
 		searchButton.addClickHandler(new ClickHandler() {
@@ -678,6 +691,15 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		toolbar.add(newButton);
 	
 		return toolbar;
+	}
+	
+	private String getToolbarTitle() {
+		if(FBATCH_TYPE.PAYROLL_PAYMENT == this.fbatchType)
+			return "Remesa Transferencias N\u00f3minas";
+		else if(FBATCH_TYPE.PAYMENT == this.fbatchType)
+			return "Remesa Pagos";
+		else
+			return "Tipo Remesa Desconocido";
 	}
 	
 	protected void checkAll(final FinanceModuleOptions opt, boolean check) {
