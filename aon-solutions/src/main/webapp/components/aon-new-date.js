@@ -49,6 +49,7 @@ export class AonNewDate extends AonNewInput {
   }
 
   buildDate() {
+    this.setValue(this.value);
     let rootDiv = this.getElement(this.ROOT);
     rootDiv.style.minWidth = '75px';
     this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
@@ -360,6 +361,25 @@ export class AonNewDate extends AonNewInput {
       this.buildCalendar();
     }
     this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
+  }
+
+  setValue(value) {
+    let input = this.getElement(this.INPUT);
+    if(value instanceof Date) {
+      this.date = value;
+      this.day = this.date.getDate();
+      this.month = this.date.getMonth();
+      this.year = this.date.getFullYear();
+      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+    } else if(value){
+      this.date = new Date(Date.parse(value));
+      this.day = this.date.getDate();
+      this.month = this.date.getMonth();
+      this.year = this.date.getFullYear();
+      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+    }
   }
 
   addZero(d){

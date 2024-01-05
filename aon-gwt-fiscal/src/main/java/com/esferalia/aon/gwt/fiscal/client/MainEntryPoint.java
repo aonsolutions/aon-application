@@ -19,7 +19,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
@@ -217,6 +218,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
 	private static final String FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT = "FBatchPaymentPayroll";
+	private static final String FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT = "FBatchPaymentTreasury";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -499,7 +501,22 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FBatchPaymentPayrollModule fBatchPaymentPayrollModule = new FBatchPaymentPayrollModule();
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYROLL_PAYMENT);
+					fBatchPaymentPayrollModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYMENT);
 					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				

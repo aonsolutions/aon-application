@@ -405,10 +405,21 @@ public class Model390HF extends MainEntryPoint {
 				return new Model390HF2017ARABA(cbk,mod390HF);
 			}
 		},
+		GIPUZKOA_2023 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2023GIPUZKOA(cbk,mod390HF);
+			}
+		},
 		GIPUZKOA_2022 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2022);
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() == 2022);
 			}
 
 			@Override

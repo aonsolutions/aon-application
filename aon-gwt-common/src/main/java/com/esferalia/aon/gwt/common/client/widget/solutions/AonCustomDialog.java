@@ -452,4 +452,17 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 			show();
 		});
 	}
+	
+	public static interface AonCustomDialogCallback {
+		void onEnd();
+	}
+	
+	public void showLoadedCB(AonCustomDialogCallback cb) {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+			cb.onEnd();
+		});
+	}
 }

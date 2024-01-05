@@ -167,6 +167,16 @@
 											</aon:commandLink>
 										</aon:div>
 										
+										<!-- Remesas de Pago (New( -->
+										<aon:if test="#{domainSwitcher.alphaUser}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="gwt_fbatchPaymentTreasury"
+													action="gwt_fbatchPaymentTreasury"
+													title="#{bundle.finance_fbatch_payment_module} (new)"
+													value="#{bundle.finance_fbatch_payment_module} (new)" />
+											</aon:div>
+										</aon:if>
+										
 										<!-- Impresión de Pagarés -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="fPaymentPrint-treasury" 

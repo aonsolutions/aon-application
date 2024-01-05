@@ -1,4 +1,9 @@
 
+.aonNewInput {
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+}
+
+
 .aonInputBox {
 	position: relative;
 	width: 100%;

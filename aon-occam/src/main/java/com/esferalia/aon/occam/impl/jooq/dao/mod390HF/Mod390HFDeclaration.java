@@ -52,9 +52,9 @@ public abstract class Mod390HFDeclaration {
 
 	static final double PERCENT_21 = 21.0;
 	static final double PERCENT_10 = 10.0;
+	static final double PERCENT_0 = 0.0;
 	static final double PERCENT_4 = 4.0;
 	static final double PERCENT_5 = 5.0;
-	// static final double PERCENT_0 = 4.0;
 	static final double PERCENT_105 = 10.5;	
 	static final double PERCENT_12 = 12;
 	static final double SURCHARGE_PERCENT_52 = 5.2;
@@ -111,6 +111,10 @@ public abstract class Mod390HFDeclaration {
 		BIZKAIA_2017 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2017Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2017Declaration();}
+		},
+		GIPUZKOA_2023 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2023Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2023Declaration();}
 		},
 		GIPUZKOA_2022 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2022Declaration.accept(mod);}
@@ -283,6 +287,9 @@ public abstract class Mod390HFDeclaration {
 		return vt;	
 	}
 	
+	static boolean hasPercent0(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_0;	
+	}
 	static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4;	
 	}

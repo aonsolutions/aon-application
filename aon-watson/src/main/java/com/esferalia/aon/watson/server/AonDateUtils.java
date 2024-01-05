@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,8 +44,10 @@ public class AonDateUtils {
 	public static final String SIMPLE_DATE_FORMAT4 = "yyyy-MM-dd";
 	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	public static final String DATE_TIME_FORMAT_AUX = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	public static final String DATE_TIME_FORMAT_AUX2 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'";
 	public static final String DATE_TIME_FORMAT_2 = "dd/MM/yyyy HH:mm:ss";
-
+	public static final String DATE_TIME_FORMAT_3 = "yyyy-MM-dd HH:mm:ss";	
+	
 	public static final String TIME_FORMAT = "HH:mm";
 	
 	private static final int MODIFY_ROUND = 1;
@@ -1085,9 +1089,28 @@ public class AonDateUtils {
 			return null;
 		}
 	}
+	
+	public static LocalDateTime parseLocalDateTime(String date, String pattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return parseLocalDateTime(date, formatter);
+	}
+	
+	public static LocalDateTime parseLocalDateTime(String date, DateTimeFormatter formatter) {
+		try {
+			return date == null ? null :  LocalDateTime.parse(date, formatter);
+		} catch (Exception e) {
+			return null;
+		}
+	}
     
 	public static String simpleFormat(Date date) {
 		return date == null ? null : format(date, SIMPLE_DATE_FORMAT);
+	}
+
+	public static LocalDateTime parseLocalDateTime(String date) {
+		if(date == null) return null;
+		LocalDateTime d = localDateTimeParse(date);
+		return d;
 	}
 	
 	public static Date parse(String date) {
@@ -1140,8 +1163,21 @@ public class AonDateUtils {
 		Date d = parse(date, DATE_TIME_FORMAT);
 		if(d == null) d = parse(date, DATE_TIME_FORMAT_AUX);
 		if(d == null) d = parse(date, DATE_TIME_FORMAT_2);
+		if(d == null) d = parse(date, DATE_TIME_FORMAT_AUX2);
+		if(d == null) d = parse(date, DATE_TIME_FORMAT_3);
 		return d;
 	}
+	
+	public static LocalDateTime localDateTimeParse(String date) {
+		if(date == null) return null;
+		LocalDateTime d = parseLocalDateTime(date, DATE_TIME_FORMAT);
+		if(d == null) d = parseLocalDateTime(date, DATE_TIME_FORMAT_AUX);
+		if(d == null) d = parseLocalDateTime(date, DATE_TIME_FORMAT_2);
+		if(d == null) d = parseLocalDateTime(date, DATE_TIME_FORMAT_AUX2);
+		if(d == null) d = parseLocalDateTime(date, DATE_TIME_FORMAT_3);
+		return d;
+	}
+	
 	
 	public static String timeFormat(Date date) {
 		return date == null ? null : format(date, TIME_FORMAT);

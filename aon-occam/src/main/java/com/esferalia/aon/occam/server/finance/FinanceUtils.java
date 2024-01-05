@@ -37,6 +37,7 @@ public class FinanceUtils {
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( true )));
 		} else if (params.getPayment() != null) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
+			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
 		}
 		
 		if (params.getFromInvoiceDate() != null) {
@@ -97,6 +98,9 @@ public class FinanceUtils {
 		}
 		if (params.getPayMethod() != null) {
 			prop = prop.and(p.getPayMethodProperty().eq(params.getPayMethod()));
+		}
+		if (params.getPayMethodType() != null) {
+			prop = prop.and(p.getPayMethodTypeProperty().eq((byte)params.getPayMethodType().ordinal()));
 		}
 		return prop;
 	}

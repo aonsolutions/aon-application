@@ -39,6 +39,7 @@ public interface FinanceServiceAsync {
 	void createSepaFile(String domainName, int domain, String user, Integer fbatchId, AsyncCallback<Integer> asyncCallback);
 
 	void getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit,AsyncCallback<LinkedList<FBatch>> callback);
+	void getFBatch(String domainName, int domain, String user, Integer fbatchId, AsyncCallback<FBatch> callback);
 	void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds, AsyncCallback<Void> callback);
 	void createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch, AsyncCallback<FBatch> callback);
 	void deleteSepaFile(String domainName, int domain, String user, Integer rattachId, AsyncCallback<Void> asyncCallback);

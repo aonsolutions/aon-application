@@ -27,7 +27,8 @@ public class FBatchUtils {
 		}
 		
 		if (params.getType() != null) {
-			prop = prop.and(p.getTypeProperty().eq(params.getType()));
+			if(params.getType() == -1) prop = prop.and(p.getTypeProperty().eq((byte)0).or(p.getTypeProperty().eq((byte)9)));
+			else prop = prop.and(p.getTypeProperty().eq(params.getType()));
 		}
 		
 		if (params.getStatus() != null) {

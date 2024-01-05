@@ -8,7 +8,7 @@ import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { uploadDocuments } from "../documental/DocumentalUtils.js";
+import { uploadDocuments, uploadOption } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
@@ -46,6 +46,7 @@ import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonDesktop extends AonElement {
 
@@ -127,7 +128,9 @@ export class AonDesktop extends AonElement {
 		});
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
+		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => {
+			this.uploadDocumentsDesktop(undefined, target.files);
+		});
 
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
@@ -328,7 +331,32 @@ export class AonDesktop extends AonElement {
 	}
 
 	uploadDocumentsDesktop(input, files){
-		uploadDocuments(input, files, this.getDur());
+		let d = new AonDialog();
+		let rootPanel = document.getElementById("rootPanel");
+		rootPanel.appendChild(d);
+		d.clear();
+		// if(isMobile()) d.width = '400px';
+		d.setTitle(MSG.UPLOAD_FILE);
+		d.setContent(uploadOption(this.getDur()));
+		d.addAcceptAction(async() => {
+		  let data = {
+			  category: document.getElementById("aonDocumentalUploadCategory").value,
+			  scope: document.getElementById("aonDocumentalUploadScope").value,
+			  tag: document.getElementById("aonDocumentalUploadTag").value,
+			  type: document.getElementById("aonDocumentalUploadType").value
+		  }
+
+		  let uploadToast = this.getElement('aonUploadToast');
+		  if(!uploadToast){ 
+			  uploadToast = new AonUploadToast();
+			  uploadToast.setDur(this.getDur());
+			  this.appendChild(uploadToast);
+		  }
+		  for (let file of files) {
+			  uploadToast.addFile("documental", file, data);
+		  }
+		});
+		d.open();
 	}
 
 	uploadInvoiceDesktop(input, files){
@@ -339,7 +367,7 @@ export class AonDesktop extends AonElement {
 			this.appendChild(uploadToast);
 		}
 		for (let file of files) {
-			uploadToast.addFile("invoice", file);
+			uploadToast.addFile("invoice", file, data);
 		}
 	}
 
@@ -1252,7 +1280,8 @@ export class AonDesktop extends AonElement {
 						switch(app.app){
 						case Apps.DOCUMENTAL.app:
 							let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-							uploadDocuments(inputDocumentFile, files, this.getDur());
+							// uploadDocuments(inputDocumentFile, files, this.getDur());
+							this.uploadDocumentsDesktop(undefined, files);
 							break;
 						case Apps.INVOICE.app:
 							let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);

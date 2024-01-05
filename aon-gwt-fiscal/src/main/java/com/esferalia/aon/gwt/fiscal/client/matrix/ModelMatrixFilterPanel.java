@@ -212,8 +212,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		});
 		
 		// Check para habilitar presentacion múltiple
-		multiplePresentation = new CheckBox();
-		multiplePresentation.setVisible(options.getConfiguration().isBetaEnabled()); // FALTA - POR AHORA SOLO APARECE EN DOMINIOS BETA 		
+		multiplePresentation = new CheckBox();		
+		multiplePresentation.setVisible(true);
 		multiplePresentation.setValue(false);
 		multiplePresentation.setStyleName(AON.CSS.aonMarginRight());
 		multiplePresentation.setText("Habilitar presentaci\u00F3n m\u00FAltiple");		

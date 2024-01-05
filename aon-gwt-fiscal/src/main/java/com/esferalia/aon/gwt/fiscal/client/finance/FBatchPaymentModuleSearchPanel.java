@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -18,8 +18,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -35,7 +33,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 
-public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FBatchParams>{
+public class FBatchPaymentModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FBatchParams>{
 	
 	// Variables
 	
@@ -52,9 +50,6 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	private ListBox status;
 	private ListBox confidential;
 	
-	private AonSearchPanelButton cleanButton;
-	private AonSearchPanelButton refreshButton;
-	
 	public static interface IFBatchPanelCallback {
 		boolean isSelected(FBatch finance);
 	}
@@ -63,16 +58,14 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	// -----------------------  CONSTRUCTOR  -----------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentPayrollModuleSearchPanel(final FinanceModuleOptions opt) {
+	public FBatchPaymentModuleSearchPanel(final FinanceModuleOptions opt, FBATCH_TYPE fbatchType) {
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
 		
 		setStyleName(AON.CSS.aonSearchPanel());
 		addStyleName(AON.CSS.aonScrollArea());
-		addStyleName(AON.CSS.aonMarginBottom());
-		addStyleName(AON.CSS.aonMarginLeft());
-		addStyleName(AON.CSS.aonMarginRight());
 		addStyleName(AON.CSS.aonBlockCenter());
+		getElement().getStyle().setProperty("margin", "0px 1rem 0.5rem");
 		
 		description = new TextBox();
 		description.setStyleName(AON.CSS.aonInputText());
@@ -127,7 +120,13 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 		});
 		
 		type = new ListBox();
-		type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
+			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		else if(FBATCH_TYPE.PAYMENT == fbatchType) {
+			type.addItem("Todo", "-1");
+			type.addItem("VISA", "0");
+			type.addItem("SEPA 34-14 (XML)", "9");
+		}
 		type.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -156,25 +155,6 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				search(opt);
-			}
-		});
-		
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
-		cleanButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				initialize(opt);
-				search(opt);
-			}
-		});
-
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
-		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
-		refreshButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
 				search(opt);
 			}
 		});
@@ -260,13 +240,6 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 		tab.setWidget(row, col, confidential);
 		++col;
 		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
-		buttonsPanel.add( cleanButton );
-		buttonsPanel.add( refreshButton );
-		tab.setWidget(row, col, buttonsPanel);
-		
-		
 		setWidget(tab);
 		initialize(opt);
 	}
@@ -296,7 +269,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	// -------------------------------------------------------------------
 
 	private void search(final FinanceModuleOptions opt) {
-		ValueChangeEvent.<FBatchParams>fire( FBatchPaymentPayrollModuleSearchPanel.this, getParams( opt ) ); 
+		ValueChangeEvent.<FBatchParams>fire( FBatchPaymentModuleSearchPanel.this, getParams( opt ) ); 
 	}
 
 	public void initialize(final FinanceModuleOptions opt) {
