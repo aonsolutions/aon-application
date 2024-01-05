@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -107,7 +108,7 @@ public class NordigenJSONUtils {
 	
 	public static Date getDateTimeAux(JSONObject json, String key ) {
 		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) { 
-			LocalDateTime ld = LocalDateTime.parse( json.optString(key, null), DATE_TIME_FORMATTER_AUX);
+			LocalDateTime ld = AonDateUtils.parseLocalDateTime(json.optString(key, null));
 			return Date.from(ld.atZone(ZoneId.systemDefault()).toInstant());
 		}
 		return null;

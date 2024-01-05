@@ -36,6 +36,10 @@ import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
 import {INVOICE} from  '../../services/app.js';
 import { AonDate } from '../../components/aon-date.js';
 import { AonNewInput } from '../../components/aon-new-input.js';
+import { AonNewSuggestion } from '../../components/aon-new-suggestion.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
+import { AonNewTextarea } from '../../components/aon-new-textarea.js';
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -875,7 +879,7 @@ export class AonInvoice extends AonElement {
 
 	onChangeInvoiceTotal(value) {
 		this.invoice.setTotal(value);
-		this.setFocus(this.TOTAL);
+		// this.setFocus(this.TOTAL);
 		this.reload();
 		if(this.autosave) this.save();
 	}
@@ -952,11 +956,18 @@ export class AonInvoice extends AonElement {
 		card.setContent(table);
 
 		table.addRow(); // ----- ROW 1
+		
+		let div = this.createDiv();
+		div.className = CSS.AON_FLEX;
+		table.addCell(div, '4');
+		
 		if(this.invoice.isEmitida()) {
-
 			// ----- SERIE
-			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
-			table.addCell(serie);
+			let serieSpan = this.createTableSpan("20%", "2px");
+			div.appendChild(serieSpan);
+
+			let serie = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.SERIE, MSG.SERIE);
+			serieSpan.appendChild(serie);
 			serie.setMaxlength(5);
 			serie.addEventListener(EVENT.AON_KEYUP, (e) => {
 				serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
@@ -971,15 +982,17 @@ export class AonInvoice extends AonElement {
 
 			// ----- NUMBER
 
+			let numberSpan = this.createTableSpan("30%", "2px");
+			div.appendChild(numberSpan);
+
 			let number = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
 			number.title = MSG.NUMBER;
 			number.value = this.invoice.number;
-
-			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
+			numberSpan.appendChild(number);
 			if(this.invoice.isInbox()) {
 				getSalesSeries({}).then(r => {
 					this.series = r;
@@ -995,20 +1008,26 @@ export class AonInvoice extends AonElement {
 			}
 		} else {
 			// ----- REFERENCE
+			let referenceSpan = this.createTableSpan("45%", "2px");
+			div.appendChild(referenceSpan);
 
-			let reference = new AonInput();
+			let reference = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 			reference.id = this.REFERENCE;
 			reference.description = MSG.REFERENCE;
+			reference.title = MSG.REFERENCE;
 			reference.value = this.invoice.reference;
 			reference.readonly = this.invoice.isReadonly();
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
 				if(this.autosave) this.save();
 			});
-			table.addCell(reference, '2');
+			referenceSpan.appendChild(reference);
 		}
 
 		// ----- DATE
+
+		let dateSpan = this.createTableSpan("30%", "2px");
+		div.appendChild(dateSpan);
 
 		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.DATE;
@@ -1021,17 +1040,26 @@ export class AonInvoice extends AonElement {
 		});
 
 		date.value = this.invoice.date;
-		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
+		dateSpan.appendChild(date);
 		date.value = this.invoice.date;
-		
+	
 		// ----- TOTAL
 
+		let totalSpan = this.createTableSpan("25%", "0px");
+		div.appendChild(totalSpan);
+
 		let total = this.createAonNumber(this.TOTAL, MSG.TOTAL, this.invoice.total);
+		total.value;
 		total.onChange(() => this.onChangeInvoiceTotal(total.value));
-		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
+		totalSpan.appendChild(total);
+		// ***** OLD THEME
+		total.readonly = this.invoice.isReadonly()
+		|| this.invoice.taxes.length > 1
+		|| this.invoice.details.length > 0;
+		// *****
 
 		table.addRow(); // ----- ROW 2
 
@@ -1090,7 +1118,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- CATEGORY
 
-		let category = new AonSelect();
+		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		category.id = this.CATEGORY;
 		category.title = MSG.CATEGORY;
 		category.autocomplete = true;
@@ -1106,29 +1134,6 @@ export class AonInvoice extends AonElement {
 			category.value = this.invoice.getCategory();
 		});
 
-		// // ----- PAYMETHOD
-
-		// let paymethod = new AonSelect();
-		// paymethod.id = this.PAYMETHOD;
-		// paymethod.title = MSG.PAYMETHOD;
-		// paymethod.autocomplete = true;
-		// // paymethod.options = JSON.stringify(Paymethods);
-		// paymethod.readonly = this.invoice.isReadonly();
-		// paymethod.addEventListener(EVENT.SELECT, () => {
-		// 	this.invoice.setPaymethod(paymethod.value);
-		// 	this.setFocus(paymethod.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
-		
-		// getPaymethods({}).then(paymethods => {
-		// 	let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-		// 	paymethod.options = JSON.stringify(pms);
-		// 	if(this.invoice.finances.length === 1) {
-		// 		paymethod.value = this.invoice.finances[0].paymethod;
-		// 	}
-		// });
 
 		getWorkplaces().then(r => {
 			if(!this.invoice.workplace && r.length > 0) {
@@ -1137,7 +1142,7 @@ export class AonInvoice extends AonElement {
 			if(r.length > 1) {
 				table.addRow();
 				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
-				let workplace = new AonSelect();
+				let workplace =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 				workplace.id = this.WORKPLACE;
 				workplace.title = MSG.WORKPLACE;
 				workplace.autocomplete = true;
@@ -1259,9 +1264,15 @@ export class AonInvoice extends AonElement {
 
 		table.addRow(); // ----- ROW 1
 
-		// ----- TRANSACTION TYPE
+		let div = this.createDiv();
+		div.className = CSS.AON_FLEX;
+		table.addCell(div, '4');
 
-		let transaction = new AonSelect();
+		// ----- TRANSACTION TYPE
+		let transactionSpan = this.createTableSpan("50%", "2px");
+		div.appendChild(transactionSpan);
+
+		let transaction =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		transaction.id = this.TRANSACTION_TYPE;
 		transaction.title = MSG.TRANSACTION_TYPE;
 		transaction.options = JSON.stringify(Transactions);
@@ -1273,11 +1284,13 @@ export class AonInvoice extends AonElement {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(transaction, '2');
+		transactionSpan.appendChild(transaction);
 
 		// ----- ACTIVITY TYPE
+		let activitySpan = this.createTableSpan("50%", "0px");
+		div.appendChild(activitySpan);
 
-		let activity = new AonSelect();
+		let activity =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		activity.id = this.ACTIVITY;
 		activity.title = MSG.ACTIVITY;
 		activity.readonly = this.invoice.isReadonly();
@@ -1288,7 +1301,7 @@ export class AonInvoice extends AonElement {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(activity, '2');
+		activitySpan.appendChild(activity);
 		getCompanyActivities({}).then(activities => {
 			if(activities.length > 0) {
 				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
@@ -1428,7 +1441,7 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 
-		let irpfType = new AonSelect();
+		let irpfType =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		irpfType.id = 'irpfwithholdingTYpe';
 		irpfType.title = 'Tipo IRPF';
 		irpfType.setAlias('id', 'name');
@@ -1509,7 +1522,7 @@ export class AonInvoice extends AonElement {
 		// ----- TAX PERCENT
 
 		tax.type = tax.type || tax.tax;
-		let percentage = new AonSelect();
+		let percentage = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '% ' + getTaxTypeName(tax.type, this.isMobile());
 		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type));
@@ -1611,7 +1624,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 
-		let description = new AonSuggestion();
+		let description = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.addEventListener(EVENT.AON_KEYUP, (e) => {
@@ -1680,13 +1693,20 @@ export class AonInvoice extends AonElement {
 	}
 
 	createAonNumber(id, title, value) {
-		let aonNumber = this.createAonElement(new AonNumber(), id, title);
+		let aonNumber = this.createAonElement(LS.isNewTheme() ? new AonNewNumber() : new AonNumber(), id, title);
 		aonNumber.format = CONSTANT.TRUE;
 		aonNumber.decimals = "2";
 		aonNumber.readonly = this.invoice.isReadonly();
-		aonNumber.value = value;
+		aonNumber.value = value || 0.0;
 		return aonNumber;
 	}
+
+	createTableSpan(width, marginRight){
+		let span = this.createSpan();
+		span.style.width= width;
+		span.style.marginRight = marginRight;
+		return span;
+	}	
 
 	onChangeDetail(detail, i, dialog) {
 		this.invoice.setDetail(detail, i);
@@ -1725,7 +1745,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 
-		let description = new AonAutosizeTextarea();
+		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.readonly = this.invoice.isReadonly();
@@ -1794,7 +1814,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
-			let vat = new AonSelect();
+			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + i;
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
@@ -1870,7 +1890,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 		
-		let description = new AonSuggestion();
+		let description = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		description.id = this.DETAIL_DESCRIPTION + 'Dialog' + i;
 		description.title = MSG.CONCEPT;
 		description.addEventListener(EVENT.AON_KEYUP, () => {
@@ -1904,7 +1924,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt() &&  (!detail.prepayment || detail.prepayment == 'false')) {
-			let vat = new AonSelect();
+			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
@@ -1968,7 +1988,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- CATEGORY
 
-		let category = new AonSelect();
+		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		category.id = this.DETAIL_CATEGORY + i;
 		category.title = MSG.CATEGORY;
 		category.autocomplete = true;
@@ -1987,7 +2007,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- BIEN AFECTO
 		// TODO
-		let bienAfecto = new AonSelect();
+		let bienAfecto = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
 		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
 		bienAfecto.autocomplete = true;
@@ -2122,7 +2142,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = new AonSelect();
+		let paymethod = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		paymethod.id =this.FINANCE_PAYMETHOD + 'Dialog' + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
@@ -2147,7 +2167,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 		
-		let bankAccount = new AonSuggestion();
+		let bankAccount = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		bankAccount.id = this.FINANCE_BANK_ACCOUNT + 'Dialog' + i;
 		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
@@ -2254,7 +2274,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = new AonSelect();
+		let paymethod = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		paymethod.id = this.FINANCE_PAYMETHOD + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
@@ -2307,7 +2327,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 
-		let bankAccount = new AonSuggestion();
+		let bankAccount = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		bankAccount.id = this.FINANCE_BANK_ACCOUNT + i;
 		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
@@ -2480,7 +2500,7 @@ export class AonInvoice extends AonElement {
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
-			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 			getAeatCertificates().then(certs => {
 				certSelect.setOptions(certs.map(s => {
 					return {
@@ -2643,7 +2663,7 @@ export class AonInvoice extends AonElement {
 			value: 'ticket',
 		}];
 
-		let type = new AonSelect();
+		let type = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		type.id = this.TYPE;
 		type.title = MSG.TYPE;
 		type.setOptions(types);
@@ -2758,7 +2778,7 @@ export class AonInvoice extends AonElement {
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("FACTURAE");
 		let div  =this.createDiv();
-		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 		div.appendChild(certSelect);
 		getAeatCertificates().then(certs => {
 			certSelect.setOptions(certs.map(s => {
@@ -2823,7 +2843,7 @@ export class AonInvoice extends AonElement {
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle("Anular");
-			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 			getAeatCertificates().then(certs => {
 				certSelect.setOptions(certs.map(s => {
 					return {

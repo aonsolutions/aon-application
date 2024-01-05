@@ -24,6 +24,7 @@ export const BUTTON = 'button';
 export const SECTION = 'section';
 export const IFRAME = 'iframe';
 export const PRE = 'pre';
+export const TEXTAREA = 'textarea';
 
 // COMPONENTS
 
@@ -32,6 +33,7 @@ export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
 export const AON_AUTH = 'aon-auth';
 export const AON_AUTOSIZE_TEXTAREA = 'aon-autosize-textarea';
+export const AON_NEW_TEXTAREA = 'aon-new-textarea';
 export const AON_BASIC_TABLE = 'aon-basic-table';
 export const AON_BUTTON = 'aon-button';
 export const AON_DASHBOARD_BUTTON = 'aon-dashboard-button';
@@ -59,12 +61,15 @@ export const AON_NOTES = 'aon-notes';
 export const AON_APP_MENU = 'aon-app-menu';
 export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
+export const AON_NEW_NUMBER = 'aon-new-number';
 export const AON_REGISTRY = 'aon-registry';
 export const AON_SEARCH = 'aon-search';
 export const AON_SEARCH_BOX = 'aon-search-box';
 export const AON_SELECT = 'aon-select';
+export const AON_NEW_SELECT = 'aon-new-select';
 export const AON_SLIDER = 'aon-slider';
 export const AON_SUGGESTION = 'aon-suggestion';
+export const AON_NEW_SUGGESTION = 'aon-new-suggestion';
 export const AON_SWITCH = 'aon-switch';
 export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
