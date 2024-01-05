@@ -380,7 +380,7 @@ public class Up2Date {
 	    //TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
 		Holidays2024Insert.HOLIDAYS2024INSERT,
 		IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
-		MEI2024Insert.MEI2024INSERT
+		MEI2024Insert.MEI2024INSERT,
 
 		
 	    // ----------------------------------------------------------------
