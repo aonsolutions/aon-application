@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
+public abstract class AonFBatchPaymentPanel extends SimplePanel {
 	
 	public static interface AonFBatchPaymentPayrollPanelCallback {
 		void onAccept(FBatch fBatch);
@@ -58,7 +58,7 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 	
 	private boolean isConfidential = false;
 	
-	public AonFBatchPaymentPayrollPanel(final String domainName, final int domain, final String user, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public AonFBatchPaymentPanel(final String domainName, final int domain, final String user, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
 		initializeCommonService();
 		
 		this.domainName = domainName;
@@ -68,7 +68,7 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 		show(new FBatch(), fbatchType, callback);
 	}
 	
-	public AonFBatchPaymentPayrollPanel(final String domainName,final int domain,final String user, Integer fbatchId, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public AonFBatchPaymentPanel(final String domainName,final int domain,final String user, Integer fbatchId, final AonFBatchPaymentPayrollPanelCallback callback) {
 		initializeCommonService();
 		
 		this.domainName = domainName;

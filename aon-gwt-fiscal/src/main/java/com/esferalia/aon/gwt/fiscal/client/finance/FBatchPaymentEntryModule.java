@@ -21,7 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButto
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule.FBATCH_TYPE;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -61,7 +61,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel {
+public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -193,7 +193,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 	// --------------------- ON MODULE LOAD ----------------------------
 	// -------------------------------------------------------------------
 
-	public FBatchPaymentPayrollEntryModule(FBATCH_TYPE fbatchType) {
+	public FBatchPaymentEntryModule(FBATCH_TYPE fbatchType) {
 		this.fbatchType = fbatchType;
 	}
 
@@ -1439,7 +1439,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 	// -------------------------------------------------------------------
 
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
-		toolbar = new AonToolbar("Remesa Transferencias N\u00f3minas");
+		toolbar = new AonToolbar(getToolbarTitle());
 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -1496,6 +1496,15 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		toolbar.add(deleteFileButton);
 
 		return toolbar;
+	}
+	
+	private String getToolbarTitle() {
+		if(FBATCH_TYPE.PAYROLL_PAYMENT == this.fbatchType)
+			return "Remesa Transferencias N\u00f3minas";
+		else if(FBATCH_TYPE.PAYMENT == this.fbatchType)
+			return "Remesa Pagos";
+		else
+			return "Tipo Remesa Desconocido";
 	}
 
 	private void save() {

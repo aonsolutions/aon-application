@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule.FBATCH_TYPE;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 
-public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FBatchParams>{
+public class FBatchPaymentModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FBatchParams>{
 	
 	// Variables
 	
@@ -58,7 +58,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	// -----------------------  CONSTRUCTOR  -----------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentPayrollModuleSearchPanel(final FinanceModuleOptions opt, FBATCH_TYPE fbatchType) {
+	public FBatchPaymentModuleSearchPanel(final FinanceModuleOptions opt, FBATCH_TYPE fbatchType) {
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
 		
@@ -269,7 +269,7 @@ public class FBatchPaymentPayrollModuleSearchPanel extends SimpleLayoutPanel imp
 	// -------------------------------------------------------------------
 
 	private void search(final FinanceModuleOptions opt) {
-		ValueChangeEvent.<FBatchParams>fire( FBatchPaymentPayrollModuleSearchPanel.this, getParams( opt ) ); 
+		ValueChangeEvent.<FBatchParams>fire( FBatchPaymentModuleSearchPanel.this, getParams( opt ) ); 
 	}
 
 	public void initialize(final FinanceModuleOptions opt) {

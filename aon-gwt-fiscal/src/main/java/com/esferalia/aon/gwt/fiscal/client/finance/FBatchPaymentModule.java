@@ -13,8 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPayrollPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPayrollPanel.AonFBatchPaymentPayrollPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPanel.AonFBatchPaymentPayrollPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -56,7 +56,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FBatchPaymentPayrollModule extends MainEntryPoint {
+public class FBatchPaymentModule extends MainEntryPoint {
 	
 	public static enum FBATCH_TYPE {
 		  CHARGE
@@ -93,7 +93,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	// Variables
 	
 	private DeckLayoutPanel deckLayoutPanel;
-	private FBatchPaymentPayrollEntryModule fBatchPaymentPayrollEntryModule;
+	private FBatchPaymentEntryModule fBatchPaymentPayrollEntryModule;
 	
 	// Listado Remesas
 	private DockLayoutPanel dockLayoutPanel;
@@ -107,7 +107,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	private LinkedHashMap<Integer,FBatchRow> fBatches = new LinkedHashMap<Integer,FBatchRow>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<Integer>();
 	
-	private FBatchPaymentPayrollModuleSearchPanel searchPanel;
+	private FBatchPaymentModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
 	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton checkAll; 
@@ -129,7 +129,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	// ----------------------  ON MODULE LOAD  ---------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentPayrollModule(FBATCH_TYPE fbatchType) {
+	public FBatchPaymentModule(FBATCH_TYPE fbatchType) {
 		this.fbatchType = fbatchType;
 	}
 
@@ -158,7 +158,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		deckLayoutPanel.add(dockLayoutPanel);
 		
-		fBatchPaymentPayrollEntryModule = new FBatchPaymentPayrollEntryModule(fbatchType) {
+		fBatchPaymentPayrollEntryModule = new FBatchPaymentEntryModule(fbatchType) {
 			
 			@Override
 			public void back(boolean refresh) {
@@ -201,7 +201,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	
 	private void loadModule( final FinanceModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
-		searchPanel = new FBatchPaymentPayrollModuleSearchPanel(opt, this.fbatchType);
+		searchPanel = new FBatchPaymentModuleSearchPanel(opt, this.fbatchType);
 		dockLayoutPanel.addNorth(searchPanel, 100.00);
 		dockLayoutContent = new FlowPanel();
 		messagePanel = new HTMLPanel("");
@@ -825,7 +825,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				final AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption("Remesa Vencimientos");
-				final AonFBatchPaymentPayrollPanel fbatchPanel = new AonFBatchPaymentPayrollPanel( opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchType.name(), new AonFBatchPaymentPayrollPanelCallback() {
+				final AonFBatchPaymentPanel fbatchPanel = new AonFBatchPaymentPanel( opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchType.name(), new AonFBatchPaymentPayrollPanelCallback() {
 					
 					@Override
 					public void onCancel() {
