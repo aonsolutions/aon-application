@@ -456,6 +456,10 @@ export class AonDate extends AonElement {
     return d.toString().padStart(2, "0");
   }
 
+  addError(e) {
+
+  }
+
   focus() {
     this.getElement(this.INPUT).focus();
   }

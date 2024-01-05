@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model3902023 extends DockLayoutPanel  {
+public class Model3902023 extends DockLayoutPanel {
 	
 	private static final Integer DEFAULT_YEAR = 2023;
 	private static final String MOD390_2023_DRAFT = "/aon_gwt_fiscal/Model3902023Draft";
@@ -48,8 +48,14 @@ public class Model3902023 extends DockLayoutPanel  {
 		void markAsDirty() {
 			Model3902023.this.markAsDirty();
 		}
-		Mod3902023  getModel() {
+		Mod3902023 getModel() {
 			return Model3902023.this.getModel(); 
+		}
+		void setModel(Mod3902023 model) {
+			Model3902023.this.setModel(model);
+		}
+		void refreshDeclarationToolbarPanel() {
+			Model3902023.this.refreshDeclarationToolbarPanel();			
 		}
 	}
 	
@@ -65,6 +71,11 @@ public class Model3902023 extends DockLayoutPanel  {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	
+	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
+	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
+	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
+	protected final Label statusLabel = new Label();
 
 	public Model3902023(final Model390Callback mod390Callback, Mod390 mod390) {
 		super(Unit.PX);
@@ -376,7 +387,7 @@ public class Model3902023 extends DockLayoutPanel  {
 		page09Link.addClickHandler(event -> showContent(pageLinks, 9,new Page09(cbk),false));
 		page10Link.addClickHandler(event -> showContent(pageLinks,10,new Page10(cbk),false));
 		page11Link.addClickHandler(event -> showContent(pageLinks,11,new Page11(cbk),false));
-		page12Link.addClickHandler(event -> showContent(pageLinks,12,new Page12(getModel(), getCallback()),false));
+		page12Link.addClickHandler(event -> showContent(pageLinks,12,new Page12(getCallback(), cbk),false));
 		
 		scrollPanel.add(pageLinks);
 		if (pageSelected == -1) {
@@ -429,11 +440,7 @@ public class Model3902023 extends DockLayoutPanel  {
 	private AonToolbar getDeclarationToolbarPanel() {
 		AonToolbar decToolbar = new AonToolbar();
 		
-		AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
 		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
-		markAsFinishedButton.setVisible(!getModel().isNew() &&
-				(getModel().getStatus() == FiscalStatus.PENDING 
-				|| getModel().getStatus() == FiscalStatus.MISSING));
 		markAsFinishedButton.addClickHandler(event -> {
 			markAsFinishedButton.setEnabled(false);
 			MOD3902023_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod3902023>() {
@@ -451,9 +458,7 @@ public class Model3902023 extends DockLayoutPanel  {
 		});
 		decToolbar.add(markAsFinishedButton);
 
-		AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 		markAsSentButton.setText(markAsSentButton.getTitle());
-		markAsSentButton.setVisible(!getModel().isNew() && (getModel().isFinished()));		
 		markAsSentButton.addClickHandler(event -> {
 			markAsSentButton.setEnabled(false);
 			MOD3902023_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.SENT, new AsyncCallback<Mod3902023>() {
@@ -471,12 +476,7 @@ public class Model3902023 extends DockLayoutPanel  {
 		});
 		decToolbar.add(markAsSentButton);
 		
-		AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 		markAsPendingButton.setText(markAsPendingButton.getTitle());
-		markAsPendingButton.setVisible(!getModel().isNew() 
-				&& (getModel().isFinished() 
-				|| getModel().getStatus() == FiscalStatus.BATCHED 
-				|| getModel().isSent()));
 		markAsPendingButton.addClickHandler(event -> {
 			markAsPendingButton.setEnabled(false);
 			MOD3902023_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod3902023>() {
@@ -522,21 +522,19 @@ public class Model3902023 extends DockLayoutPanel  {
 
 		decToolbar.getMessagePanel().add(marksPanels);
 		
-		Label statusLabel = new Label();
-		statusLabel.setText(getModel().getStatus().getName());
-		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( getModel().getStatus() ));
-		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( getModel().getStatus() ));
 		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
 		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
 		statusLabel.addStyleName(AON.CSS.aonTextCenter());
 		statusLabel.addStyleName(AON.CSS.aonBorder());
-		statusLabel.addStyleName(AON.CSS.aonNowrap());
+		statusLabel.addStyleName(AON.CSS.aonNowrap());			
 		
 		decToolbar.setTitle(statusLabel);
+		
+		refreshDeclarationToolbarPanel();
+		
 		return decToolbar;
 	}
-	
 
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
@@ -551,6 +549,18 @@ public class Model3902023 extends DockLayoutPanel  {
 			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
 		}
 		commentsButton.setTitle(getModel().getComments());
+	}
+	
+	private void refreshDeclarationToolbarPanel() {
+		
+		markAsFinishedButton.setVisible(!getModel().isNew() && (getModel().getStatus() == FiscalStatus.PENDING || getModel().getStatus() == FiscalStatus.MISSING));
+		markAsSentButton.setVisible(!getModel().isNew() && (getModel().isFinished()));		
+		markAsPendingButton.setVisible(!getModel().isNew() && (getModel().isFinished() || getModel().getStatus() == FiscalStatus.BATCHED || getModel().isSent()));
+		
+		statusLabel.setText(getModel().getStatus().getName());
+		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( getModel().getStatus() ));
+		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( getModel().getStatus() ));
+		
 	}
 
 }

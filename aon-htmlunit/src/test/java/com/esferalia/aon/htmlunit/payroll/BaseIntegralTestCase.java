@@ -252,14 +252,7 @@ public abstract class BaseIntegralTestCase {
 
 	protected static void settle(Date date) throws IOException, InterruptedException, ParseException {
 		
-	    	Calendar calendar =  Calendar.getInstance();
-	    	calendar.setTime(date);
-	    	calendar.set(Calendar.HOUR_OF_DAY, 0);
-	    	calendar.set(Calendar.MINUTE, 0);
-	    	calendar.set(Calendar.SECOND, 0);
-	    	calendar.set(Calendar.MILLISECOND, 0);
-	    	
-	    	date = calendar.getTime();
+		date = resetTime(date);
 	    
 		HtmlSelect typeSelect = getElementById("typeListBox");
 		typeSelect.click();
@@ -273,7 +266,7 @@ public abstract class BaseIntegralTestCase {
 
 		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", date)+"']")).click();
 		
-		calendar = Calendar.getInstance(new Locale("es","ES"));
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
 		calendar.setTime(date);
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH)+1;
@@ -282,8 +275,27 @@ public abstract class BaseIntegralTestCase {
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
+	/**
+	 * @param date
+	 * @return
+	 */
+	private static Date resetTime(Date date) {
+	    Calendar calendar =  Calendar.getInstance();
+	    calendar.setTime(date);
+	    calendar.set(Calendar.HOUR_OF_DAY, 0);
+	    calendar.set(Calendar.MINUTE, 0);
+	    calendar.set(Calendar.SECOND, 0);
+	    calendar.set(Calendar.MILLISECOND, 0);
+	    
+	    date = calendar.getTime();
+	    return date;
+	}
+
 	protected static void extra(Date issueDate, Date endDate) throws IOException, InterruptedException, ParseException {
 		
+	    
+		issueDate = resetTime(issueDate);
+
 		HtmlSelect typeSelect = getElementById("typeListBox");
 		typeSelect.click();
 		HtmlOption settleOption = typeSelect.getOptionByValue("EXTRA");
@@ -291,9 +303,13 @@ public abstract class BaseIntegralTestCase {
 		
 		getElementById("dateListBox").click();
 		
-		//scroll2DateListBox(issueDate);
 		
-		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate)+"']")).click();
+		try {
+		    ((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate)+"']")).click();
+		} catch ( NullPointerException e ) {
+		    scroll2DateListBox(issueDate);
+		    ((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate)+"']")).click();
+		}
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
 		calendar.setTime(endDate);

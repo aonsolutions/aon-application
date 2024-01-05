@@ -3278,11 +3278,12 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				, 
 				salary.getTotalPayment(),
 				DELTA);
+		long days = get(getLastDayOfMonth(march), Calendar.DAY_OF_YEAR) ;
 
 		double br = ( 1750.00 * 1.10 * 0.50
 				+1750.00 * 1.10 * 0.75 
 				+ 1750.00 * 1.10 * 0.75) 
-				/ 90.00; 
+				/ days; 
 		Assert.assertEquals(
 				1750.00 * 1.10 * 20/30 * 0.75
 				+ br * 10, 
@@ -3418,11 +3419,12 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				, 
 				salary.getTotalPayment(),
 				DELTA);
+		long days = get(startDate, Calendar.DAY_OF_YEAR) -1 ;
 
 		double br = ( 1750.00 * 1.10 * 0.50
 				+1750.00 * 1.10 * 0.75 
 				+ 1750.00 * 1.10 * 0.75) 
-				/ 90.00; 
+				/ days; 
 		Assert.assertEquals(
 				br * 15 
 				+ 1750.00 * 1.10 * 0.75 /2.00, 
@@ -3559,11 +3561,12 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				, 
 				salary.getTotalPayment(),
 				DELTA);
-
+		long days = get(startDate, Calendar.DAY_OF_YEAR) -1 ;
+		
 		double br = ( 1750.00 * 1.10 * 0.50
 				+1750.00 * 1.10 * 0.75 
 				+ 1750.00 * 1.10 * 0.75) 
-				/ 90.00; 
+				/ days; 
 		Assert.assertEquals(
 				br * 15 
 				+ 1750.00 * 1.10 * 0.75 /2.00, 
@@ -3722,10 +3725,12 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment(),
 				DELTA);
 
+		long days = get(getLastDayOfMonth(march), Calendar.DAY_OF_YEAR) ;
+
 		double br = ( 1750.00 * 1.10 * 0.50
 				+1750.00 * 1.10 * 0.75 
 				+ 1750.00 * 1.10 * 0.75) 
-				/ 90.00; 
+				/ days; 
 		Assert.assertEquals(
 				br * 15 
 				+ 1750.00 * 1.10 * 0.75 /2.00, 
