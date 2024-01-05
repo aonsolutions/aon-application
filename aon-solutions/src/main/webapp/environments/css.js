@@ -409,3 +409,6 @@ export const AON_COLOR_FULL = 'colorFull';
  * @returns valid CSS variable expression.
  */
 export const variable = (name) => {return "var(" + name + ")";}
+
+export const AON_INVOICE_ERROR = 'aonInvoiceError';
+export const AON_INVOICE_WARNING = 'aonInvoiceWarning';

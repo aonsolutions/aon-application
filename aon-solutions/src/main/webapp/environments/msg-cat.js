@@ -161,6 +161,7 @@ export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
+export const ERRORS = 'Errors';
 
 // ----- F
 
@@ -353,6 +354,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";
+
 
 // ----- S
 

@@ -49,6 +49,8 @@ export class Invoice {
   tbaiUrl;
 
   workplace;
+  
+  messages;
 
   constructor(invoice) {
     this.buildObject(invoice);
@@ -122,6 +124,7 @@ export class Invoice {
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
       this.workplace = invoice.workplace; 
+      this.messages = invoice.messages || [];
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';

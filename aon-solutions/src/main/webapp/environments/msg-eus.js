@@ -162,6 +162,7 @@ export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
+export const ERRORS = 'Akatsak';
 
 // ----- F
 
