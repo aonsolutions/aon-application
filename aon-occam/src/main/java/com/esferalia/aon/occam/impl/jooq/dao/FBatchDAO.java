@@ -114,7 +114,7 @@ public class FBatchDAO {
 		
 		FBatch fBatch = new FBatchFiller().apply(record);
 		
-		fBatch.setBatchDetails(FBatchDetailDAO.getList(ctx, f -> f.getFBatchProperty().eq(fBatch.getId())));
+		fBatch.setBatchDetails(FBatchDetailDAO.getFullList(ctx, f -> f.getFBatchProperty().eq(fBatch.getId())));
 		
 		return fBatch;
 	}
@@ -181,7 +181,7 @@ public class FBatchDAO {
 		ctx.checkWrite();
 		FBatch fbatch = get(ctx, id);
 		
-		if (fbatch.isPending()) {
+		if (fbatch.isPending() || fbatch.isGenerated()) {
 			removeFBatchDetails(ctx, fbatch);
 			
 			if(fbatch.getRattach() != null)

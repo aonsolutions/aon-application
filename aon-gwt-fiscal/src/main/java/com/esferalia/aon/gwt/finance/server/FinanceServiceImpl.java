@@ -118,6 +118,11 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public LinkedList<FBatch> getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit) throws AonCoreException {
 		return AON.getFBatches(domainName, domain, user, params, offset, limit);
 	}
+	
+	@Override
+	public FBatch getFBatch(String domainName, int domain, String user, Integer fbatchId) throws AonCoreException {
+		return AON.getFBatch(domainName, domain, user, fbatchId);
+	}
 
 	@Override
 	public void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds) throws AonCoreException {

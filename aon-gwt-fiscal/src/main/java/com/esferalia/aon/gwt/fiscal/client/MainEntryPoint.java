@@ -19,8 +19,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentPayrollModule.FBATCH_TYPE;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
@@ -501,7 +501,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FBatchPaymentPayrollModule fBatchPaymentPayrollModule = new FBatchPaymentPayrollModule(FBATCH_TYPE.PAYROLL_PAYMENT);
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYROLL_PAYMENT);
 					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				
@@ -516,7 +516,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FBatchPaymentPayrollModule fBatchPaymentPayrollModule = new FBatchPaymentPayrollModule(FBATCH_TYPE.PAYMENT);
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYMENT);
 					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				

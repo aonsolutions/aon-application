@@ -46,7 +46,7 @@ public class FBatchDetailDAO {
 	
 	// ---------------------------------------------------------- LECTURA
 	
-	public static LinkedList<FBatchDetail> getList(AONContext ctx, FBatchDetailFilter filter) {
+	public static LinkedList<FBatchDetail> getFullList(AONContext ctx, FBatchDetailFilter filter) {
 		ctx.checkRead();
 		LinkedList<FBatchDetail> fBatchDeatils = ctx.getDslContext().select()
 			.from(FBATCH_DETAIL)
@@ -59,6 +59,19 @@ public class FBatchDetailDAO {
 		fBatchDeatils.forEach(fBatchDeatil -> {
 			fBatchDeatil.setFinance(FinanceDAO.getFinance(ctx, fBatchDeatil.getFinance().getId()));
 		});
+		
+		return fBatchDeatils;
+	}
+	
+	public static LinkedList<FBatchDetail> getList(AONContext ctx, FBatchDetailFilter filter) {
+		ctx.checkRead();
+		LinkedList<FBatchDetail> fBatchDeatils = ctx.getDslContext().select()
+			.from(FBATCH_DETAIL)
+			.where(FBATCH_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch()
+			.stream()
+			.map(new FBatchDetailFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
 		
 		return fBatchDeatils;
 	}
