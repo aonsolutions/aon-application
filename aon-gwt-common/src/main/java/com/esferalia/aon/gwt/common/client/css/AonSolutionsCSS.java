@@ -309,6 +309,18 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_move_right")
+	String aonIconMoveRight();
+	
+	@ClassName("aon_icon_move_right_all")
+	String aonIconMoveRightAll();
+	
+	@ClassName("aon_icon_move_left")
+	String aonIconMoveLeft();
+	
+	@ClassName("aon_icon_move_left_all")
+	String aonIconMoveLeftAll();
+	
 	@ClassName("aon_icon_group_off")
 	String aonIconGroupOff();
 	
@@ -1030,6 +1042,9 @@ public interface AonSolutionsCSS extends CssResource {
 	/* TABLE */
 	@ClassName("aon_grid_header")
 	String aonGridHeader();
+	
+	@ClassName("aon_fixed_header")
+	String aonFixedHeader();
 
 	/* TABLE */
 	@ClassName("aon_table")

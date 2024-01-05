@@ -24,4 +24,24 @@ public enum VATExemptionCause implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+	
+	public static VATExemptionCause safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static VATExemptionCause safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= VATExemptionCause.values().length) return null;
+		return VATExemptionCause.values()[i];
+	}
+	
+	public static VATExemptionCause safeValueOf( String i ) {
+		if(i == null || "".equals(i)) return null;
+		for (VATExemptionCause rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }

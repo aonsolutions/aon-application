@@ -222,6 +222,14 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveRight aonIconMoveRight;
+.aon_icon_move_right { background-image: iconMoveRight;}
+@url iconMoveRightAll aonIconMoveRightAll;
+.aon_icon_move_right_all { background-image: iconMoveRightAll;}
+@url iconMoveLeft aonIconMoveLeft;
+.aon_icon_move_left { background-image: iconMoveLeft;}
+@url iconMoveLeftAll aonIconMoveLeftAll;
+.aon_icon_move_left_all { background-image: iconMoveLeftAll;}
 @url iconGroupOff aonIconGroupOff;
 .aon_icon_group_off { background-image: iconGroupOff;}
 @url iconGroup aonIconGroup;
@@ -964,6 +972,12 @@
 	font-size: smaller;
 	text-transform: uppercase;
 	background-image: linear-gradient(#FFF, #EEE);
+}
+.aon_fixed_header {
+	position: sticky;
+	top: -1px;
+	height: 1.5rem;
+	z-index: 1;
 }
 .aon_align_items_baseline {
 	align-items: baseline;

@@ -271,32 +271,101 @@ public class FinanceModule extends MainEntryPoint {
 			return cellStyleClass;
 		}
 	}
+	
+	private static enum PAYROLL_COLS {
+		  TYP(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		, CHK(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		, DDT("F. Vto."					, 75 ,AON.CSS.aonTextCenter())
+		, DOC("Concepto"				, 100,AON.CSS.aonTextLeft())
+		, TIT("CIF/NIF/NIE"				, 100,AON.CSS.aonTextLeft())
+		, AUTO("Titular"				, 0  ,AON.CSS.aonTextLeft())
+		, PYM("Forma pago"				, 150,AON.CSS.aonTextLeft())
+		, AMO("Importe"					, 80 ,AON.CSS.aonTextRight())
+		, STA(AON.MSG.status()			, 50 ,AON.CSS.aonTextCenter())
+		, ACT(AON.MSG.actions()			, 150,AON.CSS.aonTextCenter())
+		;
+
+		String headerLabel;
+		int colWidth;
+		String cellStyleClass;
+
+		private PAYROLL_COLS(String headerLabel,int colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private PAYROLL_COLS(String headerLabel,int colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public int getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
 
 	protected FlexTable getTable() {
 		tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonGrid());
 		
 		autoWidth = container.getOffsetWidth() - 36;
-		for ( COLS col : COLS.values()) {
-			if (col != COLS.AUTO ) {
-				autoWidth -= (col.getColWidth() + 2); 
+		
+		if(isPayroll) {
+			for ( PAYROLL_COLS col : PAYROLL_COLS.values()) {
+				if (col != PAYROLL_COLS.AUTO ) {
+					autoWidth -= (col.getColWidth() + 2); 
+				}
+			}
+		} else {
+			for ( COLS col : COLS.values()) {
+				if (col != COLS.AUTO ) {
+					autoWidth -= (col.getColWidth() + 2); 
+				}
 			}
 		}
 		
+		
 		selectedCount = new InlineLabel();
-		for ( COLS col : COLS.values()) {
-			if (col == COLS.AUTO ) {
-				tab.getColumnFormatter().setWidth(col.ordinal(), autoWidth + "px");
-			} else {
-				tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+		
+		if(isPayroll) {
+			for ( PAYROLL_COLS col : PAYROLL_COLS.values()) {
+				if (col == PAYROLL_COLS.AUTO ) {
+					tab.getColumnFormatter().setWidth(col.ordinal(), autoWidth + "px");
+				} else {
+					tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				
+				tab.setWidget(0, col.ordinal(), col == PAYROLL_COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
+				
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				if ( col.getCellStyleClass() != null) {
+					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
+					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
+				}
 			}
-			tab.setWidget(0, col.ordinal(), col == COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
-			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
-			if ( col.getCellStyleClass() != null) {
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
+		} else {
+			for ( COLS col : COLS.values()) {
+				if (col == COLS.AUTO ) {
+					tab.getColumnFormatter().setWidth(col.ordinal(), autoWidth + "px");
+				} else {
+					tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				
+				tab.setWidget(0, col.ordinal(), col == COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
+				
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				if ( col.getCellStyleClass() != null) {
+					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
+					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
+				}
 			}
 		}
+		
 		return tab;
 	}
 
@@ -696,7 +765,7 @@ public class FinanceModule extends MainEntryPoint {
 			invDate.setText(AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 			invReference.setText(finance.getInvoice().getReferenceCode());
 		} else {
-			numDoc.setText(finance.getRegistry().getDocument());
+			numDoc.setText(isPayroll ? finance.getConcept() : finance.getRegistry().getDocument());
 		}
 		Label regDoc  = new Label( finance.getRegistryDocument());
 	
@@ -753,10 +822,12 @@ public class FinanceModule extends MainEntryPoint {
 		++col;
 		tab.setWidget(row, col, numDoc);
 		++col;
-		tab.setWidget(row, col, invReference);
-		++col;
-		tab.setWidget(row, col, invDate);
-		++col;
+		if(!isPayroll) {
+			tab.setWidget(row, col, invReference);
+			++col;
+			tab.setWidget(row, col, invDate);
+			++col;
+		}
 		tab.setWidget(row, col, regDoc);
 		++col;
 		regName.setWidth(autoWidth + "px");

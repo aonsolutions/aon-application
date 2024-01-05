@@ -126,6 +126,7 @@ export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionA
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
 export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
 export const AON_ELLIPSIS = 'aonEllipsis';
+export const AON_DOCUMENTAL_ELLIPSIS = 'aonDocumentalEllipsis';
 export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';

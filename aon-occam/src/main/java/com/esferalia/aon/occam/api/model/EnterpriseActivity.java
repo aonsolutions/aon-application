@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 
 public class EnterpriseActivity implements Serializable {
@@ -16,6 +17,7 @@ public class EnterpriseActivity implements Serializable {
 	private String cnaeCode;
 	private String cnaeDescription;
 	private VATRegime vatRegime; 
+	private VATExemptionCause vatExemptionCause;
 
 	public Integer getId() {
 		return id;
@@ -97,8 +99,18 @@ public class EnterpriseActivity implements Serializable {
 		}
 		return vatRegime;
 	}
+	
 	public EnterpriseActivity setVatRegime(VATRegime vatRegime) {
 		this.vatRegime = vatRegime;
+		return this;
+	}
+	
+	public VATExemptionCause getVatExemptionCause() {
+		return vatExemptionCause;
+	}
+	
+	public EnterpriseActivity setVatExemptionCause(VATExemptionCause vatExemptionCause) {
+		this.vatExemptionCause = vatExemptionCause;
 		return this;
 	}
 
