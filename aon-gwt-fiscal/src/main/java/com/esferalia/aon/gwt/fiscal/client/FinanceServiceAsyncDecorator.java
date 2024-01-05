@@ -131,6 +131,12 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		AON.start();
 		fsa.getFBatches(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<FBatch>>(callback));
 	}
+	
+	@Override
+	public void getFBatch(String domainName, int domain, String user, Integer fbatchId, AsyncCallback<FBatch> callback) {
+		AON.start();
+		fsa.getFBatch(domainName, domain, user, fbatchId, new AsyncCallbackWrapper<FBatch>(callback));
+	}
 
 	@Override
 	public void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds, AsyncCallback<Void> callback) {

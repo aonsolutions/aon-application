@@ -10,10 +10,12 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPayrollPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFBatchPaymentPayrollPanel.AonFBatchPaymentPayrollPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -21,14 +23,17 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFBatchStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -36,17 +41,19 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FBatchPaymentPayrollModule extends MainEntryPoint {
@@ -90,26 +97,23 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	
 	// Listado Remesas
 	private DockLayoutPanel dockLayoutPanel;
-	private SimpleLayoutPanel centerLayoutPanel;
+	private FlowPanel dockLayoutContent;
+	private HTMLPanel messagePanel;
 	private ScrollPanel centerPanel;
 	private FlowPanel container;
 	private FlexTable tab;
 	private int autoWidth; 
-	private SplitLayoutPanel splitLayoutPanel;
 	
 	private LinkedHashMap<Integer,FBatchRow> fBatches = new LinkedHashMap<Integer,FBatchRow>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<Integer>();
 	
 	private FBatchPaymentPayrollModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
-	private AonToolbarButton searchButton;
+	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton newButton;
-	
-	private FlowPanel progressContainer = new FlowPanel();
-	private FlowPanel progress = new FlowPanel();
 
 	private InlineLabel selectedCount;
 	
@@ -199,19 +203,17 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new FBatchPaymentPayrollModuleSearchPanel(opt, this.fbatchType);
 		dockLayoutPanel.addNorth(searchPanel, 100.00);
-		progressContainer.setVisible(false);
-		progressContainer.add(progress);
-		dockLayoutPanel.addNorth(progressContainer, 5);
-		splitLayoutPanel = new SplitLayoutPanel();
-		dockLayoutPanel.add(splitLayoutPanel);
-		centerLayoutPanel = new SimpleLayoutPanel();
+		dockLayoutContent = new FlowPanel();
+		messagePanel = new HTMLPanel("");
+		dockLayoutContent.add(messagePanel);
+		dockLayoutPanel.add(dockLayoutContent);
 		centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.CSS.aonScrollArea());
+		centerPanel.setHeight((Window.getClientHeight() - 300) + "px");
+		centerPanel.getElement().getStyle().setProperty("padding", "0 1.5em 1.5em 1.5em");
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
-		centerLayoutPanel.setWidget(centerPanel);
-		splitLayoutPanel.add(centerLayoutPanel);
+		dockLayoutContent.add(centerPanel);
 		centerPanel.addScrollHandler(new ScrollHandler() {
 
 			public void onScroll(ScrollEvent event) {
@@ -264,6 +266,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		, STA("Estado"					, 100 ,AON.CSS.aonTextLeft())
 		, REG("Registros"				, 75 ,AON.CSS.aonTextRight())
 		, AMO("Importe"					, 100 ,AON.CSS.aonTextRight())
+		, FIL("Tipo"					, 100 ,AON.CSS.aonTextCenter())
 		, ACT(AON.MSG.actions()			, 80,AON.CSS.aonTextCenter())
 		;
 
@@ -315,6 +318,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			}
 			tab.setWidget(0, col.ordinal(), col == COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
 			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
 			if ( col.getCellStyleClass() != null) {
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
@@ -391,49 +395,89 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		
 		Label registries = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0" :  String.valueOf(fBatch.getBatchDetails().size()));
 		registries.addStyleName(AON.CSS.aonTextRight());
+		
 		Label amount = new Label(null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0.00 \u20ac" : AON.FMT.format(fBatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount()).reduce(0.00, (a, b) -> a + b)) + " \u20ac");
 		amount.addStyleName(AON.CSS.aonTextRight());
 		
+		Label fileType = new Label(fBatch.getType() == (byte)0 ? "VISA" : "SEPA 34-14 (XML)");
+		fileType.addStyleName(AON.CSS.aonTextLeft());
+		
+		FlowPanel actionsPanel = new FlowPanel();
+		
+		// Actions Buttons
 		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete()); 
-		deleteButton.setEnabled(fBatch.isPending());
-		deleteButton.setVisible(fBatch.isPending());
-		deleteButton.addClickHandler(e -> {
-			AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Remesa",
-					new HTML("Se va a proceder a eliminar la remesa '<b>" + fBatch.getDescription() + "</b>'.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+		AonTableButton downloadFile = new AonTableButton(AON.MSG.download() + " fichero SEPA", AON.CSS.aonIconDownload()); 
+		AonTableButton deleteFile = new AonTableButton(AON.MSG.deleteAction() + " fichero SEPA", AON.CSS.aonIconDeleteFile());
+		AonTableButton sepaButton = new AonTableButton("Crear fichero SEPA", AON.CSS.aonIconXml()); 
+		
+		// Delete FBatch
+		
+		setVisible(deleteButton, fBatch.isPending() || fBatch.isGenerated());
+		deleteButton.addClickHandler(e -> deleteFBatch(opt, fBatch));
+		actionsPanel.add(deleteButton);
+		
+		// Download File
+		FormPanel diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
 
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
+		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+		Hidden domainNameHidden = new Hidden(IRequestParamsNames.DOMAIN_NAME);
+		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
+		Hidden rattachHidden = new Hidden("rattach");
+		Hidden attachTypeHidden = new Hidden("attachType");
 
-				@Override
-				public void onCancel() {
-					// Nothing to do here
-				}
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(rattachHidden);
+		formFlowPanel.add(attachTypeHidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 
-				@Override
-				public void onAccept() {
-					LinkedList<Integer> fbatchIds = new LinkedList<>();
-					fbatchIds.add(fBatch.getId());
-					FINANCE_SERVICE.deleteFBatches(opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchIds, new AsyncCallback<Void>() {
-						
-						@Override
-						public void onSuccess(Void arg0) {
-							toolbar.hideMessages();
-							enableMoreData();
-							container.clear();
-							tab = getTable();
-							container.add(tab);
-							offset.setValue(0);
-							search(opt, searchPanel.getParams( opt ), offset.getValue());
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							showError(caught.getMessage());
-						}
-					});
-				}
-			});
+		downloadFile.addClickHandler(e -> {
+			diskForm.setAction(GWT.getHostPageBaseURL() + "/ms/download_attachment/");
+
+			rattachHidden.setValue(fBatch.getRattach().toString());
+			attachTypeHidden.setValue("registry");
+			domainIdHidden.setValue(opt.getDomain() + "");
+			domainNameHidden.setValue(opt.getDomainName());
+			userHidden.setValue(opt.getUser());
+
+			diskForm.submit();
 		});
-
+		setVisible(downloadFile, fBatch.getRattach() != null && fBatch.getType() != (byte)0);
+		actionsPanel.add(downloadFile);
+		
+		// Download File
+		deleteFile.addClickHandler(e -> {
+			setVisible(downloadFile, false);
+			setVisible(deleteFile, false);
+			setVisible(diskForm, false);
+			setVisible(sepaButton, true);
+			
+			deleteFile(opt, fBatch);
+			status.setText(FBatchStatus.PENDING.getDescription());
+			status.setStyleName(AON.CSS.aonColorRed());
+		});
+		setVisible(deleteFile, fBatch.getRattach() != null && !fBatch.getStatus().equals(FBatchStatus.ACCOUNTED) && fBatch.getType() != (byte)0);
+		actionsPanel.add(deleteFile);
+		
+		sepaButton.addClickHandler(e -> {
+			setVisible(downloadFile, true);
+			setVisible(deleteFile, true);
+			setVisible(diskForm, true);
+			setVisible(sepaButton, false);
+			
+			createSepeFile(opt, fBatch);
+			status.setText(FBatchStatus.GENERATED.getDescription());
+			status.removeStyleName(AON.CSS.aonColorRed());
+		});
+		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getStatus().equals(FBatchStatus.ACCOUNTED) && fBatch.getType() != (byte)0 && !fBatch.getBatchDetails().isEmpty());
+		actionsPanel.add(sepaButton);
+		
+		setVisible(diskForm, fBatch.getRattach() != null);
+		actionsPanel.add(diskForm);
+		
 		tab.setWidget(row, col, selectionButton);
 		++col;
 		tab.setWidget(row, col, checkButton);
@@ -454,7 +498,125 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 		++col;
 		tab.setWidget(row, col, amount);
 		++col;
-		tab.setWidget(row, col, deleteButton);
+		tab.setWidget(row, col, fileType);
+		++col;
+		tab.setWidget(row, col, actionsPanel);
+		
+		tab.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");
+	}
+	
+	private void deleteFBatch(FinanceModuleOptions opt, FBatch fBatch) {
+		AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Remesa",
+				new HTML("Se va a proceder a eliminar la remesa '<b>" + fBatch.getDescription() + "</b>'.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+
+		deleteDialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+
+			@Override
+			public void onAccept() {
+				LinkedList<Integer> fbatchIds = new LinkedList<>();
+				fbatchIds.add(fBatch.getId());
+				FINANCE_SERVICE.deleteFBatches(opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchIds, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void arg0) {
+						clearSelection();
+						toolbar.hideMessages();
+						enableMoreData();
+						container.clear();
+						tab = getTable();
+						container.add(tab);
+						offset.setValue(0);
+						search(opt, searchPanel.getParams( opt ), offset.getValue());
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showError(caught.getMessage());
+					}
+				});
+			}
+		});
+	}
+	
+	private void deleteFile(FinanceModuleOptions opt, FBatch fBatch) {
+		AonMessagePanel.showLoading(messagePanel,
+				"Eliminando fichero SEPA para la remesa '" + fBatch.getDescription() + "'...");
+		FINANCE_SERVICE.deleteSepaFile(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch.getRattach(),
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void seccess) {
+						fBatch.setRattach(null);
+						fBatch.setStatus(FBatchStatus.PENDING);
+						
+						FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch,
+								new AsyncCallback<FBatch>() {
+
+									@Override
+									public void onSuccess(FBatch savedFbatch) {
+										AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("El fichero SEPA de la remesa '<b>"
+												+ fBatch.getDescription() + "</b>' ha sido eliminado correctamente."));
+									}
+
+									@Override
+									public void onFailure(Throwable error) {
+										AonMessagePanel.showError(messagePanel,
+												new HTMLPanel("Error al guardar la remesa '<b>"
+														+ fBatch.getDescription() + "</b>': " + error.getMessage()));
+									}
+								});
+					}
+
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel,
+								new HTMLPanel("Error al eliminar el fichero SEPA de la remesa '<b>"
+										+ fBatch.getDescription() + "</b>': " + error.getMessage()));
+					}
+				});
+	}
+	
+	private void createSepeFile(FinanceModuleOptions opt, FBatch fBatch) {
+		AonMessagePanel.showLoading(messagePanel,
+				"Generando fichero SEPA para la remesa '" + fBatch.getDescription() + "'...");
+		FINANCE_SERVICE.createSepaFile(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch.getId(),
+				new AsyncCallback<Integer>() {
+
+					@Override
+					public void onSuccess(Integer rattachId) {
+						fBatch.setRattach(rattachId);
+						fBatch.setStatus(FBatchStatus.GENERATED);
+						
+						FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch,
+								new AsyncCallback<FBatch>() {
+
+									@Override
+									public void onSuccess(FBatch result) {
+										AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("El fichero SEPA de la remesa '<b>"
+												+ fBatch.getDescription() + "</b>' ha sido generado correctamente."));
+									}
+
+									@Override
+									public void onFailure(Throwable error) {
+										AonMessagePanel.showError(messagePanel,
+												new HTMLPanel("Error al guardar la remesa '<b>"
+														+ fBatch.getDescription() + "</b>': " + error.getMessage()));
+									}
+								});
+					}
+
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel,
+								new HTMLPanel("Error al generar el fichero SEPA de la remesa '<b>"
+										+ fBatch.getDescription() + "</b>': " + error.getMessage()));
+					}
+				});
 	}
 	
 	private void clearSelection() {
@@ -473,6 +635,11 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	private void refreshIcons() {
 		deleteButton.setEnabled(selectedItems.size() > 0);
 		selectedCount.setText(selectedItems.size() > 0 ?  AonNumberUtils.toString(selectedItems.size()) : ""); 
+	}
+	
+	private void setVisible(Widget widget, boolean isVisible) {
+		if(isVisible) widget.getElement().getStyle().clearDisplay();
+		else widget.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	// -------------------------------------------------------------------
@@ -562,20 +729,18 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
 		toolbar = new AonToolbar(getToolbarTitle());
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				toolbar.hideMessages();
-				enableMoreData();
-				container.clear();
-				tab = getTable();
-				container.add(tab);
-				offset.setValue(0);
-				search(opt, searchPanel.getParams( opt ), offset.getValue());
-			}
+		resetSearchButton = new AonToolbarButton(AON.MSG.clean() + " filtros", AON.CSS.aonIconClear());
+		resetSearchButton.addClickHandler(e -> {
+			toolbar.hideMessages();
+			enableMoreData();
+			container.clear();
+			tab = getTable();
+			container.add(tab);
+			offset.setValue(0);
+			searchPanel.initialize(opt);
+			search(opt, searchPanel.getParams( opt ), offset.getValue());
 		});
-		toolbar.add(searchButton);
+		toolbar.add(resetSearchButton);
 
 		checkAll = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
 		checkAll.setEnabled(false);
@@ -605,11 +770,11 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				long notPendingFBatches = fBatches.values().stream().filter(fBatcheRow -> fBatcheRow.getFBatch().isSelected() && !fBatcheRow.getFBatch().isPending()).count();
+				long notPendingFBatches = fBatches.values().stream().filter(fBatcheRow -> fBatcheRow.getFBatch().isSelected() && !fBatcheRow.getFBatch().isPending() && !fBatcheRow.getFBatch().isGenerated()).count();
 				
 				if(notPendingFBatches > 0) {
 					AonDialog warningDialog = new AonDialog("Eliminaci\u00f3n Remesas",
-							new HTML("No se pueden eliminar remesas cuyo estado sea distinto de <b>Pendiente</b>. Por favor revise las remesas seleccionadas."));
+							new HTML("No se pueden eliminar remesas cuyo estado sea distinto de <b>Pendiente</b> o <b>Fichero Generado</b>. Por favor revise las remesas seleccionadas."));
 
 					warningDialog.warning();
 				} else {
@@ -631,6 +796,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 								
 								@Override
 								public void onSuccess(Void arg0) {
+									clearSelection();
 									toolbar.hideMessages();
 									enableMoreData();
 									container.clear();
@@ -659,7 +825,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				final AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption("Remesa Vencimientos");
-				final AonFBatchPaymentPayrollPanel fbatchPanel = new AonFBatchPaymentPayrollPanel( opt.getDomainName(), opt.getDomain(), opt.getUser(), new AonFBatchPaymentPayrollPanelCallback() {
+				final AonFBatchPaymentPayrollPanel fbatchPanel = new AonFBatchPaymentPayrollPanel( opt.getDomainName(), opt.getDomain(), opt.getUser(), fbatchType.name(), new AonFBatchPaymentPayrollPanelCallback() {
 					
 					@Override
 					public void onCancel() {
@@ -667,7 +833,7 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 					}
 					
 					@Override
-					public void onAccept() {
+					public void onAccept(FBatch fBatch) {
 						dialog.hide();
 						toolbar.hideMessages();
 						enableMoreData();
@@ -676,6 +842,8 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 						container.add(tab);
 						offset.setValue(0);
 						search(opt, searchPanel.getParams( opt ), offset.getValue());
+						deckLayoutPanel.showWidget(1);
+						fBatchPaymentPayrollEntryModule.onModuleLoad(opt, fBatch);
 					}
 				}) {
 
@@ -685,7 +853,12 @@ public class FBatchPaymentPayrollModule extends MainEntryPoint {
 					}};
 				
 				dialog.add( fbatchPanel );
-				dialog.showLoaded();
+				dialog.showLoadedCB(new AonCustomDialogCallback() {
+					@Override
+					public void onEnd() {
+						fbatchPanel.setDescriptionFocus();
+					}
+				});
 			}
 		});
 		toolbar.add(newButton);

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,7 +32,7 @@ import com.google.gwt.user.client.ui.TextBox;
 public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 	
 	public static interface AonFBatchPaymentPayrollPanelCallback {
-		void onAccept();
+		void onAccept(FBatch fBatch);
 		void onCancel();
 	}
 
@@ -57,14 +58,14 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 	
 	private boolean isConfidential = false;
 	
-	public AonFBatchPaymentPayrollPanel(final String domainName, final int domain, final String user, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public AonFBatchPaymentPayrollPanel(final String domainName, final int domain, final String user, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
 		initializeCommonService();
 		
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
 		
-		show(new FBatch(), callback);
+		show(new FBatch(), fbatchType, callback);
 	}
 	
 	public AonFBatchPaymentPayrollPanel(final String domainName,final int domain,final String user, Integer fbatchId, final AonFBatchPaymentPayrollPanelCallback callback) {
@@ -79,17 +80,17 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 			@Override
 			public void onSuccess(FBatch result) {
 				if (result == null) result = new FBatch();
-				show(result, callback);
+				show(result, null, callback);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				show(new FBatch(), callback);
+				show(new FBatch(), null, callback);
 			}
 		});
 	}
 	
-	public void show(final FBatch fbatch, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public void show(final FBatch fbatch, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
 		
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.getElement().getStyle().setProperty("padding", "1rem 0");
@@ -123,7 +124,12 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 		table.setWidget(1,1,issueDate);
 		
 		table.setWidget(2,0,new InlineLabel("Tipo Fichero"));
-		type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		if(AonStringUtils.equals(fbatchType, "PAYROLL_PAYMENT"))
+			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
+		else {
+			type.addItem("VISA", "0");
+			type.addItem("SEPA 34-14 (XML)", "9");
+		}
 		type.setSelectedIndex(0);
 		table.setWidget(2,1,type);
 		
@@ -197,8 +203,8 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 				commonService.createUpdateFBatch(domainName, domainId, user, fbatch, new AsyncCallback<FBatch>() {
 
 					@Override
-					public void onSuccess(FBatch result) {
-						callback.onAccept();
+					public void onSuccess(FBatch fBatch) {
+						callback.onAccept(fBatch);
 					}
 					@Override
 					public void onFailure(Throwable caught) {
@@ -230,7 +236,6 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 		
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
-	        	description.setFocus(true);
 	        	onResize();
 	        }
 	    });		
@@ -264,6 +269,10 @@ public abstract class AonFBatchPaymentPayrollPanel extends SimplePanel {
 				// Error
 			}
 		});
+	}
+
+	public void setDescriptionFocus() {
+    	description.setFocus(true);
 	}
 
 }

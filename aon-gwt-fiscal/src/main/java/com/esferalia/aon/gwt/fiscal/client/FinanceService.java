@@ -43,6 +43,7 @@ public interface FinanceService extends RemoteService {
 	Integer createSepaFile(String domainName, int domain, String user, Integer fbatchId) throws AonCoreException;
 	
 	LinkedList<FBatch> getFBatches(String domainName, int domain, String user, FBatchParams params, int offset, int limit) throws AonCoreException;
+	FBatch getFBatch(String domainName, int domain, String user, Integer fbatchId) throws AonCoreException;
 	void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds) throws AonCoreException;
 	FBatch createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch) throws AonCoreException;
 	void deleteSepaFile(String domainName, int domain, String user, Integer rattachId) throws AonCoreException;

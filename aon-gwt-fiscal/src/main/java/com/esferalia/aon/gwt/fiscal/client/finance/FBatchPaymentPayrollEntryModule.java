@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistr
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -95,6 +94,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 
 	private AonToolbar toolbar;
 	private AonToolbarButton backButton;
+	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton sepaButton;
 	private AonToolbarButton downloadButton;
 	private AonToolbarButton deleteFileButton;
@@ -129,9 +129,6 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 	
 	private AonAccountingRegistryBox registryBox;
 	private TextBox referenceCode;
-	
-	private AonSearchPanelButton cleanButton;
-	private AonSearchPanelButton refreshButton;
 
 	private FinanceParams params;
 
@@ -200,13 +197,12 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		this.fbatchType = fbatchType;
 	}
 
-	public void onModuleLoad(final FinanceModuleOptions opt, FBatch fBatch) {
+	public void onModuleLoad(final FinanceModuleOptions opt, FBatch fBatchIn) {
 		AON.ensureInjected();
 
 		this.clear();
 
 		this.opt = opt;
-		this.fBatch = fBatch;
 		this.hasSaved = false;
 
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -220,30 +216,42 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 
 		aviableFinancesSelected = new LinkedHashSet<Integer>();
 		selectedFinancesSelected = new LinkedHashSet<Integer>();
-
-		createParams();
-
+		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		this.add(dockLayoutPanel);
+		
+		FINANCE_SERVICE.getFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatchIn.getId(), new AsyncCallback<FBatch>() {
+			@Override
+			public void onSuccess(FBatch fBatchDB) {
+				fBatch = fBatchDB;
+				
+				createParams();
 
-		if (opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(), opt.getDomain(), opt.getUser(),
-					new AsyncCallback<AonConfiguration>() {
-						@Override
-						public void onSuccess(AonConfiguration result) {
-							opt.setConfiguration(result);
-							loadModule(opt);
-						}
+				if (opt.getConfiguration() == null) {
+					COMMON_SERVICE.getAonConfiguration(opt.getDomainName(), opt.getDomain(), opt.getUser(),
+							new AsyncCallback<AonConfiguration>() {
+								@Override
+								public void onSuccess(AonConfiguration result) {
+									opt.setConfiguration(result);
+									loadModule(opt);
+								}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							dockLayoutPanel.add(new Label(
-									AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
-						}
-					});
-		} else {
-			loadModule(opt);
-		}
+								@Override
+								public void onFailure(Throwable caught) {
+									dockLayoutPanel.add(new Label(
+											AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
+								}
+							});
+				} else {
+					loadModule(opt);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
+			}
+		});
 	}
 
 	private void loadModule(final FinanceModuleOptions opt) {
@@ -334,7 +342,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 	}
 
 	private void initialize() {
-		sepaButton.setVisible(!this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0);
+		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0);
 		
 		description.setValue(fBatch.getDescription());
 		issueDate.setValue(this.fBatch.getIssueDate());
@@ -458,16 +466,6 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		registryBox.setRequired(false);
 		registryBox.addSelectionHandler(e -> search(opt));
 
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		cleanButton.addClickHandler(e -> {
-			resetFilter();
-			search(opt);
-		});
-
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
-		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
-		refreshButton.addClickHandler(e -> search(opt));
-
 		table.setWidget(0, 0, new Label(AON.MSG.amount()));
 		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
 
@@ -535,15 +533,6 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 			table.setWidget(2, 2, new InlineLabel());
 			table.setWidget(2, 3, new InlineLabel());
 		}
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
-		buttonsPanel.add(cleanButton);
-		buttonsPanel.add(refreshButton);
-		table.setWidget(
-				FBATCH_TYPE.PAYROLL_PAYMENT != fbatchType ? 3 : 2, 
-				FBATCH_TYPE.PAYROLL_PAYMENT != fbatchType ? 2 : 4, 
-				buttonsPanel);
 
 		return table;
 	}
@@ -610,6 +599,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
 		description = new TextBox();
 		description.setValue(fBatch.getDescription());
+		description.setEnabled(!fBatch.isAccounted());
 		description.setMaxLength(32);
 		description.addValueChangeHandler(e -> {
 			fBatch.setDescription(e.getValue());
@@ -622,6 +612,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		table.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
 		table.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.RIGHT);
 		issueDate.setValue(this.fBatch.getIssueDate());
+		issueDate.setEnabled(!fBatch.isAccounted());
 		issueDate.addValueChangeHandler(e -> {
 			fBatch.setIssueDate(e.getValue());
 			save();
@@ -639,6 +630,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		}
 		setSelectedValueLB(type, null != fBatch.getType() ? fBatch.getType().toString() : null);
 		type.setEnabled(fBatch.getBatchDetails().isEmpty());
+		type.setEnabled(!fBatch.isAccounted());
 		type.addChangeHandler(e -> {
 			fBatch.setType(Byte.parseByte(type.getSelectedValue()));
 			save();
@@ -656,6 +648,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 						companyBank.getId().toString());
 			});
 			setSelectedValueLB(bank, null != fBatch.getRbank() ? fBatch.getRbank().getId().toString() : null);
+			bank.setEnabled(!fBatch.isAccounted());
 		});
 		bank.addChangeHandler(e -> {
 			fBatch.setRbank(bank.getSelectedIndex() == 0 ? null
@@ -669,6 +662,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
 		confidential = new AonTableButton(AON.MSG.selectAction(),
 				fBatch.isConfidential() ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
+		confidential.setEnabled(!fBatch.isAccounted());
 		confidential.addClickHandler(e -> {
 			fBatch.setConfidential(!fBatch.isConfidential());
 			if (fBatch.isConfidential()) {
@@ -783,10 +777,11 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 
 	private static enum AVIABLE_COLS {
 		CHK(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()), 
-		FEC("F. Venc.", 80, AON.CSS.aonTextCenter()),
-		DOC("Documento", 100, AON.CSS.aonTextLeft()), 
+		FEC("F. Venc.", 70, AON.CSS.aonTextCenter()),
+		FFT("F. Factura", 70, AON.CSS.aonTextCenter()),
+		FAC("N. Factura", 100, AON.CSS.aonTextLeft()), 
 		TIT("Titular", 0, AON.CSS.aonTextLeft()),
-		AMO("Importe", 100, AON.CSS.aonTextRight()), 
+		AMO("Importe", 80, AON.CSS.aonTextRight()), 
 		SEL(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter());
 
 		String headerLabel;
@@ -798,6 +793,41 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		}
 
 		private AVIABLE_COLS(String headerLabel, int colWidth, String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+
+		public int getColWidth() {
+			return colWidth;
+		}
+
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
+	
+	private static enum AVIABLE_PAYROLL_COLS {
+		CHK(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()), 
+		FEC("F. Venc.", 70, AON.CSS.aonTextCenter()),
+		CON("Concepto", 130, AON.CSS.aonTextLeft()),
+		TIT("Titular", 0, AON.CSS.aonTextLeft()),
+		AMO("Importe", 80, AON.CSS.aonTextRight()), 
+		SEL(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter());
+
+		String headerLabel;
+		int colWidth;
+		String cellStyleClass;
+
+		private AVIABLE_PAYROLL_COLS(String headerLabel, int colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private AVIABLE_PAYROLL_COLS(String headerLabel, int colWidth, String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
@@ -848,6 +878,8 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		addAviableButton.setVisible(!fBatch.isAccounted());
 		addAviableButton.setEnabled(false);
 		addAviableButton.addClickHandler(e -> {
+			addAviableButton.setEnabled(false);
+			
 			LinkedHashSet<Integer> moveIds = new LinkedHashSet<>();
 
 			for (Integer financeId : aviableFinancesSelected) {
@@ -902,28 +934,54 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		aviableFinanceTable = new FlexTable();
 		aviableFinanceTable.setStyleName(AON.CSS.aonGrid());
 
-		aviableFinanceAutoWidth = aviableFinanceDockContent.getOffsetWidth() - 36;
-		for (AVIABLE_COLS col : AVIABLE_COLS.values()) {
-			if (col != AVIABLE_COLS.TIT) {
-				aviableFinanceAutoWidth -= (col.getColWidth() + 2);
+		aviableFinanceAutoWidth = Window.getClientWidth() / 2 - 80;
+		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			for (AVIABLE_PAYROLL_COLS col : AVIABLE_PAYROLL_COLS.values()) {
+				if (col != AVIABLE_PAYROLL_COLS.TIT) {
+					aviableFinanceAutoWidth -= (col.getColWidth() + 2);
+				}
+			}
+		} else {
+			for (AVIABLE_COLS col : AVIABLE_COLS.values()) {
+				if (col != AVIABLE_COLS.TIT) {
+					aviableFinanceAutoWidth -= (col.getColWidth() + 2);
+				}
 			}
 		}
-
+		
 		aviableCount = new InlineLabel();
-		for (AVIABLE_COLS col : AVIABLE_COLS.values()) {
-			if (col == AVIABLE_COLS.TIT) {
-				aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), aviableFinanceAutoWidth + "px");
-			} else {
-				aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			for (AVIABLE_PAYROLL_COLS col : AVIABLE_PAYROLL_COLS.values()) {
+				if (col == AVIABLE_PAYROLL_COLS.TIT) {
+					aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), aviableFinanceAutoWidth + "px");
+				} else {
+					aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				aviableFinanceTable.setWidget(0, col.ordinal(), col == AVIABLE_PAYROLL_COLS.CHK ? aviableCount : new Label(col.getHeaderLabel()));
+				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
+				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
+				if (col.getCellStyleClass() != null) {
+					aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
+					aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+				}
 			}
-			aviableFinanceTable.setWidget(0, col.ordinal(), col == AVIABLE_COLS.CHK ? aviableCount : new Label(col.getHeaderLabel()));
-			aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
-			aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
-			if (col.getCellStyleClass() != null) {
-				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
-				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+		} else {
+			for (AVIABLE_COLS col : AVIABLE_COLS.values()) {
+				if (col == AVIABLE_COLS.TIT) {
+					aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), aviableFinanceAutoWidth + "px");
+				} else {
+					aviableFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				aviableFinanceTable.setWidget(0, col.ordinal(), col == AVIABLE_COLS.CHK ? aviableCount : new Label(col.getHeaderLabel()));
+				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
+				aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
+				if (col.getCellStyleClass() != null) {
+					aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
+					aviableFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+				}
 			}
 		}
+		
 		
 		return aviableFinanceTable;
 	}
@@ -972,8 +1030,12 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		AonTableButton infoButton = new AonTableButton(infoTitle, AON.CSS.aonIconInfo());
 
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
+		
+		Label concept = new Label(finance.getConcept());
+		
+		Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 
-		Label document = new Label(finance.getRegistryDocument());
+		Label invReference = new Label(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
 
 		Label titular = new Label(finance.getRegistryName());
 		titular.setTitle(finance.getRegistryName());
@@ -985,18 +1047,17 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 
 		if (notValidAccountBic(finance) || hasNegativeAmount(finance)) {
 			issueDate.addStyleName(AON.CSS.aonColorOrange());
-			document.addStyleName(AON.CSS.aonColorOrange());
 			titular.addStyleName(AON.CSS.aonColorOrange());
 			amount.addStyleName(AON.CSS.aonColorOrange());
 
 			issueDate.setTitle(infoTitle);
-			document.setTitle(infoTitle);
 			amount.setTitle(infoTitle);
 		}
 
 		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconMoveRight());
 		addButton.addClickHandler(e -> {
-
+			addButton.setEnabled(false);
+			
 			this.fBatch.addBatchDetail(new FBatchDetail().setDomain(fBatch.getDomain()).setFbatch(fBatch.getId())
 					.setFinance(finance).setAmount(finance.getAmount()).setStatus((byte) 1).setRemoved(false));
 
@@ -1009,8 +1070,17 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		++col;
 		aviableFinanceTable.setWidget(row, col, issueDate);
 		++col;
-		aviableFinanceTable.setWidget(row, col, document);
-		++col;
+		
+		if(!FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			aviableFinanceTable.setWidget(row, col, invDate);
+			++col;
+			aviableFinanceTable.setWidget(row, col, invReference);
+			++col;
+		} else {
+			aviableFinanceTable.setWidget(row, col, concept);
+			++col;
+		}
+		
 		aviableFinanceTable.setWidget(row, col, titular);
 		++col;
 		aviableFinanceTable.setWidget(row, col, amount);
@@ -1052,14 +1122,16 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 	// -------------------------------------------------------------------
 	// ---------------------- TABLE COLUMNS ----------------------------
 	// -------------------------------------------------------------------
-
+	
 	private static enum SELECTED_COLS {
-		SEL(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()), 
-		CHK(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()),
-		FEC("F. Venc.", 80, AON.CSS.aonTextCenter()), 
-		DOC("Documento", 100, AON.CSS.aonTextLeft()),
-		TIT("Titular", 0, AON.CSS.aonTextLeft()), 
-		AMO("Importe", 100, AON.CSS.aonTextRight());
+		SEL(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()),
+		CHK(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()), 
+		FEC("F. Venc.", 70, AON.CSS.aonTextCenter()),
+		FFT("F. Factura", 70, AON.CSS.aonTextCenter()),
+		FAC("N. Factura", 100, AON.CSS.aonTextLeft()), 
+		TIT("Titular", 0, AON.CSS.aonTextLeft()),
+		AMO("Importe", 80, AON.CSS.aonTextRight()), 
+		;
 
 		String headerLabel;
 		int colWidth;
@@ -1070,6 +1142,42 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		}
 
 		private SELECTED_COLS(String headerLabel, int colWidth, String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+
+		public int getColWidth() {
+			return colWidth;
+		}
+
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
+	
+	private static enum SELECTED_PAYROLL_COLS {
+		SEL(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()),
+		CHK(AonStringUtils.EMPTY, 20, AON.CSS.aonTextCenter()), 
+		FEC("F. Venc.", 70, AON.CSS.aonTextCenter()),
+		CON("Concepto", 130, AON.CSS.aonTextLeft()),
+		TIT("Titular", 0, AON.CSS.aonTextLeft()),
+		AMO("Importe", 80, AON.CSS.aonTextRight())
+		;
+
+		String headerLabel;
+		int colWidth;
+		String cellStyleClass;
+
+		private SELECTED_PAYROLL_COLS(String headerLabel, int colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private SELECTED_PAYROLL_COLS(String headerLabel, int colWidth, String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
@@ -1105,6 +1213,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		addSelectedButton.setEnabled(false);
 		addSelectedButton.getElement().getStyle().setProperty("margin-right", ".8rem");
 		addSelectedButton.addClickHandler(e -> {
+			addSelectedButton.setEnabled(false);
 			LinkedHashSet<Integer> moveIds = new LinkedHashSet<>();
 
 			for (Integer financeId : selectedFinancesSelected) {
@@ -1177,29 +1286,56 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		selectedFinanceTable = new FlexTable();
 		selectedFinanceTable.setStyleName(AON.CSS.aonGrid());
 
-		selectedFinanceAutoWidth = selectedFinanceDockContent.getOffsetWidth() - 36;
-		for (SELECTED_COLS col : SELECTED_COLS.values()) {
-			if (col != SELECTED_COLS.TIT) {
-				selectedFinanceAutoWidth -= (col.getColWidth() + 2);
+		selectedFinanceAutoWidth = Window.getClientWidth() / 2 - 80;
+		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			for (SELECTED_PAYROLL_COLS col : SELECTED_PAYROLL_COLS.values()) {
+				if (col != SELECTED_PAYROLL_COLS.TIT) {
+					selectedFinanceAutoWidth -= (col.getColWidth() + 2);
+				}
+			}
+		} else {
+			for (SELECTED_COLS col : SELECTED_COLS.values()) {
+				if (col != SELECTED_COLS.TIT) {
+					selectedFinanceAutoWidth -= (col.getColWidth() + 2);
+				}
 			}
 		}
 
 		selectedCount = new InlineLabel();
-		for (SELECTED_COLS col : SELECTED_COLS.values()) {
-			if (col == SELECTED_COLS.TIT) {
-				selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), selectedFinanceAutoWidth + "px");
-			} else {
-				selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			for (SELECTED_PAYROLL_COLS col : SELECTED_PAYROLL_COLS.values()) {
+				if (col == SELECTED_PAYROLL_COLS.TIT) {
+					selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), selectedFinanceAutoWidth + "px");
+				} else {
+					selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				selectedFinanceTable.setWidget(0, col.ordinal(),
+						col == SELECTED_PAYROLL_COLS.CHK ? selectedCount : new Label(col.getHeaderLabel()));
+				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
+				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
+				if (col.getCellStyleClass() != null) {
+					selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
+					selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+				}
 			}
-			selectedFinanceTable.setWidget(0, col.ordinal(),
-					col == SELECTED_COLS.CHK ? selectedCount : new Label(col.getHeaderLabel()));
-			selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
-			selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
-			if (col.getCellStyleClass() != null) {
-				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
-				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+		} else {
+			for (SELECTED_COLS col : SELECTED_COLS.values()) {
+				if (col == SELECTED_COLS.TIT) {
+					selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), selectedFinanceAutoWidth + "px");
+				} else {
+					selectedFinanceTable.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth() + "px");
+				}
+				selectedFinanceTable.setWidget(0, col.ordinal(),
+						col == SELECTED_COLS.CHK ? selectedCount : new Label(col.getHeaderLabel()));
+				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonGridHeader());
+				selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
+				if (col.getCellStyleClass() != null) {
+					selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), col.getCellStyleClass());
+					selectedFinanceTable.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonNowrap());
+				}
 			}
 		}
+		
 		return selectedFinanceTable;
 	}
 
@@ -1222,6 +1358,7 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 
 		AonTableButton removeButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconMoveLeft());
 		removeButton.addClickHandler(e -> {
+			removeButton.setEnabled(false);
 			Optional<FBatchDetail> fbatchDetail = this.fBatch.getBatchDetails().stream()
 					.filter(fbatchDetial -> null != fbatchDetial.getFinance()
 							&& fbatchDetial.getFinance().getId() == finance.getId())
@@ -1257,8 +1394,11 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		});
 
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
+		
+		Label concept = new Label(finance.getConcept());
 
-		Label document = new Label(finance.getRegistryDocument());
+		Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
+		Label invReference = new Label(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
 
 		Label titular = new Label(finance.getRegistryName());
 		titular.setTitle(finance.getRegistryName());
@@ -1276,8 +1416,17 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		++col;
 		selectedFinanceTable.setWidget(row, col, issueDate);
 		++col;
-		selectedFinanceTable.setWidget(row, col, document);
-		++col;
+		
+		if(!FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+			selectedFinanceTable.setWidget(row, col, invDate);
+			++col;
+			selectedFinanceTable.setWidget(row, col, invReference);
+			++col;
+		}else {
+			selectedFinanceTable.setWidget(row, col, concept);
+			++col;
+		}
+		
 		selectedFinanceTable.setWidget(row, col, titular);
 		++col;
 		selectedFinanceTable.setWidget(row, col, amount);
@@ -1313,10 +1462,17 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 		backButton = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack());
 		backButton.addClickHandler(e -> back(hasSaved));
 		toolbar.add(backButton);
+		
+		resetSearchButton = new AonToolbarButton(AON.MSG.clean() + " filtros", AON.CSS.aonIconClear());
+		resetSearchButton.addClickHandler(e -> {
+			resetFilter();
+			search(opt);
+		});
+		toolbar.add(resetSearchButton);
 
 		sepaButton = new AonToolbarButton("Crear fichero SEPA", AON.CSS.aonIconXml());
 		sepaButton.addClickHandler(e -> createSepaFile());
-		sepaButton.setVisible(!this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0);
+		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0);
 		toolbar.add(sepaButton);
 
 		downloadButton = new AonToolbarButton(AON.MSG.download() + " fichero SEPA", AON.CSS.aonIconDownload());
@@ -1352,6 +1508,8 @@ public abstract class FBatchPaymentPayrollEntryModule extends SimpleLayoutPanel 
 						fBatch = savedFbatch;
 						hasSaved = true;
 						initialize();
+						
+						sepaButton.setVisible(!fBatch.getBatchDetails().isEmpty() && fBatch.getType() != (byte)0);
 
 						AonMessagePanel.showSuccess(messagePanel, new HTMLPanel(
 								"La remesa '<b>" + fBatch.getDescription() + "</b>' ha sido guarda correctamente."));
