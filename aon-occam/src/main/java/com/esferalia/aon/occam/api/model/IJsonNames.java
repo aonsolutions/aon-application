@@ -125,6 +125,7 @@ public final class IJsonNames {
 	public static final String CONTENT_NAME = "contentName";
 	public static final String CONTENT_SIZE = "contentSize";
 	public static final String CONTENT_TYPE = "contentType";
+	public static final String CONTEXT = "context";
 	public static final String COPIES = "copies";
 	public static final String COST_CENTER = "costCenter";
 	public static final String COST_CENTERS = "costCenters";
@@ -304,7 +305,7 @@ public final class IJsonNames {
 	public static final String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	public static final String LANGUAGE = "language";
-    public static final String LAST_ACCESS = "lastAccess";
+	public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
 	public static final String LAST_ACCESS_USER = "lastAccessUser";
 	public static final String LAST_UPDATE = "lastUpdate";

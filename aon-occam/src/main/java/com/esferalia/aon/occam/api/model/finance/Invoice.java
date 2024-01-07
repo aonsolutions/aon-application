@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -103,6 +104,8 @@ public class Invoice implements Serializable, HasAudit {
 
 	private InvoiceInfo invoiceInfo;
 		
+	private List<TediError> messages ;
+
 	public Integer getId() {
 		return id;
 	}
@@ -724,6 +727,31 @@ public class Invoice implements Serializable, HasAudit {
 		this.invoiceInfo = invoiceInfo;
 		return this;
 	}
+	
+	public List<TediError> getMessages() {
+	    if ( messages == null ) {
+		messages = new LinkedList<>();
+	    }
+	    return messages;
+	}
+	
+	public Invoice setMessages(LinkedList<TediError> messages) {
+	    this.messages = messages;
+	    return this;
+	}
+	
+	public Invoice addMessage(TediError message) {
+	    if ( messages == null ) {
+		messages = new LinkedList<>();
+	    }
+	    messages.add(message);
+	    return this;
+	}
+
+	public void clearMessages() {
+		this.messages = new LinkedList<>();		
+	}
+	
 	
 }
 

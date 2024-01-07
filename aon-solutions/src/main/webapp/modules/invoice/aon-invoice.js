@@ -15,7 +15,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
+import { ErrCode, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -210,6 +210,11 @@ export class AonInvoice extends AonElement {
 		this.FINANCE_BANK_ACCOUNT = this.FINANCE + CONSTANT.BANK_ACCOUNT.initCap();
 		this.FINANCE_AMOUNT = this.FINANCE + CONSTANT.AMOUNT.initCap();
 		this.FINANCE_DELETE = this.FINANCE + CONSTANT.DELETE.initCap();
+		
+		// ------ MESSAGES/ERRRORS
+		this.MESSAGES = this.DATA + 'Messages';
+		this.ERRORS_CARD = this.DATA + 'ErrorsCard';
+
 	}
 
 	getInvoice() {
@@ -486,6 +491,8 @@ export class AonInvoice extends AonElement {
 		this.clearElement(content);
 		this.buildCommentCard(content);
 
+		this.buildMessagesCard(content);
+
 		let general = this.createElement(TAG.DIV);
 		general.id = this.GENERAL;
 		general.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
@@ -646,6 +653,229 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	buildMessagesCard(parent) {
+		let messagesDiv = this.createElement(TAG.DIV);
+		messagesDiv.id = this.MESSAGES;
+		messagesDiv.className = CSS.AON_FLEX;
+		parent.appendChild(messagesDiv);
+
+		let hasErrors = this.invoice.messages && this.invoice.messages.length > 0;
+		if ( !hasErrors  ){
+			return;
+		}
+
+		let errorsCard = new AonCard();
+		errorsCard.id = this.ERRORS_CARD;
+		//errorsCard.title = MSG.ERRORS;
+		errorsCard.style.width = '100%';
+		
+		messagesDiv.appendChild(errorsCard);
+		
+
+		errorsCard.setContentHTML('');
+		errorsCard.setBackground('#ffc');
+
+		let ul = this.createElement(TAG.UL);
+		ul.classList.add(CSS.AON_UL);
+		ul.style.width = '100%';
+		errorsCard.setContent(ul);
+		
+		let createErrorDiv = (description, className) => {
+			
+			let errorDiv = this.createElement(TAG.DIV);
+			errorDiv.className = className ;
+			errorDiv.className += " " + CSS.AON_FLEX ;
+			errorDiv.className += " " + CSS.FLEX_ALIGN_CENTER;
+			
+			let iconSpan = this.createElement(TAG.SPAN);
+			iconSpan.className = CSS.MATERIAL_ICONS;
+			iconSpan.className += " " + CSS.AON_INPUT_MSG_ERROR;
+			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			iconSpan.style.color = className === CSS.AON_INVOICE_ERROR ? "#e83151": "#e3a733" ; 
+			errorDiv.appendChild(iconSpan);
+
+			let spaceSpan = this.createElement(TAG.SPAN);
+			spaceSpan.style.width = "16px";
+			errorDiv.appendChild(spaceSpan);
+			
+			let descriptionSpan = this.createElement(TAG.SPAN);
+			descriptionSpan.innerHTML = description;
+			errorDiv.appendChild(descriptionSpan);
+			
+			return errorDiv;			
+		};
+		
+		let createViewDiv = (viewMessage, hideMessage, errors) => {
+			let viewDiv = this.createElement(TAG.DIV);
+			
+			let viewButtonSpan = this.createElement(TAG.SPAN);
+			viewButtonSpan.innerHTML = viewMessage;
+			let hideButtonSpan = this.createElement(TAG.SPAN);
+			hideButtonSpan.innerHTML = hideMessage;
+			
+			let errorsDiv = this.createElement(TAG.DIV);
+			let errorsUl = this.createElement(TAG.UL);
+			errors.forEach( (error, i ) => {
+				let errorLi = this.createElement(TAG.LI);
+				let errorDiv = this.createElement(TAG.DIV);
+				let errorSpan = this.createElement(TAG.SPAN);
+				errorSpan.innerHTML = error.message;
+				errorDiv.appendChild(errorSpan);	
+				errorLi.appendChild(errorDiv);	
+				errorsUl.appendChild(errorLi);
+				
+				errorDiv.style.paddingTop = "12px";	
+				errorDiv.style.paddingLeft = "3px";	
+			});
+
+			errorsDiv.appendChild(errorsUl);
+			
+			viewDiv.appendChild(viewButtonSpan);
+			viewDiv.appendChild(hideButtonSpan);
+			viewDiv.appendChild(errorsDiv);
+			
+			
+			errorsDiv.style.display = "none";
+			hideButtonSpan.style.display = "none";
+			
+			viewButtonSpan.style.cursor = "pointer";
+			viewButtonSpan.onclick = function(){
+				viewButtonSpan.style.display = "none";
+				errorsDiv.style.removeProperty("display");
+				hideButtonSpan.style.removeProperty("display");
+			};
+			hideButtonSpan.style.cursor = "pointer";
+			hideButtonSpan.onclick = function(){
+				errorsDiv.style.display = "none";
+				hideButtonSpan.style.display = "none";
+				viewButtonSpan.style.removeProperty("display");
+			};
+			
+			// customize			
+			viewDiv.style.color = "#3d4045";
+			viewButtonSpan.style.fontWeight = "600";
+			hideButtonSpan.style.fontWeight = "600";
+			
+			return viewDiv; 
+		}
+		
+		let createErrorsDiv = ( titleMessage, viewMessage, hideMessage,  className, errors ) => {
+			
+			if ( errors.length > 1 ){
+				let li = this.createElement(TAG.LI);
+				li.style.backgrounColor = 'transparent !important';
+				let errorDiv = createErrorDiv(errors.length + " " +  titleMessage, className );
+				let viewDiv = createViewDiv(viewMessage, hideMessage, errors);
+				li.appendChild(errorDiv);
+				li.appendChild(viewDiv);
+				ul.appendChild(li);
+
+				errorDiv.style.paddingLeft = "3px";	
+				viewDiv.style.paddingLeft = '48px';
+				viewDiv.style.paddingBottom = "12px";	
+
+			} else if ( errors.length == 1 ) {
+				errors.forEach((error, i) => {
+					let li = this.createElement(TAG.LI);
+					li.style.backgrounColor = 'transparent !important';
+					let errorDiv  = createErrorDiv(error.message, className );
+					li.appendChild(errorDiv);
+					ul.appendChild(li);
+
+					errorDiv.style.paddingLeft = "3px";	
+					errorDiv.style.paddingBottom = "12px";	
+
+				});
+			}
+
+		}
+		
+		let customizeErrorsCards = (errorsCard, errors) =>  {
+			// customize card 
+			let errorColor = "#e83151";
+			let mainCard = errorsCard.getCard();
+			mainCard.style.padding = "0px"; 
+			mainCard.style.boxShadow = "none";
+			mainCard.style.backgroundColor = "white";
+			mainCard.style.borderColor = errorColor;
+			let titleCard = errorsCard.getCardTitle();
+			titleCard.style.paddingTop = "15px"; 
+			titleCard.style.paddingLeft = "22px"; 
+			titleCard.style.paddingRight = "22px"; 
+			titleCard.style.marginBottom = "0px"; 
+			titleCard.style.paddingBottom = "15px"; 
+			titleCard.style.color = "white";
+			titleCard.style.backgroundColor = errorColor;
+			
+			let expandSpan = this.createElement(TAG.SPAN);
+			expandSpan.style.cursor = "pointer";
+			expandSpan.className = CSS.MATERIAL_ICONS;
+			expandSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_DOWN;
+			expandSpan.onclick = function() {};
+			let collapseSpan = this.createElement(TAG.SPAN);
+			collapseSpan.style.cursor = "pointer";
+			collapseSpan.className = CSS.MATERIAL_ICONS;
+			collapseSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_UP;
+			
+			let iconSpan = this.createElement(TAG.SPAN);
+			iconSpan.className = CSS.MATERIAL_ICONS;
+			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			let messageSpan = this.createElement(TAG.SPAN);
+			messageSpan.innerHTML = errors + " " + ( errors > 1 ? MSG.ERRORS.toLowerCase() : MSG.ERRORS.substring(0,MSG.ERRORS.length-2).toLowerCase() );
+			messageSpan.style.paddingLeft = "8px";
+			
+			let titleCard1 = errorsCard.getCardTitle1();
+			titleCard1.appendChild(expandSpan);
+			
+			titleCard1.appendChild(collapseSpan);
+			titleCard1.appendChild(iconSpan);
+			titleCard1.appendChild(messageSpan);
+			
+			
+			let contentCard = errorsCard.getContent();
+			contentCard.style.paddingTop = "15px";
+			contentCard.style.paddingLeft = "22px"; 
+			contentCard.style.paddingRight = "22px"; 
+			contentCard.style.paddingBottom = "15px";
+
+			contentCard.style.display = "none"; 
+			collapseSpan.onclick = function() { 
+				contentCard.style.display = "none";
+				collapseSpan.style.display = "none"; 
+				expandSpan.style.removeProperty("display"); 
+			};
+			expandSpan.onclick = function() { 
+				contentCard.style.display = "block";
+				expandSpan.style.display = "none"; 
+				collapseSpan.style.removeProperty("display"); 
+			};
+			collapseSpan.onclick();
+			
+		}
+		
+		let emptyValueErrors =
+		this.invoice.messages.filter( err => err.code === ErrCode.ERR_EMPTY_VALUE );
+		createErrorsDiv( MSG.ERR_EMPTY_VALUE, MSG.VIEW_FIELDS, MSG.HIDE_FIELDS, CSS.AON_INVOICE_ERROR , emptyValueErrors )
+		
+		let lowConfidenceErrors =
+		this.invoice.messages.filter( err => err.code === ErrCode.ERR_LOW_CONFIDENCE );
+		createErrorsDiv( MSG.ERR_LOW_CONFIDENCE, MSG.VIEW_FIELDS, MSG.HIDE_FIELDS, CSS.AON_INVOICE_WARNING , lowConfidenceErrors )
+		
+		let otherErrors =
+		this.invoice.messages.filter( err => !emptyValueErrors.includes(err)  && !lowConfidenceErrors.includes(err) );
+		otherErrors.forEach((item, i) => {
+			let li = this.createElement(TAG.LI);
+			li.style.backgrounColor = 'transparent !important';
+
+			let errorDiv  = createErrorDiv(item.message, CSS.AON_INVOICE_ERROR );
+			li.appendChild(errorDiv);
+			ul.appendChild(li);
+		});
+		
+		let errorsCount = this.invoice.messages.length;
+		
+		customizeErrorsCards(errorsCard, errorsCount );
+	}
 
 	onChangeInvoiceTotal(value) {
 		this.invoice.setTotal(value);

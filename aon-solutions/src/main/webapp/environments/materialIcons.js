@@ -255,6 +255,7 @@ export const VISIBILITY_OFF = 'visibility_off';
 
 // ----- W
 export const WAREHOUSE = 'warehouse';
+export const WARNING = 'warning';
 
 export const OPEN_IN_FULL = "open_in_full";
 export const OPEN_IN_NEW  = "open_in_new";

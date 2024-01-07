@@ -2685,6 +2685,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("unemployment_cost", cgpBase*6.70/100.00);
 		click("costsCheck-input");
 		
+		calculate(Calendar.JANUARY,2024);
+		double cgcBase = getValue("cgcBaseLabel");
+		assertText("mei", cgcBase*0.12/100.00);
+		click("costsCheck-input");
+		assertText("mei_cost", cgpBase*0.58/100.00);
+		click("costsCheck-input");
 	}
 
 	@Test
