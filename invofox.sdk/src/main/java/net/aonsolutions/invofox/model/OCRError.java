@@ -151,7 +151,7 @@ public class OCRError implements Serializable {
 	private static int getLine(OCRError error) {
 	    return error.getFields().orElse(Collections.emptyList()).stream()
 		    .filter(f -> "breakdowns".equalsIgnoreCase(f.getPrefix().orElse("") ) )
-		    .map(f -> f.getIndex().orElse(-1)).findFirst().orElse(-1);
+		    .map(f -> f.getIndex().map(i -> i + 1 ).orElse(-1)).findFirst().orElse(-1) ;
 	}	
 
 }
