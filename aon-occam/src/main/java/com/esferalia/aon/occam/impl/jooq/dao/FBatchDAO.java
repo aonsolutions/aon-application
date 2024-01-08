@@ -235,7 +235,7 @@ public class FBatchDAO {
 				.setIssueDate(record.getValue(FBATCH.ISSUE_DATE))
 				.setType(record.getValue(FBATCH.TYPE))
 				.setStatus(FBatchStatus.safeValueOf(record.getValue(FBATCH.STATUS)))
-				.setRbank(checkField(record, RBANK.ID) ? RegistryBankFiller.build(record) : null)
+				.setRbank(checkField(record, RBANK.ID) && null != record.get(RBANK.ID) ? RegistryBankFiller.build(record) : null)
 				.setBankStatementLink(record.getValue(FBATCH.BANK_STATEMENT_LINK))
 				.setPayment(record.getValue(FBATCH.PAYMENT))
 				.setSecurityLevel(SecurityLevel.safeValueOf(record.getValue(FBATCH.SECURITY_LEVEL)))
