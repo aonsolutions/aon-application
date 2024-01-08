@@ -1032,10 +1032,16 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		
 		Label concept = new Label(finance.getConcept());
+		concept.setTitle(finance.getConcept());
+		concept.setWidth("130px");
+		concept.setStyleName(AON.CSS.aonTruncate());
 		
 		Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 
 		Label invReference = new Label(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
+		invReference.setTitle(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
+		invReference.setWidth("100px");
+		invReference.setStyleName(AON.CSS.aonTruncate());
 
 		Label titular = new Label(finance.getRegistryName());
 		titular.setTitle(finance.getRegistryName());
@@ -1396,9 +1402,16 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		
 		Label concept = new Label(finance.getConcept());
+		concept.setTitle(finance.getConcept());
+		concept.setWidth("130px");
+		concept.setStyleName(AON.CSS.aonTruncate());
 
 		Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
+		
 		Label invReference = new Label(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
+		invReference.setTitle(null == finance.getInvoice() ? "" : finance.getInvoice().getReferenceCode());
+		invReference.setWidth("100px");
+		invReference.setStyleName(AON.CSS.aonTruncate());
 
 		Label titular = new Label(finance.getRegistryName());
 		titular.setTitle(finance.getRegistryName());
