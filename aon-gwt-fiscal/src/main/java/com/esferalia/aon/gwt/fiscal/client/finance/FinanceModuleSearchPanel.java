@@ -435,6 +435,10 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	private void search(final FinanceModuleOptions opt) {
 		ValueChangeEvent.<FinanceParams>fire( FinanceModuleSearchPanel.this, getParams( opt ) ); 
 	}
+	
+	public boolean isSettledChecked() {
+		return settled.getValue();
+	}
 
 	public void initialize(final FinanceModuleOptions opt) {
 		amount.setValue(null);

@@ -481,6 +481,14 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Finance unSettleFinance(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceTrackingDAO.unSettle(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance);
+		});			
+	}
+	
+	@Override
 	public Finance undoFinance(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration -> {
 			FinanceTrackingDAO.undo(ctx, finance);
