@@ -1,9 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG } from "../../environments/environments.js";
+import { CSS, TAG, EVENT } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
 
 export class AonDashboardGraphicsTrial extends AonElement {
   PERIODS;
@@ -99,6 +100,9 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
     this.selectedPeriod = lastPeriod;
 
+    console.log("this.selectedPeriod");
+    console.log(this.selectedPeriod);
+
     this.draw();
   }
 
@@ -112,12 +116,46 @@ export class AonDashboardGraphicsTrial extends AonElement {
     contentDiv.style.flexDirection = "column";
     this.appendChild(contentDiv);
 
-    let titleDiv = this.createElement(TAG.SPAN);
-    titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
-    titleDiv.style.color = "grey";
-    titleDiv.style.fontWeight = "500";
-    titleDiv.style.textAlign = "center";
+    let titleDiv = this.createElement(TAG.DIV);
+    titleDiv.style.width = "100%";
+    titleDiv.style.display = "flex";
+    titleDiv.style.gap = ".5rem";
+    titleDiv.style.alignItems = "center";
+    titleDiv.style.justifyContent = "center";
     contentDiv.appendChild(titleDiv);
+
+    let titleSpan = this.createElement(TAG.SPAN);
+    titleSpan.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
+    titleSpan.style.color = "grey";
+    titleSpan.style.fontWeight = "500";
+    titleSpan.style.textAlign = "center";
+    titleDiv.appendChild(titleSpan);
+
+    let yearelect = this.createElement('select');
+    yearelect.id = 'yearelect';
+    yearelect.title = 'Año';
+    yearelect.style.background = "none";
+    yearelect.style.border = "1px gray solid";
+
+    for (const element of this.PERIODS) {
+      let optYear = this.createElement('option');
+      optYear.value = JSON.stringify(element);
+      optYear.innerHTML = element.name;
+      if(this.selectedPeriod.name === element.name){
+        optYear.selected = true;
+      }
+      yearelect.appendChild(optYear);
+    }
+
+    yearelect.addEventListener('change', () => {
+      console.log(yearelect);
+      console.log(JSON.parse(yearelect.value));
+      let period = JSON.parse(yearelect.value);
+      this.filter.year = period.name;
+      this.selectedPeriod = period;
+      this.draw();
+    });
+    titleDiv.appendChild(yearelect);
 
     let canvasDiv = this.createElement(TAG.DIV);
     canvasDiv.id = "pygCardCanvasDiv";
