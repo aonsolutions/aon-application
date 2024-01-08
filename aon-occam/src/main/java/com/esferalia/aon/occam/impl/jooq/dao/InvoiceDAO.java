@@ -375,6 +375,7 @@ public class InvoiceDAO {
 				,PRODUCT.CATEGORY
 				,ITEM.ID
 				,RSELLER.ID
+				,SELLER_ALIAS.ID
 				,SELLER_SUPPORT_ALIAS.NAME
 			)
 			.from(INVOICE)

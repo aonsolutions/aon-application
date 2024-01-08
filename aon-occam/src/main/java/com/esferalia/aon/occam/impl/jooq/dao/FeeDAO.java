@@ -379,7 +379,7 @@ public class FeeDAO {
 				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-				.setSeller(checkField(r, SELLER_COMERCIAL.REGISTRY)
+				.setSellerComercial(checkField(r, SELLER_COMERCIAL.REGISTRY)
 					? SellerFiller.build(r, SELLER_COMERCIAL_ALIAS)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSellerSupport(checkField(r, SELLER_SUPPORT.REGISTRY)
