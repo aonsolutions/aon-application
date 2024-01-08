@@ -2,7 +2,6 @@ package com.esferalia.aon.in.payroll.img;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,46 +23,49 @@ public class AlavaModelsTests {
 	@Test
 	public void mod115AlavaTest() throws Exception {
 		
-		Mod1152023Alava mod115A = new Mod1152023Alava();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Alava/MODELO 4T 115 DEPO 2022.pdf");	
+		Mod1152023Alava mod115A = new Mod1152023Alava();	
+		String file = "com/esferalia/aon/in/payroll/pdf/MODELO_4T_115_DEPO_2022.pdf";
+		ClassLoader classLoader = AlavaModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
+			byte[] bytes = IOUtils.toByteArray(is);
+			String text = pdfExtracter.extract(bytes);
+			System.out.println(text);
+			
+			String nif = mod115A.setNif(text);
+			assertEquals("B8586644 0", nif);		
+			String period = mod115A.setPeriod(text);
+			String periodo = pu.obtenerTrimestre(period);
+			assertEquals("4º Trimestre" , periodo);
+			String name = mod115A.setName(text);
+			assertEquals("DEPOCONSULTING SL", name);
+			String exercise = mod115A.setExercise(text);
+			assertEquals("2022" , exercise);
+			String amount = mod115A.setAmount(text);
+			assertEquals("279,40", amount);
+			String leases = mod115A.setLeases(text);
+			assertEquals("1.470,59" , leases);
+			String withHoldings = mod115A.setWithHoldings(text);
+			assertEquals("279,40", withHoldings);
+			String lessors = mod115A.setLessors(text);
+			assertEquals("1", lessors);
+			String hacienda = mod115A.setHacienda(text);
+			assertEquals("Diputacion Foral de Alava" , hacienda );
+			String model = mod115A.setModel(text);
+			assertEquals("115A", model);
+		}
 	
-		byte[] bytes = IOUtils.toByteArray(is);
-		String text = pdfExtracter.extract(bytes);
-		System.out.println(text);
-		
-		String nif = mod115A.setNif(text);
-		assertEquals("B8586644 0", nif);		
-		String period = mod115A.setPeriod(text);
-		String periodo = pu.obtenerTrimestre(period);
-		assertEquals("4º Trimestre" , periodo);
-		String name = mod115A.setName(text);
-		assertEquals("DEPOCONSULTING SL", name);
-		String exercise = mod115A.setExercise(text);
-		assertEquals("2022" , exercise);
-		String amount = mod115A.setAmount(text);
-		assertEquals("279,40", amount);
-		String leases = mod115A.setLeases(text);
-		assertEquals("1.470,59" , leases);
-		String withHoldings = mod115A.setWithHoldings(text);
-		assertEquals("279,40", withHoldings);
-		String lessors = mod115A.setLessors(text);
-		assertEquals("1", lessors);
-		String hacienda = mod115A.setHacienda(text);
-		assertEquals("Diputacion Foral de Alava" , hacienda );
-		String model = mod115A.setModel(text);
-		assertEquals("115A", model);
 	}
 	
 	@Test
 	public void mod303AlavaTest() throws Exception{
 		
 		Mod3002023Alava mod300 = new Mod3002023Alava();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Alava/aonSolutions - M.303 (2023-1T).pdf");	
+		String file = "com/esferalia/aon/in/payroll/pdf/aonSolutions-M_303_2023_1T.pdf";
+		ClassLoader classLoader = AlavaModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
+
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
-		System.out.println(text);
 		
 		String declarantNif = mod300.setDeclarantNif(text);
 		assertEquals("B0148727", declarantNif);
@@ -87,12 +89,15 @@ public class AlavaModelsTests {
 		String issueDate = mod300.setIssueDate(text);
 		assertEquals("2023-05-02", issueDate);
 	}
+	}
 	
 	@Test
 	public void mod349AlavaTest() throws Exception{
 		Mod3492023Alava mod349 = new Mod3492023Alava();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Alava/aonSolutions - M.349 (2023-2T).pdf");
+		String file = "com/esferalia/aon/in/payroll/pdf/aonSolutions-M_349_2023_2T.pdf";
+		ClassLoader classLoader = AlavaModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
+
 		byte [] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		System.out.println(text);
@@ -114,6 +119,6 @@ public class AlavaModelsTests {
 		List<String> operatorsNifTest = new ArrayList<>();
 		operatorsNifTest.add("IE-9692928F");
 		assertEquals(operatorsNifTest, operatorsNif);
-		
+		}
 	}
 }

@@ -1,12 +1,10 @@
 package com.esferalia.aon.in.payroll.img;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.printing.Orientation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import com.esferalia.aon.in.payroll.pdf.modBizkaia.Mod1102023Bizkaia;
@@ -23,8 +21,9 @@ public class BizkaiaModelsTests {
 	@Test
 	public void mod110BizkaiaTest() throws Exception {
 		Mod1102023Bizkaia mod110 = new Mod1102023Bizkaia();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Bizkaia/2 - MOD 110 ELDORADO 2T 2023 BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/2-MOD_110_ELDORADO_2T_2023_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		String nif = mod110.setNif(text);
@@ -46,13 +45,15 @@ public class BizkaiaModelsTests {
 		assertEquals("6.089,28", amount);
 		assertEquals("Año : 2023 Periodo : TRIM2", yearAndperiod);
 		assertEquals("110", model);
+		}
 	}
 
 	@Test
 	public void mod1152023BizkaiaTest() throws Exception {
 		Mod1152023Bizkaia mod115 = new Mod1152023Bizkaia();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Bizkaia/MOD 115 2T 2023 LAETITIA FERREIRO.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/MOD_115_2T_2023_LAETITIA_FERREIRO.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		
@@ -73,12 +74,14 @@ public class BizkaiaModelsTests {
 		String period = mod115.setPeriod(text);
 		assertEquals("TRIM2", period);
 	}
+	}
 
 	@Test
 	public void mod1802023BizkaiaTest() throws Exception {
 		Mod1802023Bizkaia mod180 = new Mod1802023Bizkaia();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Bizkaia/4 - MOD 180 ELDORADO 2022 BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/4-MOD_180_ELDORADO_2022_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		String nif = mod180.setNifDeclarant(text);
@@ -98,12 +101,14 @@ public class BizkaiaModelsTests {
 		String model = mod180.setModel(text);
 		assertEquals("180",model);
 	}
+	}
 
 	@Test
 	public void mod1902023BizkaiaTest() throws Exception {
 		Mod1902023Bizkaia mod190 = new Mod1902023Bizkaia();
-		InputStream is = new FileInputStream(
-				"/home/jmortega/Documentos/Modelos/Bizkaia/5 - MOD 190 ELDORADO 2022 BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/5-MOD_190_ELDORADO_2022_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte [] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		String nif = mod190.setNifDeclarant(text);
@@ -120,13 +125,15 @@ public class BizkaiaModelsTests {
 		assertEquals("24.562,77" , amount);
 		String issueDate = mod190.setIssueDate(text);
 		assertEquals("31 DE ENERO DE 2023", issueDate);
-
+		}
 	}
 	
 	@Test
 	public void mod3032023BizkaiaTest() throws Exception{
 		Mod3032023Bizkaia mod303 = new Mod3032023Bizkaia();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Bizkaia/1 - MOD 303 ELDORADO 2T 2023 - BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/1-MOD_303_ELDORADO_2T_2023_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte [] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		String nif = mod303.setPersonNif(text);
@@ -155,15 +162,15 @@ public class BizkaiaModelsTests {
 		assertEquals("25 DE JULIO DE 2023" , issueDate);
 		String hacienda = mod303.setHacienda(text);
 		assertEquals("Bizkaia" , hacienda);
-		
-		
-		
+		}
 	}
 	
 	@Test
 	public void mod3492023BizkaiaTest() throws Exception{
 		Mod3492023Bizkaia mod349 = new Mod3492023Bizkaia();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Bizkaia/7 - 7. MOD 349 JULIO 2021 ELDORADO BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/7-7_MOD_349_JULIO_2021_ELDORADO_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte [] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		String nif = mod349.setNifDeclarant(text);
@@ -181,11 +188,14 @@ public class BizkaiaModelsTests {
 		String representativeName = mod349.setRepresentativeName(text);
 		assertEquals("HERRERO VALLINAS YOLANDA", representativeName);
  	}
+	}
 	
 	@Test
 	public void mod3902023BizkaiaTest() throws Exception {
 		Mod3902023Bizkaia mod390 = new Mod3902023Bizkaia();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Bizkaia/6 - MOD 390 ELDORADO 2022 BIZKAIA.PDF");
+		String file = "com/esferalia/aon/in/payroll/pdf/6-MOD_390_ELDORADO_2022_BIZKAIA.PDF";
+		ClassLoader classLoader = AEATModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		System.out.println(text);
@@ -201,7 +211,7 @@ public class BizkaiaModelsTests {
 		assertEquals("VERA NUÑEZ MARIA SILVERIA", presentatorName);
 		String amount = mod390.setAmount(text);
 		assertEquals("18.369,75", amount);
-		
+		}
 	}
 	
 

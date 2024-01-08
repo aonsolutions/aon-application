@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
+import com.mchange.v2.sql.filter.SynchronizedFilterDataSource;
+
 public class DocumentMainForTests {
 
 	public static void main(String[] args) {
@@ -21,6 +23,7 @@ public class DocumentMainForTests {
 			Mod3002023Gipuzkoa md300G = new Mod3002023Gipuzkoa();
 			Mod39020223Gipuzkoa md390G = new Mod39020223Gipuzkoa();
 			Mod2002023Gipuzkoa md200G = new Mod2002023Gipuzkoa();
+			Mod1902023Gipuzkoa md190 = new Mod1902023Gipuzkoa();
 
 //			InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Guipuzkoa/1 - MOD 130 ROBERTO 4T 2022 GIPUZKOA.pdf");
 //			InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Guipuzkoa/2 - MOD 180 ROBERTO 2022 GIPUZKOA.pdf");
@@ -30,7 +33,7 @@ public class DocumentMainForTests {
 //			InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Guipuzkoa/6 - 300 3T 2021 ROBERTO GIPUZKOA.pdf");
 //			InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Guipuzkoa/4 - MOD 390 FIDCOMMERCE 2022 GIPUZKOA.pdf");
 			InputStream is = new FileInputStream(
-					"/home/jmortega/Documentos/Modelos/Guipuzkoa/1 - MOD 200 FIDCOMMERCE 2022 GIPUZKOA.pdf");
+					"/home/jmortega/Documentos/Modelos/Guipuzkoa/3 - MOD 190 FIDCOMMERCE 2022 GIPUZKOA.pdf");
 
 			byte[] bytes = IOUtils.toByteArray(is);
 
@@ -44,20 +47,50 @@ public class DocumentMainForTests {
 //TODO 		CAMBIAR EN REGEX LOS ACENTOS POR NOMENCLATURA CORRESPONDIENTE
 //TODO 		QUITAR AVISOS SONARLINT REGEX
 
-			// MODELO 200 GIPUZKOA
-			String nif = md200G.setDeclarantNif(text);
+			
+			
+			//MODELO 190 GIPUZKOA
+			String nif = md190.setNif(text);
 			System.out.println(nif);
-			String declarantName = md200G.setDeclarantName(text);
-			System.out.println(declarantName);
-			String relationPersonNif = md200G.setRelationPersonNif(text);
-			System.out.println(relationPersonNif);
-			String relationPersonName = md200G.setRelationPersonName(text);
-			System.out.println(relationPersonName);
-			String email = md200G.setEmail(text);
-			System.out.println(email);
-			String phoneNumber = md200G.setPhoneNumber(text);
+			String name = md190.setSocialReasonName(text);
+			System.out.println(name);
+			String phoneNumber = md190.setPhoneNumber(text);
 			System.out.println(phoneNumber);
-			String legalRepresentatorName = md200G.setLegalRepresntators(text);
+			String email = md190.setEmail(text);
+			System.out.println(email);
+			String amount = md190.setAmount(text);
+			System.out.println(amount);
+			String issueDate = md190.setIssueDate(text);
+			System.out.println(issueDate);
+			List<String> lista = md190.setNifs(text);
+			for (int i = 0; i < lista.size(); i++) {
+//					System.out.println(lista.get(i));	
+			}
+			
+			List<String> lista2 = md190.setNames(text);
+			for (int i = 0; i < lista2.size(); i++) {
+					System.out.println(lista2.get(i));
+				
+			}
+			
+			String exercise = md190.setExercise(text);
+			System.out.println(exercise);
+			
+			
+			// MODELO 200 GIPUZKOA
+//			String nif = md200G.setDeclarantNif(text);
+//			System.out.println(nif);
+//			String declarantName = md200G.setDeclarantName(text);
+//			System.out.println(declarantName);
+//			String relationPersonNif = md200G.setRelationPersonNif(text);
+//			System.out.println(relationPersonNif);
+//			String relationPersonName = md200G.setRelationPersonName(text);
+//			System.out.println(relationPersonName);
+//			String email = md200G.setEmail(text);
+//			System.out.println(email);
+//			String phoneNumber = md200G.setPhoneNumber(text);
+//			System.out.println(phoneNumber);
+//			String legalRepresentatorName = md200G.setLegalRepresntators(text);
 			
 			
 			// MODELO 390 GIPUZKOA

@@ -170,9 +170,6 @@ public class Mod3902023Bizkaia {
 		}
 		
 		return period;
-	}
-	
-	//MAYBE CONTINUE
-	
+	}	
 	
 }

@@ -10,7 +10,6 @@ import com.esferalia.aon.in.payroll.pdf.modNavarra.ModF692023Navarra;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 public class NavarraModelsTests {
@@ -20,7 +19,9 @@ public class NavarraModelsTests {
 	@Test
 	public void mod130NavarraTest() throws Exception{
 		Mod1302023Navarra mod130 = new Mod1302023Navarra();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Navarra/1 - MODELO 130 3T 2023 OLIVER - NAVARRA.pdf");
+		String file = "com/esferalia/aon/in/payroll/pdf/1-MODELO_130_3T_2023_OLIVER_NAVARRA.pdf";
+		ClassLoader classLoader = NavarraModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
@@ -39,11 +40,14 @@ public class NavarraModelsTests {
 		String hacienda = mod130.setHacienda(text);
 		assertEquals("Hacienda Navarra" , hacienda);	
 	}
+	}
 	
 	@Test
 	public void mod715NavarraTest() throws Exception{
 		Mod7152023Navarra mod715 = new Mod7152023Navarra();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Navarra/MOD 715 3T 2023 BLAS OLIVA.pdf");
+		String file = "com/esferalia/aon/in/payroll/pdf/MOD_715_3T_2023_BLAS_OLIVA.pdf";
+		ClassLoader classLoader = NavarraModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
 
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
@@ -75,11 +79,15 @@ public class NavarraModelsTests {
 		assertEquals("Hacienda Navarra" , hacienda);	
 		System.out.println(hacienda);
 	}
+	}
 	
 	@Test
 	public void modF69NavarraTest() throws Exception{
 		ModF692023Navarra modF69 = new ModF692023Navarra();
-		InputStream is = new FileInputStream("/home/jmortega/Documentos/Modelos/Navarra/2 - MODELO F69 3T 2023 OLIVER - NAVARRA.pdf");
+		String file = "com/esferalia/aon/in/payroll/pdf/2-MODELO_F69_3T_2023_OLIVER_NAVARRA.pdf";
+		ClassLoader classLoader = NavarraModelsTests.class.getClassLoader();
+		try(InputStream is = classLoader.getResourceAsStream(file)){
+
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text = pdfExtracter.extract(bytes);
 		System.out.println(text);
@@ -100,6 +108,7 @@ public class NavarraModelsTests {
 		assertEquals("Hacienda Navarra", hacienda);
 		String model = modF69.setModel(text);
 		assertEquals("F69", model);
+	}
 	}
 	
 }
