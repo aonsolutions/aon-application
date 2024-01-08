@@ -88,6 +88,7 @@ export class AonUploadToast extends AonElement {
 		span.style.position = 'relative';
 		span.style.top = '7px';
 		div.appendChild(span);
+		
 
 		let loadDiv = this.createDiv();
 		loadDiv.id = this.id + "LoadDiv";
@@ -119,7 +120,7 @@ export class AonUploadToast extends AonElement {
 	upload(type, file, data, success, error) {
 		if("invoice" === type){
 			if(this.isBeta() && this.getDur().isOcr()) {
-				s3UploadInvoice(file, this.JOB_ID, success, error);
+				s3UploadInvoice(file, this.JOB_ID, data, success, error);
 			} else {
 				uploadInvoice2(file, success, error);
 			}
