@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2016.IModel193DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2023.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1932015Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,8 +23,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
+	private static final String WIDTH_200PX = "200px";
 	private static final String WIDTH_160PX = "160px";
 
 
@@ -72,7 +73,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 	private int tabIndex; 
 	private AonDocumentTextBox document;
 	
-	public Model193AEAT2016DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
+	public Model193AEAT2023DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
@@ -136,7 +137,8 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.getColumnFormatter().setWidth(3, "120px");
 		tab2.getColumnFormatter().setWidth(4, "60px");
 		tab2.getColumnFormatter().setWidth(5, "130px");
-		tab2.getColumnFormatter().setWidth(6, "auto");
+		tab2.getColumnFormatter().setWidth(6, "100px");
+		tab2.getColumnFormatter().setWidth(7, "auto");
 		tab2.setStyleName(AON.CSS.aonWidthAll());
 		tab2.addStyleName(AON.CSS.aonNowrap());
 		
@@ -152,6 +154,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.keyCode()));
 		tab2.setWidget(1, 5, new Model193SmallerLabel(AON.MSG.issuingCode()));
 		tab2.setWidget(1, 6, new Model193SmallerLabel(AON.MSG.accrualYear()));
+		tab2.setWidget(1, 7, new Label());
 
 		final ListBox nature = new ListBox();
 		nature.setWidth("40px");
@@ -162,7 +165,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 			key.addItem(AonStringUtils.abbreviate(k.getDescription(),150), k.getValue());
 		}
 		
-		Model193AEAT2016DetailPanel.setValue(key, nature, detail);
+		Model193AEAT2023DetailPanel.setValue(key, nature, detail);
 		
 		key.addChangeHandler(event -> {
 			nature.clear();
@@ -232,6 +235,16 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 6, accrualYear);
 		
+		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
+		ceutaMelilla.setValue(detail.isCeutaMelilla());
+		ceutaMelilla.addClickHandler(event -> {
+			detail.setCeutaMelilla(ceutaMelilla.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab2.setWidget(2, 7, ceutaMelilla);
+		
+		
+		
 		tab2.setWidget(3, 0, new Model193SmallerLabel(AON.MSG.payment()));
 		tab2.setWidget(3, 1, new Model193SmallerLabel(AON.MSG.codeType()));
 		tab2.setWidget(3, 2, new Model193SmallerLabel(AON.MSG.ccv()));
@@ -239,6 +252,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(3, 4, new Model193SmallerLabel(AON.MSG.lenderAmount()));
 		tab2.getFlexCellFormatter().setColSpan(3, 4, 2);
 		tab2.setWidget(3, 5, new Model193SmallerLabel(AON.MSG.reductions()));
+		tab2.getFlexCellFormatter().setColSpan(3, 5, 2);
 
 		ListBox payment = new ListBox();
 		payment.setWidth("40px");
@@ -312,6 +326,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onNameChanged(detail);
 		});
 		tab2.setWidget(4, 5, reduction);
+		tab2.getFlexCellFormatter().setColSpan(4, 5, 2);
 		
 		FlexTable tab3 = new FlexTable();
 		panel.add(tab3);
@@ -405,6 +420,74 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab4.setWidget(2, 4, guarantee);
 
+
+		FlexTable tab31 = new FlexTable();
+		panel.add(tab31);		
+		tab31.getColumnFormatter().setWidth(0, WIDTH_200PX);
+		tab31.getColumnFormatter().setWidth(1, WIDTH_200PX);
+		tab31.getColumnFormatter().setWidth(2, WIDTH_200PX);
+		tab31.getColumnFormatter().setWidth(3, WIDTH_200PX);
+		tab31.getColumnFormatter().setWidth(4, WIDTH_200PX);
+		tab31.getColumnFormatter().setWidth(5, "auto");
+		tab31.setStyleName(AON.CSS.aonWidthAll());
+		tab31.addStyleName(AON.CSS.aonNowrap());
+
+		tab31.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab31.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
+		tab31.getFlexCellFormatter().setColSpan(0, 0, 6);
+		tab31.setWidget(0, 0,
+				new InlineLabel("Retenciones e ingresos a cuenta ingresados en el Estado, "
+						+ "en las Diputaciones Forales del Pa\u00EDs Vasco y en la Comunidad Foral de "
+						+ "Navarra"));
+		
+		tab31.setWidget(1, 0, new Model193SmallerLabel("Hacienda Estatal"));
+		tab31.setWidget(1, 1, new Model193SmallerLabel("Com. Foral Navarra"));
+		tab31.setWidget(1, 2, new Model193SmallerLabel("Dip. Foral Araba/\u00C1lava"));
+		tab31.setWidget(1, 3, new Model193SmallerLabel("Dip. Foral Gipuzkoa"));
+		tab31.setWidget(1, 4, new Model193SmallerLabel("Dip. Foral Bizkaia"));
+		tab31.setWidget(1, 5, new Label());
+		
+		AonDoubleBox commonRetention = new AonDoubleBox();
+		commonRetention.setValue(detail.getCommonRetention());
+		commonRetention.addValueChangeHandler(event -> {
+			detail.setCommonRetention(commonRetention.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab31.setWidget(2, 0, commonRetention);
+
+		AonDoubleBox navarraRetention = new AonDoubleBox();
+		navarraRetention.setValue(detail.getNavarraRetention());
+		navarraRetention.addValueChangeHandler(event -> {
+			detail.setNavarraRetention(navarraRetention.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab31.setWidget(2, 1, navarraRetention);
+		
+		AonDoubleBox arabaRetention = new AonDoubleBox();
+		arabaRetention.setValue(detail.getArabaRetention());
+		arabaRetention.addValueChangeHandler(event -> {
+			detail.setArabaRetention(arabaRetention.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab31.setWidget(2, 2, arabaRetention);
+		
+		AonDoubleBox gipuzkoaRetention = new AonDoubleBox();
+		gipuzkoaRetention.setValue(detail.getGipuzkoaRetention());
+		gipuzkoaRetention.addValueChangeHandler(event -> {
+			detail.setGipuzkoaRetention(gipuzkoaRetention.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab31.setWidget(2, 3, gipuzkoaRetention);
+
+		AonDoubleBox bizkaiaRetention = new AonDoubleBox();
+		bizkaiaRetention.setValue(detail.getBizkaiaRetention());
+		bizkaiaRetention.addValueChangeHandler(event -> {
+			detail.setBizkaiaRetention(bizkaiaRetention.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab31.setWidget(2, 4, bizkaiaRetention);
+		tab31.setWidget(2, 5, new Label());
+		
 		scroll.setWidget(panel);
 		setWidget(scroll);
 	}

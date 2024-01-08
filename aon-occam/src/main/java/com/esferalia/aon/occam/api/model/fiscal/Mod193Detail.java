@@ -49,6 +49,13 @@ public class Mod193Detail implements Serializable {
 	private double penalization;
 	private boolean declarantNature;
 	
+	private boolean ceutaMelilla;
+	private double commonRetention;
+	private double navarraRetention;
+	private double arabaRetention;
+	private double bizkaiaRetention;
+	private double gipuzkoaRetention;
+	
 	private boolean dirty;
 	private boolean deleted;
 
@@ -377,4 +384,52 @@ public class Mod193Detail implements Serializable {
 		return this;
 	}
 
+	public boolean isCeutaMelilla() {
+		return ceutaMelilla;
+	}
+
+	public Mod193Detail setCeutaMelilla(boolean ceutaMelilla) {
+		this.ceutaMelilla = ceutaMelilla;
+		return this;
+	}
+
+	public double getCommonRetention() {
+		return commonRetention;
+	}
+	public Mod193Detail setCommonRetention(double commonRetention) {
+		this.commonRetention = commonRetention;
+		return this;
+	}
+
+	public double getNavarraRetention() {
+		return navarraRetention;
+	}
+	public Mod193Detail setNavarraRetention(double navarraRetention) {
+		this.navarraRetention = navarraRetention;
+		return this;
+	}
+
+	public double getArabaRetention() {
+		return arabaRetention;
+	}
+	public Mod193Detail setArabaRetention(double arabaRetention) {
+		this.arabaRetention = arabaRetention;
+		return this;
+	}
+
+	public double getBizkaiaRetention() {
+		return bizkaiaRetention;
+	}
+	public Mod193Detail setBizkaiaRetention(double bizkaiaRetention) {
+		this.bizkaiaRetention = bizkaiaRetention;
+		return this;
+	}
+
+	public double getGipuzkoaRetention() {
+		return gipuzkoaRetention;
+	}
+	public Mod193Detail setGipuzkoaRetention(double gipuzkoaRetention) {
+		this.gipuzkoaRetention = gipuzkoaRetention;
+		return this;
+	}
 }
