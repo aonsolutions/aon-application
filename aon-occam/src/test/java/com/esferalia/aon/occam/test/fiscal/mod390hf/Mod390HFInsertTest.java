@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Date;
 
 import org.junit.Test;
@@ -30,6 +31,18 @@ public class Mod390HFInsertTest extends AbstractOccamTest {
 		modInsert(AonRandom.getRangeDate(start,end));
 	}
 	
+	@Test
+	public void testLastYear() {
+		Month month = LocalDate.now().getMonth();
+		if (month.getValue() < 2) {
+			int year = LocalDate.now().getYear() - 1;
+			Period period =  Period.YEAR;
+			Date start =  FiscalUtils.getPeriodStart(year,period);
+			Date end =  FiscalUtils.getPeriodEnd(year,period);
+			modInsert(AonRandom.getRangeDate(start,end));
+		}
+	}
+
 	public void modInsert(Date date) {
 		System.out.println( "\t ---------------------");
 		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();

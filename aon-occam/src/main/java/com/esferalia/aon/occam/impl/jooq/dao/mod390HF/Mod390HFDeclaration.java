@@ -128,6 +128,10 @@ public abstract class Mod390HFDeclaration {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2017Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2017Declaration();}
 		},
+		ARABA_2023 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2023Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFAraba2023Declaration();}
+		},
 		ARABA_2022 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2022Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFAraba2022Declaration();}
