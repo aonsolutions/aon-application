@@ -30,7 +30,7 @@ public class TediContext implements Serializable {
 		return this;
 	}
 
-	public int getLine() {
+	public Integer getLine() {
 		return line;
 	}
 

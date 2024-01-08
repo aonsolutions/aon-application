@@ -403,6 +403,10 @@ public class TediContextVisitor implements ITediContextVisitor {
 		noVisit();
 	}
 	
+	@Override
+	public void visitTotal(ICallback callback) {
+	}
+	
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
 		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(date);

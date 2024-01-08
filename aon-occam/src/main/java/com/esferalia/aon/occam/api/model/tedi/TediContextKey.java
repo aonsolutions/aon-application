@@ -162,6 +162,12 @@ public enum TediContextKey  implements Serializable {
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitFinanceAccountBank(callback);
 		}
+	},
+	TOTAL("Total") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTotal(callback);
+		}
 	}
 	;
 
