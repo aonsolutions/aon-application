@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
+import java.util.List;
+
 public class PackagingDelivery {
 	
 	Integer delivery;
 	PackagingDeliveryContainer container;
-	PackagingDeliveryContent content;
+	List<PackagingDeliveryContent> content;
 	Integer salesDetail;
 	
 	public PackagingDelivery() {
@@ -29,11 +31,11 @@ public class PackagingDelivery {
 		return this;
 	}
 
-	public PackagingDeliveryContent getContent() {
+	public List<PackagingDeliveryContent> getContent() {
 		return content;
 	}
 
-	public PackagingDelivery setContent(PackagingDeliveryContent content) {
+	public PackagingDelivery setContent(List<PackagingDeliveryContent> content) {
 		this.content = content;
 		return this;
 	}

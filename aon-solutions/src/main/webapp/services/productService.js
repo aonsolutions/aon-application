@@ -27,3 +27,4 @@ export const savePackaging = (data) => put(`${API_URL}/packaging`, data);
 
 export const getDeliveryPackaging = (data) => get(`${API_URL}/packaging/deliveryPackaging`, data);
 export const saveDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliveryPackaging`, data);
+export const acceptDeliveryPackaging = (data) => put(`${API_URL}/packaging/deliveryPackaging/accept`, data) 
