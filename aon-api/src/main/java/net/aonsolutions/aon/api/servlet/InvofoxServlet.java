@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediContext;
+import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -335,8 +336,42 @@ public class InvofoxServlet extends AonApiHttpServlet {
         }
 
         private static final Optional<TediContext> getTediContext(OCRField ocrField ) {
+            TediContextKey tediContextKey =  getTediContextKey(ocrField);
+            if ( tediContextKey == null ) { 
+        	return Optional.empty();
+            }
+            
+            TediContext tediContext = new TediContext();
+            tediContext.setKey(tediContextKey);
+            
+            ocrField.getIndex().ifPresent(tediContext::setLine);
+            
+            return Optional.of(tediContext);
+        }
+
+        private static final TediContextKey getTediContextKey(OCRField ocrField ) {
             String fieldName = ocrField.getName().orElse("");
             switch (fieldName) {
+	    case "documentNumber":
+		return TediContextKey.NUMBER;
+	    case "issueDate":
+		return TediContextKey.ISSUE_DATE;
+	    case "issuerName":
+		return TediContextKey.RNAME;
+	    case "issuerTaxId":
+		return TediContextKey.RDOCUMENT;
+	    case "issuerCountry":
+		return TediContextKey.RDOCUMENT_COUNTRY;
+	    case "issuerAddress":
+	    case "issuerAddressDetails":
+		return TediContextKey.ADDRESS;
+	    case "invoiceRef":
+		return TediContextKey.REFERENCE_CODE;
+	    case "seriesCode":
+		return TediContextKey.SERIES;
+	    case "totalAmount":
+		return TediContextKey.TOTAL;
+
 	    case "additionalChargesAmount":
 	    case "additionalDiscountsAmount":
 	    case "additionalNotes":
@@ -344,20 +379,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "contractRef":
 	    case "currency":
 	    case "deliveryNoteRef":
-	    case "documentNumber":
 	    case "documentType":
 	    case "IBAN":
 	    case "incoterms":
-	    case "invoiceRef":
 	    case "isCreditNote":
-	    case "issueDate":
-	    case "issuerAddress":
-	    case "issuerAddressDetails":
-	    case "issuerCountry":
 	    case "issuerEmail":
-	    case "issuerName":
 	    case "issuerPhoneNumber":
-	    case "issuerTaxId":
 	    case "issuerWebsite":
 	    case "language":
 	    case "legalNotes":
@@ -374,7 +401,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "recipientTaxId":
 	    case "recipientWebsite":
 	    case "reimbursableExpensesAmount":
-	    case "seriesCode":
 	    case "serviceAddress":
 	    case "shippingAddress":
 	    case "supplyNumber":
@@ -383,7 +409,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "taxBaseAmount":
 	    case "taxClass":
 	    case "taxRate":
-	    case "totalAmount":
 	    case "totalDiscountAmount":
 	    case "totalDueAmount":
 	    case "totalFeesAmount":
@@ -395,9 +420,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "withholdingTaxAmount":
 	    case "withholdingTaxRate":
 	    default:
-		return Optional.empty();
+		return null;
 	    }
-            
         }
         
         
