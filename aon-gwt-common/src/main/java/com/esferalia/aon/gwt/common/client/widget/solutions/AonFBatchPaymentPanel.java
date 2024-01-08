@@ -216,7 +216,7 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 					});
 				} else {
 					AonDialog warningDialog = new AonDialog("Datos Obligatorios",
-							new HTML("Los datos <b>Descripci\u00f3n</b>, <b>Fecha</b> y <b>Cuenta Bancaria</b> son obligatorios para crear una remesa. Por favor revise estos campos."));
+							new HTML("Los datos <b>Descripci\u00f3n</b> y <b>Fecha</b> son obligatorios para crear una remesa. Por favor revise estos campos."));
 					
 					warningDialog.warning();
 				}
@@ -225,7 +225,7 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 			}
 
 			private boolean isAbleToSave() {
-				return AonStringUtils.isNotBlank(description.getValue()) && issueDate.getValue() != null && AonStringUtils.isNotBlank(bank.getSelectedValue());
+				return AonStringUtils.isNotBlank(description.getValue()) && issueDate.getValue() != null;
 			}
 		});
     	
