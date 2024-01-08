@@ -15,8 +15,8 @@ import { AonNumber } from '../../components/aon-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTabs } from '../../components/aon-tabs.js';
-import { getDeliveries } from '../../services/warehouseService.js';
-import { getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
+import { acceptDeliveryPackaging, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonMobilePackageList } from '../warehouse/elaboration/aon-mobile-package-list.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
@@ -89,6 +89,7 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
 
@@ -169,13 +170,29 @@ export class AonMobileDelivery extends AonElement {
 
 	// ACTIONS
 
+	accept() {
+		acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
+	}
+
 	back() {
 		this.getApplication().getParent().aonDelivery();
 	}
 
-	backToDelivery() {
-		this.clear();
-		this.build();
+	backToDelivery(delivery) {
+		if(!delivery) {
+			this.clear();
+			this.build();
+		} else {
+			let data = {
+				id: delivery,
+				full: true
+			}
+			getDelivery(data).then(r => {
+				this.setDelivery(r);
+				this.clear();
+				this.build();
+			});
+		}
 	}
 
 	// Create Components
@@ -259,13 +276,15 @@ export class AonMobileDelivery extends AonElement {
 		div.appendChild(saveButton);	
 		saveButton.addEventListener(EVENT.CLICK, () => {
 			this.packaging.delivery = this.delivery.id;
-			saveDeliveryPackaging(this.packaging);
+			saveDeliveryPackaging(this.packaging).then(r =>{
+				this.backToDelivery(this.delivery.id);
+			}).catch(e => this.backToDelivery(this.delivery.id));
 
 			//RELOAD DELIVERY
-			let option = WAREHOUSE_OPTION.DELIVERY;
-			option.delivery = this.delivery.id;
-			this.getApplication().selectOption(option)
-			// this.backToDelivery();
+			// let option = WAREHOUSE_OPTION.DELIVERY;
+			// option.delivery = this.delivery.id;
+			// this.getApplication().selectOption(option)
+
 		});
 	}
 
@@ -325,7 +344,6 @@ export class AonMobileDelivery extends AonElement {
 
 				if(!r.delivery || !r.delivery.id) {	
 					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
-
 				}
 
 			}).catch(e => {
@@ -345,7 +363,7 @@ export class AonMobileDelivery extends AonElement {
 			while(table.rows >= cont) {
 				table.removeRow(table.rows);
 			}
-			this.buildNewPackaging(table);
+			this.buildNewPackaging(table, table2);
 			let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 			saveButton.setDisabled(true);
 		});
@@ -449,7 +467,9 @@ export class AonMobileDelivery extends AonElement {
 		table.addCell(product);
 		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
 	
-		
+		let source;
+		let quantity = 0;
+		let composition = [];
 		product.addEventListener(EVENT.CHANGE, () => {
 			product.setDisabled(true);
 			let data = { 
@@ -460,28 +480,23 @@ export class AonMobileDelivery extends AonElement {
 				// si no esta en ningun albaran  
 					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
 					//añadir cantidad 
-				let composition = [];
+
 				Array.prototype.forEach.call(r.item.itemComposition, i => {
-					
+					if(i.composition.product.id === data.product) {
+						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+						saveButton.setDisabled(false);
+						let pendingQuantity = detail.quantity - detail.delivered;
+						let quantityValue = i.quantity > pendingQuantity
+							? pendingQuantity : i.quantity;
+						
+						let object = i;
+						object.quantity = quantityValue;
+						composition.push(object);
 
-					
-					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
-					saveButton.setDisabled(false);
-
-					composition.put({
-						item: i.item,
-						quantity: quantityValue
-					})
+						quantity = quantity + quantityValue;
+					}
 				});
-					
-				if(r.item.itemComposition.length > 0) {
-					
-				}				
-
-				this.packaging.content = {
-					source: r.item.serialNumber,
-					composition
-				}
+				source = r.item.id;
 			}).catch(e => this.showError(e));
 		});
 
@@ -494,7 +509,34 @@ export class AonMobileDelivery extends AonElement {
 		});
 		table.addCell(magicButton);
 
-		dialog.addAcceptAction(() => {});
+		dialog.addAcceptAction(() => {
+			let contentObject = {
+				source,
+				composition
+			};
+			composition.forEach(c => {
+				let table2 = this.getElement(this.id + 'Envasesss22');
+				table2.addRow();
+				let span = this.createSpan();
+				span.innerHTML = detail.item.product.code;
+				table2.addCell(span);
+				let span2 = this.createSpan();
+				span2.innerHTML = c.quantity;
+				table2.addCell(span2);
+			});
+			
+			if(this.packaging.content) {
+				this.packaging.content.push(contentObject);
+			} else this.packaging.content = [contentObject];
+
+			for(let j = 0; j < this.salesDetails.length; j++) {
+				if(this.salesDetails[j].id === detail.id) {
+					this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+				}
+			}		
+			
+			this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+		});
 		dialog.open();
 	}
 

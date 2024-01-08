@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
 import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
+import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
 import net.aonsolutions.db.up2date.tgss.TrainingUnemployment2023Fix;
 
@@ -379,6 +380,7 @@ public class Up2Date {
 	    //TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
 		Holidays2024Insert.HOLIDAYS2024INSERT,
 		IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
+		MEI2024Insert.MEI2024INSERT,
 
 		
 	    // ----------------------------------------------------------------

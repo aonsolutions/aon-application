@@ -162,6 +162,7 @@ export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Abgelaufen';
+export const ERRORS = 'Fehler';
 
 // ----- F
 

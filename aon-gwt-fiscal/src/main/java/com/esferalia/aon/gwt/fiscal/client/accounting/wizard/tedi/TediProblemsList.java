@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class TediProblemsList extends ScrollPanel {
 
-	public TediProblemsList( LinkedList<TediError> messages) {
+	public TediProblemsList( List<TediError> messages) {
 		setStyleName(AON.CSS.aonScrollArea());
 		FlowPanel mainPanel = new FlowPanel();
 		setWidget(mainPanel);

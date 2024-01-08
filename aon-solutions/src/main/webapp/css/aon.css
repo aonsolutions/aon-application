@@ -2092,3 +2092,15 @@ aon-access-card{
     transform: rotate(360deg);
   }
 }
+
+
+.aonError .material-icons {
+	font-size: 20px;
+	color: rgb(232, 49, 81);
+}
+
+.aonWarning .material-icons {
+	font-size: 20px;
+	color: rgb(230, 151, 10);
+	
+}

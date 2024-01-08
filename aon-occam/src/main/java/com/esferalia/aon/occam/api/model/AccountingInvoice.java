@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -50,7 +51,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private String payAccountCode;
 	private String payAccountDescription;
 	
-	private LinkedList<TediError> messages = new LinkedList<>();
 	private LinkedList<AccountingRegistry> posibleRegistries;
 
 	public boolean isTediParsed() {
@@ -358,12 +358,12 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 
-	public LinkedList<TediError> getMessages() {
-		return messages;
+	public List<TediError> getMessages() {
+		return invoice.getMessages();
 	}
 
 	public void add(TediError error) {
-		messages.add(error);
+		invoice.addMessage(error);
 	}
 
 	public TediLevel getMoreSeriousLevel() {
@@ -383,7 +383,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
 	public void clearMessages() {
-		this.messages = new LinkedList<>();		
+		invoice.clearMessages();		
 	}
 	
 	public boolean isVatImportationAvailable() {

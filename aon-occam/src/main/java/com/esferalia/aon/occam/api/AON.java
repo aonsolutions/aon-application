@@ -7921,6 +7921,12 @@ public class AON {
 		}
 	}
 	
+	public static void acceptDeliveryPackaging(Domain domain, User user, Integer deliveryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().acceptDeliveryPackaging(ctx, deliveryId);
+		}
+	}
+	
 	// ---------- DOMAIN LINKED
 
 	public static List<DomainLinked> getDomainLinkedList(String domainName, Integer domainId, String login, Integer registry) {

@@ -29,7 +29,7 @@ public class PackagingDeliveryJSON {
 		return new PackagingDelivery()
 				.setDelivery(JsonUtils.getInteger(json, IJsonNames.DELIVERY))
 				.setContainer(containerFromJSON(JsonUtils.getJSONObject(json, IJsonNames.CONTAINER)))
-				.setContent(contentFromJSON(JsonUtils.getJSONObject(json, IJsonNames.CONTAINER)))
+				.setContent(contentFromJSON(JsonUtils.getJSONArray(json, IJsonNames.CONTENT)))
 				.setSalesDetail(JsonUtils.getInteger(json, IJsonNames.SALES_DETAIL));
 	}
 	
@@ -41,11 +41,19 @@ public class PackagingDeliveryJSON {
 
 	}
 	
-	private static PackagingDeliveryContent contentFromJSON(JSONObject json) {
-		if(json == null) return new PackagingDeliveryContent();
-		return new PackagingDeliveryContent()
+	private static List<PackagingDeliveryContent> contentFromJSON(JSONArray array) {
+		
+		LinkedList<PackagingDeliveryContent> list = new LinkedList<>();
+		for(Integer i = 0; i < array.length(); i++) {
+			JSONObject json = array.getJSONObject(i);
+			PackagingDeliveryContent content = new PackagingDeliveryContent()
 			.setSource(JsonUtils.getInteger(json, IJsonNames.SOURCE))
 			.setComposition(ItemCompositionJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.COMPOSITION)));
+			
+			list.add(content);
+		}
+ 		return list;
+
 	}
 	public static JSONObject toJSON(PackagingDelivery object) {
 		JSONObject json = new JSONObject();
@@ -60,7 +68,7 @@ public class PackagingDeliveryJSON {
 		return new JSONObject();
 	}
 	
-	private static JSONObject contentToJSON(PackagingDeliveryContent content) {
-		return new JSONObject();
+	private static JSONArray contentToJSON(List<PackagingDeliveryContent> content) {
+		return new JSONArray();
 	}
 }
