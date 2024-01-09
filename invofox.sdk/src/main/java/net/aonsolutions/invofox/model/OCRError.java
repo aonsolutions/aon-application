@@ -100,15 +100,16 @@ public class OCRError implements Serializable {
 	    case "ERR_UNSUPPORTED_FILE_FORMAT":
 		return "El form ato del documento no es compatible.";
 	    case "ERR_EMPTY_VALUE": {
-		return format(error, "El campo <b>%s</b> no tiene valor", "</br>" );
+		return format(error, "El campo <b>%s</b> %s no tiene valor", "</br>" );
 	    }
 	    case "ERR_INCORRECT_VALUE": {
-		return format(error, "Valor no permitido para el campo <b>%s</b>", "</br>" );
+		return format(error, "Valor no permitido para el campo <b>%s</b> %s", "</br>" );
 	    }
 	    case "ERR_INVALID_FORMAT":
 		return "El valor extraído tiene un formato no válido";
-	    case "ERR_LOW_CONFIDENCE":
-		return format(error, "El campo <b>%s</b> tiene poca confianza.", "</br>" );
+	    case "ERR_LOW_CONFIDENCE": {
+		return format(error, "El campo <b>%s</b> %s tiene poca confianza.", "</br>" );
+	    }
 	    case "ERR_HANDWRITTEN_DOC":
 		return "El documento está escrito a mano.";
 	    case "ERR_INVALID_DOC_TYPE":
@@ -144,7 +145,7 @@ public class OCRError implements Serializable {
 	
 	private static String format(OCRError error, String format, String delimiter ) {
 	    return error.getFields().orElse(Collections.emptyList()).stream().map(f -> String
-		    .format(format, f.getDescription().orElse(f.getName().orElse(""))))
+		    .format(format, f.getDescription().orElse(f.getName().orElse("")), f.getIndex().map( i -> " de la línea " + ++i ).orElse("") ))
 		    .collect(Collectors.joining("</br>"));
 	}
 	

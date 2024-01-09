@@ -351,9 +351,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
         private static final TediContextKey getTediContextKey(OCRField ocrField ) {
             String fieldName = ocrField.getName().orElse("");
+            System.out.println(fieldName);
             switch (fieldName) {
 	    case "documentNumber":
-		return TediContextKey.NUMBER;
+		return TediContextKey.REFERENCE_CODE;
 	    case "issueDate":
 		return TediContextKey.ISSUE_DATE;
 	    case "issuerName":
@@ -369,6 +370,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return TediContextKey.REFERENCE_CODE;
 	    case "seriesCode":
 		return TediContextKey.SERIES;
+	    case "taxRate":
+		return TediContextKey.TAX_RATE;
+	    case "taxAmount":
+	    case "totalTaxAmount":
+		return TediContextKey.TAX_QUOTA;
+	    case "taxBaseAmount":
+	    case "totalTaxBaseAmount":
+		return TediContextKey.TAX_BASE;
 	    case "totalAmount":
 		return TediContextKey.TOTAL;
 
@@ -405,16 +414,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "shippingAddress":
 	    case "supplyNumber":
 	    case "SWIFT":
-	    case "taxAmount":
-	    case "taxBaseAmount":
 	    case "taxClass":
-	    case "taxRate":
 	    case "totalDiscountAmount":
 	    case "totalDueAmount":
 	    case "totalFeesAmount":
 	    case "totalGrossAmount":
-	    case "totalTaxAmount":
-	    case "totalTaxBaseAmount":
 	    case "totalUsage":
 	    case "usageUnitOfMeasurement":
 	    case "withholdingTaxAmount":
