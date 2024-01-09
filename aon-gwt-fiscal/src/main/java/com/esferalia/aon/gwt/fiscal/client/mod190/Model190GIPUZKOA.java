@@ -94,8 +94,10 @@ public class Model190GIPUZKOA extends Model190Base {
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
 		if (getModel().getYear() < 2022) { 
 			setDetailManager( new Model190GIPUZKOADetail2016( getCallback() , getModel(), selectedIndex ));
-		} else {
+		} else if (getModel().getYear() >= 2022 && getModel().getYear() < 2023) {
 			setDetailManager( new Model190GIPUZKOADetail2022( getCallback() , getModel(), selectedIndex ));
+		} else {
+			setDetailManager( new Model190GIPUZKOADetail2023( getCallback() , getModel(), selectedIndex ));
 		}
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}
