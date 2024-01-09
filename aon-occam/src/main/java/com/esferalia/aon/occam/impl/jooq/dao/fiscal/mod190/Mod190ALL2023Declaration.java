@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -639,19 +640,21 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 	private static LinkedHashMap<String, Mod190Detail> getUniqueMap(Mod190 mod190) {
 		LinkedHashMap<String,Mod190Detail> map = new LinkedHashMap<>();	
 		for (Mod190Detail detail : mod190.getDetails()) {
+			String mapKey = detail.getDocument() + "-" + detail.getAccrualYear();
 			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
 			if (!AonStringUtils.equals("G", detail.getKey()) &&
 				!AonStringUtils.equals("H", detail.getKey()) &&
 				AonMathUtils.isNotZero(ret)) {
 				
 				Mod190Detail det = null;
-				if (!map.containsKey(detail.getDocument())) {
+				if (!map.containsKey(mapKey)) {
 					det = new Mod190Detail();
 					det.setDocument(detail.getDocument());
 					det.setName(detail.getName());
-					map.put(detail.getDocument(), det);
+					det.setAccrualYear(detail.getAccrualYear());
+					map.put(mapKey, det);
 				} else {
-					det = map.get(detail.getDocument());
+					det = map.get(mapKey);
 				}
 				det.setPerception( AonMathUtils.round(det.getPerception() + detail.getPerception()));
 				det.setPerceptionIL( AonMathUtils.round(det.getPerceptionIL() + detail.getPerceptionIL()));
@@ -689,12 +692,20 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
 		LinkedHashMap<String,Mod190Detail> map = getUniqueMap( mod190 );	
 		for (Mod190Detail detail : map.values()) {
+			int accrualYear = detail.getAccrualYear();
+			Condition accrualCondition = DSL.trueCondition(); 
+			if (accrualYear != 0) {
+				java.sql.Date accrualFirstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(accrualYear));
+				java.sql.Date accrualLastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(accrualYear));
+				accrualCondition = SALARY.ISSUE_DATE.between(AonDateUtils.toSql(accrualFirstDay),AonDateUtils.toSql(accrualLastDay));
+			}
 			ctx.getDslContext().select(SALARY.IRPF_BASE,SALARY.TOTAL_IRPF)
 				.from(SALARY)
 				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 				.where(dateField.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(SALARY.EMPLOYEE_DOCUMENT.eq(detail.getDocument()))
+				.and(accrualCondition)
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
@@ -712,7 +723,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		for (Mod190Detail detail : map.values()) {
 			double per = AonMathUtils.round(detail.getPerception() + detail.getPerceptionIL() + detail.getInKindPerception() + detail.getInKindPerceptionIL());
 			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
-			if ( AonNumberUtils.notEquals(detail.getSalaryPerception(), per) || AonNumberUtils.notEquals(detail.getSalaryRetention(), ret)) {
+			if ( AonNumberUtils.notEquals(detail.getSalaryPerception(), per) 
+				|| AonNumberUtils.notEquals(detail.getSalaryRetention(), ret)) {
 				retList.add(detail);
 			}
 		}
