@@ -683,7 +683,7 @@ export class AonInvoice extends AonElement {
 		
 		this.invoice.messages
 		.filter( err => err.context )
-		.filter( err => !err.context.line )
+		//.filter( err => !err.context.line )
 		.forEach( (err, i ) => {
 			try {
 				switch ( err.context.key ){
@@ -698,15 +698,11 @@ export class AonInvoice extends AonElement {
 					case ErrKey.SERIES: 
 						this.getElement(this.SERIE).addError(getMessageHTML(err));
 						break;
-					case ErrKey.NUMBER: 
-						this.getElement(this.NUMBER).addError(getMessageHTML(err));
-						break;
 					case ErrKey.DUPLICATED_SERIES_NUMBER: 
 						this.getElement(this.SERIE).addError(getMessageHTML(err));
 						break;
+					case ErrKey.NUMBER: 
 					case ErrKey.REFERENCE_CODE: 
-						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
-						break;
 					case ErrKey.DUPLICATED_REFERENCE_CODE: 
 						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
 						break;
@@ -717,21 +713,37 @@ export class AonInvoice extends AonElement {
 						break;
 					case ErrKey.TAX_DATE: 
 						break;
+					case ErrKey.TAX_RATE: 
+						this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TAX_BASE: 
+						this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TAX_QUOTA: 
+						this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+						break;
 					case ErrKey.SCOPE: 
 						break;
 					case ErrKey.REGISTRY: 
 						break;
 					case ErrKey.AMBIGUOUS_REGISTRY: 
 						break;
-					case ErrKey.RDOCUMENT:
-						let registry = this.getElement(this.REGISTRY); 
-						registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+					case ErrKey.RDOCUMENT:{
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+						}
 						break;
 					case ErrKey.RDOCUMENT_COUNTRY: 
 						break;
-					case ErrKey.RNAME: 
+					case ErrKey.RNAME: { 
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.NAME).addError(getMessageHTML(err));
+						}
 						break;
-					case ErrKey.ADDRESS: 
+					case ErrKey.ADDRESS: { 
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+						}
 						break;
 					case ErrKey.DETAIL_DESCRIPTION: 
 						break;
@@ -751,7 +763,8 @@ export class AonInvoice extends AonElement {
 					default:
 						break;
 				}
-			} catch ( e ){
+			} catch ( e ) {
+				console.error(e);
 			}
 		});
 	}
