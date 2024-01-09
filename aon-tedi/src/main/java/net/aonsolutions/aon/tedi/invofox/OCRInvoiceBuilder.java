@@ -5,7 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -32,9 +34,9 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -319,7 +321,12 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContext> INVOICE_TRANSACTION = ocr -> fillTransaction(ocr.getOCRInvoice(), ocr.getInvoice());
 	
 	public static final void fillTransaction(OCRInvoice ocrInvoice, Invoice invoice) {
-	    invoice.setTransaction( InvoiceTransactionType.NATIONAL );
+	    Map<String, InvoiceTransactionType> transactionTypeMap = new HashMap<>();
+	    transactionTypeMap.put("INTRA", InvoiceTransactionType.INTRACOMMUNITY );
+	    transactionTypeMap.put("EXTRA", InvoiceTransactionType.EXTRACOMMUNITY );
+	    String  tax =  ocrInvoice.getTaxClass().map( str -> str.getValue().orElse("") ).orElse("");
+	    InvoiceTransactionType transaction = transactionTypeMap.getOrDefault(tax, InvoiceTransactionType.NATIONAL);
+	    invoice.setTransaction(transaction);
 	}
 
 	private static final Consumer<OCRContext> INVOICE_REGISTRY = ocr -> {
