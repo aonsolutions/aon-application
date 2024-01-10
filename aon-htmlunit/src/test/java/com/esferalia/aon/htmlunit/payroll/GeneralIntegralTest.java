@@ -524,6 +524,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 4495.50);
 		assertValue("cgpBaseLabel", 4495.50);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2024);
+		assertValue("cgcBaseLabel", 4720.50);
+		assertValue("cgpBaseLabel", 4720.50);
 
 		draft("BASE, MÁXIMA ( GRUPO 10 )");
 		calculate(Calendar.JANUARY,2022);
@@ -539,6 +542,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 4495.50 / 30.00 * 28);
 		assertValue("cgpBaseLabel", 4495.50 / 30.00 * 28);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.FEBRUARY,2024);
+		assertValue("cgcBaseLabel", 4720.50 / 30.00 * 29);
+		assertValue("cgpBaseLabel", 4720.50 / 30.00 * 29);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 //		calculate(Calendar.DECEMBER,2016);
