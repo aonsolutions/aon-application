@@ -218,6 +218,29 @@ public class FinanceTrackingDAO {
 			ctx.log().debug(" ----- END FINANCE SETTLE ----- ");
 		}
 	}
+	
+	// -------------------------------------------------------------
+	// ------------ ELIMINAR MOV SALDADO UN VENCIMIENTO ------------
+	// -------------------------------------------------------------
+	
+	public static void unSettle(AONContext ctx, Integer financeId) {
+		ctx.log().debug(" ----- START FINANCE UNSETTLE ----- ");
+		try {
+			ctx.checkWrite();
+			Finance finance = FinanceValidation.validateUnSettleTracking(ctx, financeId);
+			ctx.getDslContext().delete(FINANCE_TRACKING)
+				.where(FINANCE_TRACKING.DOMAIN.eq(ctx.getDomainId()))
+				.and(FINANCE_TRACKING.FINANCE.eq(finance.getId()))
+				.and(FINANCE_TRACKING.TYPE.eq((byte)FinanceTrackingType.SETTLED.ordinal()))
+				.execute();
+			updateFinanceStatus(ctx,financeId,FinanceStatus.PENDING);
+		} catch (Throwable t) {
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
+			throw t;
+		} finally {
+			ctx.log().debug(" ----- END FINANCE UNSETTLE ----- ");
+		}
+	}
 
 	// -------------------------------------------------------------
 	// ----------------- DESHACER UN VENCIMIENTO -------------------

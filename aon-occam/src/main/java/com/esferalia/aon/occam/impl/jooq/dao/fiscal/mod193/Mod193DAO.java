@@ -269,6 +269,12 @@ public class Mod193DAO {
 			.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
 			.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
 			.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
+			.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, AonEnumUtils.getByte(detail.isCeutaMelilla()))
+			.set(FS_MODEL193_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
+			.set(FS_MODEL193_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
+			.set(FS_MODEL193_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
+			.set(FS_MODEL193_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
+			.set(FS_MODEL193_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 			.execute();
 	}
 
@@ -304,6 +310,12 @@ public class Mod193DAO {
 				.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
 				.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
 				.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
+				.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, AonEnumUtils.getByte(detail.isCeutaMelilla()))
+				.set(FS_MODEL193_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
+				.set(FS_MODEL193_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
+				.set(FS_MODEL193_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
+				.set(FS_MODEL193_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
+				.set(FS_MODEL193_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.where(FS_MODEL193_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -449,7 +461,14 @@ public class Mod193DAO {
 				.setGuarantee(rec.getValue(FS_MODEL193_DETAIL.GUARANTEE))
 				.setExpenses(rec.getValue(FS_MODEL193_DETAIL.EXPENSES))
 				.setPenalization(rec.getValue(FS_MODEL193_DETAIL.PENALIZATION))
-				.setDeclarantNature(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)));
+				.setDeclarantNature(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)))
+				.setCeutaMelilla(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.CEUTA_MELILLA)))
+				.setCommonRetention(rec.getValue(FS_MODEL193_DETAIL.COMMON_RETENTION))
+				.setNavarraRetention(rec.getValue(FS_MODEL193_DETAIL.NAVARRA_RETENTION))
+				.setArabaRetention(rec.getValue(FS_MODEL193_DETAIL.ARABA_RETENTION))
+				.setBizkaiaRetention(rec.getValue(FS_MODEL193_DETAIL.BIZKAIA_RETENTION))
+				.setGipuzkoaRetention(rec.getValue(FS_MODEL193_DETAIL.GIPUZKOA_RETENTION))
+				;
 		}
 	}
 

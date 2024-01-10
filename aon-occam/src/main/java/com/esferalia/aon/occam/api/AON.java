@@ -7242,6 +7242,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Finance unSettleFinance(String domainName, int domainId, String user, Integer finance) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().unSettleFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Finance undoFinance(String domainName, int domainId, String user, Integer finance) {
 		CloseableAONContext ctx = null;
