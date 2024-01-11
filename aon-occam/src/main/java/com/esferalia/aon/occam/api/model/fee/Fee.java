@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fee;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
@@ -39,6 +40,9 @@ public class Fee implements Serializable{
 	private boolean modify = false;
 	private Boolean hasRItem = false;
 	private Seller sellerSupport;
+	private Seller sellerComercial;
+	
+	private LinkedList<String> segments;
 	
 		
 	public Double getQuantity() {
@@ -114,6 +118,18 @@ public class Fee implements Serializable{
 	
 	public Fee setSeller(Seller seller) {
 		this.seller = seller;
+		return this;
+	}
+	
+	public Seller getSellerComercial() {
+		if(sellerComercial == null) {
+			this.sellerComercial = new Seller();
+		}
+		return sellerComercial;
+	}
+	
+	public Fee setSellerComercial(Seller sellerComercial) {
+		this.sellerComercial = sellerComercial;
 		return this;
 	}
 	
@@ -282,6 +298,14 @@ public class Fee implements Serializable{
 	public Fee setHasRItem(boolean hasRItem) {
 		this.hasRItem = hasRItem;
 		return this;
+	}
+
+	public LinkedList<String> getSegments() {
+		return segments;
+	}
+
+	public void setSegments(LinkedList<String> segments) {
+		this.segments = segments;
 	}
 	
 }

@@ -356,7 +356,7 @@ export class AonDocument extends AonElement {
   updateScope(scope) {
     if(!this.doc.scope)
       this.doc.scope = {};
-    this.doc.scope.id = category;
+    this.doc.scope.id = scope;
     this.save();
   }
 

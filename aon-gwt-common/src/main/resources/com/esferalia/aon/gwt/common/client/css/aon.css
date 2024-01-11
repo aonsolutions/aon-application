@@ -2703,7 +2703,7 @@ input:disabled+label {
 	overflow-y: auto !important;
 	text-align: left;
 	cursor: pointer;
-	cursor: hand;
+	z-index: 3;
 }
 
 .aon-odd-background {

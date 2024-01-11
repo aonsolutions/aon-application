@@ -69,6 +69,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -256,7 +257,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				deductions = copyDeductions(super.getContractDeductions());
 			return deductions;
 		}
-
+		
 		private static Collection<IContractPayment> copyPayments(
 				Collection<IContractPayment> collection) {
 			List<IContractPayment> copy = new ArrayList<IContractPayment>();
@@ -629,6 +630,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	}
 
 	private Date startDate;
+	private Calendar irpfStart;
 
 	private double bonus;
 	private double extras;
@@ -682,14 +684,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		this.ctx = new CustomSQLContractCalculatorContext(ctx);
 
 		salaryStmt = conn.prepareStatement(SALARY_SQL);
-		Calendar start = Calendar.getInstance();
-		start.setTime(startDate);
-		start.set(Calendar.DAY_OF_YEAR, 1);
-		salaryStmt.setDate(2, new java.sql.Date(start.getTimeInMillis()));
-		Calendar end = Calendar.getInstance();
-		end.setTime(startDate);
-		end.add(Calendar.DAY_OF_YEAR, -1);
-		salaryStmt.setDate(3, new java.sql.Date(end.getTimeInMillis()));
 
 		irpfDataStmt = conn.prepareStatement(IRPF_DATA_SQL);
 		irpfDataStmt.setDate(2, new java.sql.Date(endDate.getTime()));
@@ -703,6 +697,24 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		descendantsStmt = conn.prepareStatement(DESCENDATS_SQL,
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	}
+	
+	// --------------------------------------- SQLIIrpfCalculatorContext methods
+	
+	protected Calendar getIrpfStart() {
+	    Calendar calendar = Calendar.getInstance();
+	    try {
+		ExpressionContext expressionCtx = ctx.getExpressionContext();
+		Date date = 
+		ctx.getExpressionContext().eval(ContextVariable.IRPF_START.getName(), ctx.getStartDate(), ctx.getEndDate(), Date.class).stream().map(ITimedResult::getValue).findAny().orElseThrow();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+	    } catch (Exception e) {
+		calendar.setTime(startDate);
+		calendar.set(Calendar.DAY_OF_YEAR, 1);
+	    }
+	    
+	    return calendar;
 	}
 
 	// ------------------------------------------ IIrpfCalculatorContext methods
@@ -1149,6 +1161,13 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	// --------------------------------------------------------- Private methods
 
+	private Calendar getSalariesEnd() {
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(startDate);
+	    calendar.add(Calendar.DAY_OF_YEAR, -1);		
+	    return calendar;
+	}
+
 	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
 		TreeSet<Date> dates = new TreeSet<Date>();
 		bonus = 0.00;
@@ -1159,6 +1178,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		socialSecurityContributons = 0.00;
 		ResultSet salaryRs = null;
 		try {
+			irpfStart = getIrpfStart();
+			salaryStmt.setDate(2, new java.sql.Date(irpfStart.getTimeInMillis()));
+			Calendar salariesEnd = getSalariesEnd();
+			salaryStmt.setDate(3, new java.sql.Date(salariesEnd.getTimeInMillis()));
+
 			salaryStmt.setInt(1, contractId);
 			salaryRs = salaryStmt.executeQuery();
 			while (salaryRs.next()) {
@@ -1234,6 +1258,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		}
 
 	}
+	
+	private int getMonths() {
+	    int month = irpfStart.get(Calendar.MONTH);
+	    return Calendar.UNDECIMBER - month;
+	}
 
 	private Stack<ISalary> salaries = new Stack<ISalary>();
 
@@ -1261,14 +1290,16 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		Collection<IrpfContractSalaryCalculatorContext> contexts = IrpfContractSalaryCalculatorContext
 				.getContexts(ctx);
+		
 		int size ;
 		
-		if ( (issuedSalaries.size() + contexts.size())  == 12) {
+		int months = getMonths();
+		if ( (issuedSalaries.size() + contexts.size())  == months) {
 			size = contexts.size();
 		} else if ( (issuedSalaries.size() >  0 )) {
-			size = 12 - issuedSalaries.size();
+			size = months - issuedSalaries.size();
 		} else {
-			size = 12;
+			size = months;
 			irpfBase = 0.00;
 			totalIrpf = 0.00;
 			socialSecurityContributons = 0.00;

@@ -76,6 +76,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/deliveryPackaging":
 				response(req, resp, saveDeliveryPackaging(api));
 				break;
+			case "/deliveryPackaging/accept":
+				response(req, resp, acceptDeliveryPackaging(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -92,6 +95,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 	
 	private JSONObject getDeliveryPackaging(AonApiData api) {
 		String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+		if(sscc.length() > 18 && sscc.substring(0, 2).equals("00")) sscc = sscc.substring(2);  
+		else if(sscc.length() != 18) throw new AonApiException("El SSCC introducido no es correcto.");
+
 		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
 		Integer product = JsonUtils.getInteger(api.getData(), IJsonNames.PRODUCT);
 		DeliveryPackaging deliveryPackaging = AON.getDeliveryPackaging(api.getDomain(), api.getUser(), sscc, delivery, product);
@@ -107,5 +113,14 @@ public class PackagingServlet extends AonApiHttpServlet {
 		PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(api.getData());
 		packaging = AON.saveDeliveryPackaging(api.getDomain(), api.getUser(), packaging);
 		return PackagingDeliveryJSON.toJSON(packaging);
+	}
+	
+	private JSONObject acceptDeliveryPackaging(AonApiData api) {
+		Integer deliveryId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		AON.acceptDeliveryPackaging(api.getDomain(), api.getUser(), deliveryId);
+		
+		// TODO SEND TO SERES!!
+		
+		return new JSONObject();
 	}
 }

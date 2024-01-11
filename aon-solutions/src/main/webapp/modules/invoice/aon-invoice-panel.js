@@ -446,27 +446,27 @@ export class AonInvoicePanel extends AonElement {
 		let d = document.getElementById('aonDialogAddOption');
 
 		const newEmitida = {
-			name: 'Emitidas',
-			title:"Emitidas",
-			icon: 'unarchive',
+			name: MSG.ISSUEDS,
+			title: MSG.ISSUEDS,
+			icon: MATERIAL_ICONS.UNARCHIVE,
 			permission: true,
 			backgroundColor: "#4472C4",
 			fn: () => this.aonInvoice('emitida')
 		  };
 
 		  const newRecibidas = {
-			name: 'Recibidas',
-			title:"Recibidas",
-			icon: 'archive',
+			name: MSG.RECEIVEDS,
+			title: MSG.RECEIVEDS,
+			icon: MATERIAL_ICONS.ARCHIVE,
 			permission: true,
 			backgroundColor: "#4472C4",
 			fn : () => this.aonInvoice('recibida')
 		  };
 
 		  const newTicket = {
-			name: "Tickets / Justificantes",
-			title: "Tickets / Justificantes",
-			icon: 'receipt',
+			name:  MSG.TICKET,
+			title:  MSG.TICKET,
+			icon: MATERIAL_ICONS.RECEIPT,
 			permission: true,
 			backgroundColor: "#4472C4",
 			fn :  () => this.aonInvoice('ticket')

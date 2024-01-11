@@ -97,6 +97,21 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocument())? JSON_NULL : new JSONString( params.getDocument()));
 		json.put(IRequestParamsNames.NRC 	 		,AonStringUtils.isBlank(params.getNrc())? JSON_NULL : new JSONString( params.getNrc()));
 		json.put(IRequestParamsNames.TEST			,new JSONNumber( params.isTest()?1:0));
+		
+		if (params.getSelected() == null || params.getSelected().size() == 0) {
+			json.put(IRequestParamsNames.SELECTED,JSON_NULL);
+		} else {
+			JSONArray selected = new JSONArray();
+			int i = 0;
+			for (String s : params.getSelected()) {
+				if (AonStringUtils.isNotBlank(s)) {
+					selected.set(i, new JSONString(s));  
+					i++;
+				}
+			}
+			json.put(IRequestParamsNames.SELECTED,selected);
+		}
+		
 		return json.toString();
 	}
 	
@@ -251,7 +266,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.CONCEPT  	 	 ,AonStringUtils.isBlank(params.getConcept())? JSON_NULL : new JSONString( params.getConcept()));
 		json.put(IRequestParamsNames.REFERENCE_CODE,AonStringUtils.isBlank(params.getReferenceCode())? JSON_NULL : new JSONString( params.getReferenceCode()));
 		json.put(IRequestParamsNames.PAY_METHOD	,params.getPayMethod() 		== null? JSON_NULL : new JSONNumber( params.getPayMethod()));		
-		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
+		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));	
+		json.put("isPayroll"		,	new JSONNumber( params.isPayroll() ? 1 : 0 ));	
 		return json.toString();
 	}
 

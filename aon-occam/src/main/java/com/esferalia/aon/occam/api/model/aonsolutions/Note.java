@@ -15,6 +15,13 @@ public class Note implements Serializable {
 	private Date date;
 	private Integer owner;
 	private String note;
+	private boolean archive = false;
+	private boolean pinpUp = false;
+	private String noteTag;
+	private String color;
+	private Date archiveDate;
+	private Date modificationDate;
+	private Date creationDate;
 	
 	public Integer getId() {
 		return id;
@@ -58,9 +65,54 @@ public class Note implements Serializable {
 		this.note = note;
 		return this;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public boolean isArchive() {
+		return archive;
+	}
+	public Note setArchive(boolean archive) {
+		this.archive = archive;
+		return this;
+	}
+	public boolean isPinpUp() {
+		return pinpUp;
+	}
+	public Note setPinpUp(boolean pinpUp) {
+		this.pinpUp = pinpUp;
+		return this;
+	}
+	public String getNoteTag() {
+		return noteTag;
+	}
+	public Note setNoteTag(String noteTag) {
+		this.noteTag = noteTag;
+		return this;
+	}
+	public String getColor() {
+		return color;
+	}
+	public Note setColor(String color) {
+		this.color = color;
+		return this;
+	}
+	public Date getArchiveDate() {
+		return archiveDate;
+	}
+	public Note setArchiveDate(Date archiveDate) {
+		this.archiveDate = archiveDate;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public Note setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public Note setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
 	}
 	
 }

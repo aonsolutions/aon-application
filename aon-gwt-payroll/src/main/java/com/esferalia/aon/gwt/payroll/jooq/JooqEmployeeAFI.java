@@ -256,7 +256,12 @@ public class JooqEmployeeAFI {
 	
 	// -------------------------------------------- Auxiliar Methods.getEmployeeAFIInfo
 	
-	private static String getAuthKey(DSLContext dslContext, Integer domainId, Integer parentDomainId) {
+	public static String getAuthKey(Connection connection, Integer domainId, Integer parentDomainId) {
+		return getAuthKey(DSL.using(connection, getDefaultSettings()), domainId, parentDomainId);
+	}
+	
+	
+	public static String getAuthKey(DSLContext dslContext, Integer domainId, Integer parentDomainId) {
 		String authKey = "";
 		
 		Record appParamRecord = dslContext.select().from(APP_PARAM)

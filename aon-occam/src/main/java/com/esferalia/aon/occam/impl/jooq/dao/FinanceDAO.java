@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,11 +20,15 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.SortField;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -81,6 +86,8 @@ public class FinanceDAO {
 		@Override public Property<Date> getInvoiceDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.PAY_METHOD);}
+		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PAY_METHOD.TYPE);}
+		@Override public Property<Byte> getPayrollProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYROLL);}
 	}
 	
 	// ---------------------------------------------------------- ORDER
@@ -465,6 +472,23 @@ public class FinanceDAO {
 			.setFinanceStatus(FinanceStatus.PENDING)
 			.setSecurityLevel(invoice.getSecurityLevel())
 			.setScope(invoice.getScope());
+	}
+	
+	// -------------------------------------------------------------
+	// ----------------- COBROS Y PAGOS CARD -----------------------
+	// -------------------------------------------------------------
+	
+	public static Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter) {
+		ctx.checkRead();
+		Result<Record1<BigDecimal>> records = ctx.getDslContext()
+			.select(DSL.sum(FINANCE.AMOUNT))
+			.from(FINANCE)
+			.where(FINANCE_PROPERTIES.getConditions(filter))
+			.fetch();
+		
+		if(records.isEmpty() || null == records.get(0).value1()) return 0.00;
+		
+		return records.get(0).value1().doubleValue();
 	}
 
 	// -------------------------------------------------------------

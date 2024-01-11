@@ -1104,7 +1104,27 @@ public class MainCRA extends MainEntryPoint {
 
 						@Override
 						public void onAccept() {
-							createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList, p -> {
+								createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+							}, noSalariesMessage -> {
+								
+								AonDialog dialog = new AonDialog("AVISO: CRA",
+										new HTML(noSalariesMessage.getMessage()
+												+ "\u00BFDesea generar el fichero CRA sin incluir este trabajador?"));
+
+								dialog.confirm(new AonAcceptDialogCallback() {
+
+									@Override
+									public void onCancel() {
+										// Nothing to do here
+									}
+
+									@Override
+									public void onAccept() {
+										createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+									}
+								});
+							});
 						}
 					});
 

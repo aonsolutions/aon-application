@@ -49,8 +49,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -483,6 +485,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoiceNewPortal(ctx, filter);
+		} 
+	}
+	
 	public static Date getInvoiceExpDate(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceExpDate(ctx, id);
@@ -626,12 +634,6 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getNote().getNoteCountForDate(ctx, filter, date);
-		}
-	}
-	
 	public static Note saveNote(Domain domain, String login, Note note) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNote().saveNote(ctx, note);
@@ -641,6 +643,24 @@ public class AON_SOLUTIONS {
 	public static void deleteNote(Domain domain, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getNote().deleteNote(ctx, id);
+		}
+	}
+	
+	public static void deleteNoteTag(Domain domain, String login, NoteFilter filter){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+			getNote().deleteNoteTag(ctx, filter);
+		}
+	}
+	
+	public static void updateNoteTag(Domain domain, String login, String noteTag, NoteFilter filter){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+			getNote().updateNoteTag(ctx, noteTag, filter);
+		}
+	}
+	
+	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date, Integer userId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteCountForDate(ctx, filter, date, userId);
 		}
 	}
 	
@@ -1141,6 +1161,14 @@ public class AON_SOLUTIONS {
 	public static void deleteRegistryRelationship(Domain domain, User user, RRelationshipFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			getRelationship().deletetRegistryRelationship(ctx, filter);
+		}
+	}
+	
+	// COBROS Y PAGOS CARD
+
+	public static Double getFinanceGroupStatus(Domain domain, User user, FinanceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			return getFinance().getFinanceGroupStatus(ctx, filter);
 		}
 	}
 }

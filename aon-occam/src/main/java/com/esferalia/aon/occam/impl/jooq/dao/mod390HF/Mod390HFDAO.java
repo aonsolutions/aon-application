@@ -50,7 +50,12 @@ public class Mod390HFDAO extends FiscalModelDAO {
 	}
 	public static Mod390HF get(AONContext ctx,int id) {
 		ctx.checkRead();
-		return FiscalModelDAO.get(ctx,Mod390HF::new,id);
+		Mod390HF mod = FiscalModelDAO.get(ctx,Mod390HF::new,id);
+		if (mod != null) {
+			Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
+			dec.ensureDetails( mod );
+		}
+		return mod; 
 	}
 	
 	public static Stream<Mod390HF> getSamePeriodFiscalModels(AONContext ctx,Mod390HF fm) {

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
@@ -24,6 +26,8 @@ import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -85,6 +89,7 @@ public interface IFinance {
 			ItemFilter iFilter);
 
 	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
+	ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx,InvoiceFilter filter);
 	InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
 	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
@@ -160,9 +165,11 @@ public interface IFinance {
 	
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
+	public Finance unSettleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);
 	public FinanceTracking payFinance(AONContext ctx, FinanceTracking tracking);
 	public FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking);
+	void deleteFinance(CloseableAONContext ctx, Integer financeId);
 	
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);
@@ -242,6 +249,24 @@ public interface IFinance {
 	LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 	void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings);
+	
+	// 	***********************************************
+	// 	*********** VENCIMIENTO NOMINAS ***************
+	// 	***********************************************
+	
+	void createSettleSalaries(CloseableAONContext ctx, Date date);
+	Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId);
+	
+	LinkedList<FBatch> getFBatches(CloseableAONContext ctx, FBatchFilter filter, int offset, int limit);
+	FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId);
+	void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds);
+	FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch);
+	
+	// 	***********************************************
+	// 	*********** COBROS Y PAGOS CARD ***************
+	// 	***********************************************
+	
+	Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter);
 
 }
 	

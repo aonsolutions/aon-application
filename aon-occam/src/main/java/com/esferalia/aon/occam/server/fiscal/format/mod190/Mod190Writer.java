@@ -14,6 +14,24 @@ public class Mod190Writer {
 		public void propertyFill(Writer writer, Mod190 mod190, Mod190Detail detail) throws IOException;
 	}
 	private enum Writers {
+		AEAT_2023 {
+
+			@Override
+			void fill(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Aeat.fill(mod190, wr);
+			}
+			
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				fill(mod190, wr);
+			}
+
+			@Override
+			boolean accept(Mod190 mod190) {
+				return mod190.isAEAT() && mod190.getYear() >= 2023;				
+			}
+			
+		},
 		AEAT_2022 {
 
 			@Override
@@ -28,7 +46,7 @@ public class Mod190Writer {
 
 			@Override
 			boolean accept(Mod190 mod190) {
-				return mod190.isAEAT() && mod190.getYear() >= 2022;				
+				return mod190.isAEAT() && mod190.getYear() == 2022;				
 			}
 			
 		},
@@ -124,6 +142,24 @@ public class Mod190Writer {
 			
 		},
 
+		GIPUZKOA_2023{
+
+			@Override
+			void fill(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Gipuzkoa.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Aeat.fill(mod190, wr);
+			}
+
+			@Override
+			boolean accept(Mod190 mod190) {
+				return (mod190.isGipuzkoa() && mod190.getYear() >= 2023);
+			}
+			
+		},
 		GIPUZKOA_2022{
 
 			@Override
@@ -138,7 +174,7 @@ public class Mod190Writer {
 
 			@Override
 			boolean accept(Mod190 mod190) {
-				return (mod190.isGipuzkoa() && mod190.getYear() >= 2022);
+				return (mod190.isGipuzkoa() && mod190.getYear() >= 2022 && mod190.getYear() < 2023);
 			}
 			
 		},

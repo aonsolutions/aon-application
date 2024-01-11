@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,12 +20,14 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesFiller;
@@ -52,11 +55,21 @@ public class SalesDetailDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DESCRIPTION);}
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.QUANTITY);}
 		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.PRICE);}
-		@Override public Property<String> getdiscountExpressionProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DISCOUNT_EXPR);}
+		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DISCOUNT_EXPR);}
 		@Override public Property<Double> getTaxesProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.TAXES);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.STATUS);}
 		@Override public Property<Integer> getOfferDetailProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.OFFER_DETAIL);}
 		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DELIVERED);}
+		@Override public Property<java.sql.Date> getDeliveryDateProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DELIVERY_DATE);}
+		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.CARRIER);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.CARRIER_PACKING);}
+		@Override public Property<Integer> getDeliveryProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DELIVERY);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.MODIFICATION_DATE);}
+		
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PRODUCT);}
 	}
 	
 	
@@ -112,7 +125,7 @@ public class SalesDetailDAO {
 				.set(SALES_DETAIL.DESCRIPTION, salesDetail.getDescription())
 				.set(SALES_DETAIL.QUANTITY, salesDetail.getQuantity())
 				.set(SALES_DETAIL.PRICE, salesDetail.getPrice())
-				.set(SALES_DETAIL.DISCOUNT_EXPR, salesDetail.getDiscountExpression())
+				.set(SALES_DETAIL.DISCOUNT_EXPR, salesDetail.getDiscountExpression().getDiscountExpr())
 				.set(SALES_DETAIL.TAXES, salesDetail.getTaxes())
 				.set(SALES_DETAIL.STATUS, salesDetail.getStatus().value())
 				.set(SALES_DETAIL.OFFER_DETAIL, salesDetail.getOfferDetail())
@@ -120,6 +133,7 @@ public class SalesDetailDAO {
 				.set(SALES_DETAIL.DELIVERY_DATE, AonDateUtils.toSql(salesDetail.getDeliveryDate()))
 				.set(SALES_DETAIL.CARRIER, salesDetail.getCarrier().getId())
 				.set(SALES_DETAIL.CARRIER_PACKING, salesDetail.getCarrierPacking())
+				.set(SALES_DETAIL.DELIVERY, salesDetail.getDelivery())
 				.set(SALES_DETAIL.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(SALES_DETAIL.CREATION_USER, ctx.getUser())
 				.set(SALES_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
@@ -141,7 +155,7 @@ public class SalesDetailDAO {
 				.set(SALES_DETAIL.DESCRIPTION, salesDetail.getDescription())
 				.set(SALES_DETAIL.QUANTITY, salesDetail.getQuantity())
 				.set(SALES_DETAIL.PRICE, salesDetail.getPrice())
-				.set(SALES_DETAIL.DISCOUNT_EXPR, salesDetail.getDiscountExpression())
+				.set(SALES_DETAIL.DISCOUNT_EXPR, salesDetail.getDiscountExpression().getDiscountExpr())
 				.set(SALES_DETAIL.TAXES, salesDetail.getTaxes())
 				.set(SALES_DETAIL.STATUS, salesDetail.getStatus().value())
 				.set(SALES_DETAIL.OFFER_DETAIL, salesDetail.getOfferDetail())
@@ -149,6 +163,7 @@ public class SalesDetailDAO {
 				.set(SALES_DETAIL.DELIVERY_DATE, AonDateUtils.toSql(salesDetail.getDeliveryDate()))
 				.set(SALES_DETAIL.CARRIER, salesDetail.getCarrier().getId())
 				.set(SALES_DETAIL.CARRIER_PACKING, salesDetail.getCarrierPacking())
+				.set(SALES_DETAIL.DELIVERY, salesDetail.getDelivery())
 				.set(SALES_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(SALES_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.where(SALES_DETAIL.ID.eq(salesDetail.getId()))
@@ -189,11 +204,18 @@ public class SalesDetailDAO {
 				.setDescription(getValue(r, SALES_DETAIL.DESCRIPTION))
 				.setQuantity(getValue(r, SALES_DETAIL.QUANTITY))
 				.setPrice(getValue(r, SALES_DETAIL.PRICE))
-				.setDiscountExpression(r.getValue(SALES_DETAIL.DISCOUNT_EXPR))
+				.setDiscountExpression(new DiscountExpression(getValue(r, SALES_DETAIL.DISCOUNT_EXPR)))
 				.setTaxes(getValue(r, SALES_DETAIL.TAXES))
 				.setStatus(SalesDetailStatus.safeValueOf(getValue(r, SALES_DETAIL.STATUS)))
 				.setOfferDetail(getValue(r, SALES_DETAIL.OFFER_DETAIL))
-				.setDelivered(getValue(r, SALES_DETAIL.DELIVERED));
+				.setDelivered(getValue(r, SALES_DETAIL.DELIVERED))
+				.setDeliveryDate(getValue(r, SALES_DETAIL.DELIVERY_DATE))
+				.setCarrier(new Carrier().setId(getValue(r, SALES_DETAIL.CARRIER)))
+				.setCarrierPacking(getValue(r, SALES_DETAIL.CARRIER_PACKING))
+				.setDelivery(getValue(r, SALES_DETAIL.DELIVERY))
+				
+				;
+			
 		}
 	}
 }

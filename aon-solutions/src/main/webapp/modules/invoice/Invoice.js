@@ -49,6 +49,8 @@ export class Invoice {
   tbaiUrl;
 
   workplace;
+  
+  messages;
 
   constructor(invoice) {
     this.buildObject(invoice);
@@ -122,6 +124,7 @@ export class Invoice {
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
       this.workplace = invoice.workplace; 
+      this.messages = invoice.messages || [];
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
@@ -194,6 +197,29 @@ export class Invoice {
 
   setActivity(activity) {
     this.activity = activity;
+    if(!this.isNacional() || this.isExempt()){
+      this.surcharge = false;
+        
+      if(!this.isCcm()) {
+        this.withholding = false;
+        this.withholdingFarmer = false;
+        this.taxes = [{
+          tax:TaxType.IVA,
+          type: TaxType.IVA,
+          percentage: 0.0,
+          quota:0.0,
+          base: this.total,
+          surcharge: 0.0,
+          surcharge_quota: 0.0
+        }];
+      } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+      
+      this.details.forEach((detail,i) => {
+        detail.percentage = 0.0;
+        detail.vat = 0.0;
+        this.setDetail(detail, i);
+      });
+    }
     return this;
   }
 

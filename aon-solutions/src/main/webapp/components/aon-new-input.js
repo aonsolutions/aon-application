@@ -14,7 +14,7 @@ export class AonNewInput extends AonElement {
     TITLE;
     MSG;
     MSG_SPAN;
-
+    
     
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -30,6 +30,14 @@ export class AonNewInput extends AonElement {
     
     set type(type) {
         this.setAttribute(CONSTANT.TYPE, type);
+    }
+
+    get name() {
+        return this.getAttribute(CONSTANT.NAME);
+    }
+
+    set name(name) {
+        this.setAttribute(CONSTANT.NAME, name);
     }
 
     get title() {
@@ -56,6 +64,30 @@ export class AonNewInput extends AonElement {
         this.setAttribute(CONSTANT.REQUIRED, value);
     }
 
+    get readonly(){
+        return this.getAttribute(CONSTANT.READONLY);
+    } 
+
+    set readonly(value) {
+        this.setAttribute(CONSTANT.READONLY, value);
+    }
+
+    get disabled() {
+        return this.getAttribute(CONSTANT.DISABLED);
+    }
+
+    set disabled(value) {
+        this.setAttribute(CONSTANT.DISABLED, value);
+    }
+
+    get maxlength() {
+        return this.getAttribute(CONSTANT.MAXLENGTH);
+    }
+    
+    set maxlength(maxlength) {
+       this.setAttribute(CONSTANT.MAXLENGTH, maxlength);
+    }
+
     connectedCallback() {
         this.initialize();
         this.build();
@@ -68,6 +100,7 @@ export class AonNewInput extends AonElement {
         this.INPUT = this.id + CONSTANT.INPUT.initCap();
         this.TITLE = this.id + CONSTANT.TITLE.initCap();
         this.MSG = this.id + CONSTANT.MSG.initCap();
+        this.MSG_SPAN = this.id + CONSTANT.MSG.initCap() + CONSTANT.SPAN.initCap();
         this.ICON = this.id + CONSTANT.ICON.initCap();
         this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
         this.value = this.value || CONSTANT.EMPTY;
@@ -100,11 +133,21 @@ export class AonNewInput extends AonElement {
         input.id = this.INPUT;
         input.value = this.getValue();
         input.type = this.getType();
+        input.className = CSS.AON_NEW_INPUT;
+
+        if (this.isDisabled()) input.setAttribute("disabled", "true");
+        if (this.isReadonly())  input.setAttribute("readonly", "true");
+    
+        
         input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
         input.addEventListener(EVENT.BLUR, this.onBlur);
+        input.addEventListener(EVENT.INPUT, this.onInput);
 
         input.placeholder = this.getTitle();
         label.appendChild(input);
+        if(this.maxlength) {
+            input.setAttribute("maxlength", this.maxlength);
+        }
 
         let span = this.createElement(TAG.SPAN);
         span.id = this.TITLE;
@@ -146,6 +189,10 @@ export class AonNewInput extends AonElement {
         this.dispatchEvent(new Event(EVENT.BLUR));
     };
 
+    onInput = () => {
+        this.dispatchEvent(new Event(EVENT.INPUT));
+    };
+
     checkRequired() {
         if(this.isRequired() && this.getValue().isEmpty()) {
             this.addError(this.getTitle() + " " + MSG.IS_REQUIRED);
@@ -173,7 +220,7 @@ export class AonNewInput extends AonElement {
         if(fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
         iconLabel.appendChild(aonIconButton);
         
-        iconLabel.color = color;
+        if(color) iconLabel.color = color;
         this.getElement(this.INPUT).style.paddingRight = '40px';
     }
 
@@ -244,7 +291,22 @@ export class AonNewInput extends AonElement {
         this.required = required;
     }
 
+    isReadonly() {
+        return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+            && 'false' !== this.getAttribute(CONSTANT.READONLY)
+    }
 
+    setReadonly(readonly) {
+        this.setAttribute(CONSTANT.READONLY, readonly);
+    }
+
+    isDisabled() {
+        return this.disabled;
+    }
+
+    setDisabled(disabled) {
+        this.disabled = disabled;
+    }
 }
 if(!window.customElements.get(TAG.AON_NEW_INPUT)){
     window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);

@@ -34,8 +34,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -66,11 +68,13 @@ public class EnterpriseContractExcel {
 		
 	}
 	
-	public static void simpleEnterpriseContractGenerator (String domainName, String user, Integer domainId, Boolean inactive, Integer workplaceId, String employee, OutputStream outputStream) {
+	public static void simpleEnterpriseContractGenerator (String domainName, String user, Integer domainId, Boolean inactive, String workplace, String employee, String tc2, Date from, Date to, OutputStream outputStream) {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
-			List<EnterpriseContract> contracts = getEnterpriseContracts(aonContext, domainId, inactive, workplaceId, employee);
+			Integer workplaceId = AonStringUtils.isBlank(workplace) ? null : Integer.parseInt(workplace);
+			
+			List<EnterpriseContract> contracts = getEnterpriseContracts(aonContext, domainId, inactive, workplaceId, employee, tc2, from, to);
 			contracts.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 			
 			String enterpriseName = getEnterpriseName(aonContext, domainId);
@@ -511,14 +515,18 @@ public class EnterpriseContractExcel {
 		cell.setCellStyle(stylesMap.get(ContractCellStyle.STRING_CELL_STYLE));
 	}
 
-	public static List<EnterpriseContract> getEnterpriseContracts(AONContext aonContext, Integer domainId, Boolean inactive, Integer workplaceId, String employee) {
+	public static List<EnterpriseContract> getEnterpriseContracts(AONContext aonContext, Integer domainId, Boolean inactive, Integer workplaceId, String employee, String tc2, Date from, Date to) {
 		Date currentDate = new Date();
 		java.sql.Date currentDateSQL = new java.sql.Date(currentDate.getTime());
 		
 		Condition condition = CONTRACT.DOMAIN.eq(domainId);
 		condition = condition.and(CONTRACT.ID.gt(0));
+		
+		// Workplace
 		condition = null == workplaceId ? condition : condition.and(CONTRACT.WORKPLACE.eq(workplaceId));
-		if(!AonStringUtils.isBlank(employee)) {
+		
+		// Employee
+		if(!AonStringUtils.isBlank(employee) && employee.length() >= 3) {
 			condition = condition.and(
 					(PERSON.NAME.contains(employee).or(PERSON.FIRST_SURNAME.contains(employee).or(PERSON.SECOND_SURNAME.contains(employee))))
 					.or(REGISTRY.DOCUMENT.contains(employee))
@@ -526,19 +534,37 @@ public class EnterpriseContractExcel {
 					);
 		}
 		
+		// Inactive
 		condition = inactive ? condition : condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDateSQL)));
 		
-		Result<Record> contractRecords = aonContext.getDslContext().select().from(CONTRACT)
-			.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-			.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-			.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
-			.where(condition)
-			.fetch();
+		// TC2
+		condition = AonStringUtils.isBlank(tc2) || AonStringUtils.equals(tc2, "RETA") ? condition : condition.and(CONTRACT_DATA.EXPRESSION.like("%" + tc2 + "%"));
+		
+		// From
+		condition = null == from ? condition : condition.and(CONTRACT.START_DATE.ge(new java.sql.Date(from.getTime())));
+		
+		// To
+		condition = null == to ? condition : condition.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.le(new java.sql.Date(to.getTime()))));
+			
+		SelectOnConditionStep<Record> contractRecordStmt = aonContext.getDslContext().select().from(CONTRACT)
+				.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID));
+		
+		contractRecordStmt.leftOuterJoin(CONTRACT_DATA).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID).and(CONTRACT_DATA.NAME.eq("TC2")));
+		
+		Result<Record> contractRecords = contractRecordStmt
+				.where(condition)
+				.orderBy(CONTRACT.ID, CONTRACT_DATA.ID.desc())
+				.fetch();
 		
 		List<EnterpriseContract> contracts = new ArrayList<>();
+		List<Integer> visitedContracts = new ArrayList<>();
 		
 		for(Record contractRecord : contractRecords) {
 			EnterpriseContract enterpriseContract = new EnterpriseContract();
+			
+			if(!visitedContracts.isEmpty() && visitedContracts.contains(contractRecord.get(CONTRACT.ID))) continue;
 			
 			enterpriseContract.setStart(contractRecord.get(CONTRACT.START_DATE));
 			enterpriseContract.setEnd(contractRecord.get(CONTRACT.END_DATE));
@@ -547,23 +573,31 @@ public class EnterpriseContractExcel {
 			enterpriseContract.setNaf(contractRecord.get(REGISTRY.DOCUMENT));
 			enterpriseContract.setSs(contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 			
-			Result<Record> contractTypeRecords = aonContext.getDslContext().select().from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.NAME.eq("TC2"))
-					.and(CONTRACT_DATA.CONTRACT.eq(contractRecord.get(CONTRACT.ID)))
-					.orderBy(CONTRACT_DATA.START_DATE.desc()).fetch();
-			
-			if(contractTypeRecords.isNotEmpty())
-				enterpriseContract.setContractType(contractTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
-			else
+			if(null != contractRecord.get(CONTRACT_DATA.EXPRESSION)) {
+				String tc2Record = contractRecord.get(CONTRACT_DATA.EXPRESSION);
+				enterpriseContract.setContractType(AonStringUtils.containsIgnoreCase(tc2Record, "000") ? "BECARIO" : tc2Record);
+			} else
 				enterpriseContract.setContractType("RETA");
 			
 			enterpriseContract.setWorkplace(contractRecord.get(WORKPLACE.DESCRIPTION));
 			enterpriseContract.setCategory(contractRecord.get(CONTRACT.CATEGORY_DESCRIPTION));
 			
 			contracts.add(enterpriseContract);
+			
+			visitedContracts.add(contractRecord.get(CONTRACT.ID));
 		}
 		
 		return contracts;
+	}
+	
+	protected static boolean checkField(Record r , Field<?> f) {
+		Boolean bool = false;
+		for(Integer i = 0; i < r.fields().length; i++) {
+			if(f.equals(r.fields()[i])) {
+				bool = true;
+			} 
+		}
+		return bool;
 	}
 	
 	private static String parseName(Record contractRecord) {

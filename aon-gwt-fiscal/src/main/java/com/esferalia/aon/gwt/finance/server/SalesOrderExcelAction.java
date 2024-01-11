@@ -188,7 +188,7 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell(AonStringUtils.abbreviate(detail.getDescription(), 60)) ;
 		addCell(detail.getQuantity());
 		addCell(detail.getPrice());
-		addCell(detail.getDiscountExpression());
+		addCell(detail.getDiscount());
 		addCell(detail.getSales().getScopeName());
 		addCell(detail.getSales().getWorkplaceName());
 		addCell(detail.getSales().getProjectName());

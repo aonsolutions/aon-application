@@ -115,7 +115,8 @@ export class AonBankCard extends AonElement {
       let date = this.createElement(TAG.SPAN);
       date.style.color = "rgb(120, 120, 133)";
       date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
-      date.innerHTML = this.formatDate(bank.balanceDate);
+      date.innerHTML = this.formatDateShort(bank.balanceDate);
+      date.title = this.formatDate(bank.balanceDate);
       leftContent.appendChild(date);
 
       let rightContent = this.createElement(TAG.DIV);
@@ -200,8 +201,7 @@ export class AonBankCard extends AonElement {
   }
 
   formatDate(inputDate) {
-    inputDate = inputDate ? new Date(inputDate) : new Date(); 
-    inputDate.setHours(0, 0, 0, 0);
+    inputDate = inputDate ? new Date(inputDate) : new Date();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -223,6 +223,32 @@ export class AonBankCard extends AonElement {
       const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
       const formattedDate = `${this.padWithZero(inputDate.getDate())} ${this.getMonthName(inputDate)}`;
       return `Actualizado el ${formattedDate} (Hace ${dayDiff} días)`;
+    }
+  }
+
+  formatDateShort(inputDate) {
+    inputDate = inputDate ? new Date(inputDate) : new Date();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const sixDaysAgo = new Date(today);
+    sixDaysAgo.setDate(today.getDate() - 7);
+    sixDaysAgo.setHours(0, 0, 0, 0);
+  
+    if (this.isSameDay(inputDate, today)) {
+      return `Act. hoy. ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
+    } else if (this.isSameDay(inputDate, yesterday)) {
+      return `Ac. ayer, ${this.getDayName(inputDate)}`;
+    } else if (inputDate > sixDaysAgo) {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      return `Act. el ${this.getDayName(inputDate)} (Hace ${dayDiff} días)`
+    } else {
+      const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
+      const formattedDate = `${this.padWithZero(inputDate.getDate())} ${this.getMonthName(inputDate)}`;
+      return `Act. el ${formattedDate} (Hace ${dayDiff} días)`;
     }
   }
   

@@ -208,6 +208,7 @@ public interface IWarehouse {
 	List<Packaging> savePackaging(AONContext ctx, Packaging packaging);
 	DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery, Integer product);
 	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
+	void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId);
 	
 	// 	***********************************************
 	// 	**************************** DELIVERY INFO ****

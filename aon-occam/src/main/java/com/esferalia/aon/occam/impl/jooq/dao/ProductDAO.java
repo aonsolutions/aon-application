@@ -56,29 +56,29 @@ public class ProductDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
-		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.KIND);}
-		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
-		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.INVENTORIABLE);}
-		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.SERIALIZABLE);}
-		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.LOTABLE);}
-		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<Byte>(PRODUCT.STATUS);}
-		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.VAT);}
-		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.RETENTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
-		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.MANUFACTURED);}
-		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION);}
-		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION_PRICE);}
-		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.SALES_ACCOUNT);}
-		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.PURCHASE_ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}
+		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.KIND);}
+		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.BRAND);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CATEGORY);}
+		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.INVENTORIABLE);}
+		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.SERIALIZABLE);}
+		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.LOTABLE);}
+		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<>(PRODUCT.STATUS);}
+		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.VAT);}
+		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.RETENTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
+		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.MANUFACTURED);}
+		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.COMPOSITION);}
+		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.COMPOSITION_PRICE);}
+		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.SALES_ACCOUNT);}
+		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.PURCHASE_ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.MODIFICATION_DATE);}
 	}
 
 	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {		

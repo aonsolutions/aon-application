@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class FinanceParams implements Serializable{
@@ -32,7 +33,10 @@ public class FinanceParams implements Serializable{
 	private String concept;
 	private String referenceCode;
 	private Integer payMethod;
+	private PayMethodType payMethodType;
 	private int order;
+	
+	private boolean isPayroll;
 	
 	public int getDomain() {
 		return domain;
@@ -183,6 +187,13 @@ public class FinanceParams implements Serializable{
 		this.payMethod = payMethod;
 		return this;
 	}
+	public PayMethodType getPayMethodType() {
+		return payMethodType;
+	}
+	public FinanceParams setPayMethodType(PayMethodType payMethodType) {
+		this.payMethodType = payMethodType;
+		return this;
+	}
 	public int getOrder() {
 		return order;
 	}
@@ -198,5 +209,13 @@ public class FinanceParams implements Serializable{
 		}
 		return this;
 	}
+	public boolean isPayroll() {
+		return isPayroll;
+	}
+	public FinanceParams setIsPayroll(boolean isPayroll) {
+		this.isPayroll = isPayroll;
+		return this;
+	}
+	
 	
 }

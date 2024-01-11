@@ -84,8 +84,8 @@ export class AonDocumentalCard extends AonElement {
       leftContent.style.flexDirection = "column";
 
       let description = this.createElement(TAG.SPAN);
-      description.className = CSS.AON_ELLIPSIS;
-      description.style.fontSize = "1rem";
+      description.className = CSS.AON_DOCUMENTAL_ELLIPSIS;
+      description.style.fontSize = ".9rem";
       description.style.color = "var(--aonDocumental)";
       description.style.fontWeight = "500";
       description.title = document.title;
@@ -93,20 +93,73 @@ export class AonDocumentalCard extends AonElement {
       leftContent.appendChild(description);
 
       let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX;
+      rightContent.className = CSS.AON_FLEX_COLUMN;
       rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
 
       let date = this.createElement(TAG.SPAN);
       date.style.color = "rgb(120, 120, 133)";
-      date.style.fontSize = ".8rem";
+      date.style.fontSize = ".7rem";
       date.innerHTML = document.date;
       rightContent.appendChild(date);
+
+      let describeDate = this.createElement(TAG.SPAN);
+      describeDate.style.color = "rgb(120, 120, 133)";
+      describeDate.style.fontSize = ".7rem";
+      describeDate.innerHTML = this.describeDate(this.changeDateFormat(document.date));
+      rightContent.appendChild(describeDate);
 
       row.appendChild(leftContent);
       row.appendChild(rightContent);
 
       content.appendChild(row);
+    }
+  }
+
+  describeDate(date) {
+    if(!date) {
+      return "Formating Err"
+    }
+    
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    var week = new Date(today);
+    week.setDate(today.getDate() - 7);
+    var month = new Date(today);
+    month.setDate(today.getDate() - 30);
+    var quarter = new Date(today);
+    quarter.setDate(today.getDate() - 90);
+    var halfYear = new Date(today);
+    halfYear.setDate(today.getDate() - 180);
+    var year = new Date(today);
+    year.setDate(today.getDate() - 365);
+
+    if (date >= today) {
+        return 'Hoy';
+    } else if (date >= yesterday) {
+        return 'Ayer';
+    } else if (date >= week) {
+        return 'Última semana';
+    } else if (date >= month) {
+        return 'Último mes';
+    } else if (date >= quarter) {
+        return 'Último trimestre';
+    } else if (date >= halfYear) {
+        return 'Último semestre';
+    } else if (date >= year) {
+        return 'Último año';
+    } else {
+        return 'Más de un año';
+    }
+  }
+
+  changeDateFormat(dateString) {
+    if(dateString && dateString.includes("/")){
+      const [day, month, year] = dateString.split("/");
+      return new Date(year, month - 1, day);
+    } else {
+      return undefined;
     }
   }
 

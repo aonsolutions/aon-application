@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,8 @@ import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -57,6 +60,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
@@ -68,6 +72,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -135,6 +140,11 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
 		return InvoiceDAO.getInvoiceDetails(ctx, filter);
+	}
+	
+	@Override
+	public ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
+		return InvoiceDAO.getInvoiceDetailsList(ctx, filter);
 	}
 
 	@Override
@@ -471,6 +481,14 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Finance unSettleFinance(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceTrackingDAO.unSettle(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance);
+		});			
+	}
+	
+	@Override
 	public Finance undoFinance(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration -> {
 			FinanceTrackingDAO.undo(ctx, finance);
@@ -760,6 +778,60 @@ public class FinanceImpl implements IFinance {
 	public void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings) {
 		ctx.getDslContext().transaction(
 				configuration -> BookingCheckDAO.delete(ctx, selectedBookings));
+	}
+	
+	// ---------- VENCIMIENTO NOMINAS
+
+	@Override
+	public void createSettleSalaries(CloseableAONContext ctx, Date date) {
+		ctx.getDslContext().transaction(
+				configuration -> SettleSalariesDAO.createSettleSalaries(ctx, date));
+	}
+	
+
+	@Override
+	public void deleteFinance(CloseableAONContext ctx, Integer financeId) {
+		ctx.getDslContext().transaction(
+				configuration -> FinanceDAO.delete(ctx, financeId));
+	}
+	
+	@Override
+	public Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SettleSalariesDAO.createSepaFile(ctx, fbatchId));
+	}
+
+	@Override
+	public LinkedList<FBatch> getFBatches(CloseableAONContext ctx, FBatchFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.getList(ctx, filter, offset, limit));	
+	}
+	
+	@Override
+	public FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.get(ctx, fbatchId));	
+	}
+
+	@Override
+	public void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds) {
+		ctx.getDslContext().transaction(
+				configuration -> FBatchDAO.delete(ctx, fBatchIds));
+	}
+
+	@Override
+	public FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.save(ctx, fBatch));	
+	}
+
+
+	// ---------- COBROS Y PAGOS CARD
+	
+	@Override
+	public Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FinanceDAO.getFinanceGroupStatus(ctx, filter));	
 	}
 	
 }

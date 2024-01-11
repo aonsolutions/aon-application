@@ -51,9 +51,9 @@ public class JooqIvl2Contract implements IvlParserListener {
     private Optional<String> user; 
     private DSLContext dslContext;
     private String enterpriseScope;
-    private String parentDomainName;
+    private String domainName;
     
-    //private DomainRecord domainRecord;
+    private DomainRecord domainRecord;
     private PersonRecord personRecord;
     private ContractRecord contractRecord; 
     private EnterpriseCccRecord enterpriseCccRecord;
@@ -63,11 +63,11 @@ public class JooqIvl2Contract implements IvlParserListener {
 	this(dslContext, parentDomainName, "GENERAL", null);
     }
 
-    public JooqIvl2Contract(DSLContext dslContext, String parentDomainName, String enterpriseScope, String user) {
+    public JooqIvl2Contract(DSLContext dslContext, String domainName, String enterpriseScope, String user) {
 	this.dslContext = dslContext;
+	this.domainName = domainName;
 	this.user = Optional.ofNullable(user);
 	this.enterpriseScope = enterpriseScope;
-	this.parentDomainName = parentDomainName;
     }
 
     @Override
@@ -75,13 +75,15 @@ public class JooqIvl2Contract implements IvlParserListener {
             String docType, String docNumber, String enterpriseAddress, String enterpriseCity, String enterpriseCP,
             String enterpriseCNAENumber, String enterpriseCNAEDescription) {
 	
-	//domainRecord = 
-	//getDomain(dslContext, getDomainCondition(parentDomainName))
-	//.orElseGet(() -> newDomain(dslContext, parentDomainName, docNumber, enterpriseName));
+	domainRecord = 
+	getDomain(dslContext, DOMAIN.NAME.eq(domainName).and(DOMAIN.TYPE.in((byte)0))) 
+	.orElseGet(() -> getDomain(dslContext, PARENT_DOMAIN.NAME.eq(domainName).and(REGISTRY.DOCUMENT.equalIgnoreCase(docNumber)))
+	.orElseGet(() -> newDomain(dslContext, domainName, docNumber, enterpriseName))
+	);
 	
 	enterpriseCccRecord =
-	getEnterpriseCCC(dslContext, ENTERPRISE_CCC.CCC.eq(cccProvince + cccNumber).and(getDomainCondition(parentDomainName)))
-	.orElseGet(() -> newEnterpriseCCC(dslContext, parentDomainName, enterpriseName, cccRegime, cccProvince, cccNumber, docType, docNumber, enterpriseCNAENumber, enterpriseCNAEDescription, enterpriseScope));
+	getEnterpriseCCC(dslContext, ENTERPRISE_CCC.CCC.eq(cccProvince + cccNumber).and(DOMAIN.ID.eq(domainRecord.getId())) )
+	.orElseGet(() -> newEnterpriseCCC(dslContext, domainRecord, enterpriseName, cccRegime, cccProvince, cccNumber, docType, docNumber, enterpriseCNAENumber, enterpriseCNAEDescription, enterpriseScope));
 	
 	payrollWorkplaceRecord = 
 	getAnyPayrollWorkplace(dslContext, PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseCccRecord.getEnterpriseActivity()).and(RADDRESS.ZIP.eq(enterpriseCP)))
@@ -117,7 +119,7 @@ public class JooqIvl2Contract implements IvlParserListener {
     
     // ------------------------------------------------------------------------
     
-    private static Condition getDomainCondition(String parentDomainName) {
+    private static Condition _getDomainCondition(String parentDomainName) {
 	return PARENT_DOMAIN.NAME.eq(parentDomainName).or(DOMAIN.NAME.endsWith('.' + parentDomainName));
     }
     
@@ -132,7 +134,7 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.set(CONTRACT.END_DATE, contractEndDate.map(DSL::val).orElse(DSL.val((java.sql.Date)null)))
 	.set(CONTRACT.PERSON, personRecord.getRegistry())
 	.set(CONTRACT.DOMAIN, enterpriseCccRecord.getDomain())
-	.set(CONTRACT.WORKPLACE, payrollWorkplaceRecord.getId())
+	.set(CONTRACT.WORKPLACE, payrollWorkplaceRecord.getWorkplace())
 	.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccRecord.getId())
 	.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseCccRecord.getEnterpriseActivity())
 	.returning()
@@ -144,7 +146,7 @@ public class JooqIvl2Contract implements IvlParserListener {
         	.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
         	.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
         	.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
-        	.set(CONTRACT_DATA.EXPRESSION, quoteGroup)
+        	.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", quoteGroup))
         	.set(CONTRACT_DATA.START_DATE, contractStartDate)
         	.set(CONTRACT_DATA.END_DATE, contractEndDate.map(DSL::val).orElse(DSL.val((java.sql.Date)null)))
         	.execute();
@@ -168,7 +170,7 @@ public class JooqIvl2Contract implements IvlParserListener {
         	.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
         	.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
         	.set(CONTRACT_DATA.NAME, "TC2")
-        	.set(CONTRACT_DATA.EXPRESSION, tc2)
+        	.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", tc2))
         	.set(CONTRACT_DATA.START_DATE, contractStartDate)
         	.set(CONTRACT_DATA.END_DATE, contractEndDate.map(DSL::val).orElse(DSL.val((java.sql.Date)null)))
         	.execute();
@@ -269,11 +271,8 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.fetchOptionalInto(PERSON);
     }
 
-    private static  EnterpriseCccRecord newEnterpriseCCC(DSLContext dslContext, String parentDomainName , String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
+    private static  EnterpriseCccRecord newEnterpriseCCC(DSLContext dslContext, DomainRecord domainRecord , String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
             String docType, String docNumber, String enterpriseCNAENumber,  String enterpriseCNAEDescription, String enterpriseScope) {
-	DomainRecord domainRecord = 
-	getDomain(dslContext, getDomainCondition(parentDomainName))
-	.orElseGet(() -> newDomain(dslContext, parentDomainName, docNumber, enterpriseName));
 	
 	Optional<GeozoneRecord> geozoneRecord = getGeozone(dslContext, cccProvince, domainRecord); 
 	
@@ -383,7 +382,7 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.fetchOne();
     }
     
-    private static  DomainRecord newDomain(DSLContext dslContext, String parentDomainName, String name, String description) {
+    private static  DomainRecord newDomain(DSLContext dslContext, String domainName, String name, String description) {
 	return 
 	dslContext
 	.insertInto(DOMAIN)
@@ -400,14 +399,14 @@ public class JooqIvl2Contract implements IvlParserListener {
 		, DOMAIN.ID
 		, DSL.val(description))
 		.from(DOMAIN)
-		.where(DOMAIN.NAME.eq(parentDomainName)))
+		.where(DOMAIN.NAME.eq(domainName)))
 	.returning()
 	.fetchOptionalInto(DOMAIN)
 	.orElseGet(() -> 
         	dslContext
         	.insertInto(DOMAIN)
-        	.set(DOMAIN.NAME, name + "." + parentDomainName)
-        	.set(DOMAIN.OWNER,  "console@" + parentDomainName)
+        	.set(DOMAIN.NAME, domainName)
+        	.set(DOMAIN.OWNER,  "console@" + domainName)
         	.set(DOMAIN.DESCRIPTION, description)
         	.returning()
         	.fetchOneInto(DOMAIN)
@@ -419,6 +418,8 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.select()
 	.from(DOMAIN)
 	.leftJoin(PARENT_DOMAIN).onKey(Keys.FK_DOMAIN_PARENT)
+	.leftJoin(ENTERPRISE).on(DOMAIN.ID.eq(ENTERPRISE.DOMAIN))
+	.leftJoin(REGISTRY).onKey(Keys.FK_ENTERPRISE_REGISTRY)
 	.where(condition)
 	.fetchOptionalInto(DOMAIN)
 	;

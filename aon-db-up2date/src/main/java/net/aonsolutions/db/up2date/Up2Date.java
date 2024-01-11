@@ -19,13 +19,17 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
-import net.aonsolutions.db.up2date.warehouse.DeliveryInfoInsert;
+import net.aonsolutions.db.up2date.config.InsertIAE3034;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
+import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
+import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
+import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
 
 public class Up2Date {
 
-	private static Update[] UPDATES = {
+    private static Update[] UPDATES = {
 
 	    // IRPF2018UPDATE,
 	    // AGREEMENTUPDATE,
@@ -341,7 +345,7 @@ public class Up2Date {
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
-        // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
+	    // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
 	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
 	    // Bases2023Update.BASES2023UPDATE,
 	    // HomeBases2023UpdateII.HOMEBASES2023UPDATEII,
@@ -352,7 +356,7 @@ public class Up2Date {
 	    // MEIUpdate.MEIUPDATE,
 	    // Art1512023Update.ART1512023UPDATE,
 	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
-        // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+	    // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
 	    // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
@@ -369,9 +373,14 @@ public class Up2Date {
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
 	    // NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
-		RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
+	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
+	    // RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
+	    // TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
+	    // Holidays2024Insert.HOLIDAYS2024INSERT,
+	    // IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
+	    // MEI2024Insert.MEI2024INSERT,
+	    BasesMax2024Update.BASESMAX2024UPDATE,
 
-		
 	    // ----------------------------------------------------------------
 	    // Important, not remove
 	    //
@@ -393,11 +402,20 @@ public class Up2Date {
 	    // InsertIAE1516.INSERT_IAE_1516,
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
-	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-//	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-//	    DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-	    DeliveryInfoInsert.DELIVERY_INFO_INSERT
-	    
+	    // AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
+	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
+	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
+	    //AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    //AlterNoteTagLength.ALTERNOTETAGLENGTH,
+	    //AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
+	    //AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
+		  //InsertIAE3034.INSERT_IAE_3034,
+	    AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
+	    AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023
 	};
 
     // ------------------------------------------------------------------------

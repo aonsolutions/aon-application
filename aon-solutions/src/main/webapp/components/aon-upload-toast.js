@@ -1,4 +1,5 @@
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { uploadDocument, uploadDocuments } from '../modules/documental/DocumentalUtils.js';
 import { generateJobId, s3UploadInvoice, uploadInvoice2 } from '../modules/invoice/InvoiceUtils.js';
 import {AonElement} from './AonElement.js';
 import { AonCard } from './aon-card.js';
@@ -62,7 +63,7 @@ export class AonUploadToast extends AonElement {
 
 	}
 
-	addFile(type, file) {
+	addFile(type, file, data, fn) {
 		let ul = this.getElement(this.id + 'List');
 
 		let li = this.createElement(TAG.LI)
@@ -87,6 +88,7 @@ export class AonUploadToast extends AonElement {
 		span.style.position = 'relative';
 		span.style.top = '7px';
 		div.appendChild(span);
+		
 
 		let loadDiv = this.createDiv();
 		loadDiv.id = this.id + "LoadDiv";
@@ -102,9 +104,10 @@ export class AonUploadToast extends AonElement {
 		okDiv.style.color = '#5cb85c';
 		li.appendChild(okDiv);
 
-		this.upload(type, file, () => {
+		this.upload(type, file, data, () => {
 			okDiv.style.display = 'block';
 			loadDiv.style.display = 'none';
+			if(fn) fn();
 		}, () => {
 			okDiv.style.display = 'block';
 			okDiv.innerHTML = MATERIAL_ICONS.CANCEL;
@@ -114,15 +117,15 @@ export class AonUploadToast extends AonElement {
 
 	}	
 
-	upload(type, file, success, error) {
+	upload(type, file, data, success, error) {
 		if("invoice" === type){
 			if(this.isBeta() && this.getDur().isOcr()) {
-				s3UploadInvoice(file, this.JOB_ID, success, error);
+				s3UploadInvoice(file, this.JOB_ID, data, success, error);
 			} else {
 				uploadInvoice2(file, success, error);
 			}
  		} else if("documental" === type) {
-			
+			uploadDocument(file, data, success, error);
 		}
 
 	}

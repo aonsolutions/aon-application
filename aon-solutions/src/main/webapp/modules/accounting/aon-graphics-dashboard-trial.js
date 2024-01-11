@@ -1,9 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG } from "../../environments/environments.js";
+import { CSS, TAG, EVENT } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
 
 export class AonDashboardGraphicsTrial extends AonElement {
   PERIODS;
@@ -47,6 +48,10 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
   get id() {
     return this.getAttribute("id");
+  }
+
+  getFilter(){
+    return this.filter;
   }
 
   constructor(period) {
@@ -95,16 +100,68 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
     this.selectedPeriod = lastPeriod;
 
+    console.log("this.selectedPeriod");
+    console.log(this.selectedPeriod);
+
     this.draw();
   }
 
   async draw() {
     this.innerHTML = "";
 
+    let contentDiv = this.createElement(TAG.DIV);
+    contentDiv.style.width = "100%";
+    contentDiv.style.display = "flex";
+    contentDiv.style.gap = ".5rem";
+    contentDiv.style.flexDirection = "column";
+    this.appendChild(contentDiv);
+
+    let titleDiv = this.createElement(TAG.DIV);
+    titleDiv.style.width = "100%";
+    titleDiv.style.display = "flex";
+    titleDiv.style.gap = ".5rem";
+    titleDiv.style.alignItems = "center";
+    titleDiv.style.justifyContent = "center";
+    contentDiv.appendChild(titleDiv);
+
+    let titleSpan = this.createElement(TAG.SPAN);
+    titleSpan.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
+    titleSpan.style.color = "grey";
+    titleSpan.style.fontWeight = "500";
+    titleSpan.style.textAlign = "center";
+    titleDiv.appendChild(titleSpan);
+
+    let yearelect = this.createElement('select');
+    yearelect.id = 'yearelect';
+    yearelect.title = 'Año';
+    yearelect.style.background = "none";
+    yearelect.style.border = "1px gray solid";
+
+    for (const element of this.PERIODS) {
+      let optYear = this.createElement('option');
+      optYear.value = JSON.stringify(element);
+      optYear.innerHTML = element.name;
+      if(this.selectedPeriod.name === element.name){
+        optYear.selected = true;
+      }
+      yearelect.appendChild(optYear);
+    }
+
+    yearelect.addEventListener('change', () => {
+      console.log(yearelect);
+      console.log(JSON.parse(yearelect.value));
+      let period = JSON.parse(yearelect.value);
+      this.filter.year = period.name;
+      this.selectedPeriod = period;
+      this.draw();
+    });
+    titleDiv.appendChild(yearelect);
+
     let canvasDiv = this.createElement(TAG.DIV);
     canvasDiv.id = "pygCardCanvasDiv";
     canvasDiv.style.width = "100%";
-    this.appendChild(canvasDiv);
+    canvasDiv.style.height = "100%";
+    contentDiv.appendChild(canvasDiv);
 
     let canvas = this.createElement(TAG.CANVAS);
     canvas.id = "pygCardCanvas";
@@ -354,12 +411,12 @@ export class AonDashboardGraphicsTrial extends AonElement {
           data: [this.income, null, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Cpas.",
           backgroundColor: "rgb(220, 57, 18, 0.7)",
           data: [null, this.purchases, null, null, null, null],
         },
         {
-          label: "Cpas./Gtos.",
+          label: "Gtos.",
           backgroundColor: "rgb(255, 153, 0, 0.7)",
           data: [null, this.outgoings, null, null, null, null],
         },
@@ -514,6 +571,20 @@ export class AonDashboardGraphicsTrial extends AonElement {
       this.stackedChart = new Chart(canvas, config);
     }
   }
+
+  getTitlePeriod(period){
+    switch (period) {
+     case 'yearly':
+       return 'Vista anual';
+     case 'quarterly':
+       return 'Vista trimestral';
+     case 'monthly':
+       return 'Vista mensual';
+     default:
+       return '';
+   }
+ }
+
 }
 
 window.customElements.define(

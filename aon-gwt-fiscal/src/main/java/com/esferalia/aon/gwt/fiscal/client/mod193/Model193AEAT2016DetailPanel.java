@@ -186,7 +186,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 1, nature);
 
 		CheckBox intermediaryPayment = new CheckBox(AON.MSG.intermediaryPayment());
-		intermediaryPayment.setStyleName(AON.CSS.aonFontMedium());
+		// intermediaryPayment.setStyleName(AON.CSS.aonFontMedium());
 		intermediaryPayment.setValue(detail.isIntermediaryPayment());
 		intermediaryPayment.addClickHandler(event -> {
 			detail.setIntermediaryPayment(intermediaryPayment.getValue());
@@ -287,7 +287,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(4, 2, accountCode);
 				
 		CheckBox inKind = new CheckBox(AON.MSG.inKind());
-		inKind.setStyleName(AON.CSS.aonFontMedium());
+		// inKind.setStyleName(AON.CSS.aonFontMedium());
 		inKind.setValue(detail.isInKind());
 		inKind.addClickHandler(event -> {
 			detail.setInKind(inKind.getValue());

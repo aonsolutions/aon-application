@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -120,7 +121,7 @@ public class FeeDAO {
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
 				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.TYPE.eq((byte)1)))
 				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
 				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
@@ -144,11 +145,22 @@ public class FeeDAO {
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
 		
-		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
-		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		
+		return fees;
 	}
 	
+	private static LinkedList<String> getCustomerFeeSegments(AONContext ctx, Integer id) {
+		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
+			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+			.where(RSEGMENT.REGISTRY.eq(id))
+			.fetch(SEGMENT.NAME);
+		
+		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		
@@ -367,7 +379,7 @@ public class FeeDAO {
 				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-				.setSeller(checkField(r, SELLER_COMERCIAL.REGISTRY)
+				.setSellerComercial(checkField(r, SELLER_COMERCIAL.REGISTRY)
 					? SellerFiller.build(r, SELLER_COMERCIAL_ALIAS)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSellerSupport(checkField(r, SELLER_SUPPORT.REGISTRY)

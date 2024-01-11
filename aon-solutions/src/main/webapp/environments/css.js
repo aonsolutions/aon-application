@@ -126,6 +126,7 @@ export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionA
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
 export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
 export const AON_ELLIPSIS = 'aonEllipsis';
+export const AON_DOCUMENTAL_ELLIPSIS = 'aonDocumentalEllipsis';
 export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
@@ -182,12 +183,24 @@ export const AON_LOADING = 'aonLoading';
 
 // aon-new-input.css
 
+export const AON_NEW_INPUT = 'aonNewInput';
 export const AON_INPUT_BOX = 'aonInputBox';
 export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
 export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
 export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+
+
+// aon-new-textarea.css
+
+export const AON_NEW_TEXTAREA = 'aonNewTextarea';
+export const AON_TEXTAREA_BOX = 'aonTextareaBox';
+export const AON_TEXTAREA_BOX_LABEL = 'aonTextareaBoxLabel';
+export const AON_TEXTAREA_BOX_LABEL_TEXTAREA_ERROR = 'aonTextareaBoxLabelTextareaError'
+export const AON_TEXTAREA_BOX_LABEL_SPAN_ERROR = 'aonTextareaBoxLabelSpanError'
+export const AON_TEXTAREA_MSG = 'aonTextareaMsg';
+export const AON_TEXTAREA_MSG_ERROR = 'aonTextareaMsgError';
 
 // aon-access-card.css
 export const AON_ACCESS_CARD = 'aonAccessCard';
@@ -393,10 +406,14 @@ export const EMPTY_NOTE = 'emptyNote';
 // Dialog
 export const DIALOG_OVERLAY = 'dialogOverlay';
 export const DIALOG_CONTENT = 'dialogContent';
+export const DIALOG_TITLE = 'dialogTitle';
 export const DIALOG_MESSAGE = 'dialogMessage';
 export const DIALOG_BUTTONS = 'dialogButtons';
 export const DIALOG_ACCEPT = 'dialogAccept';
 export const DIALOG_CANCEL = 'dialogCancel';
+
+// Color
+export const AON_COLOR_FULL = 'colorFull';
 
 /**
  * Name to CSS variable conversion.
@@ -404,3 +421,6 @@ export const DIALOG_CANCEL = 'dialogCancel';
  * @returns valid CSS variable expression.
  */
 export const variable = (name) => {return "var(" + name + ")";}
+
+export const AON_INVOICE_ERROR = 'aonInvoiceError';
+export const AON_INVOICE_WARNING = 'aonInvoiceWarning';

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class OCRNumber implements Serializable {
+public class OCRNumber implements OCRValue<BigDecimal>, Serializable {
 	
 	private static final long serialVersionUID = 4356862400426081496L;
 	

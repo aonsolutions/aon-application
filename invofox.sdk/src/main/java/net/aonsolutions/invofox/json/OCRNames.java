@@ -22,6 +22,7 @@ public final class OCRNames {
 	public static final String BOX = "box";
 	public static final String BOXES = "boxes";
 	public static final String BREAKDOWNS = "breakdowns";
+	public static final String BUCKET = "bucket";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CHANNEL = "channel";
 	public static final String CLIENT_CODE = "clientCode";
@@ -50,6 +51,7 @@ public final class OCRNames {
 	public static final String DOCUMENT_NUMBER = "documentNumber";
 	public static final String DOCUMENT_TYPE = "documentType";
 	public static final String DUES = "dues";
+	public static final String DOMAIN = "domain";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	public static final String ENVIRONMENT = "environment";
 	public static final String ERROR = "error";
@@ -91,6 +93,7 @@ public final class OCRNames {
 	public static final String ISSUER_PHONE_NUMBER = "issuerPhoneNumber";
 	public static final String ISSUER_TAX_ID = "issuerTaxId";
 	public static final String ISSUER_WEBSITE = "issuerWebsite";
+	public static final String ORIGINAL = "original";
 	// ---------------------------------------------------------------------------------------------	[J] 
 	// ---------------------------------------------------------------------------------------------	[K] 
 	public static final String KEY = "key";
@@ -99,6 +102,7 @@ public final class OCRNames {
 	public static final String LEGAL_NOTES = "legalNotes";
 	public static final String LIMIT = "limit";
 	public static final String LINES = "lines";
+	public static final String LOAD_S3 = "loadS3";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	public static final String MESSAGE = "message";
 	public static final String METER_NUMBER = "meterNumber";

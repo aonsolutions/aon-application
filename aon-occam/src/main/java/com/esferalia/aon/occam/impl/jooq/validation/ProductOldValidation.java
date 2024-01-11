@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductOldValidation {
 	
@@ -270,70 +269,28 @@ public class ProductOldValidation {
 	 * El detalle de un producto no puede estar duplicado para un mismo dominio.
 	 */
 	public static BiConsumer<OldItem, AONContext> CHECK_VALID_DETAILS = (i,ctx) -> {
-		int count;
-		if(i.getDetail() != null)
-			count = ctx.getDslContext().selectCount()
-					.from(ITEM)
-					.where(ITEM.DOMAIN.eq(i.getDomain()))
-					.and(ITEM.DETAIL.eq(i.getDetail()))
-					.and(ITEM.PRODUCT.eq(i.getProductId()))
-					.fetchOne(0,int.class);
-		else
-			count = ctx.getDslContext().selectCount()
-			.from(ITEM)
-			.where(ITEM.DOMAIN.eq(i.getDomain()))
-			.and(ITEM.DETAIL.isNull())
-			.and(ITEM.PRODUCT.eq(i.getProductId()))
-			.fetchOne(0,int.class);
-		int count2;
-		if(i.getDetail2() != null)
-			count2 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.DETAIL2.eq(i.getDetail2()))
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0,int.class);
-		else
-			count2 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.DETAIL2.isNull())
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0,int.class);
-		int count3;
-		if(i.getDetail3() != null)
-			count3 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.DETAIL3.eq(i.getDetail3()))
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0,int.class);
-		else
-			count3 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.DETAIL3.isNull())
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0,int.class);
+		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(i.getDomain())
+				.and(i.getDetail() != null 
+					? f.getDetailProperty().eq(i.getDetail())
+					: f.getDetailProperty().isNull())
+				.and(i.getDetail2() != null
+					? f.getDetail2Property().eq(i.getDetail2())
+					: f.getDetail2Property().isNull())
+				.and(i.getDetail3() != null
+					? f.getDetail3Property().eq(i.getDetail3())
+					: f.getDetail3Property().isNull())
+				.and(f.getProductProperty().eq(i.getProductId()))
+				.and(i.getBarcode() != null
+					? f.getBarcodeProperty().eq(i.getBarcode())
+					: f.getBarcodeProperty().isNull())
+				.and(i.getSerialNumber() != null
+					? f.getSerialNumberProperty().eq(i.getSerialNumber())
+					: f.getSerialNumberProperty().isNull())
+		);
 		
-		int count4;
-		if(i.getSerialNumber() != null)
-			count4 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.SERIAL_NUMBER.eq(i.getSerialNumber()))
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0, int.class);
-		else count4 = ctx.getDslContext().selectCount()
-				.from(ITEM)
-				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.SERIAL_NUMBER.isNull())
-				.and(ITEM.PRODUCT.eq(i.getProductId()))
-				.fetchOne(0, int.class);
-		
-		if(count>0 && count2>0 && count3>0 && count4>0 && AonStringUtils.isNotBlank(i.getDetails()))
-			throw new AonCoreException(AonError.DUPLICATE_DETAILS.format(i.getDetails()));
-		
+		if(!item.isEmpty()) {
+			throw new AonCoreException(AonError.DUPLICATE_DETAILS.format(i.getDetails()));			
+		}		
 	};
 	
 	/**

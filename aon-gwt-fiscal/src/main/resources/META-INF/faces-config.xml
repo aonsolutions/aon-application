@@ -103,6 +103,18 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/InvoiceSeriesBreakdown.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_financePayroll</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/FinancePayroll.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_fbatchPaymentPayroll</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/FBatchPaymentPayroll.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_fbatchPaymentTreasury</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/FBatchPaymentTreasury.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_financeUtilities</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/financeUtilities.xhtml</to-view-id>
 		</navigation-case>

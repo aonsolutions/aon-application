@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankValidation;
 
 public class RegistryBankDAO {
@@ -225,6 +226,7 @@ public class RegistryBankDAO {
 	}
 	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
+		RegistryBankAutoComplete.autoComplete(ctx, rbank);
 		RegistryBankValidation.validate(ctx, rbank);
 		ctx.checkWrite();
 		if(rbank.getId() != null && rbank.isRemoved()) { 

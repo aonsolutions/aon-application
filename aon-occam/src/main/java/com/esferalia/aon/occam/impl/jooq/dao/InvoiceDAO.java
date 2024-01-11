@@ -23,7 +23,11 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -102,6 +106,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
@@ -176,6 +181,9 @@ public class InvoiceDAO {
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
+	public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
+	
 	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
@@ -248,6 +256,8 @@ public class InvoiceDAO {
 				.from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()).and(INVOICE.ID.eq(id)))
 				.fetch()
 				.stream()
@@ -322,6 +332,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.LINE
 				
 				,INVOICE_DETAIL.ITEM
+				,PCATEGORY.ID
 				,PCATEGORY.NAME
 				,BRAND.NAME
 				,PRODUCT.ID
@@ -360,9 +371,12 @@ public class InvoiceDAO {
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
 				,SCOPE.DESCRIPTION
-				, INVOICE_DETAIL.ID
+				,INVOICE_DETAIL.ID
 				,PRODUCT.CATEGORY
 				,ITEM.ID
+				,RSELLER.ID
+				,SELLER_ALIAS.ID
+				,SELLER_SUPPORT_ALIAS.NAME
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -381,6 +395,11 @@ public class InvoiceDAO {
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
+			
+			.leftOuterJoin(RSELLER).on(RSELLER.REGISTRY.eq(INVOICE.REGISTRY))
+			.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+			.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+			
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
@@ -435,37 +454,71 @@ public class InvoiceDAO {
 			.stream()
 			.map(new FullInvoiceDetailFiller());
 	}
+	
+	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
+		ArrayList<InvoiceDetail> invoiceDetails = getFullInvoices(ctx, filter)
+			.stream()
+			.map(new FullInvoiceDetailFiller())
+			.collect(Collectors.toCollection(ArrayList::new));
+		
+		invoiceDetails.forEach(invoiceDetail -> invoiceDetail.setSegments(getRegistrySegments(ctx, invoiceDetail.getInvoice().getRegistry())));
+		
+		return invoiceDetails;
+	}
 
+	private static LinkedList<String> getRegistrySegments(AONContext ctx, Integer id) {
+		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
+			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+			.where(RSEGMENT.REGISTRY.eq(id))
+			.fetch(SEGMENT.NAME);
+		
+		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
+//			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getIdProperty().eq(id)));
 			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
-					.collect(Collectors.toCollection(LinkedList::new)));
+			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
-				
-				if(InvoiceSource.PURCHASE.equals(detail.getSource())) {
-				    // TODO PurchaseDetailDAO.get(ctx, detail.getSourceId());
-					PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-						.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
-					invoice.getDetails().get(i).setPurchaseDetail(d);
-				} else if(InvoiceSource.SALES.equals(detail.getSource())) {
-					invoice.getDetails().get(i).setSalesDetail(
-					        SalesDetailDAO.get(ctx, detail.getSourceId()));
-				} else if(InvoiceSource.DELIVERY.equals(detail.getSource())) {
-				    invoice.getDetails().get(i).setDeliveryDetail(
-				            DeliveryDetailDAO.getFull(ctx, detail.getSourceId()));
-				} else if(InvoiceSource.INCOME.equals(detail.getSource())) {
-                    // TODO IncomeDetailDAO.get(ctx, detail.getSourceId());
-					IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
-					invoice.getDetails().get(i).setIncomeDetail(d);
-				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
-					invoice.getDetails().get(i).setOfferDetail(
-					        OfferDetailDAO.get(ctx, detail.getSourceId()));
-				}
+				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+					
+					private static final long serialVersionUID = 1L;
+					@Override public void visitTedi(InvoiceDetail detail) {}
+					@Override public void visitSales(InvoiceDetail detail) {
+						detail.setSalesDetail(SalesDetailDAO.get(ctx, detail.getSourceId()));						
+					}
+					
+					@Override public void visitReservation(InvoiceDetail detail) {}
+					
+					@Override public void visitPurchase(InvoiceDetail detail) {
+					    // TODO PurchaseDetailDAO.get(ctx, detail.getSourceId());
+						PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
+						detail.setPurchaseDetail(d);						
+					}
+					
+					@Override public void visitOffer(InvoiceDetail detail) {
+						detail.setOfferDetail(OfferDetailDAO.get(ctx, detail.getSourceId()));						
+					}
+					@Override public void visitIncome(InvoiceDetail detail) {
+						 // TODO IncomeDetailDAO.get(ctx, detail.getSourceId());
+						IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+								.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
+						detail.setIncomeDetail(d);						
+					}
+					@Override public void visitFee(InvoiceDetail detail) {}
+					@Override public void visitDirectInvoice(InvoiceDetail detail) {}
+					@Override public void visitDirectExpense(InvoiceDetail detail) {}
+					@Override public void visitDelivery(InvoiceDetail detail) {
+						detail.setDeliveryDetail(DeliveryDetailDAO.getFull(ctx, detail.getSourceId()));						
+					}
+					@Override public void visitAccount(InvoiceDetail detail) {}
+				});
 				
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -628,7 +681,9 @@ public class InvoiceDAO {
 				.setScope(checkField(r, SCOPE.ID)
 						? ScopeFiller.buildScope(r)
 						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
-				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
+				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
+						? EnterpriseActivityFiller.build(r)
+						: new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
@@ -720,6 +775,9 @@ public class InvoiceDAO {
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
+				.setSellerSupport(checkField(r, SELLER_SUPPORT_ALIAS.NAME)
+						? r.get(SELLER_SUPPORT_ALIAS.NAME)
+						: "")
 				;
 		}
 		
@@ -1833,5 +1891,4 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().info("UPDATE ACTIVITY: Invoice {0}: Activity {1}. {2} filas.",invoiceId, activity, count);
 	}
-	
 }

@@ -65,7 +65,6 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.jooq.tables.ContractDoc;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
@@ -79,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDocFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
@@ -127,6 +127,7 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProp
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDocProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractLeaveProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
@@ -234,7 +235,12 @@ public class PropertiesDAO {
 
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}		
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
+		
+		// INVOICE COMMUNICATION
+		@Override public Property<Integer> getRSellerIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
+		@Override public Property<Date> getRSellerStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
+		@Override public Property<Date> getRSellerEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}	
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -523,6 +529,9 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(RITEM.PRIORITY);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(RITEM.WORKPLACE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RITEM.STATUS);}
+
+		// PRODUCT
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
 
 	}
 	
@@ -876,6 +885,23 @@ public class PropertiesDAO {
 		@Override public Property<String> getCategoryDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.CATEGORY_DESCRIPTION);}
 		@Override public Property<Byte> getSSStatusProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_STATUS);}
 
+	}
+	
+	protected static class ContractExtendedDataPropertiesDAO extends ContractPropertiesDAO implements ContractExtendedDataProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ContractExtendedDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ContractExtendedDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		
+		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
 	}
 	
 	protected static class ContractDocPropertiesDAO implements ContractDocProperties{

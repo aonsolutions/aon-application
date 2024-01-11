@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -35,7 +36,7 @@ public class WorkplaceDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DOMAIN);}
 		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ADDRESS);}
 		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.CUSTOMER);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DESCRIPTION);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DSL.trim(WORKPLACE.DESCRIPTION));}
 		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ECONOMICAGREEMENT);}
 		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ENTERPRISE);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}	

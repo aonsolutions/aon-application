@@ -19,6 +19,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
@@ -210,10 +212,13 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String FS_PAY_METHOD_ENTRY_POINT = "PayMethod";
 	private static final String FS_FINANCE_ENTRY_POINT = "Finance";
+	private static final String FS_FINANCE_PAYROLL_ENTRY_POINT = "FinancePayroll";
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
+	private static final String FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT = "FBatchPaymentPayroll";
+	private static final String FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT = "FBatchPaymentTreasury";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -467,6 +472,52 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					FinanceModule financeModule = new FinanceModule();
 					financeModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FINANCE_PAYROLL_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FinanceModule financeModule = new FinanceModule();
+					financeModule.setIsPayroll(true);
+					financeModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYROLL_PAYMENT);
+					fBatchPaymentPayrollModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYMENT);
+					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				
 			});

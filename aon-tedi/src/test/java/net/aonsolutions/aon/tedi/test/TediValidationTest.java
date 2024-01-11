@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.hamcrest.MatcherAssert;
 import org.json.JSONObject;
@@ -276,7 +277,7 @@ public class TediValidationTest {
 		 )))));
 	}
 
-	private void printMessages(LinkedList<TediError> messages) {
+	private void printMessages(List<TediError> messages) {
 		if (messages != null && messages.size()>0) {
 			System.out.println();
 			System.out.println("\t\t"

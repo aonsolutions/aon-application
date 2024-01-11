@@ -222,7 +222,13 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL,
 								FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL,
 								FS_MODEL190_DETAIL.TIT_CONVIVENCIA,
-								FS_MODEL190_DETAIL.COMP_INFANCIA
+								FS_MODEL190_DETAIL.COMP_INFANCIA,
+								FS_MODEL190_DETAIL.COMMON_RETENTION,
+								FS_MODEL190_DETAIL.NAVARRA_RETENTION,
+								FS_MODEL190_DETAIL.ARABA_RETENTION,
+								FS_MODEL190_DETAIL.BIZKAIA_RETENTION,
+								FS_MODEL190_DETAIL.GIPUZKOA_RETENTION
+								
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -231,7 +237,7 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null));
+								null, null, null, null, null, null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -291,6 +297,11 @@ public class Mod190DAO {
 					, detail.getInKindOutputDepositIL()
 					, detail.getTitConvivencia()
 					, detail.getCompInfancia()
+					, detail.getCommonRetention()
+					, detail.getNavarraRetention()
+					, detail.getArabaRetention()
+					, detail.getBizkaiaRetention()
+					, detail.getGipuzkoaRetention()
 					);
 		}
 		batch.execute();
@@ -375,6 +386,11 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
 				.set(FS_MODEL190_DETAIL.TIT_CONVIVENCIA, detail.getTitConvivencia())
 				.set(FS_MODEL190_DETAIL.COMP_INFANCIA, detail.getCompInfancia())
+				.set(FS_MODEL190_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
+				.set(FS_MODEL190_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
+				.set(FS_MODEL190_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
+				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
+				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				;
 	}
 
@@ -441,6 +457,11 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
 				.set(FS_MODEL190_DETAIL.TIT_CONVIVENCIA, detail.getTitConvivencia())
 				.set(FS_MODEL190_DETAIL.COMP_INFANCIA, detail.getCompInfancia())
+				.set(FS_MODEL190_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
+				.set(FS_MODEL190_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
+				.set(FS_MODEL190_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
+				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
+				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -684,6 +705,11 @@ public class Mod190DAO {
 				.setThirdChildCalculation(rec.getValue(FS_MODEL190_DETAIL.THIRD_CHILD_CALCULATION))
 				.setTitConvivencia(rec.getValue(FS_MODEL190_DETAIL.TIT_CONVIVENCIA))
 				.setCompInfancia(rec.getValue(FS_MODEL190_DETAIL.COMP_INFANCIA))
+				.setCommonRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.COMMON_RETENTION)))
+				.setNavarraRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.NAVARRA_RETENTION)))
+				.setArabaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.ARABA_RETENTION)))
+				.setBizkaiaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.BIZKAIA_RETENTION)))
+				.setGipuzkoaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION)))
 				;
 		}
 	}

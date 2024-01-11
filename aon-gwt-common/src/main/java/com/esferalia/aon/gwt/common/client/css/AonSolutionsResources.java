@@ -18,6 +18,12 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-tgss.png")
 	ImageResource aonIconTgss();
 	
+	@Source("icons/aon-icon-xml.png")
+	ImageResource aonIconXml();
+	
+	@Source("icons/aon-icon-delete-file.png")
+	ImageResource aonIconDeleteFile();
+	
 	@Source("icons/aon-icon-tgss-cra.png")
 	ImageResource aonIconTgssCra();
 	
@@ -66,6 +72,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-verify.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconVerify();
+	
+	@Source("icons/aon-icon-rebase-edit.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRebaseEdit();
 	
 	@Source("icons/aon-icon-key.svg")
 	@MimeType("image/svg+xml")
@@ -166,6 +176,22 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-paste.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
+	
+	@Source("icons/aon-icon-move-right.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveRight();
+	
+	@Source("icons/aon-icon-move-right-all.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveRightAll();
+	
+	@Source("icons/aon-icon-move-left.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveLeft();
+	
+	@Source("icons/aon-icon-move-left-all.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveLeftAll();
 	
 	@Source("icons/aon-icon-group-off.svg")
 	@MimeType("image/svg+xml")

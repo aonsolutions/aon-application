@@ -4,6 +4,9 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
 import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
@@ -14,11 +17,13 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.jooq.Field;
@@ -32,10 +37,12 @@ import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902022Key;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -149,13 +156,13 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						Mod190Detail detail = null;
 						
 						if(isE01())
-							detail = getDetail(document,person,Mod1902016Key.E,"01");
+							detail = getDetail(document,person,Mod1902022Key.E,"01");
 						else if(isE02())
-							detail = getDetail(document,person,Mod1902016Key.E,"02");
+							detail = getDetail(document,person,Mod1902022Key.E,"02");
 						else if(isE03()) 
-							detail = getDetail(document,person,Mod1902016Key.E,"03");
+							detail = getDetail(document,person,Mod1902022Key.E,"03");
 						else if(isE04())
-							detail = getDetail(document,person,Mod1902016Key.E,"04");
+							detail = getDetail(document,person,Mod1902022Key.E,"04");
 						
 						if(null != detail) {
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
@@ -177,7 +184,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"01");
+						Mod190Detail detail = getDetail(document,person,Mod1902022Key.L,"01");
 						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
 						
 						// Parte no exenta va a la A
@@ -196,7 +203,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 							visitAKey();		
 						} else if(AonMathUtils.isGreatherThanZero(amount )) {
 							//Esta comprobacion es por que puede haber payments CRA 0054 que tengan amount 0 (pe.: DIAS_PREAVISO)
-							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
+							Mod190Detail detail = getDetail(document,person,Mod1902022Key.L,"05");
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 						}
@@ -209,7 +216,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
 						if ( AonMathUtils.isGreatherThanZero(expense )) {
-							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"24");
+							Mod190Detail detail = getDetail(document,person,Mod1902022Key.L,"24");
 							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
 						} else {
 							// Parte no exenta va a la A a la parte en especie
@@ -221,7 +228,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 							
 							Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 							
-							Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+							Mod190Detail detail = getDetail(document,person,Mod1902022Key.A,null);
 							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
 							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
 							if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
@@ -236,7 +243,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
 						if ( AonMathUtils.isGreatherThanZero(expense )) {
-							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"25");
+							Mod190Detail detail = getDetail(document,person,Mod1902022Key.L,"25");
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
 						} else
 							// Parte no exenta va a la A
@@ -250,7 +257,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+						Mod190Detail detail = getDetail(document,person,Mod1902022Key.A,null);
 						Integer salary = rec.getValue(SALARY.ID);
 						if (!salaries.contains(salary)) {
 							salaries.add(salary);
@@ -274,7 +281,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+						Mod190Detail detail = getDetail(document,person,Mod1902022Key.A,null);
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
 						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 						// Si esta exento deberia ir al L.24
@@ -318,7 +325,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						return irpfQuota == 0.00 || irpfQuotaEnterprise <= 0.00 ? 0.00 : irpfQuotaEnterprise;
 					}
 
-					private Mod190Detail getDetail(String document,int person, Mod1902016Key key, String subKey) {
+					private Mod190Detail getDetail(String document,int person, Mod1902022Key key, String subKey) {
 						String mapKey =  document + "_" + person + "_" + key.getValue() + (subKey != null?("_" + subKey):"");
 						if ( !map.containsKey(mapKey) ) {
 							final Mod190Detail detail = new Mod190Detail();
@@ -345,7 +352,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 										}
 									}
 								);
-							if (key == Mod1902016Key.A) {
+							if (key == Mod1902022Key.A) {
 								Integer birthData = rec.getValue(birthYear);
 								detail.setBirthYear(birthData==null?0:birthData);
 								fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail);
@@ -691,4 +698,71 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 		return retList;
 	}
 	
+	Mod190 insertDetailsFromInvoice(AONContext ctx, final Mod190 mod190) {
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
+
+		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
+		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
+		Field<Double> invoiceTaxSum = DSL.round((INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
+		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
+				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
+				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
+		Map<String,Mod190Detail> map = new LinkedHashMap<>();
+		ctx.getDslContext()
+				.select(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE, INVOICE_TAX.PERCENTAGE, minRegistry, sumBase,quotaOp)
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.where(INVOICE.DOMAIN.equal(mod190.getDomain()))
+				.and(INVOICE.TYPE.notEqual((byte) 1)) 		// No Ventas
+				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))	// IRPF
+				.and(INVOICE_TAX.WITHHOLDING_TYPE.in((byte) 0, (byte) 3,(byte) 4)) 
+				.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
+				.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE,INVOICE_TAX.PERCENTAGE)
+				.fetch()
+				.stream()
+				.forEach(
+						rec -> {
+							
+							String document = rec.getValue(INVOICE.RDOCUMENT);
+							String key = null;
+							String subKey = null;
+							
+							double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+							WithholdingType withholding = WithholdingType.safeValueOf(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE));
+							if (withholding == WithholdingType.PROFESSIONAL) {
+								key = Mod1902022Key.G.getValue();
+								if (AonNumberUtils.equals(percent, 7.0) ) {
+									subKey = Mod1902022Key.G.getSubKeys()[2];
+								} else {
+									subKey = Mod1902022Key.G.getSubKeys()[0];;
+								}
+							} else if (withholding == WithholdingType.FARMER) { // AGRICULTOR - FARMER
+								key = Mod1902022Key.H.getValue();
+								subKey = Mod1902022Key.H.getSubKeys()[0];
+							} else if (withholding == WithholdingType.TRANSPORT_OPERATOR) { // TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR
+								key = Mod1902022Key.H.getValue();
+								subKey = Mod1902022Key.H.getSubKeys()[3];
+							}
+							String mapKey = document + "|" + key + "|" + subKey;
+							Mod190Detail detail = null; 
+							if (!map.containsKey(mapKey)) {
+								detail = new Mod190Detail();
+								detail.setDomain(mod190.getDomain());
+								detail.setMod190(mod190.getId());
+								detail.setDocument(document);
+								detail.setName(rec.getValue(INVOICE.RNAME));
+								detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+								detail.setKey(key);
+								detail.setSubKey(subKey);
+								map.put(mapKey, detail);
+							}
+							detail = map.get(mapKey);
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + rec.getValue(sumBase).doubleValue()));
+							detail.setRetention(AonMathUtils.round(detail.getRetention() + rec.getValue(quotaOp).doubleValue()));
+						});
+		mod190.getDetails().addAll(map.values());
+		return mod190;
+	}
 }

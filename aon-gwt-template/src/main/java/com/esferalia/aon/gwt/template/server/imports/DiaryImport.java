@@ -190,17 +190,6 @@ public class DiaryImport extends ImportUtils {
 			}
 			return;
 		}
-
-		if(isApunte(title)) {
-			Double d = Utils.parseDouble(o);
-			apunte = d.intValue();
-			if(!apunte.equals(diary.get(asiento).getEntry().getDetails().size())) {
-				diary.get(asiento).getEntry().addDetail(new AccountEntryDetail()
-						.setDomain(domain.getId())
-						.setLine(apunte));
-			}
-			return;
-		}
 		
 		if(isDate(title)) {
 			Date date = new Date();
@@ -295,6 +284,8 @@ public class DiaryImport extends ImportUtils {
 					diary.get(asiento).getEntry().setEntryType(AccountEntryType.OPENING); 
 				} else if("&CR".equals(o.toString())) {
 					diary.get(asiento).getEntry().setEntryType(AccountEntryType.CLOSING);
+				} else if("&PG".equals(o.toString())) {
+					diary.get(asiento).getEntry().setEntryType(AccountEntryType.OPERATING);
 				} else diary.get(asiento).getEntry().setEntryType(AccountEntryType.MANUAL);
 			}
 			return;

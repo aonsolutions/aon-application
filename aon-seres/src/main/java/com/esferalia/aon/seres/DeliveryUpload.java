@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryCommunicationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryCommunicationType;
@@ -29,6 +30,8 @@ public class DeliveryUpload extends Seres {
 
 	public DeliveryUpload(Domain domain, String login, SeresInfo info) {
 		super(domain, login, info);
+		if(getInfo().getSeresPath() == null)
+			info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
 	}
 	
 	public void uploadDeliveries(List<Delivery> list) {
@@ -37,9 +40,10 @@ public class DeliveryUpload extends Seres {
 	
 	public void uploadDelivery(Delivery delivery) {
 		try {
+			String filename = delivery.getSeries()+"_"+delivery.getNumber() + ".edi";
 			FileOutput output = getEdiFile(delivery);
 			InputStream is = new BufferedInputStream(new ByteArrayInputStream(output.getContent()));
-			storeFile(getInfo().getSeresPath().getPath(), is);
+			storeFile(filename, is);
 			saveDeliveryInfo(delivery, DeliveryCommunicationStatus.ACCEPTED);
 		} catch (AonException | JSchException | SftpException e) {
 			e.printStackTrace();

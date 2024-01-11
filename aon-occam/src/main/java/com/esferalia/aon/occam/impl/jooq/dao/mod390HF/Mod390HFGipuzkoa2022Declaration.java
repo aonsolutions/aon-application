@@ -28,7 +28,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	}
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isGipuzkoa() && mod.getYear() >= 2022;
+		return  mod.isGipuzkoa() && mod.getYear() == 2022;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
 		  Mod390Key.GP_C022

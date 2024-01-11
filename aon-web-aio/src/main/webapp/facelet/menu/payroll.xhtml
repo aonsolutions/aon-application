@@ -27,9 +27,27 @@
 	          	//]]>
 		</script>
 
+		<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
+			<ui:include src="/facelet/new/portlet/s3UploadForm.xhtml" >
+				<ui:param name="s3Prefix" value="ivlccc" />
+				<ui:param name="s3Bucket" value="aon-upload-post" />
+				<ui:param name="uploadId" value="#{desktop.getTime('yyyyMMddhhmmss')}" />
+				<ui:param name="uploadPanel" value="s3IvlUploadPanel" />
+				<ui:param name="uploadOneTitle" value="Se ha subido un documento" />
+				<ui:param name="uploadManyTitle" value="Se han subido \${documents} documentos" />
+			</ui:include>
+		</aon:if>
+
 		<aon:form id="payrollMenu">
 
 			<aon:div styleClass="aon-scroll-area">
+
+				<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
+					<aon:div id="s3IvlUploadPanel" styleClass="aon-file-upload-panel">
+						<aon:outputText styleClass="aon-padding" value="Importar informe de vida laboral de un código cuenta de cotización" />
+						<aon:outputText styleClass="material-icons" value="cloud_upload" />
+					</aon:div>
+				</aon:if>
 
 				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
@@ -350,6 +368,30 @@
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
 									</aon:div>
+									<aon:if test="#{domainSwitcher.alphaUser}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_financePayroll"
+												action="gwt_financePayroll"
+												title="#{bundle.payroll_finance_payment_module}">
+												<aon:outputText
+													styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;"
+													value="#{bundle.payroll_finance_payment_module}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.alphaUser}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_fbatchPaymentPayroll"
+												action="gwt_fbatchPaymentPayroll"
+												title="#{bundle.payroll_fbatch_payment_module}">
+												<aon:outputText
+													styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;"
+													value="#{bundle.payroll_fbatch_payment_module}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>

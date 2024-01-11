@@ -11,7 +11,7 @@ public class Mod131Delete extends AbstractOccamTest {
 	@Test
 	public void test() {
 		for (Mod131 mod131 : MODEL131.getMod131s(getOccam())) {
-			MODEL131.deleteMod131(getOccam(), mod131);
+			MODEL131.delete(getOccam(), mod131);
 		};
 	}
 		

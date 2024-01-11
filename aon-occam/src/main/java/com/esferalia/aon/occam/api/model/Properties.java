@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api.model;
 
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
 public interface Properties {
 	
@@ -599,6 +602,9 @@ public interface Properties {
 		Property<Byte> getPriorityProperty();
 		Property<Integer> getWorkplaceProperty();
 		Property<Byte> getStatusProperty();
+		
+		// PRODUCT
+		Property<Byte> getProductTypeProperty();		
 	}
 	
 	public interface RegistryBankProperties{
@@ -1217,7 +1223,7 @@ public interface Properties {
 		Property<Integer> getSalesDetailIdProperty();
 	}
 	
-	public interface SalesDetailProperties{
+	public interface SalesDetailProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getSalesProperty();
@@ -1226,11 +1232,16 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<Double> getQuantityProperty();
 		Property<Double> getPriceProperty();
-		Property<String> getdiscountExpressionProperty();
+		Property<String> getDiscountExpressionProperty();
 		Property<Double> getTaxesProperty();
 		Property<Byte> getStatusProperty();
 		Property<Integer> getOfferDetailProperty();
 		Property<Double> getDeliveredProperty();
+		Property<Date> getDeliveryDateProperty();
+		Property<Integer> getCarrierProperty();
+		Property<Integer> getCarrierPackingProperty();
+		Property<Integer> getDeliveryProperty();
+		Property<Integer> getProductProperty();
 	}
 	
 	public interface SalesInfoProperties {
@@ -1305,6 +1316,10 @@ public interface Properties {
 		Property<Integer> getAgreementLevelProperty();
 		Property<String> getCategoryDescriptionProperty();
 		Property<Byte> getSSStatusProperty();
+	}
+	
+	public interface ContractExtendedDataProperties extends ContractProperties{
+		Property<String> getPersonFullNameProperty();
 	}
 	
 	public interface ContractDocProperties{
@@ -1638,6 +1653,12 @@ public interface Properties {
 		Property<String> getSubjectProperty();
 		Property<String> getNoteProperty();
 		Property<Timestamp> getDateProperty();
+		Property<Byte> getArchiveProperty();
+		Property<Byte> getPinUpProperty();
+		Property<String> getNoteTagProperty();
+		Property<String> getColorProperty();
+		Property<Timestamp> getArchiveDateProperty();
+		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	

@@ -7,6 +7,7 @@ import net.aonsolutions.core.aeat.v2020.jaxb.AEATRetencionesError2020;
 import net.aonsolutions.core.aeat.v2021.jaxb.AEATRetencionesError2021;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesError2022;
 import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesError2023;
+import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesError2024;
 
 public class IrpfCalculateException extends Exception {
 	
@@ -17,6 +18,11 @@ public class IrpfCalculateException extends Exception {
 	private AEATRetencionesError2021 error2021;
 	private AEATRetencionesError2022 error2022;
 	private AEATRetencionesError2023 error2023;
+	private AEATRetencionesError2024 error2024;
+
+	public IrpfCalculateException(AEATRetencionesError2024 error2024) {
+		this.error2024 = error2024;
+	}
 
 	public IrpfCalculateException(AEATRetencionesError2023 error2023) {
 		this.error2023 = error2023;
@@ -57,4 +63,9 @@ public class IrpfCalculateException extends Exception {
 	public AEATRetencionesError2023 getAEATRetencionesError2023() {
 		return error2023;
 	}
+	
+	public AEATRetencionesError2024 getAEATRetencionesError2024() {
+		return error2024;
+	}
+	
 }

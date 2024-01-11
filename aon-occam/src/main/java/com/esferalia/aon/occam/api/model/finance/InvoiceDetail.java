@@ -38,6 +38,10 @@ public class InvoiceDetail implements Serializable {
 	private double taxes;
 	private double surcharge;
 	private boolean prepayment;
+
+	private LinkedList<String> segments;
+	@Deprecated // Debería estar en Invoice dentro de Registry...  
+	private String sellerSupport;
 	
 	// WAREHOUSE
 	// TODO private Warehouse warehouse;
@@ -337,5 +341,25 @@ public class InvoiceDetail implements Serializable {
 	
 	public void setOfferDetail(OfferDetail offerDetail) {
 		this.offerDetail = offerDetail;
+	}
+
+	public LinkedList<String> getSegments() {
+		return segments;
+	}
+
+	public InvoiceDetail setSegments(LinkedList<String> segments) {
+		this.segments = segments;
+		return this;
+	}
+	
+	@Deprecated // Debería estar en Invoice dentro de Registry...  
+	public String getSellerSupport() {
+		return sellerSupport;
+	}
+	
+	@Deprecated // Debería estar en Invoice dentro de Registry... 
+	public InvoiceDetail setSellerSupport(String sellerSupport) {
+		this.sellerSupport = sellerSupport;
+		return this;
 	}
 }

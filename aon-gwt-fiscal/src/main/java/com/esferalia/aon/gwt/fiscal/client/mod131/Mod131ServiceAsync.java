@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Mod131ServiceAsync {
 
-	void getMod131(Occam occam, int id,AsyncCallback<Mod131> callback);
+	void get(Occam occam, int id,AsyncCallback<Mod131> callback);
 	void getMod131s(Occam occam,AsyncCallback<LinkedList<Mod131>> callback);
 	void calculate(Occam occam, Mod131 mod131,AsyncCallback<Mod131> callback);
 	void calculateActivity(Occam occam, Mod131 mod131, Mod131Activity activity, AsyncCallback<Mod131Activity> callback);

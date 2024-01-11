@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Field;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -21,29 +22,29 @@ public class BankStatementDAO {
 	
 
 	public static Date getLastMovementDate(AONContext ctx, Integer rbankId) {
-		return ctx.getDslContext()
+		Record1<java.sql.Date> bankStatement = ctx.getDslContext()
 			.select(MAX_DATE)
 			.from(BANK_STATEMENT)
 			.where(BANK_STATEMENT.RBANK.eq(rbankId))
-			.fetch()
-			.stream()
-			.map(rec -> rec.getValue(MAX_DATE))
-			.map(date -> new Date(date.getTime()))
-			.findFirst()
-			.orElse( null );
+			.limit(1)
+			.fetchOne();
+		
+		return null == bankStatement.getValue(MAX_DATE) ? null : new Date(bankStatement.getValue(MAX_DATE).getTime());
 	}
 
 	static int getNextLotNumber(AONContext ctx, Integer domainId, RegistryBank rbank) {
 		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return ctx.getDslContext().select( lot )
+		int lotNumber = ctx.getDslContext().select( lot )
 			.from(BANK_STATEMENT)
 			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
 			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
 			.fetch()
 			.stream()
+			.filter( rec -> rec.getValue(lot) != null)
 			.mapToInt( rec -> rec.getValue(lot))
 			.findFirst()
-			.orElse(1);
+			.orElse(0);
+		return ++lotNumber;  
 	}
 	
 }

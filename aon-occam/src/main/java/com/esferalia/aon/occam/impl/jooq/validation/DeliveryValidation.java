@@ -61,7 +61,7 @@ public class DeliveryValidation {
 	
 	public static final BiConsumer<AONContext, Delivery> COMPLETE_REGISTRY_ADDRESS = (ctx, delivery) -> {
 		if(delivery.getAddress() == null || delivery.getAddress().getId() == null) {
-			RegistryAddressDAO.getMain(ctx, delivery.getCustomer().getId());
+			delivery.setAddress(RegistryAddressDAO.getMain(ctx, delivery.getCustomer().getId()));
 		}
 	};
 	

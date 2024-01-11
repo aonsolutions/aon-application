@@ -26,9 +26,9 @@ public class Mod131Insert extends AbstractOccamTest {
 				mod131.setDomain(DOMAIN_ID);
 				mod131.setYear(AonDateUtils.getYear(now));
 				mod131.setPeriod( p );
-				mod131 = MODEL131.initializeMod131(getOccam(), mod131);
+				mod131 = MODEL131.initialize(getOccam(), mod131);
 				mod131.setAdministration(admon);
-				mod131 = MODEL131.createMod131(getOccam(), mod131);
+				mod131 = MODEL131.create(getOccam(), mod131);
 				MODEL131.save(getOccam(), mod131);
 			}
 		}

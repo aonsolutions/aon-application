@@ -7,12 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
@@ -23,6 +17,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Invoice Report (excel)", urlPatterns = { "/aon_gwt_fiscal/InvoiceReport",
 															 "/aon_gwt_aio/InvoiceReport" })
@@ -133,8 +133,7 @@ public class InvoiceReportServlet extends HttpServlet {
 			User user = AON.getUser(domainName, domainId, login ); 
 			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
 			
-			
-			AON.getInvoiceDetails(domainName, domainId, login,
+			AON.getInvoiceDetailsList(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))
@@ -146,6 +145,10 @@ public class InvoiceReportServlet extends HttpServlet {
 							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))
 							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))
 							.and(workplaces.length==0?p.getIdProperty().isNotNull():p.getWorkplaceProperty().in(workplaces))
+							.and(p.getRSellerIdProperty().isNull().or(
+									p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
+									.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))	
+							))
 							;
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	

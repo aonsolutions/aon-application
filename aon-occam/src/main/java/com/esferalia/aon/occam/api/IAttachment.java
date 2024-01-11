@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -16,7 +17,7 @@ public interface IAttachment {
 	public AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData);
 	public AuthAttach saveAuthAttach(AONContext ctx, AuthAttach authAttach);
 
-	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData, Options...options);
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);

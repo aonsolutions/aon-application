@@ -694,14 +694,18 @@ public class TaskDAO {
 
 		@Override
 		public Tag apply(Record r) {
-			return new Tag()
-				.setId(r.getValue(TAG.ID))
-				.setColor(r.getValue(TAG.COLOR))
-				.setDomain(r.getValue(TAG.DOMAIN))
-				.setName(r.getValue(TAG.NAME))
-				.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
-			;
+			return build(r);
 		}
+		
+		public static Tag build(Record r) {
+			return new Tag()
+					.setId(r.getValue(TAG.ID))
+					.setColor(r.getValue(TAG.COLOR))
+					.setDomain(r.getValue(TAG.DOMAIN))
+					.setName(r.getValue(TAG.NAME))
+					.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)));
+		}
+	
 	}
 	
 	private static void setParent(AONContext ctx, List<Task> tasks) {

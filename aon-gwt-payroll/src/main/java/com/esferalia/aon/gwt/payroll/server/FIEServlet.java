@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.GsonBuilder;
 
 import solutions.aon.seg.social.SistemaREDINSS;
@@ -210,6 +211,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private String ipf;
 
 		private ContractLeaveType contingency;
+		private Byte hightCause;
 		
 		private Date startDate;
 		private Date endDate;
@@ -273,6 +275,14 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 		public void setContingency(ContractLeaveType contingency) {
 			this.contingency = contingency;
+		}
+
+		public Byte getHightCause() {
+			return hightCause;
+		}
+
+		public void setHightCause(Byte hightCause) {
+			this.hightCause = hightCause;
 		}
 
 		public Optional<Date> getFromITDate() {
@@ -446,10 +456,37 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 		@Override
 		public void onDitItEndCause(String itEndCause) {
-			// TODO Auto-generated method stub
-			
+			if(AonStringUtils.isNotBlank(itEndCause))
+				try {
+					it.setHightCause(parseAonHighCause(Byte.parseByte(itEndCause)));
+				} catch (Exception e) {}
 		}
 
+		private Byte parseAonHighCause(byte hightCause) {
+			switch (hightCause) {
+				case 1: // Curacion
+					return 0;
+				case 2: // Fallecimiento
+					return 1;
+				case 3: // Inspeccion medica
+					return 2;
+				case 12: // Propuesta incapacida
+					return 3;
+				case 9: // Agotamiento de plazo
+					return 4;
+				case 6: // Mejoria que permite realizar el trabajo habitual
+					return 5;
+				case 7: // Incomparecencia
+					return 6;
+				case 17: // Recuperacion capacidad profesional
+					return 8;
+				case 18: // Incomparecencia contratos de formacion
+					return 9;
+				default:
+					return 0;
+			}
+		}
+		
 		@Override
 		public void onDitItPartCancel(boolean itPartCancel) {
 			it.setCancel(itPartCancel);
@@ -512,6 +549,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setStartDate(itStartDate);
 				contractLeaveRecord.setType(it.getContingency().value());
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
+				contractLeaveRecord.setDischargeCause(it.getHightCause());
 		
 				contractLeaveRecord.store();
 				
