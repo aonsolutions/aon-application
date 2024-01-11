@@ -3,9 +3,13 @@ package com.esferalia.aon.in.payroll.pdf.modGipuzkoa;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod1152023Gipuzkoa {
+import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
 
-	public String setPeriod(String text) {
+public class Mod1152023Gipuzkoa implements IModelDocumentParser {
+
+	public void setPeriod(FiscalModel fm,String text) {
 		String period ="";
 		String periodRegex ="Periodo:(\\s.*)";
 		
@@ -14,13 +18,11 @@ public class Mod1152023Gipuzkoa {
 		
 		if (matcher.find()) {
 			period = matcher.group(1).trim();
-			System.out.println("PERIODO: " + period);
 		}
-		
-		return period;
+		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public String setExercise(String text) {
+	public void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio\\s.*([0-9]{4})";
 		
@@ -29,13 +31,13 @@ public class Mod1152023Gipuzkoa {
 		
 		if (matcher.find()) {
 			exercise = matcher.group(1).trim();
-			System.out.println("EJERCICIO: " + exercise);
 		}
 		
-		return exercise;
+		int auxYear = Integer.parseInt(exercise);
+		fm.setYear(auxYear);
 	}
 	
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex ="("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -83,12 +85,11 @@ public class Mod1152023Gipuzkoa {
 		
 		if (matcher.find()) {
 			nif = matcher.group().trim();
-			System.out.println("NIF: " + nif);
 		}
-		return nif;
+		fm.setDocument(nif);
 	}
 	
-	public String setSocialReason(String text) {
+	public void setSocialReason(FiscalModel fm, String text) {
 		String name ="";
 		String nameRegex ="nombre o razón social\\s+([A-Z]{1}[0-9]{8})\\s([A-Z].*)";
 		
@@ -96,13 +97,12 @@ public class Mod1152023Gipuzkoa {
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			name = matcher.group(2).trim();
-			System.out.println("NOMBRE: " + name);
 		}
 		
-		return name;
+		fm.setName(name);
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount ="";
 		String amountRegex ="ORDAINTZEKOA\\s+([^\\n]+)";
 		
@@ -111,10 +111,10 @@ public class Mod1152023Gipuzkoa {
 		
 		if (matcher.find()) {
 			amount = matcher.group(1).trim();
-			System.out.println("Pago: " + amount);
 		}
 		
-		return amount;
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
 	public String setPresentationDate(String text) {
@@ -151,17 +151,21 @@ public class Mod1152023Gipuzkoa {
 //		System.out.println("Modelo : " + model);
 //	}
 	
-	public void parser(String text) {
-		System.out.println("MODELO GIPUZKOA");
-		setNif(text);
-		setSocialReason(text);
-//		setModel(text);
-		setPeriod(text);
-		setExercise(text);
-		setHacienda(text);
-		setPresentationDate(text);
-		setAmount(text);
-		System.out.println("\n");
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setSocialReason(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setExercise(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		return fiscalModel;
 	}
 	
 	

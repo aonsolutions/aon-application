@@ -32,10 +32,9 @@ public class ParserUtils {
 	}
 	
 	
-	public void modelSearch(String text) {
+	public String modelSearch(String text) {
 		ArrayList<String> models = new ArrayList<>();
-		models.add("115");
-		models.add("115A");
+		String possibleModel = "";
 		models.add("130");
 		models.add("715");
 		models.add("F69");
@@ -46,16 +45,17 @@ public class ParserUtils {
 			Matcher matcher = pattern.matcher(text);
 			
 			if (matcher.find()) {
-				String possibleModel = matcher.group();
+				possibleModel = matcher.group();
 				for(FiscalModelType modelos : FiscalModelType.values()) {
 					if (modelos.getName().equals(possibleModel)) {
-						System.out.println("MODELO : " + possibleModel);
 						break;
 					}
 				}
 			}
 			
 		}
+		return possibleModel;
+
 	}
 	
 	public boolean validateDocument(String document) {
@@ -128,6 +128,23 @@ public class ParserUtils {
 	            return "Formato no reconocido";
 	        }
 	    }
+	
+	
+	public String parsePeriodNavarra(String period) {
+		String truePeriod = "";
+		
+		if(period.equals("T1")) {
+			truePeriod = "1T";
+		}else if(period.equals("T2")) {
+			truePeriod = "2T";
+		}else if(period.equals("T3")) {
+			truePeriod = "3T";
+		}else if(period.equals("T4")) {
+			truePeriod = "4T";
+		}
+		
+		return truePeriod;
+	}
 	
 
 	

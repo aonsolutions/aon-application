@@ -3,7 +3,10 @@ package com.esferalia.aon.in.payroll.pdf.modGipuzkoa;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod1802023Gipuzkoa {
+import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+
+public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -47,7 +50,7 @@ public class Mod1802023Gipuzkoa {
 			+")"
 			;
 	
-	public String setIdentifyNif(String text) {
+	public void setIdentifyNif(FiscalModel fm ,String text) {
 		String identifyNif = "";
 		String identifyNifRegex = "IFZ / NIF Abizenak eta izena edo sozietatearen izena / Apellidos y nombre o razón social\\s"+nifRegex;
 		
@@ -57,10 +60,10 @@ public class Mod1802023Gipuzkoa {
 		if (matcher.find()) {
 			identifyNif = matcher.group(1).trim();
 		}
-		return identifyNif;
+		fm.setDocument(identifyNif);
 	} 
 	
-	public String setIdentifyName(String text) {
+	public void setIdentifyName(FiscalModel fm, String text) {
 		String identifyName = "";
 		String identifyNameRegex = "IFZ / NIF Abizenak eta izena edo sozietatearen izena / Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -71,7 +74,7 @@ public class Mod1802023Gipuzkoa {
 			identifyName = matcher.group(3).trim();
 		}
 		
-		return identifyName;
+		fm.setName(identifyName);
 	}
 	
 	public String setRelatedPersonName(String text) {
@@ -85,7 +88,7 @@ public class Mod1802023Gipuzkoa {
 		return relatedPersonName;
 	}
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "HARREMANETARAKO PERTSONA / PERSONA CON QUIEN RELACIONARSE\\s.*(\\s.*)([^A-Z][\\d]{9})";
 		
@@ -95,7 +98,7 @@ public class Mod1802023Gipuzkoa {
 			phoneNumber = matcher.group(2).trim();
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
 	//NO HAY DATOS PARA REPRESENTANTE
@@ -116,7 +119,7 @@ public class Mod1802023Gipuzkoa {
 		return declarantNif;
 	}
 	
-	public String setExercise(String text) {
+	public void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = ".*([0-9]{4}).*Ejercicio";
 		
@@ -126,10 +129,11 @@ public class Mod1802023Gipuzkoa {
 		if (matcher.find()) {
 			exercise = matcher.group(1).trim();
 		}
-		return exercise;
+		int year = Integer.parseInt(exercise);
+		fm.setYear(year);
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountregex = "([\\d]*)(,)([\\d]{2,})\\s.*Importe total de las retenciones e ingresos a cuenta";
 		
@@ -140,7 +144,8 @@ public class Mod1802023Gipuzkoa {
 			amount = matcher.group(1).trim() + matcher.group(2).trim() + matcher.group(3).trim();
 		}
 		
-		return amount;
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
 	public String setPerceivers(String text) {
@@ -169,6 +174,22 @@ public class Mod1802023Gipuzkoa {
 		}
 		
 		return amountsPaid;
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setIdentifyNif(fiscalModel, text);
+		setIdentifyName(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setExercise(fiscalModel, text);
+		return fiscalModel;
 	}
 	
 }

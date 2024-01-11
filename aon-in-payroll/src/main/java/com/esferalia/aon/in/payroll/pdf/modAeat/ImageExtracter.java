@@ -15,8 +15,9 @@ import com.amazonaws.services.textract.model.Block;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
+import com.esferalia.aon.in.payroll.pdf.modAeat.ModelDocumentExtracters.IModelDocumentExtracter;
 
-class ImageExtracter  {
+class ImageExtracter implements IModelDocumentExtracter  {
 
 	public boolean accept(byte [] bytes) {
 		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {

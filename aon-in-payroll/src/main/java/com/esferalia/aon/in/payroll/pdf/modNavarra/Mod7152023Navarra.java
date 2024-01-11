@@ -4,11 +4,15 @@ package com.esferalia.aon.in.payroll.pdf.modNavarra;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.esferalia.aon.in.payroll.pdf.modNavarra.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
 
-public class Mod7152023Navarra {
+
+public class Mod7152023Navarra implements IModelDocumentParser {
 
 	
-	public String setSocialReasonName(String text) {
+	public void setSocialReasonName(FiscalModel fm, String text) {
 		String name = "";
 		String nameSocialReasonRegex = " Nombre o razón social.+\\s+([^0-9])([0-9]+)([^\\n]+)";
 
@@ -16,31 +20,28 @@ public class Mod7152023Navarra {
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			name = matcher.group(3).trim();
-			System.out.println("Name : " + name);
 		}
 		
-		return name;
+		fm.setName(name);
 		
 	}
 	
 	
-	public String setRegistryNumber(String text) {
-		String registry = "";
-		String registryRegex = "([0-9]{5})";
-		Pattern pattern = Pattern.compile(registryRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-//		System.out.println(matcher.find());
-		if (matcher.find()) {
-			registry = matcher.group().trim();
-			System.out.println("Registry number : " + registry);
-		}
-		
-		return registry;
-	}
+//	public String setRegistryNumber(String text) {
+//		String registry = "";
+//		String registryRegex = "([0-9]{5})";
+//		Pattern pattern = Pattern.compile(registryRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			registry = matcher.group().trim();
+//			System.out.println("Registry number : " + registry);
+//		}
+//		
+//		return registry;
+//	}
 	
 	
-	//Implementar patron para cualquier nif nie dni 
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -87,13 +88,12 @@ public class Mod7152023Navarra {
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			nif = matcher.group().trim();
-			System.out.println("NIF : " + nif);
 		}
+		fm.setDocument(nif);
 		
-		return nif;
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 //		String emailRegex = ".*[A-Z]@[A-Za-z0-9.-].*[A-Z]";
         String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
@@ -102,13 +102,13 @@ public class Mod7152023Navarra {
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			email = matcher.group().trim();
-			System.out.println("Email : " + email);
+			
 		}
-		return email;
+		fm.setContactEmail(email);
 	}
 	
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -119,10 +119,10 @@ public class Mod7152023Navarra {
 			System.out.println("Phone number : " + phoneNumber);
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
-	public String setIBAN (String text) {
+	public void setIBAN (FiscalModel fm, String text) {
 		String iban = "";
 		//Cambiar ES por for que recorra nacionalidades
 		String IBANRegex = "ES+([^A-Z]{26})";
@@ -134,12 +134,13 @@ public class Mod7152023Navarra {
 			System.out.println("IBAN : " + iban);
 		}
 		
-		return iban;
+		fm.setIban(iban);
 	}
 	
-	public String setPeriodAndYear(String text) {
+	public void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
+		ParserUtils pu = new ParserUtils();
 		String periodYearRegex ="Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
 		Pattern pattern = Pattern.compile(periodYearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
@@ -147,61 +148,62 @@ public class Mod7152023Navarra {
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
-			
-			System.out.println("year : " +year);
-			System.out.println("period : " +period);
-			
+			period= pu.parsePeriodNavarra(period);
+
 		}
 		
-		return period + " " + year;
-	}
-	
-	public String setIssueDate(String text) {
-		String issueDay = "";
-		String issueMonth = "";
-		String issueYear = "";
-		String issueDateRegex = "Fecha presentación:\\s+([0-9]{2})(/)([0-9]{2})(/)([0-9]{4})";
-		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-//		System.out.println(matcher.find());
-		if (matcher.find()) {
-			issueDay= matcher.group(1).trim();
-			issueMonth = matcher.group(3).trim();
-			issueYear = matcher.group(5).trim();
-			System.out.println("Issue date : " + issueDay +"/"+ issueMonth +"/"+ issueYear);
-		}
-		
-		return issueDay +"/"+ issueMonth +"/"+ issueYear;
+		int auxYear = Integer.parseInt(year);
+		fm.setYear(auxYear);
+		fm.setPeriod(Period.safeValueOf(period));
 		
 	}
 	
-	public String setSign(String text) {
-		String sign = "";
-		String signRegex = "Firma\\s+([^\\n]+)";
-		Pattern pattern = Pattern.compile(signRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			sign = matcher.group(1).trim();
-			System.out.println("Signature : " +sign);
-		}
-		
-		return sign;
-	}
+//	public String setIssueDate(String text) {
+//		String issueDay = "";
+//		String issueMonth = "";
+//		String issueYear = "";
+//		String issueDateRegex = "Fecha presentación:\\s+([0-9]{2})(/)([0-9]{2})(/)([0-9]{4})";
+//		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+////		System.out.println(matcher.find());
+//		if (matcher.find()) {
+//			issueDay= matcher.group(1).trim();
+//			issueMonth = matcher.group(3).trim();
+//			issueYear = matcher.group(5).trim();
+//			System.out.println("Issue date : " + issueDay +"/"+ issueMonth +"/"+ issueYear);
+//		}
+//		
+//		return issueDay +"/"+ issueMonth +"/"+ issueYear;
+//		
+//	}
+//	
+//	public String setSign(String text) {
+//		String sign = "";
+//		String signRegex = "Firma\\s+([^\\n]+)";
+//		Pattern pattern = Pattern.compile(signRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			sign = matcher.group(1).trim();
+//			System.out.println("Signature : " +sign);
+//		}
+//		
+//		return sign;
+//	}
+//	
+//	public String setCsv (String text) {
+//		String csv = "";
+//		String csvRegex = "CSV:\\s+([^\\n]+)";
+//		Pattern pattern = Pattern.compile(csvRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			csv = matcher.group(1).trim();
+//			System.out.println("CSV : " + csv);
+//		}
+//		
+//		return csv;
+//	}
 	
-	public String setCsv (String text) {
-		String csv = "";
-		String csvRegex = "CSV:\\s+([^\\n]+)";
-		Pattern pattern = Pattern.compile(csvRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			csv = matcher.group(1).trim();
-			System.out.println("CSV : " + csv);
-		}
-		
-		return csv;
-	}
-	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -222,55 +224,54 @@ public class Mod7152023Navarra {
 			String decimales = 	matcher.group(4).trim();
 			
 			amount = entero + coma + decimales;
-			System.out.println("Pago : " + amount);
 		}else {
 			matcher = pattern2.matcher(text);
 			if (matcher.find()) {
 				amount = matcher.group(1).trim();
-				System.out.println("Pago : " + amount);
 			}else {
 				matcher = pattern3.matcher(text);
 				if (matcher.find()) {
 					amount = matcher.group(1).trim();
-					System.out.println("Pago : " + amount);
 				}
 			}
 		
 		}
 		
-		return amount;
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
-	public String setHacienda(String text) {
-		ParserUtils pu = new ParserUtils();
-		String hacienda ="";
-		if (pu.haciendaSearch(text)) {
-			hacienda = "Hacienda Navarra";
-		}
-		System.out.println(hacienda);
-		return hacienda;
-	}
+//	public String setHacienda(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		String hacienda ="";
+//		if (pu.haciendaSearch(text)) {
+//			hacienda = "Hacienda Navarra";
+//		}
+//		return hacienda;
+//	}
 	
 	public void setModel(String text) {
 		ParserUtils pu = new ParserUtils();
 		pu.modelSearch(text); 
 	}
-	
-	public void parser(String text) {
-		System.out.println("MODELO NAVARRA");
-		setSocialReasonName(text);
-		setNif(text);
-		setEmail(text);
-		setPeriodAndYear(text);
-		setPhoneNumber(text);
-		setRegistryNumber(text);
-		setIBAN(text);
-		setHacienda(text);
-		setCsv(text);
-		setSign(text);
-		setIssueDate(text);
-		setAmount(text);
-		setModel(text);
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setSocialReasonName(fiscalModel, text);
+		setPeriodAndYear(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setIBAN(fiscalModel, text);
+		return fiscalModel;
 	}
 	
 	

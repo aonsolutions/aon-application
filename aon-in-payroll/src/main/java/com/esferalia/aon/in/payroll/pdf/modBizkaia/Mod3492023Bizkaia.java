@@ -3,7 +3,11 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod3492023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod3492023Bizkaia implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -47,7 +51,7 @@ public class Mod3492023Bizkaia {
 			+")"
 			;
 	
-	public String setNifDeclarant(String text) {
+	public void setNifDeclarant(FiscalModel fm, String text) {
 		String nif = "";
 		String regex = "Apellidos y nombre o razón social\\s"+nifRegex;
 		
@@ -57,10 +61,10 @@ public class Mod3492023Bizkaia {
 			nif = matcher.group(1).trim();
 		}
 		
-		return nif;
+		fm.setDocument(nif);
 	}
 	
-	public String setNameDeclarant(String text) {
+	public void setNameDeclarant(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -69,7 +73,7 @@ public class Mod3492023Bizkaia {
 		if (matcher.find()) {
 			name = matcher.group(3).trim();
 		}
-		return name;
+		fm.setName(name);
 	}
 	
 	public String setContactPerson(String text) {
@@ -84,7 +88,7 @@ public class Mod3492023Bizkaia {
 		return name;
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "([^a-z][0-9]{9})(.*[A-Z]@[A-Z0-9.-].*[A-Z])";
 		
@@ -94,10 +98,10 @@ public class Mod3492023Bizkaia {
 			email = matcher.group(2).trim();
 		}
 		
-		return email;
+		fm.setContactEmail(email);
 	}
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -107,7 +111,7 @@ public class Mod3492023Bizkaia {
 			phoneNumber = matcher.group().trim();
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
 	public String setRepresentativeNif(String text) {
@@ -136,5 +140,51 @@ public class Mod3492023Bizkaia {
 		}
 		
 		return representativeName;
+	}
+	
+	public void setExercise(FiscalModel fm, String text) {
+		String exercise = "";
+		String exerciseRegex = "Declaración sustitutiva([0-9]{4})";
+		
+		Pattern pattern = Pattern.compile(exerciseRegex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(text);
+		
+		if (matcher.find()) {
+			exercise = matcher.group(1).trim();
+		}
+		int auxYear = Integer.parseInt(exercise);
+		fm.setYear(auxYear);
+		
+	}
+	
+	public void setPeriod(FiscalModel fm , String text) {
+		String period =" ";
+		String periodRegex = "Declaración sustitutiva([0-9]{4})\\s([A-Z]{1,})";
+		ParserUtils pu = new ParserUtils();
+		Pattern pattern = Pattern.compile(periodRegex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(text);
+		
+		if (matcher.find()) {
+			period = matcher.group(2).trim();
+			period = pu.parsePeriodBizkaia(period);
+		}
+		fm.setPeriod(Period.safeValueOf(period));
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNifDeclarant(fiscalModel, text);
+		setNameDeclarant(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setExercise(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		return fiscalModel;
 	}
 }

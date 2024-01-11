@@ -3,7 +3,12 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod1102023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod1102023Bizkaia implements IModelDocumentParser {
 	String nifRegex = "("
 			// -------- LEGAL_PERSON_NIF PATTERN
 			// -------- (1) --> X00000000
@@ -20,7 +25,7 @@ public class Mod1102023Bizkaia {
 			// -------- (1) --> X0000000X
 			+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
 
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 		ParserUtils pu = new ParserUtils();
 		String nif = "";
 		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
@@ -28,13 +33,13 @@ public class Mod1102023Bizkaia {
 		while (matcher.find()) {
 			nif = matcher.group().trim();
 			if (pu.validateDocument(nif)) {
-				return nif;
+				fm.setDocument(nif);
+				break;
 			}
 		}
-		return null;
 	}
 
-	public String setDeclarant(String text) {
+	public void setDeclarant(FiscalModel fm, String text) {
 		String declarant = "";
 		String declarantRegex = "Declarante\\s.*\\s.*" + nifRegex + "(\\s.*)";
 
@@ -43,9 +48,8 @@ public class Mod1102023Bizkaia {
 
 		if (matcher.find()) {
 			declarant = matcher.group(3).trim();
-			System.out.println("Declarante : " + declarant);
 		}
-		return declarant;
+		fm.setName(declarant);
 	}
 
 	public String setPresenter(String text) {
@@ -77,7 +81,7 @@ public class Mod1102023Bizkaia {
 		return presenterNif;
 	}
 
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 
@@ -87,10 +91,10 @@ public class Mod1102023Bizkaia {
 			email = matcher.group().trim();
 		}
 
-		return email;
+		fm.setContactEmail(email);
 	}
 
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 
@@ -100,56 +104,78 @@ public class Mod1102023Bizkaia {
 			phoneNumber = matcher.group().trim();
 		}
 
-		return phoneNumber;
+		fm.setPhone(phoneNumber);
 	}
 
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "ingresar\\s.*(\\d)(\\.\\d{3})(,\\d+)";
 		String wholeNumbers = "";
 		String decimalNumbers = "";
-		String auxNumber = "";
+//		String auxNumber = "";
 		Pattern pattern = Pattern.compile(amountRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 
 		if (matcher.find()) {
 			wholeNumbers = matcher.group(1).trim();
 			decimalNumbers = matcher.group(2).trim();
-			auxNumber = matcher.group(3).trim();
+//			auxNumber = matcher.group(3).trim();
 
-			amount = wholeNumbers + decimalNumbers + auxNumber;
-			System.out.println("A ingresar : " + amount);
+//			amount = wholeNumbers + decimalNumbers + auxNumber;
+			amount = wholeNumbers + decimalNumbers;
 		}
 
-		return amount;
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 
-	public String setYearAndPeriod(String text) {
+	public void setYearAndPeriod(FiscalModel fm, String text) {
 		String year = "";
 		String period = "";
 		String yearRegex = "Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
-
+		ParserUtils pu = new ParserUtils();
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
-			System.out.println("Año : " + year + " Periodo : " + period);
+			period = pu.parsePeriodBizkaia(period);
+			System.out.println(period);
 		}
-		return "Año : " + year + " Periodo : " + period;
+		int auxYear = Integer.parseInt(year);
+		fm.setYear(auxYear);
+		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public String setModel(String text) {
+	public void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "110";
 		Pattern pattern = Pattern.compile(modelRegex);
 		Matcher matcher = pattern.matcher(text);
-		
+
 		if (matcher.find()) {
 			model = matcher.group().trim();
 		}
-return model;
-		}
+		fm.setModel(FiscalModelType.safeValueOf(model));
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setDeclarant(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setModel(fiscalModel, text);
+		setYearAndPeriod(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		return fiscalModel;
+	}
 
 }

@@ -1,11 +1,14 @@
 package com.esferalia.aon.in.payroll.pdf.modGipuzkoa;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod3492023Gipuzkoa {
+import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -49,7 +52,7 @@ public class Mod3492023Gipuzkoa {
 			+")"
 			;
 	
-	public String setIdentifyNif(String text) {
+	public void setIdentifyNif(FiscalModel fm, String text) {
 		String identifyNif = "";
 		String identifyNifRegex = "DNI / CIF EKITALDIA"+nifRegex;
 		
@@ -59,10 +62,10 @@ public class Mod3492023Gipuzkoa {
 		if (matcher.find()) {
 			identifyNif = matcher.group(1).trim();
 		}
-		return identifyNif;
+		fm.setDocument(identifyNif);
 	}
 	
-	public String setIdentifyName(String text) {
+	public void setIdentifyName(FiscalModel fm, String text) {
 		String identifyName = "";
 		String identifyNameRegex = "Apellidos, Nombre y Razón Social ALDIA 2 TPERIODO\\s.*(\\s.*)";
 		
@@ -73,10 +76,10 @@ public class Mod3492023Gipuzkoa {
 			identifyName = matcher.group(1).trim();
 		}
 		
-		return identifyName;
+		fm.setName(identifyName);
 	}
 	
-	public String setExercise(String text) {
+	public void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "([\\d])\\s([\\d])EJERCICIO";
 		
@@ -86,10 +89,11 @@ public class Mod3492023Gipuzkoa {
 		if (matcher.find()) {
 			exercise = matcher.group(1).trim() + matcher.group(2).trim();
 		}		
-		return exercise;
+		int year = Integer.parseInt(exercise);
+		fm.setYear(year);
 	}
 	
-	public String setPeriod(String text) {
+	public void setPeriod(FiscalModel fm , String text) {
 		String period = "";
 		String periodRegex = "ALDIA\\s([0-9])\\s([A-Z])";
 		
@@ -100,35 +104,54 @@ public class Mod3492023Gipuzkoa {
 			period = matcher.group(1).trim() + matcher.group(2).trim();
 		}
 		
-		return period;
+		fm.setPeriod(Period.safeValueOf(period));
+
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "IMPORTE\\s.*\\s.\\s([\\d]{1,}.)([\\d]{1,},)([\\d]{1,})";
-		
+		String auxAmount = "";
 		Pattern pattern = Pattern.compile(amountRegex);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
 			amount = matcher.group(1).trim() + matcher.group(2).trim() + matcher.group(3).trim();
+			auxAmount = amount.replace("." , "");
 		}
-		
-		return amount;
+
+		double total = Double.parseDouble(auxAmount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
-	public List<String> operationsLines(String texto) {
-        List<String> capturedLines = new ArrayList<>();
-        
-        // Patrón regex para capturar líneas con datos después de código/país
-        Pattern patron = Pattern.compile("\\b[A-Z]{2}\\s+\\d+\\w*\\s+.+");
-        Matcher matcher = patron.matcher(texto);
-        
-        while (matcher.find()) {
-        	capturedLines.add(matcher.group());
-        }
-        return capturedLines;
-    }
+//	public List<String> operationsLines(String texto) {
+//        List<String> capturedLines = new ArrayList<>();
+//        
+//        // Patrón regex para capturar líneas con datos después de código/país
+//        Pattern patron = Pattern.compile("\\b[A-Z]{2}\\s+\\d+\\w*\\s+.+");
+//        Matcher matcher = patron.matcher(texto);
+//        
+//        while (matcher.find()) {
+//        	capturedLines.add(matcher.group());
+//        }
+//        return capturedLines;
+//    }
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setIdentifyNif(fiscalModel, text);
+		setIdentifyName(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		setExercise(fiscalModel, text);
+		return fiscalModel;
+	}
 	
 	
 	

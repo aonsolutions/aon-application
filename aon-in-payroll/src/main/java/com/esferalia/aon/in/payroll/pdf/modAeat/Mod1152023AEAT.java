@@ -3,23 +3,29 @@ package com.esferalia.aon.in.payroll.pdf.modAeat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod1152023AEAT {
+import com.esferalia.aon.in.payroll.pdf.modAeat.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod1152023AEAT implements IModelDocumentParser {
 	ParserUtils pu = new ParserUtils();
 
-	public String setExercise(String text) {
+	public void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio\\s.*([0-9]{4})";
-
 		Pattern pattern = Pattern.compile(exerciseRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 
 		if (matcher.find()) {
 			exercise = matcher.group(1).trim();
 		}
-		return exercise;
+		int year = Integer.parseInt(exercise);
+		fm.setYear(year);
+
 	}
 
-	public String setPeriod(String text) {
+	public void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "Per\u00EDodo\\s.*([\\d][A-Z])";
 
@@ -29,15 +35,13 @@ public class Mod1152023AEAT {
 		if (matcher.find()) {
 			period = matcher.group(1).trim();
 		}
-		
-		return period;
+		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 
 		String nif = "";
 		String nifRegex = "NIF Presentador:(\\s.*)";
-
 		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 
@@ -45,14 +49,14 @@ public class Mod1152023AEAT {
 			nif = matcher.group(1).trim();
 
 		}
+		fm.setDocument(nif);
 
-		return nif;
+
 	}
 
-	public String setSocialReason(String text) {
+	public void setSocialReason(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Raz\u00F3n social:(\\s.*)";
-
 		Pattern pattern = Pattern.compile(nameRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 
@@ -60,48 +64,45 @@ public class Mod1152023AEAT {
 			name = matcher.group(1).trim();
 		}
 
-		return name;
+		fm.setName(name);
 	}
 
-	public void setPerceivers(String text) {
-		String perceivers = "";
-		String perceiversRegex = "Nº de perceptores\\s.+([0-9])";
+//	public void setPerceivers(String text) {
+//		String perceivers = "";
+//		String perceiversRegex = "Nº de perceptores\\s.+([0-9])";
+//
+//		Pattern pattern = Pattern.compile(perceiversRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			perceivers = matcher.group(1).trim();
+//		}
+//	}
+//
+//	public void setWithHoldingsAndPayments(String text) {
+//		String withHoldingsAndPayment = "";
+//		String withHoldingsAndPaymentRegex = "Base de las retenciones e ingresos a cuenta\\s.+([0-9][.][0-9].+[,][0-9].)";
+//
+//		Pattern pattern = Pattern.compile(withHoldingsAndPaymentRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			withHoldingsAndPayment = matcher.group(1).trim();
+//		}
+//	}
+//
+//	public void setWithHoldings(String text) {
+//		String withHoldings = "";
+//		String withHoldingsRegex = "Retenciones e ingresos a cuenta\\s.*\\s.*([0-9][.][0-9].+[,][0-9].)";
+//
+//		Pattern pattern = Pattern.compile(withHoldingsRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			withHoldings = matcher.group(1).trim();
+//		}
+//	}
 
-		Pattern pattern = Pattern.compile(perceiversRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			perceivers = matcher.group(1).trim();
-			System.out.println("Perceptores : " + perceivers);
-		}
-	}
-
-	public void setWithHoldingsAndPayments(String text) {
-		String withHoldingsAndPayment = "";
-		String withHoldingsAndPaymentRegex = "Base de las retenciones e ingresos a cuenta\\s.+([0-9][.][0-9].+[,][0-9].)";
-
-		Pattern pattern = Pattern.compile(withHoldingsAndPaymentRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			withHoldingsAndPayment = matcher.group(1).trim();
-			System.out.println("Base de las retenciones e ingresos a cuenta : " + withHoldingsAndPayment);
-		}
-	}
-
-	public void setWithHoldings(String text) {
-		String withHoldings = "";
-		String withHoldingsRegex = "Retenciones e ingresos a cuenta\\s.*\\s.*([0-9][.][0-9].+[,][0-9].)";
-
-		Pattern pattern = Pattern.compile(withHoldingsRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			withHoldings = matcher.group(1).trim();
-			System.out.println("Retenciones e ingresos a cuenta : " + withHoldings);
-		}
-	}
-
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "Importe:\\s.*([^A-Z][0-9].+[,][0-9].)";
 
@@ -111,12 +112,12 @@ public class Mod1152023AEAT {
 		if (matcher.find()) {
 			amount = matcher.group(1).trim();
 		}
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 		
-		return amount;
 	}
 
-	// maybe useful maybe trash
-	public void setStreet(String text) {
+	public void setStreet(FiscalModel fm , String text) {
 		String street = "";
 		String streetRegex = "C./Plaza/Avda.";
 
@@ -125,11 +126,11 @@ public class Mod1152023AEAT {
 
 		if (matcher.find()) {
 			street = matcher.group().trim();
-			System.out.println("Calle / plaza / Avenida : " + street);
 		}
+		fm.setStreetName(street);
 	}
 
-	public String setModel(String text) {
+	public void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex ="Modelo\\s([0-9]{3})";
 		
@@ -138,9 +139,9 @@ public class Mod1152023AEAT {
 		
 		if (matcher.find()) {
 			model = matcher.group(1).trim();
+			
 		}
-		
-		return model;
+			fm.setModel(FiscalModelType.safeValueOf(model));
 	}
 
 	public String setHacienda(String text) {
@@ -152,16 +153,21 @@ public class Mod1152023AEAT {
 		return hacienda;
 	}
 
-	public void parser(String text) {
-		setNif(text);
-//		setModel(text);
-		setHacienda(text);
-		setExercise(text);
-		setPeriod(text);
-		setSocialReason(text);
-		setAmount(text);
-		setWithHoldings(text);
-		setPerceivers(text);
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setExercise(fiscalModel, text);
+		setNif(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		setSocialReason(fiscalModel, text);
+		setModel(fiscalModel, text);
+		return fiscalModel;
 	}
 
 }

@@ -34,30 +34,33 @@ public class ParserUtils {
 	}
 	
 	
-	public void modelSearch(String text) {
+	public String modelSearch(String text) {
 		ArrayList<String> models = new ArrayList<>();
+		String possibleModel = "";
+		models.add("303");
 		models.add("115");
 		models.add("115A");
 		models.add("130");
 		models.add("715");
 		models.add("F69");
-				
+		models.add("349");
+	
 		for (int i = 0; i < models.size(); i++) {
 			String modelRegex = models.get(i);
 			Pattern pattern = Pattern.compile(modelRegex, Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(text);
 			
 			if (matcher.find()) {
-				String possibleModel = matcher.group();
+				possibleModel = matcher.group();
 				for(FiscalModelType modelos : FiscalModelType.values()) {
 					if (modelos.getName().equals(possibleModel)) {
-						System.out.println("MODELO : " + possibleModel);
 						break;
 					}
 				}
 			}
 			
 		}
+		return possibleModel;
 	}
 	
 	public boolean validateDocument(String document) {
@@ -67,83 +70,117 @@ public class ParserUtils {
 	    String cifRegex = "[A-Z][\\d]{7,}.?[\\d]?[A-Z]?";
 
 	    if (document.matches(nifRegex)) {
-	        System.out.println("es NIF");
 	        result = true;
 	    } else if (document.matches(nieRegex)) {
-	        System.out.println("es NIE");
 	        result = true;
 	    } else if (document.matches(cifRegex)) {
-	        System.out.println("es CIF");
 	        result = true;
-	    } else {
-	        System.out.println("no es ninguno");
-	    }
+	    } 
 		return result;
 
 	}
 	
-	public void listPeriods(String period) {
-		
-	}
 	
-	public  String obtenerTrimestre(String dato) {
-        // Dividir el rango de fechas en dos partes: añoInicio y mesInicio
-		  if (dato.contains("-")) {
-	            // Procesar rango de fechas
-	            String[] partes = dato.split("-");
-	            String mesInicio = partes[1].substring(4); // Obtener los últimos dos dígitos del segundo año
-
-	            int mesNumero = Integer.parseInt(mesInicio);
-	            int trimestre = (mesNumero - 1) / 3 + 1;
-
-	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
-	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-
-	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
-	            String nombreMes = nombresMeses[mesNumero - 1];
-
-	            return  nombreTrimestre;
-	        } else if (dato.startsWith("T")) {
-	            // Procesar dato de trimestre (T1, T2, T3, T4)
-	            int trimestre;
-	            try {
-	                trimestre = Integer.parseInt(dato.substring(1));
-	            } catch (NumberFormatException e) {
-	                return "Formato de trimestre inválido";
-	            }
-
-	            if (trimestre < 1 || trimestre > 4) {
-	                return "Trimestre fuera de rango (debe ser T1, T2, T3 o T4)";
-	            }
-
-	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
-	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-
-	            int mesInicio = (trimestre - 1) * 3;
-	            int mesFin = mesInicio + 2;
-
-	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
-	            StringBuilder resultado = new StringBuilder();
-
-	            for (int i = mesInicio; i <= mesFin; i++) {
-	                resultado.append(nombresMeses[i]);
-	                if (i < mesFin) {
-	                    resultado.append("\n");
-	                }
-	            }
-	            return resultado.toString() + "\n" + nombreTrimestre;
-	        } else {
-	            return "Formato no reconocido";
-	        }
-	    }
+//	public  String obtenerTrimestre(String dato) {
+//		  if (dato.contains("-")) {
+//	            String[] partes = dato.split("-");
+//	            String mesInicio = partes[1].substring(4); 
+//
+//	            int mesNumero = Integer.parseInt(mesInicio);
+//	            int trimestre = (mesNumero - 1) / 3 + 1;
+//
+//	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
+//	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+//
+//	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
+//	            String nombreMes = nombresMeses[mesNumero - 1];
+//
+//	            return  nombreTrimestre;
+//	        } else if (dato.startsWith("T")) {
+//	            int trimestre;
+//	            try {
+//	                trimestre = Integer.parseInt(dato.substring(1));
+//	            } catch (NumberFormatException e) {
+//	                return "Formato de trimestre inválido";
+//	            }
+//
+//	            if (trimestre < 1 || trimestre > 4) {
+//	                return "Trimestre fuera de rango (debe ser T1, T2, T3 o T4)";
+//	            }
+//
+//	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
+//	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+//
+//	            int mesInicio = (trimestre - 1) * 3;
+//	            int mesFin = mesInicio + 2;
+//
+//	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
+//	            StringBuilder resultado = new StringBuilder();
+//
+//	            for (int i = mesInicio; i <= mesFin; i++) {
+//	                resultado.append(nombresMeses[i]);
+//	                if (i < mesFin) {
+//	                    resultado.append("\n");
+//	                }
+//	            }
+//	            return resultado.toString() + "\n" + nombreTrimestre;
+//	        } else {
+//	            return "Formato no reconocido";
+//	        }
+//	    }
 	
 
-    // Método para obtener el número del mes a partir de su nombre
     public  int obtenerMesNumero(String nombreMes) {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMM");
         LocalDate fecha = LocalDate.parse("2023" + nombreMes, formato);
         return fecha.getMonthValue();
     }
+    
+    public String parsePeriodAlava(String period) {
+		String truePeriod = "";
+		String trueTruePeriod = "";
+	
+		String [] auxPeriod = null;
+		String [] startMonth = null;
+		String [] finishMonth = null;
+		if (period.contains("-") && period.contains("2023")) {
+			auxPeriod = period.split("-");
+			startMonth = auxPeriod[0].split("2023");
+			finishMonth = auxPeriod[1].split("2023");
+			
+	
+			truePeriod = startMonth [1] +" - "+ finishMonth [1]; 
+			if (truePeriod.equals("01 - 03")) {
+				trueTruePeriod ="1T";
+			}else if(truePeriod.equals("04 - 06")) {
+				trueTruePeriod ="2T";
+			}else if(truePeriod.equals("07 - 09")) {
+				trueTruePeriod ="3T";
+			}else if(truePeriod.equals("10 - 12")) {
+				trueTruePeriod ="4T";
+			}
+
+		}else if(period.contains("-") && period.contains("2022")) {
+			auxPeriod = period.split("-");
+			startMonth = auxPeriod[0].split("2022");
+			finishMonth = auxPeriod[1].split("2022");
+			
+
+			truePeriod = startMonth [1] +" - "+ finishMonth [1]; 
+			if (truePeriod.equals("01 - 03")) {
+				trueTruePeriod ="1T";
+			}else if(truePeriod.equals("04 - 06")) {
+				trueTruePeriod ="2T";
+			}else if(truePeriod.equals("07 - 09")) {
+				trueTruePeriod ="3T";
+			}else if(truePeriod.equals("10 - 12")) {
+				trueTruePeriod ="4T";
+			}
+		}
+		return trueTruePeriod;
+	}
+    
+    
 
 	
 }

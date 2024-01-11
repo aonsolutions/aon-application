@@ -3,7 +3,10 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod1902023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+
+public class Mod1902023Bizkaia implements IModelDocumentParser {
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -47,7 +50,7 @@ public class Mod1902023Bizkaia {
 			+")"
 			;
 	
-	public String setNifDeclarant(String text) {
+	public void setNifDeclarant(FiscalModel fm, String text) {
 		String nif = "";
 		String regex = "Declarante\\s.*\\s"+(nifRegex);
 		
@@ -57,10 +60,10 @@ public class Mod1902023Bizkaia {
 			nif = matcher.group(1).trim();
 		}
 		
-		return nif;
+		fm.setDocument(nif);
 	}
 	
-	public String setNameDeclarant(String text) {
+	public void setNameDeclarant(FiscalModel fm, String text) {
 		String declarant = "";
 		String declarantNameRegex = "Declarante\\s.*\\s.*"+nifRegex+"(\\s.*)";
 		
@@ -71,7 +74,7 @@ public class Mod1902023Bizkaia {
 			declarant = matcher.group(3).trim();
 		}
 		
-		return declarant;
+		fm.setName(declarant);
 	}
 	
 	public String setContactPerson(String text) {
@@ -88,7 +91,7 @@ public class Mod1902023Bizkaia {
 		return contactPerson;
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 		
@@ -98,10 +101,10 @@ public class Mod1902023Bizkaia {
 			email = matcher.group().trim();
 		}
 		
-		return email;
+		fm.setContactEmail(email);
 	}
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -111,20 +114,24 @@ public class Mod1902023Bizkaia {
 			phoneNumber = matcher.group().trim();
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "\\sGuztira / Total\\s([\\d]{2})(\\s.*)";
+		String auxAmount = "";
 		
 		Pattern pattern = Pattern.compile(amountRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
 			amount = matcher.group(2).trim();
+			auxAmount = amount.replace("." , "");
 		}
-		return amount;
+
+		double total = Double.parseDouble(auxAmount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
 	public String setIssueDate(String text) {
@@ -140,5 +147,21 @@ public class Mod1902023Bizkaia {
 		}
 		
 		return issueDate;
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNifDeclarant(fiscalModel, text);
+		setNameDeclarant(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		return fiscalModel;
 	}
 }

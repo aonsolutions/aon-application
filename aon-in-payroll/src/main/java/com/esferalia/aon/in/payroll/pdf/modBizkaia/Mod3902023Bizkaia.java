@@ -3,7 +3,11 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod3902023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod3902023Bizkaia implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -47,7 +51,7 @@ public class Mod3902023Bizkaia {
 			+")"
 			;
 	
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegexxx = "NIF Apellidos y nombre o razón social N.º grupo\\s"+nifRegex;
 		
@@ -57,12 +61,10 @@ public class Mod3902023Bizkaia {
 		if (matcher.find()) {
 			nif = matcher.group(1).trim();
 		}
-		
-		
-		return nif;
+			fm.setDocument(nif);
 	}
 	
-	public String setName(String text) {
+	public void setName(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "NIF Apellidos y nombre o razón social N.º grupo\\s"+nifRegex+"(\\s.*)";
 		
@@ -73,10 +75,10 @@ public class Mod3902023Bizkaia {
 			name = matcher.group(3).trim();
 		}
 		
-		return name;
+		fm.setName(name);
 	}
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -86,10 +88,10 @@ public class Mod3902023Bizkaia {
 			phoneNumber = matcher.group().trim();
 		}
 		
-		return phoneNumber;
+		fm.setPhone(phoneNumber);
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 		
@@ -98,8 +100,7 @@ public class Mod3902023Bizkaia {
 		if (matcher.find()) {
 			email = matcher.group().trim();
 		}
-		
-		return email;
+		fm.setContactEmail(email);
 	}
 	
 		
@@ -128,48 +129,68 @@ public class Mod3902023Bizkaia {
 		return name;
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "A ingresar\\s.*([0-9]{2,}.[0-9]{2,},[0-9].)";
+		String auxAmount = "";
 		
 		Pattern pattern = Pattern.compile(amountRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
 			amount = matcher.group(1).trim();
+			auxAmount = amount.replace("." , "");
 		}
-		
-		return amount;
+
+		double total = Double.parseDouble(auxAmount.replace(",", "."));
+		fm.setDeclarationResult(total);
 	}
 	
-	public String setYear(String text) {
+	public void setYear(FiscalModel fm , String text) {
 		String year ="";
-		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
+		String yearRegex ="Ejercicio\\s.*\\s.([0-9]){1}([0-9]{4})";
 		
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
-		
 		if (matcher.find()) {
-			year = matcher.group(1).trim();
-			System.out.println( year );
+			year = matcher.group(2).trim();
 		}
+		int auxYear = Integer.parseInt(year);
+		fm.setYear(auxYear);
 		
-		return year;
 	}
 	
-	public String setPeriod(String text) {
+	public void setPeriod(FiscalModel fm, String text) {
 		String period ="";
-		String yearRegex ="Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
-		
+		String yearRegex ="Ejercicio\\s.*\\s.[0-9]{1,}\\s(.+)";
+		ParserUtils pu = new ParserUtils();
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
-			period = matcher.group(2).trim();
-			System.out.println( period);
+			period = matcher.group(1).trim();
+			period = pu.parsePeriodBizkaia(period);
 		}
 		
-		return period;
+		fm.setPeriod(Period.safeValueOf(period));
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setName(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		setYear(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		return fiscalModel;
 	}	
 	
 }

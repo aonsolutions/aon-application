@@ -3,10 +3,15 @@ package com.esferalia.aon.in.payroll.pdf.modNavarra;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ModF692023Navarra {
+import com.esferalia.aon.in.payroll.pdf.modNavarra.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class ModF692023Navarra implements IModelDocumentParser {
 	
 	
-	public String setSocialReasonName(String text) {
+	public void setSocialReasonName(FiscalModel fm, String text) {
 		String name = "";
 		String nameSocialReasonRegex = " Nombre o razón social.+\\s+([^0-9])([0-9]+)([^\\n]+)";
 
@@ -15,11 +20,11 @@ public class ModF692023Navarra {
 		if (matcher.find()) {
 			name = matcher.group(3).trim();
 		}
-		return name;
+		fm.setName(name);
 	}
 	
 
-	public String setNif(String text) {
+	public void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -67,10 +72,10 @@ public class ModF692023Navarra {
 		if (matcher.find()) {
 			nif = matcher.group().trim();
 		}
-		return nif;
+			fm.setDocument(nif);
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
         String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 		
@@ -80,10 +85,10 @@ public class ModF692023Navarra {
 			email = matcher.group().trim();
 		}
 		
-		return email;
+		fm.setContactEmail(email);
 	}
 	
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][\\d]{9}";
 		
@@ -93,13 +98,13 @@ public class ModF692023Navarra {
 			phoneNumber = matcher.group().trim();
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
-	public String setPeriodAndYear(String text) {
+	public void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
-		String yearAndPeriod ="";
+		ParserUtils pu = new ParserUtils();
 		String periodYearRegex ="Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
 		Pattern pattern = Pattern.compile(periodYearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
@@ -108,15 +113,15 @@ public class ModF692023Navarra {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
 			
-			yearAndPeriod = year +" "+period;
-			System.out.println("year : " +year);
-			System.out.println("period : " +period);
-			
+			period= pu.parsePeriodNavarra(period);
+
 		}
-		return yearAndPeriod;
+		int auxYear = Integer.parseInt(year);
+		fm.setYear(auxYear);
+		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -137,35 +142,32 @@ public class ModF692023Navarra {
 			String decimales = 	matcher.group(4).trim();
 			
 			amount = entero + coma + decimales;
-			System.out.println("Pago : " + amount);
 		}else {
 			matcher = pattern2.matcher(text);
 			if (matcher.find()) {
 				amount = matcher.group(1).trim();
-				System.out.println("Pago : " + amount);
 			}else {
 				matcher = pattern3.matcher(text);
 				if (matcher.find()) {
 					amount = matcher.group(1).trim();
-					System.out.println("Pago : " + amount);
 				}
 			}
 		
 		}
-		return amount;
-	}
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);	}
 	
-	public String setHacienda(String text) {
-		ParserUtils pu = new ParserUtils();
-		String hacienda ="";
-		if (pu.haciendaSearch(text)) {
-			hacienda = "Hacienda Navarra";
-		}
-		System.out.println(hacienda);
-		return hacienda;
-	}
+//	public String setHacienda(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		String hacienda ="";
+//		if (pu.haciendaSearch(text)) {
+//			hacienda = "Hacienda Navarra";
+//		}
+//		System.out.println(hacienda);
+//		return hacienda;
+//	}
 	
-	public String setModel(String text) {
+	public void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "F69";
 		
@@ -175,6 +177,27 @@ public class ModF692023Navarra {
 		if (matcher.find()) {
 			model = matcher.group().trim();
 		}
-		return model;
+		fm.setModel(FiscalModelType.safeValueOf(model));
+	}
+
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setSocialReasonName(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setPeriodAndYear(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setModel(fiscalModel, text);
+		
+		return fiscalModel;
 	}
 }

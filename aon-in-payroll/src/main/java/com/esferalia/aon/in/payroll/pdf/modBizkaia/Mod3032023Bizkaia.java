@@ -3,7 +3,12 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod3032023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod3032023Bizkaia implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -47,7 +52,7 @@ public class Mod3032023Bizkaia {
 			+")"
 			;
 	
-	public String setPersonNif(String text) {
+	public void setPersonNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifPersonRegex = "NIF Apellidos y nombre o razón social\\s"+nifRegex;
 		Pattern pattern = Pattern.compile(nifPersonRegex, Pattern.CASE_INSENSITIVE);
@@ -55,10 +60,10 @@ public class Mod3032023Bizkaia {
 		if (matcher.find()) {
 			nif = matcher.group(1).trim();
 		}
-		return nif;
+		fm.setDocument(nif);
 	}
 	
-	public String setPersonName(String text) {
+	public void setPersonName(FiscalModel fm, String text) {
 		String personName = "";
 		String personNameRegex = "NIF Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -69,10 +74,10 @@ public class Mod3032023Bizkaia {
 			personName = matcher.group(3).trim();
 		}
 		
-		return personName;
+		fm.setName(personName);
 	}
 	
-	public String setEmail(String text) {
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 		
@@ -82,11 +87,11 @@ public class Mod3032023Bizkaia {
 			email = matcher.group().trim();
 		}
 		
-		return email;
+		fm.setContactEmail(email);
 	}
 	
 
-	public String setPhoneNumber(String text) {
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -96,7 +101,7 @@ public class Mod3032023Bizkaia {
 			phoneNumber = matcher.group().trim();
 		}
 		
-		return phoneNumber;
+		fm.setContactPhone(phoneNumber);
 	}
 	
 	public String setPrincipalActivity(String text) {
@@ -139,21 +144,25 @@ public class Mod3032023Bizkaia {
 		return presentator;
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "A ingresar\\s.*([0-9].[0-9]{2,}.*[0-9])";
+		String auxAmount = "";
 		
 		Pattern pattern = Pattern.compile(amountRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
 			amount = matcher.group(1).trim();
+			auxAmount = amount.replace("." , "");
 		}
+
+		double total = Double.parseDouble(auxAmount.replace(",", "."));
+		fm.setDeclarationResult(total);
 		
-		return amount;
 	}
 	
-	public String setModel(String text) {
+	public void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "303";
 		
@@ -163,27 +172,27 @@ public class Mod3032023Bizkaia {
 		if (macther.find()) {
 			model = macther.group().trim();
 		}
-		return model;
+		fm.setModel(FiscalModelType.safeValueOf(model));
 	}
 	
 	
 	
-	public String setYear(String text) {
-		String year ="";
+	public void setExercise(FiscalModel fm, String text) {
+		String exercise ="";
 		String yearRegex ="Ejercicio Período\\s.*\\s.*(20[0-9]{2})\\s.([A-Z]*[0-9])";
 		
 		Pattern pattern = Pattern.compile(yearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		
 		if (matcher.find()) {
-			year = matcher.group(1).trim();
-			System.out.println("Año : " + year );
+			exercise= matcher.group(1).trim();
 		}
 		
-		return year;
+		int year = Integer.parseInt(exercise);
+		fm.setYear(year);
 	}
 	
-	public String setPeriod(String text) {
+	public void setPeriod(FiscalModel fm, String text) {
 		String period ="";
 		String yearRegex ="Ejercicio Período\\s.*\\s.*(20[0-9]{2})\\s.([A-Z]*[0-9])";
 		
@@ -192,10 +201,9 @@ public class Mod3032023Bizkaia {
 		
 		if (matcher.find()) {
 			period = matcher.group(2).trim();
-			System.out.println(" Periodo : " + period);
 		}
 		
-		return period;
+		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
 	
@@ -226,6 +234,25 @@ public class Mod3032023Bizkaia {
 		}
 				
 		return hacienda;
+	}
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setPersonNif(fiscalModel, text);
+		setPersonName(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setExercise(fiscalModel, text);
+		setPeriod(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		setModel(fiscalModel, text);
+		return fiscalModel;
 	}
 	
 	

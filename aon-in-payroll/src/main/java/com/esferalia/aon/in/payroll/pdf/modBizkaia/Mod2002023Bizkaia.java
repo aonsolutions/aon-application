@@ -3,7 +3,11 @@ package com.esferalia.aon.in.payroll.pdf.modBizkaia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Mod2002023Bizkaia {
+import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+
+public class Mod2002023Bizkaia implements IModelDocumentParser{
 
 	String nifRegex = "("
 			//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -48,7 +52,7 @@ public class Mod2002023Bizkaia {
 			;
 	
 	
-	public String setDeclarantNif(String text) {
+	public void setDeclarantNif(FiscalModel fm, String text) {
 		String declarantNif="";
 		String declarantNifRegex = "IFZ/NIF Izendura edo sozietatearen izena/Denominación o razón socialAitortzailea/ Declarante\\s"+nifRegex;
 		
@@ -59,10 +63,10 @@ public class Mod2002023Bizkaia {
 			declarantNif = matcher.group(1).trim();
 		}
 		
-		return declarantNif;
+		fm.setDocument(declarantNif);
 	}
 	
-	public String setDeclarantName(String text) {
+	public void setDeclarantName(FiscalModel fm, String text) {
 		String declarantName="";
 		String declarantNameRegex = "IFZ/NIF Izendura edo sozietatearen izena/Denominación o razón socialAitortzailea/ Declarante\\s"+nifRegex+"(\\s.+)";
 		
@@ -73,10 +77,10 @@ public class Mod2002023Bizkaia {
 			declarantName = matcher.group(3).trim();
 		}
 		
-		return declarantName;
+		fm.setName(declarantName);
 	}
 	
-	public String setAmount(String text) {
+	public void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "Emaitza/ Itzuli beharrekoa/A devolver Sartu beharrekoa/A ingresar\\s.*([0-9].[0-9]{2,}.*[0-9])";
 		
@@ -87,11 +91,12 @@ public class Mod2002023Bizkaia {
 			amount = matcher.group(1).trim();
 		}
 		
-		return amount;
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
 				
 	}
 	
-	public String setIban(String text) {
+	public void setIban(FiscalModel fm, String text) {
 		String iban = "";
 		String ibanRegex = "Banku helbideraketa/Datos domiciliación bancaria\\s([A-Z]{2}[0-9]{2}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4})";
 		
@@ -106,7 +111,7 @@ public class Mod2002023Bizkaia {
 					matcher.group(5).trim() + " " +
 					matcher.group(6).trim();
 		}
-		return iban;
+		fm.setIban(iban);
 	}
 	
 	public String setPrincipalActivity(String text) {
@@ -123,7 +128,7 @@ public class Mod2002023Bizkaia {
 		return principalActivity;
 	}
 	
-	public String setModel(String text) {
+	public void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "200";
 		
@@ -134,9 +139,22 @@ public class Mod2002023Bizkaia {
 			model = matcher.group().trim();
 		}
 		
-		return model;
+		fm.setModel(FiscalModelType.safeValueOf(model));
 	}
-	
-	
-	
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setDeclarantNif(fiscalModel, text);
+		setDeclarantName(fiscalModel, text);
+		setIban(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setModel(fiscalModel, text);
+		return fiscalModel;
+	}
 }

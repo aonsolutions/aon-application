@@ -17,9 +17,10 @@ import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ModelDocumentExtracters.IModelDocumentExtracter;
 import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 
-class PDFExtracter {
+class PDFExtracter implements IModelDocumentExtracter {
 
 	public boolean accept(byte [] bytes) {
 		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {

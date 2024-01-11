@@ -3,161 +3,151 @@ package com.esferalia.aon.in.payroll.pdf.modNavarra;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.esferalia.aon.in.payroll.pdf.modNavarra.ModelDocumentParsers.IModelDocumentParser;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Period;
 
-public class Mod1302023Navarra {
-	
-	public String setNif(String text) {
+public class Mod1302023Navarra implements IModelDocumentParser {
+
+	public void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
-				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- LEGAL_PERSON_NIF PATTERN
 				// -------- (1) --> X00000000
-					+"[A-JUV]"
-					+"[\\s]*"
-					+"[-_/]?"
-					+"[\\s]*"
-					+"[0-9]{2}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-				//  -------- LEGAL_PERSON_NIF PATTERN 
+				+ "[A-JUV]" + "[\\s]*" + "[-_/]?" + "[\\s]*" + "[0-9]{2}" + "[-_/\\.]?" + "[0-9]{3}" + "[-_/\\.]?"
+				+ "[0-9]{3}"
+				// -------- LEGAL_PERSON_NIF PATTERN
 				// -------- (2) --> X0000000X
-				+"|"
-					+"[NPQRSW]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"([A-J])"
-				//  -------- DNI PATTERN 
+				+ "|" + "[NPQRSW]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "([A-J])"
+				// -------- DNI PATTERN
 				// -------- (1) --> 00000000X
-				+"|"
-					+"[0-9]?"
-					+"[0-9]"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/]?"
-					+"[A-Z]"
-				//  -------- NIE PATTERN 
+				+ "|" + "[0-9]?" + "[0-9]" + "[\\s-_/\\.]?" + "[0-9]{3}" + "[\\s-_/\\.]?" + "[0-9]{3}" + "[\\s-_/]?"
+				+ "[A-Z]"
+				// -------- NIE PATTERN
 				// -------- (1) --> X0000000X
-				+"|"
-					+"[XYZ]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"[A-HJ-NP-TV-Z]"
-				+")"
-				;
-		Pattern pattern = Pattern.compile(nifRegex , Pattern.CASE_INSENSITIVE);
+				+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
+		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			nif = matcher.group().trim();
 		}
-		return nif;
+		fm.setDocument(nif);
 	}
-	
-	public String setEmail(String text) {
+
+	public void setEmail(FiscalModel fm, String text) {
 		String email = "";
-        String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
-		
+		String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
+
 		Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			email = matcher.group().trim();
 		}
-		
-		return email;
+			fm.setContactEmail(email);
 	}
-	
-	public String setPhoneNumber(String text) {
+
+	public void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
-		
+
 		Pattern pattern = Pattern.compile(phoneNumberRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			phoneNumber = matcher.group().trim();
 		}
-		
-		return phoneNumber;
+		fm.setPhone(phoneNumber);
 	}
-	
-	public String setPeriodAndYear(String text) {
+
+	public void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
-		String periodYearRegex ="Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
+		String periodYearRegex = "Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
+		ParserUtils pu = new ParserUtils();
 		Pattern pattern = Pattern.compile(periodYearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
-		
+		//SI LLEGA COMO T3 NO LO PILLA DEBE IR AL REVES -> 3T
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
 			
-			System.out.println("year : " +year);
-			System.out.println("period : " +period);
+			period= pu.parsePeriodNavarra(period);
 			
 		}
 		
-		return year +" "+ period;
+		int auxYear = Integer.parseInt(year);
+		fm.setYear(auxYear);
+		fm.setPeriod(Period.safeValueOf(period));
 	}
-	
-	public String setAmount(String text) {
+
+	public void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
 
 		String amount = "";
-		String amountRegex = "\\b"+keyWord3+"\\s+(-?\\d{1,3}(,\\d{3})*\\.?\\d*)(,)(\\d.)";
-		String amountRegex2 = ""+keyWord+"\\s.+([\\d],[\\d].)";
-		String amountRegex3 = keyWord2+"\\s.*\\s.*([\\d][\\d].[,][\\d].)";
+		String amountRegex = "\\b" + keyWord3 + "\\s+(-?\\d{1,3}(,\\d{3})*\\.?\\d*)(,)(\\d.)";
+		String amountRegex2 = "" + keyWord + "\\s.+([\\d],[\\d].)";
+		String amountRegex3 = keyWord2 + "\\s.*\\s.*([\\d][\\d].[,][\\d].)";
 		Pattern pattern = Pattern.compile(amountRegex, Pattern.CASE_INSENSITIVE);
 		Pattern pattern2 = Pattern.compile(amountRegex2, Pattern.CASE_INSENSITIVE);
 		Pattern pattern3 = Pattern.compile(amountRegex3, Pattern.CASE_INSENSITIVE);
-		
+
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
-			
+
 			String entero = matcher.group(1).trim();
 			String coma = matcher.group(3).trim();
-			String decimales = 	matcher.group(4).trim();
-			
+			String decimales = matcher.group(4).trim();
+
 			amount = entero + coma + decimales;
-			System.out.println("Pago : " + amount);
-		}else {
+		} else {
 			matcher = pattern2.matcher(text);
 			if (matcher.find()) {
 				amount = matcher.group(1).trim();
-				System.out.println("Pago : " + amount);
-			}else {
+			} else {
 				matcher = pattern3.matcher(text);
 				if (matcher.find()) {
 					amount = matcher.group(1).trim();
-					System.out.println("Pago : " + amount);
 				}
 			}
-		
+
 		}
-		
-		return amount;
+
+		double total = Double.parseDouble(amount.replace(",", "."));
+		fm.setDeclarationResult(total);
+
 	}
-	
-	public String setHacienda(String text) {
-		ParserUtils pu = new ParserUtils();
-		String hacienda ="";
-		if (pu.haciendaSearch(text)) {
-			hacienda = "Hacienda Navarra";
-		}
-		System.out.println(hacienda);
-		return hacienda;
-		
-	}
-	
+
+//	public String setHacienda(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		String hacienda = "";
+//		if (pu.haciendaSearch(text)) {
+//			hacienda = "Hacienda Navarra";
+//		}
+//		return hacienda;
+//
+//	}
+
 	public void setModel(String text) {
 		ParserUtils pu = new ParserUtils();
-		pu.modelSearch(text); 
+		pu.modelSearch(text);
+		
 	}
-	
-	
-	
+
+	@Override
+	public boolean accept(String text) {
+		return true;
+	}
+
+	@Override
+	public FiscalModel parse(String text) {
+		FiscalModel fiscalModel = new FiscalModel();
+		setNif(fiscalModel, text);
+		setEmail(fiscalModel, text);
+		setAmount(fiscalModel, text);
+		setPeriodAndYear(fiscalModel, text);
+		setPhoneNumber(fiscalModel, text);
+		return fiscalModel;
+	}
+
 }
