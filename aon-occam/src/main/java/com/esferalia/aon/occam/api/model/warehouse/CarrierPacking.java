@@ -254,4 +254,9 @@ public class CarrierPacking implements Serializable{
 			setParams(comments.substring(a,z));
 		}
 	}
+	
+	public String getReferenceCode() {
+		return (getType().isShipmentRequest() ? "SC-" : "HR-")
+			+ getSeries() + "/" + getNumber();	
+	}
 }

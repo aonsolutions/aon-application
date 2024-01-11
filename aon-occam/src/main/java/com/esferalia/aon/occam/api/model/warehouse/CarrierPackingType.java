@@ -28,4 +28,12 @@ public enum CarrierPackingType {
 		if (i < 0 || i >= CarrierPackingType.values().length) return null;
 		return CarrierPackingType.values()[i];
 	}
+	
+	public boolean isShipmentRequest() {
+		return SHIPMENT_REQUEST.equals(this);
+	}
+	
+	public boolean isWaybill() {
+		return WAYBILL.equals(this);
+	}
 }
