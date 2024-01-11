@@ -471,10 +471,8 @@ public class SalarySelect extends Composite {
 		    payDateLabel.setVisible(true);
 		    payDateListBox.setVisible(true);
 
-		    Date endDate = SalarySelect.this.salaryPreview.getEndDate();
-
-		    Date payStartDate = DateUtils.copyDateOnly(endDate);
-		    payStartDate = DateUtils.addDays2Date(payStartDate, -20);
+		    Date payStartDate = getPayStartDate();
+		    
 
 		    Date selectedDate = payDateListBox.getSelectedDate();
 		    if (!hasChanged && selectedDate != null)
@@ -497,6 +495,22 @@ public class SalarySelect extends Composite {
 		}
 		
 		
+	}
+
+	/**
+	 * @return
+	 */
+	private Date getPayStartDate() {
+	    Date salaryEndDate = SalarySelect.this.salaryPreview.getEndDate();
+	    Date payStartDate = DateUtils.copyDateOnly(salaryEndDate);
+
+	    Date contractEndDate = SalarySelect.this.salaryPreview.getEmployee().getEndDate();
+	    if ( contractEndDate != null && contractEndDate.before(payStartDate)) {
+		payStartDate =  DateUtils.copyDateOnly(contractEndDate);
+	    }
+	    
+	    payStartDate = DateUtils.addDays2Date(payStartDate, -20);
+	    return payStartDate;
 	}
 
 	private void syncDateListBox(Type type) {
@@ -699,12 +713,9 @@ public class SalarySelect extends Composite {
 
 	private List<Date> getPayDates(int start, int length) {
 
-		Date endDate = salaryPreview.getEndDate();
-
 		List<Date> dates = new ArrayList<>(length);
 
-		Date date = DateUtils.copyDateOnly(endDate);
-		date = DateUtils.addDays2Date(date,  -20);
+		Date date = SalarySelect.this.getPayStartDate();
 		
 		for (DateUtils.addDays2Date(date, start); dates.size() < length ; DateUtils
 				.addDays2Date(date, 1)) {
