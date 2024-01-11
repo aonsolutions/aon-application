@@ -87,102 +87,116 @@ export class AonBankCard extends AonElement {
     let content = this.getElement("bankCardTable");
     this.removeAllChildNodes(content);
 
-    let maxLength = banks.length > 4 ? 4 : banks.length;
-    let accumulatedBanks = 0;
+    if(banks && banks.length === 0){
+      let emptyMessage = this.createElement(TAG.DIV);
+      emptyMessage.innerHTML = "No existen bancos";
+      emptyMessage.style.fontWeight = "bold";
 
-    for (let index = 0; index < maxLength; index++) {
-      const bank = banks[index];
+      content.style.height = "100%";
+      content.appendChild(emptyMessage);
+
+      let bankCard = this.getElement("bankCard");
+      bankCard.style.display = "none";
       
-      let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_FLEX;
-      row.style.justifyContent = "space-between";
-      row.style.width = "100%";
-      row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = ".8rem 0";
+    } else {
 
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-      leftContent.style.alignContent = "center";
-      leftContent.style.flexDirection = "column";
+      let maxLength = banks.length > 4 ? 4 : banks.length;
+      let accumulatedBanks = 0;
 
-      let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = banks.length > 4 ? "1rem" : "1.2rem";
-      description.style.color = "rgb(0, 36, 105)";
-      description.style.fontWeight = "500";
-      description.innerHTML = bank.alias;
-      leftContent.appendChild(description);
+      for (let index = 0; index < maxLength; index++) {
+        const bank = banks[index];
+        
+        let row = this.createElement(TAG.DIV);
+        row.className = CSS.AON_FLEX;
+        row.style.justifyContent = "space-between";
+        row.style.width = "100%";
+        row.style.borderBottom = "1px solid #ddd";
+        row.style.padding = ".8rem 0";
 
-      let date = this.createElement(TAG.SPAN);
-      date.style.color = "rgb(120, 120, 133)";
-      date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
-      date.innerHTML = this.formatDateShort(bank.balanceDate);
-      date.title = this.formatDate(bank.balanceDate);
-      leftContent.appendChild(date);
+        let leftContent = this.createElement(TAG.DIV);
+        leftContent.className = CSS.AON_FLEX;
+        leftContent.style.alignContent = "center";
+        leftContent.style.flexDirection = "column";
 
-      let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX;
-      rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
+        let description = this.createElement(TAG.SPAN);
+        description.style.fontSize = banks.length > 4 ? "1rem" : "1.2rem";
+        description.style.color = "rgb(0, 36, 105)";
+        description.style.fontWeight = "500";
+        description.innerHTML = bank.alias;
+        leftContent.appendChild(description);
 
-      let amount = this.createElement(TAG.SPAN);
-      amount.style.fontWeight = "bold";
-      amount.style.minWidth = "5rem";
-      amount.style.textAlign = "right";
-      amount.innerHTML = this.formatNumber(bank.balance);
-      rightContent.appendChild(amount);
+        let date = this.createElement(TAG.SPAN);
+        date.style.color = "rgb(120, 120, 133)";
+        date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
+        date.innerHTML = this.formatDateShort(bank.balanceDate);
+        date.title = this.formatDate(bank.balanceDate);
+        leftContent.appendChild(date);
 
-      accumulatedBanks += bank.balance;
+        let rightContent = this.createElement(TAG.DIV);
+        rightContent.className = CSS.AON_FLEX;
+        rightContent.style.alignItems = "center";
+        rightContent.style.gap = "1rem";
 
-      row.appendChild(leftContent);
-      row.appendChild(rightContent);
+        let amount = this.createElement(TAG.SPAN);
+        amount.style.fontWeight = "bold";
+        amount.style.minWidth = "5rem";
+        amount.style.textAlign = "right";
+        amount.innerHTML = this.formatNumber(bank.balance);
+        rightContent.appendChild(amount);
 
-      content.appendChild(row);
+        accumulatedBanks += bank.balance;
+
+        row.appendChild(leftContent);
+        row.appendChild(rightContent);
+
+        content.appendChild(row);
+      }
+
+      // Create others row
+      let total = banks.reduce((t, bank) => t + bank.balance, 0);
+      if(banks.length > 4){
+        let row = this.createElement(TAG.DIV);
+        row.className = CSS.AON_FLEX;
+        row.style.justifyContent = "space-between";
+        row.style.width = "100%";
+        row.style.borderBottom = "1px solid #ddd";
+        row.style.padding = ".8rem 0";
+
+        let leftContent = this.createElement(TAG.DIV);
+        leftContent.className = CSS.AON_FLEX;
+        leftContent.style.alignItems = "center";
+        leftContent.style.gap = "1rem";
+
+        let description = this.createElement(TAG.SPAN);
+        description.style.fontSize = "1rem";
+        description.style.color = "#fb982e";
+        description.style.fontWeight = "500";
+        description.innerHTML = "Otros";
+        leftContent.appendChild(description);
+
+        let rightContent = this.createElement(TAG.DIV);
+        rightContent.className = CSS.AON_FLEX;
+        rightContent.style.alignItems = "center";
+        rightContent.style.gap = "1rem";
+
+        let amount = this.createElement(TAG.SPAN);
+        amount.style.fontWeight = "bold";
+        amount.style.minWidth = "5rem";
+        amount.style.textAlign = "right";
+        amount.innerHTML = formatNumber(total - accumulatedBanks, 2, "EUR");
+        rightContent.appendChild(amount);
+
+        row.appendChild(leftContent);
+        row.appendChild(rightContent);
+
+        content.appendChild(row);
+      }
+
+      const bankTotalDiv = this.getElement("bankTotalDiv");
+      bankTotalDiv.className = CSS.AON_CARD_TOTAL;
+      bankTotalDiv.classList.add(CSS.AON_BANK_CARD_TOTAL);
+      bankTotalDiv.innerHTML = this.getTotal(banks);
     }
-
-    // Create others row
-    let total = banks.reduce((t, bank) => t + bank.balance, 0);
-    if(banks.length > 4){
-      let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_FLEX;
-      row.style.justifyContent = "space-between";
-      row.style.width = "100%";
-      row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = ".8rem 0";
-
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-      leftContent.style.alignItems = "center";
-      leftContent.style.gap = "1rem";
-
-      let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1rem";
-      description.style.color = "#fb982e";
-      description.style.fontWeight = "500";
-      description.innerHTML = "Otros";
-      leftContent.appendChild(description);
-
-      let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX;
-      rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
-
-      let amount = this.createElement(TAG.SPAN);
-      amount.style.fontWeight = "bold";
-      amount.style.minWidth = "5rem";
-      amount.style.textAlign = "right";
-      amount.innerHTML = formatNumber(total - accumulatedBanks, 2, "EUR");
-      rightContent.appendChild(amount);
-
-      row.appendChild(leftContent);
-      row.appendChild(rightContent);
-
-      content.appendChild(row);
-    }
-
-    const bankTotalDiv = this.getElement("bankTotalDiv");
-    bankTotalDiv.className = CSS.AON_CARD_TOTAL;
-    bankTotalDiv.classList.add(CSS.AON_BANK_CARD_TOTAL);
-    bankTotalDiv.innerHTML = this.getTotal(banks);
   }
 
   removeAllChildNodes(parent) {

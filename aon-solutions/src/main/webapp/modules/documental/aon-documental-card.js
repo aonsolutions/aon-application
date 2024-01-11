@@ -67,51 +67,63 @@ export class AonDocumentalCard extends AonElement {
     let content = this.getElement("documentalCardTable");
     this.removeAllChildNodes(content);
 
-    let maxLength = documents.length > 6 ? 6 : documents.length;
+    if(documents && documents.length === 0){
+      let emptyMessage = this.createElement(TAG.DIV);
+      emptyMessage.innerHTML = "No existen documentos";
+      emptyMessage.style.fontWeight = "bold";
 
-    for (let index = 0; index < maxLength; index++) {
-      const document = documents[index];
-      
-      let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_DOCUMENTAL_CARD_ROW;
-      row.addEventListener(EVENT.CLICK, () => {
-        this.goDocumentalDocument(document);
-      });
+      content.style.height = "100%";
+      content.appendChild(emptyMessage);
 
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-      leftContent.style.alignContent = "center";
-      leftContent.style.flexDirection = "column";
+      let documentalCard = this.getElement("documentalCard");
+      documentalCard.style.display = "none";
+    } else {
+      let maxLength = documents.length > 6 ? 6 : documents.length;
 
-      let description = this.createElement(TAG.SPAN);
-      description.className = CSS.AON_DOCUMENTAL_ELLIPSIS;
-      description.style.fontSize = ".9rem";
-      description.style.color = "var(--aonDocumental)";
-      description.style.fontWeight = "500";
-      description.title = document.title;
-      description.innerHTML = document.title;
-      leftContent.appendChild(description);
+      for (let index = 0; index < maxLength; index++) {
+        const document = documents[index];
+        
+        let row = this.createElement(TAG.DIV);
+        row.className = CSS.AON_DOCUMENTAL_CARD_ROW;
+        row.addEventListener(EVENT.CLICK, () => {
+          this.goDocumentalDocument(document);
+        });
 
-      let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX_COLUMN;
-      rightContent.style.alignItems = "center";
+        let leftContent = this.createElement(TAG.DIV);
+        leftContent.className = CSS.AON_FLEX;
+        leftContent.style.alignContent = "center";
+        leftContent.style.flexDirection = "column";
 
-      let date = this.createElement(TAG.SPAN);
-      date.style.color = "rgb(120, 120, 133)";
-      date.style.fontSize = ".7rem";
-      date.innerHTML = document.date;
-      rightContent.appendChild(date);
+        let description = this.createElement(TAG.SPAN);
+        description.className = CSS.AON_DOCUMENTAL_ELLIPSIS;
+        description.style.fontSize = ".9rem";
+        description.style.color = "var(--aonDocumental)";
+        description.style.fontWeight = "500";
+        description.title = document.title;
+        description.innerHTML = document.title;
+        leftContent.appendChild(description);
 
-      let describeDate = this.createElement(TAG.SPAN);
-      describeDate.style.color = "rgb(120, 120, 133)";
-      describeDate.style.fontSize = ".7rem";
-      describeDate.innerHTML = this.describeDate(this.changeDateFormat(document.date));
-      rightContent.appendChild(describeDate);
+        let rightContent = this.createElement(TAG.DIV);
+        rightContent.className = CSS.AON_FLEX_COLUMN;
+        rightContent.style.alignItems = "center";
 
-      row.appendChild(leftContent);
-      row.appendChild(rightContent);
+        let date = this.createElement(TAG.SPAN);
+        date.style.color = "rgb(120, 120, 133)";
+        date.style.fontSize = ".7rem";
+        date.innerHTML = document.date;
+        rightContent.appendChild(date);
 
-      content.appendChild(row);
+        let describeDate = this.createElement(TAG.SPAN);
+        describeDate.style.color = "rgb(120, 120, 133)";
+        describeDate.style.fontSize = ".7rem";
+        describeDate.innerHTML = this.describeDate(this.changeDateFormat(document.date));
+        rightContent.appendChild(describeDate);
+
+        row.appendChild(leftContent);
+        row.appendChild(rightContent);
+
+        content.appendChild(row);
+      }
     }
   }
 
