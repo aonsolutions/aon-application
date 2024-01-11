@@ -52,7 +52,7 @@ public class Mod2002023Bizkaia implements IModelDocumentParser{
 			;
 	
 	
-	public void setDeclarantNif(FiscalModel fm, String text) {
+	private void setDeclarantNif(FiscalModel fm, String text) {
 		String declarantNif="";
 		String declarantNifRegex = "IFZ/NIF Izendura edo sozietatearen izena/Denominación o razón socialAitortzailea/ Declarante\\s"+nifRegex;
 		
@@ -66,7 +66,7 @@ public class Mod2002023Bizkaia implements IModelDocumentParser{
 		fm.setDocument(declarantNif);
 	}
 	
-	public void setDeclarantName(FiscalModel fm, String text) {
+	private void setDeclarantName(FiscalModel fm, String text) {
 		String declarantName="";
 		String declarantNameRegex = "IFZ/NIF Izendura edo sozietatearen izena/Denominación o razón socialAitortzailea/ Declarante\\s"+nifRegex+"(\\s.+)";
 		
@@ -80,7 +80,7 @@ public class Mod2002023Bizkaia implements IModelDocumentParser{
 		fm.setName(declarantName);
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "Emaitza/ Itzuli beharrekoa/A devolver Sartu beharrekoa/A ingresar\\s.*([0-9].[0-9]{2,}.*[0-9])";
 		
@@ -96,7 +96,7 @@ public class Mod2002023Bizkaia implements IModelDocumentParser{
 				
 	}
 	
-	public void setIban(FiscalModel fm, String text) {
+	private void setIban(FiscalModel fm, String text) {
 		String iban = "";
 		String ibanRegex = "Banku helbideraketa/Datos domiciliación bancaria\\s([A-Z]{2}[0-9]{2}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4}).*([0-9]{4})";
 		
@@ -114,21 +114,21 @@ public class Mod2002023Bizkaia implements IModelDocumentParser{
 		fm.setIban(iban);
 	}
 	
-	public String setPrincipalActivity(String text) {
-		String principalActivity = "";
-		String principalActivityRegex = "Actividad principal:(\\s.+)([0-9])(\\s.*)";
-		
-		Pattern pattern = Pattern.compile(principalActivityRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			principalActivity = matcher.group(3).trim();
-		}
-		
-		return principalActivity;
-	}
+//	private String setPrincipalActivity(String text) {
+//		String principalActivity = "";
+//		String principalActivityRegex = "Actividad principal:(\\s.+)([0-9])(\\s.*)";
+//		
+//		Pattern pattern = Pattern.compile(principalActivityRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			principalActivity = matcher.group(3).trim();
+//		}
+//		
+//		return principalActivity;
+//	}
 	
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "200";
 		

@@ -26,7 +26,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 			// -------- (1) --> X0000000X
 			+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
@@ -37,7 +37,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(nif);
 	}
 
-	public void setSocialReasonName(FiscalModel fm, String text) {
+	private void setSocialReasonName(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Apellidos y nombre o razón social\\s+" + nifRegex + "(\\s+[A-Z]+.?[A-Z]+)";
 		Pattern pattern = Pattern.compile(nameRegex);
@@ -48,7 +48,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setName(name);
 	}
 
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "Telefonoa / Teléfono Posta elektronikoa / Correo electrónico\\s+([0-9]{9})";
 		Pattern pattern = Pattern.compile(phoneNumberRegex);
@@ -59,7 +59,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setContactPhone(phoneNumber);
 	}
 
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 		Pattern pattern = Pattern.compile(emailRegex);
@@ -70,7 +70,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setContactEmail(email);
 	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "([0-9]{1,}.?[0-9]{1,}.?[0-9]{1,}\\s+)Importe total de las retenciones e ingresos a cuenta";
 		String auxAmount = "";
@@ -85,20 +85,20 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setDeclarationResult(total);
 	}
 
-	public String setIssueDate(String text) {
-		String issueDate = "";
-		String issueDateRegex = "FECHA Y FIRMA\\s+([0-9]{1,}/[0-9]{1,}/[0-9]{1,})";
-		Pattern pattern = Pattern.compile(issueDateRegex);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			issueDate = matcher.group(1).trim();
-		}
-
-		return issueDate;
-	}
+//	private String setIssueDate(String text) {
+//		String issueDate = "";
+//		String issueDateRegex = "FECHA Y FIRMA\\s+([0-9]{1,}/[0-9]{1,}/[0-9]{1,})";
+//		Pattern pattern = Pattern.compile(issueDateRegex);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			issueDate = matcher.group(1).trim();
+//		}
+//
+//		return issueDate;
+//	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodregex = "";
 		Pattern pattern = Pattern.compile(periodregex);
@@ -111,7 +111,7 @@ public class Mod1902023Gipuzkoa implements IModelDocumentParser{
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public void setExercise(FiscalModel fm , String text) {
+	private void setExercise(FiscalModel fm , String text) {
 		String exercise = "";
 		String exerciseregex = "DECLARACIÓN COMPLEMENTARIA\\s+([0-9]{1,}.?[0-9]{1,}.?[0-9]{1,}.?[0-9]{1,})";
 		Pattern pattern = Pattern.compile(exerciseregex);

@@ -25,7 +25,7 @@ public class Mod2002023Gipuzkoa implements IModelDocumentParser{
 			// -------- (1) --> X0000000X
 			+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
 
-	public void setDeclarantNif(FiscalModel fm, String text) {
+	private void setDeclarantNif(FiscalModel fm, String text) {
 		String nif = " ";
 		String nifRegexx = "NIF Razón social\\s" + nifRegex;
 
@@ -38,7 +38,7 @@ public class Mod2002023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(nif);
 	}
 
-	public void setDeclarantName(FiscalModel fm, String text) {
+	private void setDeclarantName(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "NIF Razón social\\s" + nifRegex + "(\\s.*)";
 
@@ -78,7 +78,7 @@ public class Mod2002023Gipuzkoa implements IModelDocumentParser{
 //		return name;
 //	}
 
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 
@@ -91,7 +91,7 @@ public class Mod2002023Gipuzkoa implements IModelDocumentParser{
 		fm.setContactEmail(email);
 	}
 
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][\\d]{9}";
 

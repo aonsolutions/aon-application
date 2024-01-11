@@ -50,7 +50,7 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 			+")"
 			;
 	
-	public void setIdentifyNif(FiscalModel fm ,String text) {
+	private void setIdentifyNif(FiscalModel fm ,String text) {
 		String identifyNif = "";
 		String identifyNifRegex = "IFZ / NIF Abizenak eta izena edo sozietatearen izena / Apellidos y nombre o razón social\\s"+nifRegex;
 		
@@ -63,7 +63,7 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(identifyNif);
 	} 
 	
-	public void setIdentifyName(FiscalModel fm, String text) {
+	private void setIdentifyName(FiscalModel fm, String text) {
 		String identifyName = "";
 		String identifyNameRegex = "IFZ / NIF Abizenak eta izena edo sozietatearen izena / Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -77,18 +77,18 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 		fm.setName(identifyName);
 	}
 	
-	public String setRelatedPersonName(String text) {
-		String relatedPersonName = "";
-		String relatedPersonNameRegex = "HARREMANETARAKO PERTSONA / PERSONA CON QUIEN RELACIONARSE\\s.*(\\s.*)([^A-Z][\\d]{9})";
-		Pattern pattern = Pattern.compile(relatedPersonNameRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			relatedPersonName = matcher.group(1).trim();
-		}
-		return relatedPersonName;
-	}
+//	private String setRelatedPersonName(String text) {
+//		String relatedPersonName = "";
+//		String relatedPersonNameRegex = "HARREMANETARAKO PERTSONA / PERSONA CON QUIEN RELACIONARSE\\s.*(\\s.*)([^A-Z][\\d]{9})";
+//		Pattern pattern = Pattern.compile(relatedPersonNameRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			relatedPersonName = matcher.group(1).trim();
+//		}
+//		return relatedPersonName;
+//	}
 	
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "HARREMANETARAKO PERTSONA / PERSONA CON QUIEN RELACIONARSE\\s.*(\\s.*)([^A-Z][\\d]{9})";
 		
@@ -105,21 +105,21 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 	//public String setRepresentName
 	//public String setRepresentNif
 	
-	public String setDeclarantNif(String text) {
-		String declarantNif = "";
-		String declarantNifRegex = nifRegex+"\\s.*NIF declarante";
-		
-		Pattern pattern = Pattern.compile(declarantNifRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			declarantNif = matcher.group(1).trim();
-		}
-		
-		return declarantNif;
-	}
+//	private String setDeclarantNif(String text) {
+//		String declarantNif = "";
+//		String declarantNifRegex = nifRegex+"\\s.*NIF declarante";
+//		
+//		Pattern pattern = Pattern.compile(declarantNifRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			declarantNif = matcher.group(1).trim();
+//		}
+//		
+//		return declarantNif;
+//	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = ".*([0-9]{4}).*Ejercicio";
 		
@@ -133,7 +133,7 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 		fm.setYear(year);
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountregex = "([\\d]*)(,)([\\d]{2,})\\s.*Importe total de las retenciones e ingresos a cuenta";
 		
@@ -148,33 +148,33 @@ public class Mod1802023Gipuzkoa implements IModelDocumentParser{
 		fm.setDeclarationResult(total);
 	}
 	
-	public String setPerceivers(String text) {
-		String perceivers = "";
-		String perceiversRegex = "Jasotzaileen kopurua, guztira\\s.*\\s.*([0-9]{1,})";
-		
-		Pattern pattern = Pattern.compile(perceiversRegex);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			perceivers = matcher.group(1).trim();
-		}
-		
-		return perceivers;
-	}
-	
-	public String setAmountsPaid(String text) {
-		String amountsPaid = "";
-		String amountsPaidRegex = "Egindako ordainketen zenbateko osoa\\s([0-9]{2,})\\s([0-9]{1,}.)([0-9]{1,},)([0-9]{1,})";
-		
-		Pattern pattern = Pattern.compile(amountsPaidRegex);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			amountsPaid = matcher.group(2).trim() + matcher.group(3).trim() + matcher.group(4).trim();
-		}
-		
-		return amountsPaid;
-	}
+//	private String setPerceivers(String text) {
+//		String perceivers = "";
+//		String perceiversRegex = "Jasotzaileen kopurua, guztira\\s.*\\s.*([0-9]{1,})";
+//		
+//		Pattern pattern = Pattern.compile(perceiversRegex);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			perceivers = matcher.group(1).trim();
+//		}
+//		
+//		return perceivers;
+//	}
+//	
+//	private String setAmountsPaid(String text) {
+//		String amountsPaid = "";
+//		String amountsPaidRegex = "Egindako ordainketen zenbateko osoa\\s([0-9]{2,})\\s([0-9]{1,}.)([0-9]{1,},)([0-9]{1,})";
+//		
+//		Pattern pattern = Pattern.compile(amountsPaidRegex);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			amountsPaid = matcher.group(2).trim() + matcher.group(3).trim() + matcher.group(4).trim();
+//		}
+//		
+//		return amountsPaid;
+//	}
 
 	@Override
 	public boolean accept(String text) {

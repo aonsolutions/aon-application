@@ -51,7 +51,7 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 			+")"
 			;
 	
-	public void setNifDeclarant(FiscalModel fm, String text) {
+	private void setNifDeclarant(FiscalModel fm, String text) {
 		String nif = "";
 		String regex = "Apellidos y nombre o razón social\\s"+nifRegex;
 		
@@ -64,7 +64,7 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 		fm.setDocument(nif);
 	}
 	
-	public void setNameDeclarant(FiscalModel fm, String text) {
+	private void setNameDeclarant(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -76,19 +76,19 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 		fm.setName(name);
 	}
 	
-	public String setContactPerson(String text) {
-		String name = "";
-		String declarantNameRegex = "Persona de contacto\\s.*(\\s.*)";
-		
-		Pattern pattern = Pattern.compile(declarantNameRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			name = matcher.group(1).trim();
-		}
-		return name;
-	}
+//	private String setContactPerson(String text) {
+//		String name = "";
+//		String declarantNameRegex = "Persona de contacto\\s.*(\\s.*)";
+//		
+//		Pattern pattern = Pattern.compile(declarantNameRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			name = matcher.group(1).trim();
+//		}
+//		return name;
+//	}
 	
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "([^a-z][0-9]{9})(.*[A-Z]@[A-Z0-9.-].*[A-Z])";
 		
@@ -101,7 +101,7 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 		fm.setContactEmail(email);
 	}
 	
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -114,35 +114,35 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 		fm.setContactPhone(phoneNumber);
 	}
 	
-	public String setRepresentativeNif(String text) {
-		String representativeNif = "";
-		String representativeNifRegex = "Representante\\s.*\\s.*"+nifRegex;
-		
-		Pattern pattern = Pattern.compile(representativeNifRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			representativeNif = matcher.group(1).trim();
-		}
-		
-		return representativeNif;
-	}
+//	private String setRepresentativeNif(String text) {
+//		String representativeNif = "";
+//		String representativeNifRegex = "Representante\\s.*\\s.*"+nifRegex;
+//		
+//		Pattern pattern = Pattern.compile(representativeNifRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			representativeNif = matcher.group(1).trim();
+//		}
+//		
+//		return representativeNif;
+//	}
+//	
+//	private String setRepresentativeName(String text) {
+//		String representativeName = "";
+//		String representativeNameRegex = "Representante\\s.*\\s.*"+nifRegex+"(\\s.*)";
+//		
+//		Pattern pattern = Pattern.compile(representativeNameRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			representativeName = matcher.group(3).trim();
+//		}
+//		
+//		return representativeName;
+//	}
 	
-	public String setRepresentativeName(String text) {
-		String representativeName = "";
-		String representativeNameRegex = "Representante\\s.*\\s.*"+nifRegex+"(\\s.*)";
-		
-		Pattern pattern = Pattern.compile(representativeNameRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			representativeName = matcher.group(3).trim();
-		}
-		
-		return representativeName;
-	}
-	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Declaración sustitutiva([0-9]{4})";
 		
@@ -157,7 +157,7 @@ public class Mod3492023Bizkaia implements IModelDocumentParser{
 		
 	}
 	
-	public void setPeriod(FiscalModel fm , String text) {
+	private void setPeriod(FiscalModel fm , String text) {
 		String period =" ";
 		String periodRegex = "Declaración sustitutiva([0-9]{4})\\s([A-Z]{1,})";
 		ParserUtils pu = new ParserUtils();

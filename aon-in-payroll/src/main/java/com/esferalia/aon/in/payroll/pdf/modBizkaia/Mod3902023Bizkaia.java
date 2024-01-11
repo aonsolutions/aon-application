@@ -51,7 +51,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 			+")"
 			;
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegexxx = "NIF Apellidos y nombre o razón social N.º grupo\\s"+nifRegex;
 		
@@ -64,7 +64,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 			fm.setDocument(nif);
 	}
 	
-	public void setName(FiscalModel fm, String text) {
+	private void setName(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "NIF Apellidos y nombre o razón social N.º grupo\\s"+nifRegex+"(\\s.*)";
 		
@@ -78,7 +78,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 		fm.setName(name);
 	}
 	
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -91,7 +91,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 		fm.setPhone(phoneNumber);
 	}
 	
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 		
@@ -104,32 +104,32 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 	}
 	
 		
-	public String setPrincipalActivity(String text) {
-		String activity = "";
-		String activityRegex = "Actividad principal Epígrafe IAE / Código\\s*\\n([^\\d\\n]+)";
-		
-		Pattern pattern = Pattern.compile(activityRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			activity = matcher.group().trim();
-		}
-		return activity;
-	}
+//	private String setPrincipalActivity(String text) {
+//		String activity = "";
+//		String activityRegex = "Actividad principal Epígrafe IAE / Código\\s*\\n([^\\d\\n]+)";
+//		
+//		Pattern pattern = Pattern.compile(activityRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			activity = matcher.group().trim();
+//		}
+//		return activity;
+//	}
+//	
+//	private String setPresentatorName(String text) {
+//		String name = "";
+//		String nameRegex = "Presentador/a\\sNIF Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
+//		
+//		
+//		Pattern pattern = Pattern.compile(nameRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			name = matcher.group(3).trim();
+//		}
+//		return name;
+//	}
 	
-	public String setPresentatorName(String text) {
-		String name = "";
-		String nameRegex = "Presentador/a\\sNIF Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
-		
-		
-		Pattern pattern = Pattern.compile(nameRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			name = matcher.group(3).trim();
-		}
-		return name;
-	}
-	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "A ingresar\\s.*([0-9]{2,}.[0-9]{2,},[0-9].)";
 		String auxAmount = "";
@@ -146,7 +146,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 		fm.setDeclarationResult(total);
 	}
 	
-	public void setYear(FiscalModel fm , String text) {
+	private void setYear(FiscalModel fm , String text) {
 		String year ="";
 		String yearRegex ="Ejercicio\\s.*\\s.([0-9]){1}([0-9]{4})";
 		
@@ -160,7 +160,7 @@ public class Mod3902023Bizkaia implements IModelDocumentParser{
 		
 	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period ="";
 		String yearRegex ="Ejercicio\\s.*\\s.[0-9]{1,}\\s(.+)";
 		ParserUtils pu = new ParserUtils();

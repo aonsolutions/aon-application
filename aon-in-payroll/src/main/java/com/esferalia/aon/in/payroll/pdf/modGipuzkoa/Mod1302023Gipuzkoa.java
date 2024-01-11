@@ -52,7 +52,7 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 			+")"
 			;
 	
-	public void setDeclarantNif(FiscalModel fm, String text) {
+	private void setDeclarantNif(FiscalModel fm, String text) {
 		String declarantNif = "";
 		String declarantNifRegex = "NIF Apellidos y nombre\\s"+nifRegex;
 		
@@ -66,7 +66,7 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(declarantNif);
 	}
 	
-	public void setDeclarantName(FiscalModel fm, String text) {
+	private void setDeclarantName(FiscalModel fm, String text) {
 		String declarantName = "";
 		String declarantNameRegex = "NIF Apellidos y nombre\\s"+nifRegex+"(\\s.*)";
 		
@@ -80,21 +80,21 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 		fm.setName(declarantName);
 	}
 	
-	public String setPrincipalActivity(String text) {
-		String principalActivity = "";
-		String principalActivityRegex = "Descripción de la actividad Sección IAE Epígrafe IAE(\\s.*([A-Z][^0-9]))";
-		
-		Pattern pattern = Pattern.compile(principalActivityRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			principalActivity = matcher.group(1).trim();
-		}
-		
-		return principalActivity;
-	}
+//	private String setPrincipalActivity(String text) {
+//		String principalActivity = "";
+//		String principalActivityRegex = "Descripción de la actividad Sección IAE Epígrafe IAE(\\s.*([A-Z][^0-9]))";
+//		
+//		Pattern pattern = Pattern.compile(principalActivityRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			principalActivity = matcher.group(1).trim();
+//		}
+//		
+//		return principalActivity;
+//	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "ORDAINTZEKOA, GUZTIRA \\s.*(.[\\d],[\\d].)";
 		
@@ -109,21 +109,21 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 		fm.setDeclarationResult(total);
 	}
 	
-	public String setHacienda(String text) {
-		String hacienda = "";
-		String haciendaRegex = "Gipuzkoa";
-		
-		Pattern pattern = Pattern.compile(haciendaRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			hacienda = matcher.group().trim();
-		}
-		
-		return hacienda;
-	}
+//	private String setHacienda(String text) {
+//		String hacienda = "";
+//		String haciendaRegex = "Gipuzkoa";
+//		
+//		Pattern pattern = Pattern.compile(haciendaRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			hacienda = matcher.group().trim();
+//		}
+//		
+//		return hacienda;
+//	}
 	
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "130";
 		
@@ -137,8 +137,7 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 		fm.setModel(FiscalModelType.safeValueOf(model));
 	}
 	
-	//TAMBIEN SACA PERIODO 
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "([0-9]{4})\\s([0-9].\\s[A-Z-a-z]{1,})";
 		
@@ -153,7 +152,7 @@ public class Mod1302023Gipuzkoa implements IModelDocumentParser{
 	}
 	
 	
-	public void setPeriod(FiscalModel fm , String text) {
+	private void setPeriod(FiscalModel fm , String text) {
 		String period = "";
 		String periodRegex = "([0-9]{4})\\s([0-9].\\s[A-Z-a-z]{1,})";
 		ParserUtils pu = new ParserUtils();

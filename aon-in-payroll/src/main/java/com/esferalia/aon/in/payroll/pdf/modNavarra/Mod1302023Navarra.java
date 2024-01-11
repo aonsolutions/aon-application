@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod1302023Navarra implements IModelDocumentParser {
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				// -------- LEGAL_PERSON_NIF PATTERN
@@ -34,7 +34,7 @@ public class Mod1302023Navarra implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 
@@ -46,7 +46,7 @@ public class Mod1302023Navarra implements IModelDocumentParser {
 			fm.setContactEmail(email);
 	}
 
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 
@@ -58,14 +58,13 @@ public class Mod1302023Navarra implements IModelDocumentParser {
 		fm.setPhone(phoneNumber);
 	}
 
-	public void setPeriodAndYear(FiscalModel fm, String text) {
+	private void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
 		String periodYearRegex = "Periodo+\\s+([0-9]{4})\\s+([A-Z]{1}[0-9]{1})";
 		ParserUtils pu = new ParserUtils();
 		Pattern pattern = Pattern.compile(periodYearRegex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
-		//SI LLEGA COMO T3 NO LO PILLA DEBE IR AL REVES -> 3T
 		if (matcher.find()) {
 			year = matcher.group(1).trim();
 			period = matcher.group(2).trim();
@@ -79,7 +78,7 @@ public class Mod1302023Navarra implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";

@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 public class ModF692023Navarra implements IModelDocumentParser {
 	
 	
-	public void setSocialReasonName(FiscalModel fm, String text) {
+	private void setSocialReasonName(FiscalModel fm, String text) {
 		String name = "";
 		String nameSocialReasonRegex = " Nombre o razón social.+\\s+([^0-9])([0-9]+)([^\\n]+)";
 
@@ -24,7 +24,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 	}
 	
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -75,7 +75,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 			fm.setDocument(nif);
 	}
 	
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
         String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 		
@@ -88,7 +88,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 		fm.setContactEmail(email);
 	}
 	
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][\\d]{9}";
 		
@@ -101,7 +101,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 		fm.setContactPhone(phoneNumber);
 	}
 	
-	public void setPeriodAndYear(FiscalModel fm, String text) {
+	private void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
 		ParserUtils pu = new ParserUtils();
@@ -121,7 +121,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -167,7 +167,7 @@ public class ModF692023Navarra implements IModelDocumentParser {
 //		return hacienda;
 //	}
 	
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "F69";
 		

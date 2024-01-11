@@ -50,7 +50,7 @@ public class Mod3902023Gipuzkoa implements IModelDocumentParser {
 			+")"
 			;
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif =" ";
 		
 		Pattern pattern = Pattern.compile(nifRegex);
@@ -63,7 +63,7 @@ public class Mod3902023Gipuzkoa implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 	
-	public void setname(FiscalModel fm, String text) {
+	private void setname(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = nifRegex+"(\\s.*)";
 		
@@ -91,7 +91,7 @@ public class Mod3902023Gipuzkoa implements IModelDocumentParser {
 //		return issueDate;
 //	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "([0-9]{1,}.[0-9]{1,}.[0-9]{1,})\\s.*\\s.*Aurkezpen data";
 		String auxAmount = "";

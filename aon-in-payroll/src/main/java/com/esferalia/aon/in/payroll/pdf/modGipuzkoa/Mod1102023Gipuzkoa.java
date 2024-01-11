@@ -51,7 +51,7 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 			+")"
 			;
 	
-	public void setIdentifyNif(FiscalModel fm, String text) {
+	private void setIdentifyNif(FiscalModel fm, String text) {
 		String identifyNif = "";		
 		Pattern pattern = Pattern.compile(nifRegex);
 		Matcher matcher = pattern.matcher(text);
@@ -62,7 +62,7 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 		fm.setDocument(identifyNif);
 	}
 	
-	public void setIdentifyName(FiscalModel fm, String text) {
+	private void setIdentifyName(FiscalModel fm, String text) {
 		String identifyName = "";
 		String identifyNameRegex = "Apellidos y nombre o razón social\\s"+nifRegex+"(\\s.*)";
 		
@@ -76,7 +76,7 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 		fm.setName(identifyName);
 	}
 	
-	public void setYear(FiscalModel fm, String text) {
+	private void setYear(FiscalModel fm, String text) {
 		String year = "";
 		String yearRegex = "TrimestreEkitaldia Hiruhilekoa\\s([0-9]{4})";
 		
@@ -91,7 +91,7 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 		
 	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "TrimestreEkitaldia Hiruhilekoa\\s([0-9]{4})\\s([0-9]{1})";
 		ParserUtils pu = new ParserUtils();
@@ -107,7 +107,7 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 		
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "([\\d]{1,},[\\d]{2,})A INGRESAR";
 		
@@ -122,19 +122,19 @@ public class Mod1102023Gipuzkoa implements IModelDocumentParser {
 		fm.setDeclarationResult(total);
 	}
 	
-	public String setIssueDate(String text) {
-		String issueDate = "";
-		String issueDateRegex = "Fecha de presentación:\\s([0-9]{1,}.[0-9]{1,}.[0-9]{2,})";
-		
-		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			issueDate = matcher.group(1).trim();
-		}
-		
-		return issueDate;
-	}
+//	private String setIssueDate(String text) {
+//		String issueDate = "";
+//		String issueDateRegex = "Fecha de presentación:\\s([0-9]{1,}.[0-9]{1,}.[0-9]{2,})";
+//		
+//		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			issueDate = matcher.group(1).trim();
+//		}
+//		
+//		return issueDate;
+//	}
 
 	@Override
 	public boolean accept(String text) {

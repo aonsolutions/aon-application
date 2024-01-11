@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod1152023Alava implements IModelDocumentParser {
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "([A-Z]{1})([0-9]{7}).([0-9]{1})";
 		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
@@ -24,7 +24,7 @@ public class Mod1152023Alava implements IModelDocumentParser {
 		
 	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "PERIODO:\\s+([0-9]{6}-[0-9]{6})";
 		ParserUtils pu = new ParserUtils();
@@ -39,7 +39,7 @@ public class Mod1152023Alava implements IModelDocumentParser {
 			fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public void setName (FiscalModel fm, String text) {
+	private void setName (FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "\\s.*SL";
 		
@@ -52,7 +52,7 @@ public class Mod1152023Alava implements IModelDocumentParser {
 		fm.setName(name);
 	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "EJERCICIO:\\s+([0-9]{4})";
 		
@@ -67,7 +67,7 @@ public class Mod1152023Alava implements IModelDocumentParser {
 		
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "IMPORTE:\\s+([^A-Z][^\\n].[,][0-9].)";
 
@@ -135,7 +135,7 @@ public class Mod1152023Alava implements IModelDocumentParser {
 //		return hacienda;
 //	}
 	
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "MODELO:\\s+([0-9]{3}[A-Z]{1})";
 		Pattern pattern = Pattern.compile(modelRegex, Pattern.CASE_INSENSITIVE);

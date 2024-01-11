@@ -28,7 +28,7 @@ public class Mod3002023Alava implements IModelDocumentParser {
 
 	
 	
-	public void setDeclarantNif(FiscalModel fm, String text) {
+	private void setDeclarantNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegexx = "eta Aurrekontu Saila Finanzas y Presupuestos\\s.*\\s.*([A-Z]{1}[0-9]{1,})";
 		Pattern pattern = Pattern.compile(nifRegexx);
@@ -40,7 +40,7 @@ public class Mod3002023Alava implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 	
-	public void setDeclarantName(FiscalModel fm, String text) {
+	private void setDeclarantName(FiscalModel fm, String text) {
 		String declarantName = "";
 		String declarantNameRegex = "eta Aurrekontu Saila Finanzas y Presupuestos\\s.*(\\s([A-Z]+[\\D].?)*)";
 		Pattern pattern = Pattern.compile(declarantNameRegex, Pattern.CASE_INSENSITIVE);
@@ -52,36 +52,36 @@ public class Mod3002023Alava implements IModelDocumentParser {
 		fm.setName(declarantName);
 	}
 	
-	public String setPresentatorName(String text) {
-		String presentatorName = "";
-		String presentatorNameRegex ="eta Aurrekontu Saila Finanzas y Presupuestos\\s.*\\s.*(\\s([A-Z]+[\\D].?)*)";
-		
-		Pattern pattern = Pattern.compile(presentatorNameRegex);
-		Matcher matcher = pattern.matcher(text);
-		
-		
-		if (matcher.find()) {
-			presentatorName = matcher.group(1).trim();
-		}
-		
-		return presentatorName;
-	}
+//	private String setPresentatorName(String text) {
+//		String presentatorName = "";
+//		String presentatorNameRegex ="eta Aurrekontu Saila Finanzas y Presupuestos\\s.*\\s.*(\\s([A-Z]+[\\D].?)*)";
+//		
+//		Pattern pattern = Pattern.compile(presentatorNameRegex);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		
+//		if (matcher.find()) {
+//			presentatorName = matcher.group(1).trim();
+//		}
+//		
+//		return presentatorName;
+//	}
 	
-	public String setPresentatorNif(String text) {
-		String presentatorNif = "";
-		String presentatorNifRegex = "eta Aurrekontu Saila Finanzas y Presupuestos\\s.*\\s.*\\s.*([A-Z]{1}[0-9]{1,})";
-		
-		Pattern pattern = Pattern.compile(presentatorNifRegex);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			presentatorNif = matcher.group(1).trim();
-		}
-		
-		return presentatorNif;
-	}
+//	private String setPresentatorNif(String text) {
+//		String presentatorNif = "";
+//		String presentatorNifRegex = "eta Aurrekontu Saila Finanzas y Presupuestos\\s.*\\s.*\\s.*([A-Z]{1}[0-9]{1,})";
+//		
+//		Pattern pattern = Pattern.compile(presentatorNifRegex);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			presentatorNif = matcher.group(1).trim();
+//		}
+//		
+//		return presentatorNif;
+//	}
 	
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "MODELO:\\s([0-9]{3})";
 		
@@ -95,7 +95,7 @@ public class Mod3002023Alava implements IModelDocumentParser {
 		fm.setModel(FiscalModelType.safeValueOf(model));
 	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "PERIODO:\\s+([0-9]{6}-[0-9]{6})";
 		ParserUtils pu = new ParserUtils();
@@ -109,7 +109,7 @@ public class Mod3002023Alava implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "EJERCICIO:\\s([0-9]{2,})";
 		
@@ -123,7 +123,7 @@ public class Mod3002023Alava implements IModelDocumentParser {
 		fm.setYear(year);
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "Importe:\\s([0-9]{1,}.?[0-9]{1,}.?[0-9]{1,})";
 		String[] amountSplit = null;

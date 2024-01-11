@@ -76,57 +76,6 @@ public class ParserUtils {
 		return result;
 
 	}
-	
-
-	
-//	public  String obtenerTrimestre(String dato) {
-//		  if (dato.contains("-")) {
-//	            String[] partes = dato.split("-");
-//	            String mesInicio = partes[1].substring(4); 
-//
-//	            int mesNumero = Integer.parseInt(mesInicio);
-//	            int trimestre = (mesNumero - 1) / 3 + 1;
-//
-//	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
-//	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-//
-//	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
-//	            String nombreMes = nombresMeses[mesNumero - 1];
-//
-//	            return  nombreTrimestre;
-//	        } else if (dato.startsWith("T")) {
-//	            int trimestre;
-//	            try {
-//	                trimestre = Integer.parseInt(dato.substring(1));
-//	            } catch (NumberFormatException e) {
-//	                return "Formato de trimestre inválido";
-//	            }
-//
-//	            if (trimestre < 1 || trimestre > 4) {
-//	                return "Trimestre fuera de rango (debe ser T1, T2, T3 o T4)";
-//	            }
-//
-//	            String[] nombresTrimestres = {"1º Trimestre", "2º Trimestre", "3º Trimestre", "4º Trimestre"};
-//	            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-//
-//	            int mesInicio = (trimestre - 1) * 3;
-//	            int mesFin = mesInicio + 2;
-//
-//	            String nombreTrimestre = nombresTrimestres[trimestre - 1];
-//	            StringBuilder resultado = new StringBuilder();
-//
-//	            for (int i = mesInicio; i <= mesFin; i++) {
-//	                resultado.append(nombresMeses[i]);
-//	                if (i < mesFin) {
-//	                    resultado.append("\n");
-//	                }
-//	            }
-//	            return resultado.toString() + "\n" + nombreTrimestre;
-//	        } else {
-//	            return "Formato no reconocido";
-//	        }
-//	    }
-	
 
     public  int obtenerMesNumero(String nombreMes) {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMM");

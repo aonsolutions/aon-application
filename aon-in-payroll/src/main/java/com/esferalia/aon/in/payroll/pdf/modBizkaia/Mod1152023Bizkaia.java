@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod1152023Bizkaia implements IModelDocumentParser {
 
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = ".*[A-Z]@[A-Z0-9.-].*[A-Z]";
 
@@ -22,7 +22,7 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setContactEmail(email);
 	}
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				// -------- LEGAL_PERSON_NIF PATTERN
@@ -53,7 +53,7 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 
-	public void setYear(FiscalModel fm, String text) {
+	private void setYear(FiscalModel fm, String text) {
 		String year = "";
 
 		String yearRegex = "Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
@@ -69,7 +69,7 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setYear(auxYear);
 	}
 
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String yearRegex = "Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
 		ParserUtils pu = new ParserUtils();
@@ -84,7 +84,7 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "ingresar\\s.*\\s([\\d]+)(,[\\d]+)";
 		String wholeNumbers = "";
@@ -104,7 +104,7 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setDeclarationResult(total);
 	}
 
-	public void setDeclarant(FiscalModel fm, String text) {
+	private void setDeclarant(FiscalModel fm, String text) {
 		String declarant = "";
 		String declarantRegex = "(Declarante\\s.*)(\\s.*)([A-Z]{1,}[0-9]{7,}[A-Z].)([A-Za-z].+)";
 
@@ -118,27 +118,27 @@ public class Mod1152023Bizkaia implements IModelDocumentParser {
 		fm.setName(declarant);
 	}
 
-	public String setPresenter(String text) {
-		String presenter = "";
-		String presenterRegex = "(Presentador/a\\s.*)(\\s.*)([0-9]{8,}[A-Z]{1,})(\\s.*)";
-
-		Pattern pattern = Pattern.compile(presenterRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			presenter = matcher.group(4).trim();
-		}
-		return presenter;
-	}
-
-	public String setHacienda(String text) {
-		ParserUtils pu = new ParserUtils();
-		String hacienda = "";
-		if (pu.haciendaSearch(text)) {
-			hacienda = "Diputacion foral de Bizkaia";
-		}
-		System.out.println("Hacienda : " + hacienda);
-		return hacienda;
-	}
+//	private String setPresenter(String text) {
+//		String presenter = "";
+//		String presenterRegex = "(Presentador/a\\s.*)(\\s.*)([0-9]{8,}[A-Z]{1,})(\\s.*)";
+//
+//		Pattern pattern = Pattern.compile(presenterRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			presenter = matcher.group(4).trim();
+//		}
+//		return presenter;
+//	}
+//
+//	private String setHacienda(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		String hacienda = "";
+//		if (pu.haciendaSearch(text)) {
+//			hacienda = "Diputacion foral de Bizkaia";
+//		}
+//		System.out.println("Hacienda : " + hacienda);
+//		return hacienda;
+//	}
 
 //	public void setModel(String text) {
 //		ParserUtils pu = new ParserUtils();

@@ -25,7 +25,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 			// -------- (1) --> X0000000X
 			+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		ParserUtils pu = new ParserUtils();
 		String nif = "";
 		Pattern pattern = Pattern.compile(nifRegex, Pattern.CASE_INSENSITIVE);
@@ -39,7 +39,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		}
 	}
 
-	public void setDeclarant(FiscalModel fm, String text) {
+	private void setDeclarant(FiscalModel fm, String text) {
 		String declarant = "";
 		String declarantRegex = "Declarante\\s.*\\s.*" + nifRegex + "(\\s.*)";
 
@@ -52,36 +52,36 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		fm.setName(declarant);
 	}
 
-	public String setPresenter(String text) {
+//	private String setPresenter(String text) {
+//
+//		String presenter = "";
+//		String presenterRegex = "Presentador/a\\s.*\\s.*" + nifRegex + "(\\s.*)";
+//
+//		Pattern pattern = Pattern.compile(presenterRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			presenter = matcher.group(3).trim();
+//			System.out.println("Presentador : " + presenter);
+//		}
+//
+//		return presenter;
+//	}
 
-		String presenter = "";
-		String presenterRegex = "Presentador/a\\s.*\\s.*" + nifRegex + "(\\s.*)";
+//	private String setPresenterNif(String text) {
+//		String presenterNif = "";
+//		String prsenterNifRegex = "Presentador/a\\s.*\\s" + nifRegex;
+//
+//		Pattern pattern = Pattern.compile(prsenterNifRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			presenterNif = matcher.group(1).trim();
+//		}
+//		return presenterNif;
+//	}
 
-		Pattern pattern = Pattern.compile(presenterRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			presenter = matcher.group(3).trim();
-			System.out.println("Presentador : " + presenter);
-		}
-
-		return presenter;
-	}
-
-	public String setPresenterNif(String text) {
-		String presenterNif = "";
-		String prsenterNifRegex = "Presentador/a\\s.*\\s" + nifRegex;
-
-		Pattern pattern = Pattern.compile(prsenterNifRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			presenterNif = matcher.group(1).trim();
-		}
-		return presenterNif;
-	}
-
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 		String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
 
@@ -94,7 +94,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		fm.setContactEmail(email);
 	}
 
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 
@@ -107,7 +107,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		fm.setPhone(phoneNumber);
 	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "ingresar\\s.*(\\d)(\\.\\d{3})(,\\d+)";
 		String wholeNumbers = "";
@@ -129,7 +129,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		fm.setDeclarationResult(total);
 	}
 
-	public void setYearAndPeriod(FiscalModel fm, String text) {
+	private void setYearAndPeriod(FiscalModel fm, String text) {
 		String year = "";
 		String period = "";
 		String yearRegex = "Ejercicio\\s.*\\s.*\\s([\\d]{4})\\s(.*)";
@@ -148,7 +148,7 @@ public class Mod1102023Bizkaia implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "110";
 		Pattern pattern = Pattern.compile(modelRegex);

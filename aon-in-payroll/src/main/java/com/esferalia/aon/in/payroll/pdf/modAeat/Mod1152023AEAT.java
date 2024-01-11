@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 public class Mod1152023AEAT implements IModelDocumentParser {
 	ParserUtils pu = new ParserUtils();
 
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio\\s.*([0-9]{4})";
 		Pattern pattern = Pattern.compile(exerciseRegex, Pattern.CASE_INSENSITIVE);
@@ -25,7 +25,7 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 
 	}
 
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "Per\u00EDodo\\s.*([\\d][A-Z])";
 
@@ -38,7 +38,7 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 
 		String nif = "";
 		String nifRegex = "NIF Presentador:(\\s.*)";
@@ -54,7 +54,7 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 
 	}
 
-	public void setSocialReason(FiscalModel fm, String text) {
+	private void setSocialReason(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Raz\u00F3n social:(\\s.*)";
 		Pattern pattern = Pattern.compile(nameRegex, Pattern.CASE_INSENSITIVE);
@@ -102,7 +102,7 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 //		}
 //	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "Importe:\\s.*([^A-Z][0-9].+[,][0-9].)";
 
@@ -117,20 +117,20 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 		
 	}
 
-	public void setStreet(FiscalModel fm , String text) {
-		String street = "";
-		String streetRegex = "C./Plaza/Avda.";
+//	private void setStreet(FiscalModel fm , String text) {
+//		String street = "";
+//		String streetRegex = "C./Plaza/Avda.";
+//
+//		Pattern pattern = Pattern.compile(streetRegex);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			street = matcher.group().trim();
+//		}
+//		fm.setStreetName(street);
+//	}
 
-		Pattern pattern = Pattern.compile(streetRegex);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			street = matcher.group().trim();
-		}
-		fm.setStreetName(street);
-	}
-
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex ="Modelo\\s([0-9]{3})";
 		
@@ -144,14 +144,14 @@ public class Mod1152023AEAT implements IModelDocumentParser {
 			fm.setModel(FiscalModelType.safeValueOf(model));
 	}
 
-	public String setHacienda(String text) {
-		String hacienda = "";
-
-		if (!pu.haciendaSearch(text)) {
-			hacienda = "AEAT";
-		}
-		return hacienda;
-	}
+//	private String setHacienda(String text) {
+//		String hacienda = "";
+//
+//		if (!pu.haciendaSearch(text)) {
+//			hacienda = "AEAT";
+//		}
+//		return hacienda;
+//	}
 
 	@Override
 	public boolean accept(String text) {

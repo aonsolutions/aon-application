@@ -52,7 +52,7 @@ public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 			+")"
 			;
 	
-	public void setIdentifyNif(FiscalModel fm, String text) {
+	private void setIdentifyNif(FiscalModel fm, String text) {
 		String identifyNif = "";
 		String identifyNifRegex = "DNI / CIF EKITALDIA"+nifRegex;
 		
@@ -65,7 +65,7 @@ public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(identifyNif);
 	}
 	
-	public void setIdentifyName(FiscalModel fm, String text) {
+	private void setIdentifyName(FiscalModel fm, String text) {
 		String identifyName = "";
 		String identifyNameRegex = "Apellidos, Nombre y Razón Social ALDIA 2 TPERIODO\\s.*(\\s.*)";
 		
@@ -79,7 +79,7 @@ public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 		fm.setName(identifyName);
 	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "([\\d])\\s([\\d])EJERCICIO";
 		
@@ -93,7 +93,7 @@ public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 		fm.setYear(year);
 	}
 	
-	public void setPeriod(FiscalModel fm , String text) {
+	private void setPeriod(FiscalModel fm , String text) {
 		String period = "";
 		String periodRegex = "ALDIA\\s([0-9])\\s([A-Z])";
 		
@@ -108,7 +108,7 @@ public class Mod3492023Gipuzkoa implements IModelDocumentParser{
 
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex = "IMPORTE\\s.*\\s.\\s([\\d]{1,}.)([\\d]{1,},)([\\d]{1,})";
 		String auxAmount = "";

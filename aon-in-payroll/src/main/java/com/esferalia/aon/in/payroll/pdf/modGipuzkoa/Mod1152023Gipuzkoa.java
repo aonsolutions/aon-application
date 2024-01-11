@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 
-	public void setPeriod(FiscalModel fm,String text) {
+	private void setPeriod(FiscalModel fm,String text) {
 		String period ="";
 		String periodRegex ="Periodo:(\\s.*)";
 		
@@ -22,7 +22,7 @@ public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 		fm.setPeriod(Period.safeValueOf(period));
 	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio\\s.*([0-9]{4})";
 		
@@ -37,7 +37,7 @@ public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 		fm.setYear(auxYear);
 	}
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex ="("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -89,7 +89,7 @@ public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 	
-	public void setSocialReason(FiscalModel fm, String text) {
+	private void setSocialReason(FiscalModel fm, String text) {
 		String name ="";
 		String nameRegex ="nombre o razón social\\s+([A-Z]{1}[0-9]{8})\\s([A-Z].*)";
 		
@@ -102,7 +102,7 @@ public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 		fm.setName(name);
 	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount ="";
 		String amountRegex ="ORDAINTZEKOA\\s+([^\\n]+)";
 		
@@ -117,30 +117,30 @@ public class Mod1152023Gipuzkoa implements IModelDocumentParser {
 		fm.setDeclarationResult(total);
 	}
 	
-	public String setPresentationDate(String text) {
-		String presentationDate ="";
-		String presentationDateRegex = "Aurkezpen data / Fecha de presentación:\\s+([0-9]{2}[/][0-9]{2}[/][0-9]{4})";
-		
-		Pattern pattern = Pattern.compile(presentationDateRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			presentationDate= matcher.group(1).trim();
-			System.out.println("Fecha de presentacion :" + presentationDate);
-		}
-		
-		return presentationDate;
-	}
-	
-	public String setHacienda(String text) {
-		ParserUtils pu = new ParserUtils();
-		String hacienda ="";
-		if (pu.haciendaSearch(text)) {
-			hacienda = "Diputacion foral de Gipuzkoa";
-		}
-		System.out.println("Hacienda : " + hacienda);
-		return hacienda;
-	}
+//	private String setPresentationDate(String text) {
+//		String presentationDate ="";
+//		String presentationDateRegex = "Aurkezpen data / Fecha de presentación:\\s+([0-9]{2}[/][0-9]{2}[/][0-9]{4})";
+//		
+//		Pattern pattern = Pattern.compile(presentationDateRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			presentationDate= matcher.group(1).trim();
+//			System.out.println("Fecha de presentacion :" + presentationDate);
+//		}
+//		
+//		return presentationDate;
+//	}
+//	
+//	private String setHacienda(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		String hacienda ="";
+//		if (pu.haciendaSearch(text)) {
+//			hacienda = "Diputacion foral de Gipuzkoa";
+//		}
+//		System.out.println("Hacienda : " + hacienda);
+//		return hacienda;
+//	}
 	
 //	public void setModel(String text) {
 //		ParserUtils pu = new ParserUtils();

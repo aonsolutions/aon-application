@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 public class Mod7152023Navarra implements IModelDocumentParser {
 
 	
-	public void setSocialReasonName(FiscalModel fm, String text) {
+	private void setSocialReasonName(FiscalModel fm, String text) {
 		String name = "";
 		String nameSocialReasonRegex = " Nombre o razón social.+\\s+([^0-9])([0-9]+)([^\\n]+)";
 
@@ -41,7 +41,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 //	}
 	
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegex = "("
 				//  -------- LEGAL_PERSON_NIF PATTERN  
@@ -93,7 +93,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 		
 	}
 	
-	public void setEmail(FiscalModel fm, String text) {
+	private void setEmail(FiscalModel fm, String text) {
 		String email = "";
 //		String emailRegex = ".*[A-Z]@[A-Za-z0-9.-].*[A-Z]";
         String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
@@ -108,7 +108,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 	}
 	
 	
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 		
@@ -122,7 +122,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 		fm.setContactPhone(phoneNumber);
 	}
 	
-	public void setIBAN (FiscalModel fm, String text) {
+	private void setIBAN (FiscalModel fm, String text) {
 		String iban = "";
 		//Cambiar ES por for que recorra nacionalidades
 		String IBANRegex = "ES+([^A-Z]{26})";
@@ -137,7 +137,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 		fm.setIban(iban);
 	}
 	
-	public void setPeriodAndYear(FiscalModel fm, String text) {
+	private void setPeriodAndYear(FiscalModel fm, String text) {
 		String period = "";
 		String year = "";
 		ParserUtils pu = new ParserUtils();
@@ -203,7 +203,7 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 //		return csv;
 //	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String keyWord = "Importe a ingresar";
 		String keyWord2 = "Cantidad";
 		String keyWord3 = "RESULTADO";
@@ -250,10 +250,10 @@ public class Mod7152023Navarra implements IModelDocumentParser {
 //		return hacienda;
 //	}
 	
-	public void setModel(String text) {
-		ParserUtils pu = new ParserUtils();
-		pu.modelSearch(text); 
-	}
+//	private void setModel(String text) {
+//		ParserUtils pu = new ParserUtils();
+//		pu.modelSearch(text); 
+//	}
 
 	@Override
 	public boolean accept(String text) {

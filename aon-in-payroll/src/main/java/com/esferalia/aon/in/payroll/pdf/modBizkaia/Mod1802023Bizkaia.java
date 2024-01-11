@@ -25,7 +25,7 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 			// -------- (1) --> X0000000X
 			+ "|" + "[XYZ]" + "[\\s-_/]?" + "[0-9]{7}" + "[\\s-_/]?" + "[A-HJ-NP-TV-Z]" + ")";
 
-	public void setNifDeclarant(FiscalModel fm, String text) {
+	private void setNifDeclarant(FiscalModel fm, String text) {
 		String nif = "";
 		String regex = "Declarante\\s.*\\s" + (nifRegex);
 
@@ -39,22 +39,22 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 		fm.setDocument(nif);
 	}
 
-	public String setIssueDate(String text) {
-		String issueDate = "";
-		String issueDateRegex = "Fecha y número de envío\\s([0-9]{2})\\s([A-Z]{1,})\\s([A-Z]{1,})\\s([A-Z]{1,})\\s([0-9]{4})";
+//	private String setIssueDate(String text) {
+//		String issueDate = "";
+//		String issueDateRegex = "Fecha y número de envío\\s([0-9]{2})\\s([A-Z]{1,})\\s([A-Z]{1,})\\s([A-Z]{1,})\\s([0-9]{4})";
+//
+//		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			issueDate = matcher.group(1).trim() + " " + matcher.group(2).trim() + " " + matcher.group(3).trim() + " "
+//					+ matcher.group(4).trim() + " " + matcher.group(5).trim();
+//		}
+//
+//		return issueDate;
+//	}
 
-		Pattern pattern = Pattern.compile(issueDateRegex, Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			issueDate = matcher.group(1).trim() + " " + matcher.group(2).trim() + " " + matcher.group(3).trim() + " "
-					+ matcher.group(4).trim() + " " + matcher.group(5).trim();
-		}
-
-		return issueDate;
-	}
-
-	public void setNameDeclarant(FiscalModel fm, String text) {
+	private void setNameDeclarant(FiscalModel fm, String text) {
 		String declarant = "";
 		String declarantNameRegex = "Declarante\\s.*\\s.*" + nifRegex + "(\\s.*)";
 
@@ -68,21 +68,21 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 		fm.setName(declarant);
 	}
 
-	public String setContactPerson(String text) {
-		String contactPerson = "";
-		String contactPersonRegex = "Persona de contacto(\\s.+)(\\s.+[A-Z])";
+//	private String setContactPerson(String text) {
+//		String contactPerson = "";
+//		String contactPersonRegex = "Persona de contacto(\\s.+)(\\s.+[A-Z])";
+//
+//		Pattern pattern = Pattern.compile(contactPersonRegex);
+//		Matcher matcher = pattern.matcher(text);
+//
+//		if (matcher.find()) {
+//			contactPerson = matcher.group(2).trim();
+//		}
+//
+//		return contactPerson;
+//	}
 
-		Pattern pattern = Pattern.compile(contactPersonRegex);
-		Matcher matcher = pattern.matcher(text);
-
-		if (matcher.find()) {
-			contactPerson = matcher.group(2).trim();
-		}
-
-		return contactPerson;
-	}
-
-	public void setPhoneNumber(FiscalModel fm, String text) {
+	private void setPhoneNumber(FiscalModel fm, String text) {
 		String phoneNumber = "";
 		String phoneNumberRegex = "[^a-z][0-9]{9}";
 
@@ -95,7 +95,7 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 		fm.setPhone(phoneNumber);
 	}
 
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ekitaldia / Ejercicio(\\s.*)([0-9]{4})";
 
@@ -110,7 +110,7 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 		fm.setYear(year);
 	}
 
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String auxAmount = "";
 		String amountRegex = "(\\s.*)\\sGuztira / Total";
@@ -127,7 +127,7 @@ public class Mod1802023Bizkaia implements IModelDocumentParser {
 		fm.setDeclarationResult(total);
 	}
 
-	public void setModel(FiscalModel fm, String text) {
+	private void setModel(FiscalModel fm, String text) {
 		String model = "";
 		String modelRegex = "180";
 		Pattern pattern = Pattern.compile(modelRegex);

@@ -52,7 +52,7 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 			;
 	
 	
-	public void setNif(FiscalModel fm, String text) {
+	private void setNif(FiscalModel fm, String text) {
 		String nif = "";
 		String nifRegexx = "Apellidos y nombre o razón social AnagramaDNI . NIF\\s"+nifRegex;
 		
@@ -67,7 +67,7 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 		fm.setDocument(nif);
 	} 
 	
-	public void setName(FiscalModel fm, String text) {
+	private void setName(FiscalModel fm, String text) {
 		String name = "";
 		String nameRegex = "Apellidos y nombre o razón social AnagramaDNI . NIF\\s"+nifRegex+"(\\s.*)";
 		
@@ -81,7 +81,7 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 		fm.setName(name);
 	}
 	
-	public void setPeriod(FiscalModel fm, String text) {
+	private void setPeriod(FiscalModel fm, String text) {
 		String period = "";
 		String periodRegex = "Período:(\\s[0-9]{1})";
 		ParserUtils pu = new ParserUtils();
@@ -99,7 +99,7 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 
 	}
 	
-	public void setExercise(FiscalModel fm, String text) {
+	private void setExercise(FiscalModel fm, String text) {
 		String exercise = "";
 		String exerciseRegex = "Ejercicio:\\s([0-9]{2,})";
 		
@@ -141,7 +141,7 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 //		return deduct;
 //	}
 	
-	public void setAmount(FiscalModel fm, String text) {
+	private void setAmount(FiscalModel fm, String text) {
 		String amount = "";
 		String amountRegex ="([0-9]{1,}.[0-9]{2,})EMAITZA / RESULTADO";
 		
@@ -157,19 +157,19 @@ public class Mod3002023Gipuzkoa implements IModelDocumentParser{
 		
 	}
 	
-	public String setIssueDate(String text) {
-		String issueDate = "";
-		String issueDateRegex ="Fecha de presentación:\\s([0-9]{1,}.[0-9]{1,}.[0-9]{2,})";
-		
-		Pattern pattern = Pattern.compile(issueDateRegex);
-		Matcher matcher = pattern.matcher(text);
-		
-		if (matcher.find()) {
-			issueDate = matcher.group(1).trim();
-		}
-		
-		return issueDate;
-	}
+//	private String setIssueDate(String text) {
+//		String issueDate = "";
+//		String issueDateRegex ="Fecha de presentación:\\s([0-9]{1,}.[0-9]{1,}.[0-9]{2,})";
+//		
+//		Pattern pattern = Pattern.compile(issueDateRegex);
+//		Matcher matcher = pattern.matcher(text);
+//		
+//		if (matcher.find()) {
+//			issueDate = matcher.group(1).trim();
+//		}
+//		
+//		return issueDate;
+//	}
 
 	@Override
 	public boolean accept(String text) {
