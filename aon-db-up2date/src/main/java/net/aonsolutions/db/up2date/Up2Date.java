@@ -25,7 +25,9 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
+import net.aonsolutions.db.up2date.tgss.BasesMin2024Update;
 import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
+import net.aonsolutions.db.up2date.tgss.SMI2024Update;
 
 public class Up2Date {
 
@@ -380,6 +382,8 @@ public class Up2Date {
 	    // IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
 	    // MEI2024Insert.MEI2024INSERT,
 	    BasesMax2024Update.BASESMAX2024UPDATE,
+	    SMI2024Update.SMI2024UPDATE,
+	    BasesMin2024Update.BASESMIN2024UPDATE,
 
 	    // ----------------------------------------------------------------
 	    // Important, not remove
