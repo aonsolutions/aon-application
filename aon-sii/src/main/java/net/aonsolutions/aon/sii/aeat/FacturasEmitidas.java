@@ -187,11 +187,11 @@ public class FacturasEmitidas extends SIIBuilt {
 		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
 				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
 		
-		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment()) 
 				.mapToDouble(f -> f.getBase()).sum();
-		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() ))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment())
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())
