@@ -2135,7 +2135,7 @@ public class EmployeesServiceHelper {
 			
 			@Override
 			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
-				return new RoundSalaryBuilder<T>(salaryBuilder, round(3)) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, round(2)) {
 					@Override
 					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 							Map<String, ITimedVariable<?>> context) {
