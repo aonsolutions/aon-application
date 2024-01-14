@@ -100,6 +100,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
 		    .map(invoice -> invoice.put("file", getFileJSON(ocrDocument)) )
@@ -217,6 +218,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
             return jsonObject;
         }
 	
+	private static final Invoice fillFinances (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
+	    OCRInvoiceBuilder.fillFinances(ctx, ocrInvoice, invoice);
+	    return invoice;
+	}
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
 		OCRInvoiceBuilder.fillRegistry(ctx, invoice);
@@ -302,18 +307,31 @@ public class InvofoxServlet extends AonApiHttpServlet {
         }
         
         private static final Collection<TediError> getMessages(OCRError ocrError) {
-	    return ocrError.getFields().orElseGet(Collections::emptyList).stream()
-		    .map(ocrField -> {
-			TediError tediError = new TediError();
-			tediError.setLevel(getTediLevel(ocrError));
-			ocrError.getCode().ifPresent(tediError::setCode);
-			getTediContext(ocrField).ifPresent(tediError::setContext);
-			ocrError.getDescription().ifPresent(tediError::setMessage);
-			return tediError;
-		    })
-		    .collect(Collectors.toMap(TediError::getMessage, err -> err, ( err1, err2 ) -> err2 ))
-		    .values();
+            
+            Collection<TediError> messages = 
+    	    ocrError.getFields()
+    	    .orElse(Collections.emptyList())
+    	    .stream()
+    	    .map(ocrField -> {
+    		TediError tediError = new TediError();
+		tediError.setLevel(getTediLevel(ocrError));
+		ocrError.getCode().ifPresent(tediError::setCode);
+		getTediContext(ocrField).ifPresent(tediError::setContext);
+		ocrError.getDescription().ifPresent(tediError::setMessage);
+		return tediError;
+    	    })
+    	    .collect(Collectors.toMap(TediError::getMessage, err -> err, ( err1, err2 ) -> err2 )).values();
 
+            if ( !messages.isEmpty() ) {
+		return messages;
+	    }
+	    
+	    TediError tediError = new TediError();
+	    tediError.setLevel(getTediLevel(ocrError));
+	    ocrError.getCode().ifPresent(tediError::setCode);
+	    ocrError.getDescription().ifPresent(tediError::setMessage);
+	    return Collections.singletonList(tediError);
+	    
         }
         
         private static final TediLevel getTediLevel(OCRError ocrError ) {
@@ -351,7 +369,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
         private static final TediContextKey getTediContextKey(OCRField ocrField ) {
             String fieldName = ocrField.getName().orElse("");
-            System.out.println(fieldName);
             switch (fieldName) {
 	    case "documentNumber":
 		return TediContextKey.REFERENCE_CODE;
