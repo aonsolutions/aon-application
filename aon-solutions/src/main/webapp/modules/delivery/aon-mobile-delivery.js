@@ -235,7 +235,7 @@ export class AonMobileDelivery extends AonElement {
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.BACK, () => this.backToDelivery());
 
-		let div = this.createDiv(TAG.DIV);
+		let div = this.createDiv();
 		this.appendChild(div);
 
 		let packagingCard = new AonCard();
@@ -326,7 +326,7 @@ export class AonMobileDelivery extends AonElement {
 				Array.prototype.forEach.call(r.item.itemComposition, i => {
 					table2.addRow();
 					let span = this.createSpan();
-					span.innerHTML = i.composition.product.code;
+					span.innerHTML = i.composition.product.code + ' #' + i.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
 					span2.innerHTML = i.quantity;
