@@ -54,6 +54,9 @@ public class EmployeeIT implements Serializable {
 	String name;
 	String nss;
 	String dni;
+	
+	String job;
+	String jobDescription;
 
 	
 	private List<EmployeeITPart> itParts;
@@ -181,6 +184,24 @@ public class EmployeeIT implements Serializable {
 	
 	public EmployeeIT setDni(String dni) {
 		this.dni = dni;
+		return this;
+	}
+
+	public Optional<String> getJob() {
+		return Optional.ofNullable(job);
+	}
+	
+	public EmployeeIT setJob(String job) {
+		this.job = job;
+		return this;
+	}
+	
+	public Optional<String> getJobDescription() {
+		return Optional.ofNullable(jobDescription);
+	}
+	
+	public EmployeeIT setJobDescription(String jobDescription) {
+		this.jobDescription = jobDescription;
 		return this;
 	}
 
@@ -352,6 +373,8 @@ public class EmployeeIT implements Serializable {
         		+ "parent=" + parent +","
         		+ "dischargeCause=" + dischargeCause +","
         		+ "contractType=" + contractType +","
+        		+ "job=" + job +","
+        		+ "jobDescription=" + jobDescription +","
         		+ "itParts=[" + itParts.toString() +"],"
         		+ "contractDatas=[" + getContractDatas()+"]"
         +  "}";

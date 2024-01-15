@@ -194,7 +194,7 @@ public interface EnterprisesServiceAsync {
 	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
 			String situation_employee, String licenseNumber, String cias,
 			String occupation, Date startdate, String contractType, float baseCot, int cotDays,
-			Date fATEP, String accidentType, AsyncCallback<Void> asyncCallback);
+			Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback);
 	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
 			String situation_employee, String licenseNumber, String cias, Date fbaja,
 			Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback);

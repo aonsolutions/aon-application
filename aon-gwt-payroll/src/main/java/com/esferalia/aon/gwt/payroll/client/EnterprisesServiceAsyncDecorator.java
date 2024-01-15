@@ -820,11 +820,11 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
 			String contingency, String situation_employee, String licenseNumber,
 			String cias, String occupation, Date startdate, String contractType,
-			float baseCot, int cotDays, Date fATEP, String accidentType,
+			float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription,
 			AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.registerITBaja(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
-				cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType, new AsyncCallbackWrapper<Void>(callback));
+				cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType, job, jobDescription, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

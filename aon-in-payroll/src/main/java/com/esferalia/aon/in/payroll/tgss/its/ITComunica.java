@@ -209,6 +209,8 @@ public class ITComunica {
 				Optional<String> cias = itPart.getCias();
 				Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
 				Optional<String> collegeNumber = !itPartCollegeNumber.isEmpty() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
+				Optional<String> job = employeeIt.getJob();
+				Optional<String> jobDescription = employeeIt.getJobDescription();
 	
 				SistemaRED.registerITBaja(
 						byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
@@ -217,7 +219,7 @@ public class ITComunica {
 						date, ContractType.safeValueOf(employeeIt.getContractType().value()),
 						baseCtiCgc, quoteDays, 
 						fATEP, accidentType,
-						collegeNumber, cias, occupation
+						collegeNumber, cias, occupation, job, jobDescription
 				);
 				messages.add(SUCCESS);
 			} catch (SegSocialException e) {
