@@ -602,6 +602,9 @@ class SistemaREDI {
 			if(selectAuth != null) {
 				// Seleccione un Número de Autorización
 				String auth = removeLeftZeros(authCode);
+				if(auth.length() == 5) {
+					auth = '0' + auth;
+				} 
 				HtmlAnchor authAnchor = (HtmlAnchor) htmlPage.getElementById("enlace_" + auth);
 				if(null == authAnchor)
 					throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
