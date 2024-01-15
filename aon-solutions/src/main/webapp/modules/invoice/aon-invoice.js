@@ -680,93 +680,94 @@ export class AonInvoice extends AonElement {
 			return span.outerHTML;
 			
 		};
-		
-		this.invoice.messages
-		.filter( err => err.context )
-		//.filter( err => !err.context.line )
-		.forEach( (err, i ) => {
-			try {
-				switch ( err.context.key ){
-					case ErrKey.DOMAIN: 
-						break;
-					case ErrKey.WORKPLACE: 
-						break;
-					case ErrKey.TYPE: 
-						break;
-					case ErrKey.BASES_QUOTAS: 
-						break;
-					case ErrKey.SERIES: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.DUPLICATED_SERIES_NUMBER: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.NUMBER: 
-					case ErrKey.REFERENCE_CODE: 
-					case ErrKey.DUPLICATED_REFERENCE_CODE: 
-						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TRANSACTION: 
-						break;
-					case ErrKey.ISSUE_DATE: 
-						this.getElement(this.DATE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_DATE: 
-						break;
-					case ErrKey.TAX_RATE: 
-						this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_BASE: 
-						this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_QUOTA: 
-						this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
-						break;
-					case ErrKey.SCOPE: 
-						break;
-					case ErrKey.REGISTRY: 
-						break;
-					case ErrKey.AMBIGUOUS_REGISTRY: 
-						break;
-					case ErrKey.RDOCUMENT:{
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.RDOCUMENT_COUNTRY: 
-						break;
-					case ErrKey.RNAME: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.NAME).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.ADDRESS: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.DETAIL_DESCRIPTION: 
-						break;
-					case ErrKey.DETAILS: 
-						break;
-					case ErrKey.ACCOUNT_ENTRY: 
-						break;
-					case ErrKey.FINANCE_AMOUNT_ZERO: 
-						break;
-					case ErrKey.FINANCE_WRONG_DUE_DATE: 
-						break;
-					case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
-						break;
-					case ErrKey.TOTAL: 
-						this.getElement(this.TOTAL).addError(getMessageHTML(err));
-						break;
-					default:
-						break;
+		if(this.invoice.messages) {
+			this.invoice.messages
+			.filter( err => err.context )
+			//.filter( err => !err.context.line )
+			.forEach( (err, i ) => {
+				try {
+					switch ( err.context.key ){
+						case ErrKey.DOMAIN: 
+							break;
+						case ErrKey.WORKPLACE: 
+							break;
+						case ErrKey.TYPE: 
+							break;
+						case ErrKey.BASES_QUOTAS: 
+							break;
+						case ErrKey.SERIES: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.DUPLICATED_SERIES_NUMBER: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.NUMBER: 
+						case ErrKey.REFERENCE_CODE: 
+						case ErrKey.DUPLICATED_REFERENCE_CODE: 
+							this.getElement(this.REFERENCE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TRANSACTION: 
+							break;
+						case ErrKey.ISSUE_DATE: 
+							this.getElement(this.DATE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_DATE: 
+							break;
+						case ErrKey.TAX_RATE: 
+							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_BASE: 
+							this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_QUOTA: 
+							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+							break;
+						case ErrKey.SCOPE: 
+							break;
+						case ErrKey.REGISTRY: 
+							break;
+						case ErrKey.AMBIGUOUS_REGISTRY: 
+							break;
+						case ErrKey.RDOCUMENT:{
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.RDOCUMENT_COUNTRY: 
+							break;
+						case ErrKey.RNAME: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.NAME).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.ADDRESS: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.DETAIL_DESCRIPTION: 
+							break;
+						case ErrKey.DETAILS: 
+							break;
+						case ErrKey.ACCOUNT_ENTRY: 
+							break;
+						case ErrKey.FINANCE_AMOUNT_ZERO: 
+							break;
+						case ErrKey.FINANCE_WRONG_DUE_DATE: 
+							break;
+						case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
+							break;
+						case ErrKey.TOTAL: 
+							this.getElement(this.TOTAL).addError(getMessageHTML(err));
+							break;
+						default:
+							break;
+					}
+				} catch ( e ) {
+					console.error(e);
 				}
-			} catch ( e ) {
-				console.error(e);
-			}
-		});
+			});
+		}
 	}
 
 	buildMessagesCard(parent) {

@@ -31,7 +31,9 @@ export class AonNewNumber extends AonNewInput {
     attributeChangedCallback(name, oldValue, newValue) {
         if (CONSTANT.VALUE === name) {
             let input = this.getElement(this.INPUT);
-            if (newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur2(newValue);
+            if (newValue && 'undefined' !== newValue && input 
+                && !isNaN(newValue) && !newValue.includes(','))
+                input.value = this.onBlur2(newValue);
             if (input && newValue === '') input.value = '';
             let desc = this.getElement(this.DESCRIPTION);
             if(desc && input.value.length > 0) {
@@ -78,7 +80,7 @@ export class AonNewNumber extends AonNewInput {
         let input = this.getElement(this.INPUT);
         input.value = this.value;
         input.style.textAlign = 'right';
-        if(this.value) input.value = this.value.replace(".",",");
+        if(this.value) input.value = this.value;
 
         input.addEventListener(EVENT.KEYPRESS, (ev) => {
             let keyChar = String.fromCharCode(ev.which || ev.keyCode);
@@ -159,7 +161,7 @@ export class AonNewNumber extends AonNewInput {
     onBlur2(value) {
         let newValue = value;
         let decimals = this.decimals || 0;
-        if (this.format) {
+        if (this.format && !value.includes(',')) {
             newValue = formatNumber(value, decimals);
         }
         return newValue;
