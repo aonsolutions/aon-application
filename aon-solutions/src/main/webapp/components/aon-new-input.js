@@ -184,6 +184,18 @@ export class AonNewInput extends AonElement {
         div.appendChild(span);
     }
 
+    buildWarningMessage(message) {
+        let div = this.getElement(this.MSG);
+        this.clearElement(div);
+        div.style.display = '';
+        
+        let span = this.createElement(TAG.SPAN);
+        span.id = this.MSG_SPAN;
+        span.className = CSS.AON_INPUT_MSG_WARNING;
+        span.innerHTML = message;
+        div.appendChild(span);
+    }
+
     onBlur = () => {
         this.checkRequired();
         this.dispatchEvent(new Event(EVENT.BLUR));
@@ -233,7 +245,17 @@ export class AonNewInput extends AonElement {
         if(message) {
             this.buildErrorMessage(message);
         }
+    }
 
+    addWarning(message) {
+        let span = this.getElement(this.TITLE);
+        span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
+        let input = this.getElement(this.INPUT);
+        input.classList.add(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
+        
+        if(message) {
+            this.buildWarningMessage(message);
+        }
     }
 
     removeError() {
@@ -241,6 +263,17 @@ export class AonNewInput extends AonElement {
         span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);
         let input = this.getElement(this.INPUT);
         input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_ERROR);
+
+        let div = this.getElement(this.MSG);
+        this.clearElement(div);
+        div.style.display = 'none';
+    }
+
+    removeWarning() {
+        let span = this.getElement(this.TITLE);
+        span.classList.remove(CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING);
+        let input = this.getElement(this.INPUT);
+        input.classList.remove(CSS.AON_INPUT_BOX_LABEL_INPUT_WARNING);
 
         let div = this.getElement(this.MSG);
         this.clearElement(div);
