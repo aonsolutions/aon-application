@@ -169,7 +169,7 @@ export class AonBankCard extends AonElement {
 
         let description = this.createElement(TAG.SPAN);
         description.style.fontSize = "1rem";
-        description.style.color = "#fb982e";
+        description.style.color = "rgb(0, 36, 105)";
         description.style.fontWeight = "500";
         description.innerHTML = "Otros";
         leftContent.appendChild(description);
