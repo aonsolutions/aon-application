@@ -9,6 +9,9 @@ public interface ITediContextVisitor {
 	void visitTransaction(ICallback callback  );
 	void visitIssueDate(ICallback callback );
 	void visitTaxDate(ICallback callback );
+	void visitTaxRate(ICallback callback );
+	void visitTaxBase(ICallback callback );
+	void visitTaxQuota(ICallback callback );
 	void visitScope(ICallback callback  );
 	void visitRegistry(ICallback callback  );
 	void visitAmbiguousRegistry(ICallback callback  );
@@ -26,4 +29,7 @@ public interface ITediContextVisitor {
 	void visitFinanceAccountBank(ICallback callback);
 	void visitWorkplace(ICallback callback);
 	void visitBasesQuotas(ICallback callback);
+	
+	void visitTotal(ICallback callback);
+	
 }

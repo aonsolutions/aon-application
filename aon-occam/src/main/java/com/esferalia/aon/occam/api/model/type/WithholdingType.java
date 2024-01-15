@@ -43,7 +43,7 @@ public enum WithholdingType implements Serializable {
 		
 		@Override 
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
-			return visitor.visitProfessional(t);
+			return visitor.visitFarmer(t);
 		}
 	}	
 	// MODELO 190 - CLAVE H - 04  

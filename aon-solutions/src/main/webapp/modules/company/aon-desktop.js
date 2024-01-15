@@ -366,6 +366,9 @@ export class AonDesktop extends AonElement {
 			uploadToast.setDur(this.getDur());
 			this.appendChild(uploadToast);
 		}
+		let data = {
+			uploaded : 0
+		}
 		for (let file of files) {
 			uploadToast.addFile("invoice", file, data);
 		}

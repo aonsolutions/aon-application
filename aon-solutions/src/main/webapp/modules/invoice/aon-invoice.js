@@ -15,7 +15,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { ErrCode, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
+import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -503,6 +503,9 @@ export class AonInvoice extends AonElement {
 
 		this.buildDetailCard(content);
 		this.buildFinanceCard(content);
+		if ( LS.isNewTheme() ) { 
+			this.showFieldsMessages(content);
+		}
 	}
 
 	buildCommunication() {
@@ -651,6 +654,119 @@ export class AonInvoice extends AonElement {
 				div.appendChild(this.createElement('br'));
 			});
 		}
+	}
+	
+	showFieldsMessages(parent){
+		
+		let getText = ( err ) => {
+			switch ( err.code ) {
+				case ErrCode.ERR_EMPTY_VALUE: 
+					return "Sin valor"
+				case ErrCode.ERR_LOW_CONFIDENCE: 
+					return "Poca confianza"
+				case ErrCode.ERR_INVALID_FORMAT: 
+					return "Formato no válido"
+				case ErrCode.ERR_INCORRECT_VALUE: 
+					return "Valor incorrecto"
+				default:
+					return err.message;
+			}
+		};
+		
+		let getMessageHTML = ( err ) => {
+			let span = this.createElement(TAG.SPAN)
+			span.style.fontSize = "12px";
+			span.innerHTML = getText(err);
+			return span.outerHTML;
+			
+		};
+		
+		this.invoice.messages
+		.filter( err => err.context )
+		//.filter( err => !err.context.line )
+		.forEach( (err, i ) => {
+			try {
+				switch ( err.context.key ){
+					case ErrKey.DOMAIN: 
+						break;
+					case ErrKey.WORKPLACE: 
+						break;
+					case ErrKey.TYPE: 
+						break;
+					case ErrKey.BASES_QUOTAS: 
+						break;
+					case ErrKey.SERIES: 
+						this.getElement(this.SERIE).addError(getMessageHTML(err));
+						break;
+					case ErrKey.DUPLICATED_SERIES_NUMBER: 
+						this.getElement(this.SERIE).addError(getMessageHTML(err));
+						break;
+					case ErrKey.NUMBER: 
+					case ErrKey.REFERENCE_CODE: 
+					case ErrKey.DUPLICATED_REFERENCE_CODE: 
+						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TRANSACTION: 
+						break;
+					case ErrKey.ISSUE_DATE: 
+						this.getElement(this.DATE).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TAX_DATE: 
+						break;
+					case ErrKey.TAX_RATE: 
+						this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TAX_BASE: 
+						this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+						break;
+					case ErrKey.TAX_QUOTA: 
+						this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+						break;
+					case ErrKey.SCOPE: 
+						break;
+					case ErrKey.REGISTRY: 
+						break;
+					case ErrKey.AMBIGUOUS_REGISTRY: 
+						break;
+					case ErrKey.RDOCUMENT:{
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+						}
+						break;
+					case ErrKey.RDOCUMENT_COUNTRY: 
+						break;
+					case ErrKey.RNAME: { 
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.NAME).addError(getMessageHTML(err));
+						}
+						break;
+					case ErrKey.ADDRESS: { 
+							let registry = this.getElement(this.REGISTRY); 
+							registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+						}
+						break;
+					case ErrKey.DETAIL_DESCRIPTION: 
+						break;
+					case ErrKey.DETAILS: 
+						break;
+					case ErrKey.ACCOUNT_ENTRY: 
+						break;
+					case ErrKey.FINANCE_AMOUNT_ZERO: 
+						break;
+					case ErrKey.FINANCE_WRONG_DUE_DATE: 
+						break;
+					case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
+						break;
+					case ErrKey.TOTAL: 
+						this.getElement(this.TOTAL).addError(getMessageHTML(err));
+						break;
+					default:
+						break;
+				}
+			} catch ( e ) {
+				console.error(e);
+			}
+		});
 	}
 
 	buildMessagesCard(parent) {
@@ -2135,8 +2251,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date);
 		date.value = finance.due_date;
+		table.addCell(date);
 		
 		table.addRow(); // ----- ROW 2
 
@@ -2216,8 +2332,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date);
 		date.value = finance.due_date;
+		table.addCell(date);
 
 		// ----- FINANCE AMOUNT
 
@@ -2268,9 +2384,9 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
+		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
 		dateCell.style.width = '15%';
-		date.value = finance.due_date;
 
 		// ----- FINANCE PAYMETHOD
 

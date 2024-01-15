@@ -85,6 +85,24 @@ public enum TediContextKey  implements Serializable {
 			visitor.visitTaxDate(callback);
 		}
 	},
+	TAX_RATE("Tipo (%) de IVA") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTaxRate(callback);
+		}
+	},
+	TAX_BASE("Base Imponible") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTaxBase(callback);
+		}
+	},
+	TAX_QUOTA("Cuota") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTaxQuota(callback);
+		}
+	},
 	SCOPE("\u00C1mbito") {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
@@ -161,6 +179,12 @@ public enum TediContextKey  implements Serializable {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitFinanceAccountBank(callback);
+		}
+	},
+	TOTAL("Total") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTotal(callback);
 		}
 	}
 	;
