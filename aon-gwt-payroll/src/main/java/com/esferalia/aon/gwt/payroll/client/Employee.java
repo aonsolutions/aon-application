@@ -390,6 +390,13 @@ public abstract class Employee extends ResizeComposite {
 //	}
 //	
 	public void fillFormDniData(){
+		
+		document.setValue("");
+		nationality.setValue("");
+		name.setValue("");
+		firstSurname.setValue("");
+		secondSurname.setValue("");
+		
 		AsyncCallback<PersonDocumentResult> callback = new AsyncCallback<PersonDocumentResult>() {
 			
 			@Override
