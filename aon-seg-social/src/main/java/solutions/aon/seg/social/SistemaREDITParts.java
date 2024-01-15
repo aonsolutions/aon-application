@@ -145,7 +145,7 @@ class SistemaREDITParts {
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, Optional<String> licenseNumber, Optional<String> cias,
-			Optional<String> occupation) throws SegSocialException {
+			Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency, situationEmployee, licenseNumber, cias,
 				startdate, contractType, baseCot, cotDays });
@@ -153,7 +153,7 @@ class SistemaREDITParts {
 		try {
 			registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
 					contingency, situationEmployee,startdate, contractType, baseCot,
-					cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
+					cotDays, fATEP, accidentType, licenseNumber, cias, occupation, job, jobDescription);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
@@ -264,7 +264,7 @@ class SistemaREDITParts {
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
-			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 

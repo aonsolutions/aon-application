@@ -3368,7 +3368,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
 			String contingency, String situation_employee, String licenseNumber,
 			String cias, String occupation, java.util.Date startdate, String contractType,
-			float baseCot, int cotDays, java.util.Date fATEP, String accidentType) {
+			float baseCot, int cotDays, java.util.Date fATEP, String accidentType, String job, String jobDescription) {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3394,7 +3394,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)),
 					Optional.of(licenseNumber), 
 					Optional.of(cias),
-					Optional.of(occupation));
+					Optional.of(occupation),
+					Optional.of(job),
+					Optional.of(jobDescription));
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -4836,6 +4838,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			.setDni(employeeInfo.getDocument())
 			.setStartDate(it.getStartDate()) //FECHA DE BAJA
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
+			.setJob(contractInfo.getAgreementCategory())
+			.setJobDescription("Las propias de " + contractInfo.getAgreementCategory())
 			;
 			
 			if(it.getEndDate()!=null) {				

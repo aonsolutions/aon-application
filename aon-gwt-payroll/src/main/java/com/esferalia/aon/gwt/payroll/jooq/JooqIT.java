@@ -173,6 +173,7 @@ public class JooqIT {
 			contractInfo.setStartDate(r.get(CONTRACT.START_DATE));
 			contractInfo.setSeniorityDate(r.get(CONTRACT.SENIORITY_DATE));
 			contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
+			contractInfo.setAgreementCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION));
 			
 			//contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
 			//contractInfo.setEnterpriseCIF(r.get(ENTERPRISE_REGISTRY.DOCUMENT));

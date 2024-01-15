@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -33,18 +34,21 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSection;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.html.HtmlTextArea;
+import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -92,7 +96,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, Optional<String> licenseNumber, Optional<String> cias,
-			Optional<String> occupation) throws SegSocialException {
+			Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency, situationEmployee, licenseNumber, cias,
 				startdate, contractType, baseCot, cotDays });
@@ -100,7 +104,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		try {
 			return registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
 					contingency, situationEmployee,startdate, contractType, baseCot,
-					cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
+					cotDays, fATEP, accidentType, licenseNumber, cias, occupation, job, jobDescription);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
@@ -285,63 +289,82 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
-			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
 			
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
 
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+//			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
 //			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 //			
-			form.getInputByName(ARQ_SPM_OUT).remove(); 
+//			form.getInputByName(ARQ_SPM_OUT).remove(); 
 //			
 //			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 
+			if (job.isPresent()) {				
+				((HtmlInput) htmlPage.querySelector("#puestoTrabajo")).setValue(job.get());
+				((HtmlInput) htmlPage.querySelector("#puestoTrabajo")).setValueAttribute(job.get());
+			}
+			
+			if (jobDescription.isPresent()) {				
+				((HtmlTextArea) htmlPage.querySelector("#funcDesempe")).setText(jobDescription.get());
+			}
+			
 			// Data Contract
 			HtmlOption contractTypeOption = null;
 			HtmlInput cotBaseInput = null;
 			HtmlInput cotDaysInput = null;
-	
+			
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
-					contractTypeOption = form.querySelector("#tipoContrato option[value=\"1\"]");
+					contractTypeOption = htmlPage.querySelector("#tipoContrato option[value=\"1\"]");
 					htmlPage = contractTypeOption.click();
-					cotBaseInput = form.getInputByName("sumaBaseCot");
-					cotDaysInput = form.getInputByName("sumaDiasCot");
+					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+					cotBaseInput = htmlPage.querySelector("#sumaBaseCot");
+					cotDaysInput = htmlPage.querySelector("#sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
-					contractTypeOption = form.querySelector("#tipoContrato option[value=\"2\"]");
+					contractTypeOption = htmlPage.querySelector("#tipoContrato option[value=\"2\"]");
 					htmlPage = contractTypeOption.click();
-					cotBaseInput = form.getInputByName("BaseCot");
-					cotDaysInput = form.getInputByName("DiasCot");	
+					
+					wait4(htmlPage, p -> p.getElementById("#BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+					
+					cotBaseInput = (HtmlInput) htmlPage.querySelector("#BaseCot");
+					cotDaysInput = (HtmlInput) htmlPage.querySelector("#DiasCot");
 				break;
 			}
 			
 			if(fATEP.isPresent()) {
-				DomNode inputATEP = form.querySelector("#fechaATEP");
+				DomNode inputATEP = htmlPage.querySelector("#fechaATEP");
 				if(null != inputATEP) ((HtmlInput)inputATEP).setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
 			}
 			
 			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
 			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
 				cotBaseInput.setValue(baseCotStr);
+				cotBaseInput.setValueAttribute(baseCotStr);
 			}
 
 			if(cotDaysInput!=null && cotDays>0) {
 				cotDaysInput.setValue(cotDays+"");
+				cotDaysInput.setValueAttribute(cotDays+"");
 			}
 			
 			if (occupation.isPresent()) {				
-				((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
+				((HtmlSelect) htmlPage.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
 			}
 			
+			Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/it_2.html");
+			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			htmlPage = validate.click();
+			XmlPage xmlPage = validate.click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
 			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
@@ -355,7 +378,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			return getPdfProcess(htmlPage, "#ENVIO_10");
 		}
 	}
-	
+
 	// REGISTER IT END
 	private static byte[] registerItAltaImpl(InputStream certificateInputStream, String certificatePassword,
 				String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,

@@ -100,7 +100,7 @@ public class TestSistemaREDITPart {
 					"0111", "01105360062", "291136796369", 
 					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
 					startDate, SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.ofNullable(startDate), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.empty());
+					Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 			
 			System.out.println(new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
