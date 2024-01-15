@@ -824,7 +824,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 0, 6).setResult(mod.getAmount(Mod303Key.CT_S17R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17R))
 		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
-		,CT_S117(Mod303Key.CT_S117, null, null, null, "CT_S11R+CT_S12R+CT_S13R+CT_S14R+CT_S15R+CT_S16R+CT_S17R", null
+		,CT_S117(Mod303Key.CT_S117, null, null, null, "round(CT_S11R+CT_S12R+CT_S13R+CT_S14R+CT_S15R+CT_S16R+CT_S17R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S117, ensureActivity(mod, 0).getDev())
 			,mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117))
 			,null)
@@ -1183,7 +1183,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 1, 6).setResult(mod.getAmount(Mod303Key.CT_S27R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27R))
 		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
-		,CT_S217(Mod303Key.CT_S217, null, null, null, "CT_S21R+CT_S22R+CT_S23R+CT_S24R+CT_S25R+CT_S26R+CT_S27R", null
+		,CT_S217(Mod303Key.CT_S217, null, null, null, "round(CT_S21R+CT_S22R+CT_S23R+CT_S24R+CT_S25R+CT_S26R+CT_S27R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S217, ensureActivity(mod, 1).getDev())
 			,mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217))
 			,null)
@@ -1538,7 +1538,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37R))
 
 		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
-		,CT_S317(Mod303Key.CT_S317, null, null, null, "CT_S31R+CT_S32R+CT_S33R+CT_S34R+CT_S35R+CT_S36R+CT_S37R", null
+		,CT_S317(Mod303Key.CT_S317, null, null, null, "round(CT_S31R+CT_S32R+CT_S33R+CT_S34R+CT_S35R+CT_S36R+CT_S37R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S317, ensureActivity(mod, 2).getDev())
 			,mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317))
 			,null)
@@ -1891,7 +1891,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 3, 6).setResult(mod.getAmount(Mod303Key.CT_S47R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47R))
 		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones // corrientes
-		,CT_S417(Mod303Key.CT_S417, null, null, null, "CT_S41R+CT_S42R+CT_S43R+CT_S44R+CT_S45R+CT_S46R+CT_S47R", null
+		,CT_S417(Mod303Key.CT_S417, null, null, null, "round(CT_S41R+CT_S42R+CT_S43R+CT_S44R+CT_S45R+CT_S46R+CT_S47R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S417, ensureActivity(mod, 3).getDev())
 			,mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S417))
