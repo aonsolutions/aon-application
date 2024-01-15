@@ -7,9 +7,10 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.modAlava.ModelDocumentParser;
-import com.esferalia.aon.in.payroll.pdf.modAlava.ParserUtils;
+import com.esferalia.aon.in.payroll.pdf.mod.Alava.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Alava.ParserUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class AlavaModelsTests {
@@ -46,6 +47,9 @@ public class AlavaModelsTests {
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T4, actualPeriod);
 			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.ALAVA , actualAdministration);
+			
 //			FiscalModelType expectedModel = FiscalModelType.M115;
 //			FiscalModelType actualModel = fiscalModel.getModel();
 //			assertEquals(expectedModel, actualModel);
@@ -80,8 +84,12 @@ public class AlavaModelsTests {
 		int actualExercise = fiscalModel.getYear();
 		assertEquals(expectedExercise, actualExercise);
 		
-		System.out.println(fiscalModel.getPeriod());
-	
+		Period actualPeriod = fiscalModel.getPeriod();
+		assertEquals(Period.T1, actualPeriod);
+		
+		Administration actualAdministration = fiscalModel.getAdministration();
+		assertEquals(Administration.ALAVA , actualAdministration);
+			
 //		FiscalModelType expectedModel = FiscalModelType.M115;
 //		FiscalModelType actualModel = fiscalModel.getModel();
 //		assertEquals(expectedModel, actualModel);
@@ -114,8 +122,12 @@ public class AlavaModelsTests {
 		int actualYear = fiscalModel.getYear();
 		assertEquals(expectedYear, actualYear);
 		
-		System.out.println(fiscalModel.getPeriod());
-
+		Period actualPeriod = fiscalModel.getPeriod();
+		assertEquals(Period.T2, actualPeriod);
+		
+		Administration actualAdministration = fiscalModel.getAdministration();
+		assertEquals(Administration.ALAVA , actualAdministration);
+		
 		
 //		String model = mod349.setModel(text);
 //		assertEquals("349", model);

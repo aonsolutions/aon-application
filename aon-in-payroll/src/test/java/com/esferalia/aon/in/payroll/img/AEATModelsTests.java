@@ -7,9 +7,10 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.modAeat.ModelDocumentParser;
-import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ParserUtils;
+import com.esferalia.aon.in.payroll.pdf.mod.Aeat.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Gipuzkoa.ParserUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class AEATModelsTests {
@@ -44,6 +45,9 @@ public class AEATModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.COMMON_TERRITORY , actualAdministration);
 			
 		}
 		

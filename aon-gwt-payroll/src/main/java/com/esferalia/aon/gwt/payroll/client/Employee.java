@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.occam.api.model.PersonDocument;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType.ModelRecord;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
@@ -52,8 +54,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -248,14 +253,14 @@ public abstract class Employee extends ResizeComposite {
 	@UiField
 	HTMLPanel journeyDuration;
 
-//	@UiField
-//	FormPanel formPanel;
-//
-//	@UiField
-//	FileUpload fileUpload;
-//
-//	@UiField
-//	Button uploadButton;
+	@UiField
+	FormPanel formPanel;
+
+	@UiField
+	FileUpload fileUpload;
+
+	@UiField
+	Button uploadButton;
 	
 
 	// ------------------------------------------------- Class variables
@@ -272,7 +277,7 @@ public abstract class Employee extends ResizeComposite {
 
 	// ------------------------------------------------- Constructor
 
-	private static final String [] ALLOWED_DOMAINS = {".aonsolutions.org" ,"ayudat.aonsolutions.net."};
+//	private static final String [] ALLOWED_DOMAINS = {".aonsolutions.org" ,"ayudat.aonsolutions.net."};
 
 	
 	protected Employee() {
@@ -287,9 +292,7 @@ public abstract class Employee extends ResizeComposite {
 
 		initializeView();
 		addReformatAccount();
-		
-//		checkDomain();
-		
+				
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
 
 			@Override
@@ -386,29 +389,30 @@ public abstract class Employee extends ResizeComposite {
 //	    uploadButton.setVisible(isAllowedDomain);
 //	}
 //	
-//	public void fillFormDniData(){
-//		AsyncCallback<EmployeeDataResult> callback = new AsyncCallback<EmployeeDataResult>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeDataResult e) {
-//				document.setValue(e.getDni(),true);
-//				nationality.setValue(e.getNationality(),true);
-//				name.setValue(e.getName(),true);
-//				firstSurname.setValue(e.getFirstSurname(),true);
-//				secondSurname.setValue(e.getSecondSurname(),true);
-//			}
-//			@Override
-//			public void onFailure(Throwable f) {
-//				
-//			}
-//		};
-//		formPanel.addSubmitCompleteHandler(event -> {
-//				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-//				callback.onSuccess(eps);
-//			});
-//		
-//		formPanel.submit();
-//	}
+	public void fillFormDniData(){
+		AsyncCallback<PersonDocumentResult> callback = new AsyncCallback<PersonDocumentResult>() {
+			
+			@Override
+			public void onSuccess(PersonDocumentResult e) {
+				document.setValue(e.getDocument(),true);
+				nationality.setValue(e.getNationality(),true);
+				name.setValue(e.getName(),true);
+				firstSurname.setValue(e.getFirstSurname(),true);
+				secondSurname.setValue(e.getSecondSurname(),true);
+			}
+			@Override
+			public void onFailure(Throwable f) {
+				
+			}
+		
+		};
+		formPanel.addSubmitCompleteHandler(event -> {
+			PersonDocumentResult eps = JsonUtils.safeEval(event.getResults());
+				callback.onSuccess(eps);
+			});
+		
+		formPanel.submit();
+	}
 
 	// ------------------------------------------------- UiHandlers
 
@@ -444,22 +448,18 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 
-//	@UiHandler("uploadButton")
-//	void onUploadButtonClick(ClickEvent event) {
-//		fileUpload.click();
-//	}
-//
-//	@UiHandler("fileUpload")
-//	void onFileUpload(ChangeEvent event) {
-//		fileUpload.setName("archivo");
-//		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
-//			addUploadedBorder(this.uploadButton);
-//			fillFormDniData();
-//		}else {
-//			addUploadedFail(this.uploadButton);
-//			Window.alert("El archivo no es valido");
-//		}
-//	}
+	@UiHandler("uploadButton")
+	void onUploadButtonClick(ClickEvent event) {
+		fileUpload.click();
+	}
+
+	@UiHandler("fileUpload")
+	void onFileUpload(ChangeEvent event) {
+		fileUpload.setName("archivo");
+		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
+			fillFormDniData();
+		}
+	}
 
 	@UiHandler("nationality")
 	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {

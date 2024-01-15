@@ -3,10 +3,11 @@ package com.esferalia.aon.in.payroll.img;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.modNavarra.ParserUtils;
+import com.esferalia.aon.in.payroll.pdf.mod.Navarra.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Navarra.ParserUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.in.payroll.pdf.modNavarra.ModelDocumentParser;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,6 +47,9 @@ public class NavarraModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.NAVARRA , actualAdministration);
 			
 
 //		String periodAndYear = mod130.setPeriodAndYear(text);
@@ -94,6 +98,9 @@ public class NavarraModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.NAVARRA , actualAdministration);
 
 //		String registryNumber = mod715.setRegistryNumber(text);
 //		assertEquals("92677" , registryNumber);
@@ -145,6 +152,9 @@ public class NavarraModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.NAVARRA , actualAdministration);
 
 //		String hacienda = modF69.setHacienda(text);
 //		assertEquals("Hacienda Navarra", hacienda);

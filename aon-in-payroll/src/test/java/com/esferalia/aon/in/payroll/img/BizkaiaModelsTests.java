@@ -7,8 +7,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import com.esferalia.aon.in.payroll.pdf.modBizkaia.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Bizkaia.ModelDocumentParser;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class BizkaiaModelsTests {
@@ -49,6 +50,13 @@ public class BizkaiaModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T2, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "VERA NUÑEZ MARIA SILVERIA";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
 
 //		String nif = mod110.setNif(text);
 //		String declarant = mod110.setDeclarant(text);
@@ -104,11 +112,13 @@ public class BizkaiaModelsTests {
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T2, actualPeriod);
 
-//			
-//			String presenter = mod115.setPresenter(text);
-//			assertEquals("VERA NUÑEZ MARIA SILVERIA", presenter);
-//			String hacienda = mod115.setHacienda(text);
-//			assertEquals("Diputacion foral de Bizkaia", hacienda);
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "VERA NUÑEZ MARIA SILVERIA";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
+
 
 		}
 	}
@@ -141,13 +151,22 @@ public class BizkaiaModelsTests {
 			String expectedPhoneNumber = "691568973";
 			String actualPhoneNumber = fiscalModel.getPhone();
 			assertEquals(expectedPhoneNumber, actualPhoneNumber);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
 
+			String expectedContactPerson = "MUÑOZ GARCIA JESUS";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
+			
+			
+			
 //		String issueDate = mod180.setIssueDate(text);
 //		assertEquals("30 DE ENERO DE 2023",issueDate);
 //		String declarantName = mod180.setNameDeclarant(text);
 //		assertEquals("ELDORADO AUTOMOTIVE SL", declarantName);
-//		String contactPerson = mod180.setContactPerson(text);
-//		assertEquals("MUÑOZ GARCIA JESUS" , contactPerson);
+//		 = mod180.setContactPerson(text);
+//		assertEquals(, contactPerson);
 //		String phoneNumber = mod180.setPhoneNumber(text);
 //		assertEquals("691568973" , phoneNumber);
 //		String exercise = mod180.setExercise(text);
@@ -188,9 +207,15 @@ public class BizkaiaModelsTests {
 			Double expectedAmount = 24562.77;
 			Double actualAmount = fiscalModel.getDeclarationResult();
 			assertEquals(expectedAmount, actualAmount);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "MUÑOZ GARCIA JESUS";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
 
-//		String contactPerson = mod190.setContactPerson(text);
-//		assertEquals("MUÑOZ GARCIA JESUS", contactPerson);
+
 
 //		String issueDate = mod190.setIssueDate(text);
 //		assertEquals("31 DE ENERO DE 2023", issueDate);
@@ -230,6 +255,13 @@ public class BizkaiaModelsTests {
 			Double expectedAmount = 1510.06;
 			Double actualAmount = fiscalModel.getDeclarationResult();
 			assertEquals(expectedAmount, actualAmount);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "VERA NUÑEZ MARIA SILVERIA";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
 
 //			String principalActivity = mod303.setPrincipalActivity(text);
 //			assertEquals("COMERCIO AL POR MAYOR DE", principalActivity);
@@ -283,8 +315,12 @@ public class BizkaiaModelsTests {
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.M07, actualPeriod);
 			
-//			String contactPerson = mod349.setContactPerson(text);
-//			assertEquals("MUÑOZ GARCIA JESUS", contactPerson);
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "MUÑOZ GARCIA JESUS";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
 //			String representativeNif = mod349.setRepresentativeNif(text);
 //			assertEquals("4976686W", representativeNif);
 //			String representativeName = mod349.setRepresentativeName(text);
@@ -328,10 +364,15 @@ public class BizkaiaModelsTests {
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.YEAR, actualPeriod);
 			
-//			String presentatorName = mod390.setPresentatorName(text);
-//			assertEquals("VERA NUÑEZ MARIA SILVERIA", presentatorName);
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.BIZKAIA , actualAdministration);
+			
+			String expectedContactPerson = "VERA NUÑEZ MARIA SILVERIA";
+			String actualContactPerson = fiscalModel.getContactPerson();
+			assertEquals(expectedContactPerson, actualContactPerson);
+
 
 		}
 	}
-
+	
 }

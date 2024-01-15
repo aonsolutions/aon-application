@@ -7,9 +7,10 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ParserUtils;
-import com.esferalia.aon.in.payroll.pdf.modGipuzkoa.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Gipuzkoa.ModelDocumentParser;
+import com.esferalia.aon.in.payroll.pdf.mod.Gipuzkoa.ParserUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class GuipuzkoaModelsTests {
@@ -44,9 +45,10 @@ public class GuipuzkoaModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 
-//			String period = mod110.setPeriod(text);
-//			assertEquals("3 Trimestre", period);
 //			String issueDate = mod110.setIssueDate(text);
 //			assertEquals("25/10/2021", issueDate);
 //			System.out.println(issueDate);
@@ -77,7 +79,11 @@ public class GuipuzkoaModelsTests {
 			int actualYear = fiscalModel.getYear();
 			assertEquals(expectedYear, actualYear);
 			
-		
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
+			
+			Period actualPeriod = fiscalModel.getPeriod();
+			assertEquals(Period.T3, actualPeriod);
 
 //		String hacienda = mod115.setHacienda(text);
 //		assertEquals("Diputacion foral de Gipuzkoa", hacienda);
@@ -116,6 +122,9 @@ public class GuipuzkoaModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T4, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 
 //		String principalActivity = mod130.setPrincipalActivity(text);
 //		assertEquals("VENTA MENOR LABORES DEL TABACO EN EXPEND", principalActivity);
@@ -156,6 +165,9 @@ public class GuipuzkoaModelsTests {
 			Double expectedAmount = 570.00;
 			Double actualAmount = fiscalModel.getDeclarationResult();
 			assertEquals(expectedAmount, actualAmount);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 
 //		String perceivers = mod180.setPerceivers(text);
 //		assertEquals("1", perceivers);
@@ -188,6 +200,9 @@ public class GuipuzkoaModelsTests {
 			String expectedPhoneNumber = "691568973";
 			String actualPhoneNumber = fiscalModel.getContactPhone();
 			assertEquals(expectedPhoneNumber, actualPhoneNumber);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 	
 		
 //		String relationPersonNif = mod200.setRelationPersonNif(text);
@@ -226,6 +241,9 @@ public class GuipuzkoaModelsTests {
 			
 			Period actualPeriod = fiscalModel.getPeriod();
 			assertEquals(Period.T3, actualPeriod);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 
 		
 //		String period = mod300.setPeriod(text);
@@ -258,6 +276,9 @@ public class GuipuzkoaModelsTests {
 			Double expectedAmount = 2424.29;
 			Double actualAmount = fiscalModel.getDeclarationResult();
 			assertEquals(expectedAmount, actualAmount);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 	
 //		String period = mod349.setPeriod(text);
 //		assertEquals("2T", period);
@@ -286,6 +307,9 @@ public class GuipuzkoaModelsTests {
 			Double expectedAmount = 4685.07;
 			Double actualAmount = fiscalModel.getDeclarationResult();
 			assertEquals(expectedAmount, actualAmount);
+			
+			Administration actualAdministration = fiscalModel.getAdministration();
+			assertEquals(Administration.GIPUZKOA , actualAdministration);
 
 //		String issueDate = mod390.setIssueDate(text);
 //		assertEquals("31/01/2023", issueDate);
@@ -327,6 +351,8 @@ public class GuipuzkoaModelsTests {
 			int actualYear = fiscalModel.getYear();
 			assertEquals(expectedYear, actualYear);
 		
+			
+			
 //		String issueDate = mod190.setIssueDate(text);
 //		assertEquals("30/01/2023", issueDate);
 		}
