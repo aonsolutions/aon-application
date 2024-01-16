@@ -500,7 +500,9 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 			if (descs != null && !descs.isEmpty()) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
-					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
+					Integer birthYear = desc.getBirthYear();
+					if (birthYear == null) birthYear = Integer.valueOf(0);
+					int descYear = desc.getAdoptionYear() == null?birthYear:desc.getAdoptionYear();
 					boolean lessThan3 = ( curYear - 3 ) <=  descYear;
 					boolean disability = desc.getDisabilityLevel() != null;
 					boolean disability33 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 0;
