@@ -28,7 +28,7 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -73,7 +73,8 @@ public class LroeModel140 extends DockLayoutPanel {
 			.addItem(new AonMenuItem().setTitle("1.1 Con software garante")
 					.setHandler(chapter1_1Handler()))
 			.addItem(new AonMenuItem().setTitle("1.2 Sin software garante")
-					.setHandler(chapter1_2Handler()))
+					.setHandler(emptyHandler())
+					.setDisabled(true))
 			.addItem(new AonMenuItem().setTitle("1.3 Ingresos sin factura")
 					.setDisabled(true)
 					.setHandler(emptyHandler()));
@@ -187,7 +188,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
-			.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1);
+			.setCommunicationType(InvoiceCommunicationType.LROE);
 	}
 	
 	private AonMenu getMenu() {
@@ -447,20 +448,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1)
-				.setType(InvoiceType.SALES);
-				invoiceGrid.setFilterParams(getFilterParams());
-			}
-		};
-	}
-	
-	private ClickHandler chapter1_2Handler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(InvoiceCommunicationType.LROE)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -473,7 +461,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_2_1)
+				.setCommunicationType(InvoiceCommunicationType.LROE)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -517,7 +505,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					VerticalPanel vp = new VerticalPanel();
 					getModel140().getBreakdownPanel().setWidget(vp);
 					selectedInvoices.stream().forEach(invoice -> {
-						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<Boolean>() {
+						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<Boolean>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -565,11 +553,11 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !OldInvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
-								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<ICResponse>() {
+								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
 									
 									@Override
 									public void onSuccess(ICResponse result) {

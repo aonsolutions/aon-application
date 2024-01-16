@@ -39,11 +39,11 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -385,7 +385,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
 			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
 				f.getInvoiceProperty().eq(invoiceId)
-				.and(f.getTypeProperty().eq(OldInvoiceCommunicationType.LROE_1_1.value())));
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
 			accepted = info.isAccepted() || info.isAcceptedWithErrors();
 		}
 

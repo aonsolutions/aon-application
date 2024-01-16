@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE3034;
+import net.aonsolutions.db.up2date.finance.InvoiceInfoLroeUpdate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
@@ -419,7 +420,8 @@ public class Up2Date {
 	    //AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
 		  //InsertIAE3034.INSERT_IAE_3034,
 	    AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
-	    AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023
+	    AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
+	    InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
 	};
 
     // ------------------------------------------------------------------------

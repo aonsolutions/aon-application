@@ -8,9 +8,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationType implements Serializable{
  
-	SII(){ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();} },
-	TBAI{ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();} },
-	LROE{ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();} },
+	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();} },
+	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();} },
+	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();} },
+	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();} }
 	;
 	
 	
@@ -56,5 +57,9 @@ public enum InvoiceCommunicationType implements Serializable{
 	
 	public boolean isLroe() {
 		return LROE.equals(this);
+	}
+	
+	public boolean isSeres() {
+		return SERES.equals(this);
 	}
 }
