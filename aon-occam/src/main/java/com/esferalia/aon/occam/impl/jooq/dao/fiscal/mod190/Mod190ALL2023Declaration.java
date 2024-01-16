@@ -107,7 +107,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				Date chargeDate = rec.getValue(SALARY.CHARGE_DATE);
 				Integer chargeYear = AonDateUtils.getYear(chargeDate);
 				final Integer accrualYear = (!AonNumberUtils.equals(issueYear, chargeYear))
-						? issueYear 
+						? (AonNumberUtils.equals(mod190.getYear(),issueYear)? null : issueYear) 
 						: null;
 				Byte p = rec.getValue(SALARY_PAYMENT.TYPE);
 				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[p.intValue()];
