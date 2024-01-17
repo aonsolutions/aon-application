@@ -1,9 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG } from "../../environments/environments.js";
-import { isEmptyObject } from "../../services/utils.js";
-import { getAccounting, getPeriods } from "../../services/accountingService.js";
-import * as UTILS from "./AccountingUtils.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { TAG } from "../../environments/environments.js";
 import { getChargePayments } from "../../services/invoiceService.js";
 
 export class AonDashboardChargePayments extends AonElement {
@@ -179,15 +175,12 @@ export class AonDashboardChargePayments extends AonElement {
       this.stackedChart.destroy();
     }
 
-    console.log(config);
-
     this.stackedChart = new Chart(canvas, config);
   }
   
   async getDataDB(){
     try {
       let chargePayments = await getChargePayments({period: this.filter.period});
-      console.log(chargePayments);
       return chargePayments;
     } catch(e){
       console.log(e);

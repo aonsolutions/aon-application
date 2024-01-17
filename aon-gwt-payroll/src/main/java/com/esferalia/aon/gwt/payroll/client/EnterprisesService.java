@@ -303,7 +303,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
 			String situation_employee, String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot, int cotDays, Date fATEP, String accidentType);
+			String contractType, float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription);
 
 	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
 			String situation_employee, String licenseNumber, String cias, Date fbaja,

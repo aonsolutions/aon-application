@@ -525,9 +525,9 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void registerITBaja(String regime, String ccc, String naf, String contingency, String situation_employee, 
 			String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot , int cotDays, Date fATEP, String accidentType, AsyncCallback<Void> asyncCallback) {
+			String contractType, float baseCot , int cotDays, Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.registerITBaja(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee,  licenseNumber, cias, 
-				occupation, startdate, contractType, baseCot , cotDays, fATEP, accidentType, asyncCallback);
+				occupation, startdate, contractType, baseCot , cotDays, fATEP, accidentType, job, jobDescription, asyncCallback);
 	}
 	
 	public void registerITConfirmation(String regime, String ccc, String naf, String contingency, String situation_employee, 

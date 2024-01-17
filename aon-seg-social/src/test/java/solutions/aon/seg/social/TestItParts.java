@@ -104,7 +104,7 @@ public class TestItParts {
 					"0111", "01105360062", "011017250195", 
 					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
 					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.empty());
+					Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -107,7 +107,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				Date chargeDate = rec.getValue(SALARY.CHARGE_DATE);
 				Integer chargeYear = AonDateUtils.getYear(chargeDate);
 				final Integer accrualYear = (!AonNumberUtils.equals(issueYear, chargeYear))
-						? issueYear 
+						? (AonNumberUtils.equals(mod190.getYear(),issueYear)? null : issueYear) 
 						: null;
 				Byte p = rec.getValue(SALARY_PAYMENT.TYPE);
 				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[p.intValue()];
@@ -500,7 +500,9 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 			if (descs != null && !descs.isEmpty()) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
-					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
+					Integer birthYear = desc.getBirthYear();
+					if (birthYear == null) birthYear = Integer.valueOf(0);
+					int descYear = desc.getAdoptionYear() == null?birthYear:desc.getAdoptionYear();
 					boolean lessThan3 = ( curYear - 3 ) <=  descYear;
 					boolean disability = desc.getDisabilityLevel() != null;
 					boolean disability33 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 0;

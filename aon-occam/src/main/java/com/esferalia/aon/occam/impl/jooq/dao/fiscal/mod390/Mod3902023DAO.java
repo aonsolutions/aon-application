@@ -138,7 +138,9 @@ public class Mod3902023DAO {
 	 	// IVA devengado en otros supuestos de inversión del sujeto pasivo
 		 ,C0028	(Mod3902023DetailKey.C0028, (mod, vc) -> isOperacionesISPFilter(vc))
 	 	// Modificación de bases y cuotas
-		 ,C0030	(Mod3902023DetailKey.C0030, (mod, vc) -> isCommonNationalSalesRECT(vc, mod))
+		 // ,C0030	(Mod3902023DetailKey.C0030, (mod, vc) -> isCommonNationalSalesRECT(vc, mod))
+		 ,C0030	(Mod3902023DetailKey.C0030, (mod, vc) -> modificacionBasesYCuotasFilter(vc))
+		 
 	 	// Modificación de bases y cuotas de operaciones intragrupo
 		 ,C0650 (Mod3902023DetailKey.C0650, null)	
 	 	// Modificación de bases y cuotas por auto de declaración de concurso de acreedores
@@ -1226,6 +1228,18 @@ public class Mod3902023DAO {
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses());
 	}
 	
+
+	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+				&& !vat.isVatSurchargeRegime() 
+				&& vat.isRectification()
+				&& (vat.isNationalSales() 
+					|| (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses())
+					|| (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
+						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
+						|| (vat.isCanCeuMelPurchase() && vat.isService())));
+	}
+
 }
 
 

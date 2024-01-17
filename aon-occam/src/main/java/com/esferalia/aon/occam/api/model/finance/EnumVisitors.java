@@ -121,6 +121,7 @@ public class EnumVisitors {
 		void visitSII();
 		void visitTBAI();
 		void visitLROE();
+		void visitSERES();
 	}
 	
 	public static interface IFiscalModelKeyInfoVisitor<T> {

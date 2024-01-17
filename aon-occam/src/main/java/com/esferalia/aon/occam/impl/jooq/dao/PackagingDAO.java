@@ -86,6 +86,7 @@ public class PackagingDAO {
 			boolean contain = false;
 			for(ItemComposition r : item.getItemComposition()) {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				if(productMap.containsKey(productId)) {
 					contain = true;
@@ -101,6 +102,7 @@ public class PackagingDAO {
 			List<Integer> ps = new LinkedList<>();
 			item.getItemComposition().stream().forEach(r -> {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				ps.add(productId);
 			});

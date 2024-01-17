@@ -110,7 +110,7 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private FinanceModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
-	private AonToolbarButton searchButton;
+	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton exportButton;
 	private AonToolbarButton settleAllButton;
 	private AonToolbarButton unSettleAllButton;
@@ -191,7 +191,7 @@ public class FinanceModule extends MainEntryPoint {
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.CSS.aonScrollArea());
+		centerPanel.getElement().getStyle().setProperty("padding", "0 1.5em 1.5em 1.5em");
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
@@ -227,14 +227,13 @@ public class FinanceModule extends MainEntryPoint {
 		});
 		
 		// Auto search first time
-		if(this.isPayroll) {
-			enableMoreData();
-			container.clear();
-			tab = getTable();
-			container.add(tab);
-			offset.setValue(0);
-			search(opt, searchPanel.getParams( opt ), offset.getValue());
-		}
+		enableMoreData();
+		container.clear();
+		tab = getTable();
+		container.add(tab);
+		offset.setValue(0);
+		search(opt, searchPanel.getParams( opt ), offset.getValue());
+		
 	}
 
 	private static enum COLS {
@@ -347,6 +346,7 @@ public class FinanceModule extends MainEntryPoint {
 				tab.setWidget(0, col.ordinal(), col == PAYROLL_COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
 				
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
 				if ( col.getCellStyleClass() != null) {
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
@@ -363,6 +363,7 @@ public class FinanceModule extends MainEntryPoint {
 				tab.setWidget(0, col.ordinal(), col == COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
 				
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
 				if ( col.getCellStyleClass() != null) {
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
@@ -390,21 +391,19 @@ public class FinanceModule extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		toolbar.add(diskForm);
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				toolbar.hideMessages();
-				enableMoreData();
-				container.clear();
-				tab = getTable();
-				container.add(tab);
-				offset.setValue(0);
-				search(opt, searchPanel.getParams( opt ), offset.getValue());
-			}
+		resetSearchButton = new AonToolbarButton(AON.MSG.clean() + " filtros", AON.CSS.aonIconClear());
+		resetSearchButton.addClickHandler(e -> {
+			toolbar.hideMessages();
+			enableMoreData();
+			container.clear();
+			tab = getTable();
+			container.add(tab);
+			offset.setValue(0);
+			searchPanel.initialize(opt);
+			search(opt, searchPanel.getParams( opt ), offset.getValue());
 		});
-		toolbar.add(searchButton);
-
+		toolbar.add(resetSearchButton);
+		
 		exportButton = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconExcel() );
 		exportButton.setEnabled(false);
 		exportButton.addClickHandler(new ClickHandler() {
@@ -924,6 +923,8 @@ public class FinanceModule extends MainEntryPoint {
 		tab.setWidget(row, col, status);
 		++col;
 		tab.setWidget(row, col, actionsPanel);
+		
+		tab.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");
 	}
 	
 	private void clearSelection() {

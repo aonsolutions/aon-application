@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 public class InvoiceInfo implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Integer domain;
 	private Integer invoice;
-	private OldInvoiceCommunicationType type;
+	private InvoiceCommunicationType type;
 	private InvoiceCommunicationStatus status;
 
 	public Integer getId() {
@@ -37,11 +39,11 @@ public class InvoiceInfo implements Serializable {
 		return this;
 	}
 
-	public OldInvoiceCommunicationType getType() {
+	public InvoiceCommunicationType getType() {
 		return type;
 	}
 
-	public InvoiceInfo setType(OldInvoiceCommunicationType type) {
+	public InvoiceInfo setType(InvoiceCommunicationType type) {
 		this.type = type;
 		return this;
 	}

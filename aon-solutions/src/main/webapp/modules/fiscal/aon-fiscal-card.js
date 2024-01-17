@@ -79,9 +79,14 @@ export class AonFiscalCard extends AonElement {
           this.MODELS = sortBy(datos, "year", "desc").map((model) =>
             FiscalUtils.getModelNew(model)
           );
+        } else {
+          return [];
         }
 
         const filter = await this.defaultFilter;
+
+        if(!filter) { return []; }
+
         let filterDatos = this.MODELS.filter((dato) => {
           return dato.year == filter.year && dato.period === filter.period;
         });
@@ -104,107 +109,119 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    let maxModels = modelDatas && modelDatas.length < 5 ? modelDatas.length : 5;
-    let accumulatedModels = 0;
+    if(modelDatas && modelDatas.length === 0){
+      let emptyMessage = this.createElement(TAG.DIV);
+      emptyMessage.innerHTML = "No existen modelos fiscales";
+      emptyMessage.style.fontWeight = "bold";
 
-    for (let index = 0; index < maxModels; index++) {
-      const modelData = modelDatas[index];
+      content.style.height = "100%";
+      content.appendChild(emptyMessage);
 
-      let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_FLEX;
-      row.style.justifyContent = "space-between";
-      row.style.width = "100%";
-      row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = ".8rem 0";
+      let fiscalCard = this.getElement("fiscalCard");
+      fiscalCard.style.display = "none";
+    } else {
+      let maxModels = modelDatas && modelDatas.length < 5 ? modelDatas.length : 5;
+      let accumulatedModels = 0;
 
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-      leftContent.style.alignItems = "center";
-      leftContent.style.gap = "1rem";
+      for (let index = 0; index < maxModels; index++) {
+        const modelData = modelDatas[index];
 
-      let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
-      description.style.color = "#fb982e";
-      description.style.fontWeight = "500";
-      description.innerHTML = "Modelo " + this.getParsedModel(modelData);
-      leftContent.appendChild(description);
+        let row = this.createElement(TAG.DIV);
+        row.className = CSS.AON_FLEX;
+        row.style.justifyContent = "space-between";
+        row.style.width = "100%";
+        row.style.borderBottom = "1px solid #ddd";
+        row.style.padding = ".8rem 0";
 
-      let territory = this.createElement(TAG.SPAN);
-      territory.style.color = "rgb(120, 120, 133)";
-      territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
-      territory.innerHTML = this.getModelTerritory(modelData.administration);
-      leftContent.appendChild(territory);
+        let leftContent = this.createElement(TAG.DIV);
+        leftContent.className = CSS.AON_FLEX;
+        leftContent.style.alignItems = "center";
+        leftContent.style.gap = "1rem";
 
-      let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX;
-      rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
+        let description = this.createElement(TAG.SPAN);
+        description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
+        description.style.color = "#fb982e";
+        description.style.fontWeight = "500";
+        description.innerHTML = "Modelo " + this.getParsedModel(modelData);
+        leftContent.appendChild(description);
 
-      let status = this.createElement(TAG.SPAN);
-      status.style.textAlign = "center";
-      status.style.cursor = "pointer";
-      status.appendChild(this.createStatus(modelData.status));
-      rightContent.appendChild(status);
+        let territory = this.createElement(TAG.SPAN);
+        territory.style.color = "rgb(120, 120, 133)";
+        territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
+        territory.innerHTML = this.getModelTerritory(modelData.administration);
+        leftContent.appendChild(territory);
 
-      let amount = this.createElement(TAG.SPAN);
-      amount.style.fontWeight = "bold";
-      amount.style.minWidth = "5rem";
-      amount.style.textAlign = "right";
-      amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
-      rightContent.appendChild(amount);
+        let rightContent = this.createElement(TAG.DIV);
+        rightContent.className = CSS.AON_FLEX;
+        rightContent.style.alignItems = "center";
+        rightContent.style.gap = "1rem";
 
-      accumulatedModels += modelData.result;
+        let status = this.createElement(TAG.SPAN);
+        status.style.textAlign = "center";
+        status.style.cursor = "pointer";
+        status.appendChild(this.createStatus(modelData.status));
+        rightContent.appendChild(status);
 
-      row.appendChild(leftContent);
-      row.appendChild(rightContent);
+        let amount = this.createElement(TAG.SPAN);
+        amount.style.fontWeight = "bold";
+        amount.style.minWidth = "5rem";
+        amount.style.textAlign = "right";
+        amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
+        rightContent.appendChild(amount);
 
-      content.appendChild(row);
+        accumulatedModels += modelData.result;
+
+        row.appendChild(leftContent);
+        row.appendChild(rightContent);
+
+        content.appendChild(row);
+      }
+
+      // Create others row
+      let total = modelDatas.reduce((t, model) => t + model.result, 0);
+      if (modelDatas.length > 5) {
+        let row = this.createElement(TAG.DIV);
+        row.className = CSS.AON_FLEX;
+        row.style.justifyContent = "space-between";
+        row.style.width = "100%";
+        row.style.borderBottom = "1px solid #ddd";
+        row.style.padding = ".8rem 0";
+
+        let leftContent = this.createElement(TAG.DIV);
+        leftContent.className = CSS.AON_FLEX;
+        leftContent.style.alignItems = "center";
+        leftContent.style.gap = "1rem";
+
+        let description = this.createElement(TAG.SPAN);
+        description.style.fontSize = "1rem";
+        description.style.color = "#fb982e";
+        description.style.fontWeight = "500";
+        description.innerHTML = "Otros";
+        leftContent.appendChild(description);
+
+        let rightContent = this.createElement(TAG.DIV);
+        rightContent.className = CSS.AON_FLEX;
+        rightContent.style.alignItems = "center";
+        rightContent.style.gap = "1rem";
+
+        let amount = this.createElement(TAG.SPAN);
+        amount.style.fontWeight = "bold";
+        amount.style.minWidth = "5rem";
+        amount.style.textAlign = "right";
+        amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
+        rightContent.appendChild(amount);
+
+        row.appendChild(leftContent);
+        row.appendChild(rightContent);
+
+        content.appendChild(row);
+      }
+
+      const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
+      fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
+      fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
+      fiscalTotalDiv.innerHTML = this.getTotal(modelDatas);
     }
-
-    // Create others row
-    let total = modelDatas.reduce((t, model) => t + model.result, 0);
-    if (modelDatas.length > 5) {
-      let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_FLEX;
-      row.style.justifyContent = "space-between";
-      row.style.width = "100%";
-      row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = ".8rem 0";
-
-      let leftContent = this.createElement(TAG.DIV);
-      leftContent.className = CSS.AON_FLEX;
-      leftContent.style.alignItems = "center";
-      leftContent.style.gap = "1rem";
-
-      let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1rem";
-      description.style.color = "#fb982e";
-      description.style.fontWeight = "500";
-      description.innerHTML = "Otros";
-      leftContent.appendChild(description);
-
-      let rightContent = this.createElement(TAG.DIV);
-      rightContent.className = CSS.AON_FLEX;
-      rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
-
-      let amount = this.createElement(TAG.SPAN);
-      amount.style.fontWeight = "bold";
-      amount.style.minWidth = "5rem";
-      amount.style.textAlign = "right";
-      amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
-      rightContent.appendChild(amount);
-
-      row.appendChild(leftContent);
-      row.appendChild(rightContent);
-
-      content.appendChild(row);
-    }
-
-    const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
-    fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
-    fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
-    fiscalTotalDiv.innerHTML = this.getTotal(modelDatas);
   }
 
   getEstimationTable(estimationModels) {
@@ -413,7 +430,7 @@ export class AonFiscalCard extends AonElement {
   }
 
   filterTable(filter) {
-    let section2 = this.getElement("fiscalTitleSection2");
+    let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
 
     titleSection2.innerHTML = filter.title;
@@ -424,7 +441,7 @@ export class AonFiscalCard extends AonElement {
   }
 
   async filterEstimationTable(filter) {
-    let section2 = this.getElement("fiscalTitleSection2");
+    let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
     titleSection2.innerHTML = filter.title;
 
