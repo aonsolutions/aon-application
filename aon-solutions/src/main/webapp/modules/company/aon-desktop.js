@@ -744,6 +744,10 @@ export class AonDesktop extends AonElement {
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
+		let pyGYearSelect = this.getElement('pyGyearelect');
+		let period = JSON.parse(pyGYearSelect.value);
+        let pygyYear = period.name;
+
 		let aonDashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
 
 		let d = document.getElementById('aonCardPyGOption');
@@ -755,7 +759,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
@@ -768,7 +772,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("quarterly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("quarterly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
@@ -781,7 +785,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}

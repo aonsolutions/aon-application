@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFBatchStatusVisitor;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
@@ -110,6 +111,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	private AonDateBox issueDate = new AonDateBox();
 	private ListBox bank = new ListBox();
 	private ListBox type = new ListBox();
+	private Label status = new Label();
 	private AonTableButton confidential = new AonTableButton("");
 	private Label totalAmount = new Label();
 
@@ -281,7 +283,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		aviableFinanceDockContent.getElement().getStyle().setProperty("margin", "0 1rem 1rem 1rem");
 		aviableDockLayoutPanel.add(aviableFinanceDockContent);
 		
-		financesPanel.addWest(aviableDockLayoutPanel, Window.getClientWidth() / 2);
+		financesPanel.addWest(aviableDockLayoutPanel, fBatch.isAccounted() ? 0 : Window.getClientWidth() / 2);
 
 		aviableFinanceScrollPanel = new ScrollPanel();
 		aviableFinanceScrollPanel.setHeight((Window.getClientHeight() - 350) + "px");
@@ -348,6 +350,39 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		issueDate.setValue(this.fBatch.getIssueDate());
 		setSelectedValueLB(type, null != fBatch.getType() ? fBatch.getType().toString() : null);
 		type.setEnabled(fBatch.getBatchDetails().isEmpty());
+		status.setText(null == fBatch.getStatus() ? "" : fBatch.getStatus().getDescription());
+		fBatch.getStatus().visit(new IFBatchStatusVisitor() {
+			
+			@Override
+			public void visitUnknown() {
+				status.removeStyleName(AON.CSS.aonColorGreen());
+				status.removeStyleName(AON.CSS.aonBold());
+				status.removeStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitPending() {
+				status.removeStyleName(AON.CSS.aonColorGreen());
+				status.removeStyleName(AON.CSS.aonBold());
+				
+				status.setStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitGenerated() {
+				status.removeStyleName(AON.CSS.aonColorGreen());
+				status.removeStyleName(AON.CSS.aonBold());
+				status.removeStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitAccounted() {
+				status.removeStyleName(AON.CSS.aonColorRed());
+				
+				status.setStyleName(AON.CSS.aonColorGreen());
+				status.addStyleName(AON.CSS.aonBold());
+			}
+		});
 		setSelectedValueLB(bank, null != fBatch.getRbank() ? fBatch.getRbank().getId().toString() : "");
 		if (fBatch.isConfidential()) {
 			confidential.addStyleName(AON.CSS.aonIconChecked());
@@ -536,7 +571,9 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		return table;
 	}
 
-	private void search(FinanceModuleOptions opt2) {
+	private void search(FinanceModuleOptions opt) {
+		if(fBatch.isAccounted()) return;
+		
 		aviableFinances.clear();
 		aviableFinancesSelected.clear();
 
@@ -635,7 +672,35 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			save();
 		});
 		table.setWidget(1, 1, type);
-		table.getFlexCellFormatter().setColSpan(1, 1, 3);
+		
+		table.setWidget(1, 2, new InlineLabel(AON.MSG.status()));
+		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
+		table.getCellFormatter().getElement(1, 2).getStyle().setTextAlign(TextAlign.RIGHT);
+		status.setText(null == fBatch.getStatus() ? "" : fBatch.getStatus().getDescription());
+		fBatch.getStatus().visit(new IFBatchStatusVisitor() {
+			
+			@Override
+			public void visitUnknown() {
+				// TODO Auto-generated method stub	
+			}
+			
+			@Override
+			public void visitPending() {
+				status.setStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitGenerated() {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void visitAccounted() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+				status.addStyleName(AON.CSS.aonBold());
+			}
+		});
+		table.setWidget(1, 3, status);
 
 		table.setWidget(2, 0, new InlineLabel(AON.MSG.bankAccount()));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
@@ -1567,6 +1632,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 									public void onSuccess(FBatch savedFbatch) {
 										fBatch = savedFbatch;
 										hasSaved = true;
+										initialize();
 									}
 
 									@Override
@@ -1610,6 +1676,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 										hasSaved = true;
 										fBatch = savedFbatch;
 										sepaButton.setVisible(!savedFbatch.getBatchDetails().isEmpty() && fBatch.getRbank() != null);
+										initialize();
 									}
 
 									@Override

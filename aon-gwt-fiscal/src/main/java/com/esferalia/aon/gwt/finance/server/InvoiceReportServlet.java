@@ -148,6 +148,7 @@ public class InvoiceReportServlet extends HttpServlet {
 							.and(p.getRSellerIdProperty().isNull().or(
 									p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
 									.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))	
+									.and(p.getRSellerStatusProperty().eq((byte)0))	
 							))
 							;
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
