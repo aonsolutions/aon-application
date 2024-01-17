@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.config.InsertIAE3034;
 import net.aonsolutions.db.up2date.finance.InvoiceInfoLroeUpdate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
+import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
 import net.aonsolutions.db.up2date.payroll.AlterContractDeductionExpression;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
@@ -419,7 +420,8 @@ public class Up2Date {
 	    // AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
 	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
 	    AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
-	    InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
+	    InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE,
+	    CodinucovaInvoiceTaxFix.INSTANCE
 	};
 
     // ------------------------------------------------------------------------
