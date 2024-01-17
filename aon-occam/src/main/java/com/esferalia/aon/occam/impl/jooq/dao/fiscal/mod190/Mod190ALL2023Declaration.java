@@ -81,6 +81,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				,SALARY_PAYMENT.AMOUNT
 				,SALARY_PAYMENT.IRPF
 				
+				,CONTRACT.ID
 				,CONTRACT.SS_REGIME
 				
 				,PERSON.REGISTRY
