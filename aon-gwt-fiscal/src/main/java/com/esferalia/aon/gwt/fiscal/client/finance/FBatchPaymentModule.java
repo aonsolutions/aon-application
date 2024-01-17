@@ -493,7 +493,7 @@ public class FBatchPaymentModule extends MainEntryPoint {
 			status.setText(FBatchStatus.GENERATED.getDescription());
 			status.removeStyleName(AON.CSS.aonColorRed());
 		});
-		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getStatus().equals(FBatchStatus.ACCOUNTED) && fBatch.getType() != (byte)0 && !fBatch.getBatchDetails().isEmpty());
+		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getBatchDetails().isEmpty() && fBatch.getType() != (byte)0 && fBatch.getRbank() != null);
 		actionsPanel.add(sepaButton);
 		
 		setVisible(diskForm, fBatch.getRattach() != null);
