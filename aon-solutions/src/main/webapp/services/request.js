@@ -2,13 +2,17 @@ import { CONSTANT, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME } from "../environments/e
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
+  
+  let arrays = Object.keys(params).filter((key) => Array.isArray(params[key]));
+  let primitives = Object.keys(params).filter((key) => !Array.isArray(params[key]));
+  	
   return (
     "?" +
-    Object.keys(params)
-      .map((key) => key + "=" + encodeURIComponent(params[key]))
-      .join("&")
+      primitives.map((key) => key + "=" + encodeURIComponent(params[key])).join("&") +
+	  (arrays.length === 0  ? "" : "&" + arrays.map((key) => params[key].map((value) => key + "=" + encodeURIComponent(value)).join("&")).join("&"))
   );
 };
+
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 

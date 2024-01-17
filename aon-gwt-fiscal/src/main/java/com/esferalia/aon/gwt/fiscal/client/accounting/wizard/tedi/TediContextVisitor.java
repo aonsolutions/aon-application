@@ -419,6 +419,17 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitTaxQuota(ICallback callback ) {
 	}
 
+	@Override
+	public void visitIrpfRate(ICallback callback ){
+	}
+	
+	@Override
+	public void visitPayMethod(ICallback callback){
+	}
+	@Override
+	public void visitIrpfQuota(ICallback callback ){
+	}
+
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
 		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(date);
