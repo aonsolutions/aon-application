@@ -119,6 +119,7 @@ export const BANKS = [
     {code: '3187', bic: 'BCOEESMM187', bank: 'CAJA RURAL DEL SUR'},
     {code: '3190', bic: 'BCOEESMM190', bank: 'CAJA RURAL ALBACETE C. REAL CUENCA'},
     {code: '3191', bic: 'BCOEESMM191', bank: 'CAJA RURAL DE ARAGON'},
+    {code: '3023', bic: 'BCOEESMM023', bank: 'CAJA RURAL DE GRANADA'},
 ];
 
 export const getBank = (code) => {

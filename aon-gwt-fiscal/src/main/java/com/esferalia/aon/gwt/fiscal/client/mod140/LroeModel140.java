@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -28,7 +29,8 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -50,6 +52,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -73,7 +76,8 @@ public class LroeModel140 extends DockLayoutPanel {
 			.addItem(new AonMenuItem().setTitle("1.1 Con software garante")
 					.setHandler(chapter1_1Handler()))
 			.addItem(new AonMenuItem().setTitle("1.2 Sin software garante")
-					.setHandler(chapter1_2Handler()))
+					.setHandler(emptyHandler())
+					.setDisabled(true))
 			.addItem(new AonMenuItem().setTitle("1.3 Ingresos sin factura")
 					.setDisabled(true)
 					.setHandler(emptyHandler()));
@@ -158,7 +162,78 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void info(Integer invoice, String reference) {
-				Window.alert("En desarrollo...");
+				SII_SERVICE.getInvoiceTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceTracking>>() {
+					
+					@Override
+					public void onSuccess(List<InvoiceTracking> result) {
+						FlexTable table = new FlexTable();
+						table.setWidth("100%");
+						if(result.isEmpty()) {
+							table.setWidget(0, 0, new Label("No se ha realizado ning\u00fan env\u00edo."));
+						} else {
+							result.stream().forEach(r -> {
+								Integer row = table.getRowCount();
+								table.setWidget(row, 0, new Label(AonDateUtils.formatDate(r.getInvoiceBatch().getDate())));
+								table.setWidget(row, 1, new Label(r.getInvoiceBatch().getOperation().getDescription()));
+								table.setWidget(row, 2, new Label(r.getInvoiceBatchDetail().getStatus().getDescription()));
+								
+								HorizontalPanel hp = new HorizontalPanel();
+								AonIcon downloadRequest = new AonIcon("download");
+								downloadRequest.setTitle("Descargar Petici\u00f3n");
+								downloadRequest.getElement().getStyle().setCursor(Cursor.POINTER);
+								downloadRequest.onClick(new ClickHandler() {
+									
+									@Override
+									public void onClick(ClickEvent event) {
+										SII_SERVICE.getRequestUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+											
+											@Override
+											public void onSuccess(String url) {
+												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											}
+											
+											@Override
+											public void onFailure(Throwable arg0) {}
+										});
+									}
+								});
+								
+								hp.add(downloadRequest);
+								
+								AonIcon downloadResponse = new AonIcon("download");
+								downloadResponse.setTitle("Descargar Respuesta");
+								downloadResponse.getElement().getStyle().setCursor(Cursor.POINTER);
+								downloadResponse.onClick(new ClickHandler() {
+									
+									@Override
+									public void onClick(ClickEvent event) {
+										SII_SERVICE.getResponseUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+											
+											@Override
+											public void onSuccess(String url) {
+												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											}
+											
+											@Override
+											public void onFailure(Throwable arg0) {}
+										});
+									}
+								});
+								
+								hp.add(downloadResponse);
+								table.setWidget(row, 3, hp);
+							});
+						}
+						AonDialog dialog = new AonDialog("Informaci\u00f3n", table);
+						dialog.info();
+					}
+					
+					@Override
+					public void onFailure(Throwable arg0) {
+						AonDialog dialog = new AonDialog("Informaci\u00f3n", new Label("No se ha realizado ning\u00fan env\u00edo."));
+						dialog.info();
+					}
+				});
 			}
 
 			@Override
@@ -187,7 +262,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
-			.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1);
+			.setCommunicationType(InvoiceCommunicationType.LROE);
 	}
 	
 	private AonMenu getMenu() {
@@ -447,20 +522,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1)
-				.setType(InvoiceType.SALES);
-				invoiceGrid.setFilterParams(getFilterParams());
-			}
-		};
-	}
-	
-	private ClickHandler chapter1_2Handler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(InvoiceCommunicationType.LROE)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -473,7 +535,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(OldInvoiceCommunicationType.LROE_2_1)
+				.setCommunicationType(InvoiceCommunicationType.LROE)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -517,7 +579,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					VerticalPanel vp = new VerticalPanel();
 					getModel140().getBreakdownPanel().setWidget(vp);
 					selectedInvoices.stream().forEach(invoice -> {
-						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<Boolean>() {
+						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<Boolean>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -565,11 +627,11 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !OldInvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && invoice.isSales()) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
-								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<ICResponse>() {
+								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
 									
 									@Override
 									public void onSuccess(ICResponse result) {
