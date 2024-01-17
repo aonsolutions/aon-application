@@ -1939,7 +1939,7 @@ CREATE TABLE `contract_deduction` (
   `contract` int NOT NULL COMMENT 'Contrato',
   `description` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `description_decorable` tinyint NOT NULL DEFAULT '0',
-  `expression` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Fórmula',
+  `expression` varchar(512) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Fórmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `month` tinyint DEFAULT NULL COMMENT 'Mes de la percepcion',
