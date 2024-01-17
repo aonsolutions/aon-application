@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import com.esferalia.aon.in.payroll.tgss.idc.PEC.Bonus;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,7 +23,7 @@ class PECListener  implements IdcParserListener {
 	
 	@FunctionalInterface
 	private static interface CostProvider {
-		PEC.Cost  newCost(			
+		Cost  newCost(			
 				String nss, 
 				String ccc, 
 				String pec, 
@@ -36,7 +36,7 @@ class PECListener  implements IdcParserListener {
 	
 	@FunctionalInterface
 	private static interface DeductionProvider {
-		PEC.Deduction  newDeduction(			
+		Deduction  newDeduction(			
 				String nss, 
 				String ccc, 
 				String pec, 
@@ -47,10 +47,161 @@ class PECListener  implements IdcParserListener {
 				Date end);
 	}
 	
-	private static class BenefitsLoss extends PEC.Bonus {
+	private static interface AddPEC {
+	    public void addTo(PECListener listener);
+	}
+	
+	private static class Cost extends PEC.Cost implements AddPEC {
+	    @Override
+	    public void addTo(PECListener listener) {
+		listener.ssPECs.add(this);
+	    }
+	}
+	
+	private static class Bonus extends PEC.Bonus implements AddPEC {
+	    @Override
+	    public void addTo(PECListener listener) {
+		listener.ssPECs.add(this);
+	    }
+	    
 	}
 
+	private static class Deduction extends PEC.Deduction implements AddPEC {
+	    @Override
+	    public void addTo(PECListener listener) {
+		listener.ssPECs.add(this);
+	    }
+	}
 
+	private static class RemoveCost extends Cost {
+	    @Override
+	    public void addTo(PECListener listener) {
+		// remove cost like this
+		List<PEC> toRemove =
+		listener.ssPECs.stream().filter(this::isThis).toList();
+		listener.ssPECs.removeAll(toRemove);
+		
+		boolean hasMe =
+		listener.ssPECs.stream().anyMatch(this::hasMe);
+		if ( hasMe ) {
+		    return;
+		}
+		
+		listener.ssPECs.add(this);
+	    }
+
+	    private boolean isThis(PEC pec) {
+		return pec.visit( new Visitor<Boolean>() {
+		    @Override
+		    public Boolean visitCost(Cost cost) {
+			return 
+		        Objects.equals(cost.getSsNum(), getSsNum())
+		        && Objects.equals(cost.getName(), getName())
+		        && Objects.equals(cost.getEndDate(), getEndDate())
+		        && Objects.equals(cost.getStartDate(), getStartDate());
+		    }
+		    @Override
+		    public Boolean visitBonus(Bonus bonus) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitDeduction(Deduction deduction) {
+		        return false;
+		    }
+		});
+	    }
+	    
+	    private boolean hasMe(PEC pec) {
+		return pec.visit( new Visitor<Boolean>() {
+		    @Override
+		    public Boolean visitCost(Cost cost) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitBonus(Bonus bonus) {
+		        return 
+		        Objects.equals(bonus.getSsNum(), getSsNum())
+		        && Objects.equals(bonus.getEndDate(), getEndDate())
+		        && Objects.equals(bonus.getStartDate(), getStartDate())
+		        && bonus.getFormula() != null && bonus.getFormula().contains(getName()) ;
+		    }
+		    @Override
+		    public Boolean visitDeduction(Deduction deduction) {
+		        return false;
+		    }
+		});
+	    }
+	}
+
+	private static class BenefitsLoss extends Bonus {
+	}
+
+	private static class ZeroDeduction extends Deduction {
+	}
+
+	private static class RemoveDeduction extends Deduction {
+	    @Override
+	    public void addTo(PECListener listener) {
+		// remove deduction like this
+		List<PEC> toRemove =
+		listener.ssPECs.stream().filter(this::isThis).toList();
+		listener.ssPECs.removeAll(toRemove);
+
+		boolean hasMe =
+		listener.ssPECs.stream().anyMatch(this::hasMe);
+		if ( hasMe ) {
+		    return;
+		}
+
+		listener.ssPECs.add(this);
+	    }
+
+	    private boolean isThis(PEC pec) {
+		return pec.visit( new Visitor<Boolean>() {
+		    @Override
+		    public Boolean visitCost(Cost cost) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitBonus(Bonus bonus) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitDeduction(Deduction deduction) {
+		        return 
+		        Objects.equals(deduction.getSsNum(), getSsNum())
+		        && Objects.equals(deduction.getName(), getName())
+		        && Objects.equals(deduction.getEndDate(), getEndDate())
+		        && Objects.equals(deduction.getStartDate(), getStartDate())
+		        ;
+		    }
+		});
+	    }
+
+	    private boolean hasMe(PEC pec) {
+		return pec.visit( new Visitor<Boolean>() {
+		    @Override
+		    public Boolean visitCost(Cost cost) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitBonus(Bonus bonus) {
+		        return false;
+		    }
+		    @Override
+		    public Boolean visitDeduction(Deduction deduction) {
+			return
+		        Objects.equals(deduction.getSsNum(), getSsNum())
+		        && Objects.equals(deduction.getEndDate(), getEndDate())
+		        && Objects.equals(deduction.getStartDate(), getStartDate())
+		        && deduction.getFormula() != null && deduction.getFormula().contains(getName()) ;
+		    }
+		});
+	    }
+	}
+
+	private static class NegativeDeduction extends Deduction {
+	}
 
 	private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
 
@@ -87,7 +238,7 @@ class PECListener  implements IdcParserListener {
 			put("08", REMOVE_ALL_DEDUCTIONS);
 			put("10", collection(
 				newCgcITDeduction(ContextVariable.CGC_EMPLOYEE),
-				newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
+				//newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.MEI_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)
@@ -116,7 +267,7 @@ class PECListener  implements IdcParserListener {
 			put("01", REMOVE_ALL_COSTS );
 			put("10", collection(
 				newCgcITCost(ContextVariable.CGC_ENTERPRISE),
-				newRemoveCost(ContextVariable.CGC_ENTERPRISE),
+				//newRemoveCost(ContextVariable.CGC_ENTERPRISE),
 				newRemoveCost(ContextVariable.MEI_ENTERPRISE),
 				newRemoveCost(ContextVariable.FP_ENTERPRISE),
 				newRemoveCost(ContextVariable.FOGASA_ENTERPRISE),
@@ -192,8 +343,7 @@ class PECListener  implements IdcParserListener {
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("03", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
-			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; BONF_SEPE", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
-			//put("16",  String.format(Locale.ROOT,"MIN(%%s, MIN(%%2$.2f, (%s == %s) ? %%2$.2f : ROUND(%%2$.2f/30.00, 2)*%s))", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
+			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE_E=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE_E : 0.00); BONF_SEPE_E=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE_E, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE_E', TOTAL_BONF_SEPE_E + BONF_SEPE_E ) ; BONF_SEPE_E", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
 			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
@@ -203,6 +353,13 @@ class PECListener  implements IdcParserListener {
 
 			put("51",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_DEDUCTION_EXPRESSION_MAP = new HashMap<String, String>() {
+		{
+			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(-(%%s), MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; -BONF_SEPE", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
 		}
 	};
 
@@ -232,8 +389,8 @@ class PECListener  implements IdcParserListener {
 	@Override
 	public void onEmployeeQuoteTRL(String nss, String ccc, String description, Date start, Date end) {
 	    if ( description.matches("\\s*PROGRAMAS\\s*DE\\s*FORMACION\\s*")) {
-        	    ssPECs.add(newRemovePEC(new PEC.Cost(), nss, ccc, "986", description, start, end, ContextVariable.MEI_ENTERPRISE));
-        	    ssPECs.add(newRemovePEC(new PEC.Deduction(), nss, ccc, "986",description, start, end,  ContextVariable.MEI_EMPLOYEE));
+        	    newRemovePEC(new Cost(), nss, ccc, "986", description, start, end, ContextVariable.MEI_ENTERPRISE).addTo(this);
+        	    newRemovePEC(new Deduction(), nss, ccc, "986",description, start, end,  ContextVariable.MEI_EMPLOYEE).addTo(this);
 	    }
 	}
 	@Override
@@ -246,27 +403,30 @@ class PECListener  implements IdcParserListener {
 		
 		if ( PEC_BONUS_MAP.containsKey(code )) {
 			try {
-				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, pecEnd)) ;
-				if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssPECs.add( newDeduction(nss, ccc, code, description, portTipo, quota, start, pecEnd)) ;
+				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
+					newBonus(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this);
+				}
+				if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
+					newDeduction(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this); ;
+				}
 			} catch (ParseException e) {
 			}
 		}
 		if ( PEC_COST_MAP.containsKey(code )) {
-			if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota))
-				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> ssPECs.add(f.newCost(nss, ccc, code, quota, portTipo, description, start, pecEnd))) ;
+			if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota)) {
+				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> f.newCost(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;
+			}
 		}
 		if ( PEC_DEDUCTION_MAP.containsKey(code )) {
-			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota))
-				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> ssPECs.add( f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd))) ;
+			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota)) {
+				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;			}
 		}
 	}
 	
 	
 	@Override
 	public void onEmployeeBenefitsLoss(String nss, String ccc, String cause, Date start, Date end) {
-	    PEC benefitsLoss = new BenefitsLoss();
+	    BenefitsLoss benefitsLoss = new BenefitsLoss();
 	    benefitsLoss.setCcc(ccc);
 	    benefitsLoss.setNss(nss);
 	    benefitsLoss.setStartDate(start);
@@ -276,7 +436,7 @@ class PECListener  implements IdcParserListener {
 	    	+ "/*epoch:%d*/AVISO(\"<div>PERDIDA DE BENEFICIOS: <span style='color:red;'>%s</span></div>"
 	    	+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\")", Calendar.getInstance().getTimeInMillis(), cause));
 
-	    ssPECs.add(benefitsLoss);
+	    benefitsLoss.addTo(this);
 	    
 	}
 	
@@ -293,23 +453,23 @@ class PECListener  implements IdcParserListener {
 	// ------------------------------------------------------------------------
 	static String getBonusFormula(String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
-		return getFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+		return getBonusFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
 		
 	}
 	
 	static String getDeductionFormula(String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
-		return getFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+		return getDeductionFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
 	}
 	
 	// ------------------------------------------------------------------------
 	
-	private static PEC newBonus(String nss, String ccc, String code, String description, String portTipo,
+	private static Bonus newBonus(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
 		
-		PEC ssBonus = new PEC.Bonus();		
+		Bonus ssBonus = new Bonus();		
 		ssBonus.setCcc(ccc);
 		ssBonus.setNss(nss);
 		ssBonus.setStartDate(start);
@@ -321,12 +481,12 @@ class PECListener  implements IdcParserListener {
 		return ssBonus;
 	}
 
-	private static PEC newDeduction(String nss, String ccc, String code, String description, String portTipo,
+	private static Deduction newDeduction(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
 		
-		PEC ssDeduction = new PEC.Deduction();		
+		Deduction ssDeduction = new Deduction();		
 		ssDeduction.setCcc(ccc);
 		ssDeduction.setNss(nss);
 		ssDeduction.setStartDate(start);
@@ -339,7 +499,7 @@ class PECListener  implements IdcParserListener {
 		return ssDeduction;
 	}
 
-	private static String getFormula(String expression, String code, String portTipo,
+	private static String getBonusFormula(String expression, String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
@@ -356,8 +516,21 @@ class PECListener  implements IdcParserListener {
 		return formula;
 	}
 
-	private static DeductionProvider newZeroDeduction( ContextVariable var ) {
-		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newZeroDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	private static String getDeductionFormula(String expression, String code, String portTipo,
+		String quota, Date start, Date end) throws ParseException {
+
+        	double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+        	String formula ;
+	
+		formula = String.format(Locale.ROOT,
+		"/*epoch:%d,pec:%s,quota:%s*//*read-only*/_D=(%s);_D == 0.00 ? REMOVE() : _D /**/",
+		Calendar.getInstance().getTimeInMillis(),
+		code, 
+		quota,
+		String.format(Locale.ROOT, PEC_DEDUCTION_EXPRESSION_MAP.getOrDefault(code, PEC_EXPRESSION_MAP.get(code)), expression, percent) 
+		);
+	
+		return formula;
 	}
 
 	private static DeductionProvider newNegativeDeduction( ContextVariable var ) {
@@ -380,7 +553,7 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static PEC.Deduction newNegativeDeduction(
+	private static NegativeDeduction newNegativeDeduction(
 			String nss, 
 			String ccc, 
 			String pec, 
@@ -390,11 +563,11 @@ class PECListener  implements IdcParserListener {
 			Date start, 
 			Date end ,
 			ContextVariable var){
-		PEC.Deduction deduction =  new PEC.Deduction();	
+	    	NegativeDeduction deduction =  new NegativeDeduction();	
 		return newNegativePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static PEC.Deduction newZeroDeduction(
+	private static ZeroDeduction newZeroDeduction(
 			String nss, 
 			String ccc, 
 			String pec, 
@@ -404,11 +577,11 @@ class PECListener  implements IdcParserListener {
 			Date start, 
 			Date end ,
 			ContextVariable var){
-		PEC.Deduction deduction =  new PEC.Deduction();	
+	    	ZeroDeduction deduction =  new ZeroDeduction();	
 		return newZeroPEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static PEC.Deduction newRemoveDeduction(
+	private static RemoveDeduction newRemoveDeduction(
 			String nss, 
 			String ccc, 
 			String pec, 
@@ -418,11 +591,11 @@ class PECListener  implements IdcParserListener {
 			Date start, 
 			Date end ,
 			ContextVariable var){
-		PEC.Deduction deduction =  new PEC.Deduction();	
+		RemoveDeduction deduction =  new RemoveDeduction();	
 		return newRemovePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static PEC.Cost newCgcITCost(
+	private static Cost newCgcITCost(
 		String nss, 
 		String ccc, 
 		String pec, 
@@ -432,7 +605,7 @@ class PECListener  implements IdcParserListener {
 		Date start, 
 		Date end ,
 		ContextVariable var){
-        	PEC.Cost cost =  new PEC.Cost();	
+        	Cost cost =  new Cost();	
 		cost.setCcc(ccc);
 		cost.setNss(nss);
 		cost.setStartDate(start);
@@ -449,7 +622,7 @@ class PECListener  implements IdcParserListener {
 		return cost;
 	}
 
-	private static PEC.Deduction newCgcITDeduction(
+	private static Deduction newCgcITDeduction(
 		String nss, 
 		String ccc, 
 		String pec, 
@@ -459,7 +632,7 @@ class PECListener  implements IdcParserListener {
 		Date start, 
 		Date end ,
 		ContextVariable var){
-        	PEC.Deduction deduction =  new PEC.Deduction();	
+        	Deduction deduction =  new Deduction();	
 		deduction.setCcc(ccc);
 		deduction.setNss(nss);
 		deduction.setStartDate(start);
@@ -476,7 +649,7 @@ class PECListener  implements IdcParserListener {
 		return deduction;
 	}
 
-	private static PEC.Cost newRemoveCost(
+	private static RemoveCost newRemoveCost(
 			String nss, 
 			String ccc, 
 			String pec, 
@@ -486,7 +659,7 @@ class PECListener  implements IdcParserListener {
 			Date start, 
 			Date end ,
 			ContextVariable var){
-		PEC.Cost cost =  new PEC.Cost();	
+		RemoveCost cost =  new RemoveCost();	
 		return newRemovePEC(cost, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
@@ -518,7 +691,7 @@ class PECListener  implements IdcParserListener {
 		return t;
 	}
 
-	private static <T extends PEC> T newRemovePEC(
+	private static <T extends PEC & AddPEC> T newRemovePEC(
 		T t,
 		String nss, 
 		String ccc, 
@@ -543,7 +716,7 @@ class PECListener  implements IdcParserListener {
         	return t;
 	}
 
-	private static <T extends PEC> T newRemovePEC(
+	private static <T extends PEC & AddPEC> T newRemovePEC(
 			T t,
 			String nss, 
 			String ccc, 
