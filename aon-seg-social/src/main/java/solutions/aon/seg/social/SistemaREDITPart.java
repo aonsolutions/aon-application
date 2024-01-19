@@ -34,11 +34,9 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
-import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
-import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlOption;
@@ -291,6 +289,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
 			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			
@@ -308,8 +307,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 //			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 
 			if (job.isPresent()) {				
-				((HtmlInput) htmlPage.querySelector("#puestoTrabajo")).setValue(job.get());
-				((HtmlInput) htmlPage.querySelector("#puestoTrabajo")).setValueAttribute(job.get());
+				((HtmlInput) htmlPage.getElementById("puestoTrabajo")).setValue(job.get());
+				((HtmlInput) htmlPage.getElementById("puestoTrabajo")).setValueAttribute(job.get());
 			}
 			
 			if (jobDescription.isPresent()) {				
@@ -330,13 +329,13 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					cotDaysInput = htmlPage.querySelector("#sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
-					contractTypeOption = htmlPage.querySelector("#tipoContrato option[value=\"2\"]");
-					htmlPage = contractTypeOption.click();
+				    	webClient.waitForBackgroundJavaScript(5000);
+				    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+				    	
+					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					
-					wait4(htmlPage, p -> p.getElementById("#BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-					
-					cotBaseInput = (HtmlInput) htmlPage.querySelector("#BaseCot");
-					cotDaysInput = (HtmlInput) htmlPage.querySelector("#DiasCot");
+					cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
+					cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
 				break;
 			}
 			
