@@ -134,6 +134,11 @@ public class FinanceImpl implements IFinance {
 		return InvoiceDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
 	}
 
+	@Override
+	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice) {
+		ctx.getDslContext().transaction(configuration -> InvoiceDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
+	}
+	
 	
 	// ------------------------------------- INVOICE DETAIL
 	
