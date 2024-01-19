@@ -102,6 +102,8 @@ public interface IFinance {
 	
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
+	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************

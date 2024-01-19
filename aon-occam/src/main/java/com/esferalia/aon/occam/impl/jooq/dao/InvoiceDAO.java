@@ -1425,6 +1425,22 @@ public class InvoiceDAO {
 		}
 	}
 	
+	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NORMAL_RECTIFIER.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifiedInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifierInvoice)))
+		.execute();
+		
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifierInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifiedInvoice)))
+		.execute();
+	}
+	
 	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
 		Invoice inv = getInvoice(ctx, invoiceId);
 		if (inv == null) {
