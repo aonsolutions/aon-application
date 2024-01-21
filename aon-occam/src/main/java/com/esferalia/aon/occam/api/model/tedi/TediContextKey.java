@@ -186,8 +186,25 @@ public enum TediContextKey  implements Serializable {
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitTotal(callback);
 		}
-	}
-	;
+	},
+	IRPF_RATE("Tipo (%) retención") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitIrpfRate(callback);
+		}
+	},
+	IRPF_QUOTA("Retención") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitIrpfQuota(callback);
+		}
+	},
+	PAY_METHOD("Forma de pago") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitPayMethod(callback);
+		}
+	}	;
 
 	private String description;
 
