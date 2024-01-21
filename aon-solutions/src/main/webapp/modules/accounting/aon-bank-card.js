@@ -100,7 +100,7 @@ export class AonBankCard extends AonElement {
       
     } else {
 
-      let maxLength = banks.length > 4 ? 4 : banks.length;
+      let maxLength = banks.length > 5 ? 5 : banks.length;
       let accumulatedBanks = 0;
 
       for (let index = 0; index < maxLength; index++) {
@@ -111,7 +111,7 @@ export class AonBankCard extends AonElement {
         row.style.justifyContent = "space-between";
         row.style.width = "100%";
         row.style.borderBottom = "1px solid #ddd";
-        row.style.padding = ".8rem 0";
+        row.style.padding = "0.5rem 0";
 
         let leftContent = this.createElement(TAG.DIV);
         leftContent.className = CSS.AON_FLEX;
@@ -154,13 +154,13 @@ export class AonBankCard extends AonElement {
 
       // Create others row
       let total = banks.reduce((t, bank) => t + bank.balance, 0);
-      if(banks.length > 4){
+      if(banks.length > 5){
         let row = this.createElement(TAG.DIV);
         row.className = CSS.AON_FLEX;
         row.style.justifyContent = "space-between";
         row.style.width = "100%";
         row.style.borderBottom = "1px solid #ddd";
-        row.style.padding = ".8rem 0";
+        row.style.padding = "0.4rem 0";
 
         let leftContent = this.createElement(TAG.DIV);
         leftContent.className = CSS.AON_FLEX;

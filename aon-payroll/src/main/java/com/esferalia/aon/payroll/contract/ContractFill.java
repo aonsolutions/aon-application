@@ -62,6 +62,31 @@ public class ContractFill {
 		
 	}
 	
+	public static byte[] fillCopyBasic(
+			Integer contractType, 
+			String sepeIde, 
+			Date comunicationDate,
+			Map<String, String> contractOtherInfo, 
+			Map<String, String> contractFillInfo, 
+			TreeMap<String, String> contractClauses) throws IllegalArgumentException {
+		
+		if(null == contractType)
+			throw new IllegalArgumentException("El tipo de contrato no esta definido.");
+		
+		initializeFieldNames();
+		checkContractOtherInfo(contractOtherInfo);
+		
+		if(contractType >= 100 && contractType <= 400) 
+			return fillIndefiniteCopyBasic(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
+		else if (contractType == 421) 
+			return fillFormationCopyBasic(sepeIde, comunicationDate,contractOtherInfo, contractFillInfo, contractClauses);
+		else if (contractType == 420 || contractType == 520) 
+			return fillPracticeCopyBasic(sepeIde, comunicationDate,contractOtherInfo, contractFillInfo, contractClauses);
+		else 
+			return fillTemporalCopyBasic(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
+		
+	}
+	
 	public static byte[] fillContractExtension(Map<String, String> contractExtensionFillInfo) throws IllegalArgumentException {
 		return fillExtensionContract(contractExtensionFillInfo);
 	}
@@ -281,6 +306,95 @@ public class ContractFill {
 			return null;
 		}
 	}
+	
+	private static byte[] fillIndefiniteCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String valueStr = field.getValueAsString();
+					String fieldName = field.getPartialName();
+					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
+					
+					if(null != renderFieldName) {
+						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
+						newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+						setField(field, newValue);
+					} else {
+					
+						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
+							valueStr = valueStr.replace("$aon:", "");
+							
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
+							} else {
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+									setField(field, newValue);
+								}
+							}
+							
+						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
+							valueStr = valueStr.replace("${", "");
+							valueStr = valueStr.replace("}", "");
+							if(!StringUtils.contains(valueStr, " ")){
+								String newValue = contractFillInfo.getOrDefault(valueStr, "");
+								newValue = AonStringUtils.isBlank(newValue) ? newValue : newValue.toUpperCase();
+								setField(field, newValue);
+							}
+						}
+					
+					}
+						
+				}
+			}
+			
+			 // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+			
+	        // Add Copy Basic info if exists
+	        addCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
+	        
+	        // Remove unsed pages
+	        removeIndefiniteNotUsingPage(contractType, pdfDocument);
+	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+			pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	private static void removeIndefiniteNotUsingPage(Integer contractType, PDDocument pdfDocument) {
 		if(contractType.equals(100) || contractType.equals(200) || contractType.equals(300)) {
@@ -431,6 +545,95 @@ public class ContractFill {
 			return null;
 		}
 	}
+	
+	private static byte[] fillFormationCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String valueStr = field.getValueAsString();
+					String fieldName = field.getPartialName();
+					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
+					
+					if(null != renderFieldName) {
+						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
+						setField(field, newValue);
+					} else {
+					
+						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
+							valueStr = valueStr.replace("$aon:", "");
+							
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
+							} else {
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
+								}
+							}
+						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
+							valueStr = valueStr.replace("${", "");
+							valueStr = valueStr.replace("}", "");
+							
+							if(!StringUtils.contains(valueStr, " ")){
+								String newValue = contractFillInfo.getOrDefault(valueStr, "");
+								setField(field, newValue);
+							}
+						}
+					
+					}
+						
+				}
+			}
+			
+			 // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+
+			// Add Copy Basic info if exists
+	        addCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
+	        
+	        // Remove unsed pages
+	        pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+	        pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
@@ -498,6 +701,96 @@ public class ContractFill {
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
+	        pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+	        pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static byte[] fillPracticeCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String valueStr = field.getValueAsString();
+					String fieldName = field.getPartialName();
+					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
+					
+					if(null != renderFieldName) {
+						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
+						setField(field, newValue);
+					} else {
+					
+						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
+							valueStr = valueStr.replace("$aon:", "");
+							
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
+							} else {
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
+								}
+							}
+						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
+							valueStr = valueStr.replace("${", "");
+							valueStr = valueStr.replace("}", "");
+							
+							if(!StringUtils.contains(valueStr, " ")){
+								String newValue = contractFillInfo.getOrDefault(valueStr, "");
+								setField(field, newValue);
+							}
+						}
+					
+					}
+						
+				}
+			}
+			
+			 // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+
+			// Add Copy Basic info if exists
+	        addCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
 	        
 	        // Remove unsed pages
 	        pdfDocument.removePage(4);
@@ -586,6 +879,93 @@ public class ContractFill {
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
+	        removeTemporalPages(contractType, pdfDocument);
+	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+	        pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static byte[] fillTemporalCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String valueStr = field.getValueAsString();
+					String fieldName = field.getPartialName();
+					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
+					
+					if(null != renderFieldName) {
+						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
+						setField(field, newValue);
+					} else {
+						if(AonStringUtils.equalsIgnoreCase(fieldName, "TEXTOCasilla de verificaci\u00f3n25") && null != contractOtherInfo.get("T_EMPLOYEE_CONTRACT_DIST_ADDR")) {
+							 ((PDCheckBox) field).check();
+						}
+						
+						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
+							valueStr = valueStr.replace("$aon:", "");
+							
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
+							} else {
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
+								}
+							}
+						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
+							valueStr = valueStr.replace("${", "");
+							valueStr = valueStr.replace("}", "");
+							
+							if(!StringUtils.contains(valueStr, " ")){
+								String newValue = contractFillInfo.getOrDefault(valueStr, "");
+								setField(field, newValue);
+							}
+						}
+					
+					}
+						
+				}
+			}
+
+			 // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+			
+			// Add Copy Basic info if exists
+	        addCopyBasicInfo(pdfDocument, contractOtherInfo.get("LEGAL_REPRESENTATIVE"));
 	        
 	        // Remove unsed pages
 	        removeTemporalPages(contractType, pdfDocument);
@@ -768,6 +1148,78 @@ public class ContractFill {
 			contentStream.close();
 		} catch (IOException e) {
 			System.err.println("ERROR SEPE PDF");
+			e.printStackTrace();
+		}
+	}
+	
+	private static void addCopyBasicInfo(PDDocument document, String legalRepresentative) {
+		// Create a document and add a page to it
+		PDPage firstPage = document.getPage(0);
+
+		// Create a new font object selecting one of the PDF base fonts
+		PDFont font = new PDType1Font(FontName.HELVETICA_BOLD);
+		PDFont fontLight = new PDType1Font(FontName.HELVETICA);
+
+		// Start a new content stream which will "hold" the to be created content
+		try {
+			PDPageContentStream contentStream = new PDPageContentStream(document, firstPage, PDPageContentStream.AppendMode.APPEND, true, true);
+			
+			// Se imprime en orden inverso, ¿por que?, no lo se, creo que por el APPEND
+			
+			// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 130, 715 );
+			contentStream.showText("En cumplimiento del art. 8, punto 4 del Real Decreto Legislativo 2/2015");
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( fontLight, 10 );
+			contentStream.newLineAtOffset( 150, 700 );
+			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
+			contentStream.endText();
+			
+			// Make sure that the content stream is closed:
+			contentStream.close();
+		} catch (IOException e) {
+			System.err.println("ERROR SEPE COPY BASIC PDF");
+			e.printStackTrace();
+		}
+		
+		// Create a document and add a page to it
+		PDPage lastPage = document.getPage(document.getPages().getCount() - 1);
+
+		// Start a new content stream which will "hold" the to be created content
+		try {
+			PDPageContentStream contentStream = new PDPageContentStream(document, lastPage, PDPageContentStream.AppendMode.APPEND, true, true);
+			
+			// Se imprime en orden inverso, ¿por que?, no lo se, creo que por el APPEND
+			
+			// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( fontLight, 10 );
+			contentStream.newLineAtOffset( 150, 100 );
+			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.BLACK);
+			contentStream.setNonStrokingColor(Color.BLACK);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 220, 60 );
+			contentStream.showText(null == legalRepresentative ? "" : legalRepresentative);
+			contentStream.endText();
+			
+			// Make sure that the content stream is closed:
+			contentStream.close();
+		} catch (IOException e) {
+			System.err.println("ERROR SEPE COPY BASIC PDF");
 			e.printStackTrace();
 		}
 	}

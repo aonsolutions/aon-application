@@ -646,6 +646,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
+				String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 
@@ -1278,6 +1285,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					public void fillContractRelocation(String currentDomainName, Integer contractId,
 							Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback)
 							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
+							String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

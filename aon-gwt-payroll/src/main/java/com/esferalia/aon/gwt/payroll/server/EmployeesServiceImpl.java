@@ -6094,6 +6094,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void fillBasicCopy(String domainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+
+			byte[] pdfBytes = JooqContractPDF.copyBasicFill(connection, domainId, parentDomainId, contractId,
+					contractType, formativeLvl);
+
+			JooqContractPDF.saveDraftCopyBasic(domainName, domainId, contractId, pdfBytes);
+			
+		} catch (SQLException | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void fillContractExtension(String domainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException {

@@ -797,6 +797,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.fillBasicCopy(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.fillContractExtension(currentDomainName, employeeData, contractData, new AsyncCallbackWrapper<Void>(callback));

@@ -330,7 +330,12 @@ export class AonFiscalCard extends AonElement {
   getParsedModel(modelData) {
     let model = modelData.newModel;
     let territory = modelData.administration;
-    return model === "111" && territory === "ALAVA" ? "110" : model;
+    if(model === "111" && territory === "ALAVA"){
+      return "110";
+    } else if(model === "303" && territory !== "COMMON_TERRITORY"){
+      return "390";
+    }
+    return model;
   }
 
   getModelTerritory(territory) {
