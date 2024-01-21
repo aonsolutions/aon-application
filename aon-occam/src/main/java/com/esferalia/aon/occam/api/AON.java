@@ -2048,6 +2048,12 @@ public class AON {
 		}
 	}
 
+	public static void rectifyInvoice(String domainName, Integer domainId, String login, Integer rectifierInvoice, Integer rectifiedInvoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().rectifyInvoice(ctx, rectifierInvoice, rectifiedInvoice);
+		}
+	}
+	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(
 			String domainName, Integer domainId, String login,
 			InvoicingGroupFilter filter) {

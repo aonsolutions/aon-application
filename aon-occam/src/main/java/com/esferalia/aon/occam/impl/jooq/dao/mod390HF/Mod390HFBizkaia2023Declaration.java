@@ -22,13 +22,13 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
+class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 	
-	Mod390HFBizkaia2022Declaration() {
+	Mod390HFBizkaia2023Declaration() {
 	}
 	
 	static boolean accept(Mod390HF mod) {
-		return  mod.isBizkaia() && mod.getYear() == 2022;
+		return  mod.isBizkaia() && mod.getYear() >= 2023;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
@@ -582,12 +582,12 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		// Entregas intracomunitarias exentas
 		,BZ_C202	(Mod390Key.BZ_C202
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && !vat.isService()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C202,mod,vat.getBase())
 			,null,null,null)
 		// Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n
 		,BZ_C203	(Mod390Key.BZ_C203
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C203,mod,vat.getBase())
 			,null,null,null)
 		// Operaciones exentas sin derecho a deducci\u00F3n

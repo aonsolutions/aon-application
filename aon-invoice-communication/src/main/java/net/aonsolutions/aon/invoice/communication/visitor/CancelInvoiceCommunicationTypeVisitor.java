@@ -19,7 +19,6 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitSII() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -39,6 +38,11 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
+	}
+	
+	@Override
+	public void visitSERES() {
+		
 	}
 
 }

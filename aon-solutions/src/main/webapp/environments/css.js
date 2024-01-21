@@ -188,8 +188,11 @@ export const AON_INPUT_BOX = 'aonInputBox';
 export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
 export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
 export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
+export const AON_INPUT_BOX_LABEL_INPUT_WARNING = 'aonInputBoxLabelInputWarning'
+export const AON_INPUT_BOX_LABEL_SPAN_WARNING = 'aonInputBoxLabelSpanWarning'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+export const AON_INPUT_MSG_WARNING = 'aonInputMsgWarning';
 
 
 // aon-new-textarea.css

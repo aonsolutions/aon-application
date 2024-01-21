@@ -155,6 +155,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private InvestAsset savedInvestAsset;
 	private boolean showInvestAssetWindow;
 	private boolean showDetailInvestAssetWindow;
+	private boolean showAddRectificationInvoiceWindow;
 	private Project savedProject;
 	private boolean showProjectLookup;
 	private boolean showProjectWindow;
@@ -2138,5 +2139,49 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		if(date == null && isTbaiInvoice()) date = getInvoice().getDate();
 		if(date == null) return "Pendiente de emisión";
 		else return AonDateUtils.format(date, "dd/MM/yyyy");
+	}
+	
+	public boolean isRectificationInvoiceNull() {
+		Invoice invoice = (Invoice) getTo();
+		return invoice.getRectificationInvoice() == null
+				|| invoice.getRectificationInvoice().getId() == null;
+		
+	}
+	
+	public boolean isShowAddRectificationInvoiceWindow() {
+		return showAddRectificationInvoiceWindow;
+	}
+
+	public void setShowAddRectificationInvoiceWindow(boolean value) {
+		this.showAddRectificationInvoiceWindow = value;
+	}
+	
+	public void onRectificationInvoiceChanged(ActionEvent event) {
+		Invoice invoice = getInvoice();
+		Invoice rectificationInvoice = invoice.getRectificationInvoice();
+		
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		AON.rectifyInvoice(domainName, domainId, login, invoice.getId(), rectificationInvoice.getId());	
+	}
+	
+	public List<SelectItem> getRectificationInvoices() throws ManagerBeanException {
+		List<SelectItem> rectificationInvoices = new LinkedList<>();
+
+		Invoice inv = getInvoice();
+		
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), inv.getRegistry().getId());
+		criteria.addNotEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), inv.getId());
+		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), false);
+		for (ITransferObject ito : invoiceBean.getList(criteria)) {
+			Invoice invoice = (Invoice)ito;
+			SelectItem item = new SelectItem(invoice, invoice.getDate() + " - "  + invoice.getReferenceCode() + " - " + invoice.getTotal());
+			rectificationInvoices.add(item);
+		}
+		return rectificationInvoices;
 	}
 }

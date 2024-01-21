@@ -17,19 +17,21 @@ public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitSII() {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
 	public void visitTBAI() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void visitLROE() {
-		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void visitSERES() {
 		
 	}
 

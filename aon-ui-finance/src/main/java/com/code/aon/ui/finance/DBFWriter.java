@@ -54,7 +54,7 @@ public class DBFWriter {
 		abyte0[0] = 3;
 		Calendar calendar = Calendar.getInstance();
 		abyte0[1] = (byte) (calendar.get(1) - 1900);
-		abyte0[2] = (byte) calendar.get(2);
+		abyte0[2] = (byte) (calendar.get(2) + 1);
 		abyte0[3] = (byte) calendar.get(5);
 		abyte0[4] = (byte) (recCount % 256);
 		abyte0[5] = (byte) ((recCount / 256) % 256);

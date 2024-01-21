@@ -6,11 +6,11 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
+import org.jooq.SelectSeekStep1;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
@@ -81,14 +81,15 @@ public class InvoiceDetailDAO {
 	
 	
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceDetailFilter filter){	
+	public static SelectSeekStep1<Record, Short> select(AONContext ctx, InvoiceDetailFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(INVOICE_DETAIL)
-				.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
+				.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter))
+				.orderBy(INVOICE_DETAIL.LINE);
 	}
 	
-	public static SelectConditionStep<Record> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
+	public static SelectSeekStep1<Record, Short> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
         return ctx.getDslContext()
                 .select()
                 .from(INVOICE_DETAIL)
@@ -100,7 +101,8 @@ public class InvoiceDetailDAO {
                 .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
                 .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
                 .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-                .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
+                .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter))
+                .orderBy(INVOICE_DETAIL.LINE);
     }
 	
 	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter){	

@@ -524,6 +524,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalUdapaImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalEdiFtp.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddRectificationInvoice.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
 		<aon:if test="#{company.ediSupportEnabled}">
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.aon_edi}" />

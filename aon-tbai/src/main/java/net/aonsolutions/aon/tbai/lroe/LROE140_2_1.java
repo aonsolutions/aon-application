@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.BienAfectoIRPFYOIVAEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
@@ -219,7 +220,11 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
-			r.setImporteGastoIRPF(Double.toString(tax.getBase()));
+			if(!AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
+				r.setConcepto(detail.getAccountCode().substring(0,3));
+				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
+				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
+			}
 					
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
