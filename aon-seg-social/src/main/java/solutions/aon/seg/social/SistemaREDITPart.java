@@ -361,8 +361,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				((HtmlSelect) htmlPage.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
 			}
 			
-			Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/it_2.html");
-			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			XmlPage xmlPage = validate.click();
 			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
