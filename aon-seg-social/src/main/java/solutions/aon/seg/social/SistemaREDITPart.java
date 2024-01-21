@@ -312,7 +312,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 			
 			if (jobDescription.isPresent()) {				
-				((HtmlTextArea) htmlPage.querySelector("#funcDesempe")).setText(jobDescription.get());
+				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setText(jobDescription.get());
 			}
 			
 			// Data Contract
@@ -322,15 +322,17 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
-					contractTypeOption = htmlPage.querySelector("#tipoContrato option[value=\"1\"]");
-					htmlPage = contractTypeOption.click();
+					webClient.waitForBackgroundJavaScript(5000);
+			    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+			    	
 					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-					cotBaseInput = htmlPage.querySelector("#sumaBaseCot");
-					cotDaysInput = htmlPage.querySelector("#sumaDiasCot");
+					
+					cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
+					cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
-				    	webClient.waitForBackgroundJavaScript(5000);
-				    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+			    	webClient.waitForBackgroundJavaScript(5000);
+			    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
 				    	
 					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					
