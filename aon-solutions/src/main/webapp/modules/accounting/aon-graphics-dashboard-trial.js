@@ -53,13 +53,13 @@ export class AonDashboardGraphicsTrial extends AonElement {
     return this.filter;
   }
 
-  constructor(period) {
+  constructor(period, year) {
     super();
     this.id = this.id || "aonGraphicsDashboardTrial";
     this.applicationEl = document.querySelector("#pygContent");
     this.filter = {};
     this.filter.show = period;
-    this.filter.year = new Date().getFullYear();
+    this.filter.year = year || new Date().getFullYear();
     this.style.width = "100%";
     this.style.display = "flex";
     this.style.height = "100%";
@@ -139,7 +139,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
       titleDiv.appendChild(titleSpan);
 
       let yearelect = this.createElement('select');
-      yearelect.id = 'yearelect';
+      yearelect.id = 'pyGyearelect';
       yearelect.title = 'Año';
       yearelect.style.background = "none";
       yearelect.style.border = "1px gray solid";
@@ -148,7 +148,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
         let optYear = this.createElement('option');
         optYear.value = JSON.stringify(element);
         optYear.innerHTML = element.name;
-        if(this.selectedPeriod.name === element.name){
+        if(this.filter.year === element.name){
           optYear.selected = true;
         }
         yearelect.appendChild(optYear);

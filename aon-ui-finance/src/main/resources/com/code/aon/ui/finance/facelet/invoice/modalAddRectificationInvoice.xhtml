@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showAddRectificationInvoiceWindow">
+		<aon:if test="#{invoiceController.showAddRectificationInvoiceWindow}">
+			<rich:modalPanel id="addRectificationInvoiceModalPanel"
+				minWidth="740" minHeight="200" zindex="90"
+				showWhenRendered="#{invoiceController.showAddRectificationInvoiceWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Factura Rectificada" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showAddRectificationInvoiceWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceController.showAddRectificationInvoiceWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="addRectificationInvoiceForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="addRectificationInvoice-accept"
+											value="#{bundle.aon_accept}"
+											actionListener="#{invoiceController.acceptInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<rich:componentControl for="addRectificationInvoiceModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{invoiceController.showAddRectificationInvoiceWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="addRectificationInvoice-cancel"
+											value="#{bundle.aon_cancel}"
+											reRender="showAddRectificationInvoiceWindow"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{invoiceController.showAddRectificationInvoiceWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+										<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+												
+											<aon:div>
+												<aon:outputLabel for="Invoice_rectificationInvoice"
+													value="Factura Rectificada" />
+											</aon:div>
+											<aon:selectOneMenu id="Invoice_rectificationInvoice"
+												value="#{invoiceController.to.rectificationInvoice}" ajaxSingle="true"
+												actionListener="#{invoiceController.onRectificationInvoiceChanged}"
+												reRender="#{formName}">
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{invoiceController.rectificationInvoices}" />
+											</aon:selectOneMenu>
+											
+										</aon:panelGrid>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>							
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>
