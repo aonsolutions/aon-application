@@ -323,7 +323,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
 					webClient.waitForBackgroundJavaScript(5000);
-			    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+			    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
 			    	
 					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					
@@ -331,8 +331,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
-			    	webClient.waitForBackgroundJavaScript(5000);
-			    	htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+			    webClient.waitForBackgroundJavaScript(5000);
+			    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
 				    	
 					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					

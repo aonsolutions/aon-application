@@ -113,6 +113,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    JSONArray array = new JSONArray();
 	    Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
 	    Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
+	    
+	    JSONArray publicStates = JsonUtils.getJSONArray(api.getData(), IJsonNames.PUBLIC_STATE);
+	    if ( publicStates == null ) {
+		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
+	    }
+	    
 	    String token = OCRInvofox.getLoginToken().getLoginToken().orElse(new OCRLoginToken()).getToken()
 		    .orElse(null);
 	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
@@ -123,10 +129,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
 		if (!companies.isEmpty()) {
 		    OCRCompany company = companies.get(0);
+		    OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
+		    ocrDocumentParams.withType(OCRType.invoice);
+		    ocrDocumentParams.withCompany(company.getId()).skiping(page * perPage);
+		    publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
+		    ocrDocumentParams.limit(perPage); 
+		    
 		    OCRDocumentsResponse response = OCRInvofox
-			    .getDocuments(OCRDocumentsParams.get().withType(OCRType.invoice)
-				    // .withPublicState(OCRSeverity.pendingCorrection)
-				    .withCompany(company.getId()).skiping(page * perPage).limit(perPage));
+			    .getDocuments(ocrDocumentParams);
 
 		    response.getDocuments().orElse(new LinkedList<>()).stream().forEach(r -> {
 			JSONObject json = new JSONObject();
@@ -145,7 +155,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return array;
 	}
 	
-	
+
 	
 //	INVOICE_DOMAIN
 //	.andThen(INVOICE_TRANSACTION)
@@ -397,6 +407,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return TediContextKey.TAX_BASE;
 	    case "totalAmount":
 		return TediContextKey.TOTAL;
+	    case "withholdingTaxAmount":
+		return TediContextKey.IRPF_QUOTA;
+	    case "withholdingTaxRate":
+		return TediContextKey.IRPF_RATE;
+	    case "paymentMethod":
+		return TediContextKey.PAY_METHOD;
 
 	    case "additionalChargesAmount":
 	    case "additionalDiscountsAmount":
@@ -417,7 +433,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "meterNumber":
 	    case "numberFormat":
 	    case "orderRef":
-	    case "paymentMethod":
 	    case "recipientAddress":
 	    case "recipientAddressDetails":
 	    case "recipientCountry":
@@ -438,13 +453,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "totalGrossAmount":
 	    case "totalUsage":
 	    case "usageUnitOfMeasurement":
-	    case "withholdingTaxAmount":
-	    case "withholdingTaxRate":
 	    default:
 		return null;
 	    }
         }
-        
         
 	
 }

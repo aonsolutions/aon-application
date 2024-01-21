@@ -672,7 +672,21 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoiceList({status: CONSTANT.REJECTED});
 				break;
 			case OPTION.RAWDOC_OCR.id:
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50});
+				// [ processing, 
+				// 	pendingCorrection, 
+				// 	discarded, 
+				// 	pendingDecission, 
+				// 	rejected, 
+				// 	approved, 
+				// 	exported, 
+				// 	error ]
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['pendingCorrection', 'approved', 'error', 'discarded']}); 
+				break;
+			case OPTION.RAWDOC_OCR_EXPORTED.id:
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['exported']}); 
+				break;
+			case OPTION.RAWDOC_OCR_REJECTED.id:
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['rejected']}); 
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});

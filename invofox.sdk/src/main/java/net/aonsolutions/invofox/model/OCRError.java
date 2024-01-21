@@ -126,10 +126,16 @@ public class OCRError implements Serializable {
 		return "El documento está duplicado.";
 	    case "ERR_MISSING_INFO":
 		return "Al documento le falta información requerida.";
-	    case "ERR_BREAKDOWN_AMOUNT_MISSMATCH":
+	    case "ERR_AMOUNT_MISSMATCH":{
+		int line = getLine(error);
+		return String.format("Las cantidades %s de los totales no son  correctas.",
+			line != -1 ? "de la línea " + line : "");
+	    }
+	    case "ERR_BREAKDOWN_AMOUNT_MISSMATCH": {
 		int line = getLine(error);
 		return String.format("Las cantidades %s de los desgloses no son  correctas.",
 			line != -1 ? "de la línea " + line : "");
+	    }
 	    case "ERR_CLASSIFIER_DISCARD":
 		return "Este documento no tiene un tipo válido.";
 	    case "WARN_CLASSIFIER_FORCED_DEFTYPE":

@@ -448,6 +448,8 @@ public final class IJsonNames {
 	public static final String PURCHASES_RATIO = "purchasesRatio";
 	public static final String PURCHASE_VALUATED = "purchaseValuated";
 	public static final String PYMNT_DAYS = "pymntDays";
+	public static final String PUBLIC_STATE = "publicStatus";
+	
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
