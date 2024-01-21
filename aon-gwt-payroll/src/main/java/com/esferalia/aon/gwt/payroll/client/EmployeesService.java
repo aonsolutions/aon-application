@@ -254,6 +254,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform) throws IllegalArgumentException;
 	
+	void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
+	
 	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException;
 	
 	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo) throws IllegalArgumentException;

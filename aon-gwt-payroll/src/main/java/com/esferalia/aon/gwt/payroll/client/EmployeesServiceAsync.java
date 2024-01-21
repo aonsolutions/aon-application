@@ -271,6 +271,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
+	void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;

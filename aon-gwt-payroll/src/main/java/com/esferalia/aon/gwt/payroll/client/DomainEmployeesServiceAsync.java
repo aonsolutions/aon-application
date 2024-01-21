@@ -529,6 +529,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, isTransform, callback);
 	}
 	
+	public void fillBasicCopy(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillBasicCopy(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
+	}
+	
 	public void fillContractExtension(EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.fillContractExtension(getCurrentDomainName(), employeeData, contractData, callback);
 	}
