@@ -28,6 +28,7 @@ import net.aonsolutions.db.up2date.payroll.AlterContractDeductionExpression;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
 import net.aonsolutions.db.up2date.tgss.SMI2024Update;
 
@@ -418,8 +419,9 @@ public class Up2Date {
 	    // InsertIAE3034.INSERT_IAE_3034,
 	    // AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
 	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
-	    AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
-	    InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
+	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
+	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
+	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV
 	};
 
     // ------------------------------------------------------------------------
