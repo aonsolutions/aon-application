@@ -115,9 +115,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA14("303-CTAS14",false,null,"Cuota devengada")
 	,CT_SA15("303-CTAS15",false,null,"Porcentaje trimestral (1T/2T/3T)")
 	,CT_SA16("303-CTAS16",false,"A1","Ingreso a cuenta (1T/2T/3T) [A]")
-	,CT_SA17("303-CTAS17",false,null,"Cuota soportada operaciones corrientes (4T)")
+	
 	,CT_SA1A("303-CTAS1A",false,null,"Cuota soportada (4T)")
 	,CT_SA1B("303-CTAS1B",false,null,"Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)")
+	,CT_SA1C("303-CTAS1C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	
+	,CT_SA17("303-CTAS17",false,null,"Cuota soportada operaciones corrientes (4T)")
 	,CT_SA18("303-CTAS18",false,"B1","Cuota anual derivada del regimen simplificado (4T) [B]")
 	
 	// ************************************************************** [ACTIVIDAD AGRICOLA 2]

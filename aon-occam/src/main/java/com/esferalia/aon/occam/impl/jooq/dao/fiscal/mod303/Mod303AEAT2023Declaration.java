@@ -366,6 +366,12 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_SA16, ensureFarmerActivity(mod, 0).getIng())
 			,mod -> ensureFarmerActivity(mod, 0).setIng(mod.getAmount(Mod303Key.CT_SA16))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA16))
+
+		// ******************		
+		// ******************		
+		// ******************		
+		// ******************		
+		// ******************		
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada
 		,CT_SA17(Mod303Key.CT_SA17, null, null, null
 			,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)"
@@ -373,9 +379,36 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_SA17, ensureFarmerActivity(mod, 0).getSop())
 			,mod -> ensureFarmerActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_SA17))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA17))
+		// (1) Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
+		,CT_SA1B(Mod303Key.CT_SA1B, null, null, null
+			,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA1B:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA1B, ensureFarmerActivity(mod, 0).getCom())
+			,mod -> ensureFarmerActivity(mod, 0).setCom(mod.getAmount(Mod303Key.CT_SA1B))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1B))
+		// (1) 1% de la cuota devengada por operaciones corrientes
+		,CT_SA1C(Mod303Key.CT_SA1C, null, null, null
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14 * 1 / 100):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA1C, ensureFarmerActivity(mod, 0).getDev())
+			,mod -> ensureFarmerActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_SA1C))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1C))
+		// (1) Cuota soportada (4T)
+		,CT_SA1A(Mod303Key.CT_SA1A, null, null, null
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA17+CT_SA1B+CT_SA1C):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA1A, ensureFarmerActivity(mod, 0).getTso())
+			,mod -> ensureFarmerActivity(mod, 0).setTso(mod.getAmount(Mod303Key.CT_SA1A))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1A))
+		// ******************		
+		// ******************		
+		// ******************		
+		// ******************		
+		// ******************		
+		
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
 		,CT_SA18(Mod303Key.CT_SA18, null, null, null
-			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA17):(0.0)"
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA1A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA18, ensureFarmerActivity(mod, 0).getCad())
 			,mod -> ensureFarmerActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_SA18))
