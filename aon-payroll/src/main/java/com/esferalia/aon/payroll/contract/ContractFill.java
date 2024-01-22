@@ -1105,43 +1105,43 @@ public class ContractFill {
 			contentStream.beginText();
 			contentStream.setStrokingColor(Color.RED);
 			contentStream.setNonStrokingColor(Color.RED);
-			contentStream.setFont( font, 12 );
-			contentStream.newLineAtOffset( 300, 785 );
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 300, 810 );
 			contentStream.showText("Registro SEPE");
 			contentStream.endText();
 			
 			contentStream.beginText();
 			contentStream.setStrokingColor(Color.RED);
 			contentStream.setNonStrokingColor(Color.RED);
-			contentStream.setFont( font, 10 );
-			contentStream.newLineAtOffset( 270, 765 );
+			contentStream.setFont( font, 9 );
+			contentStream.newLineAtOffset( 270, 790 );
 			contentStream.showText("IDE : " + sepeIde);
 			contentStream.endText();
 			
 			contentStream.beginText();
 			contentStream.setStrokingColor(Color.RED);
 			contentStream.setNonStrokingColor(Color.RED);
-			contentStream.setFont( font, 10 );
-			contentStream.newLineAtOffset( 270, 750 );
+			contentStream.setFont( font, 9 );
+			contentStream.newLineAtOffset( 270, 775 );
 			contentStream.showText("F. Comunicaci\u00f3n : " + (null == comunicationDate ? "" : dateFormat.format(comunicationDate)));
 			contentStream.endText();
 			
 			contentStream.setNonStrokingColor(Color.RED);
 			
-			contentStream.moveTo(260, 805);
-			contentStream.lineTo(420, 805);
+			contentStream.moveTo(260, 830);
+			contentStream.lineTo(420, 830);
 			contentStream.stroke();
 			
-			contentStream.moveTo(260, 805);
-			contentStream.lineTo(260, 740);
+			contentStream.moveTo(260, 830);
+			contentStream.lineTo(260, 765);
 			contentStream.stroke();
 			
-			contentStream.moveTo(420, 805);
-			contentStream.lineTo(420, 740);
+			contentStream.moveTo(420, 830);
+			contentStream.lineTo(420, 765);
 			contentStream.stroke();
 			
-			contentStream.moveTo(260, 740);
-			contentStream.lineTo(420, 740);
+			contentStream.moveTo(260, 765);
+			contentStream.lineTo(420, 765);
 			contentStream.stroke();
 
 			// Make sure that the content stream is closed:
@@ -1171,7 +1171,7 @@ public class ContractFill {
 			contentStream.setStrokingColor(Color.BLACK);
 			contentStream.setNonStrokingColor(Color.BLACK);
 			contentStream.setFont( font, 10 );
-			contentStream.newLineAtOffset( 130, 715 );
+			contentStream.newLineAtOffset( 130, 750 );
 			contentStream.showText("En cumplimiento del art. 8, punto 4 del Real Decreto Legislativo 2/2015");
 			contentStream.endText();
 			
@@ -1179,7 +1179,7 @@ public class ContractFill {
 			contentStream.setStrokingColor(Color.BLACK);
 			contentStream.setNonStrokingColor(Color.BLACK);
 			contentStream.setFont( fontLight, 10 );
-			contentStream.newLineAtOffset( 150, 700 );
+			contentStream.newLineAtOffset( 150, 735 );
 			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
 			contentStream.endText();
 			
@@ -1204,7 +1204,7 @@ public class ContractFill {
 			contentStream.setStrokingColor(Color.BLACK);
 			contentStream.setNonStrokingColor(Color.BLACK);
 			contentStream.setFont( fontLight, 10 );
-			contentStream.newLineAtOffset( 150, 100 );
+			contentStream.newLineAtOffset( 150, 120 );
 			contentStream.showText("FIRMA DE LOS REPRESENTANTES DE LOS TRABAJADORES");
 			contentStream.endText();
 			
@@ -1212,7 +1212,7 @@ public class ContractFill {
 			contentStream.setStrokingColor(Color.BLACK);
 			contentStream.setNonStrokingColor(Color.BLACK);
 			contentStream.setFont( font, 10 );
-			contentStream.newLineAtOffset( 220, 60 );
+			contentStream.newLineAtOffset( 220, 80 );
 			contentStream.showText(null == legalRepresentative ? "" : legalRepresentative);
 			contentStream.endText();
 			
