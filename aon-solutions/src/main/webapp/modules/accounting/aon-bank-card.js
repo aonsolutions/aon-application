@@ -206,7 +206,7 @@ export class AonBankCard extends AonElement {
   }
 
   formatNumber(number){
-    return !number || number == 0 ? "No disponible" : formatNumber(number, 2, "EUR");
+    return number || number === 0 ? formatNumber(number, 2, "EUR") : "No disponible";
   }
 
   getTotal(banks){
