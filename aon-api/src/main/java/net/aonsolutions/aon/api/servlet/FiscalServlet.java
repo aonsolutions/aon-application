@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.ISalaryFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryGroup;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryPercent;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -329,8 +330,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams);
 			
 			// IRPF PROFESIONAL
-			TreeMap<Double, IrpfSummaryPercent> professionalMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL).getMap().get(WithholdingType.PROFESSIONAL).getMap();
-			Double professionalAmount = professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
+			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);
+			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap ? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
+			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfProfessionalJson = new JSONObject();
 			irpfProfessionalJson.put("description", "IRPF Profesional");
@@ -338,8 +340,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			jsonModels.put(irpfProfessionalJson);
 			
 			// IRPF PROFESIONAL
-			TreeMap<Double, IrpfSummaryPercent> rentinglMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO).getMap().get(WithholdingType.RENTING).getMap();
-			Double rentingAmount = rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
+			IrpfSummaryGroup rentingIRPFlMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO);
+			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap ? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
+			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfRentingJson = new JSONObject();
 			irpfRentingJson.put("description", "IRPF Arrendamiento");
