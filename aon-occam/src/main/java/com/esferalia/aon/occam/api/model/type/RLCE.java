@@ -46,6 +46,8 @@ public class RLCE {
 		rlceTableMap.put("9911", "Alumnos - Trabajadores en programas de escuela taller");
 		rlceTableMap.put("9912", "Alumnos - Trabajadores en programas de casas de oficios");
 		rlceTableMap.put("9913", "Alumnos - Trabajadores en programas de talleres de empleo");
+		rlceTableMap.put("9914", "Pensionista de Incapacidad Seguridad Social.");
+		rlceTableMap.put("9915", "Pensionista de Incapacidad Clases Pasivas.");
 		rlceTableMap.put("9916", "Personal investigador I+D+I");
 		rlceTableMap.put("9917", "Agentes auxiliares Uni\u00F3n Europea");
 		rlceTableMap.put("9918", "Contratos de Formaci\u00F3n - Prorroga posterior 18-06-2010");
@@ -59,6 +61,13 @@ public class RLCE {
 		rlceTableMap.put("9927", "Pr\u00E1cticas Acad\u00E9micas Externas");
 		rlceTableMap.put("9928", "Pr\u00E1cticas curriculares externas Real Decreto-Ley 8/2014");
 		rlceTableMap.put("9929", "Contrato predoctoral. No incentivado.");
+		
+		rlceTableMap.put("9935", "Contrato formaci\u00F3n en alternancia. Certificaci\u00F3n profesional nivel 3.");
+		rlceTableMap.put("9936", "Contrato formaci\u00F3n en alternancia. Estudios universitarios/FP.");
+		rlceTableMap.put("9937", "Contrato acceso personal Investigador Doctor.");
+		rlceTableMap.put("9938", "Personal investigador I+D+i. No bonificado.");
+		rlceTableMap.put("9939", "Pr\u00E1cticas Form. Remuneradas (D.A. 52 LGSS).");
+		rlceTableMap.put("9999", "Declaraci\u00F3n Responsable inexistencia de RLCE.");
 		
 		rlceTable = Collections.unmodifiableMap(rlceTableMap);
 		
