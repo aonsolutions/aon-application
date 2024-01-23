@@ -327,7 +327,7 @@ export class AonMobileDelivery extends AonElement {
 				this.packaging.container = {
 					item: r.item.id
 				};
-
+				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
 				Array.prototype.forEach.call(r.item.itemComposition, i => {
 					table2.addRow();
 					let span = this.createSpan();
@@ -363,14 +363,24 @@ export class AonMobileDelivery extends AonElement {
 		addButton.title = MSG.ADD;
 		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 		addButton.addEventListener(EVENT.CLICK, () => {
+			this.packaging = {};
 			let cont = 1;
-			
+
 			while(table.rows >= cont) {
 				table.removeRow(table.rows);
 			}
+
+			table2.removeRows();
 			this.buildNewPackaging(table, table2);
 			let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 			saveButton.setDisabled(true);
+			this.packaging.container = undefined;
+			getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
+			.then(sd => {
+				this.salesDetails = sd
+				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+			});
+			
 		});
 		table.addCell(addButton);
 	}
@@ -388,6 +398,7 @@ export class AonMobileDelivery extends AonElement {
 			this.packaging.container = {
 				product: envaseSelect.value
 			};
+			this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
 			// this.buildNewPackagingContent(table, detail);
 		});
 		
@@ -399,12 +410,20 @@ export class AonMobileDelivery extends AonElement {
 		pButton.title = MSG.ADD;
 		pButton.icon = MATERIAL_ICONS.QR_CODE_SCANNER;
 		pButton.addEventListener(EVENT.CLICK, () => {
+			this.packaging.container = {};
 			let cont = 1;
 
 			while(table.rows >= cont) {
 				table.removeRow(table.rows);
 			}
+			table2.removeRows();
 			this.buildProductPackaging(table, table2);
+			this.packaging.container = undefined;
+			getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
+			.then(sd => {
+				this.salesDetails = sd
+				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+			});
 		});
 		table.addCell(pButton);
 
@@ -444,6 +463,7 @@ export class AonMobileDelivery extends AonElement {
 					this.sourceDialog(this.salesDetails[i]);
 				});
 				pendingTable.addCell(aonIconButton);
+				aonIconButton.setDisabled(this.packaging.container == undefined);
 			}	
 		}
 	}
