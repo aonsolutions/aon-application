@@ -102,6 +102,8 @@ public interface IFinance {
 	
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
+	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************
@@ -165,6 +167,7 @@ public interface IFinance {
 	
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
+	public Finance unSettleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);
 	public FinanceTracking payFinance(AONContext ctx, FinanceTracking tracking);
 	public FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking);

@@ -115,9 +115,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA14("303-CTAS14",false,null,"Cuota devengada")
 	,CT_SA15("303-CTAS15",false,null,"Porcentaje trimestral (1T/2T/3T)")
 	,CT_SA16("303-CTAS16",false,"A1","Ingreso a cuenta (1T/2T/3T) [A]")
-	,CT_SA17("303-CTAS17",false,null,"Cuota soportada operaciones corrientes (4T)")
+	
 	,CT_SA1A("303-CTAS1A",false,null,"Cuota soportada (4T)")
 	,CT_SA1B("303-CTAS1B",false,null,"Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)")
+	,CT_SA1C("303-CTAS1C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	,CT_SA17("303-CTAS17",false,null,"Cuota soportada operaciones corrientes (4T)")
 	,CT_SA18("303-CTAS18",false,"B1","Cuota anual derivada del regimen simplificado (4T) [B]")
 	
 	// ************************************************************** [ACTIVIDAD AGRICOLA 2]
@@ -128,9 +130,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA24("303-CTAS24",false,null,CT_SA14.getDescription())
 	,CT_SA25("303-CTAS25",false,null,CT_SA15.getDescription())
 	,CT_SA26("303-CTAS26",false,"A2",CT_SA16.getDescription())
-	,CT_SA27("303-CTAS27",false,null,CT_SA17.getDescription())
 	,CT_SA2A("303-CTAS2A",false,null,CT_SA1A.getDescription())
 	,CT_SA2B("303-CTAS2B",false,null,CT_SA1B.getDescription())
+	,CT_SA2C("303-CTAS2C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	,CT_SA27("303-CTAS27",false,null,CT_SA17.getDescription())
 	,CT_SA28("303-CTAS28",false,"B2",CT_SA18.getDescription())
 	
 	// ************************************************************** [ACTIVIDAD AGRICOLA 3]
@@ -141,9 +144,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA34("303-CTSA34",false,null,CT_SA14.getDescription())
 	,CT_SA35("303-CTSA35",false,null,CT_SA15.getDescription())
 	,CT_SA36("303-CTSA36",false,"A3",CT_SA16.getDescription())
-	,CT_SA37("303-CTSA37",false,null,CT_SA17.getDescription())
 	,CT_SA3A("303-CTAS3A",false,null,CT_SA1A.getDescription())
 	,CT_SA3B("303-CTAS3B",false,null,CT_SA1B.getDescription())
+	,CT_SA3C("303-CTAS2C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	,CT_SA37("303-CTSA37",false,null,CT_SA17.getDescription())
 	,CT_SA38("303-CTSA38",false,"B3",CT_SA18.getDescription())
 	
 	// ************************************************************** [ACTIVIDAD AGRICOLA 4]
@@ -154,9 +158,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA44("303-CTSA44",false,null,CT_SA14.getDescription())
 	,CT_SA45("303-CTSA45",false,null,CT_SA15.getDescription())
 	,CT_SA46("303-CTSA46",false,"A4",CT_SA16.getDescription())
-	,CT_SA47("303-CTSA47",false,null,CT_SA17.getDescription())
 	,CT_SA4A("303-CTAS4A",false,null,CT_SA1A.getDescription())
 	,CT_SA4B("303-CTAS4B",false,null,CT_SA1B.getDescription())
+	,CT_SA4C("303-CTAS4C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	,CT_SA47("303-CTSA47",false,null,CT_SA17.getDescription())
 	,CT_SA48("303-CTSA48",false,"B4",CT_SA18.getDescription())
 
 	// ************************************************************** [ACTIVIDAD 1]

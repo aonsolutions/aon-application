@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediContext;
+import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -99,6 +100,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
 		    .map(invoice -> invoice.put("file", getFileJSON(ocrDocument)) )
@@ -111,6 +113,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    JSONArray array = new JSONArray();
 	    Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
 	    Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
+	    
+	    JSONArray publicStates = JsonUtils.getJSONArray(api.getData(), IJsonNames.PUBLIC_STATE);
+	    if ( publicStates == null ) {
+		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
+	    }
+	    
 	    String token = OCRInvofox.getLoginToken().getLoginToken().orElse(new OCRLoginToken()).getToken()
 		    .orElse(null);
 	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
@@ -121,10 +129,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
 		if (!companies.isEmpty()) {
 		    OCRCompany company = companies.get(0);
+		    OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
+		    ocrDocumentParams.withType(OCRType.invoice);
+		    ocrDocumentParams.withCompany(company.getId()).skiping(page * perPage);
+		    publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
+		    ocrDocumentParams.limit(perPage); 
+		    
 		    OCRDocumentsResponse response = OCRInvofox
-			    .getDocuments(OCRDocumentsParams.get().withType(OCRType.invoice)
-				    // .withPublicState(OCRSeverity.pendingCorrection)
-				    .withCompany(company.getId()).skiping(page * perPage).limit(perPage));
+			    .getDocuments(ocrDocumentParams);
 
 		    response.getDocuments().orElse(new LinkedList<>()).stream().forEach(r -> {
 			JSONObject json = new JSONObject();
@@ -143,7 +155,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return array;
 	}
 	
-	
+
 	
 //	INVOICE_DOMAIN
 //	.andThen(INVOICE_TRANSACTION)
@@ -216,6 +228,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
             return jsonObject;
         }
 	
+	private static final Invoice fillFinances (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
+	    OCRInvoiceBuilder.fillFinances(ctx, ocrInvoice, invoice);
+	    return invoice;
+	}
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
 		OCRInvoiceBuilder.fillRegistry(ctx, invoice);
@@ -301,18 +317,31 @@ public class InvofoxServlet extends AonApiHttpServlet {
         }
         
         private static final Collection<TediError> getMessages(OCRError ocrError) {
-	    return ocrError.getFields().orElseGet(Collections::emptyList).stream()
-		    .map(ocrField -> {
-			TediError tediError = new TediError();
-			tediError.setLevel(getTediLevel(ocrError));
-			ocrError.getCode().ifPresent(tediError::setCode);
-			getTediContext(ocrField).ifPresent(tediError::setContext);
-			ocrError.getDescription().ifPresent(tediError::setMessage);
-			return tediError;
-		    })
-		    .collect(Collectors.toMap(TediError::getMessage, err -> err, ( err1, err2 ) -> err2 ))
-		    .values();
+            
+            Collection<TediError> messages = 
+    	    ocrError.getFields()
+    	    .orElse(Collections.emptyList())
+    	    .stream()
+    	    .map(ocrField -> {
+    		TediError tediError = new TediError();
+		tediError.setLevel(getTediLevel(ocrError));
+		ocrError.getCode().ifPresent(tediError::setCode);
+		getTediContext(ocrField).ifPresent(tediError::setContext);
+		ocrError.getDescription().ifPresent(tediError::setMessage);
+		return tediError;
+    	    })
+    	    .collect(Collectors.toMap(TediError::getMessage, err -> err, ( err1, err2 ) -> err2 )).values();
 
+            if ( !messages.isEmpty() ) {
+		return messages;
+	    }
+	    
+	    TediError tediError = new TediError();
+	    tediError.setLevel(getTediLevel(ocrError));
+	    ocrError.getCode().ifPresent(tediError::setCode);
+	    ocrError.getDescription().ifPresent(tediError::setMessage);
+	    return Collections.singletonList(tediError);
+	    
         }
         
         private static final TediLevel getTediLevel(OCRError ocrError ) {
@@ -335,8 +364,56 @@ public class InvofoxServlet extends AonApiHttpServlet {
         }
 
         private static final Optional<TediContext> getTediContext(OCRField ocrField ) {
+            TediContextKey tediContextKey =  getTediContextKey(ocrField);
+            if ( tediContextKey == null ) { 
+        	return Optional.empty();
+            }
+            
+            TediContext tediContext = new TediContext();
+            tediContext.setKey(tediContextKey);
+            
+            ocrField.getIndex().ifPresent(tediContext::setLine);
+            
+            return Optional.of(tediContext);
+        }
+
+        private static final TediContextKey getTediContextKey(OCRField ocrField ) {
             String fieldName = ocrField.getName().orElse("");
             switch (fieldName) {
+	    case "documentNumber":
+		return TediContextKey.REFERENCE_CODE;
+	    case "issueDate":
+		return TediContextKey.ISSUE_DATE;
+	    case "issuerName":
+		return TediContextKey.RNAME;
+	    case "issuerTaxId":
+		return TediContextKey.RDOCUMENT;
+	    case "issuerCountry":
+		return TediContextKey.RDOCUMENT_COUNTRY;
+	    case "issuerAddress":
+	    case "issuerAddressDetails":
+		return TediContextKey.ADDRESS;
+	    case "invoiceRef":
+		return TediContextKey.REFERENCE_CODE;
+	    case "seriesCode":
+		return TediContextKey.SERIES;
+	    case "taxRate":
+		return TediContextKey.TAX_RATE;
+	    case "taxAmount":
+	    case "totalTaxAmount":
+		return TediContextKey.TAX_QUOTA;
+	    case "taxBaseAmount":
+	    case "totalTaxBaseAmount":
+		return TediContextKey.TAX_BASE;
+	    case "totalAmount":
+		return TediContextKey.TOTAL;
+	    case "withholdingTaxAmount":
+		return TediContextKey.IRPF_QUOTA;
+	    case "withholdingTaxRate":
+		return TediContextKey.IRPF_RATE;
+	    case "paymentMethod":
+		return TediContextKey.PAY_METHOD;
+
 	    case "additionalChargesAmount":
 	    case "additionalDiscountsAmount":
 	    case "additionalNotes":
@@ -344,27 +421,18 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "contractRef":
 	    case "currency":
 	    case "deliveryNoteRef":
-	    case "documentNumber":
 	    case "documentType":
 	    case "IBAN":
 	    case "incoterms":
-	    case "invoiceRef":
 	    case "isCreditNote":
-	    case "issueDate":
-	    case "issuerAddress":
-	    case "issuerAddressDetails":
-	    case "issuerCountry":
 	    case "issuerEmail":
-	    case "issuerName":
 	    case "issuerPhoneNumber":
-	    case "issuerTaxId":
 	    case "issuerWebsite":
 	    case "language":
 	    case "legalNotes":
 	    case "meterNumber":
 	    case "numberFormat":
 	    case "orderRef":
-	    case "paymentMethod":
 	    case "recipientAddress":
 	    case "recipientAddressDetails":
 	    case "recipientCountry":
@@ -374,32 +442,21 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    case "recipientTaxId":
 	    case "recipientWebsite":
 	    case "reimbursableExpensesAmount":
-	    case "seriesCode":
 	    case "serviceAddress":
 	    case "shippingAddress":
 	    case "supplyNumber":
 	    case "SWIFT":
-	    case "taxAmount":
-	    case "taxBaseAmount":
 	    case "taxClass":
-	    case "taxRate":
-	    case "totalAmount":
 	    case "totalDiscountAmount":
 	    case "totalDueAmount":
 	    case "totalFeesAmount":
 	    case "totalGrossAmount":
-	    case "totalTaxAmount":
-	    case "totalTaxBaseAmount":
 	    case "totalUsage":
 	    case "usageUnitOfMeasurement":
-	    case "withholdingTaxAmount":
-	    case "withholdingTaxRate":
 	    default:
-		return Optional.empty();
+		return null;
 	    }
-            
         }
-        
         
 	
 }

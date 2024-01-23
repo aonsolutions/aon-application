@@ -31,6 +31,7 @@ public interface FinanceService extends RemoteService {
 	LinkedList<Finance> getFinancesForInvoice(String domainName, int domainId, String  user,Invoice invoice) throws AonCoreException;
 	LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String  user,Integer finance) throws AonCoreException;
 	Finance settleFinance(String domainName, int domainId, String user, Integer finance)  throws AonCoreException;
+	Finance unSettleFinance(String domainName, int domainId, String user, Integer finance)  throws AonCoreException;
 	Finance undoFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException;
 	FinanceTracking payFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
 	FinanceTracking returnFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;

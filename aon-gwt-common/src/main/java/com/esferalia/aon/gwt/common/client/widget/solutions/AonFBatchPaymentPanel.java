@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -134,7 +135,7 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 		table.setWidget(2,1,type);
 		
 		table.setWidget(3,0,new InlineLabel(AON.MSG.bankAccount()));
-		bank.addItem("-");
+		bank.addItem("-", "");
 		getEnterpriseBanks(companyBanks -> {
 			companyBanks.stream().filter(companyBank -> companyBank.isActive()).forEach(companyBank -> {
 				bank.addItem("(" + companyBank.getAlias() + ") " + companyBank.getBankAccount().toString(), companyBank.getId().toString());
@@ -186,32 +187,45 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				
-				fbatch.setDescription(description.getValue());
-				fbatch.setIssueDate(issueDate.getValue());
-				fbatch.setType((byte) Integer.parseInt(type.getSelectedValue()));
-				fbatch.setRbank(bank.getSelectedIndex() == 0 ? null : new RegistryBank().setId(Integer.parseInt(bank.getSelectedValue())));
-				fbatch.setConfidential(isConfidential);
-				
-				if (fbatch.getId() == null) {
-					fbatch.setDomain(domainId);
-					fbatch.setPayment((byte)1); // Pago
-					fbatch.setStatus(FBatchStatus.PENDING); // Pendiente
+				if(isAbleToSave()) {
+					okButton.setEnabled(false);
+					
+					fbatch.setDescription(description.getValue());
+					fbatch.setIssueDate(issueDate.getValue());
+					fbatch.setType((byte) Integer.parseInt(type.getSelectedValue()));
+					fbatch.setRbank(bank.getSelectedIndex() == 0 ? null : new RegistryBank().setId(Integer.parseInt(bank.getSelectedValue())));
+					fbatch.setConfidential(isConfidential);
+					
+					if (fbatch.getId() == null) {
+						fbatch.setDomain(domainId);
+						fbatch.setPayment((byte)1); // Pago
+						fbatch.setStatus(FBatchStatus.PENDING); // Pendiente
+					}
+					
+					commonService.createUpdateFBatch(domainName, domainId, user, fbatch, new AsyncCallback<FBatch>() {
+
+						@Override
+						public void onSuccess(FBatch fBatch) {
+							callback.onAccept(fBatch);
+						}
+						@Override
+						public void onFailure(Throwable caught) {
+							errorPanel.showError(caught.getMessage());
+							okButton.setEnabled(true);
+						}
+					});
+				} else {
+					AonDialog warningDialog = new AonDialog("Datos Obligatorios",
+							new HTML("Los datos <b>Descripci\u00f3n</b> y <b>Fecha</b> son obligatorios para crear una remesa. Por favor revise estos campos."));
+					
+					warningDialog.warning();
 				}
 				
-				commonService.createUpdateFBatch(domainName, domainId, user, fbatch, new AsyncCallback<FBatch>() {
+				
+			}
 
-					@Override
-					public void onSuccess(FBatch fBatch) {
-						callback.onAccept(fBatch);
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						errorPanel.showError(caught.getMessage());
-						okButton.setEnabled(true);
-					}
-				});
+			private boolean isAbleToSave() {
+				return AonStringUtils.isNotBlank(description.getValue()) && issueDate.getValue() != null;
 			}
 		});
     	

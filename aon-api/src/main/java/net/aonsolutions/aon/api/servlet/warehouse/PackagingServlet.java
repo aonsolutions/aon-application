@@ -76,6 +76,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/deliveryPackaging":
 				response(req, resp, saveDeliveryPackaging(api));
 				break;
+			case "/deliveryPackaging/accept":
+				response(req, resp, acceptDeliveryPackaging(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -110,5 +113,14 @@ public class PackagingServlet extends AonApiHttpServlet {
 		PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(api.getData());
 		packaging = AON.saveDeliveryPackaging(api.getDomain(), api.getUser(), packaging);
 		return PackagingDeliveryJSON.toJSON(packaging);
+	}
+	
+	private JSONObject acceptDeliveryPackaging(AonApiData api) {
+		Integer deliveryId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		AON.acceptDeliveryPackaging(api.getDomain(), api.getUser(), deliveryId);
+		
+		// TODO SEND TO SERES!!
+		
+		return new JSONObject();
 	}
 }

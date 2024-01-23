@@ -392,6 +392,8 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
 			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
 			.set(FS_MODEL184_DETAIL.ASSET_DAYS,partner.getAssetDays())
+			.set(FS_MODEL184_DETAIL.REND_NETO_PREVIO,partner.getRendNetoPrevio())
+			.set(FS_MODEL184_DETAIL.REND_NETO_MINORA,partner.getRendNetoMinorado())
 			.execute();
 	}
 
@@ -418,6 +420,8 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
 			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
 			.set(FS_MODEL184_DETAIL.ASSET_DAYS,partner.getAssetDays())
+			.set(FS_MODEL184_DETAIL.REND_NETO_PREVIO,partner.getRendNetoPrevio())
+			.set(FS_MODEL184_DETAIL.REND_NETO_MINORA,partner.getRendNetoMinorado())
 			.where(FS_MODEL184_DETAIL.ID.equal(partner.getId()))
 			.execute();
 	}
@@ -601,6 +605,8 @@ public class Mod184DAO {
 				.setDeclaredKey(rec.getValue(FS_MODEL184_DETAIL.DECLARED_KEY))
 				.setAssetPercent(rec.getValue(FS_MODEL184_DETAIL.ASSET_PERCENT))
 				.setAssetDays(rec.getValue(FS_MODEL184_DETAIL.ASSET_DAYS))
+				.setRendNetoPrevio(rec.getValue(FS_MODEL184_DETAIL.REND_NETO_PREVIO))
+				.setRendNetoMinorado(rec.getValue(FS_MODEL184_DETAIL.REND_NETO_MINORA))
 				;
 			
 		}

@@ -40,6 +40,7 @@ public class Fee implements Serializable{
 	private boolean modify = false;
 	private Boolean hasRItem = false;
 	private Seller sellerSupport;
+	private Seller sellerComercial;
 	
 	private LinkedList<String> segments;
 	
@@ -117,6 +118,18 @@ public class Fee implements Serializable{
 	
 	public Fee setSeller(Seller seller) {
 		this.seller = seller;
+		return this;
+	}
+	
+	public Seller getSellerComercial() {
+		if(sellerComercial == null) {
+			this.sellerComercial = new Seller();
+		}
+		return sellerComercial;
+	}
+	
+	public Fee setSellerComercial(Seller sellerComercial) {
+		this.sellerComercial = sellerComercial;
 		return this;
 	}
 	

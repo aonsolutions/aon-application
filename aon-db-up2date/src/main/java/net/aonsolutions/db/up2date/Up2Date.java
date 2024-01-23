@@ -19,19 +19,23 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.AddColumnActivityExemptionCause;
 import net.aonsolutions.db.up2date.config.InsertIAE3034;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2023;
+import net.aonsolutions.db.up2date.finance.InvoiceInfoLroeUpdate;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
+import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
-import net.aonsolutions.db.up2date.note.AlterNoteTagLength;
+import net.aonsolutions.db.up2date.payroll.AlterContractDeductionExpression;
 import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
+import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
+import net.aonsolutions.db.up2date.tgss.BasesMin2024Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023421Fix;
-import net.aonsolutions.db.up2date.tgss.TrainingUnemployment2023Fix;
+import net.aonsolutions.db.up2date.tgss.SMI2024Update;
 
 public class Up2Date {
 
-	private static Update[] UPDATES = {
+    private static Update[] UPDATES = {
 
 	    // IRPF2018UPDATE,
 	    // AGREEMENTUPDATE,
@@ -376,16 +380,14 @@ public class Up2Date {
 	    // NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
-	    //RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
-	    //TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
-		Holidays2024Insert.HOLIDAYS2024INSERT,
-		IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
-		MEI2024Insert.MEI2024INSERT,
-
-		
-	    // ----------------------------------------------------------------
-	    // Important, not remove
-	    //
+	    // RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
+	    // TrainingUnemployment2023Fix.TRAININGUNEMPLOYMENT2023FIX,
+	    // Holidays2024Insert.HOLIDAYS2024INSERT,
+	    // IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
+	    // MEI2024Insert.MEI2024INSERT,
+	    // BasesMax2024Update.BASESMAX2024UPDATE,
+	    // SMI2024Update.SMI2024UPDATE,
+	    // BasesMin2024Update.BASESMIN2024UPDATE,
 	    // AlterRitem.ALTER_RITEM,
 	    // AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
 	    // AlterInvestAsset.ALTER_INVEST_ASSET,
@@ -405,17 +407,23 @@ public class Up2Date {
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
 	    // AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
-	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
-	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
-	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
-	    //AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
-	    //AlterNoteTagLength.ALTERNOTETAGLENGTH,
-	    //AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
-	    //AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
-		InsertIAE3034.INSERT_IAE_3034
+	    // RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    // DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    // DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    // SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    // CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
+	    // AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
+	    // AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    // AlterNoteTagLength.ALTERNOTETAGLENGTH,
+	    // AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
+	    // AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
+	    // InsertIAE3034.INSERT_IAE_3034,
+	    // AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
+	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
+	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
+	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
+	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
+	    CodinucovaInvoiceTaxFix.INSTANCE
 	};
 
     // ------------------------------------------------------------------------
@@ -496,15 +504,15 @@ public class Up2Date {
 	    System.out.println("Error: " + e.getLocalizedMessage());
 	} finally {
 	    try {
-	    	if (databasesRs != null)
-	    		databasesRs.close();
-	    	if (statement != null)
-	    		statement.close();
-	    	if (connection != null)
-	    		connection.close();
+		if (databasesRs != null)
+		    databasesRs.close();
+		if (statement != null)
+		    statement.close();
+		if (connection != null)
+		    connection.close();
 	    } catch (SQLException e) {
-	   		System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
-	    }	
+		System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+	    }
 	}
 
     }

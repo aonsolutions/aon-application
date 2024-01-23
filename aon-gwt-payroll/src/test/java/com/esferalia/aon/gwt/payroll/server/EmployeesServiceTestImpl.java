@@ -1142,4 +1142,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -179,6 +179,14 @@ public class FinanceValidation {
 		if (!finance.isPending() && !finance.isReturned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_SETTLED.getMessage());
 	};
+	
+	/**
+	 * El vencimiento debe estar saldado para ser deshacer el movimiento y volver a pendiente.
+	 */
+	private static BiConsumer<Finance,AONContext> CHECK_SETTLE_FOR_UNSETTLING = (finance,ctx) -> {
+		if (!finance.isSettled()) 
+			throw new AonCoreException("No se puede eleminar el movimiento saldado del vencimiento, no est\u00E1 saldado.");
+	};
 
 	/**
 	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
@@ -218,6 +226,16 @@ public class FinanceValidation {
 			if (finance == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
 		CHECK_PENDING_FOR_SETTLING
+			.accept(finance, ctx);
+		return finance;
+	}
+	
+	public static Finance validateUnSettleTracking(AONContext ctx, Integer financeId) {
+		Finance finance = FinanceDAO.getFinance(ctx, financeId);
+		if (finance == null ) {
+			if (finance == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		CHECK_SETTLE_FOR_UNSETTLING
 			.accept(finance, ctx);
 		return finance;
 	}

@@ -183,6 +183,8 @@ public class WorkplaceITObject {
 								days, 
 								it.getStartDate(), 
 								null, 
+								itEmployee.getContractInfo().getAgreementCategory(),
+								"Las propias de " + itEmployee.getContractInfo().getAgreementCategory(),
 								new AsyncCallback<Void>() {
 									
 									@Override

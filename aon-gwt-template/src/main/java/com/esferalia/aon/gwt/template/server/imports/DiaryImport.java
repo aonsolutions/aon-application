@@ -237,10 +237,13 @@ public class DiaryImport extends ImportUtils {
 		
 		if(isDocument(title)) {
 			if(!invoice) {
-				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
-					CellType.NUMERIC == cell.getCellTypeEnum() 
+				String documento = 	CellType.NUMERIC == cell.getCellTypeEnum() 
 						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
-						: o.toString());
+						: o.toString();
+				if(documento.length() > 32) {
+					documento = documento.substring(0, 32);
+				}
+				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(documento);
 			}
 			return;
 		}

@@ -5,7 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -32,15 +35,16 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tedi.TediErrorException;
 import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
@@ -319,7 +323,12 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContext> INVOICE_TRANSACTION = ocr -> fillTransaction(ocr.getOCRInvoice(), ocr.getInvoice());
 	
 	public static final void fillTransaction(OCRInvoice ocrInvoice, Invoice invoice) {
-	    invoice.setTransaction( InvoiceTransactionType.NATIONAL );
+	    Map<String, InvoiceTransactionType> transactionTypeMap = new HashMap<>();
+	    transactionTypeMap.put("INTRA", InvoiceTransactionType.INTRACOMMUNITY );
+	    transactionTypeMap.put("EXTRA", InvoiceTransactionType.EXTRACOMMUNITY );
+	    String  tax =  ocrInvoice.getTaxClass().map( str -> str.getValue().orElse("") ).orElse("");
+	    InvoiceTransactionType transaction = transactionTypeMap.getOrDefault(tax, InvoiceTransactionType.NATIONAL);
+	    invoice.setTransaction(transaction);
 	}
 
 	private static final Consumer<OCRContext> INVOICE_REGISTRY = ocr -> {
@@ -679,25 +688,37 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_INVOICE = ocr -> 
 		ocr.getFinance().setInvoice(ocr.getInvoice());
 	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_DUE_DATE = ocr -> {
-		String dueDateString = ocr.getOCRDue().getDate()
+	    try {
+		fillFinanceDueDate(ocr.getOCRDue(), ocr.getFinance(), ocr.getInvoice());
+	    } catch (TediErrorException e) {
+		ocr.add(e.getTediError());
+	    }
+	};
+	
+	private static final void fillFinanceDueDate(OCRInvoiceDue due, Finance finance, Invoice invoice) throws TediErrorException {
+		String dueDateString = due.getDate()
 			.flatMap( s -> s.getValue() ).orElse(null);
 		if (AonStringUtils.isNotBlank( dueDateString)) {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 				Date dueDate = formatter.parse(dueDateString);
-				ocr.getFinance().setDueDate(dueDate);
+				finance.setDueDate(dueDate);
 			} catch (ParseException e) {
-				ocr.add( TediErrorMessages.C019.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
+				throw new TediErrorException( TediErrorMessages.C019.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
 			}
 		} else {
-			ocr.getFinance().setDueDate(ocr.getInvoice().getIssueDate());
+		    finance.setDueDate(invoice.getIssueDate());
 		}
-	};
+	}
 	
-	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_AMOUNT = ocr -> {
-		BigDecimal amount = ocr.getOCRDue().getAmount().flatMap( d -> d.getValue() ).orElse(null);
-		ocr.getFinance().setAmount( AonNumberUtils.zeroIfNull(amount));
-	};
+	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_AMOUNT = ocr -> 
+	    	fillFinanceAmount(ocr.getOCRDue(), ocr.getFinance());
+	
+	private static final void fillFinanceAmount(OCRInvoiceDue due, Finance finance) {
+		BigDecimal amount = due.getAmount().flatMap( d -> d.getValue() ).orElse(null);
+		finance.setAmount( AonNumberUtils.zeroIfNull(amount));
+	}
+	
 	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_PAYMETHOD = ocr -> {
 		String iban = ocr.getOCRInvoice().getIBAN().flatMap( d -> d.getValue() ).orElse(null);
 		String paymethodDesc = ocr.getOCRInvoice().getPaymentMethod().flatMap( d -> d.getValue() ).orElse(null);
@@ -726,24 +747,58 @@ public class OCRInvoiceBuilder {
 		}
 	};
 
+	private static void fillFinancePayMethod(AONContext aonContext, OCRInvoice ocrInvoice, Finance finance) {
+		String iban = ocrInvoice.getIBAN().flatMap( d -> d.getValue() ).orElse(null);
+		String paymethodDesc = ocrInvoice.getPaymentMethod().flatMap( d -> d.getValue() ).orElse(null);
+		if (AonStringUtils.isNotBlank( paymethodDesc )) {
+		    PayMethod paymethod = PayMethodDAO.get(aonContext, paymethodDesc);
+		    if (paymethod == null) {
+			paymethod = new PayMethod();
+			paymethod.setDomain(aonContext.getDomainId());
+			paymethod.setName(paymethodDesc);
+			if (AonStringUtils.isNotBlank( iban )) {
+				if (AonStringUtils.containsIgnoreCase(paymethodDesc,"transferencia" )) {
+					paymethod.setType( PayMethodType.BANK_TRANSFER);	
+				} else {
+					paymethod.setType( PayMethodType.NEGOTIABLE_DOCUMENT );
+				}
+			} else {
+				if (AonStringUtils.containsIgnoreCase(paymethodDesc,"efectivo" )) {
+					paymethod.setType( PayMethodType.CASH_BASIS );
+				} else {
+					paymethod.setType( PayMethodType.OTHER );
+				}
+			}
+			paymethod = PayMethodDAO.save(aonContext, paymethod);
+		    } 
+		    finance.setPayMethod(paymethod.getId());
+		}
+	}
+
 	private static final String ALPHANUMERIC_PATTERN = "[^A-Za-z0-9]";
 
-	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_BANK = ocr -> {
-		String iban = ocr.getOCRInvoice().getIBAN().flatMap( d -> d.getValue() ).orElse(null);
-		if (AonStringUtils.isNotBlank( iban )) {
-			iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
-			BankAccount bankAccount = new BankAccount(iban);
-			ocr.getFinance().setBankAccount(bankAccount);
-		}
-	};
+	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_BANK = ocr -> 
+	    	fillFinanceBank(ocr.getOCRInvoice(), ocr.getFinance());
+	
+	private static void fillFinanceBank(OCRInvoice ocrInvoice, Finance finance) {
+	    String iban = ocrInvoice.getIBAN().flatMap(d -> d.getValue()).orElse(null);
+	    if (AonStringUtils.isNotBlank(iban)) {
+		iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
+		BankAccount bankAccount = new BankAccount(iban);
+		finance.setBankAccount(bankAccount);
+	    }
+	}
 
-	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_SWIFT = ocr -> {
-		String swift = ocr.getOCRInvoice().getSWIFT().flatMap( d -> d.getValue() ).orElse(null);
+	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_SWIFT = ocr -> 
+		fillFinanceSwift(ocr.getOCRInvoice(), ocr.getFinance());
+	
+	private static void fillFinanceSwift(OCRInvoice ocrInvoice, Finance finance) {
+		String swift = ocrInvoice.getSWIFT().flatMap( d -> d.getValue() ).orElse(null);
 		if (AonStringUtils.isNotBlank( swift )) {
 			swift = swift.replaceAll(ALPHANUMERIC_PATTERN, "");
-			ocr.getFinance().setBic(swift);
+			finance.setBic(swift);
 		}
-	};
+	}
 
 	private static final Consumer<OCRContextDetailFromDue> ADD_INVOICE_FINANCE = ocr -> {
 		if(ocr.getInvoice().getFinances() == null) {
@@ -769,6 +824,40 @@ public class OCRInvoiceBuilder {
 				.accept(ocrDue));
 		;		
 	};
+
+	public static final void fillFinances(AONContext aonContext, OCRInvoice ocrInvoice, Invoice invoice ) {
+	    	List<Finance> finances =
+		Stream.of( ocrInvoice.getDues())
+		.filter( Optional::isPresent )
+		.map( Optional::get )
+		.flatMap( Collection::stream )
+		.map( ocrInvoiceDue -> {
+		    Finance finance = new Finance();
+		    
+		    // INVOICE_FINANCE_INVOICE
+		    finance.setInvoice(invoice);
+		    // INVOICE_FINANCE_DUE_DATE
+		    try {
+			fillFinanceDueDate(ocrInvoiceDue, finance, invoice);
+		    } catch (TediErrorException e) {
+			invoice.addMessage(e.getTediError());
+		    }
+		    // INVOICE_FINANCE_AMOUNT
+		    fillFinanceAmount(ocrInvoiceDue, finance);
+		    // INVOICE_FINANCE_PAYMETHOD
+		    fillFinancePayMethod(aonContext, ocrInvoice, finance);
+		    
+		    // INVOICE_FINANCE_BANK
+		    fillFinanceBank(ocrInvoice, finance);
+		    // INVOICE_FINANCE_SWIFT
+		    fillFinanceSwift(ocrInvoice, finance);
+		    return finance;
+		}).toList();
+
+	    	// ADD_INVOICE_FINANCE
+		invoice.setFinances(finances);
+		
+	}
 
 	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_BASE = ocr -> {
 		fillBreakdownBase(ocr.getOcrBreakdown(), ocr.getBreakdown());

@@ -155,6 +155,12 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1555.00);
 		assertValue("cgcBaseLabel", 1555.00);
 
+		draft("TRAMO, _10 ( PAGAS )");
+		calculate(Calendar.JANUARY, 2024);
+		double prorration = getText("prorationBaseLabel");
+		double totalPayment = getValue("totalPaymentLabel");
+		assertValue("cgpBaseLabel", prorration + totalPayment);
+		assertValue("cgcBaseLabel", prorration + totalPayment);
 	}
 
 	@Test

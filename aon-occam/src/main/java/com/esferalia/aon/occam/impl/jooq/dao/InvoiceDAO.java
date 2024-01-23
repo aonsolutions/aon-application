@@ -375,6 +375,7 @@ public class InvoiceDAO {
 				,PRODUCT.CATEGORY
 				,ITEM.ID
 				,RSELLER.ID
+				,SELLER_ALIAS.ID
 				,SELLER_SUPPORT_ALIAS.NAME
 			)
 			.from(INVOICE)
@@ -479,9 +480,9 @@ public class InvoiceDAO {
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-//			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getIdProperty().eq(id)));
-			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
-			.collect(Collectors.toCollection(LinkedList::new)));
+			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(id)));
+//			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
+//			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
@@ -1422,6 +1423,22 @@ public class InvoiceDAO {
 				deleteDetail(ctx,config,invoice,detail);
 			}
 		}
+	}
+	
+	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NORMAL_RECTIFIER.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifiedInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifierInvoice)))
+		.execute();
+		
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifierInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifiedInvoice)))
+		.execute();
 	}
 	
 	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {

@@ -12,12 +12,14 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSettleDateDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSettleDateDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -53,6 +55,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -107,9 +110,10 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private FinanceModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
-	private AonToolbarButton searchButton;
+	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton exportButton;
 	private AonToolbarButton settleAllButton;
+	private AonToolbarButton unSettleAllButton;
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	private AonToolbarButton settleSalariesButton;
@@ -187,7 +191,7 @@ public class FinanceModule extends MainEntryPoint {
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.CSS.aonScrollArea());
+		centerPanel.getElement().getStyle().setProperty("padding", "0 1.5em 1.5em 1.5em");
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
@@ -223,14 +227,13 @@ public class FinanceModule extends MainEntryPoint {
 		});
 		
 		// Auto search first time
-		if(this.isPayroll) {
-			enableMoreData();
-			container.clear();
-			tab = getTable();
-			container.add(tab);
-			offset.setValue(0);
-			search(opt, searchPanel.getParams( opt ), offset.getValue());
-		}
+		enableMoreData();
+		container.clear();
+		tab = getTable();
+		container.add(tab);
+		offset.setValue(0);
+		search(opt, searchPanel.getParams( opt ), offset.getValue());
+		
 	}
 
 	private static enum COLS {
@@ -343,6 +346,7 @@ public class FinanceModule extends MainEntryPoint {
 				tab.setWidget(0, col.ordinal(), col == PAYROLL_COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
 				
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
 				if ( col.getCellStyleClass() != null) {
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
@@ -359,6 +363,7 @@ public class FinanceModule extends MainEntryPoint {
 				tab.setWidget(0, col.ordinal(), col == COLS.CHK ? selectedCount : new Label( col.getHeaderLabel() ));
 				
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(), AON.CSS.aonFixedHeader());
 				if ( col.getCellStyleClass() != null) {
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
 					tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
@@ -386,21 +391,19 @@ public class FinanceModule extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		toolbar.add(diskForm);
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				toolbar.hideMessages();
-				enableMoreData();
-				container.clear();
-				tab = getTable();
-				container.add(tab);
-				offset.setValue(0);
-				search(opt, searchPanel.getParams( opt ), offset.getValue());
-			}
+		resetSearchButton = new AonToolbarButton(AON.MSG.clean() + " filtros", AON.CSS.aonIconClear());
+		resetSearchButton.addClickHandler(e -> {
+			toolbar.hideMessages();
+			enableMoreData();
+			container.clear();
+			tab = getTable();
+			container.add(tab);
+			offset.setValue(0);
+			searchPanel.initialize(opt);
+			search(opt, searchPanel.getParams( opt ), offset.getValue());
 		});
-		toolbar.add(searchButton);
-
+		toolbar.add(resetSearchButton);
+		
 		exportButton = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconExcel() );
 		exportButton.setEnabled(false);
 		exportButton.addClickHandler(new ClickHandler() {
@@ -501,6 +504,84 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		toolbar.add(settleAllButton);
+		
+		unSettleAllButton = new AonToolbarButton("Eliminar movimientos saldados", AON.CSS.aonIconFinanceUndo() );
+		unSettleAllButton.setVisible(selectedItems.size()>0 && searchPanel.isSettledChecked());
+		unSettleAllButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				long notSettledFinances = finances.values().stream().filter(financesRow -> financesRow.getFinance().isSelected() && !financesRow.getFinance().isSettled()).count();
+				
+				if(notSettledFinances > 0) {
+					AonDialog warningDialog = new AonDialog("Eliminar movimientos saldados",
+							new HTML("No se pueden eliminar los movimientos saldados de los vencimientos cuyo estado sea distinto de <b>Saldado</b>. Por favor revise los vencimientos seleccionadas."));
+
+					warningDialog.warning();
+				} else if(selectedItems.size() > 0){
+					AonDialog deleteDialog = new AonDialog("Eliminar movimientos saldados",
+							new HTML("Se va a proceder a elimiar los moviminetos saldados de <b>" + selectedItems.size() + "</b> vencimiento(s).<br>\u00bfEsta seguro que desea proceder\u003f. Este proceso ser\u00e1 irreversible"));
+
+					deleteDialog.confirm(new AonAcceptDialogCallback() {
+
+						@Override
+						public void onCancel() {
+							// Nothing to do here
+						}
+
+						@Override
+						public void onAccept() {
+							unSettleAllButton.setEnabled(false);
+							
+							progressContainer.setVisible(true);
+							progress.setStyleName(AON.CSS.aonPaddingLeft());
+							progress.addStyleName(AON.CSS.aonPaddingRight());
+							progress.addStyleName(AON.CSS.aonMarginRight());
+							progressContainer.getElement().getStyle().setBorderColor("RoyalBlue");
+							progressContainer.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+							progressContainer.getElement().getStyle().setBorderWidth(1, Unit.PX);
+							progressContainer.getElement().getStyle().setProperty("margin", "0 1rem");
+							progress.getElement().getStyle().setBackgroundColor("RoyalBlue");
+							progress.setHeight("5px");
+							progress.setWidth("0px");
+							final MutableInt p = new MutableInt(0);
+							for (Integer id : selectedItems) {
+								FinanceRow financeRow = finances.get(id);
+								if (financeRow != null && financeRow.getFinance().isSettled() && financeRow.getFinance().getId() != null) {
+									FINANCE_SERVICE.unSettleFinance(opt.getDomainName()
+											,opt.getDomain()
+											,opt.getUser(), financeRow.getFinance().getId()
+											,new AsyncCallback<Finance>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+											progress();
+											showError("Se ha producido un error al eliminar el movimiento saldado del vencimiento. ["+caught.getMessage()+"]");
+										}
+
+										@Override
+										public void onSuccess(Finance fin) {
+											progress();
+											paintRow(opt, fin, financeRow.getRow());
+										}
+										
+										private void progress() {
+											p.add(1);
+											int prg = ( p.getValue() * 100 / selectedItems.size());
+											progress.setWidth(prg + "%");
+											if (AonNumberUtils.equals(p.getValue(),selectedItems.size())) {
+												progressContainer.setVisible(false);	
+												unSettleAllButton.setEnabled(true);
+											}
+										}
+									});					
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+		toolbar.add(unSettleAllButton);
 		
 		if(this.isPayroll) {
 			settleSalariesButton = new AonToolbarButton("Vencimiento de n\u00f3minas", AON.CSS.aonIconRebaseEdit());
@@ -635,9 +716,6 @@ public class FinanceModule extends MainEntryPoint {
 							result.forEach( finance -> paintRow(opt,finance));
 							offset.setValue(ofs + result.size());
 							enableMoreData();
-							checkAll.setEnabled(true);
-							uncheckAll.setEnabled(true);
-							exportButton.setEnabled(true);
 						} else {
 							Label label = new Label(AON.MSG.noData());
 							label.setStyleName(AON.CSS.aonBlockMessage());
@@ -646,6 +724,9 @@ public class FinanceModule extends MainEntryPoint {
 							container.add(label);
 							disableMoreData();
 						}
+						checkAll.setEnabled(true);
+						uncheckAll.setEnabled(true);
+						exportButton.setEnabled(true);
 						enableSearch();
 					}
 					
@@ -842,6 +923,8 @@ public class FinanceModule extends MainEntryPoint {
 		tab.setWidget(row, col, status);
 		++col;
 		tab.setWidget(row, col, actionsPanel);
+		
+		tab.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");
 	}
 	
 	private void clearSelection() {
@@ -857,6 +940,8 @@ public class FinanceModule extends MainEntryPoint {
 	}
 	private void refreshIcons() {
 		settleAllButton.setEnabled(selectedItems.size()>0);
+		unSettleAllButton.setVisible(selectedItems.size()>0 && searchPanel.isSettledChecked());
+		unSettleAllButton.setEnabled(selectedItems.size()>0 && searchPanel.isSettledChecked());
 		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 }		

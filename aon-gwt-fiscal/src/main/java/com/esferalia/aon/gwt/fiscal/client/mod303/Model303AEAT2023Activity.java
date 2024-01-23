@@ -793,12 +793,13 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 						desk.setDeskDays( 365 );
 				}
 				double daysFactor = (callback.getModel().isLastPeriod())
-					?(desk.getDeskDays() / 365.0)
+					?AonMathUtils.round(desk.getDeskDays() / 365.0)
 					:1.0;
-				double factor = desk.getDeskCapacity() / 4.0;
+				double factor = AonMathUtils.round(desk.getDeskCapacity() / 4.0);
 				double v = (desk.getDesks() * factor * daysFactor);
 				value = value + v;
 			}
+			value = AonMathUtils.round(value);
 			callback.getActivity().getModules().get( deskIndex ).setValue( value );
 			fillDeskLabel(callback);
 		}

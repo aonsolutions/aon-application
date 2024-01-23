@@ -338,7 +338,28 @@ public class FBatchPaymentModule extends MainEntryPoint {
 		
 		AonTableButton selectionButton = new AonTableButton("Ir a la remesa", AON.CSS.aonIconRight()); 
 		selectionButton.addClickHandler(e -> {
-			deckLayoutPanel.showWidget(1);
+			fBatchPaymentPayrollEntryModule = new FBatchPaymentEntryModule(fbatchType) {
+				
+				@Override
+				public void back(boolean refresh) {
+					if(refresh) {
+						toolbar.hideMessages();
+						enableMoreData();
+						container.clear();
+						tab = getTable();
+						container.add(tab);
+						offset.setValue(0);
+						search(opt, searchPanel.getParams( opt ), offset.getValue());
+					}
+					
+					deckLayoutPanel.showWidget(0);
+				}
+				
+			};
+			deckLayoutPanel.remove(fBatchPaymentPayrollEntryModule);
+			deckLayoutPanel.add(fBatchPaymentPayrollEntryModule);
+			
+			deckLayoutPanel.showWidget(fBatchPaymentPayrollEntryModule);
 			fBatchPaymentPayrollEntryModule.onModuleLoad(opt, fBatch);
 		});
 		
@@ -472,7 +493,7 @@ public class FBatchPaymentModule extends MainEntryPoint {
 			status.setText(FBatchStatus.GENERATED.getDescription());
 			status.removeStyleName(AON.CSS.aonColorRed());
 		});
-		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getStatus().equals(FBatchStatus.ACCOUNTED) && fBatch.getType() != (byte)0 && !fBatch.getBatchDetails().isEmpty());
+		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getBatchDetails().isEmpty() && fBatch.getType() != (byte)0 && fBatch.getRbank() != null);
 		actionsPanel.add(sepaButton);
 		
 		setVisible(diskForm, fBatch.getRattach() != null);

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -16,6 +18,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
@@ -23,6 +26,8 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Barcode;
 import com.esferalia.aon.occam.api.model.warehouse.BarcodeType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -31,12 +36,16 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.GS1128Codes;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
+import com.esferalia.aon.occam.api.model.warehouse.PackagingDeliveryContent;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 
 public class PackagingDAO {
 	
@@ -77,6 +86,7 @@ public class PackagingDAO {
 			boolean contain = false;
 			for(ItemComposition r : item.getItemComposition()) {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				if(productMap.containsKey(productId)) {
 					contain = true;
@@ -92,6 +102,7 @@ public class PackagingDAO {
 			List<Integer> ps = new LinkedList<>();
 			item.getItemComposition().stream().forEach(r -> {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				ps.add(productId);
 			});
@@ -166,6 +177,36 @@ public class PackagingDAO {
 		return processPackaging(ctx, packaging, elaboration, warehouse);
 	}
 	
+	public static void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId) {
+		// CAMBIAR ESTADO DEL ALBARÁN DE VENTA
+		ctx.getDslContext().update(DELIVERY).set(DELIVERY.STATUS, DeliveryStatus.PENDING.value()).where(DELIVERY.ID.eq(deliveryId)).execute();
+		
+		// BUSCAR TODOS LOS DETALLES DEL PEDIDO VINCULADOS CON EL ALBARAN
+		SalesDetailDAO.getStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getDeliveryProperty().eq(deliveryId)))
+		.map(salesDetail -> {
+			boolean delivered = salesDetail.getQuantity() - salesDetail.getDelivered() <= 0;
+			
+			// ELIMINAR EL VINCULO DEL DETALLE DEL PEDIDO CON EL ALBARÁN.
+			ctx.getDslContext().update(SALES_DETAIL)
+			.set(SALES_DETAIL.DELIVERY, (Integer) null)
+			.set(SALES_DETAIL.STATUS, delivered ? SalesDetailStatus.SETTLED.value() : salesDetail.getStatus().value())
+			.where(SALES_DETAIL.ID.eq(salesDetail.getId()))
+			.execute();
+			
+			return salesDetail.getSales().getId();
+		}).distinct().forEach(id -> {
+			Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
+			boolean notDelivered = ss.getDetails().stream().filter(f -> !f.getStatus().equals(SalesDetailStatus.SETTLED)).count() > 0;
+			if(!notDelivered) {
+				ss.setStatus(SalesStatus.SERVED);
+				SalesDAO.save(ctx, ss);
+			}
+		});
+		
+	}
+	
 	public static PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging) {
 		Delivery delivery = DeliveryDAO.get(ctx, packaging.getDelivery());
 		
@@ -193,43 +234,44 @@ public class PackagingDAO {
 					.setSerialDate(new Date()));
 			// CREAR ITEM DEL ENVASADO.
 			// AÑADIR DELIVERY PACKAGING
-			DeliveryPackaging dp = DeliveryPackagingDAO.save(ctx, new DeliveryPackaging()
+			DeliveryPackagingDAO.save(ctx, new DeliveryPackaging()
 					.setDomain(ctx.getDomainId())
 					.setDelivery(delivery)
 					.setItem(container));
 		}
 		
-		if(packaging.getContent().getSource() != null) {
-			List<ItemComposition> list = new LinkedList<>();
-			Integer containerId = container.getId();
-			packaging.getContent().getComposition().stream().forEach(c -> {
-				Item item = ItemDAO.get(ctx, c.getCompositionItemId());
-				ItemComposition itemComposition = ItemCompositionDAO.save(ctx, new ItemComposition()
-						.setItemId(containerId)
-						.setCompositionItemId(c.getCompositionItemId())
-						.setDescription(item.getDescription())
-						.setDomain(ctx.getDomainId())
-						.setQuantity(c.getQuantity()));
-				list.add(itemComposition);
+		for (PackagingDeliveryContent content : packaging.getContent()) {
+			if(content.getSource() != null) {
+				List<ItemComposition> list = new LinkedList<>();
+				Integer containerId = container.getId();
+				content.getComposition().stream().forEach(c -> {
+					Item item = ItemDAO.get(ctx, c.getCompositionItemId());
+					ItemComposition itemComposition = ItemCompositionDAO.save(ctx, new ItemComposition()
+							.setItemId(containerId)
+							.setCompositionItemId(c.getCompositionItemId())
+							.setDescription(item.getDescription())
+							.setDomain(ctx.getDomainId())
+							.setQuantity(c.getQuantity()));
+					itemComposition.setComposition(item);
+					list.add(itemComposition);
 
-				ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getItemProperty().eq(packaging.getContent().getSource()))
-						.and(f.getCompositionItemProperty().eq(c.getCompositionItemId())));
-				
-				double q = ic.getQuantity() - c.getQuantity();
-				if(q == 0) {
-					// delete itemcomposition
-					ItemCompositionDAO.delete(ctx, ic.getId());
-				} else {
-					// update itemcomposition
-					ItemCompositionDAO.save(ctx, ic.setQuantity(q));
-				}
-			});
-			container.setItemComposition(list);
-
-			// AÑADIR COMPOSITION SI ES NECESARIO
-			// QUITAR COMPOSITION DEL SOURCE SI ES NECESARIO			
+					ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+							.and(f.getItemProperty().eq(content.getSource()))
+							.and(f.getCompositionItemProperty().eq(c.getCompositionItemId())));
+					
+					double q = ic.getQuantity() - c.getQuantity();
+					if(q == 0) {
+						// delete itemcomposition
+						ItemCompositionDAO.delete(ctx, ic.getId());
+					} else {
+						// update itemcomposition
+						ItemCompositionDAO.save(ctx, ic.setQuantity(q));
+					}
+				});
+				container.setItemComposition(list);		
+			}
 		}
+
 
 		// RESTAR STOCK!
 		
@@ -263,6 +305,9 @@ public class PackagingDAO {
 				stock.setQuantity(stock.getQuantity() - ic.getQuantity());
 				WarehouseDAO.saveStock(ctx, stock);
 			}
+			
+			sd.setStatus(sd.getQuantity() != sd.getDelivered() 
+					? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
 			SalesDetailDAO.save(ctx, sd);
 		}
 	

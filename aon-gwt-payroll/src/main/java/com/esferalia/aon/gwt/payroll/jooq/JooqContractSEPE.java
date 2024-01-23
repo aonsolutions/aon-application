@@ -154,6 +154,7 @@ public class JooqContractSEPE {
 		getContractTransformComunicationDate(dslContext, contractId, contractSpecificData);
 		getContractDisc(dslContext, contractId, contractSpecificData);
 		getContractTrueDate(dslContext, contractId, contractSpecificData);
+		getContractLegalRepresentative(dslContext, contractId, contractSpecificData);
 		getContractExtensions(dslContext, contractId, contractSpecificData);
 		
 		boolean hasCNO = AonStringUtils.isNotBlank(contractSpecificData.getCno());
@@ -331,6 +332,18 @@ public class JooqContractSEPE {
 		
 	}
 	
+	private static void getContractLegalRepresentative(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
+		Result<Record> legalRepresentativeRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("LEGAL_REPRESENTATIVE"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(legalRepresentativeRecords.isNotEmpty()) {
+			contractSpecificData.setLegalRepresentative(legalRepresentativeRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
+		}
+		
+	}
+	
 	private static void getContractExtensions(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
 		Result<Record> extensionRecords = dslContext.select().from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.NAME.contains("SEPE_EXTENSION_ID").or(CONTRACT_INFO.NAME.contains("COMUNICATION_EXTENSION_DATE")))
@@ -377,6 +390,7 @@ public class JooqContractSEPE {
 			updateContractTransformComunicationDate(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getComunicationTransformDate());
 			updateContractDisc(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getDisc(), contractSpecificData.getDiscReason());
 			updateContractTrueDate(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getTrueDate());
+			updateContractLegalRepresentative(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getLegalRepresentative());
 			
 			IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
 			
@@ -618,6 +632,25 @@ public class JooqContractSEPE {
 				.set(CONTRACT_DATA.EXPRESSION, trueDate ? "true" : "false")
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
+		}
+	}
+	
+	private static void updateContractLegalRepresentative(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate, Date endDate, String legalRepresentative) {
+		
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("LEGAL_REPRESENTATIVE"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.execute();
+	
+		if(AonStringUtils.isNotBlank(legalRepresentative)) {
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "LEGAL_REPRESENTATIVE")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, legalRepresentative)
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}

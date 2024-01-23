@@ -341,7 +341,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			case (byte)0:
 				return "Borrador del contrato";
 			case (byte)1:
-				return "Copia Contrato laboral";
+				return "Borrador de la copia basica";
 			case (byte)7:
 				return "Domiciliacion bancaria";
 			case (byte)8:
@@ -564,6 +564,26 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 	}
 	
+	public void exportBasicCopy() {
+		if(existBasicCopy()) {
+			AonDialog confirm = new AonDialog("Generar borrador copia basica", new HTMLPanel("Ya existe un borrador de la copia basica generado. \u00bfRealmente desea sobreescribirlo\u003f"));
+			confirm.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					exportBasicCopyPDF();
+				}
+			});
+		} else
+			exportBasicCopyPDF();
+		
+	}
+	
 	public void exportTransformContract() {
 		if(existContractTransform()) {
 			AonDialog confirm = new AonDialog("Generar borrador trasnfromaci\u00f3n contrato", new HTMLPanel("Ya existe un borrador de la transformaci\u00f3n del contrato generado. \u00bfRealmente desea sobreescribirlo\u003f"));
@@ -629,6 +649,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			showSuccessMessage("Contrato", "El contrato se ha generado correctamente");
 			refreshPage();
 		}, f -> showErrorMessage("Contrato", f.getMessage()));
+	}
+	
+	private void exportBasicCopyPDF() {
+		onExportBasicCopyPDF(e -> {
+			showSuccessMessage("Copia Basica", "La Copia Basica se ha generado correctamente");
+			refreshPage();
+		}, f -> showErrorMessage("Copia Basica", f.getMessage()));
 	}
 	
 	private void exportContractTransformPDF() {
@@ -714,6 +741,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	protected abstract void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
+	protected abstract void onExportBasicCopyPDF(Consumer<String> consumer, Consumer<Throwable> failure);
+	
 	protected abstract void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
 	protected abstract void onExportExtensionPDF(Consumer<String> consumer, Consumer<Throwable> failure);
@@ -764,6 +793,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	public boolean existContract() {
 		for (Attach attach : employeeContractInfo.getContractAttachments())
 			if(attach.getType().equals((byte)0))
+				return true;
+		return false;
+	}
+	
+	public boolean existBasicCopy() {
+		for (Attach attach : employeeContractInfo.getContractAttachments())
+			if(attach.getType().equals((byte)1))
 				return true;
 		return false;
 	}

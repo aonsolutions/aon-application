@@ -56,7 +56,7 @@ public class FinanceJSON {
 		return new JSONObject()
 			.put(IJsonNames.ID, finance.getId())
 			.put(IJsonNames.DOMAIN, finance.getDomain())
-			.put(IJsonNames.DUE_DATE, AonDateUtils.format(finance.getDueDate(), "yyyy-MM-dd"))
+			.put(IJsonNames.DUE_DATE, AonDateUtils.format(finance.getDueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX))
 			.put(IJsonNames.PAYMETHOD, finance.getPayMethod())
 			.put(IJsonNames.PAYMETHOD_NAME, finance.getPayMethodName() != null ? finance.getPayMethodName() : null)
 			.put(IJsonNames.PAYMETHOD_TYPE, finance.getPayMethodType() != null ? finance.getPayMethodType().name() : null)

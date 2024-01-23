@@ -5,7 +5,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -27,7 +27,6 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitSII() {		
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -61,9 +60,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 					.setOperation(InvoiceCommunicationOperation.REGISTER)
 					.setTbaiConfiguration(getTbaiConfiguration())
 					
-					.setType(!isPersonaFisica(company.getDocument())
-							? OldInvoiceCommunicationType.LROE_2
-							: OldInvoiceCommunicationType.LROE_2_1)
+					.setType(InvoiceCommunicationType.LROE)
 					.setPerson(isPersonaFisica(company.getDocument()) 
 							? getPerson(company.getId()) : null)
 					.setModel(isPersonaFisica(company.getDocument()) 
@@ -72,6 +69,11 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 			LroeMain lroe = new LroeMain();
 			lroe.alta(ic);
 		}
+	}
+	
+	@Override
+	public void visitSERES() {		
+		
 	}
 
 }

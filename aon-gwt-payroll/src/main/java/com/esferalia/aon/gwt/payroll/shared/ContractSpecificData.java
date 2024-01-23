@@ -23,6 +23,7 @@ public class ContractSpecificData implements Serializable {
 	private String formativeLevel;
 	private String academicTitulation;
 	private Boolean profesionality; 
+	private String legalRepresentative;
 	private String signBasicCopy;
 	private String basicCopy;
 	private String useEnterpriseFree;
@@ -191,6 +192,14 @@ public class ContractSpecificData implements Serializable {
 
 	public void setProfesionality(Boolean profesionality) {
 		this.profesionality = profesionality;
+	}
+
+	public String getLegalRepresentative() {
+		return legalRepresentative;
+	}
+
+	public void setLegalRepresentative(String legalRepresentative) {
+		this.legalRepresentative = legalRepresentative;
 	}
 
 	public String getSignBasicCopy() {

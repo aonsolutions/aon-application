@@ -2048,6 +2048,12 @@ public class AON {
 		}
 	}
 
+	public static void rectifyInvoice(String domainName, Integer domainId, String login, Integer rectifierInvoice, Integer rectifiedInvoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().rectifyInvoice(ctx, rectifierInvoice, rectifiedInvoice);
+		}
+	}
+	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(
 			String domainName, Integer domainId, String login,
 			InvoicingGroupFilter filter) {
@@ -7242,6 +7248,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Finance unSettleFinance(String domainName, int domainId, String user, Integer finance) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().unSettleFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Finance undoFinance(String domainName, int domainId, String user, Integer finance) {
 		CloseableAONContext ctx = null;
@@ -7907,6 +7924,12 @@ public class AON {
 	public static PackagingDelivery saveDeliveryPackaging(Domain domain, User user, PackagingDelivery packaging) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getWarehouse().saveDeliveryPackaging(ctx, packaging);
+		}
+	}
+	
+	public static void acceptDeliveryPackaging(Domain domain, User user, Integer deliveryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().acceptDeliveryPackaging(ctx, deliveryId);
 		}
 	}
 	

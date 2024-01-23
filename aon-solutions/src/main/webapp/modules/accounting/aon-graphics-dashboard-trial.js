@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG } from "../../environments/environments.js";
+import { CSS, TAG, EVENT } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
@@ -53,13 +53,13 @@ export class AonDashboardGraphicsTrial extends AonElement {
     return this.filter;
   }
 
-  constructor(period) {
+  constructor(period, year) {
     super();
     this.id = this.id || "aonGraphicsDashboardTrial";
     this.applicationEl = document.querySelector("#pygContent");
     this.filter = {};
     this.filter.show = period;
-    this.filter.year = new Date().getFullYear();
+    this.filter.year = year || new Date().getFullYear();
     this.style.width = "100%";
     this.style.display = "flex";
     this.style.height = "100%";
@@ -105,123 +105,167 @@ export class AonDashboardGraphicsTrial extends AonElement {
   async draw() {
     this.innerHTML = "";
 
-    let contentDiv = this.createElement(TAG.DIV);
-    contentDiv.style.width = "100%";
-    contentDiv.style.display = "flex";
-    contentDiv.style.gap = ".5rem";
-    contentDiv.style.flexDirection = "column";
-    this.appendChild(contentDiv);
+    if(this.PERIODS && this.PERIODS.length === 0){
+      let emptyMessage = this.createElement(TAG.DIV);
+      emptyMessage.innerHTML = "No existe periodos disponibles";
+      emptyMessage.style.fontWeight = "bold";
 
-    let titleDiv = this.createElement(TAG.SPAN);
-    titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
-    titleDiv.style.color = "grey";
-    titleDiv.style.fontWeight = "500";
-    titleDiv.style.textAlign = "center";
-    contentDiv.appendChild(titleDiv);
+      this.style.height = "100%";
+      this.appendChild(emptyMessage);
 
-    let canvasDiv = this.createElement(TAG.DIV);
-    canvasDiv.id = "pygCardCanvasDiv";
-    canvasDiv.style.width = "100%";
-    canvasDiv.style.height = "100%";
-    contentDiv.appendChild(canvasDiv);
+      let pygCard = this.getElement("pygCard");
+      pygCard.style.display = "none";
+    } else {
+      let contentDiv = this.createElement(TAG.DIV);
+      contentDiv.style.width = "100%";
+      contentDiv.style.display = "flex";
+      contentDiv.style.gap = ".5rem";
+      contentDiv.style.flexDirection = "column";
+      this.appendChild(contentDiv);
 
-    let canvas = this.createElement(TAG.CANVAS);
-    canvas.id = "pygCardCanvas";
-    canvasDiv.appendChild(canvas);
+      let titleDiv = this.createElement(TAG.DIV);
+      titleDiv.style.width = "100%";
+      titleDiv.style.display = "flex";
+      titleDiv.style.gap = ".5rem";
+      titleDiv.style.alignItems = "center";
+      titleDiv.style.justifyContent = "center";
+      contentDiv.appendChild(titleDiv);
 
-    this.accounts = await this.getData();
+      let titleSpan = this.createElement(TAG.SPAN);
+      titleSpan.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
+      titleSpan.style.color = "grey";
+      titleSpan.style.fontWeight = "500";
+      titleSpan.style.textAlign = "center";
+      titleDiv.appendChild(titleSpan);
 
-    if (this.accounts) {
-      if (this.filter.show === "yearly") {
-        this.calculateYearlyData(this.accounts);
-        this.drawBarChart(canvas);
-      } else {
-        let accountsCalc = [];
-        if (this.filter.show === "quarterly") {
-          let dteFrom = UTILS.getDateFromString(this.selectedPeriod.initiationDate);
-          for (let i = 1; i <= 4; i++) {
-            let dteTo = new Date(dteFrom.getTime());
-            dteTo.setMonth(dteTo.getMonth() + 3);
-            dteTo.setDate(0);
+      let yearelect = this.createElement('select');
+      yearelect.id = 'pyGyearelect';
+      yearelect.title = 'Año';
+      yearelect.style.background = "none";
+      yearelect.style.border = "1px gray solid";
 
-            let stmnts = [
-              {
-                debit: 0,
-                credit: 0,
-                account: {
-                  code: "RESULT",
-                  description: "RESULTADO",
-                  type: "RESULT",
+      for (const element of this.PERIODS) {
+        let optYear = this.createElement('option');
+        optYear.value = JSON.stringify(element);
+        optYear.innerHTML = element.name;
+        if(this.filter.year === element.name){
+          optYear.selected = true;
+        }
+        yearelect.appendChild(optYear);
+      }
+
+      yearelect.addEventListener('change', () => {
+        let period = JSON.parse(yearelect.value);
+        this.filter.year = period.name;
+        this.selectedPeriod = period;
+        this.draw();
+      });
+      titleDiv.appendChild(yearelect);
+
+      let canvasDiv = this.createElement(TAG.DIV);
+      canvasDiv.id = "pygCardCanvasDiv";
+      canvasDiv.style.width = "100%";
+      canvasDiv.style.height = "100%";
+      contentDiv.appendChild(canvasDiv);
+
+      let canvas = this.createElement(TAG.CANVAS);
+      canvas.id = "pygCardCanvas";
+      canvasDiv.appendChild(canvas);
+
+      this.accounts = await this.getData();
+
+      if (this.accounts) {
+        if (this.filter.show === "yearly") {
+          this.calculateYearlyData(this.accounts);
+          this.drawBarChart(canvas);
+        } else {
+          let accountsCalc = [];
+          if (this.filter.show === "quarterly") {
+            let dteFrom = UTILS.getDateFromString(this.selectedPeriod.initiationDate);
+            for (let i = 1; i <= 4; i++) {
+              let dteTo = new Date(dteFrom.getTime());
+              dteTo.setMonth(dteTo.getMonth() + 3);
+              dteTo.setDate(0);
+
+              let stmnts = [
+                {
+                  debit: 0,
+                  credit: 0,
+                  account: {
+                    code: "RESULT",
+                    description: "RESULTADO",
+                    type: "RESULT",
+                  },
                 },
-              },
-            ];
+              ];
 
-            for (const element of this.accounts.intervals) {
-              let interFrom = UTILS.getDateFromString(
-                element.interval.fromDate
-              );
-              let interTo = UTILS.getDateFromString(element.interval.toDate);
+              for (const element of this.accounts.intervals) {
+                let interFrom = UTILS.getDateFromString(
+                  element.interval.fromDate
+                );
+                let interTo = UTILS.getDateFromString(element.interval.toDate);
 
-              if (
-                interFrom.getTime() != interTo.getTime() &&
-                dteFrom <= interFrom &&
-                dteTo >= interTo
-              ) {
-                element.statements.forEach((stm) => {
-                  let repeatedAccount = stmnts.filter(
-                    (st) =>
-                      JSON.stringify(st.account) == JSON.stringify(stm.account)
-                  );
+                if (
+                  interFrom.getTime() != interTo.getTime() &&
+                  dteFrom <= interFrom &&
+                  dteTo >= interTo
+                ) {
+                  element.statements.forEach((stm) => {
+                    let repeatedAccount = stmnts.filter(
+                      (st) =>
+                        JSON.stringify(st.account) == JSON.stringify(stm.account)
+                    );
 
-                  if (repeatedAccount.length > 0) {
-                    repeatedAccount[0].debit =
-                      repeatedAccount[0].debit + stm.debit;
-                    repeatedAccount[0].credit =
-                      repeatedAccount[0].credit + stm.credit;
-                  } else {
-                    let statement = {
-                      account: stm.account,
-                      credit: stm.credit,
-                      debit: stm.debit,
-                    };
-                    stmnts.push(statement);
-                  }
-                });
+                    if (repeatedAccount.length > 0) {
+                      repeatedAccount[0].debit =
+                        repeatedAccount[0].debit + stm.debit;
+                      repeatedAccount[0].credit =
+                        repeatedAccount[0].credit + stm.credit;
+                    } else {
+                      let statement = {
+                        account: stm.account,
+                        credit: stm.credit,
+                        debit: stm.debit,
+                      };
+                      stmnts.push(statement);
+                    }
+                  });
+                }
               }
+
+              let quarter = {
+                interval: {
+                  fromDate: AonDateUtils.formatDate(dteFrom),
+                  toDate: AonDateUtils.formatDate(dteTo),
+                  name: `${i}T`,
+                },
+                statements: stmnts,
+              };
+              accountsCalc.push(quarter);
+              dteFrom.setMonth(dteFrom.getMonth() + 3);
+              dteFrom.setDate(1);
             }
 
-            let quarter = {
-              interval: {
-                fromDate: AonDateUtils.formatDate(dteFrom),
-                toDate: AonDateUtils.formatDate(dteTo),
-                name: `${i}T`,
-              },
-              statements: stmnts,
-            };
-            accountsCalc.push(quarter);
-            dteFrom.setMonth(dteFrom.getMonth() + 3);
-            dteFrom.setDate(1);
-          }
+            let totalYear = null;
+            try {
+              totalYear = this.accounts.intervals
+                ? this.accounts.intervals.filter(
+                    (acc) =>
+                      acc.interval.fromDate == acc.interval.toDate &&
+                      /31\/12\/d*/.test(acc.interval.fromDate)
+                  )[0]
+                : null;
+            } catch (error) {
+              console.log(error);
+            }
 
-          let totalYear = null;
-          try {
-            totalYear = this.accounts.intervals
-              ? this.accounts.intervals.filter(
-                  (acc) =>
-                    acc.interval.fromDate == acc.interval.toDate &&
-                    /31\/12\/d*/.test(acc.interval.fromDate)
-                )[0]
-              : null;
-          } catch (error) {
-            console.log(error);
+            if (totalYear) accountsCalc.push(totalYear);
+          } else {
+            accountsCalc = this.accounts.intervals || [];
           }
-
-          if (totalYear) accountsCalc.push(totalYear);
-        } else {
-          accountsCalc = this.accounts.intervals || [];
+          accountsCalc = UTILS.getOnly6and7(accountsCalc);
+          this.drawBarLineChart(canvas, accountsCalc);
         }
-        accountsCalc = UTILS.getOnly6and7(accountsCalc);
-        this.drawBarLineChart(canvas, accountsCalc);
       }
     }
   }
@@ -241,6 +285,9 @@ export class AonDashboardGraphicsTrial extends AonElement {
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
       }
+
+      if(!this.params.fromDate) { return []; }
+
       this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
         this.showError(err);
         return null;
@@ -527,8 +574,6 @@ export class AonDashboardGraphicsTrial extends AonElement {
       if (this.stackedChart != undefined) {
         this.stackedChart.destroy();
       }
-  
-      console.log(config);
 
       this.stackedChart = new Chart(canvas, config);
     }
