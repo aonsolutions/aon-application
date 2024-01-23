@@ -156,10 +156,10 @@ export class AonMobileDelivery extends AonElement {
 
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
-		let packaging = new AonMobilePackageList();
-		packaging.setToolbar(this.DELIVERY_TOOLBAR);
-		packaging.setPackages(this.delivery.packaging);
-		div.appendChild(packaging);
+		let packagingList = new AonMobilePackageList();
+		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setPackages(this.delivery.packaging);
+		div.appendChild(packagingList);
 		parent.appendChild(div);
 	}
 
@@ -179,9 +179,12 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	backToDelivery(delivery) {
+		this.packaging = {};
 		if(!delivery) {
 			this.clear();
 			this.build();
+			getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
+			.then(sd => this.salesDetails = sd);
 		} else {
 			let data = {
 				id: delivery,
@@ -191,6 +194,8 @@ export class AonMobileDelivery extends AonElement {
 				this.setDelivery(r);
 				this.clear();
 				this.build();
+				getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
+				.then(sd => this.salesDetails = sd);
 			});
 		}
 	}
@@ -497,7 +502,11 @@ export class AonMobileDelivery extends AonElement {
 					}
 				});
 				source = r.item.id;
-			}).catch(e => this.showError(e));
+			}).catch(e => {
+				product.value = "";
+				product.setDisabled(false);
+				this.showError(e);
+			});
 		});
 
 		let magicButton = new AonIconButton();
@@ -510,32 +519,35 @@ export class AonMobileDelivery extends AonElement {
 		table.addCell(magicButton);
 
 		dialog.addAcceptAction(() => {
-			let contentObject = {
-				source,
-				composition
-			};
-			composition.forEach(c => {
-				let table2 = this.getElement(this.id + 'Envasesss22');
-				table2.addRow();
-				let span = this.createSpan();
-				span.innerHTML = detail.item.product.code;
-				table2.addCell(span);
-				let span2 = this.createSpan();
-				span2.innerHTML = c.quantity;
-				table2.addCell(span2);
-			});
-			
-			if(this.packaging.content) {
-				this.packaging.content.push(contentObject);
-			} else this.packaging.content = [contentObject];
-
-			for(let j = 0; j < this.salesDetails.length; j++) {
-				if(this.salesDetails[j].id === detail.id) {
-					this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
-				}
-			}		
-			
-			this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+			if(source) {
+				let contentObject = {
+					source,
+					composition
+				};
+				composition.forEach(c => {
+					let table2 = this.getElement(this.id + 'Envasesss22');
+					table2.addRow();
+					let span = this.createSpan();
+					span.innerHTML = detail.item.product.code;
+					table2.addCell(span);
+					let span2 = this.createSpan();
+					span2.innerHTML = c.quantity;
+					table2.addCell(span2);
+				});
+				
+				alert(this.packaging.content);
+				if(this.packaging.content) {
+					this.packaging.content.push(contentObject);
+				} else this.packaging.content = [contentObject];
+	
+				for(let j = 0; j < this.salesDetails.length; j++) {
+					if(this.salesDetails[j].id === detail.id) {
+						this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+					}
+				}		
+				
+				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+			}
 		});
 		dialog.open();
 	}
