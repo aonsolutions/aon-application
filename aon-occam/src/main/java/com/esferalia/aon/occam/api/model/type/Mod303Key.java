@@ -146,7 +146,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA36("303-CTSA36",false,"A3",CT_SA16.getDescription())
 	,CT_SA3A("303-CTAS3A",false,null,CT_SA1A.getDescription())
 	,CT_SA3B("303-CTAS3B",false,null,CT_SA1B.getDescription())
-	,CT_SA3C("303-CTAS2C",false,null,"1% de la cuota devengada por operaciones corrientes")
+	,CT_SA3C("303-CTAS3C",false,null,"1% de la cuota devengada por operaciones corrientes")
 	,CT_SA37("303-CTSA37",false,null,CT_SA17.getDescription())
 	,CT_SA38("303-CTSA38",false,"B3",CT_SA18.getDescription())
 	
