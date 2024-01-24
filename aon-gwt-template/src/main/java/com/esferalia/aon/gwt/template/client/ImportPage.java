@@ -56,20 +56,9 @@ public class ImportPage extends AonTemplate2{
 		AonToolbarButton infoButton = new AonToolbarButton("Descargar Plantillas", AON.CSS.aonIconInfo());
 		infoButton.addClickHandler(e -> info());
 		
-//		Boolean showFixButton = getDomain().getName().contains("auditors") || getDomain().getName().contains("ayudat");
-//		AonToolbarButton fixButton = new AonToolbarButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
-//		fixButton.setVisible(showFixButton);
-//		fixButton.addClickHandler(e -> importFix());
-		
-//		Boolean showRegistryEmptyFixButton = getDomain().getName().equals("b06844062-cezaragoza.aonsolutions.net");
-//		AonToolbarButton registryEmptyFixButton = new AonToolbarButton("Regenerar Clientes Vacíos", "aon-icon-segment");
-//		registryEmptyFixButton.setVisible(showRegistryEmptyFixButton);
-//		registryEmptyFixButton.addClickHandler(e -> importRegistryEmptyFix());
-		
 		toolbar.add(downloadTemplate);
 		toolbar.add(infoButton);
-//		toolbar.add(fixButton);
-//		toolbar.add(registryEmptyFixButton);
+
 		
 		setToolbar(toolbar);
 	}
@@ -94,37 +83,6 @@ public class ImportPage extends AonTemplate2{
 	private void content() {
 		setContent(new ImportContent(getAonData()));
 	}
-	
-// TODO remove
-//	private void importFix() {
-//		item.importFix(getDomain(), getUser(), new AsyncCallback<Void>() {
-//			
-//			@Override
-//			public void onSuccess(Void result) {
-//				Window.alert("El proceso de correcci\u00f3n ha terminado.");
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				
-//			}
-//		});
-//	}
-	
-//	private void importRegistryEmptyFix() {
-//		item.importRegistryEmptyFix(getDomain(), getUser(), new AsyncCallback<Void>() {
-//			
-//			@Override
-//			public void onSuccess(Void result) {
-//				Window.alert("El proceso de correcci\u00f3n ha terminado.");
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				
-//			}
-//		});
-//	}
 	
 		
 }

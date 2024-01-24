@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import jakarta.servlet.ServletException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
@@ -47,7 +46,6 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.imports.DiaryImport;
-import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImport;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
@@ -72,7 +70,6 @@ import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -82,7 +79,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -90,11 +86,9 @@ import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
-import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
@@ -106,6 +100,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletException;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 
@@ -2437,19 +2432,4 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index) {
 		return PGCImport.insertPGC(domain, user, index, pgc);			
 	}
-
-// TODO remove
-//	@Override
-//	public void importFix(Domain domain, User user) {
-//		ImportFixer.fixCustomer(domain, user.getLogin());
-//		ImportFixer.fixSupplier(domain, user.getLogin());
-//		ImportFixer.fixCreditor(domain, user.getLogin());
-//		ImportFixer.fixAccounts(domain, user.getLogin());
-//	}
-//
-//	
-//	@Override
-//	public void importRegistryEmptyFix(Domain domain, User user) {
-//		ImportFixer.fixEmptyCustomer(domain, user.getLogin());
-//	}
 }

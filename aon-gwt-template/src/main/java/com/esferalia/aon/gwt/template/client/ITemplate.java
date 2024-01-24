@@ -118,8 +118,4 @@ public interface ITemplate extends RemoteService{
 	
 	public void print(String text);
 
-// TODO REMOVE
-//	public void importFix(Domain domain, User user);
-//	public void importRegistryEmptyFix(Domain domain, User user);
-
 }

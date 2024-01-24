@@ -103,10 +103,6 @@ public interface ITemplateAsync {
 	void generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif,
 			AsyncCallback<String> callback);
-	
-// TODO remove
-//	void importFix(Domain domain, User user, AsyncCallback<Void> callback);
-//	void importRegistryEmptyFix(Domain domain, User user, AsyncCallback<Void> callback);
 
 	void insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
 	void insertServalInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
