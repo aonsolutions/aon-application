@@ -2438,17 +2438,18 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return PGCImport.insertPGC(domain, user, index, pgc);			
 	}
 
-	@Override
-	public void importFix(Domain domain, User user) {
-		ImportFixer.fixCustomer(domain, user.getLogin());
-		ImportFixer.fixSupplier(domain, user.getLogin());
-		ImportFixer.fixCreditor(domain, user.getLogin());
-		ImportFixer.fixAccounts(domain, user.getLogin());
-	}
-
-	
-	@Override
-	public void importRegistryEmptyFix(Domain domain, User user) {
-		ImportFixer.fixEmptyCustomer(domain, user.getLogin());
-	}
+// TODO remove
+//	@Override
+//	public void importFix(Domain domain, User user) {
+//		ImportFixer.fixCustomer(domain, user.getLogin());
+//		ImportFixer.fixSupplier(domain, user.getLogin());
+//		ImportFixer.fixCreditor(domain, user.getLogin());
+//		ImportFixer.fixAccounts(domain, user.getLogin());
+//	}
+//
+//	
+//	@Override
+//	public void importRegistryEmptyFix(Domain domain, User user) {
+//		ImportFixer.fixEmptyCustomer(domain, user.getLogin());
+//	}
 }

@@ -2,18 +2,13 @@ package com.esferalia.aon.gwt.template.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 
 public class ImportPage extends AonTemplate2{
 	
@@ -61,20 +56,20 @@ public class ImportPage extends AonTemplate2{
 		AonToolbarButton infoButton = new AonToolbarButton("Descargar Plantillas", AON.CSS.aonIconInfo());
 		infoButton.addClickHandler(e -> info());
 		
-		Boolean showFixButton = getDomain().getName().contains("auditors") || getDomain().getName().contains("ayudat");
-		AonToolbarButton fixButton = new AonToolbarButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
-		fixButton.setVisible(showFixButton);
-		fixButton.addClickHandler(e -> importFix());
+//		Boolean showFixButton = getDomain().getName().contains("auditors") || getDomain().getName().contains("ayudat");
+//		AonToolbarButton fixButton = new AonToolbarButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
+//		fixButton.setVisible(showFixButton);
+//		fixButton.addClickHandler(e -> importFix());
 		
-		Boolean showRegistryEmptyFixButton = getDomain().getName().equals("b06844062-cezaragoza.aonsolutions.net");
-		AonToolbarButton registryEmptyFixButton = new AonToolbarButton("Regenerar Clientes Vacíos", "aon-icon-segment");
-		registryEmptyFixButton.setVisible(showRegistryEmptyFixButton);
-		registryEmptyFixButton.addClickHandler(e -> importRegistryEmptyFix());
+//		Boolean showRegistryEmptyFixButton = getDomain().getName().equals("b06844062-cezaragoza.aonsolutions.net");
+//		AonToolbarButton registryEmptyFixButton = new AonToolbarButton("Regenerar Clientes Vacíos", "aon-icon-segment");
+//		registryEmptyFixButton.setVisible(showRegistryEmptyFixButton);
+//		registryEmptyFixButton.addClickHandler(e -> importRegistryEmptyFix());
 		
 		toolbar.add(downloadTemplate);
 		toolbar.add(infoButton);
-		toolbar.add(fixButton);
-		toolbar.add(registryEmptyFixButton);
+//		toolbar.add(fixButton);
+//		toolbar.add(registryEmptyFixButton);
 		
 		setToolbar(toolbar);
 	}
@@ -100,35 +95,36 @@ public class ImportPage extends AonTemplate2{
 		setContent(new ImportContent(getAonData()));
 	}
 	
-	private void importFix() {
-		item.importFix(getDomain(), getUser(), new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				Window.alert("El proceso de correcci\u00f3n ha terminado.");
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
-	}
+// TODO remove
+//	private void importFix() {
+//		item.importFix(getDomain(), getUser(), new AsyncCallback<Void>() {
+//			
+//			@Override
+//			public void onSuccess(Void result) {
+//				Window.alert("El proceso de correcci\u00f3n ha terminado.");
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				
+//			}
+//		});
+//	}
 	
-	private void importRegistryEmptyFix() {
-		item.importRegistryEmptyFix(getDomain(), getUser(), new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				Window.alert("El proceso de correcci\u00f3n ha terminado.");
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
-	}
+//	private void importRegistryEmptyFix() {
+//		item.importRegistryEmptyFix(getDomain(), getUser(), new AsyncCallback<Void>() {
+//			
+//			@Override
+//			public void onSuccess(Void result) {
+//				Window.alert("El proceso de correcci\u00f3n ha terminado.");
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				
+//			}
+//		});
+//	}
 	
 		
 }
