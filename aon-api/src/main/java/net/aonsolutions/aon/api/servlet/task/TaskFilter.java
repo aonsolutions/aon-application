@@ -471,10 +471,14 @@ public class TaskFilter {
 			}
 			
 			if(newStr!=null && !"".equals(newStr)) {
+				if(newStr.contains("[")) newStr = newStr.replace("[", "");
+				if(newStr.contains("]")) newStr = newStr.replace("]", "");
+				
 				String[] str = newStr.split(",");
 		
 				for(int i=0; i<str.length; i++) {
-					workgroupList.add( Integer.parseInt(str[i]) );
+					String workgroup = str[i].contains("\"") ? str[i].split("\"")[1] : str[i];
+					workgroupList.add( Integer.parseInt(workgroup) );
 				}
 			}
 		}
