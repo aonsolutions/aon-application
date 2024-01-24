@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +42,9 @@ public class PackagingSalesPdfServlet extends AonApiHttpServlet {
 		
 			
 			Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesId), new Options().setFull(true));
-			
-			PdfMaker.printSalesPackaging(resp.getOutputStream(), sales);
+			Integer deliveryId = sales.getDetails().get(0).getDelivery();
+			Delivery delivery = AON.getDelivery(domain, login, f -> f.getIdProperty().eq(deliveryId));
+			PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
 
 			responseFile(resp, "almacen", MimeType.PDF);
 		} catch (IOException e) {

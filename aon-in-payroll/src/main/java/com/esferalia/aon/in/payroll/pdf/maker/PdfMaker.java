@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 
 public class PdfMaker {
 
@@ -75,9 +76,9 @@ public class PdfMaker {
 		}		
 	}
 	
-	public static void printSalesPackaging(OutputStream out, Sales sales) {
+	public static void printSalesPackaging(OutputStream out, Sales sales, Delivery delivery) {
 		try {
-			WarehouseSaleTemplate template = new WarehouseSaleTemplate(sales);
+			WarehouseSaleTemplate template = new WarehouseSaleTemplate(sales, delivery);
 			template.print(out);
 		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();
