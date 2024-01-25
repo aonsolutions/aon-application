@@ -1252,7 +1252,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setCarrier(to.getCarrier().getId())
 				.setNumberPlate(getNumberPlate())
 				.setDriver(getDriverName())
-				.setDriverDocument(getDriverDocument());
+				.setDriverDocument(getDriverDocument())
+				.setStatusModificationDate(getChargeDate());
 			d = AON.saveDelivery(domainName, to.getDomain(), login, d);
 			deliveryId = d.getId();
 		}

@@ -746,16 +746,16 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			if ( AonMathUtils.isZero( callback.getActivity().getYearHours() )) {
 				callback.getActivity().setYearHours( 1800 );
 			}
-			double v0 = callback.getActivity().getMay19Hours() / callback.getActivity().getYearHours();
-			double v1 = callback.getActivity().getMen19Hours() / callback.getActivity().getYearHours() * 0.60;
-			double v2 = callback.getActivity().getDisHours() / callback.getActivity().getYearHours() * 0.40;
-			double v3 = callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours();
+			double v0 = AonMathUtils.floor(callback.getActivity().getMay19Hours() / callback.getActivity().getYearHours());
+			double v1 = AonMathUtils.floor(callback.getActivity().getMen19Hours() / callback.getActivity().getYearHours() * 0.60);
+			double v2 = AonMathUtils.floor(callback.getActivity().getDisHours() / callback.getActivity().getYearHours() * 0.40);
+			double v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours());
 			if (callback.getActivity().isOwnerDis()) {
-				v3 = callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours() * 0.75;	
+				v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours() * 0.75);	
 			}
-			double v4 = callback.getActivity().getSpouseHours() / callback.getActivity().getYearHours() * 0.50;
-			double v5 = callback.getActivity().getChildMen18Hours() / callback.getActivity().getYearHours() * 0.50;
-			double value = AonMathUtils.floor(v0 + v1 + v2 + v3 + v4 + v5 , 2);
+			double v4 = AonMathUtils.floor(callback.getActivity().getSpouseHours() / callback.getActivity().getYearHours() * 0.50);
+			double v5 = AonMathUtils.floor(callback.getActivity().getChildMen18Hours() / callback.getActivity().getYearHours() * 0.50);
+			double value = AonMathUtils.round(AonMathUtils.floor(v0 + v1 + v2 + v3 + v4 + v5 , 2));
 			callback.getActivity().getModules().get( staffIndex ).setValue( value );
 			fillStaffLabel( callback );
 		} else {
@@ -793,7 +793,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 						desk.setDeskDays( 365 );
 				}
 				double daysFactor = (callback.getModel().isLastPeriod())
-					?AonMathUtils.round(desk.getDeskDays() / 365.0)
+					?(desk.getDeskDays() / 365.0)
 					:1.0;
 				double factor = AonMathUtils.round(desk.getDeskCapacity() / 4.0);
 				double v = (desk.getDesks() * factor * daysFactor);

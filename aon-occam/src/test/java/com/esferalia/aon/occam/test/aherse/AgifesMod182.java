@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -105,7 +106,7 @@ public class AgifesMod182 {
 		StringBuffer buf = new StringBuffer();
 		buf.append("1");
 		buf.append("182");
-		buf.append("2021");
+		buf.append("2023");
 		buf.append("G20124749");
 		buf.append(AonFiscalFileUtils.text("AGIFES",(57-18+1)));
 		buf.append("T");
@@ -126,31 +127,35 @@ public class AgifesMod182 {
 		
 		for (Registry reg : map.values()) {
 			if ( AonMathUtils.isGreatherThanZero(reg.getAmount())) {
-				buf = new StringBuffer();
-				buf.append("2");
-				buf.append("182");
-				buf.append("2021");
-				buf.append("G20124749");
-				buf.append(AonFiscalFileUtils.document(reg.getDocument()));
-				buf.append(AonFiscalFileUtils.spaces(35-27+1));
-				buf.append(AonFiscalFileUtils.text(AonFiscalFileUtils.changeInvalidCharacters(reg.getName()),(75-36+1)));
-				buf.append(AonFiscalFileUtils.unsigned( getProvince(reg.getProvince()),(77-76+1)));
-				buf.append("A");
-				buf.append(AonFiscalFileUtils.unsigned(20.0,(83-79+1) ,2));
-				buf.append(AonFiscalFileUtils.unsigned(reg.getAmount(),(96-84+1) ,2));
-				buf.append(AonFiscalFileUtils.spaces(104-97+1));
-				buf.append("F");
-				buf.append(" ");
-				buf.append(AonFiscalFileUtils.unsigned(0,(110-107+1) ,2));
-				buf.append(" ");
-				buf.append(AonFiscalFileUtils.spaces(131-112+1));
-				buf.append("0");
-				buf.append(AonFiscalFileUtils.spaces(500-133+1));
-				writer.write(buf.toString());
-				if (buf.length() != 500) {
-					System.out.println( "LENGHT "   + reg.getDocument() + " " + reg.getName() + " " + reg.getAmount() );		
+				if (AonDocumentUtil.isValid(reg.getDocument())) {
+					buf = new StringBuffer();
+					buf.append("2");
+					buf.append("182");
+					buf.append("2023");
+					buf.append("G20124749");
+					buf.append(AonFiscalFileUtils.document(reg.getDocument()));
+					buf.append(AonFiscalFileUtils.spaces(35-27+1));
+					buf.append(AonFiscalFileUtils.text(AonFiscalFileUtils.changeInvalidCharacters(reg.getName()),(75-36+1)));
+					buf.append(AonFiscalFileUtils.unsigned( getProvince(reg.getProvince()),(77-76+1)));
+					buf.append("A");
+					buf.append(AonFiscalFileUtils.unsigned(20.0,(83-79+1) ,2));
+					buf.append(AonFiscalFileUtils.unsigned(reg.getAmount(),(96-84+1) ,2));
+					buf.append(AonFiscalFileUtils.spaces(104-97+1));
+					buf.append("F");
+					buf.append(" ");
+					buf.append(AonFiscalFileUtils.unsigned(0,(110-107+1) ,2));
+					buf.append(" ");
+					buf.append(AonFiscalFileUtils.spaces(131-112+1));
+					buf.append("0");
+					buf.append(AonFiscalFileUtils.spaces(500-133+1));
+					writer.write(buf.toString());
+					if (buf.length() != 500) {
+						System.out.println( "LENGHT -> " + buf.length() + " ("   + reg.getDocument() + ") (" + reg.getName() + ") (" + reg.getAmount() + ")");		
+					}
+					writer.write("\r\n");
+				} else {
+					System.out.println( "NIF INCORRECTO ..: "  + reg.getDocument() + " " + reg.getName() + " " + reg.getAmount() );		
 				}
-				writer.write("\r\n");
 			} else {
 				System.out.println( reg.getDocument() + " " + reg.getName() + " " + reg.getAmount() );		
 			}
@@ -171,7 +176,7 @@ public class AgifesMod182 {
 			.setProvince(tokens[4])
 			.setAmount(AonNumberUtils.todouble(tokens[5]))
 			;
-	}
+	}	
 	
 	private static int getProvince(String prov) {
 		if (AonStringUtils.equals(prov, "GUIPUZCOA")) {
@@ -183,7 +188,20 @@ public class AgifesMod182 {
 		} else if (AonStringUtils.equals(prov, "ZARAGOZA")) {
 			return 50;
 		} else if (AonStringUtils.equals(prov, "VIZCAYA")) {
-			return 48;			
+			return 48;
+		} else if (AonStringUtils.equals(prov, "ALAVA")) {
+			return 01;
+		} else if (AonStringUtils.equals(prov, "ALICANTE")) {
+			return 03;
+		} else if (AonStringUtils.equals(prov, "LUGO")) {
+			return 27;
+		} else if (AonStringUtils.equals(prov, "HUELVA")) {
+			return 21;
+		} else if (AonStringUtils.equals(prov, "ASTURIAS")) {
+			return 33;
+		} else if (AonStringUtils.isNotBlank(prov)) {
+			System.out.println( "Provincia ..: " + prov);
+			return 20;
 		} else {
 			return 20;
 		}
