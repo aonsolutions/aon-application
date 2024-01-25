@@ -63,11 +63,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
-public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
+public class OLDInvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
 	
 	private static TediServiceAsync TEDI_SERVICE;
 
-	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OLDInvoicePanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -90,7 +90,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private FileUpload fileSelect;
 	private AsyncCallback<IAccountEntryWrapper> attachmentCallback; 
 
-	public InvoicePanel(final IAccountEntryModuleCallback callback) {
+	public OLDInvoicePanel(final IAccountEntryModuleCallback callback) {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
 		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 		
@@ -136,18 +136,18 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private void editInvoice(InvoicePanelCallback invoiceCallback) {
 		LOGGER.info("Editing invoice as account source");
 		centerContainer.clear();
-		EditableInvoicePanel eip = new EditableInvoicePanel(invoiceCallback);
+		OLDEditableInvoicePanel eip = new OLDEditableInvoicePanel(invoiceCallback);
 		eip.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+				SelectionEvent.<AccountingInvoice>fire( OLDInvoicePanel.this, event.getSelectedItem());
 			}
 		});
 		eip.addSelectionHandler(new AccountEntrySelectionHandler() {
 			
 			@Override
 			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null);
+				AccountEntrySelectionEvent.fire( OLDInvoicePanel.this, event.getSelectedItem(), null);
 			}
 		});
 		focusableWidget = eip;
@@ -370,7 +370,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		});
 	}
 	
-	class InvoicePanelCallback implements IInvoicePanelCallback {
+	protected class InvoicePanelCallback implements IInvoicePanelCallback {
 		@Override
 		public AccountEntryModule getModule() {
 			return getCallback().getModule();
@@ -430,7 +430,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		}
 		
 		public void setDocument(final String doc, final String name, String type) {
-			InvoicePanel.this.setDocument(this, doc, name, type);
+			OLDInvoicePanel.this.setDocument(this, doc, name, type);
 		}
 		@Override
 		public AccountingRegistry getLastRegistry() {
@@ -541,12 +541,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				@Override
 				public void onSuccess(AccountingInvoice result) {
 					setWrapper(result);
-					InvoicePanel.this.attachmentCallback.onSuccess(result);
+					OLDInvoicePanel.this.attachmentCallback.onSuccess(result);
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					InvoicePanel.this.attachmentCallback.onFailure(caught);
+					OLDInvoicePanel.this.attachmentCallback.onFailure(caught);
 				}
 
 			});

@@ -354,9 +354,64 @@ public class InvoiceRecorder {
 					}
 				}
 			}
-			 
 	 	})
 		
+		,DIRECT_TAX_ADJUST( new IVisitor() {
+
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (!invoice.isSales() 
+					&& !invoice.isSurcharge() 
+					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
+					&& invoice.getVats() != null) {
+					for (InvoiceVAT vat : invoice.getVats()) {
+						if (AonMathUtils.isNotZero(vat.getDirectTaxQuota())) {
+							double amount = vat.getDirectTaxQuota();
+							Integer id = vat.getAdjDirectTaxAccountId();
+							String code = vat.getAdjDirectTaxAccountCode();
+							String description = vat.getAdjDirectTaxAccountDescription();
+							AccountEntryDetail detail = map.get(id);
+							if (detail == null) {
+								detail = new AccountEntryDetail()
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+								map.put(id,detail);
+							}
+							if (invoice.isOutputVatEnabled()) {
+								detail.addCredit( amount );
+							} else {
+								detail.addDebit( amount );
+							}
+							
+							id = vat.getExpAccountId();
+							code = vat.getExpAccountCode();
+							description = vat.getExpAccountDescription();
+							detail = map.get(id);
+							if (detail == null) {
+								detail = new AccountEntryDetail()
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+								map.put(id,detail);
+							}
+							if (invoice.isOutputVatEnabled()) {
+								detail.addDebit( amount );
+							} else {
+								detail.addCredit( amount );
+							}
+						}
+					}
+				}
+			}
+	 	})
+
 		,SALES_WITHHOLDING(new IVisitor() {
 
 			@Override

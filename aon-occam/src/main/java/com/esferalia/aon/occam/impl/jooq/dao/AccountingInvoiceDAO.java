@@ -568,6 +568,11 @@ public class AccountingInvoiceDAO {
 			vat.setAdjAccountCode( config.accounting().getVatNegativeAdjustAccount().getCode());
 			vat.setAdjAccountDescription( config.accounting().getVatNegativeAdjustAccount().getDescription());
 		}
+		if (config.accounting().getDirectTaxAdjustAccount() != null) {
+			vat.setAdjDirectTaxAccountId( config.accounting().getDirectTaxAdjustAccount().getId());
+			vat.setAdjDirectTaxAccountCode( config.accounting().getDirectTaxAdjustAccount().getCode());
+			vat.setAdjDirectTaxAccountDescription( config.accounting().getDirectTaxAdjustAccount().getDescription());
+		}
 		if (ai.isSales() && config.accounting().getDefaultSalesAccount() != null) {
 			vat.setExpAccountId(config.accounting().getDefaultSalesAccount().getId());
 			vat.setExpAccountCode(config.accounting().getDefaultSalesAccount().getCode());

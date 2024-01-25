@@ -21,13 +21,13 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.OLDInvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -95,28 +95,23 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers,Focusable {
+public class OLDEditableInvoicePanel extends SimpleLayoutPanel implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers,Focusable {
 	
-	private static final Logger LOGGER = Logger.getLogger(EditableInvoicePanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OLDEditableInvoicePanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
-	}
-	private static final FinanceServiceAsync FINANCE_SERVICE;
-	static {
-		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
-		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
-	}
-	private static final AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
-	static {
-		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
-		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
 	}
 
 	protected static final String INNER_BACKGROUND_COLOR = "inherit";
 	protected static final String LABEL_BACKGROUND_COLOR = "#DDD";
+	
 	protected static final String TAG_ITEM_BACKGROUND_COLOR = "#DDD";
 	protected static final String TAG_ITEM_FOREGROUND_COLOR = "Black";
+	
 	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
+	
+	private static FinanceServiceAsync FINANCE_SERVICE;
+	private static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	
 	private SimplePanel invoicePanelContainer;
 	private AonAccountingRegistryBox registryBox;
@@ -144,7 +139,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private CheckLabel duaLinked;
 	private CheckLabel importRegime;
 	
-	private InvoiceVATPanel vatPanel;
+	private OLDInvoiceVATPanel vatPanel;
 	private FlowPanel duaPanelContainer;
 	private InvoiceDUAPanel duaPanel;
 	private InvoiceWithholdingPanel withholdingPanel;
@@ -154,80 +149,68 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	
 	protected static interface IEditableInvoicePanelCallback extends IInvoicePanelCallback {
 		void enableInvoiceTotal(boolean b);
-		InvoiceVAT getVat(final int vatIdx);
 	}
 	
 	protected class EditableInvoicePanelCallback implements IEditableInvoicePanelCallback {
-		
-		private IInvoicePanelCallback invoiceCallback;
-		
-		EditableInvoicePanelCallback( IInvoicePanelCallback invoiceCallback) {
-			this.invoiceCallback = invoiceCallback;
-		}
 
 		@Override
 		public AccountingInvoice getInvoice() {
-			return invoiceCallback.getInvoice();
+			return invCallback.getInvoice();
 		}
 
 		@Override
 		public boolean isInvestAssetsAvailable() {
-			return invoiceCallback.isInvestAssetsAvailable();
+			return invCallback.isInvestAssetsAvailable();
 		}
 
 		@Override
 		public void paintEntry() {
-			invoiceCallback.paintEntry();
+			invCallback.paintEntry();
 		}
 
 		@Override
 		public Occam getOccam() {
-			return invoiceCallback.getOccam();
+			return invCallback.getOccam();
 		}
 
 		@Override
 		public String getCurrentDomainName() {
-			return invoiceCallback.getCurrentDomainName();
+			return invCallback.getCurrentDomainName();
 		}
 
 		@Override
 		public int getCurrentDomainId() {
-			return invoiceCallback.getCurrentDomainId();
+			return invCallback.getCurrentDomainId();
 		}
 
 		@Override
 		public String getCurrentUser() {
-			return invoiceCallback.getCurrentUser();
+			return invCallback.getCurrentUser();
 		}
 
 		@Override
 		public AccountEntryModule getModule() {
-			return invoiceCallback.getModule();
+			return invCallback.getModule();
 		}
 
 		@Override
 		public AonConfiguration getConfiguration() {
-			return invoiceCallback.getConfiguration();
+			return invCallback.getConfiguration();
 		}
 		
 		@Override
 		public AccountEntryModuleOptions getModuleOptions() {
-			return invoiceCallback.getModuleOptions();
+			return invCallback.getModuleOptions();
 		}
 
 		@Override
 		public void enableInvoiceTotal(boolean enabled) {
 			invoiceTotal.setEnabled(enabled);
 		}
-		
-		@Override
-		public InvoiceVAT getVat(final int vatIdx) {
-			return getInvoice().getVats().get(vatIdx);
-		}
 
 		@Override
 		public AccountingRegistry getLastRegistry() {
-			return invoiceCallback.getLastRegistry();
+			return invCallback.getLastRegistry();
 		}
 	}
 	
@@ -247,9 +230,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 	}
 
-	public EditableInvoicePanel(final InvoicePanelCallback invoiceCallback) {
+	public OLDEditableInvoicePanel(final InvoicePanelCallback invoiceCallback) {
 	
 		this.invCallback = invoiceCallback; 
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
+
+		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
+		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
 
 		// *************************************************************************
 		// ** PANEL ( Titular, Label de factura) ***********************************
@@ -341,7 +329,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						@Override
 						public void onSuccess(AccountingInvoice result) {
 							if (result != null) {
-								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+								SelectionEvent.<AccountingInvoice>fire( OLDEditableInvoicePanel.this, result);
 							} else {
 								invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());	
 							}
@@ -379,7 +367,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						@Override
 						public void onSuccess(AccountingInvoice result) {
 							if (result != null) {
-								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+								SelectionEvent.<AccountingInvoice>fire( OLDEditableInvoicePanel.this, result);
 							} else {
 								invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());	
 							}
@@ -432,7 +420,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 							@Override
 							public void onSuccess(AccountingInvoice result) {
 								if (result != null) {
-									SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+									SelectionEvent.<AccountingInvoice>fire( OLDEditableInvoicePanel.this, result);
 								} else {
 									invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());	
 								}
@@ -490,7 +478,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 											public void onSuccess(AccountingInvoice result) {
 												dialog.hide();
 												if (result != null) {
-													SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+													SelectionEvent.<AccountingInvoice>fire( OLDEditableInvoicePanel.this, result);
 												} else {
 													invoiceCallback.getModule().onError("Error al rectificar la factura.");	
 												}
@@ -769,7 +757,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	protected void headerDataChanged(IInvoicePanelCallback invoiceCallback) {
-		vatPanel.headerInfoChanged(new EditableInvoicePanelCallback(invoiceCallback));
+		vatPanel.headerInfoChanged();
 		withholdingPanel.setVisible(invoiceCallback.getInvoice().isWithholding());
 		withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
 		invoiceTotal.setValue(invoiceCallback.getInvoice().getTotalInvoice(),false);
@@ -921,7 +909,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 									// TODO Manage due dates for all finances.
 								}
 								result.getInvoice().setId(null);
-								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+								SelectionEvent.<AccountingInvoice>fire( OLDEditableInvoicePanel.this, result);
 								
 							}
 							if (cbk != null) {
@@ -1018,13 +1006,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTotal.setValue(inv.getTotalInvoice());
 		manualConcept.setValue(inv.getManualConcept());
 		
-		vatPanel = new InvoiceVATPanel( new EditableInvoicePanelCallback(invoiceCallback) );
-		
+		vatPanel = new OLDInvoiceVATPanel( new EditableInvoicePanelCallback() );
 		financePanel = new InvoiceFinancePanel(invoiceCallback);
 		financePanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			@Override
 			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntrySelectionEvent.fire( EditableInvoicePanel.this, event.getSelectedItem(), null);
+				AccountEntrySelectionEvent.fire( OLDEditableInvoicePanel.this, event.getSelectedItem(), null);
 			}
 		});
 
@@ -1643,7 +1630,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
 					if (invoiceCallback.getInvoice().getVats() != null &&  invoiceCallback.getInvoice().getVats().size() == 1) {
 						InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice(),invoiceTotal.getValue());
-						vatPanel.populateFirstVat( new EditableInvoicePanelCallback(invoiceCallback) );
+						vatPanel.populateFirstVat();
 						withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
 						financePanel.invoiceTotalChanged( invoiceCallback );
 					}
@@ -1699,10 +1686,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		FlowPanel vatDataTableCellDiv1 = new FlowPanel();
 		vatDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
-		ScrollPanel vatScrollPanel = new ScrollPanel(); 
-		vatScrollPanel.setStyleName(AON.CSS.aonWidthAll());
-		vatScrollPanel.setWidget( vatPanel );
-		vatDataTableRowDiv.add(vatScrollPanel);
+		vatDataTableRowDiv.add(vatPanel);
 		invoicePanel.add(vatDataTableDiv);
 		
 		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
@@ -1925,7 +1909,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		duaPanel.populate(invoiceCallback);
 		invoiceCallback.getInvoice().setPrepayments(invoiceCallback.getInvoice().getDuaInvoice() != null);
 		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-		vatPanel.paint( new EditableInvoicePanelCallback(invoiceCallback) );
+		vatPanel.paint();
 		InvoiceCalculator.calculate(invoiceCallback.getInvoice());
 		headerDataChanged(invoiceCallback);
 	}
