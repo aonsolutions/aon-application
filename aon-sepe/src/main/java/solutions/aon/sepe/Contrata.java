@@ -820,7 +820,8 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
-
+			
+			webClient.waitForBackgroundJavaScript(5000);
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			
 			// For contract 502 check if duration equals or less than 90 days
@@ -836,6 +837,7 @@ public class Contrata {
 					
 					setOccupation(cto, form);
 					
+					webClient.waitForBackgroundJavaScript(5000);
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {}
@@ -843,9 +845,18 @@ public class Contrata {
 			// For contract 402 check if has writen contract
 			try {
 				if(contract.equals("402")) {
-					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=volver]")).click();
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					setOccupation(cto, form);
+					
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=aceptar]")).click();
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
@@ -1377,12 +1388,21 @@ public class Contrata {
 			String ide1 = ide.substring(0, 2);
 			String ide2 = ide.substring(2, 6);
 			String ide3 = ide.substring(6);
-			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
-			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
-			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
-			formDatos.getInputByName("idcontrato").setValue(ide1 + "-" + ide2 + "-" + ide3);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion1")).setValue(ide1);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion1")).setValueAttribute(ide1);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion2")).setValue(ide2);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion2")).setValueAttribute(ide2);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion3")).setValue(ide3);
+			((HtmlInput) htmlPage.getElementByName("idcomunicacion3")).setValueAttribute(ide3);
+			
+//			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+//			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+//			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+//			formDatos.getInputByName("idcontrato").setValue(ide1 + "-" + ide2 + "-" + ide3);
 
-			htmlPage = formDatos.getInputByName("enviar").click();
+			htmlPage = htmlPage.getElementById("enviar").click();
+			
+//			htmlPage = formDatos.getInputByName("enviar").click();
 			handleSepeExceptions(htmlPage);
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
@@ -1405,19 +1425,36 @@ public class Contrata {
 			}
 
 			String[] startDate = Toolkit.dateString(contractExtension.getStartDate());
-			form.getInputByName("diainiciopro").setValue(startDate[0]);
-			form.getInputByName("mesiniciopro").setValue(startDate[1]);
-			form.getInputByName("annoiniciopro").setValue(startDate[2]);
+			((HtmlInput) htmlPage.getElementByName("diainiciopro")).setValue(startDate[0]);
+			((HtmlInput) htmlPage.getElementByName("diainiciopro")).setValueAttribute(startDate[0]);
+			((HtmlInput) htmlPage.getElementByName("mesiniciopro")).setValue(startDate[1]);
+			((HtmlInput) htmlPage.getElementByName("mesiniciopro")).setValueAttribute(startDate[1]);
+			((HtmlInput) htmlPage.getElementByName("annoiniciopro")).setValue(startDate[2]);
+			((HtmlInput) htmlPage.getElementByName("annoiniciopro")).setValueAttribute(startDate[2]);
+//			form.getInputByName("diainiciopro").setValue(startDate[0]);
+//			form.getInputByName("mesiniciopro").setValue(startDate[1]);
+//			form.getInputByName("annoiniciopro").setValue(startDate[2]);
 
 			String[] endDate = Toolkit.dateString(contractExtension.getEndDate());
-			form.getInputByName("diafinpro").setValue(endDate[0]);
-			form.getInputByName("mesfinpro").setValue(endDate[1]);
-			form.getInputByName("annofinpro").setValue(endDate[2]);
+			((HtmlInput) htmlPage.getElementByName("diafinpro")).setValue(endDate[0]);
+			((HtmlInput) htmlPage.getElementByName("diafinpro")).setValueAttribute(endDate[0]);
+			((HtmlInput) htmlPage.getElementByName("mesfinpro")).setValue(endDate[1]);
+			((HtmlInput) htmlPage.getElementByName("mesfinpro")).setValueAttribute(endDate[1]);
+			((HtmlInput) htmlPage.getElementByName("annofinpro")).setValue(endDate[2]);
+			((HtmlInput) htmlPage.getElementByName("annofinpro")).setValueAttribute(endDate[2]);
+//			form.getInputByName("diafinpro").setValue(endDate[0]);
+//			form.getInputByName("mesfinpro").setValue(endDate[1]);
+//			form.getInputByName("annofinpro").setValue(endDate[2]);
 
-			DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
+			HtmlSelect discontinuidad = htmlPage.getElementByName("discontinuidad");
 			if (discontinuidad != null && contractExtension.isDiscontinuo()) {
-				((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
+				discontinuidad.setSelectedAttribute("S", true);
 			}
+			
+//			DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
+//			if (discontinuidad != null && contractExtension.isDiscontinuo()) {
+//				((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
+//			}
 
 			form.getInputByName("idprorroga").setValue(ide1 + "-" + ide2 + "-" + ide3);
 			

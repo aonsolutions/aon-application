@@ -949,7 +949,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				Integer contractType = Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType());
 				
 				boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
-				boolean hasExtensionComuniation = AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
+				boolean hasExtensionComuniation = false; //AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
 				boolean canExtension = contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521;
 				
 				boolean hasTransform = null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getTransformDate();
