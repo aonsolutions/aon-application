@@ -207,6 +207,8 @@ public class LROE140_2_1 extends LROE140 {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
+			if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+			if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 			r.setEpigrafe(invoice.getEpigraph());
 
 			r.setBaseImponible(Double.toString(tax.getBase()));	
@@ -360,6 +362,8 @@ public class LROE140_2_1 extends LROE140 {
 		FiltroConsultaGastosConFacturaType filtro = new FiltroConsultaGastosConFacturaType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
 		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		filtro.setEpigrafe(invoice.getEpigraph());
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
 		filtro.setNumPaginaConsulta(1);
