@@ -221,8 +221,12 @@ public class Mod145DAO {
 				.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
 				.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 				.fetch(CONTRACT_DATA.EXPRESSION);
+		try {
+			return irpfPercents.isEmpty() || AonStringUtils.isBlank(irpfPercents.get(0)) ? null : Double.parseDouble(irpfPercents.get(0));
+		} catch (NumberFormatException e) {
+			return 0.00;
+		}
 		
-		return irpfPercents.isEmpty() || AonStringUtils.isBlank(irpfPercents.get(0)) ? null : Double.parseDouble(irpfPercents.get(0));
 	}
 	
 	private static List<IrpfDataAscendants> getAscendants(AONContext ctx, Integer irpfData) {
