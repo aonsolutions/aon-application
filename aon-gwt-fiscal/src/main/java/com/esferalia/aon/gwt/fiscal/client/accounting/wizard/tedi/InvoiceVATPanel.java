@@ -405,7 +405,8 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 					.setOutputAccountDescription(last.getOutputAccountDescription())
 					.setAdjAccountId(last.getAdjAccountId()).setAdjAccountCode(last.getAdjAccountCode())
 					.setAdjAccountDescription(last.getAdjAccountDescription())
-					.setDirectTaxPercent(last.getDirectTaxPercent()).setDirectTaxQuota(last.getDirectTaxQuota())
+					.setDirectTaxPercent(last.getDirectTaxPercent())
+					.setDirectTaxNoDedExpenses(last.getDirectTaxNoDedExpenses())
 					.setAdjDirectTaxAccountId(last.getAdjDirectTaxAccountId())
 					.setAdjDirectTaxAccountCode(last.getAdjDirectTaxAccountCode())
 					.setAdjDirectTaxAccountDescription(last.getAdjDirectTaxAccountDescription());

@@ -78,10 +78,12 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	
 	private AonDoubleBox dedPercent;
 	private AonDoubleBox dedQuota;
+	private AonDoubleBox noDedQuota;
 	private AonAccountBox adjAccount;
 
 	private AonDoubleBox directTaxPercent;
-	private AonDoubleBox directTaxQuota;
+	private AonDoubleBox directTaxNoDedExpenses;
+	private AonDoubleBox directTaxDedExpenses;
 	private AonAccountBox directTaxAccount;
 
 	
@@ -107,10 +109,12 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		
 		defineDedPercent(callback,vatIdx);
 		defineDedQuota(callback,vatIdx);
+		defineNoDedQuota(callback,vatIdx);
 		defineAdjAccount(callback,vatIdx);
 
 		defineDirectTaxPercent(callback,vatIdx);
-		defineDirectTaxQuota(callback,vatIdx);
+		defineDirectTaxNoDedExpenses(callback,vatIdx);
+		defineDirectTaxDedExpenses(callback,vatIdx);
 		defineDirectTaxAccount(callback,vatIdx);
 
 		paintRow(callback,vatIdx);
@@ -157,15 +161,26 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		iaGrid.addStyleName( AON.CSS.aonMarginLeft());
 		iaGrid.addStyleName( AON.CSS.aonPaddingLeft());
 		
+		Label dedLabel = new Label("IVA Deducible");
+		dedLabel.setStyleName(AON.CSS.aonInnerLabel());
+		dedLabel.addStyleName(AON.CSS.aonBold());
+		dedLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		dedLabel.addStyleName(AON.CSS.aonPaddingRight());
+
 		Label dedPercentLabel = new Label(AON.MSG.dedPercent());
 		dedPercentLabel.setStyleName(AON.CSS.aonInnerLabel());
 		dedPercentLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		dedPercentLabel.addStyleName(AON.CSS.aonPaddingRight());
 		
-		Label dedQuotaLabel = new Label(AON.MSG.dedQuota());
+		Label dedQuotaLabel = new Label("IVA Deducible");
 		dedQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
 		dedQuotaLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		dedQuotaLabel.addStyleName(AON.CSS.aonPaddingRight());
+
+		Label noDedQuotaLabel = new Label("IVA NO Deducible");
+		noDedQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
+		noDedQuotaLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		noDedQuotaLabel.addStyleName(AON.CSS.aonPaddingRight());
 
 		Label adjAccountLabel = new Label(AON.MSG.adjAccount());
 		adjAccountLabel.setStyleName(AON.CSS.aonInnerLabel());
@@ -173,22 +188,38 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		adjAccountLabel.addStyleName(AON.CSS.aonPaddingRight());
 
 		iaGrid.addRow()
+			.addCell( new Label() )
 			.addCell( dedPercentLabel )
-			.addCell( dedPercent )
 			.addCell( dedQuotaLabel )
-			.addCell( dedQuota )
-			.addCell( adjAccountLabel )
-			.addCell( adjAccount );
+			.addCell( noDedQuotaLabel )
+			.addCell( adjAccountLabel );
+		iaGrid.addRow()
+			.addCell( dedLabel )
+			.addCell( dedPercent ,AON.CSS.aonPaddingLeft())
+			.addCell( dedQuota   ,AON.CSS.aonPaddingLeft())
+			.addCell( noDedQuota ,AON.CSS.aonPaddingLeft())
+			.addCell( adjAccount ,AON.CSS.aonPaddingLeft());
 		
+		Label directTaxLabel = new Label("Gastos");
+		directTaxLabel.setStyleName(AON.CSS.aonInnerLabel());
+		directTaxLabel.addStyleName(AON.CSS.aonBold());
+		directTaxLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		directTaxLabel.addStyleName(AON.CSS.aonPaddingRight());
+
 		Label directTaxPercentLabel = new Label(AON.MSG.directTaxPercent());
 		directTaxPercentLabel.setStyleName(AON.CSS.aonInnerLabel());
 		directTaxPercentLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		directTaxPercentLabel.addStyleName(AON.CSS.aonPaddingRight());
 		
-		Label directTaxQuotaLabel = new Label(AON.MSG.directTaxQuota());
-		directTaxQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
-		directTaxQuotaLabel.addStyleName(AON.CSS.aonPaddingLeft());
-		directTaxQuotaLabel.addStyleName(AON.CSS.aonPaddingRight());
+		Label directTaxDedExpensesLabel = new Label("Deducible");
+		directTaxDedExpensesLabel.setStyleName(AON.CSS.aonInnerLabel());
+		directTaxDedExpensesLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		directTaxDedExpensesLabel.addStyleName(AON.CSS.aonPaddingRight());
+
+		Label directTaxNoDedExpensesLabel = new Label("NO deducible");
+		directTaxNoDedExpensesLabel.setStyleName(AON.CSS.aonInnerLabel());
+		directTaxNoDedExpensesLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		directTaxNoDedExpensesLabel.addStyleName(AON.CSS.aonPaddingRight());
 
 		Label directTaxAccountLabel = new Label(AON.MSG.adjDirectTaxAccount());
 		directTaxAccountLabel.setStyleName(AON.CSS.aonInnerLabel());
@@ -196,12 +227,17 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		directTaxAccountLabel.addStyleName(AON.CSS.aonPaddingRight());
 
 		iaGrid.addRow()
+			.addCell( new Label() )
 			.addCell( directTaxPercentLabel )
-			.addCell( directTaxPercent )
-			.addCell( directTaxQuotaLabel )
-			.addCell( directTaxQuota )
-			.addCell( directTaxAccountLabel )
-			.addCell( directTaxAccount );
+			.addCell( directTaxDedExpensesLabel )
+			.addCell( directTaxNoDedExpensesLabel )
+			.addCell( directTaxAccountLabel );
+		iaGrid.addRow()
+			.addCell( directTaxLabel )
+			.addCell( directTaxPercent 		,AON.CSS.aonPaddingLeft())
+			.addCell( directTaxDedExpenses 	,AON.CSS.aonPaddingLeft())
+			.addCell( directTaxNoDedExpenses,AON.CSS.aonPaddingLeft())
+			.addCell( directTaxAccount 		,AON.CSS.aonPaddingLeft());
 		
 		vatPanel.getGrid().setWidget(vatInvestRowIndex,0,iaGrid);
 		vatPanel.getGrid().getCellFormatter().setStyleName(vatInvestRowIndex,0,AON.CSS.aonDisplayGridCell());
@@ -290,6 +326,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineSurchargePercent(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		surchargePercent = new AonDoubleBox(6);
+		surchargePercent.getElement().getStyle().setWidth(40, Unit.PX);
 		surchargePercent.setValue(callback.getVat(vatIdx).getSurcharge());
 		surchargePercent.addValueChangeHandler(event -> {
 			callback.getVat(vatIdx).setSurcharge(event.getValue() );
@@ -418,7 +455,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineDedPercent(IEditableInvoicePanelCallback callback, int vatIdx) {
 		dedPercent = new AonDoubleBox();
-		dedPercent.getElement().getStyle().setWidth(50, Unit.PX);
+		dedPercent.getElement().getStyle().setWidth(40, Unit.PX);
 		dedPercent.setValue(callback.getVat(vatIdx).getDeductiblePercent());
 		dedPercent.addValueChangeHandler(event -> {
 			Double p = event.getValue();
@@ -448,6 +485,12 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		decorateDeductibleQuota(callback, vatIdx);
 	}
 	
+	private void defineNoDedQuota(IEditableInvoicePanelCallback callback, int vatIdx) {
+		noDedQuota = new AonDoubleBox();
+		noDedQuota.setValue(callback.getVat(vatIdx).getNoDeductibleQuota());
+		noDedQuota.setEnabled(false);
+	}
+
 	private void defineAdjAccount(IEditableInvoicePanelCallback callback, int vatIdx) {
 		adjAccount = new AonAccountBox(callback.getOccam(), false);
 		adjAccount.setRequired(false);
@@ -471,36 +514,42 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineDirectTaxPercent(IEditableInvoicePanelCallback callback, int vatIdx) {
 		directTaxPercent = new AonDoubleBox();
-		directTaxPercent.getElement().getStyle().setWidth(50, Unit.PX);
+		directTaxPercent.getElement().getStyle().setWidth(40, Unit.PX);
 		directTaxPercent.setValue(callback.getVat(vatIdx).getDirectTaxPercent());
 		directTaxPercent.addValueChangeHandler(event -> {
 			Double p = event.getValue();
 			if (p > 100) p = 100.0;
 			if (p < 0) p = 0.0;
 			callback.getVat(vatIdx).setDirectTaxPercent( p );
-			checkCalculate(callback, vatIdx, directTaxQuota);
+			checkCalculate(callback, vatIdx, directTaxNoDedExpenses);
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}
 	
-	private void defineDirectTaxQuota(IEditableInvoicePanelCallback callback, int vatIdx) {
-		directTaxQuota = new AonDoubleBox();
-		directTaxQuota.setValue(callback.getVat(vatIdx).getDirectTaxQuota());
-		directTaxQuota.addValueChangeHandler(event -> {
-			callback.getVat(vatIdx).setDirectTaxQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDirectTaxQuotaGap(callback.getVat(vatIdx), directTaxQuota.getValue())));
-			if (callback.getVat(vatIdx).isDirectTaxQuotaEdited()) {
-				directTaxQuota.setTitle("Cuota de imposici\u00F3n directa modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(callback.getVat(vatIdx)));
+	private void defineDirectTaxNoDedExpenses(IEditableInvoicePanelCallback callback, int vatIdx) {
+		directTaxNoDedExpenses= new AonDoubleBox();
+		directTaxNoDedExpenses.setValue(callback.getVat(vatIdx).getDirectTaxNoDedExpenses());
+		directTaxNoDedExpenses.addValueChangeHandler(event -> {
+			callback.getVat(vatIdx).setDirectTaxNoDedExpensesEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDirectTaxNoDedExpensesGap(callback.getVat(vatIdx), directTaxNoDedExpenses.getValue())));
+			if (callback.getVat(vatIdx).isDirectTaxNoDedExpensesEdited()) {
+				directTaxNoDedExpenses.setTitle("Cuota de imposici\u00F3n directa modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(callback.getVat(vatIdx)));
 			} else {
-				directTaxQuota.setTitle(null);
+				directTaxNoDedExpenses.setTitle(null);
 			}
-			callback.getVat(vatIdx).setDirectTaxQuota(event.getValue() );
+			callback.getVat(vatIdx).setDirectTaxNoDedExpenses(event.getValue() );
 			calculate(callback, vatIdx);
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
-		directTaxQuota.addBlurHandler(event -> decorateDirectTaxQuota(callback, vatIdx));
-		decorateDirectTaxQuota(callback, vatIdx);
+		directTaxNoDedExpenses.addBlurHandler(event -> decorateDirectTaxNoDedExpenses(callback, vatIdx));
+		decorateDirectTaxNoDedExpenses(callback, vatIdx);
 	}
 	
+	private void defineDirectTaxDedExpenses(IEditableInvoicePanelCallback callback, int vatIdx) {
+		directTaxDedExpenses = new AonDoubleBox();
+		directTaxDedExpenses.setValue(callback.getVat(vatIdx).getDirectTaxDedExpenses());
+		directTaxDedExpenses.setEnabled(false);
+	}
+
 	private void defineDirectTaxAccount(IEditableInvoicePanelCallback callback, int vatIdx) {
 		directTaxAccount = new AonAccountBox(callback.getOccam(), false);
 		directTaxAccount.setValue(
@@ -539,11 +588,11 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		double gap = InvoiceCalculator.getDeductibleQuotaGap(callback.getVat(vatIdx), dedQuota.getValue());
 		decorateEditableQuota(gap, quota, dedQuota);
 	}
-
-	private void decorateDirectTaxQuota(IEditableInvoicePanelCallback callback, final int vatIdx) {
-		double quota = InvoiceCalculator.getDirectTaxQuota(callback.getVat(vatIdx));
-		double gap = InvoiceCalculator.getDirectTaxQuotaGap(callback.getVat(vatIdx), directTaxQuota.getValue());
-		decorateEditableQuota(gap, quota, directTaxQuota);
+	
+	private void decorateDirectTaxNoDedExpenses(IEditableInvoicePanelCallback callback, final int vatIdx) {
+		double quota = InvoiceCalculator.getDirectTaxNoDedExpenses(callback.getVat(vatIdx));
+		double gap = InvoiceCalculator.getDirectTaxNoDedExpensesGap(callback.getVat(vatIdx), directTaxNoDedExpenses.getValue());
+		decorateEditableQuota(gap, quota, directTaxNoDedExpenses);
 	}
 
 	private void decorateEditableQuota(double gap, double quota, AonDoubleBox editableBox) {
@@ -581,12 +630,12 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 					callback.getVat(vatIdx).setQuotaEdited(false);
 					callback.getVat(vatIdx).setSurchargeQuotaEdited(false);
 					callback.getVat(vatIdx).setDeductibleQuotaEdited(false);
-					callback.getVat(vatIdx).setDirectTaxQuotaEdited(false);
+					callback.getVat(vatIdx).setDirectTaxNoDedExpensesEdited(false);
 					calculate(callback, vatIdx);
 					decorateVatQuota(callback, vatIdx);
 					decorateSurchargeQuota(callback, vatIdx);
 					decorateDeductibleQuota(callback, vatIdx);
-					decorateDirectTaxQuota(callback, vatIdx);
+					decorateDirectTaxNoDedExpenses(callback, vatIdx);
 					if (toFocus != null) {
 						toFocus.selectAll();
 						toFocus.setFocus(true);
@@ -613,8 +662,10 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		withholding.setValue(callback.getVat(vatIdx).isWithholding() , false);
 		dedPercent.setValue( callback.getVat(vatIdx).getDeductiblePercent() , false);
 		dedQuota.setValue( callback.getVat(vatIdx).getDeductibleQuota() , false);
+		noDedQuota.setValue( callback.getVat(vatIdx).getNoDeductibleQuota() , false);
 		directTaxPercent.setValue( callback.getVat(vatIdx).getDirectTaxPercent() , false);
-		directTaxQuota.setValue( callback.getVat(vatIdx).getDirectTaxQuota() , false);
+		directTaxNoDedExpenses.setValue( callback.getVat(vatIdx).getDirectTaxNoDedExpenses() , false);
+		directTaxDedExpenses.setValue( callback.getVat(vatIdx).getDirectTaxDedExpenses() , false);
 	}
 
 	void withholdingChanged(Boolean value) {

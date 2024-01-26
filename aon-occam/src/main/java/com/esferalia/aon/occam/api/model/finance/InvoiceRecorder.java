@@ -365,8 +365,8 @@ public class InvoiceRecorder {
 					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
 					&& invoice.getVats() != null) {
 					for (InvoiceVAT vat : invoice.getVats()) {
-						if (AonMathUtils.isNotZero(vat.getDirectTaxQuota())) {
-							double amount = vat.getDirectTaxQuota();
+						if (AonMathUtils.isNotZero(vat.getDirectTaxNoDedExpenses())) {
+							double amount = vat.getDirectTaxNoDedExpenses();
 							Integer id = vat.getAdjDirectTaxAccountId();
 							String code = vat.getAdjDirectTaxAccountCode();
 							String description = vat.getAdjDirectTaxAccountDescription();

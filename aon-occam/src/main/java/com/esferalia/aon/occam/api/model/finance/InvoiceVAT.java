@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceVAT implements Serializable {
 
@@ -15,7 +16,7 @@ public class InvoiceVAT implements Serializable {
 	private boolean quotaEdited;
 	private boolean surchargeQuotaEdited;
 	private boolean deductibleQuotaEdited;
-	private boolean directTaxQuotaEdited;
+	private boolean directTaxNoDedExpensesEdited;
 	
 	private VatDeductionType vatDeductionType;
 	private double base;
@@ -27,7 +28,7 @@ public class InvoiceVAT implements Serializable {
 	private double deductiblePercent;
 	private double deductibleQuota;
 	private double directTaxPercent;
-	private double directTaxQuota;
+	private double directTaxNoDedExpenses;
 	private boolean withholding;
 	private boolean prepayment;
 	
@@ -74,7 +75,7 @@ public class InvoiceVAT implements Serializable {
 		return isQuotaEdited() 
 			|| isSurchargeQuotaEdited() 
 			|| isDeductibleQuotaEdited()
-			|| isDirectTaxQuotaEdited();
+			|| isDirectTaxNoDedExpensesEdited();
 	}
 	public boolean isQuotaEdited() {
 		return quotaEdited;
@@ -97,11 +98,11 @@ public class InvoiceVAT implements Serializable {
 		this.deductibleQuotaEdited = deductibleQuotaEdited;
 		return this;
 	}
-	public boolean isDirectTaxQuotaEdited() {
-		return directTaxQuotaEdited;
+	public boolean isDirectTaxNoDedExpensesEdited() {
+		return directTaxNoDedExpensesEdited;
 	}
-	public InvoiceVAT setDirectTaxQuotaEdited(boolean directTaxQuotaEdited) {
-		this.directTaxQuotaEdited = directTaxQuotaEdited;
+	public InvoiceVAT setDirectTaxNoDedExpensesEdited(boolean directTaxNoDedExpensesEdited) {
+		this.directTaxNoDedExpensesEdited = directTaxNoDedExpensesEdited;
 		return this;
 	}
 	
@@ -163,6 +164,10 @@ public class InvoiceVAT implements Serializable {
 		return deductibleQuota;
 	}
 
+	public double getNoDeductibleQuota() {
+		return AonMathUtils.round( getQuota() - getDeductibleQuota() );
+	}
+
 	public InvoiceVAT setDeductibleQuota(double deductibleQuota) {
 		this.deductibleQuota = deductibleQuota;
 		return this;
@@ -176,14 +181,17 @@ public class InvoiceVAT implements Serializable {
 		return this;
 	}
 	
-	public double getDirectTaxQuota() {
-		return directTaxQuota;
+	public double getDirectTaxNoDedExpenses() {
+		return directTaxNoDedExpenses;
 	}
-	public InvoiceVAT setDirectTaxQuota(double directTaxQuota) {
-		this.directTaxQuota = directTaxQuota;
+	public InvoiceVAT setDirectTaxNoDedExpenses(double directTaxNoDedExpenses) {
+		this.directTaxNoDedExpenses = directTaxNoDedExpenses;
 		return this;
 	}
-	
+	public double getDirectTaxDedExpenses() {
+		return AonMathUtils.round( getBase() - getDirectTaxNoDedExpenses() );
+	}
+
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -366,6 +374,7 @@ public class InvoiceVAT implements Serializable {
 			.setQuotaEdited(this.quotaEdited)
 			.setSurchargeQuotaEdited(this.surchargeQuotaEdited)
 			.setDeductibleQuotaEdited(this.deductibleQuotaEdited)
+			.setDirectTaxNoDedExpensesEdited(this.directTaxNoDedExpensesEdited)
 			.setVatDeductionType(this.vatDeductionType)
 			.setBase(this.base)
 			.setPercentage(this.percentage)
@@ -376,7 +385,7 @@ public class InvoiceVAT implements Serializable {
 			.setDeductiblePercent(this.deductiblePercent)
 			.setDeductibleQuota(this.deductibleQuota)
 			.setDirectTaxPercent(this.directTaxPercent)
-			.setDirectTaxQuota(this.directTaxQuota)
+			.setDirectTaxNoDedExpenses(this.directTaxNoDedExpenses)
 			.setWithholding(this.withholding)
 			.setPrepayment(this.prepayment) 
 			.setOutputAccountId(this.outputAccountId)

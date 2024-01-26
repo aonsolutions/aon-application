@@ -61,7 +61,7 @@ public class InvoiceCalculator {
 			vat.setQuotaEdited(false);
 			vat.setSurchargeQuotaEdited(false);
 			vat.setDeductibleQuotaEdited(false);
-			vat.setDirectTaxQuotaEdited(false);
+			vat.setDirectTaxNoDedExpensesEdited(false);
 		}
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
@@ -78,15 +78,15 @@ public class InvoiceCalculator {
 			if (!vat.isDeductibleQuotaEdited()) {
 				vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
 			}
-			if (!vat.isDirectTaxQuotaEdited()) {
+			if (!vat.isDirectTaxNoDedExpensesEdited()) {
 				double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
-				vat.setDirectTaxQuota( AonMathUtils.round(vat.getBase() *  percent / 100) );
+				vat.setDirectTaxNoDedExpenses( AonMathUtils.round(vat.getBase() *  percent / 100) );
 			}
 		} else {
 			vat.setDeductiblePercent(100.0);
 			vat.setDeductibleQuota( vat.getQuota() );
 			vat.setDirectTaxPercent(0.0);
-			vat.setDirectTaxQuota( 0.0 );
+			vat.setDirectTaxNoDedExpenses( 0.0 );
 		}
 	}
 	
@@ -174,14 +174,14 @@ public class InvoiceCalculator {
 		return AonMathUtils.round(deductibleQuota - AonMathUtils.round(vat.getQuota() * vat.getDeductiblePercent() / 100));		
 	}
 
-	public static double getDirectTaxQuota(InvoiceVAT vat) {
+	public static double getDirectTaxNoDedExpenses(InvoiceVAT vat) {
 		double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
 		return AonMathUtils.round(vat.getBase() *  percent / 100);		
 	}
 
-	public static double getDirectTaxQuotaGap(InvoiceVAT vat, Double directTaxQuota) {
+	public static double getDirectTaxNoDedExpensesGap(InvoiceVAT vat, Double directTaxQuota) {
 		if (directTaxQuota == null) directTaxQuota = 0.0;
-		return AonMathUtils.round(directTaxQuota - getDirectTaxQuota(vat));		
+		return AonMathUtils.round(directTaxQuota - getDirectTaxNoDedExpenses(vat));		
 	}
 	
 	public static void calculateDUAInfo( AccountingInvoice ai ) {
@@ -193,7 +193,7 @@ public class InvoiceCalculator {
 			info.setStatisticalValue(stv);
 			info.setDutyBase(stv);
 			double bas = info.getDutyBase();
-			double per = info.getDutyPercent();;
+			double per = info.getDutyPercent();
 			double tot = AonMathUtils.round(bas * per / 100 );
 			info.setDutyTotal(tot);
 		}

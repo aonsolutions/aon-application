@@ -219,7 +219,7 @@ public class OLDInvoiceVATPanel extends ScrollPanel implements HasValueChangeHan
 					.setAdjAccountCode(last.getAdjAccountCode())
 					.setAdjAccountDescription(last.getAdjAccountDescription())
 					.setDirectTaxPercent(last.getDirectTaxPercent())
-					.setDirectTaxQuota(last.getDirectTaxQuota())
+//					.setDirectTaxQuota(last.getDirectTaxQuota())
 					.setAdjDirectTaxAccountId(last.getAdjDirectTaxAccountId())
 					.setAdjDirectTaxAccountCode(last.getAdjDirectTaxAccountCode())
 					.setAdjDirectTaxAccountDescription(last.getAdjDirectTaxAccountDescription())
@@ -545,68 +545,68 @@ public class OLDInvoiceVATPanel extends ScrollPanel implements HasValueChangeHan
 			});
 			add(getCell(adjAccountCell,adjAccount));
 
-			directTaxPercent.getElement().getStyle().setWidth(50, Unit.PX);
-			directTaxPercent.setValue(vat.getDirectTaxPercent());
-			directTaxPercentCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
-			directTaxPercentLabelCell.setVisible(isInvestAssetsEnabled(callback,vat)  && otherLineWithInvestAssests);
-			directTaxPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					Double p = event.getValue();
-					if (p > 100) p = 100.0;
-					if (p < 0) p = 0.0;
-					vat.setDirectTaxPercent( p );
-					checkCalculate(vat,directTaxQuota);
-					ValueChangeEvent.fire(OLDInvoiceVATPanel.this, vat );
-				}
-			});
-			add(getCell(directTaxPercentCell,directTaxPercent));
-			
-			directTaxQuota.setValue(vat.getDirectTaxQuota());
-			directTaxQuotaCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
-			directTaxQuotaLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
-			directTaxQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					vat.setDirectTaxQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDirectTaxQuotaGap(vat, directTaxQuota.getValue())));
-					if (vat.isDirectTaxQuotaEdited()) {
-						directTaxQuota.setTitle("Cuota de imposici\u00F3n directa modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(vat));
-					} else {
-						directTaxQuota.setTitle(null);
-					}
-					vat.setDirectTaxQuota(event.getValue() );
-					calculate(vat);
-					ValueChangeEvent.fire(OLDInvoiceVATPanel.this, vat );
-				}
-			});
-			directTaxQuota.addBlurHandler(event -> decorateDirectTaxQuota(vat));
-			decorateDirectTaxQuota(vat);
-			add(getCell(directTaxQuotaCell,directTaxQuota));
-			
-			directTaxAccount.setValue(vat.getAdjDirectTaxAccountId(),vat.getAdjDirectTaxAccountCode()
-					,vat.getAdjDirectTaxAccountDescription(),true);
-			directTaxAccountCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null && vat.getDeductiblePercent() != 100);
-			adjDirectTaxAccountLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
-			directTaxAccount.addSelectionHandler( new SelectionHandler<Account>() {
-				
-				@Override
-				public void onSelection(SelectionEvent<Account> event) {
-					Account a = event.getSelectedItem();
-					if (a != null) {
-						vat.setAdjDirectTaxAccountId(a.getId());
-						vat.setAdjDirectTaxAccountCode(a.getCode());
-						vat.setAdjDirectTaxAccountDescription(a.getDescription());
-					} else {
-						vat.setAdjDirectTaxAccountId(null);
-						vat.setAdjDirectTaxAccountCode(null);
-						vat.setAdjDirectTaxAccountDescription(null);
-					}
-					SelectionEvent.<Account>fire(OLDInvoiceVATPanel.this, a);
-				}
-			});
-			add(getCell(directTaxAccountCell,directTaxAccount));
+//			directTaxPercent.getElement().getStyle().setWidth(50, Unit.PX);
+//			directTaxPercent.setValue(vat.getDirectTaxPercent());
+//			directTaxPercentCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
+//			directTaxPercentLabelCell.setVisible(isInvestAssetsEnabled(callback,vat)  && otherLineWithInvestAssests);
+//			directTaxPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
+//				
+//				@Override
+//				public void onValueChange(ValueChangeEvent<Double> event) {
+//					Double p = event.getValue();
+//					if (p > 100) p = 100.0;
+//					if (p < 0) p = 0.0;
+//					vat.setDirectTaxPercent( p );
+//					checkCalculate(vat,directTaxQuota);
+//					ValueChangeEvent.fire(OLDInvoiceVATPanel.this, vat );
+//				}
+//			});
+//			add(getCell(directTaxPercentCell,directTaxPercent));
+//			
+//			directTaxQuota.setValue(vat.getDirectTaxQuota());
+//			directTaxQuotaCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
+//			directTaxQuotaLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
+//			directTaxQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
+//				
+//				@Override
+//				public void onValueChange(ValueChangeEvent<Double> event) {
+//					vat.setDirectTaxQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDirectTaxQuotaGap(vat, directTaxQuota.getValue())));
+//					if (vat.isDirectTaxQuotaEdited()) {
+//						directTaxQuota.setTitle("Cuota de imposici\u00F3n directa modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(vat));
+//					} else {
+//						directTaxQuota.setTitle(null);
+//					}
+//					vat.setDirectTaxQuota(event.getValue() );
+//					calculate(vat);
+//					ValueChangeEvent.fire(OLDInvoiceVATPanel.this, vat );
+//				}
+//			});
+//			directTaxQuota.addBlurHandler(event -> decorateDirectTaxQuota(vat));
+//			decorateDirectTaxQuota(vat);
+//			add(getCell(directTaxQuotaCell,directTaxQuota));
+//			
+//			directTaxAccount.setValue(vat.getAdjDirectTaxAccountId(),vat.getAdjDirectTaxAccountCode()
+//					,vat.getAdjDirectTaxAccountDescription(),true);
+//			directTaxAccountCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null && vat.getDeductiblePercent() != 100);
+//			adjDirectTaxAccountLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
+//			directTaxAccount.addSelectionHandler( new SelectionHandler<Account>() {
+//				
+//				@Override
+//				public void onSelection(SelectionEvent<Account> event) {
+//					Account a = event.getSelectedItem();
+//					if (a != null) {
+//						vat.setAdjDirectTaxAccountId(a.getId());
+//						vat.setAdjDirectTaxAccountCode(a.getCode());
+//						vat.setAdjDirectTaxAccountDescription(a.getDescription());
+//					} else {
+//						vat.setAdjDirectTaxAccountId(null);
+//						vat.setAdjDirectTaxAccountCode(null);
+//						vat.setAdjDirectTaxAccountDescription(null);
+//					}
+//					SelectionEvent.<Account>fire(OLDInvoiceVATPanel.this, a);
+//				}
+//			});
+//			add(getCell(directTaxAccountCell,directTaxAccount));
 			
 			inputVatAccount.setValue(vat.getInputAccountId(),vat.getInputAccountCode()
 					,vat.getInputAccountDescription(),true);
@@ -750,9 +750,9 @@ public class OLDInvoiceVATPanel extends ScrollPanel implements HasValueChangeHan
 		}
 		
 		private void decorateDirectTaxQuota(InvoiceVAT vat) {
-			double quota = InvoiceCalculator.getDirectTaxQuota(vat);
-			double gap = InvoiceCalculator.getDirectTaxQuotaGap(vat, directTaxQuota.getValue());
-			decorateEditableQuota(gap, quota, directTaxQuota);
+//			double quota = InvoiceCalculator.getDirectTaxQuota(vat);
+//			double gap = InvoiceCalculator.getDirectTaxQuotaGap(vat, directTaxQuota.getValue());
+//			decorateEditableQuota(gap, quota, directTaxQuota);
 		}
 		
 		private void decorateDeductibleQuota(InvoiceVAT vat) {
@@ -907,7 +907,7 @@ public class OLDInvoiceVATPanel extends ScrollPanel implements HasValueChangeHan
 			dedPercent.setValue( vat.getDeductiblePercent() , false);
 			dedQuota.setValue( vat.getDeductibleQuota() , false);
 			directTaxPercent.setValue( vat.getDirectTaxPercent() , false);
-			directTaxQuota.setValue( vat.getDirectTaxQuota() , false);
+//			directTaxQuota.setValue( vat.getDirectTaxQuota() , false);
 			withholding.setValue(vat.isWithholding() , false);
 		}
 
