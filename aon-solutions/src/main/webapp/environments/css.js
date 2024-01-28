@@ -418,6 +418,13 @@ export const DIALOG_CANCEL = 'dialogCancel';
 // Color
 export const AON_COLOR_FULL = 'colorFull';
 
+
+// PDF.js
+export const PDFJS_PDF_VIEWER = 'pdfViewer';
+export const PDFJS_TEXT_LAYER = 'textLayer';
+
+
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name

@@ -25,6 +25,8 @@ export const SECTION = 'section';
 export const IFRAME = 'iframe';
 export const PRE = 'pre';
 export const TEXTAREA = 'textarea';
+export const SRIPT = 'script';
+export const LINK = 'link';
 
 // COMPONENTS
 

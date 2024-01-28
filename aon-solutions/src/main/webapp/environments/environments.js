@@ -2,8 +2,12 @@
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
-// export const URL_PDF_VIEWER = "https://mozilla.github.io/pdf.js/build/pdf.js";
-export const URL_PDF_VIEWER = "https://sig.aonsolutions.org/html/build/pdf.js";
+export const PDFJS_URL = "https://mozilla.github.io/pdf.js/";
+export const PDFJS_PDF_URL = `${PDFJS_URL}/build/pdf.mjs`;
+export const PDFJS_WORKER_URL = `${PDFJS_URL}/build/pdf.worker.mjs`;
+export const PDFJS_VIEWER_STYLESHEET_URL = `${PDFJS_URL}/web/viewer.css`;
+
+//export const URL_PDF_VIEWER = "https://sig.aonsolutions.org/html/build/pdf.js";
 
 //----PROD
 export const SIG_URL = "https://aonsolutions.org";
