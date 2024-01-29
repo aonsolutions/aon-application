@@ -159,7 +159,7 @@ public enum FiscalModelJSON {
 				private void visitNew() {
 					json.put(IJsonNames.RESULT, model.getDeclarationResult());
 				}
-				@Override public void visitM390()  { visitOld();}
+				@Override public void visitM390()  { visitNew();}
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
 				@Override public void visitM202()  { visitOld();}
@@ -196,7 +196,6 @@ public enum FiscalModelJSON {
 					json.put(IJsonNames.TYPE, model.getDeclarationResultType());
 				}
 				
-				@Override public void visitM390()  { visitOld();}
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
 				@Override public void visitM202()  { visitOld();}
@@ -208,6 +207,7 @@ public enum FiscalModelJSON {
 				@Override public void visitM131()  { visitOld();}
 
 				@Override public void visitM130()  { visitNew();}
+				@Override public void visitM390()  { visitNew();}
 				@Override public void visitM390HF(){ visitNew();}
 				@Override public void visitM303()  { visitNew();}
 				@Override public void visitM123()  { visitNew();}
