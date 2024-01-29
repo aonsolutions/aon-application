@@ -216,6 +216,7 @@ export const PREVIOUS = 'previous';
 export const PRICE = 'price';
 export const PRIMARY = 'primary';
 export const PRINT = 'print';
+export const PRINT_SECURE = 'printSecure';
 export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 
