@@ -586,7 +586,7 @@ public class FinanceModule extends MainEntryPoint {
 		if(this.isPayroll) {
 			settleSalariesButton = new AonToolbarButton("Vencimiento de n\u00f3minas", AON.CSS.aonIconRebaseEdit());
 			settleSalariesButton.addClickHandler(e -> {
-				new AonSettleDateDialog("Generar vencimientos de n\u00f3minas") {
+				new AonSettleDateDialog("Generar vencimientos de n\u00f3minas", "Fecha venicimiento de n\u00f3minas:") {
 					
 					@Override
 					protected void onAccept(Date date) {
