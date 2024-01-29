@@ -264,7 +264,7 @@ export class Invoice {
   }
 
   setTotal(total){
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateTaxFromTotal();
     this.calculateFinances();
     return this;
@@ -919,7 +919,7 @@ export class Invoice {
       total = total - Number(tax.quota);
     });
 
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateFinances();
   }
 
@@ -950,6 +950,8 @@ export class Invoice {
         this.finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });
+      this.total = round(Number(this.total));
+      financeTotal = round(Number(financeTotal));
       if(this.total != financeTotal) {
         let bankAccount = this.finances[0].bank_account;
         let finance = {
