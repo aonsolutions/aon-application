@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {ConsultancyBookingApps, BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -112,7 +112,9 @@ export class AonBooking extends AonElement {
 				this.buildApps(content, BookingApps, dur);
 			}
 			this.buildTitle(content, MSG.SERVICES);
-			this.buildApps(content, Services, dur);
+			if(this.isConsole() || this.isBeta()) 
+				this.buildApps(content, ConsoleServices, dur);
+			else this.buildApps(content, Services, dur);
 	
 			this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
 			this.buildApps(content, ClassicApps, dur);
