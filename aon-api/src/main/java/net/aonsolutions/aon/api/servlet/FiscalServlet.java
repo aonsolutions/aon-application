@@ -99,6 +99,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
@@ -138,6 +139,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req, false);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/models390") ) {
+				response(req, resp, getFiscalModels390(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/estimations") ) {
 				response(req, resp, getFiscalModelsEstimations(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
@@ -189,6 +192,35 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod130DAO.getMod130s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			
+			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
+			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
+			boolean testEnvironment = AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.FS_AEAT_TEST_ENV));
+			
+			JSONArray jsonModels = new JSONArray();
+
+			models.forEach(model-> {
+				try {
+					jsonModels.put(FiscalModelJSON.toJSON(model)
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
+							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
+							.put("nrc", model.getNrc())
+							);
+					
+				}
+				catch (Exception e) {
+					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
+				}
+			});
+
+			return jsonModels; 
+		} 
+	}
+	
+	private JSONArray getFiscalModels390(AonApiData api) {
+		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
+			LinkedList<FiscalModel> models = new LinkedList<>();
+			models.addAll( Mod390HFDAO.getMod390HFs(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
 			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);

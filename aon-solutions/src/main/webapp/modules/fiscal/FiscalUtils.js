@@ -46,9 +46,7 @@ const getModelNew = (model)=> {
   let modelText = newModel;
   if(newModel === "111" && model.administration === "ALAVA") {
     modelText = "110";
-  } else if(newModel === "303" && model.administration !== "COMMON_TERRITORY"){
-    modelText = "390";
-  }
+  } 
 
   const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
   
