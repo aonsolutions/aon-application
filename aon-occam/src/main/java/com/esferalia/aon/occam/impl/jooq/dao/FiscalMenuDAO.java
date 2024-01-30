@@ -43,13 +43,16 @@ public class FiscalMenuDAO {
 	public static JSONArray  getDomainsModels(AONContext ctx, int domainId, FiscalMatrixParams params) {
 		final JSONArray allModels = new JSONArray();
 		Domain domain = null;
-		if (params.getScope() == null) {
-			domain = DomainDAO.getDomain(ctx, domainId);
-		} else {
-			domain = DomainDAO.getDomain(ctx, p ->
-					p.getIdProperty().eq(domainId)
-					.and( p.getScopeProperty().isNull().or(p.getScopeProperty().eq(params.getScope())) ));
-		}
+//		if (params.getScope() == null) {
+//			domain = DomainDAO.getDomain(ctx, domainId);
+//		} else {
+//			// CREO QUE ES ESTE FILTRO EL QUE PUEDE HACER QUE NO SALGA NADA SI FILTRO POR AMBITO Y EL DOMINIO PADRE TIENE INDICADO UN AMBITO Y ES DISTINTO
+//			// AUNQUE IGUAL TAMPOCO TIENE MUCHO SENTIDO FILTRAR AQUI POR AMBITO, SI ESTOY EN EL DOMINIO PADRE LO QUE ME INTERESA SON LOS AMBITOS DE LOS MODELOS DE LOS HIJOS ENTIENDO
+//			domain = DomainDAO.getDomain(ctx, p ->
+//					p.getIdProperty().eq(domainId)
+//					.and( p.getScopeProperty().isNull().or(p.getScopeProperty().eq(params.getScope())) ));
+//		}
+		domain = DomainDAO.getDomain(ctx, domainId);
 		if (domain != null && domain.getId() != null) {
 			getDomainModels(ctx, domain, allModels, params);
 		}
@@ -69,7 +72,7 @@ public class FiscalMenuDAO {
 				@Override public void visitM390HF() {	/* Resolved in visitM111() */ }
 				@Override public void visitM202() {	/* Resolved in visitM111() */ }
 				@Override public void visitM303() {	/* Resolved in visitM111() */ }
-				
+								
 				@Override 
 				public void visitM111() {
 					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
@@ -99,8 +102,7 @@ public class FiscalMenuDAO {
 						Mod347DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
@@ -113,8 +115,7 @@ public class FiscalMenuDAO {
 						Mod349DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
@@ -128,7 +129,10 @@ public class FiscalMenuDAO {
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+									|| AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared())
+									|| AonStringUtils.containsIgnoreCase(mod.getFirstSurname(), params.getDeclared())
+									|| AonStringUtils.containsIgnoreCase(mod.getSecondSurname(), params.getDeclared())									
+									|| AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
@@ -141,8 +145,7 @@ public class FiscalMenuDAO {
 						Mod180DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 							.map( FiscalMenuItemJSON::toJSON )
@@ -155,8 +158,7 @@ public class FiscalMenuDAO {
 						Mod184DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
@@ -169,8 +171,7 @@ public class FiscalMenuDAO {
 						Mod190DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
@@ -183,8 +184,7 @@ public class FiscalMenuDAO {
 						Mod193DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-								|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
+						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
 						.map( FiscalMenuItemJSON::toJSON )
@@ -284,7 +284,7 @@ public class FiscalMenuDAO {
 			prop = prop.and( p.getDomainScopeProperty().eq( params.getScope()));
 		}
 		if (AonStringUtils.isNotBlank(params.getDeclared())) {
-			prop = prop.and( p.getNameProperty().like( "%"+params.getDeclared()+"%"));
+			prop = prop.and( p.getNameProperty().like("%"+params.getDeclared()+"%").or(p.getSurnameProperty().like("%"+params.getDeclared()+"%")).or(p.getDocumentProperty().like("%"+params.getDeclared()+"%")) );
 		}
 		if (params.getStatus() != null) {
 			prop = prop.and( p.getStatusProperty().eq(params.getStatus().value()) );
