@@ -333,7 +333,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		InlineLabel i5 = new InlineLabel("Clientes");
 		i5.setStyleName(AON.CSS.aonInnerLabel());
 		i5.addStyleName(AON.CSS.aonClickable());
-		i5.addClickHandler(event -> account.setValue("430",true));
+		i5.addClickHandler(event -> account.setValue("43",true));
 		InlineLabel i6 = new InlineLabel("Proveedores");
 		i6.setStyleName(AON.CSS.aonInnerLabel());
 		i6.addStyleName(AON.CSS.aonClickable());

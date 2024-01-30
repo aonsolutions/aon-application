@@ -46,6 +46,7 @@ public class NordigenAccountTransactionJSON {
 			.setTransactionAmount(NordigenJSONUtils.accountAmountFromJSON(json.optJSONObject("transactionAmount")))
 			.setRemittanceInformationUnstructured(json.optString("remittanceInformationUnstructured", null))
 			.setRemittanceInformationStructured(json.optString("remittanceInformationStructured", null))
+			.setRemittanceInformationUnstructuredArray( getRemittanceInformationUnstructuredArray( json )  )
 			.setPurposeCode(json.optString("purposeCode", null))
 			.setBankTransactionCode(json.optString("bankTransactionCode", null))
 			.setProprietaryBankTransactionCode(json.optString("proprietaryBankTransactionCode", null))
@@ -53,6 +54,18 @@ public class NordigenAccountTransactionJSON {
 			;
 	}
 	
+	private static String[] getRemittanceInformationUnstructuredArray(JSONObject json) {
+		JSONArray array = json.optJSONArray( "remittanceInformationUnstructuredArray" );
+		if (array != null) {
+			String[] arr = new String[array.length()];
+			for (int i = 0; i < array.length(); i++ ) {
+				arr[i] = array.getString(i);
+			}
+			return arr;
+		}
+		return null;
+	}
+
 	public static JSONArray to(List<NordigenAccountTransaction> list) {
 		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
 		return to(list.stream());
