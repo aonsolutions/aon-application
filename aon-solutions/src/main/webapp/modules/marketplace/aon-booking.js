@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
+import {getDomainUserRoles, getInvofoxConfiguration, saveInvofoxConfiguration, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -27,6 +27,7 @@ export class AonBooking extends AonElement {
 	APP;
 	SAVE_DIALOG;
 	EDIT_TYPE_DIALOG;
+	CONFIGURATION_DIALOG;
 	apps;
 	users;
 	definedUsers;
@@ -76,6 +77,7 @@ export class AonBooking extends AonElement {
 		this.USER_NUMBER = this.id + 'UserNumber';
 		this.SAVE_DIALOG = this.id + 'SaveDialog';
 		this.EDIT_TYPE_DIALOG = this.id + 'EditTypeDialog';
+		this.CONFIGURATION_DIALOG = this.id + 'ConfigurationDialog';
 		this.apps = [];
 	}
 
@@ -262,6 +264,17 @@ export class AonBooking extends AonElement {
 			price.style.color = 'gray';
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
+
+			if(app.configuration) {
+				let configuration = new AonIconButton();
+				configuration.id = this.APP + app.app + 'Configuration';
+				configuration.icon = MATERIAL_ICONS.SETTINGS;
+				configuration.style.position = 'absolute';
+				configuration.style.right = '150px'
+				configuration.style.top = '-10px'
+				configuration.addEventListener(EVENT.CLICK, () => this.configurationDialog(app.app));
+				buttons.appendChild(configuration);
+			}
 
 			// let parentContract = document.createElement('span');
 			// parentContract.id = this.APP + app.app + 'ParentContract';
@@ -782,6 +795,35 @@ export class AonBooking extends AonElement {
 			|| (dur.hasProfessionalManagement() && (App.INVOICE === app || App.COMMERCIAL === app
 				|| App.TREASURY === app || App.MARKETING === app
 				|| App.WAREHOUSE === app || App.GROUPWARE === app));
+	}
+
+	configurationDialog(app) {
+		if(App.INVOFOX === app.toUpperCase()){
+
+			getInvofoxConfiguration({}).then(invofoxConfiguration => {
+				let dialog = this.getElement(this.CONFIGURATION_DIALOG);
+				if(!dialog){
+					dialog = new AonDialog();
+					dialog.id = this.CONFIGURATION_DIALOG;
+					this.appendChild(dialog);
+				}
+				let div = this.createDiv();
+				dialog.clear();
+				dialog.setTitle("Configuración de Invofox");
+				dialog.setContent(div);
+			
+				let test = new AonSwitch()
+				test.id = this.APP + app + 'Test';
+				test.title = 'Entorno de Pruebas';
+				div.appendChild(test);
+
+				test.checked = invofoxConfiguration.test;
+
+				dialog.addAcceptAction(() => saveInvofoxConfiguration({test: test.checked})
+				.then(() => {}));
+				dialog.open();
+			});
+		}
 	}
 }
 if(!window.customElements.get('aon-booking')){

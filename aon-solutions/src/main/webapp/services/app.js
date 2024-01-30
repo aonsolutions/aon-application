@@ -455,6 +455,7 @@ export const INVOFOX = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
+  configuration: true
 };
 
 export const CONVENIOS = {
