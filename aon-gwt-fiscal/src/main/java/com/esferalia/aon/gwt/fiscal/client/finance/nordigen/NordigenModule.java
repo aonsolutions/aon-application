@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1135,14 +1136,14 @@ public class NordigenModule extends MainEntryPoint {
 				
 				if (NordigenRequisitionStatus.LINKED.equals(requisition.getStatus())) {
 					List<NordigenBankStatement> movs = result.getNotInsertedMovements();
-					long movCount = movs.stream().filter(m -> m != null && !m.isPending()).count();
-					long pendingMovCount = movs.stream().filter(m -> m != null && m.isPending()).count();
+					long movCount = AonCollectionUtils.stream(movs).filter(m -> m != null && !m.isPending()).count();
+					long pendingMovCount = AonCollectionUtils.stream(movs).filter(m -> m != null && m.isPending()).count();
 					String pendingString = pendingMovCount + " movimientos no consolidados";
 					Label noConsLabel = pendingMovCount > 0 ? new Label(pendingString) : null;
 					if (noConsLabel != null) {
 						noConsLabel.getElement().getStyle().setColor("darkOrange");						
 					}
-					if (!result.getNotInsertedMovements().isEmpty()) {
+					if (AonCollectionUtils.isNotEmpty( result.getNotInsertedMovements() )) {
 						Label pendingLabel = new Label("Hay " + movCount + " movimientos pendientes");
 						pendingLabel.getElement().getStyle().setColor("green");
 						showBottomMessage(pendingLabel, noConsLabel);
@@ -1260,7 +1261,8 @@ public class NordigenModule extends MainEntryPoint {
 		
 		FlowPanel onlinePanel = new FlowPanel();
 		
-		if (lastMovDate != null && !noridgenankAccount.getNotInsertedMovements().isEmpty()) {
+		
+		if (lastMovDate != null && AonCollectionUtils.isNotEmpty( noridgenankAccount.getNotInsertedMovements() )) {
 			long diffGap = new Date().getTime() - lastMovDate.getTime();
 			long diffDays = diffGap / (24 * 60 * 60 * 1000) - 1;
 			periodSelector.addItem("Movimientos pendientes", "" + diffDays);
