@@ -211,7 +211,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildRawdocOptions() {
-		let pendingOptions = (this.isBeta() && this.getDur().isOcr()) ? 
+		let pendingOptions =  this.getDur().isInvofox() ? 
 		[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_OCR,
@@ -581,7 +581,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	preview(el, files) {
-		if(this.isBeta() && this.getDur().isOcr()) {
+		if(this.getDur().isInvofox()) {
 			let uploadToast = this.getElement('aonUploadToast');
 			if(!uploadToast){ 
 				uploadToast = new AonUploadToast();
