@@ -77,6 +77,7 @@ public class CraTypes {
 			case 59: return words.getString("59");
 			case 60: return words.getString("60");
 			case 61: return words.getString("61");
+			case 62: return words.getString("62");
 			case 100: return words.getString("100");
 
 			case INFO: return words.getString(Integer.toString(INFO));
