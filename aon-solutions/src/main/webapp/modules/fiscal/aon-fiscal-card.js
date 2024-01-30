@@ -188,7 +188,8 @@ export class AonFiscalCard extends AonElement {
         let info = this.createElement(TAG.SPAN);
         info.style.color = "rgb(120, 120, 133)";
         info.style.fontSize = ".7rem";
-        info.innerHTML = this.getModelDescription(modelData.newModel) + " Anual";
+        info.style.minWidth = "7.5rem";
+        info.innerHTML = this.getModelDescription(modelData.newModel);
         leftContent2.appendChild(info);
 
         let territory = this.createElement(TAG.SPAN);
@@ -255,6 +256,7 @@ export class AonFiscalCard extends AonElement {
         let info = this.createElement(TAG.SPAN);
         info.style.color = "rgb(120, 120, 133)";
         info.style.fontSize = ".7rem";
+        info.style.minWidth = "7.5rem";
         info.innerHTML = this.getModelDescription(modelData.newModel);
         leftContent2.appendChild(info);
 
@@ -527,15 +529,15 @@ export class AonFiscalCard extends AonElement {
       case "303":
         return "IVA";
       case "390":
-        return "IVA";
+        return "IVA Anual";
       case "110":
-        return "IRPF Nóminas";
+        return "IRPF Nóminas/Prof.";
       case "111":
-        return "IRPF Nóminas";
+        return "IRPF Nóminas/Prof.";
       case "115":
           return "IRPF Arrendamiento";
       case "123":
-          return "IRPF Arrendamiento";
+          return "IRPF Capital mobiliario";
       default:
         return "";
     }
