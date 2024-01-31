@@ -255,7 +255,7 @@ export class AonBankCard extends AonElement {
     if (this.isSameDay(inputDate, today)) {
       return `Act. hoy. ${this.getDayName(inputDate)} a las ${this.formatTime(inputDate)}`;
     } else if (this.isSameDay(inputDate, yesterday)) {
-      return `Ac. ayer, ${this.getDayName(inputDate)}`;
+      return `Act. ayer, ${this.getDayName(inputDate)}`;
     } else if (inputDate > sixDaysAgo) {
       const dayDiff = Math.floor((today - inputDate) / (1000 * 60 * 60 * 24));
       return `Act. el ${this.getDayName(inputDate)} (Hace ${dayDiff} días)`

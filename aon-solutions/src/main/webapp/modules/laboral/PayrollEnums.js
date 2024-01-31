@@ -30,7 +30,7 @@ export const AON_CERT = {
 
 export const AON_LABORAL = {
   name: 'Laboral',
-  icon: MATERIAL_ICONS.SETTING,
+  icon: MATERIAL_ICONS.SETTINGS,
   id: "LABORAL"
 };
 

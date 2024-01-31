@@ -16,10 +16,12 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TediErrorJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -33,7 +35,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.tedi.invofox.OCRBlankValueException;
@@ -67,24 +68,52 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(InvofoxServlet.class.getName());
 	
 	public static final String DOCUMENTS = "/";
+	public static final String DOCUMENT = "/document";
+	public static final String CONFIGURATION= "/configuration";
+	
+	@Override	
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+		get(req, resp);
+	}
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON INVOFOX SERVLET GET");
-		try {		
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		put(req, resp);
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		put(req, resp);
+	}
+	
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-				case "/":
-				    	response(req, resp, getDocuments(api));
-					break;
-				case "/document":
-				    	response(req, resp, getDocument(api));
-					break;
-				default:
-					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(DOCUMENTS, InvofoxServlet::getDocuments)
+				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
+				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
-			e.printStackTrace();
+			error(req, resp, e);
+		}
+	}
+	
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
@@ -155,7 +184,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return array;
 	}
 	
-
+	private static JSONObject getConfiguration(AonApiData api) {
+		return InvofoxConfigurationJSON.toJSON(AON.getInvofoxConfiguration(api.getDomain(), api.getUser()));
+	}
+	
+	private static JSONObject saveConfiguration(AonApiData api) {
+		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationJSON.fromJSON(api.getData());
+		return InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), invofoxConfiguration));
+	}
 	
 //	INVOICE_DOMAIN
 //	.andThen(INVOICE_TRANSACTION)

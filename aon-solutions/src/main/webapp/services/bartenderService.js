@@ -54,9 +54,15 @@ export const writeXml = (cadena) => {
     return cadena;
 };
 
-export const printDeliveryTag = (printer, tag, data) => {
+export const printDeliveryTagHttps = (printer, tag, data) => {
     let xml = generateXml(printer, tag, data);
     let url = 'https://192.168.1.189/Integration/IntegracionWebService/Execute';
+    postXml(url, xml);
+};
+
+export const printDeliveryTagHttp = (printer, tag, data) => {
+    let xml = generateXml(printer, tag, data);
+    let url = 'http://192.168.1.189/Integration/IntegracionWebService/Execute';
     postXml(url, xml);
 };
 

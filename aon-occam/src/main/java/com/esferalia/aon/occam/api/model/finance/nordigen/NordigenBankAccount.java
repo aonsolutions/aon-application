@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -152,14 +154,6 @@ public class NordigenBankAccount implements Serializable {
 		NordigenBankStatement statement = new NordigenBankStatement();
 		double amount = NordigenAccountAmount.getAmount( transaction.getTransactionAmount());
 		boolean bpayment = AonMathUtils.isLessThanZero( amount );
-		String description = "";
-		if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationUnstructured())) {
-			description = transaction.getRemittanceInformationUnstructured();
-		} else if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationStructured())) {				
-			description = transaction.getRemittanceInformationStructured();
-		}
-		description = AonStringUtils.substring(description, 0, 80);
-		
 		StringBuilder sb = new StringBuilder();
 		if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
 			sb.append(transaction.getTransactionId());
@@ -173,7 +167,7 @@ public class NordigenBankAccount implements Serializable {
 			.setCommonConcept(StatementConcept.UNKNOWN)
 			.setPayment(bpayment)
 			.setAmount(Math.abs(amount))
-			.setDescription(description)
+			.setDescription(guessDescription( transaction) )
 			.setStatus(StatementStatus.PENDING)
 			.setReference1("NORDIGEN")
 			.setReference2(AonStringUtils.trimToNull(AonStringUtils.substring(sb.toString(), 0, 64)));
@@ -186,6 +180,19 @@ public class NordigenBankAccount implements Serializable {
 		}
 		statement.setNordigenMovementId(id);
 		return statement;
+	}
+	
+	private static String guessDescription(NordigenAccountTransaction transaction) {
+		String[] options = new String[] {
+			 transaction.getRemittanceInformationUnstructured()
+			,transaction.getRemittanceInformationStructured()
+			,AonCollectionUtils.stream( transaction.getRemittanceInformationUnstructuredArray() ).collect(Collectors.joining(" "))
+		};
+		return AonCollectionUtils.stream(options)
+			.filter( s -> s != null )
+			.map( s -> AonStringUtils.substring(s, 0, 80) )
+			.findFirst()
+			.orElse("");
 	}
 	
 }

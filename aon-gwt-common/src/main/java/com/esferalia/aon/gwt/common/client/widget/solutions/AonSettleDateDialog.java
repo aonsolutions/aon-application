@@ -16,23 +16,23 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AonSettleDateDialog extends AonCustomDialog {
 	
-	public AonSettleDateDialog(String caption) {
+	public AonSettleDateDialog(String caption, String message) {
 		this.setCaption(caption);
 		this.showCloseButton(true);
 		
 		setWidth("400px");
 		
-		this.add(createContent());
+		this.add(createContent(message));
 		
 		showDialog();
 	}
 
-	private Widget createContent() {
+	private Widget createContent(String message) {
 		HTMLPanel content = new HTMLPanel("");
 		content.addStyleName(AON.CSS.aonFlexColumn());
 		content.getElement().getStyle().setPadding(1, Unit.EM);
-		
-		Label selectLabel = new Label("Fecha venicimiento de n\u00f3minas:");
+	
+		Label selectLabel = new Label(message);
 		selectLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		content.add(selectLabel);
 		

@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -65,6 +66,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
@@ -651,6 +653,20 @@ public class FinanceImpl implements IFinance {
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> PrintInvoiceConfigurationDAO.save(ctx, pic));
+	}
+
+	// ---------- TBAI CONFIGURATION
+	
+	@Override
+	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvofoxConfigurationDAO.get(ctx));
+	}
+
+	@Override
+	public InvofoxConfiguration saveInvofoxConfiguration(AONContext ctx, InvofoxConfiguration config) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvofoxConfigurationDAO.save(ctx, config));
 	}
 	
 	// ---------- TBAI CONFIGURATION
