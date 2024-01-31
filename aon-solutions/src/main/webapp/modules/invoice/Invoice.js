@@ -265,7 +265,7 @@ export class Invoice {
   }
 
   setTotal(total){
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateTaxFromTotal();
     this.calculateFinances();
     return this;
@@ -451,13 +451,14 @@ export class Invoice {
     return this.withholding && this.withholding != CONSTANT.FALSE;
   }
 
-  setWithholding(withholding) {
+  setWithholding(withholding, def) {
     this.withholding = withholding;
+    let wt = def ? WithholdingType.find(v => v.id == def) : undefined;
     if(this.isNacional() && !this.isExempt()) {
-      this.calculateWithholdingFromTax();
+      this.calculateWithholdingFromTax(wt);
       this.calculateTotalFromTax();
     } else {
-      this.calculateWithholdingFromDetail();
+      this.calculateWithholdingFromDetail(wt);
       this.calculateTotalFromDetail();
     }
     this.details.forEach((detail, i) => {
@@ -601,7 +602,7 @@ export class Invoice {
         : (this.isWithholdingFarmer() ? 2.0 : 15.0);
 
       let wt = withholdingType ? withholdingType.id
-        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+        : (this.isWithholdingFarmer() ? "FARMER" : "PROFESSIONAL");
 
       let tax = {
         tax: TaxType.IRPF,
@@ -665,7 +666,7 @@ export class Invoice {
         : (this.isWithholdingFarmer() ? 2.0 : 15.0);
 
       let wt = withholdingType ? withholdingType.id
-        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+        : (this.isWithholdingFarmer() ? "FARMER" : "PROFESSIONAL");
 
       let tax = {
         tax: TaxType.IRPF,
@@ -923,7 +924,7 @@ export class Invoice {
       total = total - Number(tax.quota);
     });
 
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateFinances();
   }
 
@@ -954,6 +955,8 @@ export class Invoice {
         this.finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });
+      this.total = round(Number(this.total));
+      financeTotal = round(Number(financeTotal));
       if(this.total != financeTotal) {
         let bankAccount = this.finances[0].bank_account;
         let finance = {

@@ -128,7 +128,8 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA14) ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA15) ,5 ,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA16) ,17,2))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA17) ,17,2))
+		   // ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA17) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA1A) ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA18) ,17,2))
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned( AonNumberUtils.toint(mod.getDescription(Mod303Key.CT_SA21))  ,2))
@@ -137,7 +138,7 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA24)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA25)  ,5 ,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA26)  ,17,2))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA27),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA2A),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA28),17,2))
 
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S101), '.')  ,4))
@@ -302,9 +303,9 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2M4) ,4,0))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2D4) ,3,0))
 		   
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA1A) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA17) ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA1B) ,17,2))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA2A) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA27) ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA2B) ,17,2))
 
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 270))
@@ -326,7 +327,7 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA34) ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA35) ,5 ,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA36) ,17,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA37) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA3A) ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA38) ,17,2))
 			   
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned( AonNumberUtils.toint(mod.getDescription(Mod303Key.CT_SA41))  ,2))
@@ -335,7 +336,7 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA44)  ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA45)  ,5 ,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA46)  ,17,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA47),17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA4A),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA48),17,2))
 
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S301), '.')  ,4))
@@ -469,9 +470,9 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4M4) ,4,0))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4D4) ,3,0))
 			   
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA3A) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA37) ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA3B) ,17,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA4A) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA47) ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA4B) ,17,2))
 			   
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 270))

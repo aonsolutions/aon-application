@@ -183,7 +183,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 
-	// ------------------------------------------------- ContractClausesUIImpl
+	// ------------------------------------------------- ContractOtherDataImpl
 
 	public class ContractOtherDataImpl extends ContractOtherData {
 
@@ -239,6 +239,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		
 		@Override
+		protected void onExportBasicCopyPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportBasicCopy(consumer, failure);
+		}
+		
+		@Override
 		protected void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
 			exportContract(consumer, failure, true);
 		}
@@ -287,6 +292,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(isTransform,
+							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							e -> failure.accept(e));
+				}
+			}, f -> failure.accept(f));
+		}
+		
+		private void exportBasicCopy(Consumer<String> consumer, Consumer<Throwable> failure) {
+			showLoading("Generando borrador de la copia basica");
+			contrataEmployeeObject.getContractOtherInfo(s -> {
+				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+					contrataEmployeeObject.getContractSpecificData(su -> {
+						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+						contrataEmployeeObject.saveBasicCopyExport(
+								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								e -> failure.accept(e));
+					}, f -> failure.accept(f));
+				else {
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+					contrataEmployeeObject.saveBasicCopyExport(
 							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
 							e -> failure.accept(e));
 				}
@@ -923,7 +949,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				Integer contractType = Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType());
 				
 				boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
-				boolean hasExtensionComuniation = AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
+				boolean hasExtensionComuniation = false; //AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
 				boolean canExtension = contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521;
 				
 				boolean hasTransform = null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getTransformDate();
@@ -999,6 +1025,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ExportBasicCopyCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportBasicCopy();
+		}
+	}
+	
 	class ExportExtensionContractCommand implements ScheduledCommand {
 
 		@Override
@@ -1041,6 +1075,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public AttachContextMenu() {
 			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
+			exportContract = addMenuItem("Borrador Copia Basica", new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(), "exportBasicCopy");
 			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)", new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
 			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)", new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
 			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n", new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");

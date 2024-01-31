@@ -43,7 +43,11 @@ const getModelNew = (model)=> {
     color = "in";
   }
 
-  let modelText = newModel === "111" && model.administration === "ALAVA" ? "110" : newModel;
+  let modelText = newModel;
+  if(newModel === "111" && model.administration === "ALAVA") {
+    modelText = "110";
+  } 
+
   const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
   
   return {

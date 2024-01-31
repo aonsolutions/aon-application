@@ -54,5 +54,7 @@ export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data);
 export const getInvofoxDocument = (id) => get(`${API_URL}/invofox/document`, {id: id});
 
 export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});
+export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configuration`, data);
+export const saveInvofoxConfiguration = (data) => put(`${API_URL}/invofox/configuration`, data);
 
 export const getChargePayments = (data) => get(`${API_URL}/charge_payments`, data);

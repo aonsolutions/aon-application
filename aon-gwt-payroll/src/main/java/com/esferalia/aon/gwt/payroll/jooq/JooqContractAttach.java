@@ -9,7 +9,6 @@ import java.util.Base64;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 

@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -59,8 +60,11 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -842,6 +846,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getConfiguration(AonApiData api) {
+		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
+		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
+		Tax withholdingPercent = AON.getTax(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), withholdingPercentId);
+		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
+
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
@@ -850,6 +859,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("tbai", getTbaiConfiguration(api));
 		json.put("sii", getSiiConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
+		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		return json;
 	}
 	

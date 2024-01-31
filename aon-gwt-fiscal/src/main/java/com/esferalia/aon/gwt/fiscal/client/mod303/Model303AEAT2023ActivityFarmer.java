@@ -36,6 +36,9 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 	private AonDoubleBox por = new AonDoubleBox();
 	private AonDoubleBox ing = new AonDoubleBox();
 	
+	private AonDoubleBox com = new AonDoubleBox();
+	private AonDoubleBox dev = new AonDoubleBox();
+	private AonDoubleBox tso = new AonDoubleBox();
 	private AonDoubleBox sop = new AonDoubleBox();
 	private AonDoubleBox cad = new AonDoubleBox();
 	
@@ -103,8 +106,27 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmer.this, cbk.getActivity());
 			});
 			tab.addRow()
-				.addCell( new Label(AON.MSG.page6D()), AON.CSS.aonBorderBottom() )
+				.addCell( new Label("Cuotas soportadas"), AON.CSS.aonBorderBottom() )
 				.addCell( sop );
+			
+			com.addValueChangeHandler(event -> {
+				if (com.getValue() == null) com.setValue(0.0,false);
+				cbk.getActivity().setCom(com.getValue());
+				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmer.this, cbk.getActivity());
+			});
+			tab.addRow()
+				.addCell( new Label("Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P."), AON.CSS.aonBorderBottom() )
+				.addCell( com );
+			
+			dev.setEnabled(false);
+			tab.addRow()
+				.addCell( new Label("1% de la cuota devengada por operaciones corrientes"), AON.CSS.aonBorderBottom() )
+				.addCell( dev );
+			
+			tso.setEnabled(false);
+			tab.addRow()
+				.addCell( new Label("Total cuotas soportadas"), AON.CSS.aonBorderBottom() )
+				.addCell( tso );
 			
 			cad.setEnabled(false);
 			tab.addRow()
@@ -153,6 +175,9 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		por.setValue(act.getPor(),false,true);
 		ing.setValue(act.getIng(),false,true);
 		sop.setValue(act.getSop(),false,true);
+		com.setValue(act.getCom(),false,true);
+		dev.setValue(act.getDev(),false,true);
+		tso.setValue(act.getTso(),false,true);
 		cad.setValue(act.getCad(),false,true);
 	}
 	

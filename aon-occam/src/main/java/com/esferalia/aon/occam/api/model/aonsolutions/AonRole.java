@@ -59,7 +59,8 @@ public enum AonRole  implements Serializable {
 	TREASURY,
 	MARKETING,
 	GROUPWARE,
-	CONSOLE				// ACCESO A CONSOLE (sig.aonsolutions.org)
+	CONSOLE,				// ACCESO A CONSOLE (sig.aonsolutions.org)
+	INVOFOX
 	;
 	
 	public Byte value(){

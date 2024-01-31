@@ -277,13 +277,17 @@ public class JooqEnterprise {
 							.fetch(ENTERPRISE.REGISTRY)))
 				.fetch(ENTERPRISE_ACTIVITY.ID)))
 			.and(ENTERPRISE_CCC.TYPE.ne((byte)6))
-			.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
+//			.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
 			.and(CONTRACT.SS_REGIME.ne((byte) 3))
 			.and(
-				(SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
+				((SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
 				.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
+				.or(SALARY.CHARGE_DATE.between(findPeriod, findEndPeriod).and(SALARY.TYPE.eq((byte)3)))
+				
+			)
 			.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 			.fetch();
+		
 		
 		System.err.println("enterpriseCCCActivities START");
 		

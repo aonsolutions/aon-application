@@ -555,6 +555,21 @@ export class DomainUserRoles {
       && (this.isAdmin() || this.hasRole(Role.OCR));
 	}
 
+  // OCR INVOFOX
+
+  hasInvofox() {
+    return this.hasApp(App.INVOFOX);
+  }
+  
+  hasParentInvofox() {
+    return this.hasParentApp(App.INVOFOX);
+  }
+  
+  isInvofox() {
+    return (this.hasInvofox() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentInvofox()))
+      && (this.isAdmin() || this.hasRole(Role.INVOFOX));
+  }
+
   // BANK
 
   hasBank() {

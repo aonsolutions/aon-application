@@ -1568,7 +1568,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked);
+			this.invoice.setWithholding(irpf.checked, this.configuration.withholdingPercent);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1587,6 +1587,7 @@ export class AonInvoice extends AonElement {
 			irpfType.disabled = 'true';
 		}
 		irpfType.setOptions(WithholdingType);
+
 		irpfType.addEventListener(EVENT.SELECT, () => {
 			let detail = WithholdingType.find(v => v.id == irpfType.value);
 			this.invoice.setWithholdingType(detail);
@@ -1597,8 +1598,8 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val;
-		}
+			irpfType.value = val || this.configuration.withholdingPercent;
+		} 
 	}
 
 	onChangeRegistry(registry) { 
