@@ -67,6 +67,8 @@ public class Mod2002023 extends Mod200 {
 	private LinkedList<String> sicav1 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
 	private LinkedList<String> sicav2 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
 	
+	// FALTA - NUEVO APARTADO EN UTES - Partícipes de agrupaciones de interés económico y UTES
+	
 	private String devType;
 	private String payType;
 	private String iban;
@@ -78,6 +80,9 @@ public class Mod2002023 extends Mod200 {
 	private String nrsAnexoV;
 	private String nrsAnexoVric;
 	private String justActivos;
+	// FALTA - NUEVAS CASILLAS PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPOS EN fs_model200
+	// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas
+	// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
