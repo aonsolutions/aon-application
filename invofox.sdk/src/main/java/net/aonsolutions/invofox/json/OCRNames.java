@@ -25,6 +25,7 @@ public final class OCRNames {
 	public static final String BOXES = "boxes";
 	public static final String BREAKDOWNS = "breakdowns";
 	public static final String BUCKET = "bucket";
+	public static final String BOUNDING_BOX = "boundingBox";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CHANNEL = "channel";
 	public static final String CLIENT_CODE = "clientCode";
@@ -165,6 +166,7 @@ public final class OCRNames {
 	public static final String SUB_REGION = "subRegion";
 	public static final String SUPPLY_NUMBER = "supplyNumber";
 	public static final String SWIFT = "SWIFT";
+	public static final String SORT = "sort";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TAX_BASE_UNIT_PRICE = "taxBaseUnitPrice";
 	public static final String TAX_CLASS = "taxClass";
@@ -200,6 +202,7 @@ public final class OCRNames {
 	public static final String WIDTH = "width";
 	public static final String WITHHOLDING_TAX_RATE = "withholdingTaxRate";
 	public static final String WITHHOLDING_TAX_AMOUNT = "withholdingTaxAmount";
+	public static final String WORDS = "words";
 	// ---------------------------------------------------------------------------------------------	[X]
 	// ---------------------------------------------------------------------------------------------	[Y]
 	// ---------------------------------------------------------------------------------------------	[Z]
