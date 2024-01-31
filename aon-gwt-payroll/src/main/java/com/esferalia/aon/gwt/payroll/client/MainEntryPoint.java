@@ -70,6 +70,8 @@ public class MainEntryPoint implements EntryPoint {
 			runAsync(MainMassiveContracts.class, new MainMassiveContracts() );
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_MASSIVE_FIE_ENTRY_POINT)) {
 			runAsync(MainMassiveFie.class, new MainMassiveFie() );
+		} else if (entryPoint.equalsIgnoreCase(Constants.CONTRACT_VARIABLES_MODULE)) {
+			runAsync(ContractVariablesModule.class, new ContractVariablesModule() );
 		}
 	}
 	
@@ -285,6 +287,19 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == MainMassiveFie.class ) {
 			GWT.runAsync(MainMassiveFie.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == ContractVariablesModule.class ) {
+			GWT.runAsync(ContractVariablesModule.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {
