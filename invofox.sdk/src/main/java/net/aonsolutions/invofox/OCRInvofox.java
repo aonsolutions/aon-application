@@ -1,6 +1,5 @@
 package net.aonsolutions.invofox;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +9,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.json.JSONObject;
 
@@ -24,6 +25,7 @@ import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
+import net.aonsolutions.invofox.json.OCRInfoResponseJSON;
 import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
@@ -32,9 +34,13 @@ import net.aonsolutions.invofox.model.OCRCompanyResponse;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCRInfoResponse;
+import net.aonsolutions.invofox.model.OCRLine;
 import net.aonsolutions.invofox.model.OCRLoginTokenResponse;
+import net.aonsolutions.invofox.model.OCRPage;
 import net.aonsolutions.invofox.model.OCRResponse;
 import net.aonsolutions.invofox.model.OCRSeverity;
+import net.aonsolutions.invofox.model.OCRWord;
 
 public class OCRInvofox {
 
@@ -45,7 +51,7 @@ public class OCRInvofox {
     	private static final String X_API_KEY = "x-api-key";
 	private static final String DEFAULT_CONFIG_FILE = "/etc/aon-aio/invofox";
 	
-	private static final String DEF_API_URL = "https://prod.kinequo.com/backends/midas";
+	private static final String DEF_API_URL = "https://api.invofox.com";
 	private static final String PROD_X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
 	//private static final String TEST_X_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
 	
@@ -73,6 +79,10 @@ public class OCRInvofox {
 	
         private static String getDocumentURL() {
             return getDocumentsURL() + "/{0}";
+        }
+
+        private static String getOcrInfoURL() {
+            return getDocumentURL()+ "/ocr";
         }
 
         private static String getDocumentsURL() {
@@ -241,6 +251,9 @@ public class OCRInvofox {
 		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
 		return put(MessageFormat.format(getDocumentURL(), documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
+	public static OCRInfoResponse getOcrInfo(String documentId) {
+		return get(MessageFormat.format(getOcrInfoURL(), documentId), OCRInfoResponse::new, OCRInfoResponseJSON::from);
+	}
 	// ---------------------------------------------------------------------- [COMPANIES]
 	public static OCRCompanyResponse postCompany(OCRCompany company) {
 		return  post(getCompaniesURL(), OCRCompanyJSON.to(company), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
@@ -250,6 +263,12 @@ public class OCRInvofox {
 	}
 	public static OCRCompaniesResponse getCompanies(OCRCompanyParams params) {
 		return get(getCompaniesURL() + params.build(), OCRCompaniesResponse::new, OCRCompaniesResponseJSON::from);
+	}
+	
+	
+	public static void main(String[] args) {
+	    System.out.println(OCRCompaniesResponseJSON.to(getCompanies(OCRCompanyParams.get().withTaxId("B01487271"))).toString(1));
+	    System.out.println(OCRDocumentResponseJSON.to(getDocument("659b530b802d990008d8ecde")).toString(1));
 	}
 	
 }

@@ -41,3 +41,5 @@ export const TOUCHSTART = 'touchstart';
 export const TOUCHMOVE = 'touchmove';
 export const TOUCHEND = 'touchend';
 export const PASTE = 'paste';
+export const PRINT_IMAGE = 'printImage';
+export const PRINT_PDF_PAGE = 'printPdfPage';

@@ -6,6 +6,8 @@ import { AonIconButton } from './aon-icon-button.js';
 export class AonViewer extends AonElement {
 
 	_scale;
+	AON_IMG_DIV;
+	AON_TEXT_DIV;
 	AON_VIEWER_DIV;
 	AON_CANVAS_DIV;
 	PDF;
@@ -40,6 +42,8 @@ export class AonViewer extends AonElement {
 	set width(width) {
 		this.setAttribute('width', width);
 	}
+	
+	setImgText
 
 	constructor() {
 		super();
@@ -79,6 +83,7 @@ export class AonViewer extends AonElement {
 
 	initialize(){
 		this._scale = 1;
+		this.AON_IMG_DIV  = "aonViewerImgDiv";
 		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
 		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";	
 	}
@@ -178,6 +183,7 @@ export class AonViewer extends AonElement {
 
 	printImage() {
 		let img = this.createElement(TAG.IMG);
+		img.id = this.AON_IMG_DIV;
 		img.style.width = '100%';
 		img.src = this.file;
 		img.onerror = () =>{
@@ -185,6 +191,51 @@ export class AonViewer extends AonElement {
 			this.notSupport(this.type);
 		}
 		this.appendChild(img);
+		this.dispatchEvent(new CustomEvent(EVENT.PRINT_IMAGE));
+	}
+	
+	printImageTextLayer(textContent) {
+		this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
+			console.log(JSON.stringify(textContent));
+			
+			let img = this.getElement(this.AON_IMG_DIV);
+			
+			let page = textContent.pages[0];
+			
+			let textLayerDiv = this.createElement(TAG.DIV);
+			textLayerDiv.className = CSS.PDFJS_TEXT_LAYER;
+		    textLayerDiv.style.width = `${img.width}px`;
+		    textLayerDiv.style.height = `${img.height}px`;
+			textLayerDiv.style.top = `${img.offsetTop}px`;
+			textLayerDiv.style.left = `${img.offsetLeft}px`;
+			textLayerDiv.style.setProperty("--scale-factor", img.width / page.width );
+			this.append(textLayerDiv);
+
+			page.items.forEach(item => {
+				console.log(JSON.stringify(item));
+				let itemSpan = this.createElement(TAG.SPAN);
+				itemSpan.innerText = item.str;
+	
+				itemSpan.style.top = `${item.top / page.height * 100.00}%`;
+				itemSpan.style.left = `${item.left / page.width * 100.00}%`;
+				itemSpan.style.width = `${item.width / page.width * 100.00}%`;
+				itemSpan.style.height = `${item.height / page.height * 100.00}%`;
+				/*
+				itemSpan.style.top = `${item.top * screenPPI}px`;
+				itemSpan.style.left = `${item.left * screenPPI}px`;
+				itemSpan.style.width = `${item.width * screenPPI}px`;
+				itemSpan.style.height = `${item.height * screenPPI}px`;
+				*/			
+				
+				itemSpan.style.setProperty('overflow', `hidden`);
+				itemSpan.style.setProperty('role', 'presentation');
+				itemSpan.style.setProperty('font-family', 'sans-serif');
+				itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height}px)`);
+	
+				textLayerDiv.appendChild(itemSpan);
+			});
+		});		
+		
 	}
 
 	notSupport(type, reason) {
@@ -269,6 +320,11 @@ export class AonViewer extends AonElement {
 					if ( oldCanvas ) { 
 						oldCanvas.parentElement.removeChild(oldCanvas);
 					}
+					// Remove old textLayer if exist. 
+					let oldTextlayerDiv = this.getElement('textLayerDiv' + pageNumber);
+					if ( oldTextlayerDiv ) { 
+						oldTextlayerDiv.parentElement.removeChild(oldTextlayerDiv);
+					}
 					
 					const canvas = this.createElement(TAG.CANVAS);
 					canvas.id = 'canvas' + pageNumber;
@@ -293,6 +349,7 @@ export class AonViewer extends AonElement {
 						canvas.width = viewport.width;
 						
 						let textLayerDiv = this.createElement(TAG.DIV);
+						textLayerDiv.id = 'textLayerDiv' + pageNumber;
 						textLayerDiv.className = CSS.PDFJS_TEXT_LAYER;
 					    textLayerDiv.style.width = `${viewport.width}px`;
 					    textLayerDiv.style.height = `${viewport.height}px`;
@@ -323,6 +380,13 @@ export class AonViewer extends AonElement {
 									textContentSource: textContent
 								});
 								console.log(JSON.stringify(textContent));
+								let text = textContent.items.map( item => item.str).join();
+								this.dispatchEvent(new CustomEvent(EVENT.PRINT_PDF_PAGE, {
+									detail:{
+										text: text,
+										page: pageNumber
+									}
+								}));
 							});
 						});
 			
@@ -333,6 +397,39 @@ export class AonViewer extends AonElement {
 			});
 		}).catch(err=>{
 			console.log(err);
+		});
+	}
+
+	printPdfTextLayer(pageIndex, textContent) {
+		
+		console.log(JSON.stringify(textContent));
+		
+		let screenPPI = this.getScreenPPI() * 0.80;
+		let page = textContent.pages[pageIndex-1];
+		
+		let textLayerDiv = this.getElement(`textLayerDiv${pageIndex}`);
+		
+		page.items.forEach(item => {
+			let itemSpan = this.createElement(TAG.SPAN);
+			itemSpan.innerText = item.str;
+
+			itemSpan.style.top = `${item.top / page.height * 100.00}%`;
+			itemSpan.style.left = `${item.left / page.width * 100.00}%`;
+			itemSpan.style.width = `${item.width / page.width * 100.00}%`;
+			itemSpan.style.height = `${item.height / page.height * 100.00}%`;
+			/*
+			itemSpan.style.top = `${item.top * screenPPI}px`;
+			itemSpan.style.left = `${item.left * screenPPI}px`;
+			itemSpan.style.width = `${item.width * screenPPI}px`;
+			itemSpan.style.height = `${item.height * screenPPI}px`;
+			*/			
+			
+			itemSpan.style.setProperty('role', 'presentation');
+			itemSpan.style.setProperty('font-family', 'sans-serif');
+			console.log(`calc(var(--scale-factor)*${item.height * screenPPI}px)`);
+			itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height * screenPPI}px)`);
+
+			textLayerDiv.appendChild(itemSpan);
 		});
 	}
 
@@ -435,6 +532,19 @@ export class AonViewer extends AonElement {
 		        };
 	        }
 	    });
+	}
+	
+	getScreenPPI(){
+		let ppiDiv = document.createElement(TAG.DIV);
+		ppiDiv.style.width = "1in";
+		ppiDiv.style.padding = "0px";
+		ppiDiv.style.padding = "hidden";
+		
+		this.appendChild(ppiDiv);
+		let screenPPI = ppiDiv.offsetWidth;  
+		this.removeChild(ppiDiv);		
+		
+		return screenPPI;
 	}
 
 }
