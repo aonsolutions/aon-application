@@ -435,7 +435,7 @@ export const ALMA = {
 
 export const OCR = {
   app: "ocr",
-  title: "OCR",
+  title: "OCR | Asistente Registro Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
@@ -455,7 +455,6 @@ export const INVOFOX = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
-  configuration: true
 };
 
 export const CONVENIOS = {

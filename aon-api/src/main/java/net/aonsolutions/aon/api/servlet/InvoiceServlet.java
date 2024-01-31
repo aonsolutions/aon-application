@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
@@ -61,7 +62,6 @@ import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -83,7 +83,6 @@ import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
-import net.aonsolutions.aon.tedi.TediException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -860,6 +859,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("sii", getSiiConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
+		json.put("invofox", InvofoxServlet.getConfiguration(api));
 		return json;
 	}
 	
@@ -889,11 +889,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
 		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
 		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
+		
+		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
+				InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), 
+						InvofoxConfigurationJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), "invofox")))) 
+				: new JSONObject();
+		
 		return new JSONObject()
 			.put("administration", administration.name())	
 			.put("print", print)
 			.put("tbai", tbai)
 			.put("sii", sii)
+			.put("invofox", invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
 	
