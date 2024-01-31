@@ -239,7 +239,7 @@ export class AonBooking extends AonElement {
 			span2.className = 'aonAppTitle';
 			span2.innerHTML = app.title;
 			span.appendChild(span2);
-			if(app.domainType && this.dur.isConsoleUser()) {
+			if(app.domainType && (this.isConsole() || this.dur.isConsoleUser())) {
 				span2.style.cursor = 'pointer';
 				span2.addEventListener(EVENT.CLICK, () => this.editTypeDialog());
 			}
@@ -264,17 +264,6 @@ export class AonBooking extends AonElement {
 			price.style.color = 'gray';
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
-
-			if(app.configuration) {
-				let configuration = new AonIconButton();
-				configuration.id = this.APP + app.app + 'Configuration';
-				configuration.icon = MATERIAL_ICONS.SETTINGS;
-				configuration.style.position = 'absolute';
-				configuration.style.right = '150px'
-				configuration.style.top = '-10px'
-				configuration.addEventListener(EVENT.CLICK, () => this.configurationDialog(app.app));
-				buttons.appendChild(configuration);
-			}
 
 			// let parentContract = document.createElement('span');
 			// parentContract.id = this.APP + app.app + 'ParentContract';
@@ -324,7 +313,7 @@ export class AonBooking extends AonElement {
 
 			if(!app.domainType)
 				span.appendChild(buttons);
-			else if (this.dur.isConsoleUser()){
+			else if (this.isConsole() || this.dur.isConsoleUser()){
 				let domainPayer = new AonSwitch();
 				domainPayer.id = this.APP + app.app + 'DomainPayment';
 				domainPayer.title = 'Dominio Pagador';
@@ -795,35 +784,6 @@ export class AonBooking extends AonElement {
 			|| (dur.hasProfessionalManagement() && (App.INVOICE === app || App.COMMERCIAL === app
 				|| App.TREASURY === app || App.MARKETING === app
 				|| App.WAREHOUSE === app || App.GROUPWARE === app));
-	}
-
-	configurationDialog(app) {
-		if(App.INVOFOX === app.toUpperCase()){
-
-			getInvofoxConfiguration({}).then(invofoxConfiguration => {
-				let dialog = this.getElement(this.CONFIGURATION_DIALOG);
-				if(!dialog){
-					dialog = new AonDialog();
-					dialog.id = this.CONFIGURATION_DIALOG;
-					this.appendChild(dialog);
-				}
-				let div = this.createDiv();
-				dialog.clear();
-				dialog.setTitle("Configuración de Invofox");
-				dialog.setContent(div);
-			
-				let test = new AonSwitch()
-				test.id = this.APP + app + 'Test';
-				test.title = 'Entorno de Pruebas';
-				div.appendChild(test);
-
-				test.checked = invofoxConfiguration.test;
-
-				dialog.addAcceptAction(() => saveInvofoxConfiguration({test: test.checked})
-				.then(() => {}));
-				dialog.open();
-			});
-		}
 	}
 }
 if(!window.customElements.get('aon-booking')){
