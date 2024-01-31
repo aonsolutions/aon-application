@@ -38,6 +38,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.tedi.invofox.OCRBlankValueException;
@@ -76,6 +77,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	
 	public static final String DOCUMENTS = "/";
 	public static final String DOCUMENT = "/document";
+	public static final String TEXT_CONTENT= "/text_content";
 	public static final String CONFIGURATION= "/configuration";
 	
 	@Override	
@@ -97,42 +99,30 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-				case "/":
-				    	response(req, resp, getDocuments(api));
-					break;
-				case "/document":
-				    	response(req, resp, getDocument(api));
-					break;
-				case "/text_content":
-				    	response(req, resp, getTextContent(api));
-					break;
-				default:
-					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
 			
-//			Object object = new AonRouting(api)
-//				.addRoute(DOCUMENTS, InvofoxServlet::getDocuments)
-//				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
-//				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
-//				.apply();
-//			
-//			response(req, resp, object);
-//		} catch (Exception e) {
-//			error(req, resp, e);
-//		}
-//	}
-//	
-//	private void put(HttpServletRequest req, HttpServletResponse resp) {
-//		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
-//		try {
-//			AonApiData api = initialize(req);
-//			
-//			Object object = new AonRouting(api)
-//				.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
-//				.apply();
-//			
-//			response(req, resp, object);
+			Object object = new AonRouting(api)
+				.addRoute(DOCUMENTS, InvofoxServlet::getDocuments)
+				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
+				.addRoute(TEXT_CONTENT, InvofoxServlet::getTextContent)
+				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
