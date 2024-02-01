@@ -531,9 +531,9 @@ export class AonFiscalCard extends AonElement {
       case "390":
         return "IVA Anual";
       case "110":
-        return "IRPF Nóminas/Prof.";
+        return "IRPF Ret. Trabajo";
       case "111":
-        return "IRPF Nóminas/Prof.";
+        return "IRPF Ret. Trabajo";
       case "115":
           return "IRPF Arrendamiento";
       case "123":

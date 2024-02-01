@@ -430,7 +430,7 @@ public class JooqEmployeeAFI {
 		fab.put("realDate", dateFormat.format(contractRecord.get(CONTRACT.START_DATE)));
 		fab.put("quoteGroup", quoteGruop);
 		fab.put("tc2", tc2);
-		fab.put("partialityCoef", partiality);
+		fab.put("partialityCoef", partiality == null ? "" : parseCoefLengnt(partiality));
 		fab.put("employeeColective", employeeColective);
 		fab.put("birthDate", personRecord.getBirthDate() == null ? "" : dateFormat.format(personRecord.getBirthDate()));
 		fab.put("gender", personRecord.getGender());
