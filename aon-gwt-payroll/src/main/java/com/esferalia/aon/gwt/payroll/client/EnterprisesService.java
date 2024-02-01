@@ -45,6 +45,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -163,7 +164,9 @@ public interface EnterprisesService extends RemoteService {
 
 	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(long findingDate, List<String> cccList, String domain);
 
-	List<CRA> getCRAs(String domain, String string, long liquidDateTime);
+	List<CRA> getCRAs(String domain, String string, long liquidDateTime) throws IllegalArgumentException;
+
+	Period getMinMaxCraDate(String domain, String string) throws IllegalArgumentException;
 
 	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
 

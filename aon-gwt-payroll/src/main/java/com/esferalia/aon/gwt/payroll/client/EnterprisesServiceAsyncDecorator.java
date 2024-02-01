@@ -49,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -416,9 +417,16 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCRAs(String domain, String user, long liquidDateTime, AsyncCallback<List<CRA>> callback) {
+	public void getCRAs(String domain, String user, long liquidDateTime, AsyncCallback<List<CRA>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getCRAs(domain, user, liquidDateTime, new AsyncCallbackWrapper<List<CRA>>(callback));
+	}
+	
+
+	@Override
+	public void getMinMaxCraDate(String domain, String user, AsyncCallback<Period> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMinMaxCraDate(domain, user, new AsyncCallbackWrapper<Period>(callback));
 	}
 
 	@Override

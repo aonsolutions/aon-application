@@ -133,6 +133,7 @@ import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -1998,6 +1999,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			return JooqCRA.getDomainCRAs(domainId, userId, liquidDateTime, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public Period getMinMaxCraDate(String domain, String user) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			return JooqCRA.getMinMaxCraDate(domainId, userId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

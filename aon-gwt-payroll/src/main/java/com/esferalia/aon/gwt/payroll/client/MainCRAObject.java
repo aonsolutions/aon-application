@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -78,6 +79,23 @@ public class MainCRAObject {
 				cras.addAll(dbCRAs);
 				
 				success.accept(dbCRAs);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
+	public void getMinMaxCraDate(Consumer<Period> success, Consumer<Throwable> failure){
+		
+		impl.getMinMaxCraDate(new AsyncCallback<Period>() {
+			
+			@Override
+			public void onSuccess(Period period) {
+				success.accept(period);
 			}
 
 			@Override
