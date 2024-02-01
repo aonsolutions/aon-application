@@ -148,6 +148,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/salaryPrint.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- ====================== Contract Variables Module  ============================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_contractVariablesPayroll</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/contract_variables.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
 		

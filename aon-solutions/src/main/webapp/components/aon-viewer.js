@@ -218,8 +218,8 @@ export class AonViewer extends AonElement {
 	
 				itemSpan.style.top = `${item.top / page.height * 100.00}%`;
 				itemSpan.style.left = `${item.left / page.width * 100.00}%`;
-				itemSpan.style.width = `${item.width / page.width * 100.00}%`;
-				itemSpan.style.height = `${item.height / page.height * 100.00}%`;
+				itemSpan.style.width = `${item.width / page.width * 101.00}%`;
+				itemSpan.style.height = `${item.height / page.height * 101.00}%`;
 				/*
 				itemSpan.style.top = `${item.top * screenPPI}px`;
 				itemSpan.style.left = `${item.left * screenPPI}px`;
@@ -230,7 +230,7 @@ export class AonViewer extends AonElement {
 				itemSpan.style.setProperty('overflow', `hidden`);
 				itemSpan.style.setProperty('role', 'presentation');
 				itemSpan.style.setProperty('font-family', 'sans-serif');
-				itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height}px)`);
+				itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height * 2}px)`);
 	
 				textLayerDiv.appendChild(itemSpan);
 			});

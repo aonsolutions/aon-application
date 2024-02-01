@@ -722,6 +722,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							return getGuaranteedDays(exprCtx,p);
 						}
 					});
+					
+					// getGuaranteedDays > MONTH_DAYS ????
+					if ( !isWholeMonth(period) ) {
+        					exprCtx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
+        						
+        						@Override
+        						public Period getPeriod() {
+        							return period;
+        						}
+        						@Override
+        						public Double getValue(Period p ) {
+        						    	double guaranteedDays = getGuaranteedDays(exprCtx,p);
+        							return guaranteedDays * getCurrentBindings().get(PARTIAL_FACTOR,
+        								obj -> ((Number) obj).doubleValue(), 1.00);
+        						}
+        					});
+					}
 
 					ExpressionImpl exp = new ExpressionImpl();
 					exp.setName(EVERYTHING.getName());

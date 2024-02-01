@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -15,7 +17,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.HttpException;
+import com.esferalia.aon.gwt.payroll.shared.IvlService;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
@@ -26,9 +31,15 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
@@ -152,6 +163,11 @@ public class MainCCC extends MainEntryPoint{
 	@UiField
 	FullViewer pdfViewer;
 	
+	// --------------------------------------------- Import Form
+	
+	private FormPanel uploadForm;
+	private FileUpload fileUpload;
+
 	// ----------------------------------------------- Variables
 	
 	private MainCCCObject mainCCCObject;
@@ -188,8 +204,12 @@ public class MainCCC extends MainEntryPoint{
 		
 		mainPanel.add(cccWidget);
 		mainPanel.addStyleName(style.widthAll());
+		
+		initUploadForm();
+		
+		
 	}
-	
+
 	// ----------------------------------------------- onModuleLoad
 	
 	@Override
@@ -206,6 +226,40 @@ public class MainCCC extends MainEntryPoint{
 					cccWidget.calculateScrollPanelHeightMainCCC();
 					setHasChange(false);
 				}, f -> {});
+	}
+	
+	// ------------------------------------------ Upload Form
+
+	private void initUploadForm() {
+	    uploadForm = new FormPanel();
+	    uploadForm.setVisible(false);
+	    uploadForm.setAction(IvlService.IVL_URL);
+	    uploadForm.setMethod(FormPanel.METHOD_POST);
+	    uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+	    uploadForm.addSubmitCompleteHandler(e ->  cccWidget.fireInfoMessage(Collections.singletonMap("IVL", e.getResults())) );
+	    
+	    
+	    FlowPanel formPanel = new FlowPanel();
+	    
+	    fileUpload = new FileUpload();
+	    fileUpload.setName(IvlService.Parameter.FILE.name());
+	    fileUpload.setVisible(false);
+	    formPanel.add(fileUpload);
+	    
+	    formPanel.add(new Hidden(IvlService.Parameter.USER.name(), Wnd.getCurrentUser()));
+	    formPanel.add(new Hidden(IvlService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL()));
+	    
+	    
+	    uploadForm.add(formPanel);
+	    mainPanel.add(uploadForm);
+	}
+	
+	private void uploadFile() {
+	    fileUpload.click();
+	    fileUpload.addChangeHandler( e -> {
+		    cccWidget.fireLoadingMessage("Importando vida laboral ...");
+		    uploadForm.submit();
+	    });
 	}
 	
 	// ----------------------------------------------- Toolbar
@@ -249,6 +303,9 @@ public class MainCCC extends MainEntryPoint{
 		createCCCBtn.addClickHandler(e -> cccWidget.onAddNewCCC());
 		toolbar.add(createCCCBtn);
 		
+		AonToolbarButton importBtn = new AonToolbarButton(AON.MSG.importAction() , AON.CSS.aonIconUploadFile() );
+		importBtn.addClickHandler(e -> uploadFile());
+		toolbar.add(importBtn);
 		
 	}
 	
@@ -330,19 +387,114 @@ public class MainCCC extends MainEntryPoint{
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
 			toolbarPDFViewer.add(monthListBox);
+			
+			AonToolbarButton importPDF = new AonToolbarButton(AON.MSG.importAction(), AON.CSS.aonIconImport());
+			importPDF.addClickHandler(e -> onImportIvl());
+			toolbarPDFViewer.add(importPDF);
+
 		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
 			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
 		
 	}
-
+	
 	private void onClosePDF() {
 		showCCCs();
 	}
 	
+	
+	private void onImportIvl() {
+	    pdfViewer.getData(this::importIvl);
+	}
+	
+	private void importIvl(String data) {
+	    cccWidget.fireLoadingMessage("Importando Informe de Vida Laboral ...");
+	    upload(data, 
+		    message -> cccWidget.fireInfoMessage(Collections.singletonMap("IVL", message)), 
+		    exception -> cccWidget.fireWarningMessage(Collections.singletonMap("IVL", exception.getMessage())) );
+	}
+
 	private void setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
 		acceptButton.setEnabled(this.hasChange);
 		undoAllButton.setEnabled(this.hasChange);
 	}
 
-}
+	protected static void upload(String data, Consumer<String> onSuccess, Consumer<HttpException> onFailure ) {
+
+	    XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+
+	    xmlHttpRequest.setOnReadyStateChange(xhr -> {
+		int state = xhr.getReadyState();
+		
+		if (state != XMLHttpRequest.DONE)
+			return;
+		
+		int status = xhr.getStatus();
+		// Successful 2xx
+		if (status >= 200 && status < 300)
+			onSuccess.accept(xhr.getResponseText());
+		else
+			onFailure.accept(new HttpException(status, xhr.getResponseText()));
+		
+		
+	    });
+
+	    xmlHttpRequest.open("POST", IvlService.IVL_URL);
+
+	    /* enctype is multipart/form-data */
+	    String boundary = "---------------------------" + Long.toHexString(System.currentTimeMillis());
+	    xmlHttpRequest.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+	    StringBuilder requestBuffer = new StringBuilder();
+	    
+	    Map<String, String> datas = new HashMap<>();
+	    datas.put(IvlService.Parameter.USER.name(), Wnd.getCurrentUser());
+	    datas.put(IvlService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+	    
+	    for (Map.Entry<String, String> entry : datas.entrySet()) {
+		    // We start a new part in our body's request
+		    requestBuffer.append("--" + boundary + "\r\n");
+		    // We said it's form data (it could be something else)
+		    requestBuffer.append("Content-Disposition: form-data; "
+			    // We define the name of the form data
+			    + "name=\"" + entry.getKey() + "\"\r\n");
+		    // There is always a blank line between the meta-data and the
+		    // data
+		    requestBuffer.append("\r\n");
+
+		    requestBuffer.append(entry.getValue());
+
+		    requestBuffer.append("\r\n");
+	    }
+
+	    // We start a new part in our body's request
+	    requestBuffer.append("--" + boundary + "\r\n");
+	    // We said it's form data (it could be something else)
+	    requestBuffer.append("Content-Disposition: form-data; "
+		    // We define the name of the form data
+		    + "name=\""+IvlService.Parameter.FILE.name() +"\"; "
+		    // We provide the 'real' name of the file
+		    + "filename=\"Informe de Vida Laboral.pdf" + "\"\r\n");
+	    requestBuffer.append("Content-Transfer-Encoding: base64\r\n");
+		    // We provide the mime type of the file
+	    requestBuffer.append("Content-Type: application/pdf\r\n");
+	    // There is always a blank line between the meta-data and the data
+	    requestBuffer.append("\r\n");
+
+	    requestBuffer.append(data);
+
+	    requestBuffer.append("\r\n");
+
+	    // Once we are done, we "close" the body's request
+	    requestBuffer.append("--" + boundary + "--\r\n");
+
+	    xmlHttpRequest.send(requestBuffer.toString());
+
+	}
+	
+	
+	static native String btoa(byte[] data) /*-{
+	    return btoa(data);
+	}-*/;
+	
+    }
