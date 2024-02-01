@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -93,19 +94,19 @@ public abstract class CCC extends ResizeComposite {
 		public TgssContextMenu() {
 			
 			employeesWorking = addItem("Trabajadores en situacion de alta", new EmployeesWorkingCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			employeesWorking.ensureDebugId("employeesWorking");
 			
 			employeePrevMov = addItem("Movimientos previos de trabajadores", new EmployeePrevMovCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			employeePrevMov.ensureDebugId("employeePrevMov");
 			
 			idc = addItem("IDC", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			idc.ensureDebugId("idc");
 			
 			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			laboralLife.ensureDebugId("laboralLife");
 			
 		}
@@ -440,7 +441,18 @@ public abstract class CCC extends ResizeComposite {
 			this.ccc = cccInfo.getCcc();
 			NativeEvent nativeEvent = e.getNativeEvent();
 			contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-			contextMenu.show();
+			contextMenu.setPopupPositionAndShow((offsetWidth, offsetHeight) ->  {
+				int clientX = e.getClientX();
+				int clientY = e.getClientY();
+				
+				int clientWidth = Window.getClientWidth();
+				int clientHeight = Window.getClientHeight();
+				
+				int left = Math.min(clientX, clientWidth - ( offsetWidth + 10 )  );
+				int top = Math.min(clientY, clientHeight - ( offsetHeight + 10 ) );
+				
+				contextMenu.setPopupPosition(left, top);
+			});
 		});
 		buttonsPanel.add(tgssMenu);
 		
