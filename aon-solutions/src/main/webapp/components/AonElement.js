@@ -191,10 +191,10 @@ export class AonElement extends HTMLElement{
 
   isConsole(){
     const href = window.location.href;
-		return href === 'console.aonsolutions.org'
-      || href === 'console-pro.aonsolutions.net'
-      || href === 'console-ayudat.aonsolutions.net'
-      || href === 'console-grupoayudat.aonsolutions.net';
+		return href.includes('console.aonsolutions.org')
+      || href.includes('console-pro.aonsolutions.net')
+      || href.includes('console-ayudat.aonsolutions.net')
+      || href.includes('console-grupoayudat.aonsolutions.net');
 	}
 
   showMessage(msg) {

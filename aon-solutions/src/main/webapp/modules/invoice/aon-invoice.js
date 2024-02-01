@@ -1192,6 +1192,8 @@ export class AonInvoice extends AonElement {
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
+		if(this.invoice.taxes.length > 1 || this.invoice.details.length > 0)
+			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
@@ -1676,6 +1678,10 @@ export class AonInvoice extends AonElement {
 		percentage.readonly = this.invoice.isReadonly() 
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
+
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			percentage.disabled = CONSTANT.TRUE;
+		
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1687,13 +1693,18 @@ export class AonInvoice extends AonElement {
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
 
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			base.disabled = CONSTANT.TRUE;
+
 		// ----- TAX QUOTA
 
 		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
 
 		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
 		taxesTable.addCell(quota);
-		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
+		quota.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 || tax.type.includes('IRPF');
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			quota.disabled = CONSTANT.TRUE;
 
 		// ----- TAX DELETE
 
@@ -1802,6 +1813,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);		
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL OPTIONS
 
@@ -1950,6 +1962,7 @@ export class AonInvoice extends AonElement {
 		let td5 = table.addCell(amount);
 		td5.style.verticalAlign = "bottom";
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
@@ -2122,6 +2135,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		table.addRow(); // ----- ROW 4
 
