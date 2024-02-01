@@ -87,6 +87,11 @@ public class JooqAgreementTab {
 		Set<String> allVariables = EmployeesServiceHelper.getVariables(conn, agreement, agreement.getDomain(), parentDomainId);
 		if(allVariables.contains("DIAS_TRABAJADOS")) allVariables.add("DIAS_NO_TRABAJADOS");
 		if(!allVariables.contains("HORAS_CONVENIO")) allVariables.add("HORAS_CONVENIO");
+		
+		// Add AÑOS_ANTIGUEDAD if needed
+		Optional<Payment> antiguedadPayment = agreement.getPayments().stream().filter(payment -> AonStringUtils.containsIgnoreCase(payment.getDescription(), "ANTIGUEDAD") || AonStringUtils.containsIgnoreCase(payment.getDescription(), "ANTIG\u00dcEDAD")).findAny();
+		if(antiguedadPayment.isPresent()) allVariables.add("A\u00d1OS_ANTIGUEDAD");
+		
 		agreement.setAllVariables(allVariables);
 		
 		return agreement;

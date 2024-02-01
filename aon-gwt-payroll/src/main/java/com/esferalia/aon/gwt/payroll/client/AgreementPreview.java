@@ -994,7 +994,9 @@ public abstract class AgreementPreview extends Composite {
 				
 				if(null == levelData)
 					value = null;
-				else {
+				else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD")) {
+					value = levelData.getExpression();
+				} else {
 					String expression = levelData.getExpression();
 					value = levelData.getExpression();
 
@@ -1010,6 +1012,26 @@ public abstract class AgreementPreview extends Composite {
 				if(readOnly) {
 					cell = new Label();
 					((Label)cell).setText(value);
+				} else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD") && level.getId() == 0) {
+					cell = new ListBox();
+					((ListBox) cell).getElement().getStyle().setProperty("max-width", "180px");
+					((ListBox) cell).addItem("Segun Contrato", "");
+					((ListBox) cell).addItem("Desde inicio del a\u00f1o", "A\u00d1O(FIN_NOMINA)-A\u00d1O(INICIO_ANTIGUEDAD)");
+					((ListBox) cell).addItem("Desde inicio del mes", "A\u00d1O(FIN_NOMINA)-A\u00d1O(FECHA(A\u00d1O(INICIO_ANTIGUEDAD),MES(INICIO_ANTIGUEDAD),1))");
+					setSelectedValueLB(((ListBox) cell), value);
+					((ListBox) cell).addChangeHandler(e -> {
+						String result = AonStringUtils.isBlank(((ListBox) cell).getSelectedValue()) ? null : ((ListBox) cell).getSelectedValue();
+						
+						if (null == levelData || null == levelData.getId())
+							agreement.createLevelData(level.getId(), variable, result, selectedDate);
+						else
+							agreement.updateLevelData(level.getId(), levelData.getId(), result);
+
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}  else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD") && level.getId() != 0) {
+					cell = new Label();
 				} else {
 					cell = new ExpressionBox();
 					((ExpressionBox)cell).setValue(value);
@@ -1052,6 +1074,8 @@ public abstract class AgreementPreview extends Composite {
 				if (null != levelData && AonStringUtils.isNotBlank(levelData.getExpression())
 						&& SpecialExpresion.parse(levelData.getExpression()).getInput().length() > 16)
 					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+				else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD"))
+					cell.setWidth("180px");
 				else
 					cell.setWidth("95%");
 
@@ -1067,16 +1091,22 @@ public abstract class AgreementPreview extends Composite {
 					String valueData = null == levelDataDefault ? null
 							: SpecialExpresion.parse(levelDataDefault.getExpression()).getInput();
 					
-					cell.addStyleName(style.levelDefaultValue());
+					if(!AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD"))
+							cell.addStyleName(style.levelDefaultValue());
+					
 					cell.setTitle("Valor por defecto");
 
-					if (null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression())
+					if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD"))
+						cell.setWidth("180px");
+					else if (null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression())
 							&& valueData.length() > 20)
 						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
 					else
 						cell.setWidth("95%");
 					
 					if(readOnly) ((Label)cell).setText(valueData);
+					else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD") && level.getId() == 0) {}
+					else if(AonStringUtils.equalsIgnoreCase(variable, "A\u00d1OS_ANTIGUEDAD") && level.getId() != 0) {}
 					else ((ExpressionBox)cell).setValue(valueData);
 				}
 

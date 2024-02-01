@@ -45,6 +45,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -58,7 +59,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
-
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.core.client.GWT;
@@ -264,6 +264,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getCRAs(long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback) {
 		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), getCurrentUser(), liquidDateTime, asyncCallback);
+	}
+	
+	public void getMinMaxCraDate(AsyncCallback<Period> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getMinMaxCraDate(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
