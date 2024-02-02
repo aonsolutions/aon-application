@@ -61,7 +61,6 @@ public class InvoiceCalculator {
 			vat.setQuotaEdited(false);
 			vat.setSurchargeQuotaEdited(false);
 			vat.setDeductibleQuotaEdited(false);
-			vat.setDirectTaxNoDedExpensesEdited(false);
 		}
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
@@ -78,15 +77,10 @@ public class InvoiceCalculator {
 			if (!vat.isDeductibleQuotaEdited()) {
 				vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
 			}
-			if (!vat.isDirectTaxNoDedExpensesEdited()) {
-				double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
-				vat.setDirectTaxNoDedExpenses( AonMathUtils.round(vat.getBase() *  percent / 100) );
-			}
 		} else {
 			vat.setDeductiblePercent(100.0);
 			vat.setDeductibleQuota( vat.getQuota() );
 			vat.setDirectTaxPercent(0.0);
-			vat.setDirectTaxNoDedExpenses( 0.0 );
 		}
 	}
 	

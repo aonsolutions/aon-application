@@ -529,19 +529,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineDirectTaxNoDedExpenses(IEditableInvoicePanelCallback callback, int vatIdx) {
 		directTaxNoDedExpenses= new AonDoubleBox();
 		directTaxNoDedExpenses.setValue(callback.getVat(vatIdx).getDirectTaxNoDedExpenses());
-		directTaxNoDedExpenses.addValueChangeHandler(event -> {
-			callback.getVat(vatIdx).setDirectTaxNoDedExpensesEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDirectTaxNoDedExpensesGap(callback.getVat(vatIdx), directTaxNoDedExpenses.getValue())));
-			if (callback.getVat(vatIdx).isDirectTaxNoDedExpensesEdited()) {
-				directTaxNoDedExpenses.setTitle("Cuota de imposici\u00F3n directa modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(callback.getVat(vatIdx)));
-			} else {
-				directTaxNoDedExpenses.setTitle(null);
-			}
-			callback.getVat(vatIdx).setDirectTaxNoDedExpenses(event.getValue() );
-			calculate(callback, vatIdx);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
-		});
-		directTaxNoDedExpenses.addBlurHandler(event -> decorateDirectTaxNoDedExpenses(callback, vatIdx));
-		decorateDirectTaxNoDedExpenses(callback, vatIdx);
+		directTaxNoDedExpenses.setEnabled(false);
 	}
 	
 	private void defineDirectTaxDedExpenses(IEditableInvoicePanelCallback callback, int vatIdx) {
@@ -630,7 +618,6 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 					callback.getVat(vatIdx).setQuotaEdited(false);
 					callback.getVat(vatIdx).setSurchargeQuotaEdited(false);
 					callback.getVat(vatIdx).setDeductibleQuotaEdited(false);
-					callback.getVat(vatIdx).setDirectTaxNoDedExpensesEdited(false);
 					calculate(callback, vatIdx);
 					decorateVatQuota(callback, vatIdx);
 					decorateSurchargeQuota(callback, vatIdx);

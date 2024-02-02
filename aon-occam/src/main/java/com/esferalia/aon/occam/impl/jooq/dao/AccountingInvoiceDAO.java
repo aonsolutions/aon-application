@@ -76,6 +76,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.server.io.DataUrl;
 import com.esferalia.aon.watson.server.io.DataUrlSerializer;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -253,6 +254,18 @@ public class AccountingInvoiceDAO {
 	}
 	
 	private static void fillInvoiceTax(AONContext ctx, Integer invoideDetailId, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
+		boolean directTaxEnabledPre = false;
+		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
+		if (directTaxAccount != null && ai.getAccountEntry() != null) {
+			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
+				.map( aed -> {
+					System.out.println( aed.getAccount() + " -- " + directTaxAccount.getId()); 
+					return aed;
+				}) 
+				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
+		}
+		final boolean directTaxEnabled = directTaxEnabledPre;
+		
 		final LinkedList<InvoiceVAT> vats = new LinkedList<>();
 		final InvoiceVAT vat = new InvoiceVAT();
 		ctx.getDslContext()
@@ -285,15 +298,26 @@ public class AccountingInvoiceDAO {
 			boolean withholding = tax.getValue(INVOICE_TAX.TAX_TYPE) == TaxType.RETENTION.ordinal();
 			if (!withholding) {
 				vats.add(vat);
+				Double base = tax.getValue(INVOICE_TAX.BASE);
+				Integer investAsset = det.getValue(INVOICE_DETAIL.INVEST_ASSET);
+				Double  directTaxPercent = Double.valueOf(0);
+				if (directTaxEnabled && investAsset != null) {
+					directTaxPercent = AonCollectionUtils.stream( config.getInvestAssets() )
+						.filter( ia -> AonNumberUtils.equals(ia.getId(),investAsset))
+						.map( ia -> ia.getRetentionPercent())
+						.findFirst()
+						.orElse(Double.valueOf(0));
+				}
 				vat.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
-					.setBase(tax.getValue(INVOICE_TAX.BASE))
+					.setBase(base)
 					.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
 					.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
 					.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
 					.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-					.setInvestAsset(det.getValue(INVOICE_DETAIL.INVEST_ASSET))
+					.setInvestAsset(investAsset)
 					.setDeductiblePercent(tax.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
 					.setDeductibleQuota(tax.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
+					.setDirectTaxPercent(directTaxPercent)
 					.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
 					.setExpAccountCode(accDet.getValue(EXP_ACCOUNT.CODE))
 					.setExpAccountDescription(accDet.getValue(EXP_ACCOUNT.DESCRIPTION));
@@ -336,6 +360,12 @@ public class AccountingInvoiceDAO {
 					.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
 					.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
 				}
+				if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
+					vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())
+						.setAdjDirectTaxAccountCode(config.accounting().getDirectTaxAdjustAccount().getCode())
+						.setAdjDirectTaxAccountDescription(config.accounting().getDirectTaxAdjustAccount().getDescription());
+				}
+				
 			}
 		});
 		if (!vats.isEmpty()) {
@@ -662,6 +692,7 @@ public class AccountingInvoiceDAO {
 			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
 			visitCommon(reg);
 		}
+		@Override
 		public void visitUndedCreditor(AccountingRegistry reg) {
 			visitCommon(reg);
 			invoice.setSurcharge(false);

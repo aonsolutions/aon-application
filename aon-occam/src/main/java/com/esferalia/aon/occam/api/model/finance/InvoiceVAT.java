@@ -16,7 +16,6 @@ public class InvoiceVAT implements Serializable {
 	private boolean quotaEdited;
 	private boolean surchargeQuotaEdited;
 	private boolean deductibleQuotaEdited;
-	private boolean directTaxNoDedExpensesEdited;
 	
 	private VatDeductionType vatDeductionType;
 	private double base;
@@ -28,7 +27,6 @@ public class InvoiceVAT implements Serializable {
 	private double deductiblePercent;
 	private double deductibleQuota;
 	private double directTaxPercent;
-	private double directTaxNoDedExpenses;
 	private boolean withholding;
 	private boolean prepayment;
 	
@@ -74,8 +72,7 @@ public class InvoiceVAT implements Serializable {
 	public boolean isAnyQuotaEdited() {
 		return isQuotaEdited() 
 			|| isSurchargeQuotaEdited() 
-			|| isDeductibleQuotaEdited()
-			|| isDirectTaxNoDedExpensesEdited();
+			|| isDeductibleQuotaEdited();
 	}
 	public boolean isQuotaEdited() {
 		return quotaEdited;
@@ -96,13 +93,6 @@ public class InvoiceVAT implements Serializable {
 	}
 	public InvoiceVAT setDeductibleQuotaEdited(boolean deductibleQuotaEdited) {
 		this.deductibleQuotaEdited = deductibleQuotaEdited;
-		return this;
-	}
-	public boolean isDirectTaxNoDedExpensesEdited() {
-		return directTaxNoDedExpensesEdited;
-	}
-	public InvoiceVAT setDirectTaxNoDedExpensesEdited(boolean directTaxNoDedExpensesEdited) {
-		this.directTaxNoDedExpensesEdited = directTaxNoDedExpensesEdited;
 		return this;
 	}
 	
@@ -182,11 +172,8 @@ public class InvoiceVAT implements Serializable {
 	}
 	
 	public double getDirectTaxNoDedExpenses() {
-		return directTaxNoDedExpenses;
-	}
-	public InvoiceVAT setDirectTaxNoDedExpenses(double directTaxNoDedExpenses) {
-		this.directTaxNoDedExpenses = directTaxNoDedExpenses;
-		return this;
+		double percent = AonMathUtils.round(100 - this.directTaxPercent);
+		return AonMathUtils.round( this.base *  percent / 100);		
 	}
 	public double getDirectTaxDedExpenses() {
 		return AonMathUtils.round( getBase() - getDirectTaxNoDedExpenses() );
@@ -374,7 +361,6 @@ public class InvoiceVAT implements Serializable {
 			.setQuotaEdited(this.quotaEdited)
 			.setSurchargeQuotaEdited(this.surchargeQuotaEdited)
 			.setDeductibleQuotaEdited(this.deductibleQuotaEdited)
-			.setDirectTaxNoDedExpensesEdited(this.directTaxNoDedExpensesEdited)
 			.setVatDeductionType(this.vatDeductionType)
 			.setBase(this.base)
 			.setPercentage(this.percentage)
@@ -385,7 +371,6 @@ public class InvoiceVAT implements Serializable {
 			.setDeductiblePercent(this.deductiblePercent)
 			.setDeductibleQuota(this.deductibleQuota)
 			.setDirectTaxPercent(this.directTaxPercent)
-			.setDirectTaxNoDedExpenses(this.directTaxNoDedExpenses)
 			.setWithholding(this.withholding)
 			.setPrepayment(this.prepayment) 
 			.setOutputAccountId(this.outputAccountId)
