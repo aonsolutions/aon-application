@@ -723,22 +723,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						}
 					});
 					
-					// getGuaranteedDays > MONTH_DAYS ????
-					if ( !isWholeMonth(period) ) {
-        					exprCtx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
-        						
-        						@Override
-        						public Period getPeriod() {
-        							return period;
-        						}
-        						@Override
-        						public Double getValue(Period p ) {
-        						    	double guaranteedDays = getGuaranteedDays(exprCtx,p);
-        							return guaranteedDays * getCurrentBindings().get(PARTIAL_FACTOR,
-        								obj -> ((Number) obj).doubleValue(), 1.00);
-        						}
-        					});
-					}
+    					exprCtx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
+    						
+    						@Override
+    						public Period getPeriod() {
+    							return period;
+    						}
+    						@Override
+    						public Double getValue(Period p ) {
+						    	double workDays = getGuaranteeWorkDays(exprCtx, p);
+    							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
+    								obj -> ((Number) obj).doubleValue(), 1.00);
+    						}
+    					});
 
 					ExpressionImpl exp = new ExpressionImpl();
 					exp.setName(EVERYTHING.getName());
@@ -978,6 +975,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		}
 
+		protected double getGuaranteeWorkDays(ExpressionContext ctx, Period p) {
+			Double workDays = super.getWorkDays(ctx, p);
+			if ( isWholeMonth(p)  ) 
+				return workDays;
+			
+			if ( p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
+				return getRemainDays(workDays, ctx, p);
+	
+			if (p.getEnd().before(lastLeaveEnd))
+				return workDays;
+
+			if (p.getStart().equals(getStart()) && p.getEnd().equals(getEnd()))
+				return workDays;
+
+			if (p.getStart().equals(getStartDate()) && p.getEnd().equals(getEndDate()))
+				return workDays;
+
+			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
+		}
+
 		protected double getGuaranteedDays(ExpressionContext ctx, Period p) {
 
 			Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
@@ -1007,7 +1024,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
 		}
-
+		
+		protected double getMonthDays(ExpressionContext ctx, Period p) {
+		    try {
+			return ctx.getVariable(MONTH_DAYS, p.getStart(), p.getEnd(), Number.class).doubleValue();
+		    } catch (Exception e) {
+			try {
+			    for (ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(),
+				    Number.class))
+				return result.getValue().doubleValue();
+			} catch (ExpressionException e1) {
+			}
+		    }
+		    return AonDateUtils.get(AonDateUtils.getLastDayOfMonth(p.getStart()), Calendar.DAY_OF_MONTH);
+		}
+		
 		@Override
 		protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) {
 			// Skip load GUARANTEE, that is already loaded
