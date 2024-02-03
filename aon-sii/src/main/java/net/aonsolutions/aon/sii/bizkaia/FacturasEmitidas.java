@@ -741,7 +741,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	private Boolean isPersonaFisica(String document){
 		String pri = document.substring(0, 1);
 	return document.length() == 9 
-		&& (isNumber(pri) || pri.equals("L") || pri.equals("K"));
+		&& (isNumber(pri) || pri.equals("L") || pri.equals("K") || pri.equals("Z"));
 	}
 	
 	private Boolean isNumber(String s) {
