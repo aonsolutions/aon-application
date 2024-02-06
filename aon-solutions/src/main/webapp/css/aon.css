@@ -884,6 +884,12 @@
   overflow-y: auto;
 }
 
+.aonTabSubContent {
+  position: relative;
+  height: calc(100vh - 182px);
+  overflow-y: auto;
+}
+
 .aonContent::-webkit-scrollbar {
   display: none;
 }
