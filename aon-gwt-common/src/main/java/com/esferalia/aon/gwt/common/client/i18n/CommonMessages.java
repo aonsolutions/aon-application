@@ -958,8 +958,17 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cuota Deduc.")
 	String dedQuota();
 
-	@DefaultMessage("Cta. Ajustes")
+	@DefaultMessage("Cta.Aj.IVA")
 	String adjAccount();
+	
+	@DefaultMessage("% Imp.Dir.")
+	String directTaxPercent();
+	
+	@DefaultMessage("Cuota Imp.Dir.")
+	String directTaxQuota();
+
+	@DefaultMessage("Cta.Aj.Imp.Dir")
+	String adjDirectTaxAccount();
 
 	@DefaultMessage("Total")
 	String total();
