@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -121,9 +122,10 @@ public class AccountEntryModule extends MainEntryPoint {
 	private AccountEntry base;
 
 	public interface IAccountEntryModuleCallback {
-		String getCurrentDomainName();
-		int getCurrentDomainId();
-		String getCurrentUser();
+		@Deprecated String getCurrentDomainName();
+		@Deprecated int getCurrentDomainId();
+		@Deprecated String getCurrentUser();
+		Occam getOccam();
 		AonConfiguration getConfiguration();
 		AccountEntryModule getModule();
 		AccountEntryModuleOptions getModuleOptions();
@@ -175,6 +177,10 @@ public class AccountEntryModule extends MainEntryPoint {
 		public AccountEntryModuleOptions getModuleOptions() {
 			return AccountEntryModule.this.getOptions();
 		};
+		@Override
+		public Occam getOccam() {
+			return AccountEntryModule.this.getOptions().getOccam();
+		}
 		@Override
 		public String getCurrentDomainName() {
 			return AccountEntryModule.this.getOptions().getDomainName();

@@ -79,6 +79,7 @@ public class AccountAppParamsController implements Serializable {
 		DEFAULT_PARAMETERS.put(AppParam.ACC_DEF_DUA_DUTY_ACC.getValue(), null );
 		
 		DEFAULT_PARAMETERS.put(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DIRECT_TAX_ADJUST_ACC.getValue(), null );
 		DEFAULT_PARAMETERS.put(AppParam.OCR_DEFAULT_ITEM.getValue(), null );
 
 	}
@@ -101,6 +102,7 @@ public class AccountAppParamsController implements Serializable {
 	private Account accSalaryDedOtherAccount;
 	
 	private Account accVatNegativeAdjustAccount;
+	private Account accDirectTaxAdjustAccount;
 	
 	private Account accDefDuaVatAccount;
 	private Account accDefDuaDutyAccount;
@@ -151,11 +153,6 @@ public class AccountAppParamsController implements Serializable {
 				ApplicationParameter p = new ApplicationParameter();
 				p.setName(key);
 				String value = DEFAULT_PARAMETERS.get(key);
-				System.out.println(
-						key+"="+AppParam.ACC_OPERATIONS_DEADLINE.getValue()
-												
-						);
-				
 				if (StringUtils.endsWith(key, "_ACC")) {
 					Criteria c = new Criteria();
 					c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), value);
@@ -187,6 +184,7 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccSalaryDedInKindAccount();
 		initializeAccSalaryDedOtherAccount();
 		initializeAccVatNegativeAdjustAccount();
+		initializeAccDirectTaxAdjustAccount();
 		initializeAccDefDuaVatAccount();
 		initializeAccDefDuaDutyAccount();
 		
@@ -516,6 +514,22 @@ public class AccountAppParamsController implements Serializable {
 			Account accVatNegativeAdjustAccount) {
 		this.accVatNegativeAdjustAccount = accVatNegativeAdjustAccount;
 		putAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC,accVatNegativeAdjustAccount);
+	}
+
+	private void initializeAccDirectTaxAdjustAccount() {
+		try {
+			setAccDirectTaxAdjustAccount( initializeAccount(AppParam.ACC_DIRECT_TAX_ADJUST_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDirectTaxAdjustAccount( new Account() );	
+		}
+	}
+	public Account getAccDirectTaxAdjustAccount() {
+		return accDirectTaxAdjustAccount;
+	}
+	public void setAccDirectTaxAdjustAccount(Account accDirectTaxAdjustAccount) {
+		this.accDirectTaxAdjustAccount = accDirectTaxAdjustAccount;
+		putAccount(AppParam.ACC_DIRECT_TAX_ADJUST_ACC,accDirectTaxAdjustAccount);
 	}
 
 	private void initializeAccDefDuaVatAccount() {

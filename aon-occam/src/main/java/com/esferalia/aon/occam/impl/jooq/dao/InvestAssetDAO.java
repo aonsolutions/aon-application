@@ -209,7 +209,6 @@ public class InvestAssetDAO {
 				.setEndDate(r.getValue(INVEST_ASSET.END_DATE))
 				.setRetentionPercent(r.getValue(INVEST_ASSET.RETENTION_PERCENT))
 				.setVatPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
-				.setPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
 				.setProperties(r.getValue(INVEST_ASSET.PROPERTIES));
 		}
 	}
