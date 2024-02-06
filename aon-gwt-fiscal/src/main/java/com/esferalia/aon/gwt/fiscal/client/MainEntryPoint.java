@@ -36,8 +36,10 @@ import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -250,6 +252,12 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== NORDIGEN
 	//
 	private static final String NORDIGEN_ENTRY_POINT = "NordigenModule";
+	//
+	//    ================================================================== BOOKING RESUME
+	//
+	private static final String DOMAIN_BOOKING_RESUME_ENTRY_POINT = "DomainBookingResume";
+	private static final String CUSTOMER_BOOKING_RESUME_ENTRY_POINT = "CustomerBookingResume";
+	
 
 	@Override
 	public void onModuleLoad() {
@@ -862,6 +870,36 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Sii().onModuleLoad();
+				}
+				
+			});
+		}  else if ( entryPoint.equalsIgnoreCase(DOMAIN_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					DomainBookingResumeModule dbrm = new DomainBookingResumeModule();
+					dbrm.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(CUSTOMER_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerBookingResumeModule dbrm = new CustomerBookingResumeModule();
+					dbrm.onModuleLoad();
 				}
 				
 			});

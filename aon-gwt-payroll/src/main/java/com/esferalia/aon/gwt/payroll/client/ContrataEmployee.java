@@ -1246,6 +1246,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeCalendar
 	private HTMLPanel employeeCalendarButtons;
+	private ListBox calendarYaerLB;
 
 	// EmployeeContractIrpf
 	private HTMLPanel employeeContractIrpfButtons;
@@ -1590,6 +1591,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+			
+			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
+			employeeCalendar.setYearLB(calendarYaerLB);
+			
 			success.accept("");
 		});
 	}
@@ -1607,6 +1612,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 			tabLayOutPanel.selectTab(selectedTab, true);
+			
+			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
+			employeeCalendar.setYearLB(calendarYaerLB);
+			
 			success.accept("");
 		});
 	}
@@ -2674,10 +2683,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		utilityButton.addClickHandler(e -> employeeCalendar.onUtility(e));
 		hPanel.add(utilityButton);
 
-		ListBox yearLB = new ListBox();
-		employeeCalendar.initializeYearLB(yearLB);
-		employeeCalendar.setYearLB(yearLB);
-		hPanel.add(yearLB);
+		calendarYaerLB = new ListBox();
+		hPanel.add(calendarYaerLB);
 
 		return hPanel;
 	}
