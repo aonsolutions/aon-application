@@ -254,17 +254,19 @@ public class AccountingInvoiceDAO {
 	}
 	
 	private static void fillInvoiceTax(AONContext ctx, Integer invoideDetailId, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
+		// *********************
+		// Al no guardar el porcentaje de imposición directa en BD, se "supone" su activación en función
+		// de la existencia de la cuenta en apuntes.
+		// Si la cuenta ha cambiad, el apunte fallará....
+		// Si el porcentaje de invest_asset ha cambiado, el apunte fallará-
 		boolean directTaxEnabledPre = false;
 		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
 		if (directTaxAccount != null && ai.getAccountEntry() != null) {
 			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
-				.map( aed -> {
-					System.out.println( aed.getAccount() + " -- " + directTaxAccount.getId()); 
-					return aed;
-				}) 
 				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
 		}
 		final boolean directTaxEnabled = directTaxEnabledPre;
+		// *********************
 		
 		final LinkedList<InvoiceVAT> vats = new LinkedList<>();
 		final InvoiceVAT vat = new InvoiceVAT();
