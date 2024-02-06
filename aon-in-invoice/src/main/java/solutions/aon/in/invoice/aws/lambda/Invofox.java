@@ -21,9 +21,9 @@ import org.json.JSONObject;
 
 public class Invofox {
     
-    protected static final String INVOFOX_API_URL = "https://prod.kinequo.com/backends/midas";
-    //protected static final String INVOFOX_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
-    protected static final String INVOFOX_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+    protected static final String INVOFOX_API_URL = System.getenv().getOrDefault("INVOFOX_API_URL","https://api.invofox.com");
+    protected static final String INVOFOX_API_KEY = System.getenv().getOrDefault("INVOFOX_API_KEY","$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy"); // Test
+    //protected static final String INVOFOX_API_KEY = System.getenv().getOrDefault("INVOFOX_API_KEY","$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi");
 
     enum DocumentType {
         INVOICE("invoice"),
@@ -199,5 +199,6 @@ public class Invofox {
 	
     }
    
+    
 
 }

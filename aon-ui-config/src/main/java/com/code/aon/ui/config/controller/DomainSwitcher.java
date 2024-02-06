@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -781,6 +782,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public String getCurrentDomainDescription() {
 		return getDomainName();
 	}
+	
+	public String getInvofoxFolder() {
+	    try (CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())){
+		if ( InvofoxConfigurationDAO.get(ctx).isTest() ) 
+			return "facturas";
+	    } catch ( Exception e ) {
+	    }
+	    return "invoices";
+	    
+	}
+
+	
 
 	
 

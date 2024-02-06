@@ -33,12 +33,12 @@ import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.tedi.invofox.OCRBlankValueException;
@@ -132,10 +132,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    JSONObject params = api.getData();
 	    String documentId    = params.optString(IJsonNames.ID);
 	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
-	    OCRDocumentResponse response = OCRInvofox.getDocument(documentId);
+	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),  documentId);
 	    OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
 	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
-	    String token = OCRInvofox.getLoginToken().getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
+	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
@@ -152,7 +153,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static JSONObject getTextContent(AonApiData api) {
 	    JSONObject params = api.getData();
 	    String documentId    = params.optString(IJsonNames.ID);
-	    OCRInfoResponse ocrInfoResponse = OCRInvofox.getOcrInfo(documentId);
+	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
+	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    OCRInfoResponse ocrInfoResponse = OCRInvofox.getOcrInfo(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),documentId);
 	    
 	    Stream<OCRPage> ocrPages =Arrays.stream(ocrInfoResponse.getPages().orElse(new OCRPage[0]));
 	    
@@ -178,14 +181,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
 	    }
 	    
-	    String token = OCRInvofox.getLoginToken().getLoginToken().orElse(new OCRLoginToken()).getToken()
+	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
+	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken()
 		    .orElse(null);
 	    
 	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
 		    f -> f.getDomainProperty().eq(api.getDomain().getId()));
 	    if (!AonStringUtils.isBlank(cp.getDocument())) {
 		OCRCompaniesResponse companiesResponse = OCRInvofox
-			.getCompanies(OCRCompanyParams.get().withTaxId(cp.getDocument()));
+			.getCompanies(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), OCRCompanyParams.get().withTaxId(cp.getDocument()));
 		List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
 		if (!companies.isEmpty()) {
 		    OCRCompany company = companies.get(0);
@@ -198,7 +203,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    ocrDocumentParams.limit(perPage); 
 		    
 		    OCRDocumentsResponse response = OCRInvofox
-			    .getDocuments(ocrDocumentParams);
+			    .getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
 		    response.getDocuments().orElse(new LinkedList<>()).stream().forEach(r -> {
 			JSONObject json = new JSONObject();
