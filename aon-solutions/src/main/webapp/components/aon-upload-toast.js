@@ -155,6 +155,12 @@ export class AonUploadToast extends AonElement {
 	getDur() {
 		return this.dur;
 	}
+	
+	isInvofox() {
+		console.log(JSON.stringify(this.dur));
+		console.log(this.dur.isInvofox());
+		return this.dur.isInvofox();
+	}
 
 }
 if(!window.customElements.get(TAG.AON_UPLOAD_TOAST)){
