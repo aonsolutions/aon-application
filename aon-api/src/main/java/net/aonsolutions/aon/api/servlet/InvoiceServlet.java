@@ -98,6 +98,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		Date from;
 		Date to;
+		Integer registry;
 		
 		public String getDescription() {
 			return description;
@@ -168,6 +169,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		public InvoiceFilter setRecorded(Byte recorded) {
 			this.recorded = recorded;
+			return this;
+		}
+		
+		public Integer getRegistry() {
+			return registry;
+		}
+		
+		public InvoiceFilter setRegistry(Integer registry) {
+			this.registry = registry;
 			return this;
 		}
 	}
@@ -318,6 +328,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					? api.getData().optString(IConstants.TYPE).split(","): null)
 				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
 				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setRegistry(JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY))
 				.setPage(api.getData().optInt("page"))
 				.setPerPage(api.getData().optInt("per_page"));
 			return getInvoices(api.getDomain(), api.getUser().getLogin(), filter);
@@ -461,6 +472,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
     	if(invoiceFilter.getRecorded() != null) {
     		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
+    	}
+    	
+    	if(invoiceFilter.getRegistry() != null) {
+    		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
     	}
     	
     	if(invoiceFilter.getPage() != null) {

@@ -68,6 +68,7 @@ export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
 export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
+export const AON_TAB_SUB_CONTENT = 'aonTabSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
