@@ -6,24 +6,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.RegistryService;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,7 +28,6 @@ import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -46,10 +37,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class DomainBookingResumeModule extends MainEntryPoint {
 	
-	// Services
-	private static RegistryServiceAsync SERVICE;
-	private static CommonServiceAsync COMMON_SERVICE;
-
 	// Options Config
 	private RegistryModuleOptions options;
 
@@ -87,12 +74,6 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 
 	public void onModuleLoad(final RegistryModuleOptions opt) {
 		AON.ensureInjected();
-
-		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
-		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
-
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.opt = opt;
 		
@@ -101,23 +82,7 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 		
 		dockLayoutPanel.clear();
 		
-		if (opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(this.opt.getDomainName(), this.opt.getDomain(), this.opt.getUser(),
-					new AsyncCallback<AonConfiguration>() {
-						@Override
-						public void onSuccess(AonConfiguration result) {
-							opt.setConfiguration(result);
-							loadModule();
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
-						}
-					});
-		} else {
-			loadModule();
-		}
+		loadModule();
 	}
 
 	private void loadModule() {
@@ -156,7 +121,7 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 	}
 
 	private void getBookingResume() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n de " + this.opt.getConfiguration().getDomain().getDescription());
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n del dominio... ");
 		
 		// Create the base URL
 		String baseUrl = "/ms/api/booking/";
