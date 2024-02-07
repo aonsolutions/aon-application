@@ -258,6 +258,8 @@ public enum AppParam {
 	, AON_DOMAIN_PAYER
 	, OCR_DEFAULT_ITEM
 	, INVOFOX_TEST	
+	, INVOFOX_API_URL	
+	, INVOFOX_API_KEY	
 	;
 	
 	public String getValue() {

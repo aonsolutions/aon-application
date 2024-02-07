@@ -24,10 +24,13 @@ class Aon {
     static final String SESSION_ID = "session_id";
     static final String DOMAIN_NAME = "domain_name";
     static final String DOMAIN_LOGIN = "domain_login";
-    static final String AON_API_URL = "https://%s/%s";
+    static final String AON_API_URL = "https://%s/%s"; 
+    
     /**
-     * private static final String AON_API_URL = "http://%s:8080/aon-aio/%s";
+     * private static final String AON_API_URL = "http://%s:8080/aon-aio/%s"; 
      */
+    
+
     static final String PREDEFINED_TOKEN = "AONd95770f269e711eb94390242ac130002";  
 
     static String get(String domainName, String userLogin, String path, Map<String, ?> params) throws URISyntaxException, IOException, InterruptedException {
