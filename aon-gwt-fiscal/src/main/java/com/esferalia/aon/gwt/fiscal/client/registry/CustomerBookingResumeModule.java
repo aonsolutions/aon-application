@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
@@ -17,14 +14,13 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSyncSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
@@ -65,7 +61,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	
 	// Services
 	private static RegistryServiceAsync SERVICE;
-	private static CommonServiceAsync COMMON_SERVICE;
 
 	// Options Config
 	private RegistryModuleOptions options;
@@ -114,9 +109,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
-
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.opt = opt;
 		
@@ -125,44 +117,26 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		dockLayoutPanel.clear();
 		
-		if (opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(this.opt.getDomainName(), this.opt.getDomain(), this.opt.getUser(),
-					new AsyncCallback<AonConfiguration>() {
-						@Override
-						public void onSuccess(AonConfiguration result) {
-							opt.setConfiguration(result);
-							
-							Integer customerId = getCustomer();
-							RegistryParams params = new RegistryParams()
-									.setId(customerId)
-									.setDomain(options.getDomain());
-							
-							SERVICE.getCustomers(options.getDomainName(), options.getDomain(), options.getUser(), params, 0, 1, new AsyncCallback<LinkedList<Customer>>() {
-								
-								@Override
-								public void onSuccess(LinkedList<Customer> customers) {
-									if(customers != null && !customers.isEmpty()) {
-										customer = customers.get(0);
-										loadModule();
-									}
-								}
-								
-								@Override
-								public void onFailure(Throwable arg0) {
-									// TODO Auto-generated method stub
-									
-								}
-							});
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
-						}
-					});
-		} else {
-			loadModule();
-		}
+		Integer customerId = getCustomer();
+		RegistryParams params = new RegistryParams()
+				.setId(customerId)
+				.setDomain(options.getDomain());
+		
+		SERVICE.getCustomers(options.getDomainName(), options.getDomain(), options.getUser(), params, 0, 1, new AsyncCallback<LinkedList<Customer>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<Customer> customers) {
+				if(customers != null && !customers.isEmpty()) {
+					customer = customers.get(0);
+					loadModule();
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+			}
+		});
 	}
 
 	private void loadModule() {
