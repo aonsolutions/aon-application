@@ -72,13 +72,15 @@ public class InvoiceCalculator {
 		} else {
 			vat.setSurchargeQuota( 0.0);	
 		}
-		vat.setDeductiblePercent(vat.getInvestAsset() != null?vat.getDeductiblePercent():100.0);
+
 		if ( vat.getInvestAsset() != null ) {
 			if (!vat.isDeductibleQuotaEdited()) {
 				vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
 			}
 		} else {
+			vat.setDeductiblePercent(100.0);
 			vat.setDeductibleQuota( vat.getQuota() );
+			vat.setDirectTaxPercent(0.0);
 		}
 	}
 	
@@ -165,6 +167,16 @@ public class InvoiceCalculator {
 		if (deductibleQuota == null) deductibleQuota = 0.0;
 		return AonMathUtils.round(deductibleQuota - AonMathUtils.round(vat.getQuota() * vat.getDeductiblePercent() / 100));		
 	}
+
+	public static double getDirectTaxNoDedExpenses(InvoiceVAT vat) {
+		double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
+		return AonMathUtils.round(vat.getBase() *  percent / 100);		
+	}
+
+	public static double getDirectTaxNoDedExpensesGap(InvoiceVAT vat, Double directTaxQuota) {
+		if (directTaxQuota == null) directTaxQuota = 0.0;
+		return AonMathUtils.round(directTaxQuota - getDirectTaxNoDedExpenses(vat));		
+	}
 	
 	public static void calculateDUAInfo( AccountingInvoice ai ) {
 		if ( ai.getDuaInvoice() != null && ai.getDuaInvoice().getInfo() != null) {
@@ -175,7 +187,7 @@ public class InvoiceCalculator {
 			info.setStatisticalValue(stv);
 			info.setDutyBase(stv);
 			double bas = info.getDutyBase();
-			double per = info.getDutyPercent();;
+			double per = info.getDutyPercent();
 			double tot = AonMathUtils.round(bas * per / 100 );
 			info.setDutyTotal(tot);
 		}

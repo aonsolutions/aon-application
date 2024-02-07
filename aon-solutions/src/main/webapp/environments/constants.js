@@ -37,6 +37,7 @@ export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
 export const AUDIT = 'audit';
+export const APPROVED = 'approved';
 
 // ----- B
 
@@ -94,6 +95,7 @@ export const DELETE_FOREVER = 'deleteForever';
 export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
+export const DISCARDED = 'discarded';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DIV = 'div';
@@ -117,6 +119,7 @@ export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
+export const EXPORTED = "exported";
 
 // ----- F
 
@@ -194,6 +197,7 @@ export const NUMBER = 'number';
 
 // ----- O
 
+export const OCR = 'ocr';
 export const OBJECT = 'object';
 export const OFFER = 'offer';
 export const OFF = 'off';
@@ -209,6 +213,8 @@ export const PASSWORD = 'password';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
+export const PENDING_CORRECTION = 'pendingCorrection';
+export const PENDING_DECISSION = 'pendingDecission';
 export const PERCENTAGE = 'percentage';
 export const PERSON = 'person';
 export const PREPAYMENT = 'prepayment';
@@ -216,8 +222,10 @@ export const PREVIOUS = 'previous';
 export const PRICE = 'price';
 export const PRIMARY = 'primary';
 export const PRINT = 'print';
+export const PRINT_SECURE = 'printSecure';
 export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
+export const PROCESSING = 'processing'
 
 // ----- Q
 

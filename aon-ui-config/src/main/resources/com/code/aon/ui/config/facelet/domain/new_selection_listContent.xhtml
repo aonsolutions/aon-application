@@ -37,8 +37,8 @@
 			
 	<c:if test="#{domainSwitcher.adminDomain or !userUtils.newAONTheme }" >
 		
-		<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
-			columnClasses="aon-float-left,aon-float-right">		
+		<h:panelGrid columns="3" styleClass="aon-width-all aon-padding-bottom"
+			columnClasses="aon-float-left,aon-float-right,aon-float-right">		
 			<aon:panelGroup  >
 				<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:" />
 				<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}" >
@@ -62,7 +62,20 @@
 							value="#{null}"/>						
 					</aon:commandLink>
 			</aon:panelGroup>
-			
+			<aon:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">
+				<aon:panelGroup>
+                                        <aon:commandLink id="domainBooking2"
+                                                actionListener="#{domainBooking.onInit}" action="gwt_domainBooking_resume">
+                                                <aon:outputText value="#{bundle.config_domain_booking} (new)"
+                                                        style="padding-bottom: 1px;padding-top: 1px;"
+                                                        styleClass="aon-portlet-title-text aon-icon aon-button-goto"/> 
+                                                <f:setPropertyActionListener target="#{domainBooking.backAction}"
+                                                        value="#{null}"/>
+                                        </aon:commandLink>
+                        	</aon:panelGroup>
+			</aon:if>
+
+
 		</h:panelGrid>
 		
 	</c:if>

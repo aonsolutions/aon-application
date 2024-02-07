@@ -202,3 +202,10 @@ export const BOOKING_PANEL = {
   module: GWT_FISCAL,
   entryPoint: 'BookingPanel'
 }
+
+export const BOOKING_RESUME = {
+  title: MSG.BOOKING_RESUME,
+  name: MSG.BOOKING_RESUME,
+  module: GWT_FISCAL,
+  entryPoint: 'DomainBookingResume'
+}

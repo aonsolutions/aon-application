@@ -73,7 +73,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 	}
 	
 	public void createEmployeeCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map){
-		if (detail.getKey().equals("A") || detail.getKey().equals("L") || detail.getKey().equals("E")){
+		if (detail.getKey().equals("A") || detail.getKey().equals("L") || detail.getKey().equals("E") || detail.getKey().equals("F")){
 			RetentionCertificate cert = null;
 			if(map.containsKey(detail.getDocument())){
 				cert = map.get(detail.getDocument());
@@ -81,7 +81,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 				cert = new RetentionCertificate();
 			}
 
-			if (detail.getKey().equals("A") || detail.getKey().equals("E")){
+			if (detail.getKey().equals("A") || detail.getKey().equals("E") || detail.getKey().equals("F")){
 				cert = completeCertificate(mod190, detail, cert, detail.getKey());
 			}
 			
@@ -91,7 +91,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 			// TODO: ¿se debe pedir en el 190?
 			cert.setDependencyContributions(0);
 			
-			if (detail.getKey().equals("A") || detail.getKey().equals("E")){
+			if (detail.getKey().equals("A") || detail.getKey().equals("E") || detail.getKey().equals("F")){
 				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction());
 				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());
 			}

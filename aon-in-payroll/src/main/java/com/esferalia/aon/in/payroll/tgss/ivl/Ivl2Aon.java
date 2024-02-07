@@ -1,6 +1,8 @@
 package com.esferalia.aon.in.payroll.tgss.ivl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 
@@ -60,6 +62,12 @@ public class Ivl2Aon {
 	});
     }
     
+    public static void insert(DSLContext dslContext, String parentDomainName, byte [] data ) throws IOException {
+	try ( InputStream is = new ByteArrayInputStream(data)) {
+	    new Ivl2Aon(dslContext, parentDomainName).insert(is);
+	}
+    }
+
     public static void insert(DSLContext dslContext, String parentDomainName, InputStream is ) {
 	new Ivl2Aon(dslContext, parentDomainName).insert(is);
     }

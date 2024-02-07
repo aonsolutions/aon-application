@@ -1,4 +1,4 @@
-import { CONSTANT, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME } from "../environments/environments.js";
+import { CONSTANT, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME, SIG_SESSION_ID } from "../environments/environments.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
@@ -295,6 +295,17 @@ export const postInvofox = (url, data) => {
 export const getPro = (url, data) => {
   return new Promise((resolve, reject) => {
     requestPro("GET", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const getSig = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestSig("GET", url, SIG_SESSION_ID, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));

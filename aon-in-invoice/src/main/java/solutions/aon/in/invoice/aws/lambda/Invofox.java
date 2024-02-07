@@ -21,9 +21,9 @@ import org.json.JSONObject;
 
 public class Invofox {
     
-    protected static final String INVOFOX_API_URL = "https://prod.kinequo.com/backends/midas";
-    //protected static final String INVOFOX_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
-    protected static final String INVOFOX_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+    protected static final String INVOFOX_API_URL = System.getenv().getOrDefault("INVOFOX_API_URL","https://api.invofox.com");
+    protected static final String INVOFOX_API_KEY = System.getenv().getOrDefault("INVOFOX_API_KEY","$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy"); // Test
+    //protected static final String INVOFOX_API_KEY = System.getenv().getOrDefault("INVOFOX_API_KEY","$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi");
 
     enum DocumentType {
         INVOICE("invoice"),
@@ -45,19 +45,19 @@ public class Invofox {
         
     }
 
-    protected static String newCompany(String cif, String name, Map<String,String> data) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException {
+    protected static String newCompany(String apiKey, String apiUrl, String cif, String name, Map<String,String> data) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException {
 	Map<String,Object> params = new HashMap<>();
 	params.put("countryCode", "ES");
 	params.put("taxId", cif);
 	params.put("name", name);
 	params.put("clientData", data);
-	JSONObject company = postJSON("companies", params );
+	JSONObject company = postJSON(apiKey, apiUrl, "companies", params );
 	JSONObject result = company.getJSONObject("result");
 	return result.getString("_id");
     }
 
-    protected static String getCompanyId(String cif) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException {
-	JSONObject companies = get("companies", Collections.singletonMap("taxId", cif));
+    protected static String getCompanyId(String apiKey, String apiUrl, String cif) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException {
+	JSONObject companies = get(apiKey, apiUrl, "companies", Collections.singletonMap("taxId", cif));
 	int count = companies.getInt("count");
 	if ( count > 0 ) { 
 	    JSONArray result = companies.getJSONArray("result");
@@ -67,13 +67,13 @@ public class Invofox {
 	throw new NoSuchCompanyException(String.format("No company with taxId '%s'", cif ));
     }
 
-    protected static JSONObject newLoadBatch(String company)
+    protected static JSONObject newLoadBatch(String apiKey, String apiUrl, String company)
 	    throws URISyntaxException, IOException, InterruptedException {
-	JSONObject loadBatch = postJSON("loadBatches", Collections.singletonMap("company", company));
+	JSONObject loadBatch = postJSON(apiKey, apiUrl, "loadBatches", Collections.singletonMap("company", company));
 	return loadBatch.getJSONObject("result");
     }
 
-    protected static JSONObject loadDocuments(DocumentType type, String company, String loadBatch, JSONObject clientData , String ...urls) throws URISyntaxException, IOException, InterruptedException {
+    protected static JSONObject loadDocuments(String apiKey, String apiUrl, DocumentType type, String company, String loadBatch, JSONObject clientData , String ...urls) throws URISyntaxException, IOException, InterruptedException {
         
         
         Map<String, String> params = new HashMap<>();
@@ -95,11 +95,11 @@ public class Invofox {
         params.put("urls", Arrays.stream(urls).collect(Collectors.joining(",")));
     
     
-        return  postMultipartForm("documents/bulk", params );
+        return  postMultipartForm(apiKey, apiUrl, "documents/bulk", params );
         
     }
 
-    private static JSONObject postJSON(String path, Map<String, ?> params)
+    private static JSONObject postJSON(String apiKey, String apiUrl, String path, Map<String, ?> params)
 	    throws URISyntaxException, IOException, InterruptedException {
 
 		JSONObject jsonObject = new JSONObject(params);
@@ -107,8 +107,8 @@ public class Invofox {
 		System.out.println("POST : " + jsonObject.toString() );
 		
 		HttpRequest httpRequest = HttpRequest
-	    	.newBuilder(new URI(String.format("%s/%s", INVOFOX_API_URL, path)))
-	    	.setHeader("x-api-key", INVOFOX_API_KEY)
+	    	.newBuilder(new URI(String.format("%s/%s", apiUrl, path)))
+	    	.setHeader("x-api-key", apiKey)
 	    	.setHeader("Accept", "application/json")
 	    	.setHeader("Content-Type", "application/json")
 	    	.POST( BodyPublishers.ofString(jsonObject.toString()))
@@ -141,7 +141,7 @@ public class Invofox {
 	}
     }
 
-    private static JSONObject postMultipartForm(String path, Map<String, ?> params)
+    private static JSONObject postMultipartForm(String apiKey, String apiUrl, String path, Map<String, ?> params)
 	    throws URISyntaxException, IOException, InterruptedException {
 	        
 	String boundary = "---------------------------7360350682899180152152769264";
@@ -157,8 +157,8 @@ public class Invofox {
 	System.out.println(form.toString());
 	        
 	HttpRequest httpRequest = HttpRequest
-	.newBuilder(new URI(String.format("%s/%s", INVOFOX_API_URL, path)))
-	.setHeader("x-api-key", INVOFOX_API_KEY)
+	.newBuilder(new URI(String.format("%s/%s", apiUrl, path)))
+	.setHeader("x-api-key", apiKey)
 	.setHeader("Accept", "application/json")
 	.setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
 	.POST( BodyPublishers.ofString(form.toString()))
@@ -170,14 +170,14 @@ public class Invofox {
 	return new JSONObject(response.body());
     }
 
-    private static JSONObject get(String path, Map<String, ?> params) throws URISyntaxException, IOException, InterruptedException {
+    private static JSONObject get(String apiKey, String apiUrl, String path, Map<String, ?> params) throws URISyntaxException, IOException, InterruptedException {
 	String query = params.entrySet().stream()
 	.map(e -> String.format("%s=%s", e.getKey() , URLEncoder.encode(e.getValue().toString(), Charset.defaultCharset() ) ))
 	.collect(Collectors.joining("&")) ;
 	  
 	HttpRequest httpRequest = HttpRequest
-    	.newBuilder(new URI(String.format("%s/%s?%s", INVOFOX_API_URL, path, query)))
-    	.setHeader("x-api-key", INVOFOX_API_KEY)
+    	.newBuilder(new URI(String.format("%s/%s?%s", apiUrl, path, query)))
+    	.setHeader("x-api-key", apiKey)
     	.setHeader("Accept", "application/json")
     	.build();
 	
@@ -193,11 +193,11 @@ public class Invofox {
 //	}
 //	
 //	
-//	getCompanyId("44679529N");
+	getCompanyId("$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy", "https://api.invofox.com", "44679529M");
 	
-	postMultipartForm("/", Collections.singletonMap("url", "https://aon-upload-post.s3.eu-west-1.amazonaws.com/facturas/translogia.aonsolutions.org/B66941873/jgarcia/20231121010932/00_0023-18%20AON%20SOLUTIONSS.L.pdf_16165.pdf"));
 	
     }
    
+    
 
 }

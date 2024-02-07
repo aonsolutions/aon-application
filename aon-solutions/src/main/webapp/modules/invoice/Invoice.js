@@ -51,7 +51,7 @@ export class Invoice {
   workplace;
   
   messages;
-
+  
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -125,6 +125,7 @@ export class Invoice {
       this.tbaiUrl = invoice.tbaiUrl || '';
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
+      this.insight = invoice.insight || {};
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
@@ -328,6 +329,10 @@ export class Invoice {
 
   isRawdoc() {
     return this.isInbox() || this.isRejected() || this.isDraft();
+  }
+
+  isOcrStatus(...publicStates) {
+	return publicStates.some( publicState =>  this.status.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
   }
 
   isInbox() {

@@ -1070,7 +1070,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	private PersonaFisicaJuridicaType contraparte(VatContext vat) {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
-	
+
 		if((vat.getRegistryDocumentCountry() == null || vat.getRegistryDocumentCountry().equals(Country.ES))
 				&& (!vat.getInvoiceType().equals(InvoiceType.SALES) || !isPersonaFisica(vat.getRegistryDocument()) ||  validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()))){
 			contraparte.setNIF(vat.getRegistryDocument());
@@ -1112,7 +1112,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	private Boolean isPersonaFisica(String document){
 		String pri = document.substring(0, 1);
 	return document.length() == 9 
-		&& (isNumber(pri) || pri.equals("L") || pri.equals("K"));
+		&& (isNumber(pri) || pri.equals("L") || pri.equals("K") || pri.equals("Z"));
 	}
 	
 	private Boolean isNumber(String s) {

@@ -24,6 +24,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -33,7 +35,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -84,24 +85,37 @@ public class SettleSalariesDAO {
 		
 		boolean hasSettleSalaryModify = false;
 		
+		// Delete finance for distinc salaries registies which status == 0 (Pediente)
+		Set<Integer> registries = salaries.stream().map(record -> record.get(REGISTRY.ID)).collect(Collectors.toSet());
+		ctx.getDslContext().deleteFrom(FINANCE)
+			.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+			.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
+			.and(FINANCE.REGISTRY.in(registries))
+			.and(FINANCE.PAYROLL.eq((byte)1))
+			.and(FINANCE.STATUS.eq((byte)0))
+			.execute();
+		
 		for(Record record : salaries) {
 			// Delete finance for this registry which status == 0 (Pediente)
-			ctx.getDslContext().deleteFrom(FINANCE)
-				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
-				.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
-				.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
-				.and(FINANCE.PAYROLL.eq((byte)1))
-				.and(FINANCE.STATUS.eq((byte)0))
-				.execute();
+//			ctx.getDslContext().deleteFrom(FINANCE)
+//				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+//				.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
+//				.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
+//				.and(FINANCE.PAYROLL.eq((byte)1))
+//				.and(FINANCE.STATUS.eq((byte)0))
+//				.execute();
 			
 			String concept = getSalaryType(record.get(SALARY.TYPE));
 			
-			Result<FinanceRecord> finances = ctx.getDslContext().selectFrom(FINANCE)
+			Result<Record> finances = ctx.getDslContext().select().from(FINANCE)
+					.innerJoin(SALARY)
+					.on(SALARY.ID.eq(FINANCE.SOURCE_ID))
 					.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 					.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
 					.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
 					.and(FINANCE.PAYROLL.eq((byte)1))
 					.and(FINANCE.CONCEPT.like(concept + "%"))
+					.and(SALARY.CONTRACT.eq(record.get(CONTRACT.ID)))
 					.fetch();
 			
 			if(finances.isEmpty()) {
@@ -132,7 +146,7 @@ public class SettleSalariesDAO {
 			} else {
 				// Check if existing amount is same as salary
 				Double salaryAmount = record.get(SALARY.TOTAL_LIQUID);
-				Double financeAmount = finances.stream().mapToDouble(finance -> finance.getAmount()).sum();
+				Double financeAmount = finances.stream().mapToDouble(finance -> finance.get(FINANCE.AMOUNT)).sum();
 				
 				if(!salaryAmount.equals(financeAmount)) {
 					Double amountDiff = salaryAmount - financeAmount;
@@ -161,7 +175,7 @@ public class SettleSalariesDAO {
 					
 					hasSettleSalaryModify = true;
 				}
-			}	
+			}
 		}
 		
 		if(!hasSettleSalaryModify) throw new AonCoreException("No existen modificaciones en las n\u00f3minas sobre los vencimiento ya generados para el periodo " + formatDate(date));

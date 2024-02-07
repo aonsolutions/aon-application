@@ -503,6 +503,21 @@ public class DomainUserRoles implements Serializable {
 			&& (isAdmin() || hasRole(AonRole.OCR));
 	}
 	
+	// OCR
+	
+	public boolean hasInvofox() {
+		return hasApp(AonApp.INVOFOX);
+	}
+	
+	public boolean hasParentInvofox() {
+		return hasParentApp(AonApp.INVOFOX);
+	}
+	
+	public boolean isInvofox() {
+		return (hasInvofox() || ((isParentUser() || isEnterpriseChild()) && hasParentInvofox()))
+			&& (isAdmin() || hasRole(AonRole.INVOFOX));
+	}
+	
 	// BANK
 	
 	public boolean hasBank() {
