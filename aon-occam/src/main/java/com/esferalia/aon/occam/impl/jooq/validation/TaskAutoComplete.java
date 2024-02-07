@@ -325,7 +325,29 @@ public class TaskAutoComplete {
         		.and(DOMAIN.NAME.eq(domainName))
         		)
         		.returning()
-        		.fetchOne();
+        		.fetchOptional()
+        		.orElseGet(() -> 
+        		aonContext
+        		.getDslContext()
+        		.insertInto(REGISTRY)
+        		.columns(
+        		REGISTRY.DOMAIN
+        		, REGISTRY.NAME)
+        		.select( 
+        		DSL.select(
+        		USER.DOMAIN
+        		, USER.NAME) 
+        		.from(DOMAIN)
+        		.innerJoin(DOMAIN.as(PARENT_DOMAIN))
+        		.on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
+        		.innerJoin(USER)
+        		.on(USER.DOMAIN.eq(PARENT_DOMAIN.ID))
+        		.where(USER.LOGIN.eq(userLogin))
+        		.and(DOMAIN.NAME.eq(domainName))
+        		)
+        		.returning()
+        		.fetchOne()
+        		);
         		
         		aonContext
         		.getDslContext()

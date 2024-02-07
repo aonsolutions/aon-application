@@ -783,19 +783,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainName();
 	}
 	
-	public String getInvofoxFolder() {
-	    try (CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())){
-		if ( InvofoxConfigurationDAO.get(ctx).isTest() ) 
-			return "facturas";
-	    } catch ( Exception e ) {
-	    }
-	    return "invoices";
-	    
-	}
-
-	
-
-	
 
 	private static DomainType getSafeDomainType( Byte b ) {
 		if (b == null) return null;
