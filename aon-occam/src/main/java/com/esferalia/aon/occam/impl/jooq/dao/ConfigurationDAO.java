@@ -276,6 +276,7 @@ public class ConfigurationDAO {
 			.setDefaultPaidRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_RET_ACC) )
 			.setDefaultCashAccount( getAccount(ctx, AppParam.ACC_DEFAULT_CASH_ACC) )
 			.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
+			.setDirectTaxAdjustAccount( getAccount(ctx, AppParam.ACC_DIRECT_TAX_ADJUST_ACC) )
 			.setDefaultDUAVatAccount( getAccount(ctx, AppParam.ACC_DEF_DUA_VAT_ACC) )
 			.setDefaultDUADutyAccount( getAccount(ctx, AppParam.ACC_DEF_DUA_DUTY_ACC) )
 			.setDefaultSalary( getAccount(ctx, AppParam.ACC_DEFAULT_SALARY_ACC ) )

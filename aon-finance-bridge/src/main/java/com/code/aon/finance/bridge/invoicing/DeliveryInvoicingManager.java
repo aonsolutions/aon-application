@@ -28,6 +28,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistrySeller;
 import com.code.aon.seller.Seller;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -114,7 +115,7 @@ public class DeliveryInvoicingManager {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(delivery.getScope());
-		invoice.setSeller(obtainSeller(delivery.getId()));
+		invoice.setSeller(obtainSeller(delivery.getId(), delivery.getCustomer().getRegistry().getId()));
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoiceBean.restoreNullSubPOJOs(invoice);
@@ -127,7 +128,7 @@ public class DeliveryInvoicingManager {
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	private Seller obtainSeller(Integer deliveryId) throws ManagerBeanException {
+	private Seller obtainSeller(Integer deliveryId, Integer registryId) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), deliveryId);
@@ -139,7 +140,14 @@ public class DeliveryInvoicingManager {
 				return deliveryDetail.getSalesDetail().getSales().getSeller();
 			}
 		}
-		return null;
+
+		IManagerBean rsellerBean = BeanManager.getManagerBean(RegistrySeller.class);
+
+		Criteria criteria2 = new Criteria();
+		criteria2.addEqualExpression(rsellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_REGISTRY_ID), registryId);
+		RegistrySeller rseller = (RegistrySeller) rsellerBean.getList(criteria2).stream().findFirst().orElse(null);
+		
+		return rseller != null ? rseller.getSeller() : null;
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Delivery delivery) throws ManagerBeanException {
@@ -164,7 +172,7 @@ public class DeliveryInvoicingManager {
 			invoiceDetail.setWorkPlace(delivery.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
-			invoiceDetail.setSeller((deliveryDetail.getSalesDetail() != null) ? deliveryDetail.getSalesDetail().getSales().getSeller() : null);
+			invoiceDetail.setSeller((deliveryDetail.getSalesDetail() != null) ? deliveryDetail.getSalesDetail().getSales().getSeller() : invoice.getSeller());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetail.getInvoice().setUpdateEnabled(line == deliveryDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);

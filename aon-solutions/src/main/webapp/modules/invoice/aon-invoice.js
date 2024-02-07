@@ -684,111 +684,113 @@ export class AonInvoice extends AonElement {
 			
 		};
 		
-		this.invoice.messages
-		.filter( err => err.context )
-		//.filter( err => !err.context.line )
-		.forEach( (err, i ) => {
-			try {
-				switch ( err.context.key ){
-					case ErrKey.DOMAIN: 
-						break;
-					case ErrKey.WORKPLACE: 
-						break;
-					case ErrKey.TYPE: 
-						break;
-					case ErrKey.BASES_QUOTAS: 
-						break;
-					case ErrKey.SERIES: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.DUPLICATED_SERIES_NUMBER: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.NUMBER: 
-					case ErrKey.REFERENCE_CODE: 
-					case ErrKey.DUPLICATED_REFERENCE_CODE: 
-						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TRANSACTION: 
-						break;
-					case ErrKey.ISSUE_DATE: 
-						this.getElement(this.DATE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_DATE: 
-						break;
-					case ErrKey.TAX_RATE: 
-						this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_BASE: 
-						this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_QUOTA: 
-						this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
-						break;
-					case ErrKey.IRPF_RATE: {
-						let line = this.getElement(this.TAX_TABLE2).rows - 1;
-						this.getElement(`${this.TAX_PERCENTAGE}${line}` ).addError(getMessageHTML(err));
-						break;
+		if(this.invoice.messages) {
+			this.invoice.messages
+			.filter( err => err.context )
+			//.filter( err => !err.context.line )
+			.forEach( (err, i ) => {
+				try {
+					switch ( err.context.key ){
+						case ErrKey.DOMAIN: 
+							break;
+						case ErrKey.WORKPLACE: 
+							break;
+						case ErrKey.TYPE: 
+							break;
+						case ErrKey.BASES_QUOTAS: 
+							break;
+						case ErrKey.SERIES: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.DUPLICATED_SERIES_NUMBER: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.NUMBER: 
+						case ErrKey.REFERENCE_CODE: 
+						case ErrKey.DUPLICATED_REFERENCE_CODE: 
+							this.getElement(this.REFERENCE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TRANSACTION: 
+							break;
+						case ErrKey.ISSUE_DATE: 
+							this.getElement(this.DATE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_DATE: 
+							break;
+						case ErrKey.TAX_RATE: 
+							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_BASE: 
+							this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_QUOTA: 
+							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+							break;
+						case ErrKey.IRPF_RATE: {
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_PERCENTAGE}${line}` ).addError(getMessageHTML(err));
+							break;
 						}
-					case ErrKey.IRPF_BASE: { 
-						let line = this.getElement(this.TAX_TABLE2).rows - 1;
-						this.getElement(`${this.TAX_BASE}${line}` ).addError(getMessageHTML(err));
-						break;
+						case ErrKey.IRPF_BASE: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_BASE}${line}` ).addError(getMessageHTML(err));
+							break;
+						}
+						case ErrKey.IRPF_QUOTA: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_QUOTA}${line}`).addError(getMessageHTML(err));
+							break;
+						}
+						case ErrKey.SCOPE: 
+							break;
+						case ErrKey.REGISTRY: 
+							break;
+						case ErrKey.AMBIGUOUS_REGISTRY: 
+							break;
+						case ErrKey.RDOCUMENT:{
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.RDOCUMENT_COUNTRY: 
+							break;
+						case ErrKey.RNAME: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.NAME).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.ADDRESS: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.DETAIL_DESCRIPTION: 
+							break;
+						case ErrKey.DETAILS: 
+							break;
+						case ErrKey.ACCOUNT_ENTRY: 
+							break;
+						case ErrKey.FINANCE_AMOUNT_ZERO: 
+							break;
+						case ErrKey.FINANCE_WRONG_DUE_DATE: 
+							break;
+						case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
+							break;
+						case ErrKey.TOTAL: 
+							this.getElement(this.TOTAL).addError(getMessageHTML(err));
+							break;
+						case ErrKey.PAY_METHOD: 
+							let line = err.context.line || 0; 
+							this.getElement(`${this.FINANCE_PAYMETHOD}${line}`).addError(getMessageHTML(err));
+							break;
+						default:
+							break;
 					}
-					case ErrKey.IRPF_QUOTA: { 
-						let line = this.getElement(this.TAX_TABLE2).rows - 1;
-						this.getElement(`${this.TAX_QUOTA}${line}`).addError(getMessageHTML(err));
-						break;
-					}
-					case ErrKey.SCOPE: 
-						break;
-					case ErrKey.REGISTRY: 
-						break;
-					case ErrKey.AMBIGUOUS_REGISTRY: 
-						break;
-					case ErrKey.RDOCUMENT:{
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.RDOCUMENT_COUNTRY: 
-						break;
-					case ErrKey.RNAME: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.NAME).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.ADDRESS: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
-						}
-						break;
-					case ErrKey.DETAIL_DESCRIPTION: 
-						break;
-					case ErrKey.DETAILS: 
-						break;
-					case ErrKey.ACCOUNT_ENTRY: 
-						break;
-					case ErrKey.FINANCE_AMOUNT_ZERO: 
-						break;
-					case ErrKey.FINANCE_WRONG_DUE_DATE: 
-						break;
-					case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
-						break;
-					case ErrKey.TOTAL: 
-						this.getElement(this.TOTAL).addError(getMessageHTML(err));
-						break;
-					case ErrKey.PAY_METHOD: 
-						let line = err.context.line || 0; 
-						this.getElement(`${this.FINANCE_PAYMETHOD}${line}`).addError(getMessageHTML(err));
-						break;
-					default:
-						break;
+				} catch ( e ) {
+					console.error(e);
 				}
-			} catch ( e ) {
-				console.error(e);
-			}
-		});
+			});
+		}
 	}
 
 	buildMessagesCard(parent) {
@@ -1192,6 +1194,8 @@ export class AonInvoice extends AonElement {
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
+		if(this.invoice.taxes.length > 1 || this.invoice.details.length > 0)
+			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
@@ -1676,6 +1680,10 @@ export class AonInvoice extends AonElement {
 		percentage.readonly = this.invoice.isReadonly() 
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
+
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			percentage.disabled = CONSTANT.TRUE;
+		
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1687,13 +1695,18 @@ export class AonInvoice extends AonElement {
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
 
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			base.disabled = CONSTANT.TRUE;
+
 		// ----- TAX QUOTA
 
 		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
 
 		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
 		taxesTable.addCell(quota);
-		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
+		quota.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 || tax.type.includes('IRPF');
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			quota.disabled = CONSTANT.TRUE;
 
 		// ----- TAX DELETE
 
@@ -1802,6 +1815,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);		
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL OPTIONS
 
@@ -1891,7 +1905,7 @@ export class AonInvoice extends AonElement {
 		description.value = detail.description;
 		description.addEventListener(EVENT.AON_KEYUP, (e) => {
 			if(description.value.length > 2) {
-				let data = { value: description.value};
+				let data = { value: description.getValue()};
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {
 						return {
@@ -1950,6 +1964,7 @@ export class AonInvoice extends AonElement {
 		let td5 = table.addCell(amount);
 		td5.style.verticalAlign = "bottom";
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
@@ -2122,6 +2137,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		table.addRow(); // ----- ROW 4
 

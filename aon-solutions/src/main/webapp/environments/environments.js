@@ -15,9 +15,9 @@ export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
 export const PRO_URL = "https://aon.solutions";
 //----TEST
-// export const SIG_URL = "https://b4da-47-62-53-208.ngrok.io";
-// export const SIG_DOMAIN_NAME = "b72384936-ayudat.rvasquez.net";
-// export const SIG_DOMAIN_ID = 7138;
+// export const SIG_URL = "http://localhost:8080";
+// export const SIG_DOMAIN_NAME = "sig.aibanez.org";
+// export const SIG_DOMAIN_ID = 5;
 
 
 export const SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";

@@ -363,7 +363,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		// HasSettle then only sendBaja
 		if(Boolean.TRUE.equals(this.hasSettle)) {
 			this.afiTypeLB.setSelectedIndex(2);
-			afiTypeLB.setEnabled(false);
 			if(null != this.holidayDate) {
 				holidaysEndDB.setEnabled(false);
 				holidaysTB.setEnabled(false);

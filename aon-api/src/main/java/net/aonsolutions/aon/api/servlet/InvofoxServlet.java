@@ -222,11 +222,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return array;
 	}
 	
-	private static JSONObject getConfiguration(AonApiData api) {
+	public static JSONObject getConfiguration(AonApiData api) {
 		return InvofoxConfigurationJSON.toJSON(AON.getInvofoxConfiguration(api.getDomain(), api.getUser()));
 	}
 	
-	private static JSONObject saveConfiguration(AonApiData api) {
+	public static JSONObject saveConfiguration(AonApiData api) {
 		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationJSON.fromJSON(api.getData());
 		return InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), invofoxConfiguration));
 	}

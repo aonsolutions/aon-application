@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record6;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
@@ -33,6 +34,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.jooq.tables.records.CraBatchRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -118,17 +120,6 @@ public class JooqCRA {
 					.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).le(parseDateToSQL(endDate)))
 					.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc())
 					.fetch();
-		
-		System.out.println(
-				dslContext.select(CRA_BATCH.ID, CRA_BATCH.DOMAIN, CRA_BATCH.STATUS, CRA_BATCH.DATE, CRA_BATCH.OUTCOME_FILE_DATE, CRA_BATCH.COMMUNICATION_ID).from(CRA_BATCH)
-				.where(
-						CRA_BATCH.DOMAIN.eq(domainId)
-					   .or(CRA_BATCH.DOMAIN.in(domainChilds))
-				)
-				.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).ge(new java.sql.Date(liquidDateTime)))
-				.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).le(parseDateToSQL(endDate)))
-				.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc()).getSQL()
-		);
 		
 		Integer countCras = 0;
 		
@@ -219,6 +210,35 @@ public class JooqCRA {
 		endDate.add(Calendar.MONTH, 1);
 		endDate.add(Calendar.DAY_OF_MONTH, -1);
 		return endDate.getTime();
+	}
+	
+	// --------------------------------------------- Get CRA Min Max Date
+
+	public static Period getMinMaxCraDate(Integer domainId, Integer userId, Connection connection) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		// Domain Childs
+		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
+
+		Record1<java.sql.Date> craMinDateRecord = dslContext.select(DSL.min(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE)))
+				.from(CRA_BATCH)
+				.where(
+						CRA_BATCH.DOMAIN.eq(domainId)
+					   .or(CRA_BATCH.DOMAIN.in(domainChilds))
+				).fetchOne();
+		
+		Date craMinDate = craMinDateRecord.value1();
+		
+		Record1<java.sql.Date> craMaxDateRecord = dslContext.select(DSL.max(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE)))
+				.from(CRA_BATCH)
+				.where(
+						CRA_BATCH.DOMAIN.eq(domainId)
+					   .or(CRA_BATCH.DOMAIN.in(domainChilds))
+				).fetchOne();
+		
+		Date craMaxDate = craMaxDateRecord.value1();
+		
+		return new Period(craMinDate, craMaxDate);
 	}
 
 	// --------------------------------------------- Get CRA data

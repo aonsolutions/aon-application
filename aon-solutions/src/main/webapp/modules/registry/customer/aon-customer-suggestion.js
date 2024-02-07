@@ -160,7 +160,9 @@ export class AonCustomerSuggestion extends AonElement {
        if(value.length > 2) {
         getRegistries(data).then(r => {
           this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
-        }).catch(e => alert(e));
+        }).catch(e => {
+          // alert(e);
+        });
       } else {
         this.closeOptions();
        }

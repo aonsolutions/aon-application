@@ -1,6 +1,6 @@
-import { post, get, remove, put, getInvofox } from "./request.js";
+import { post, get, remove, put, getInvofox, getSig } from "./request.js";
 import { openFileUrl } from "./fileService.js";
-import { API_URL } from "../environments/environments.js";
+import { API_URL, SIG_URL } from "../environments/environments.js";
 
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
@@ -17,6 +17,8 @@ export const invoiceSelection = (inv) => invoice = inv;
 export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
+
+export const getSigInvoices = (data) => getSig(`${SIG_URL}/${API_URL}/invoice`, data);
 
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 

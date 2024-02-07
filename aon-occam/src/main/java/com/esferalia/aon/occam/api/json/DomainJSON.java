@@ -117,6 +117,7 @@ public class DomainJSON {
 			.putOpt(IJsonNames.AON_CUSTOMER, domain.getAonCustomer())
 			.putOpt(IJsonNames.AON_STATUS, domain.getAonStatus() == null?null:domain.getAonStatus().toString())	
 			.putOpt(IJsonNames.APPS, domain.getApps() == null ? null : getDomainApps(domain))	
+			.putOpt(IJsonNames.USERS, domain.getUsers() == null ? null : UserJSON.toJSON(domain.getUsers()))	
 			;		
 	}
 
