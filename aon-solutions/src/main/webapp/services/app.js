@@ -832,6 +832,7 @@ export const AllApps = {
   GROUPWARE,
   WAREHOUSE,
   OCR,
+  INVOFOX,
   CONVENIOS,
   BANK,
   AON_SOLUTIONS,

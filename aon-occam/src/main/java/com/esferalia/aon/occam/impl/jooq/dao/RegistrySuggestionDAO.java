@@ -24,7 +24,9 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 
+// TODO REPLANTEAR...
 public class RegistrySuggestionDAO {
+
 	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
 	private static final Field<Integer> REG_FIELD = DSL.field("reg", REGISTRY.ID.getType() ); 
 	private static final String AR = "aonRegTable";	
@@ -62,7 +64,6 @@ public class RegistrySuggestionDAO {
 					.from(ar)
 					.join(REGISTRY).on(REGISTRY.ID.eq(REG_FIELD))
 					.where(REGISTRY_PROPERTIES.getConditions(filter))
-					.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), REGISTRY.SECURITY_LEVEL))
 					.orderBy(REGISTRY.NAME)
 					.limit(30)
 					.fetch()

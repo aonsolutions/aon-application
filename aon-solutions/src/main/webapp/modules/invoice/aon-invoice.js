@@ -88,12 +88,13 @@ export class AonInvoice extends AonElement {
    		super();
 	}
 
-	connectedCallback () {
+	async connectedCallback () {
 		this.initialize();
 		this.buildDur().then(r => {
 			this.build();
 		});
 		
+		this.configuration = await getInvoiceConfiguration();
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
@@ -115,9 +116,7 @@ export class AonInvoice extends AonElement {
 			}
 		});
 
-		getInvoiceConfiguration().then(r => {
-            this.configuration = r;
-        });
+
 	}
 
 	initialize(){
@@ -1194,9 +1193,11 @@ export class AonInvoice extends AonElement {
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
-		if(this.invoice.taxes.length > 1 || this.invoice.details.length > 0)
+		if(LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
+		if(!LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+			total.disabled = CONSTANT.TRUE;
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
 		|| this.invoice.taxes.length > 1
@@ -1572,7 +1573,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked, this.configuration.withholdingPercent);
+			this.invoice.setWithholding(irpf.checked, this.configuration ? this.configuration.withholdingPercent : undefined);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1602,7 +1603,7 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val || this.configuration.withholdingPercent;
+			irpfType.value = val || this.configuration ? this.configuration.withholdingPercent : undefined;
 		} 
 	}
 
@@ -2292,7 +2293,8 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
-		
+		date.value = finance.due_date;
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
@@ -2373,6 +2375,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
+		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
 
@@ -2425,6 +2428,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
+		date.value = finance.due_date;
 		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
