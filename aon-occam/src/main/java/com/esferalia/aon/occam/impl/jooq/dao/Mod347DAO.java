@@ -752,8 +752,13 @@ public class Mod347DAO {
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
 					// Ventas ISP, se ponen como Nacionales, por que no hay que marcar ISP en las ventas en el 347, solo en las compras
-					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP)
+					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
+					}
+					// Compras extracomunitarias de servicios se tratan como si fueran ISP
+					if (vat.getInvoiceType() == InvoiceType.PURCHASE && vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) {
+						vat.setTransaction( InvoiceTransactionType.OTHER_ISP );
+					}
 				})
 				.forEach( vat -> {
 						// Añadir la factura al registro que corresponda del declarado
@@ -803,7 +808,7 @@ public class Mod347DAO {
 							declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
 	
 							declared.setVatAccrual(vat.isVatAccrualRegime());
-							declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
+							declared.setIsp( vat.getTransaction() == InvoiceTransactionType.OTHER_ISP );
 						
 							declared.setFirstQuarterAmount(0.0);
 							declared.setSecondQuarterAmount(0.0);

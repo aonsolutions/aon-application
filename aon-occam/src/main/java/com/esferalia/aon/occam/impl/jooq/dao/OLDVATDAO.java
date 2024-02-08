@@ -383,15 +383,19 @@ public class OLDVATDAO  {
 			.setQuota(quota)
 			.setSurchargeQuota(surchargeQuota)
 			.setDeductibleQuota(deductibleQuota)
-			.setAmount347(!vat.isOtherISP()
-				?(base + quota + surchargeQuota)
-				:base);
+			.setAmount347( vat.isOtherISP() || (vat.isExtracommunityPurchase() && vat.isService()) ? base : (base + quota + surchargeQuota) );
+			//.setAmount347(!vat.isOtherISP()?(base + quota + surchargeQuota):base);
 	}
 	
 	private static class VatContextFiller  implements Function<Record,VatContext> {
 
 		@Override
 		public VatContext apply(Record rec) {
+			
+			InvoiceTransactionType invoiceTransactionType = InvoiceTransactionType.safeValueOf( rec.getValue(INVOICE.TRANSACTION));
+			InvoiceType invoiceType = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE));
+			boolean isService = (rec.getValue(INVOICE.SERVICE) == 1);
+			
 			return new VatContext()
 				.setInvoice(rec.getValue(INVOICE.ID))
 				.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
@@ -431,7 +435,11 @@ public class OLDVATDAO  {
 				.setDeductiblePercent(getDeductiblePercent(rec))
 				.setDeductibleQuota(getDeductibleQuota(rec))
 				
-				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
+				//.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
+				.setAmount347( invoiceTransactionType == InvoiceTransactionType.OTHER_ISP 
+				  || (invoiceType == InvoiceType.PURCHASE && invoiceTransactionType == InvoiceTransactionType.EXTRACOMMUNITY && isService)				
+				? rec.getValue(INVOICE_TAX.BASE) : (rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) )
+								
 				.setHasRetention( hasRetention(
 						rec.getValue(INVOICE.WITHHOLDING),
 						rec.getValue(INVOICE_DETAIL.SOURCE),
