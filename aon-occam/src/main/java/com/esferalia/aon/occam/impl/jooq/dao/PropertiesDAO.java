@@ -894,10 +894,10 @@ public class PropertiesDAO {
 		}
 		
 		protected Condition[] getConditions(ContractExtendedDataFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
+			if (filter == null){
 				return new Condition[0];
 			}
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
