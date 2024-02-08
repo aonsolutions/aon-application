@@ -623,7 +623,6 @@ public class InvoiceAutoComplete {
 						scope = s.getId();
 					}
 				} else scope = s.getId();
-				inv.setScope(new Scope().setId(scope));				
 			} else {
 				Scope s = null;
 				List<Scope> list = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
@@ -642,6 +641,7 @@ public class InvoiceAutoComplete {
 				}
 				scope = s.getId();
 			}	
+			inv.setScope(new Scope().setId(scope));				
 		}
 
 	};
