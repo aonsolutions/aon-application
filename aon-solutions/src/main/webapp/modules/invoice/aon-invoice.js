@@ -2292,7 +2292,8 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
-		
+		date.value = finance.due_date;
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
@@ -2373,6 +2374,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
+		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
 
@@ -2425,6 +2427,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
+		date.value = finance.due_date;
 		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
