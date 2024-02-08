@@ -107,6 +107,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/FinancePayroll.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_fbatchPaymentPayroll</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/FBatchPaymentPayroll.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_fbatchPaymentTreasury</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/FBatchPaymentTreasury.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_financeUtilities</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/financeUtilities.xhtml</to-view-id>
 		</navigation-case>
@@ -272,5 +280,21 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountCostCenter.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Booking Resume ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_domainBooking_resume</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/domainBookingResume.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_booking_customer_resume</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customerBookingResume.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
 </faces-config>
 		

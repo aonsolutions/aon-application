@@ -8,6 +8,7 @@ import * as ACTION from '../actions.js';
 import { AonTab } from "../../components/aon-tab.js";
 import { AonInvoiceCommunication } from "./aon-invoice-communication.js";
 import * as LS from '../../services/localStorageService.js';
+import { AonOcrConfiguration } from "./aon-ocr-configuration.js";
 
 export class AonInvoiceConfiguration extends AonElement {
     
@@ -18,12 +19,11 @@ export class AonInvoiceConfiguration extends AonElement {
     TABS;
     CONTENT;
     
-    connectedCallback () {
-        getInvoiceConfiguration().then(r => {
-            this.configuration = r;
-            this.initialize();
-            this.build();
-        });
+    async connectedCallback () {
+        this.configuration = await getInvoiceConfiguration();
+        await this.buildDur();
+        this.initialize();
+        this.build();
   	}
 
     initialize() {
@@ -35,6 +35,7 @@ export class AonInvoiceConfiguration extends AonElement {
 			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()},
             { title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
         ];
+        if(this.getDur().isInvofox()) this.options.push({title: 'OCR', fn: () => this.buildOcrConfiguration()})
         if(!LS.isAonSolutions() && !this.configuration.print.active){
             this.options = [{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}];
         }
@@ -88,6 +89,18 @@ export class AonInvoiceConfiguration extends AonElement {
         });
         content.appendChild(communication);
     }
+
+    async buildOcrConfiguration() {
+        let content = this.getElement(this.CONTENT);
+        this.clearElement(content);
+        let ocr =  new AonOcrConfiguration();
+        ocr.setConfiguration(this.configuration.invofox);
+        ocr.onChange(() => {
+            this.configuration.invofox = ocr.getConfiguration();
+        });
+        content.appendChild(ocr);
+    }
+
 
     save() {
         saveInvoiceConfiguration(this.configuration);

@@ -142,6 +142,24 @@ public class Mod190Writer {
 			
 		},
 
+		GIPUZKOA_2023{
+
+			@Override
+			void fill(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Gipuzkoa.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Aeat.fill(mod190, wr);
+			}
+
+			@Override
+			boolean accept(Mod190 mod190) {
+				return (mod190.isGipuzkoa() && mod190.getYear() >= 2023);
+			}
+			
+		},
 		GIPUZKOA_2022{
 
 			@Override
@@ -156,7 +174,7 @@ public class Mod190Writer {
 
 			@Override
 			boolean accept(Mod190 mod190) {
-				return (mod190.isGipuzkoa() && mod190.getYear() >= 2022);
+				return (mod190.isGipuzkoa() && mod190.getYear() >= 2022 && mod190.getYear() < 2023);
 			}
 			
 		},
@@ -218,6 +236,24 @@ public class Mod190Writer {
 			
 		},
 
+		ARABA_2023{
+
+			@Override
+			void fill(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Araba.fill(mod190, wr);		
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2023Aeat.fill(mod190, wr);
+			}
+
+			@Override
+			boolean accept(Mod190 mod190) {
+				return (mod190.isAraba() && mod190.getYear() >= 2023);
+			}
+			
+		},
 		ARABA_2017{
 
 			@Override
@@ -232,7 +268,7 @@ public class Mod190Writer {
 
 			@Override
 			boolean accept(Mod190 mod190) {
-				return (mod190.isAraba() && mod190.getYear() >= 2017);
+				return (mod190.isAraba() && mod190.getYear() >= 2017 && mod190.getYear() < 2023);
 			}
 			
 		},

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
@@ -25,9 +26,12 @@ import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -99,6 +103,8 @@ public interface IFinance {
 	
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
+	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************
@@ -162,9 +168,11 @@ public interface IFinance {
 	
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
+	public Finance unSettleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);
 	public FinanceTracking payFinance(AONContext ctx, FinanceTracking tracking);
 	public FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking);
+	void deleteFinance(CloseableAONContext ctx, Integer financeId);
 	
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);
@@ -200,6 +208,13 @@ public interface IFinance {
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
+	
+	// 	***********************************************
+	// 	********** INVOFOX CONFIGURATION **************
+	// 	***********************************************
+
+	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx);
+	public InvofoxConfiguration saveInvofoxConfiguration(AONContext ctx, InvofoxConfiguration config);
 	
 	// 	***********************************************
 	// 	********** TICKET BAI CONFIGURATION ***********
@@ -250,7 +265,12 @@ public interface IFinance {
 	// 	***********************************************
 	
 	void createSettleSalaries(CloseableAONContext ctx, Date date);
-	void deleteFinance(CloseableAONContext ctx, Integer financeId);
+	Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId);
+	
+	LinkedList<FBatch> getFBatches(CloseableAONContext ctx, FBatchFilter filter, int offset, int limit);
+	FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId);
+	void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds);
+	FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch);
 	
 	// 	***********************************************
 	// 	*********** COBROS Y PAGOS CARD ***************

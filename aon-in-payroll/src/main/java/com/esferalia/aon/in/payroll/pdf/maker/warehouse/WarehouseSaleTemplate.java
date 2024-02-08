@@ -26,6 +26,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.zxing.BarcodeFormat;
@@ -53,12 +54,13 @@ public class WarehouseSaleTemplate implements AutoCloseable {
 	private float y;
 	
 	private Sales sales;
+	private Delivery delivery;
 		
 	
-	public WarehouseSaleTemplate(Sales sales) throws CanNotCreatePdfException {
+	public WarehouseSaleTemplate(Sales sales, Delivery delivery) throws CanNotCreatePdfException {
 		try {
-			this.sales = sales;
-			
+			this.sales = sales;		
+			this.delivery = delivery;
 			
 			this.document = new PDDocument();
 			this.page = new PDPage(PDRectangle.A5);
@@ -179,7 +181,17 @@ public class WarehouseSaleTemplate implements AutoCloseable {
 					addressFontSize,
 					0);
 		}
-	
+
+		this.y -= 50f;
+		PDFToolkit.drawTextCenter(
+				this.contents,
+				new PDRectangle(this.x, this.y, addressWidth, addressFontSize),
+				"FECHA CARGA: " + AonDateUtils.format(this.delivery.getStatusModificationDate(), "dd/MM/yyyy") ,
+				DEFAULT_FONT_COLOR,
+				DEFAULT_FONT,
+				addressFontSize,
+				0);
+		
 		this.y -= 50f;
 		PDFToolkit.drawTextCenter(
 				this.contents,

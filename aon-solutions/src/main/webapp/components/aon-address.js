@@ -8,6 +8,9 @@ import { AonSelect } from './aon-select.js';
 import { TABLE } from '../environments/aonTag.js';
 import { AonBasicTable } from './aon-basic-table.js';
 import { getStreetTypes, streetType } from '../services/StreetType.js';
+import * as LS from '../services/localStorageService.js';
+import { AonNewInput } from './aon-new-input.js';
+import { AonNewSelect } from './aon-new-select.js';
 
 export class AonAddress extends AonElement {
 
@@ -82,19 +85,21 @@ export class AonAddress extends AonElement {
 
   build() {
     this.clear();
-    let aonInput = new AonInput();
+    let aonInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
-    aonInput.title = this.address.getFullAddress();
+    aonInput.title = this.title;
     aonInput.value = this.address.getFullAddress();
-    this.appendChild(aonInput);
     aonInput.readonly = CONSTANT.READONLY;
+    this.appendChild(aonInput);
+
     this.buildAddress();
     let color = this.address.isMain() ? '#002469' : undefined;
     aonInput.addIconWithRemove(MATERIAL_ICONS.ROOM, color, () => this.dispatchEvent(new Event(EVENT.DELETE)));
 
     this.getElement(aonInput.INPUT).style.cursor = 'pointer';
     aonInput.addEventListener(EVENT.CLICK, () => {
+      alert(this.isReadonly());
       if (!this.isReadonly()) {
         let divEdit = this.getElement(this.EDIT);
         if (divEdit.style.display === "block") {
@@ -115,7 +120,7 @@ export class AonAddress extends AonElement {
 
     table.addRow();
 
-    let streetTypeSelect = new AonSelect();
+    let streetTypeSelect = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
     streetTypeSelect.id = this.STREET_TYPE;
     streetTypeSelect.title = 'Tipo vía'; //MSG.STREET_TYPE;
     streetTypeSelect.options = JSON.stringify(
@@ -132,7 +137,7 @@ export class AonAddress extends AonElement {
     });
     table.addCell(streetTypeSelect, 2);
     
-    let addressInput = new AonInput();
+    let addressInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     addressInput.id = this.ADDRESS;
     addressInput.description = MSG.ADDRESS;
     addressInput.className = CSS.AON_WIDTH_ALL;
@@ -147,7 +152,7 @@ export class AonAddress extends AonElement {
 
     table.addRow();
 
-    let numberInput = new AonInput();
+    let numberInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     numberInput.id = this.NUMBER;
     numberInput.description = MSG.NUMBER;
     numberInput.className = CSS.AON_WIDTH_ALL;
@@ -160,7 +165,7 @@ export class AonAddress extends AonElement {
     });
     table.addCell(numberInput, 2);
 
-    let address2Input = new AonInput();
+    let address2Input = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     address2Input.id = this.ADDRESS2;
     address2Input.description = 'Resto Dirección';//MSG.ADDRESS;
     address2Input.className = CSS.AON_WIDTH_ALL;
@@ -176,7 +181,7 @@ export class AonAddress extends AonElement {
     table.addRow();
 
 
-    let countryInput = new AonSelect();
+    let countryInput = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
     countryInput.id = this.COUNTRY;
     countryInput.title = MSG.COUNTRY;
     countryInput.options = JSON.stringify(
@@ -194,7 +199,7 @@ export class AonAddress extends AonElement {
     let countryTd = table.addCell(countryInput, 1);
     countryTd.style.width = '20%';
 
-    let zipInput = new AonInput();
+    let zipInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     zipInput.id = this.ZIP;
     zipInput.description = MSG.POSTAL_CODE_MIN;
     zipInput.value = this.address.getZip();
@@ -207,7 +212,7 @@ export class AonAddress extends AonElement {
     });
     let zipTd = table.addCell(zipInput, 1);
     zipTd.style.width = '15%';
-    let cityInput = new AonInput();
+    let cityInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     cityInput.id = this.CITY;
     cityInput.description = MSG.CITY;
     cityInput.value = this.address.getCity();
@@ -220,7 +225,7 @@ export class AonAddress extends AonElement {
     table.addCell(cityInput, 3);
 
 
-    let provinceInput = new AonInput();
+    let provinceInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     provinceInput.id = this.PROVINCE;
     provinceInput.description = MSG.PROVINCE;
     provinceInput.value = this.address.getProvince();

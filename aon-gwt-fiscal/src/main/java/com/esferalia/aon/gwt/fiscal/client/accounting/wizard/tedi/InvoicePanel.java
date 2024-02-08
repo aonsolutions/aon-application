@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -369,7 +370,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		});
 	}
 	
-	protected class InvoicePanelCallback implements IInvoicePanelCallback {
+	class InvoicePanelCallback implements IInvoicePanelCallback {
 		@Override
 		public AccountEntryModule getModule() {
 			return getCallback().getModule();
@@ -383,14 +384,21 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			return getCallback().getModuleOptions();
 		}
 		@Override
+		public Occam getOccam() {
+			return getCallback().getOccam();
+		}
+		@Override
+		@Deprecated
 		public String getCurrentDomainName() {
 			return getCallback().getCurrentDomainName();
 		}
 		@Override
+		@Deprecated
 		public int getCurrentDomainId() {
 			return getCallback().getCurrentDomainId();
 		}
 		@Override
+		@Deprecated
 		public String getCurrentUser() {
 			return getCallback().getCurrentUser();
 		}
@@ -696,9 +704,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		    
 		    @Override public AccountEntryModuleOptions getModuleOptions() {return getCallback().getModuleOptions();}
 		    @Override public AccountEntryModule getModule() {return getCallback().getModule();}
-		    @Override public String getCurrentUser() {return getCallback().getCurrentUser();}
-		    @Override public String getCurrentDomainName() {return getCallback().getCurrentDomainName();}
-		    @Override public int getCurrentDomainId() {return getCallback().getCurrentDomainId();}
+		    @Override public Occam getOccam() { return getCallback().getOccam();}
+		    @Override @Deprecated public String getCurrentUser() {return getCallback().getCurrentUser();}
+		    @Override @Deprecated public String getCurrentDomainName() {return getCallback().getCurrentDomainName();}
+		    @Override @Deprecated public int getCurrentDomainId() {return getCallback().getCurrentDomainId();}
 		    @Override public AonConfiguration getConfiguration() {return getCallback().getConfiguration();}
 		    
 		    @Override

@@ -406,7 +406,7 @@ public class SettlementTemplate extends PdfFile {
 		String[] variables = { "location" };
 		String[] values	   = {"A "};
 		if (settlement.location().isPresent()) {
-			values[0]	   = "En " + settlement.location().get() + " a ";
+			values[0]	   = "En " + AonStringUtils.replace(settlement.location().get(),"'","''") + " a ";
 		}
 //		String[] values	   = { safeString(settlement.location()) };
 		String	 dateTxt   = formatDate(new Date(), replaceVariables(variables, values, text("DATE"))).orElse("");

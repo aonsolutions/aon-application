@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.PayMethodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -62,9 +61,6 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	private CheckBox paid;
 	private CheckBox settled;
 	
-	private AonSearchPanelButton cleanButton;
-	private AonSearchPanelButton refreshButton;
-	
 	private boolean isPayroll = false;
 
 	public static interface IFinancePanelCallback {
@@ -84,7 +80,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 
 		amount = new AonDoubleBox();
 		amount.setVisibleLength(6);
-		amount.setValue(null,false);
+		amount.setValue(null);
 		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -253,25 +249,6 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		});
 		
 		payroll = new Label("N\u00f3minas");
-		
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
-		cleanButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				initialize(opt);
-				search(opt);
-			}
-		});
-
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
-		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
-		refreshButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				search(opt);
-			}
-		});
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonGrid());
@@ -399,13 +376,6 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		tab.getFlexCellFormatter().setColSpan(row, col, 3);
 		++col;
 		
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
-		buttonsPanel.add( cleanButton );
-		buttonsPanel.add( refreshButton );
-		tab.setWidget(row, col, buttonsPanel);
-		++col;
 		setWidget(tab);
 		
 		initialize(opt);
@@ -434,6 +404,10 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	
 	private void search(final FinanceModuleOptions opt) {
 		ValueChangeEvent.<FinanceParams>fire( FinanceModuleSearchPanel.this, getParams( opt ) ); 
+	}
+	
+	public boolean isSettledChecked() {
+		return settled.getValue();
 	}
 
 	public void initialize(final FinanceModuleOptions opt) {

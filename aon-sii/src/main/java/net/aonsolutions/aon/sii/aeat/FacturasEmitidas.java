@@ -187,11 +187,11 @@ public class FacturasEmitidas extends SIIBuilt {
 		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
 				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
 		
-		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment()) 
 				.mapToDouble(f -> f.getBase()).sum();
-		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() ))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment())
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())
@@ -1070,7 +1070,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	private PersonaFisicaJuridicaType contraparte(VatContext vat) {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
-	
+
 		if((vat.getRegistryDocumentCountry() == null || vat.getRegistryDocumentCountry().equals(Country.ES))
 				&& (!vat.getInvoiceType().equals(InvoiceType.SALES) || !isPersonaFisica(vat.getRegistryDocument()) ||  validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()))){
 			contraparte.setNIF(vat.getRegistryDocument());
@@ -1112,7 +1112,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	private Boolean isPersonaFisica(String document){
 		String pri = document.substring(0, 1);
 	return document.length() == 9 
-		&& (isNumber(pri) || pri.equals("L") || pri.equals("K"));
+		&& (isNumber(pri) || pri.equals("L") || pri.equals("K") || pri.equals("Z"));
 	}
 	
 	private Boolean isNumber(String s) {

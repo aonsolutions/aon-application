@@ -7,7 +7,7 @@ import { AonToolbar } from '../../../components/aon-toolbar.js';
 import {AonElement} from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { ToolbarType } from '../../../models/enums.js';
-import { printDeliveryTag, sendDeliveryTag } from '../../../services/bartenderService.js';
+import { printDeliveryTagHttp, printDeliveryTagHttps, sendDeliveryTag } from '../../../services/bartenderService.js';
 import { AonCustomerSuggestion } from '../../registry/customer/aon-customer-suggestion.js';
 export class AonDeliveryTag extends AonElement {
 
@@ -62,21 +62,38 @@ export class AonDeliveryTag extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		this.appendChild(toolbar);
 		toolbar.addButton2({
-			id: CONSTANT.DOWNLOAD.initCap(),
-			name: MSG.DOWNLOAD,
-			title: MSG.DOWNLOAD,
+			id: CONSTANT.PRINT.initCap(),
+			name: MSG.PRINT + " HTTP",
+			title: MSG.PRINT + " HTTP",
 			icon: MATERIAL_ICONS.PRINT
-		}, () => this.print());	
+		}, () => this.printHttp());	
+		toolbar.addButton2({
+			id: CONSTANT.PRINT_SECURE.initCap(),
+			name: MSG.PRINT + " HTTPS",
+			title: MSG.PRINT + " HTTPS",
+			icon:  MATERIAL_ICONS.PRINT
+		}, () => this.printHttps());	
 	}
 
-	print() {
+	printHttps() {
 		let json = {
 			printer: this.printer,
 			tag: this.tag,
 			content: this.data
 		};
 		// sendDeliveryTag(json);
-		printDeliveryTag(this.printer, this.tag, this.data);
+		printDeliveryTagHttps(this.printer, this.tag, this.data);
+		
+	}
+
+	printHttp() {
+		let json = {
+			printer: this.printer,
+			tag: this.tag,
+			content: this.data
+		};
+		// sendDeliveryTag(json);
+		printDeliveryTagHttp(this.printer, this.tag, this.data);
 		
 	}
 

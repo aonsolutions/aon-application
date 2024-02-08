@@ -113,6 +113,37 @@ public class BankBic11 {
 		addValue( new BankBic11("9091","XBCNESBBXXX","SOCIEDAD RECTORA BOLSA VALORES DE BARCELONA, S.A., S.R.B.V."));
 		addValue( new BankBic11("9092","XRBVES2BXXX","SOCIEDAD RECTORA BOLSA DE VALORES DE BILBAO, S.A., S.R.B.V."));
 		addValue( new BankBic11("9093","XRVVESVVXXX","SOCIEDAD RECTORA BOLSA VALORES DE VALENCIA, S.A., S.R.B.V."));
+		
+		addValue( new BankBic11("0133","",""));
+
+		addValue( new BankBic11("1491","TRIOESMMXXX","TRIODOS BANK"));
+
+		addValue( new BankBic11("0073","OPENESMM","OPENBANK"));
+		
+
+		addValue( new BankBic11("0030","BAEMESM1XXX","BANESTO"));
+		addValue( new BankBic11("0004","POPUESMMXXX", "BANCO DE ANDALUCIA, S.A."));
+		addValue( new BankBic11("2024","CSURES2CXXX","BBK BANK CAJASUR S.A.U."));
+		addValue( new BankBic11("2106","CECAESMM106","CAJASOL"));
+
+		addValue( new BankBic11("3005","BCOEESMM005","CAJA RURAL CENTRAL"));
+		addValue( new BankBic11("3016","BCOEESMM016","CAJA RURAL DE SALAMANCA"));
+		addValue( new BankBic11("3020","BCOEESMM020","CAJA RURAL DE UTRERA"));
+		addValue( new BankBic11("3029","BCOEESMM029","CAJA DE CREDITO DE PETREL, CAIXAPETRER"));
+		addValue( new BankBic11("3059","BCOEESMM059","CAJA RURAL DE ASTURIAS"));
+		addValue( new BankBic11("3060","BCOEESMM060","CAJA RURAL DE BURGOS"));
+		addValue( new BankBic11("3063","BCOEESMM063","CAJA RURAL DE CORDOBA"));
+		addValue( new BankBic11("3067","BCOEESMM067","CAJA RURAL DE JAEN"));
+		addValue( new BankBic11("3070","BCOEESMM070","CAIXA RURAL GALEGA"));
+		addValue( new BankBic11("3076","BCOEESMM076","CAJA RURAL DE TENERIFE"));
+		addValue( new BankBic11("3080","BCOEESMM080","CAJA RURAL DE TERUEL"));
+		addValue( new BankBic11("3085","BCOEESMM085","CAJA RURAL DE ZAMORA"));
+		addValue( new BankBic11("3159","BCOEESMM159","CAIXA POPULAR, CAIXA RURAL"));
+		addValue( new BankBic11("3187","BCOEESMM187","CAJA RURAL DEL SUR"));
+		addValue( new BankBic11("3190","BCOEESMM190","CAJA RURAL ALBACETE C. REAL CUENCA"));
+		addValue( new BankBic11("3191","BCOEESMM191","CAJA RURAL DE ARAGON"));
+		addValue( new BankBic11("3023","BCOEESMM023","CAJA RURAL DE GRANADA"));
+		
 	}
 	
 	private static void addValue( BankBic11 value ) {

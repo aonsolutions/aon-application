@@ -518,6 +518,11 @@ public class WarehouseImpl implements IWarehouse {
 			PackagingDAO.saveDeliveryPackaging(ctx, packaging));
 	}
 	
+	@Override
+	public void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId) {
+		ctx.getDslContext().transaction(configuration -> PackagingDAO.acceptDeliveryPackaging(ctx, deliveryId));
+	}
+	
 	// DELIVERY INFO
 	
 	@Override

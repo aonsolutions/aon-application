@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Expedient;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -183,9 +184,11 @@ import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -313,6 +316,7 @@ import com.esferalia.aon.occam.impl.jooq.StatsImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
+import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.occam.server.registry.RegistryUtils;
@@ -2045,6 +2049,12 @@ public class AON {
 		}
 	}
 
+	public static void rectifyInvoice(String domainName, Integer domainId, String login, Integer rectifierInvoice, Integer rectifiedInvoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().rectifyInvoice(ctx, rectifierInvoice, rectifiedInvoice);
+		}
+	}
+	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(
 			String domainName, Integer domainId, String login,
 			InvoicingGroupFilter filter) {
@@ -7239,6 +7249,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Finance unSettleFinance(String domainName, int domainId, String user, Integer finance) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().unSettleFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Finance undoFinance(String domainName, int domainId, String user, Integer finance) {
 		CloseableAONContext ctx = null;
@@ -7272,6 +7293,12 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void deleteFinance(String domainName, int domainId, String user, Integer financeId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().deleteFinance(ctx, financeId);
+		}
+	}	
 
 	public static List<RegistryBank> getRegistryBanks(Domain domain, User user, Integer registry) {
 		return getRegistryBanks(domain.getName(), domain.getId(), user.getLogin(), registry);
@@ -7614,6 +7641,36 @@ public class AON {
 			getFinance().deletePayMethod(ctx, id); 
 		}
 	}
+
+	// INVOFOX CONFIGURATION
+	
+	public static InvofoxConfiguration getInvofoxConfiguration(Domain domain, User user) {
+		return getInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	}
+		
+	public static InvofoxConfiguration getInvofoxConfiguration(Domain domain, String login) {
+		return getInvofoxConfiguration(domain.getName(), domain.getId(), login);
+	}
+		
+	public static InvofoxConfiguration getInvofoxConfiguration(String domainName, Integer domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getInvofoxConfiguration(ctx);
+		}
+	}
+	
+	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, User user, InvofoxConfiguration config) {
+		return saveInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
+	}
+		
+	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, String login, InvofoxConfiguration config) {
+		return saveInvofoxConfiguration(domain.getName(), domain.getId(), login, config);
+	}
+		
+	public static InvofoxConfiguration saveInvofoxConfiguration(String domainName, Integer domainId, String login, InvofoxConfiguration config) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveInvofoxConfiguration(ctx, config);
+		}
+	}
 	
 	// TICKET BAI CONFIGURATION
 
@@ -7901,6 +7958,12 @@ public class AON {
 		}
 	}
 	
+	public static void acceptDeliveryPackaging(Domain domain, User user, Integer deliveryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().acceptDeliveryPackaging(ctx, deliveryId);
+		}
+	}
+	
 	// ---------- DOMAIN LINKED
 
 	public static List<DomainLinked> getDomainLinkedList(String domainName, Integer domainId, String login, Integer registry) {
@@ -8096,11 +8159,34 @@ public class AON {
 		}
 	}	
 	
-	public static void deleteFinance(String domainName, int domainId, String user, Integer financeId) {
+	public static Integer createSepaFile(String domainName, int domainId, String user, Integer fbatchId) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
-			getFinance().deleteFinance(ctx, financeId);
+			return getFinance().createSepaFile(ctx, fbatchId);
+		}
+	}
+
+	public static LinkedList<FBatch> getFBatches(String domainName, int domainId, String user, FBatchParams params, int offset, int limit) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			return getFinance().getFBatches(ctx, p -> FBatchUtils.getFilter(p, params), offset, limit);
+		}
+	}
+	
+	public static FBatch getFBatch(String domainName, int domainId, String user, Integer fbatchId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			return getFinance().getFBatch(ctx, fbatchId);
+		}
+	}
+
+	public static void deleteFBatches(String domainName, int domainId, String user, LinkedList<Integer> fBatchIds) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			getFinance().deleteFBatches(ctx, fBatchIds);
+		}
+	}
+
+	public static FBatch createUpdateFBatch(String domainName, int domainId, String user, FBatch fBatch) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
+			return getFinance().createUpdateFBatch(ctx, fBatch);
 		}
 	}	
-	
 	
 }

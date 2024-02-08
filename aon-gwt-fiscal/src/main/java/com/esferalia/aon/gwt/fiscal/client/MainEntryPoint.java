@@ -19,6 +19,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
@@ -34,8 +36,10 @@ import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -215,6 +219,8 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
+	private static final String FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT = "FBatchPaymentPayroll";
+	private static final String FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT = "FBatchPaymentTreasury";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -246,6 +252,12 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== NORDIGEN
 	//
 	private static final String NORDIGEN_ENTRY_POINT = "NordigenModule";
+	//
+	//    ================================================================== BOOKING RESUME
+	//
+	private static final String DOMAIN_BOOKING_RESUME_ENTRY_POINT = "DomainBookingResume";
+	private static final String CUSTOMER_BOOKING_RESUME_ENTRY_POINT = "CustomerBookingResume";
+	
 
 	@Override
 	public void onModuleLoad() {
@@ -484,6 +496,36 @@ public class MainEntryPoint implements EntryPoint {
 					FinanceModule financeModule = new FinanceModule();
 					financeModule.setIsPayroll(true);
 					financeModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYROLL_PAYMENT);
+					fBatchPaymentPayrollModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYMENT);
+					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				
 			});
@@ -828,6 +870,36 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Sii().onModuleLoad();
+				}
+				
+			});
+		}  else if ( entryPoint.equalsIgnoreCase(DOMAIN_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					DomainBookingResumeModule dbrm = new DomainBookingResumeModule();
+					dbrm.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(CUSTOMER_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerBookingResumeModule dbrm = new CustomerBookingResumeModule();
+					dbrm.onModuleLoad();
 				}
 				
 			});

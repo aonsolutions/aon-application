@@ -19,6 +19,7 @@ public class AccountingConfig implements Serializable {
 	private Account defaultPaidRetAccount;
 	private Account defaultCashAccount;
 	private Account vatNegativeAdjustAccount;
+	private Account directTaxAdjustAccount;
 	private Account defaultDUAVatAccount;
 	private Account defaultDUADutyAccount;
 	private Account defaultSalary;
@@ -134,7 +135,13 @@ public class AccountingConfig implements Serializable {
 		this.vatNegativeAdjustAccount = vatNegativeAdjustAccount;
 		return this;
 	}
-	
+	public Account getDirectTaxAdjustAccount() {
+		return directTaxAdjustAccount;
+	}
+	public AccountingConfig setDirectTaxAdjustAccount(Account directTaxAdjustAccount) {
+		this.directTaxAdjustAccount = directTaxAdjustAccount;
+		return this;
+	}
 	public Account getDefaultDUAVatAccount() {
 		return defaultDUAVatAccount;
 	}

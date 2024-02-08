@@ -46,6 +46,7 @@ import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.parser.HTMLParser;
 import org.htmlunit.html.parser.HTMLParserListener;
 import org.htmlunit.javascript.JavaScriptErrorListener;
@@ -352,6 +353,16 @@ public class HtmlUnitToolkit {
 		checkStatusAndDown(page);
 		return page;
 	}
+	
+	public static HtmlPage selectOption(HtmlPage htmlPage, String id, String value) throws IOException {
+		HtmlSelect htmlSelect = (HtmlSelect) htmlPage.getElementById(id);
+		htmlSelect.focus();
+		htmlSelect.click();
+		htmlPage = htmlSelect.getOptionByValue(value).click();
+		htmlSelect.blur();
+		return htmlPage;
+	}
+	
 	
 	//Method to disable all the HtmlUnit web client logs
 	public static void disableLogging (WebClient webClient) {

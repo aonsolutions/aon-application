@@ -336,6 +336,9 @@ public class Mod130AEAT2023Declaration extends Mod130Declaration {
 	}
 	
 	private static double getInitialC15(AONContext ctx, final Mod130 mod) {
+		Mod130AEAT2023Declaration dec = new Mod130AEAT2023Declaration( );
+		dec.calculate(ctx, mod);
+		
 		double c14 = mod.getAmount(Mod130Key.C14);
 		double c15 = 0.0; 
 		if (c14 > 0) {

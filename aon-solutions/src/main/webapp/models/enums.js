@@ -34,6 +34,7 @@ export const Role = {
 	MANAGEMENT_MANAGER: 'MANAGEMENT_MANAGER',	// ACCESO A GESTION - MODO ASESOR
 	ALMA: 'ALMA',			           	        // ACCESO AL SERVICIO ALMA
 	OCR: 'OCR',				                    // ACCESO AL SERVICIO OCR
+	INVOFOX: 'INVOFOX',							// ACCESO AL SERVICIO OCR INVOFOX
 	BANK: 'BANK',				                // ACCESO AL SERVICIO BANK
 	CONVENIOS: 'CONVENIOS',			            // ACCESO AL SERVICIO CONVENIOS
 	AON: 'AON',
@@ -94,6 +95,7 @@ export const App = {
   	FISCAL: 'FISCAL',
   	PAYROLL: 'PAYROLL',
  	OCR: 'OCR',
+	INVOFOX: 'INVOFOX',
   	AIO: 'AIO',
   	ALMA: 'ALMA',
   	COMUNICA: 'COMUNICA',

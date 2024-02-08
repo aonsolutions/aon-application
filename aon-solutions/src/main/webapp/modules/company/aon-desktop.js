@@ -8,7 +8,7 @@ import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { uploadDocuments } from "../documental/DocumentalUtils.js";
+import { uploadDocuments, uploadOption } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
@@ -46,6 +46,7 @@ import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonDesktop extends AonElement {
 
@@ -127,7 +128,9 @@ export class AonDesktop extends AonElement {
 		});
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
+		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => {
+			this.uploadDocumentsDesktop(undefined, target.files);
+		});
 
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
@@ -328,7 +331,32 @@ export class AonDesktop extends AonElement {
 	}
 
 	uploadDocumentsDesktop(input, files){
-		uploadDocuments(input, files, this.getDur());
+		let d = new AonDialog();
+		let rootPanel = document.getElementById("rootPanel");
+		rootPanel.appendChild(d);
+		d.clear();
+		// if(isMobile()) d.width = '400px';
+		d.setTitle(MSG.UPLOAD_FILE);
+		d.setContent(uploadOption(this.getDur()));
+		d.addAcceptAction(async() => {
+		  let data = {
+			  category: document.getElementById("aonDocumentalUploadCategory").value,
+			  scope: document.getElementById("aonDocumentalUploadScope").value,
+			  tag: document.getElementById("aonDocumentalUploadTag").value,
+			  type: document.getElementById("aonDocumentalUploadType").value
+		  }
+
+		  let uploadToast = this.getElement('aonUploadToast');
+		  if(!uploadToast){ 
+			  uploadToast = new AonUploadToast();
+			  uploadToast.setDur(this.getDur());
+			  this.appendChild(uploadToast);
+		  }
+		  for (let file of files) {
+			  uploadToast.addFile("documental", file, data);
+		  }
+		});
+		d.open();
 	}
 
 	uploadInvoiceDesktop(input, files){
@@ -338,8 +366,11 @@ export class AonDesktop extends AonElement {
 			uploadToast.setDur(this.getDur());
 			this.appendChild(uploadToast);
 		}
+		let data = {
+			uploaded : 0
+		}
 		for (let file of files) {
-			uploadToast.addFile("invoice", file);
+			uploadToast.addFile("invoice", file, data);
 		}
 	}
 
@@ -477,7 +508,7 @@ export class AonDesktop extends AonElement {
 
 			let pygCard = new AonCard();
 			pygCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			pygCard.id = "pyg";
+			pygCard.id = "pygCard";
 			// pygCard.title = "Pérdidas y Ganancias";
 			pygCard.message = "Pérdidas y Ganancias";
 			pygCard.setApp(Apps.ACCOUNTING);
@@ -570,7 +601,7 @@ export class AonDesktop extends AonElement {
 			// Bancos
 			let bankCard = new AonCard();
 			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			bankCard.id = "bank";
+			bankCard.id = "bankCard";
 			// bankCard.title = "Bancos";
 			bankCard.message = "Bancos";
 			bankCard.setApp(Apps.ACCOUNTING);
@@ -596,7 +627,7 @@ export class AonDesktop extends AonElement {
 			// Impuestos
 			let fiscalCard = new AonCard();
 			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			fiscalCard.id = "fiscal";
+			fiscalCard.id = "fiscalCard";
 			// fiscalCard.title = "Impuestos";
 			fiscalCard.message = "Impuestos";
 			fiscalCard.setApp(Apps.FISCAL);
@@ -613,7 +644,9 @@ export class AonDesktop extends AonElement {
 			spanPeriod.style.fontSize =  "1rem";
 			spanPeriod.style.color = "#d2d2d6";
 			spanPeriod.style.fontWeight = "500";
-			fiscalDefaultFilter.then(filter => spanPeriod.innerHTML = filter.title);
+			if(fiscalDefaultFilter){
+				fiscalDefaultFilter.then(filter => spanPeriod.innerHTML = filter ? filter.title : '');
+			}
 			fiscalCard.addSection2(spanPeriod);
 			
 			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal(fiscalCard));
@@ -628,7 +661,7 @@ export class AonDesktop extends AonElement {
 			// Documental
 			let documentalCard = new AonCard();
 			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			documentalCard.id = "documental";
+			documentalCard.id = "documentalCard";
 			// documentalCard.title = "Documental";
 			documentalCard.message = "Documental";
 			documentalCard.setApp(Apps.DOCUMENTAL);
@@ -707,9 +740,13 @@ export class AonDesktop extends AonElement {
 	  };
 
 	filterPyG(pygCard){
-		let button = this.getElement('pygTitleSection2OpcionesButtonIconButton');
+		let button = this.getElement('pygCardTitleSection2OpcionesButtonIconButton');
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
+
+		let pyGYearSelect = this.getElement('pyGyearelect');
+		let period = JSON.parse(pyGYearSelect.value);
+        let pygyYear = period.name;
 
 		let aonDashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
 
@@ -722,7 +759,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
@@ -735,7 +772,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("quarterly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("quarterly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
@@ -748,7 +785,7 @@ export class AonDesktop extends AonElement {
 			backgroundColor: "#4472C4",
 			fn: () => {
 				pygCard.clear();
-				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly");
+				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
@@ -853,6 +890,7 @@ export class AonDesktop extends AonElement {
 
 	async getFiscalFilter(){
 		let result = await this.getFilterModels();
+		if(!result || result.length == 0) return undefined;
 		let period = result[0];
 		return {year: period.year, period: period.period, title: period.periodText + " " + period.year};
 	}
@@ -893,7 +931,7 @@ export class AonDesktop extends AonElement {
 	  }
 
 	filterFiscal(){
-		let button = this.getElement('fiscalTitleSection2OpcionesButtonIconButton');
+		let button = this.getElement('fiscalCardTitleSection2OpcionesButtonIconButton');
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
@@ -954,6 +992,8 @@ export class AonDesktop extends AonElement {
 	async filterFutureFiscal(){
 		let aonFiscalCard = document.getElementById('aonFiscalCard');
 		let result = await this.getFilterModels();
+
+		if(!result || result.length === 0) { return; }
 
 		let lastPeriod;
 		let period;
@@ -1252,7 +1292,8 @@ export class AonDesktop extends AonElement {
 						switch(app.app){
 						case Apps.DOCUMENTAL.app:
 							let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-							uploadDocuments(inputDocumentFile, files, this.getDur());
+							// uploadDocuments(inputDocumentFile, files, this.getDur());
+							this.uploadDocumentsDesktop(undefined, files);
 							break;
 						case Apps.INVOICE.app:
 							let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);

@@ -68,6 +68,7 @@ export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
 export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
+export const AON_TAB_SUB_CONTENT = 'aonTabSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
@@ -126,6 +127,7 @@ export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionA
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
 export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
 export const AON_ELLIPSIS = 'aonEllipsis';
+export const AON_DOCUMENTAL_ELLIPSIS = 'aonDocumentalEllipsis';
 export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
@@ -182,12 +184,27 @@ export const AON_LOADING = 'aonLoading';
 
 // aon-new-input.css
 
+export const AON_NEW_INPUT = 'aonNewInput';
 export const AON_INPUT_BOX = 'aonInputBox';
 export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
 export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
 export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
+export const AON_INPUT_BOX_LABEL_INPUT_WARNING = 'aonInputBoxLabelInputWarning'
+export const AON_INPUT_BOX_LABEL_SPAN_WARNING = 'aonInputBoxLabelSpanWarning'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+export const AON_INPUT_MSG_WARNING = 'aonInputMsgWarning';
+
+
+// aon-new-textarea.css
+
+export const AON_NEW_TEXTAREA = 'aonNewTextarea';
+export const AON_TEXTAREA_BOX = 'aonTextareaBox';
+export const AON_TEXTAREA_BOX_LABEL = 'aonTextareaBoxLabel';
+export const AON_TEXTAREA_BOX_LABEL_TEXTAREA_ERROR = 'aonTextareaBoxLabelTextareaError'
+export const AON_TEXTAREA_BOX_LABEL_SPAN_ERROR = 'aonTextareaBoxLabelSpanError'
+export const AON_TEXTAREA_MSG = 'aonTextareaMsg';
+export const AON_TEXTAREA_MSG_ERROR = 'aonTextareaMsgError';
 
 // aon-access-card.css
 export const AON_ACCESS_CARD = 'aonAccessCard';
@@ -402,9 +419,19 @@ export const DIALOG_CANCEL = 'dialogCancel';
 // Color
 export const AON_COLOR_FULL = 'colorFull';
 
+
+// PDF.js
+export const PDFJS_PDF_VIEWER = 'pdfViewer';
+export const PDFJS_TEXT_LAYER = 'textLayer';
+
+
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name
  * @returns valid CSS variable expression.
  */
 export const variable = (name) => {return "var(" + name + ")";}
+
+export const AON_INVOICE_ERROR = 'aonInvoiceError';
+export const AON_INVOICE_WARNING = 'aonInvoiceWarning';

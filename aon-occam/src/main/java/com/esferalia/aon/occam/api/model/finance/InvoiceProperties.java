@@ -52,4 +52,5 @@ public interface InvoiceProperties extends Serializable {
 	Property<Integer> getRSellerIdProperty();
 	Property<java.sql.Date> getRSellerStartDateProperty();
 	Property<java.sql.Date> getRSellerEndDateProperty();
+	Property<Byte> getRSellerStatusProperty();
 }

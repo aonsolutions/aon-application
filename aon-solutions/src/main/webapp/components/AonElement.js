@@ -189,6 +189,14 @@ export class AonElement extends HTMLElement{
       || LS.getDomainName() === 'sig.aonsolutions.org';
 	}
 
+  isConsole(){
+    const href = window.location.href;
+		return href.includes('console.aonsolutions.org')
+      || href.includes('console-pro.aonsolutions.net')
+      || href.includes('console-ayudat.aonsolutions.net')
+      || href.includes('console-grupoayudat.aonsolutions.net');
+	}
+
   showMessage(msg) {
     this.showToast({
       type: CONSTANT.SUCCESS,

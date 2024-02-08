@@ -8,6 +8,26 @@ import { AonDocumental } from "./aon-documental.js";
 import { ASESOR_TYPE_OPTION,
     ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 
+export const uploadDocument = (file, data, success, error) => {
+    if (file) {
+        getReader(file).then(f => {
+            const doc = {
+                ...f,
+                contentName: f.name,
+                contentSize: f.size,
+                category: data.category,
+                tag: data.tag,
+                scope: data.scope,
+                type: data.type
+            };
+            uploadFileDocumental(doc)
+                .then(r => success(file))
+                .catch((e) => error(file, e));
+        }).catch((e) => error(file, e));
+    }
+}
+  
+
 export const uploadDocuments = (el, files, dur) => {
     let d = new AonDialog();
     let rootPanel = document.getElementById("rootPanel");

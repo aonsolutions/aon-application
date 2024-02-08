@@ -96,12 +96,39 @@
 										<aon:outputLabel for="Sales_carrier"
 											value="#{bundle.warehouse_delivery_carrier}" />
 										<aon:selectOneMenu id="Sales_carrier" 
-											value="#{sales.to.carrier}">
+											value="#{sales.carrier}">
 											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{carrierCollections.carriers}" />
 										</aon:selectOneMenu>
 										
-					
+									</aon:panelGrid>
+									<!-- <aon:div>
+										<aon:selectBooleanCheckbox id="Sales_includePackingList" styleClass="aon-margin-left"
+											value="#{sales.includePackingList}" 
+											reRender="packingListDiv" immediate="true"
+											/>
+										<aon:outputLabel for="Sales_includePackingList" styleClass="aon-italic"
+											value="Incluir Packing List" />
+									</aon:div>
+									<aon:div id="packingListDiv" styleClass="aon-padding-top">
+										<aon:if test="#{sales.includePackingList}">
+												
+									<aon:panelGrid id="packingListMenuGrid" columns="4" dir="true" style="width: 100%;" >
+										<aon:outputLabel for="Sales_PackingList"
+											value="Packing List" />
+										<aon:div>
+											<aon:selectOneMenu id="Sales_PackingList" 
+												value="#{sales.packingList}">
+												<f:selectItem itemLabel=" - " itemValue="#{null}" />
+												<f:selectItems value="#{sales.packingLists}" />
+											</aon:selectOneMenu>
+											
+											<aon:selectBooleanCheckbox id="Sales_newPackingList" styleClass="aon-margin-left"
+												value="#{sales.newPackingList}" />
+											<aon:outputLabel for="Sales_newPackingList" styleClass="aon-italic"
+												value="Crear Nuevo Packing List" />
+										</aon:div>
+										
 										<aon:outputLabel for="Sales_numberPlate"
 											value="Matricula" />
 										<aon:inputText id="Sales_numberPlate"  
@@ -120,6 +147,13 @@
 											size="20" maxlength="128"
 											value="#{sales.driverDocument}" />
 									</aon:panelGrid>	
+									</aon:if>
+									</aon:div> -->
+									
+									<!-- Seleccionar detalles ... -->
+									
+									
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>

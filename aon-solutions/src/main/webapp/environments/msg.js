@@ -96,6 +96,7 @@ export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
 export const BOOKING_PANEL = MSG.BOOKING_PANEL;
+export const BOOKING_RESUME = "Resumen de Contratación"; // TODO
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
@@ -242,6 +243,10 @@ export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const EXPIRED = MSG.EXPIRED;
 export const ESTIMATED_TIME = "Tiempo estimado";
+export const ERRORS = MSG.ERRORS;
+export const ERR_EMPTY_VALUE = "Campos sin valor";
+export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
+export const EXPORTED = "Exportadas";
 
 // ----- F
 
@@ -274,6 +279,7 @@ export const GROUPED = "Agrupadas";//TODO
 
 export const HEADER = MSG.HEADER;
 export const HELP = MSG.HELP;
+export const HIDE_FIELDS = "Ocultar campos"; //TODO
 export const HIRING = MSG.HIRING;
 export const HIRING_DATA = MSG.HIRING_DATA;
 export const HISTORIC = MSG.HISTORIC;
@@ -643,6 +649,7 @@ export const VERIFIED = 'Verificado';
 export const VERIFICATION = 'Verificación';
 export const VERIFICATION_CODE = 'Código Verificación';
 export const VERSION = MSG.VERSION;
+export const VIEW_FIELDS = "Ver campos"; //TODO
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 export const VIEW = "Ver"; // TODO

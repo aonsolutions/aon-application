@@ -34,6 +34,9 @@ public class Mod184Partner implements Serializable {
 	private double assetPercent;
 	private int assetDays;
 	
+	private double rendNetoPrevio;
+	private double rendNetoMinorado;
+	
 
 	private boolean dirty;
 	private boolean deleted;
@@ -251,7 +254,23 @@ public class Mod184Partner implements Serializable {
 		this.assetDays = assetDays;
 		return this;
 	}
-	
+
+	public double getRendNetoPrevio() {
+		return rendNetoPrevio;
+	}
+	public Mod184Partner setRendNetoPrevio(double rendNetoPrevio) {
+		this.rendNetoPrevio = rendNetoPrevio;
+		return this;
+	}
+
+	public double getRendNetoMinorado() {
+		return rendNetoMinorado;
+	}
+	public Mod184Partner setRendNetoMinorado(double rendNetoMinorado) {
+		this.rendNetoMinorado = rendNetoMinorado;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}

@@ -44,11 +44,26 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
 
+  export const RAWDOC_OCR_REJECTED = {
+    id: CONSTANT.RAWDOC_OCR_REJECTED.initCap(),
+    name: MSG.REJECTEDS,
+    icon: MATERIAL_ICONS.ERROR
+  }
+
+  export const RAWDOC_OCR_EXPORTED = {
+    id: CONSTANT.RAWDOC_OCR_EXPORTED.initCap(),
+    name: MSG.EXPORTED,
+    icon: MATERIAL_ICONS.DONE
+  }
+
   export const RAWDOC_OCR = {
     id: CONSTANT.RAWDOC_OCR.initCap(),
     name: 'OCR',
-    icon: 'find_in_page'
-  }
+    icon: 'find_in_page',
+    clickable: true,
+    options: [RAWDOC_OCR_REJECTED, RAWDOC_OCR_EXPORTED]
+ }
+
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
@@ -171,7 +186,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const CONFIGURATION_SII_TBAI = {
     id: CONSTANT.CONFIGURATION_SII_TBAI.initCap(),
     name: MSG.SII_TICKETBAI,
-    icon: MATERIAL_ICONS.SETTING    
+    icon: MATERIAL_ICONS.SETTINGS    
   }   
 
   export const PENDING_DOCUMENTS = {

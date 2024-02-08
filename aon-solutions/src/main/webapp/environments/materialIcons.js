@@ -229,7 +229,7 @@ export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
 export const SECURITY = 'security';
 export const SEND = 'send';
-export const SETTING = 'setting';
+export const SETTINGS = 'settings';
 export const SHOPPING_BAG = 'shopping_bag';
 export const STICKY_NOTE = 'sticky_note_2';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
@@ -255,6 +255,7 @@ export const VISIBILITY_OFF = 'visibility_off';
 
 // ----- W
 export const WAREHOUSE = 'warehouse';
+export const WARNING = 'warning';
 
 export const OPEN_IN_FULL = "open_in_full";
 export const OPEN_IN_NEW  = "open_in_new";

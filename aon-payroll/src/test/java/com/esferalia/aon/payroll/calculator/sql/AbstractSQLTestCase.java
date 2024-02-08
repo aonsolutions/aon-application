@@ -163,7 +163,7 @@ public abstract class AbstractSQLTestCase {
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
-//		shutUp();
+		shutUp();
 		connection = connect();
 		AONContext context = new AONContext(connection);
 		cleanSystemData(context);

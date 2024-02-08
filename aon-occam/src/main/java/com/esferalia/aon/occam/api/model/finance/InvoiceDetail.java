@@ -40,6 +40,7 @@ public class InvoiceDetail implements Serializable {
 	private boolean prepayment;
 
 	private LinkedList<String> segments;
+	@Deprecated // Debería estar en Invoice dentro de Registry...  
 	private String sellerSupport;
 	
 	// WAREHOUSE
@@ -351,10 +352,12 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
+	@Deprecated // Debería estar en Invoice dentro de Registry...  
 	public String getSellerSupport() {
 		return sellerSupport;
 	}
 	
+	@Deprecated // Debería estar en Invoice dentro de Registry... 
 	public InvoiceDetail setSellerSupport(String sellerSupport) {
 		this.sellerSupport = sellerSupport;
 		return this;

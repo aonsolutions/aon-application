@@ -1,4 +1,9 @@
 
+.aonNewInput {
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+}
+
+
 .aonInputBox {
 	position: relative;
 	width: 100%;
@@ -11,6 +16,10 @@
 
 .aonInputMsgError {
 	color: var(--aonError);
+}
+
+.aonInputMsgWarning {
+	color: var(--aonWarning);
 }
 
 .aonInputBoxLabel > input {
@@ -38,6 +47,10 @@
 	border: 2px solid var(--aonError) !important;
 }
 
+.aonInputBoxLabelInputWarning {
+	border: 2px solid var(--aonWarning) !important;
+}
+
 .aonInputBoxLabel > span {
 	top: -8px;
 	padding-left: 5px;
@@ -52,6 +65,10 @@
 
 .aonInputBoxLabelSpanError {
 	color: var(--aonError);
+}
+
+.aonInputBoxLabelSpanWarning {
+	color: var(--aonWarning);
 }
 
 .aonInputBoxLabel > span:focus {

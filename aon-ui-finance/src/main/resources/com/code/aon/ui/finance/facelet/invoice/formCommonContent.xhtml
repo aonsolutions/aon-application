@@ -151,10 +151,20 @@
 					 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
 			</aon:div>
 			<aon:div rendered="#{invoiceController.rectifier}">
+			
 				<aon:outputFormat styleClass="aon-bold aon-label-error"
 					 value="#{bundle.finance_invoice_rectifier_message2}">
 					<f:param value="#{invoiceController.to.rectificationInvoice.referenceCode}" />
 				</aon:outputFormat>
+				<aon:if test="#{invoiceController.rectificationInvoiceNull}">
+				
+					<aon:commandLink id="Invoice_rectificationInvoiceAdd" immediate="true"
+						styleClass="aon-icon-new" style="margin-left: 5px; padding-left: 20px;"
+						title="Añadir Factura Rectificada">
+						<f:setPropertyActionListener
+							target="#{invoiceController.showAddRectificationInvoiceWindow}" value="#{true}" />					
+					</aon:commandLink>
+				</aon:if>
 			</aon:div>
 			<aon:div rendered="#{invoiceController.rectified}">
 				<aon:outputFormat styleClass="aon-bold aon-label-error"

@@ -25,7 +25,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 	}
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isAraba() && mod.getYear() >= 2022;
+		return  mod.isAraba() && mod.getYear() == 2022;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{

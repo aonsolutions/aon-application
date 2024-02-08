@@ -33,31 +33,31 @@ export const TaxType = {
 
 export const WithholdingType = [
   {
-    id: CONSTANT.PROFESSIONAL,
+    id: "PROFESSIONAL",
     name: "Profesional (G/01) - 15%",
     description: "Actividades profesionales con carácter general.",
     percentage: 15.0
   },
   {
-    id: CONSTANT.RENTING,
+    id: "RENTING",
     name: "Arrendamiento - 19%",
     description: "Arrendamiento o subarrendamiento de bienes inmuebles urbanos.",
     percentage: 19.0
   },
    {
-    id: CONSTANT.MOVABLE_CAPITAL,
+    id: "MOVABLE_CAPITAL",
     name: "Cap. Mobiliario (A) - 19%",
     description: "Derivados de la participación en fondos propios de entidades.",
     percentage: 19.0
   },
    {
-    id: CONSTANT.FARMER,
+    id: "FARMER",
     name: "Agrícola (H/01) - 2%",
     description: "Actividades agrícolas y ganaderas en general.",
     percentage: 2.0
   },
    {
-    id: CONSTANT.TRANSPORT_OPERATOR,
+    id: "TRANSPORT_OPERATOR",
     name: "Est. Obj. (H/04) - 1%",
     description: "Determinadas actividades empresariales en Estimación Objetiva.",
     percentage: 1.0
@@ -274,3 +274,63 @@ export const getTaxPercentageOption = (type) => {
     return TaxIRPFAGRIPercentage;
   } 
 }
+
+
+export const ErrCode = {
+	ERR_FILE_TOO_BIG: 'ERR_FILE_TOO_BIG',
+	ERR_TOO_MANY_PAGES: 'ERR_TOO_MANY_PAGES',
+	ERR_UNSUPPORTED_FILE_FORMAT: 'ERR_UNSUPPORTED_FILE_FORMAT',
+	ERR_EMPTY_VALUE: 'ERR_EMPTY_VALUE', 
+	ERR_INCORRECT_VALUE: 'ERR_INCORRECT_VALUE', 
+	ERR_INVALID_FORMAT: 'ERR_INVALID_FORMAT',
+	ERR_LOW_CONFIDENCE: 'ERR_LOW_CONFIDENCE',
+	ERR_HANDWRITTEN_DOC: 'ERR_HANDWRITTEN_DOC',
+	ERR_INVALID_DOC_TYPE: 'ERR_INVALID_DOC_TYPE',
+	ERR_CROPPED_DOC: 'ERR_CROPPED_DOC',
+	ERR_MULTI_DOC_PAGE_FOUND: 'ERR_MULTI_DOC_PAGE_FOUND',
+	ERR_PAGES_MISSING: 'ERR_PAGES_MISSING',
+	ERR_BAD_QUALITY: 'ERR_BAD_QUALITY',
+	ERR_DUPLICATED_DOCUMENT: 'ERR_DUPLICATED_DOCUMENT',
+	ERR_MISSING_INFO: 'ERR_MISSING_INFO',
+	ERR_BREAKDOWN_AMOUNT_MISSMATCH: 'ERR_BREAKDOWN_AMOUNT_MISSMATCH',
+	ERR_CLASSIFIER_DISCARD: 'ERR_CLASSIFIER_DISCARD',
+	WARN_CLASSIFIER_FORCED_DEFTYPE: 'WARN_CLASSIFIER_FORCED_DEFTYPE',
+	ERR_OTHER: 'ERR_OTHER'
+};
+
+export const ErrKey = {
+	DOMAIN: 'DOMAIN',
+	WORKPLACE: 'WORKPLACE',
+	TYPE: 'TYPE',
+	BASES_QUOTAS: 'BASES_QUOTAS',
+	SERIES: 'SERIES',
+	NUMBER: 'NUMBER',
+	DUPLICATED_SERIES_NUMBER: 'DUPLICATED_SERIES_NUMBER',
+	REFERENCE_CODE: 'REFERENCE_CODE',
+	DUPLICATED_REFERENCE_CODE: 'DUPLICATED_REFERENCE_CODE',
+	TRANSACTION: 'TRANSACTION',
+	ISSUE_DATE: 'ISSUE_DATE',
+	TAX_DATE: 'TAX_DATE',
+	TAX_RATE: 'TAX_RATE',
+	TAX_BASE: 'TAX_BASE',
+	TAX_QUOTA: 'TAX_QUOTA',
+	IRPF_RATE: 'IRPF_RATE',
+	IRPF_BASE: 'IRPF_BASE',
+	IRPF_QUOTA: 'IRPF_QUOTA',
+	SCOPE: 'SCOPE',
+	REGISTRY: 'REGISTRY',
+	AMBIGUOUS_REGISTRY: 'AMBIGUOUS_REGISTRY',
+	RDOCUMENT: 'RDOCUMENT',
+	RDOCUMENT_COUNTRY: 'RDOCUMENT_COUNTRY',
+	RNAME: 'RNAME',
+	ADDRESS: 'ADDRESS',
+	DETAIL_DESCRIPTION: 'DETAIL_DESCRIPTION',
+	DETAILS: 'DETAILS',
+	ACCOUNT_ENTRY: 'ACCOUNT_ENTRY',
+	FINANCE_AMOUNT_ZERO: 'FINANCE_AMOUNT_ZERO',
+	FINANCE_WRONG_DUE_DATE: 'FINANCE_WRONG_DUE_DATE',
+	FINANCE_WRONG_ACCOUNT_BANK: 'FINANCE_WRONG_ACCOUNT_BANK',
+	TOTAL: 'TOTAL',
+	PAY_METHOD: 'PAY_METHOD'
+	
+};

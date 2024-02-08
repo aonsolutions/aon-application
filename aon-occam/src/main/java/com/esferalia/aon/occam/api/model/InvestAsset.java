@@ -17,7 +17,6 @@ public class InvestAsset implements Serializable {
 	private Date endDate;
 	private double vatPercent;
 	private double retentionPercent;
-	private double percent;
 	private String properties;
 
 	public Integer getId() {
@@ -110,15 +109,6 @@ public class InvestAsset implements Serializable {
 
 	public InvestAsset setRetentionPercent(double retentionPercent) {
 		this.retentionPercent = retentionPercent;
-		return this;
-	}
-
-	public double getPercent() {
-		return percent;
-	}
-
-	public InvestAsset setPercent(double percent) {
-		this.percent = percent;
 		return this;
 	}
 

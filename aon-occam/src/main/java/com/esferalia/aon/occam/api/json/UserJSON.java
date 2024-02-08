@@ -50,6 +50,7 @@ public class UserJSON {
 			.put(IJsonNames.PORTAL, user.isPortal())
 			.put(IJsonNames.SHARED, user.isShared())
 			.put(IJsonNames.LOGIN, user.getLogin())
+			.put(IJsonNames.ACTIVE, user.isActive())
 			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()));
 	}
 }

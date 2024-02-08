@@ -29,9 +29,12 @@ import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -58,10 +61,12 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
@@ -131,6 +136,11 @@ public class FinanceImpl implements IFinance {
 		return InvoiceDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
 	}
 
+	@Override
+	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice) {
+		ctx.getDslContext().transaction(configuration -> InvoiceDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
+	}
+	
 	
 	// ------------------------------------- INVOICE DETAIL
 	
@@ -478,6 +488,14 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Finance unSettleFinance(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceTrackingDAO.unSettle(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance);
+		});			
+	}
+	
+	@Override
 	public Finance undoFinance(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration -> {
 			FinanceTrackingDAO.undo(ctx, finance);
@@ -636,6 +654,20 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> PrintInvoiceConfigurationDAO.save(ctx, pic));
 	}
+
+	// ---------- TBAI CONFIGURATION
+	
+	@Override
+	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvofoxConfigurationDAO.get(ctx));
+	}
+
+	@Override
+	public InvofoxConfiguration saveInvofoxConfiguration(AONContext ctx, InvofoxConfiguration config) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvofoxConfigurationDAO.save(ctx, config));
+	}
 	
 	// ---------- TBAI CONFIGURATION
 	
@@ -782,6 +814,36 @@ public class FinanceImpl implements IFinance {
 	public void deleteFinance(CloseableAONContext ctx, Integer financeId) {
 		ctx.getDslContext().transaction(
 				configuration -> FinanceDAO.delete(ctx, financeId));
+	}
+	
+	@Override
+	public Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SettleSalariesDAO.createSepaFile(ctx, fbatchId));
+	}
+
+	@Override
+	public LinkedList<FBatch> getFBatches(CloseableAONContext ctx, FBatchFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.getList(ctx, filter, offset, limit));	
+	}
+	
+	@Override
+	public FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.get(ctx, fbatchId));	
+	}
+
+	@Override
+	public void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds) {
+		ctx.getDslContext().transaction(
+				configuration -> FBatchDAO.delete(ctx, fBatchIds));
+	}
+
+	@Override
+	public FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.save(ctx, fBatch));	
 	}
 
 

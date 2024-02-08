@@ -83,7 +83,7 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(),16,2))  // Importe transmisiones inmuebles tercer trimestre  
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(),16,2))      // Importe operaciones cuarto trimestre
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(),16,2)) // Importe transmisiones inmuebles cuarto trimestre  
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getOperatorNif(),17))	 		            // NIF operador intracomunitario
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 		            // NIF operador intracomunitario
 		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual()?"X":" ")                                             // Operaciones régimen especial criterio de caja
 		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp()?"X":" ")                                                    // Operación con inversión del sujeto pasivo
 		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime()?"X":" ")                                          // Operación con bienes vinculados o destinados a vincularse al régimen de depósito distinto del aduanero
@@ -183,7 +183,7 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(),16,2))  // Importe transmisiones inmuebles tercer trimestre  
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(),16,2))      // Importe operaciones cuarto trimestre
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(),16,2)) // Importe transmisiones inmuebles cuarto trimestre  
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getOperatorNif(),17))	 		            // NIF operador intracomunitario
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getOperatorNif(declared.getOperatorNif()),17))	 		            // NIF operador intracomunitario
 		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual()?"X":" ")                                             // Operaciones régimen especial criterio de caja
 		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp()?"X":" ")                                                    // Operación con inversión del sujeto pasivo
 		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime()?"X":" ")                                          // Operación con bienes vinculados o destinados a vincularse al régimen de depósito distinto del aduanero
@@ -318,6 +318,19 @@ public class Mod347Writer {
 				ctx.close();
 		}
 		
+	}
+	
+	// Devuelve el mismo nif que se le pasa, si el NIF es de un pais intracomunitario, en caso contrario devuelve una cadena vacia
+	// Se hace así por los registros de los servicios extracomunitarios, pues en la linea del 347 se guarda el NIF del cliente/proveedor en 
+	// el campo NIF operador intracomunitario, pero en ese campo solo se admiten NIF-IVA comunitarios, por eso al presentarlo se deja vacio
+	private static String getOperatorNif(String nif) {
+		if (AonStringUtils.isNotBlank(nif)) {
+			Country country = Country.safeValueOf(AonStringUtils.left(nif,2));
+			if (country != null && !country.isIntracommunityCountry()) {
+				return "";
+			}			
+		}
+		return nif;
 	}
 
 

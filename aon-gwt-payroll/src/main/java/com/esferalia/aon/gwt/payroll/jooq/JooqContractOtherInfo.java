@@ -340,6 +340,7 @@ public class JooqContractOtherInfo {
 		contractOtherDataNames.add("I_OPT17_FULL_TIME_QUOTE_BONUS");
 		contractOtherDataNames.add("I_OPT17_DISCONT_TIME_QUOTE_BONUS");
 		contractOtherDataNames.add("I_OPT17_SRC_CONTRACT_SEPE_MUNIC");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE");
 		
 		return contractOtherDataNames;
 	}
@@ -394,6 +395,7 @@ public class JooqContractOtherInfo {
 		contractOtherDataNames.add("T_OPT14_DISTANCE_ADJUSTMENT");
 		contractOtherDataNames.add("T_OPT14_DISTANCE_ADJUSTMENT_MORE");
 		contractOtherDataNames.add("T_OPT14_COLLECTIVE_AGREEMENT");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE");
 		
 		return contractOtherDataNames;
 	}
@@ -420,6 +422,7 @@ public class JooqContractOtherInfo {
 		contractOtherDataNames.add("L_HOLIDAYS");
 		contractOtherDataNames.add("L_ANNEX_I_CHECK");
 		contractOtherDataNames.add("L_ANNEX_II_CHECK");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE");
 		
 		return contractOtherDataNames;
 	}
@@ -457,6 +460,7 @@ public class JooqContractOtherInfo {
 		contractOtherDataNames.add("P_OPT4_STAFF_ADJUSTMENT_MORE");
 		contractOtherDataNames.add("P_OPT5_MOTIVATION");
 		contractOtherDataNames.add("P_OPT5_EMPLOYER");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE");
 		
 		return contractOtherDataNames;
 	}

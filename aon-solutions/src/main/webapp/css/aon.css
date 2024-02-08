@@ -3,6 +3,7 @@
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
+  --aonWarning: #e6970a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
@@ -883,6 +884,12 @@
   overflow-y: auto;
 }
 
+.aonTabSubContent {
+  position: relative;
+  height: calc(100vh - 182px);
+  overflow-y: auto;
+}
+
 .aonContent::-webkit-scrollbar {
   display: none;
 }
@@ -1703,8 +1710,9 @@ label.rating:hover {
   justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid rgb(221, 221, 221);
-  padding: 1rem 0px;
+  padding: .6rem 0px;
   cursor: pointer;
+  align-items: center;
 }
 
 .aonMessengerCardRow:hover{
@@ -1715,6 +1723,15 @@ label.rating:hover {
 .aonDocumentalCardRow:hover{
   border-top: 1px solid var(--aonDocumental);
   border-bottom: 1px solid var(--aonDocumental);
+}
+
+.aonDocumentalEllipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 13rem;
+  text-overflow: ellipsis;
 }
 
 .aonBadge{
@@ -1979,8 +1996,8 @@ aon-access-card{
       flex-direction: row;
   }
 
-  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
-    max-width: 21rem;
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
+      max-width: 21rem;
   }
 }
 
@@ -1991,8 +2008,8 @@ aon-access-card{
       max-width: 20rem;
   }
 
-  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
-    max-width: 30rem;
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
+      max-width: 30rem;
   }
 }
 
@@ -2016,7 +2033,7 @@ aon-access-card{
     max-width: 26rem;
   }
 
-  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
     max-width: 14rem;
   }
 
@@ -2081,4 +2098,16 @@ aon-access-card{
   100% {
     transform: rotate(360deg);
   }
+}
+
+
+.aonError .material-icons {
+	font-size: 20px;
+	color: var(--aonError);
+}
+
+.aonWarning .material-icons {
+	font-size: 20px;
+	color: var(--aonWarning);
+	
 }

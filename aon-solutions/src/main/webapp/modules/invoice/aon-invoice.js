@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod} from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -15,11 +15,11 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
+import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonDate } from '../../components/aon-date.js';
+import { AonNewDate } from '../../components/aon-new-date.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -34,6 +34,12 @@ import { AonEmail } from '../../components/aon-email.js';
 import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
 
 import {INVOICE} from  '../../services/app.js';
+import { AonDate } from '../../components/aon-date.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
+import { AonNewSuggestion } from '../../components/aon-new-suggestion.js';
+import { AonNewNumber } from '../../components/aon-new-number.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
+import { AonNewTextarea } from '../../components/aon-new-textarea.js';
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -204,6 +210,11 @@ export class AonInvoice extends AonElement {
 		this.FINANCE_BANK_ACCOUNT = this.FINANCE + CONSTANT.BANK_ACCOUNT.initCap();
 		this.FINANCE_AMOUNT = this.FINANCE + CONSTANT.AMOUNT.initCap();
 		this.FINANCE_DELETE = this.FINANCE + CONSTANT.DELETE.initCap();
+		
+		// ------ MESSAGES/ERRRORS
+		this.MESSAGES = this.DATA + 'Messages';
+		this.ERRORS_CARD = this.DATA + 'ErrorsCard';
+
 	}
 
 	getInvoice() {
@@ -404,7 +415,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
-		}
+		} 
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
@@ -423,6 +434,9 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
@@ -480,6 +494,8 @@ export class AonInvoice extends AonElement {
 		this.clearElement(content);
 		this.buildCommentCard(content);
 
+		this.buildMessagesCard(content);
+
 		let general = this.createElement(TAG.DIV);
 		general.id = this.GENERAL;
 		general.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
@@ -490,6 +506,9 @@ export class AonInvoice extends AonElement {
 
 		this.buildDetailCard(content);
 		this.buildFinanceCard(content);
+		if ( LS.isNewTheme() ) { 
+			this.showFieldsMessages(content);
+		}
 	}
 
 	buildCommunication() {
@@ -639,11 +658,368 @@ export class AonInvoice extends AonElement {
 			});
 		}
 	}
+	
+	showFieldsMessages(parent){
+		
+		let getText = ( err ) => {
+			switch ( err.code ) {
+				case ErrCode.ERR_EMPTY_VALUE: 
+					return "Sin valor"
+				case ErrCode.ERR_LOW_CONFIDENCE: 
+					return "Poca confianza"
+				case ErrCode.ERR_INVALID_FORMAT: 
+					return "Formato no válido"
+				case ErrCode.ERR_INCORRECT_VALUE: 
+					return "Valor incorrecto"
+				default:
+					return err.message;
+			}
+		};
+		
+		let getMessageHTML = ( err ) => {
+			let span = this.createElement(TAG.SPAN)
+			span.style.fontSize = "12px";
+			span.innerHTML = getText(err);
+			return span.outerHTML;
+			
+		};
+		
+		if(this.invoice.messages) {
+			this.invoice.messages
+			.filter( err => err.context )
+			//.filter( err => !err.context.line )
+			.forEach( (err, i ) => {
+				try {
+					switch ( err.context.key ){
+						case ErrKey.DOMAIN: 
+							break;
+						case ErrKey.WORKPLACE: 
+							break;
+						case ErrKey.TYPE: 
+							break;
+						case ErrKey.BASES_QUOTAS: 
+							break;
+						case ErrKey.SERIES: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.DUPLICATED_SERIES_NUMBER: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.NUMBER: 
+						case ErrKey.REFERENCE_CODE: 
+						case ErrKey.DUPLICATED_REFERENCE_CODE: 
+							this.getElement(this.REFERENCE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TRANSACTION: 
+							break;
+						case ErrKey.ISSUE_DATE: 
+							this.getElement(this.DATE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_DATE: 
+							break;
+						case ErrKey.TAX_RATE: 
+							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_BASE: 
+							this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_QUOTA: 
+							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+							break;
+						case ErrKey.IRPF_RATE: {
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_PERCENTAGE}${line}` ).addError(getMessageHTML(err));
+							break;
+						}
+						case ErrKey.IRPF_BASE: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_BASE}${line}` ).addError(getMessageHTML(err));
+							break;
+						}
+						case ErrKey.IRPF_QUOTA: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_QUOTA}${line}`).addError(getMessageHTML(err));
+							break;
+						}
+						case ErrKey.SCOPE: 
+							break;
+						case ErrKey.REGISTRY: 
+							break;
+						case ErrKey.AMBIGUOUS_REGISTRY: 
+							break;
+						case ErrKey.RDOCUMENT:{
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.RDOCUMENT_COUNTRY: 
+							break;
+						case ErrKey.RNAME: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.NAME).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.ADDRESS: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.DETAIL_DESCRIPTION: 
+							break;
+						case ErrKey.DETAILS: 
+							break;
+						case ErrKey.ACCOUNT_ENTRY: 
+							break;
+						case ErrKey.FINANCE_AMOUNT_ZERO: 
+							break;
+						case ErrKey.FINANCE_WRONG_DUE_DATE: 
+							break;
+						case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
+							break;
+						case ErrKey.TOTAL: 
+							this.getElement(this.TOTAL).addError(getMessageHTML(err));
+							break;
+						case ErrKey.PAY_METHOD: 
+							let line = err.context.line || 0; 
+							this.getElement(`${this.FINANCE_PAYMETHOD}${line}`).addError(getMessageHTML(err));
+							break;
+						default:
+							break;
+					}
+				} catch ( e ) {
+					console.error(e);
+				}
+			});
+		}
+	}
 
+	buildMessagesCard(parent) {
+		let messagesDiv = this.createElement(TAG.DIV);
+		messagesDiv.id = this.MESSAGES;
+		messagesDiv.className = CSS.AON_FLEX;
+		parent.appendChild(messagesDiv);
+
+		let hasErrors = this.invoice.messages && this.invoice.messages.length > 0;
+		if ( !hasErrors  ){
+			return;
+		}
+
+		let errorsCard = new AonCard();
+		errorsCard.id = this.ERRORS_CARD;
+		//errorsCard.title = MSG.ERRORS;
+		errorsCard.style.width = '100%';
+		
+		messagesDiv.appendChild(errorsCard);
+		
+
+		errorsCard.setContentHTML('');
+		errorsCard.setBackground('#ffc');
+
+		let ul = this.createElement(TAG.UL);
+		ul.classList.add(CSS.AON_UL);
+		ul.style.width = '100%';
+		errorsCard.setContent(ul);
+		
+		let createErrorDiv = (description, className) => {
+			
+			let errorDiv = this.createElement(TAG.DIV);
+			errorDiv.className = className ;
+			errorDiv.className += " " + CSS.AON_FLEX ;
+			errorDiv.className += " " + CSS.FLEX_ALIGN_CENTER;
+			
+			let iconSpan = this.createElement(TAG.SPAN);
+			iconSpan.className = CSS.MATERIAL_ICONS;
+			iconSpan.className += " " + CSS.AON_INPUT_MSG_ERROR;
+			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			iconSpan.style.color = className === CSS.AON_INVOICE_ERROR ? "#e83151": "#e3a733" ; 
+			errorDiv.appendChild(iconSpan);
+
+			let spaceSpan = this.createElement(TAG.SPAN);
+			spaceSpan.style.width = "16px";
+			errorDiv.appendChild(spaceSpan);
+			
+			let descriptionSpan = this.createElement(TAG.SPAN);
+			descriptionSpan.innerHTML = description;
+			errorDiv.appendChild(descriptionSpan);
+			
+			return errorDiv;			
+		};
+		
+		let createViewDiv = (viewMessage, hideMessage, errors) => {
+			let viewDiv = this.createElement(TAG.DIV);
+			
+			let viewButtonSpan = this.createElement(TAG.SPAN);
+			viewButtonSpan.innerHTML = viewMessage;
+			let hideButtonSpan = this.createElement(TAG.SPAN);
+			hideButtonSpan.innerHTML = hideMessage;
+			
+			let errorsDiv = this.createElement(TAG.DIV);
+			let errorsUl = this.createElement(TAG.UL);
+			errors.forEach( (error, i ) => {
+				let errorLi = this.createElement(TAG.LI);
+				let errorDiv = this.createElement(TAG.DIV);
+				let errorSpan = this.createElement(TAG.SPAN);
+				errorSpan.innerHTML = error.message;
+				errorDiv.appendChild(errorSpan);	
+				errorLi.appendChild(errorDiv);	
+				errorsUl.appendChild(errorLi);
+				
+				errorDiv.style.paddingTop = "12px";	
+				errorDiv.style.paddingLeft = "3px";	
+			});
+
+			errorsDiv.appendChild(errorsUl);
+			
+			viewDiv.appendChild(viewButtonSpan);
+			viewDiv.appendChild(hideButtonSpan);
+			viewDiv.appendChild(errorsDiv);
+			
+			
+			errorsDiv.style.display = "none";
+			hideButtonSpan.style.display = "none";
+			
+			viewButtonSpan.style.cursor = "pointer";
+			viewButtonSpan.onclick = function(){
+				viewButtonSpan.style.display = "none";
+				errorsDiv.style.removeProperty("display");
+				hideButtonSpan.style.removeProperty("display");
+			};
+			hideButtonSpan.style.cursor = "pointer";
+			hideButtonSpan.onclick = function(){
+				errorsDiv.style.display = "none";
+				hideButtonSpan.style.display = "none";
+				viewButtonSpan.style.removeProperty("display");
+			};
+			
+			// customize			
+			viewDiv.style.color = "#3d4045";
+			viewButtonSpan.style.fontWeight = "600";
+			hideButtonSpan.style.fontWeight = "600";
+			
+			return viewDiv; 
+		}
+		
+		let createErrorsDiv = ( titleMessage, viewMessage, hideMessage,  className, errors ) => {
+			
+			if ( errors.length > 1 ){
+				let li = this.createElement(TAG.LI);
+				li.style.backgrounColor = 'transparent !important';
+				let errorDiv = createErrorDiv(errors.length + " " +  titleMessage, className );
+				let viewDiv = createViewDiv(viewMessage, hideMessage, errors);
+				li.appendChild(errorDiv);
+				li.appendChild(viewDiv);
+				ul.appendChild(li);
+
+				errorDiv.style.paddingLeft = "3px";	
+				viewDiv.style.paddingLeft = '48px';
+				viewDiv.style.paddingBottom = "12px";	
+
+			} else if ( errors.length == 1 ) {
+				errors.forEach((error, i) => {
+					let li = this.createElement(TAG.LI);
+					li.style.backgrounColor = 'transparent !important';
+					let errorDiv  = createErrorDiv(error.message, className );
+					li.appendChild(errorDiv);
+					ul.appendChild(li);
+
+					errorDiv.style.paddingLeft = "3px";	
+					errorDiv.style.paddingBottom = "12px";	
+
+				});
+			}
+
+		}
+		
+		let customizeErrorsCards = (errorsCard, errors) =>  {
+			// customize card 
+			let errorColor = "#e83151";
+			let mainCard = errorsCard.getCard();
+			mainCard.style.padding = "0px"; 
+			mainCard.style.boxShadow = "none";
+			mainCard.style.backgroundColor = "white";
+			mainCard.style.borderColor = errorColor;
+			let titleCard = errorsCard.getCardTitle();
+			titleCard.style.paddingTop = "15px"; 
+			titleCard.style.paddingLeft = "22px"; 
+			titleCard.style.paddingRight = "22px"; 
+			titleCard.style.marginBottom = "0px"; 
+			titleCard.style.paddingBottom = "15px"; 
+			titleCard.style.color = "white";
+			titleCard.style.backgroundColor = errorColor;
+			
+			let expandSpan = this.createElement(TAG.SPAN);
+			expandSpan.style.cursor = "pointer";
+			expandSpan.className = CSS.MATERIAL_ICONS;
+			expandSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_DOWN;
+			expandSpan.onclick = function() {};
+			let collapseSpan = this.createElement(TAG.SPAN);
+			collapseSpan.style.cursor = "pointer";
+			collapseSpan.className = CSS.MATERIAL_ICONS;
+			collapseSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_UP;
+			
+			let iconSpan = this.createElement(TAG.SPAN);
+			iconSpan.className = CSS.MATERIAL_ICONS;
+			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			let messageSpan = this.createElement(TAG.SPAN);
+			messageSpan.innerHTML = errors + " " + ( errors > 1 ? MSG.ERRORS.toLowerCase() : MSG.ERRORS.substring(0,MSG.ERRORS.length-2).toLowerCase() );
+			messageSpan.style.paddingLeft = "8px";
+			
+			let titleCard1 = errorsCard.getCardTitle1();
+			titleCard1.appendChild(expandSpan);
+			
+			titleCard1.appendChild(collapseSpan);
+			titleCard1.appendChild(iconSpan);
+			titleCard1.appendChild(messageSpan);
+			
+			
+			let contentCard = errorsCard.getContent();
+			contentCard.style.paddingTop = "15px";
+			contentCard.style.paddingLeft = "22px"; 
+			contentCard.style.paddingRight = "22px"; 
+			contentCard.style.paddingBottom = "15px";
+
+			contentCard.style.display = "none"; 
+			collapseSpan.onclick = function() { 
+				contentCard.style.display = "none";
+				collapseSpan.style.display = "none"; 
+				expandSpan.style.removeProperty("display"); 
+			};
+			expandSpan.onclick = function() { 
+				contentCard.style.display = "block";
+				expandSpan.style.display = "none"; 
+				collapseSpan.style.removeProperty("display"); 
+			};
+			collapseSpan.onclick();
+			
+		}
+		
+		let emptyValueErrors =
+		this.invoice.messages.filter( err => err.code === ErrCode.ERR_EMPTY_VALUE );
+		createErrorsDiv( MSG.ERR_EMPTY_VALUE, MSG.VIEW_FIELDS, MSG.HIDE_FIELDS, CSS.AON_INVOICE_ERROR , emptyValueErrors )
+		
+		let lowConfidenceErrors =
+		this.invoice.messages.filter( err => err.code === ErrCode.ERR_LOW_CONFIDENCE );
+		createErrorsDiv( MSG.ERR_LOW_CONFIDENCE, MSG.VIEW_FIELDS, MSG.HIDE_FIELDS, CSS.AON_INVOICE_WARNING , lowConfidenceErrors )
+		
+		let otherErrors =
+		this.invoice.messages.filter( err => !emptyValueErrors.includes(err)  && !lowConfidenceErrors.includes(err) );
+		otherErrors.forEach((item, i) => {
+			let li = this.createElement(TAG.LI);
+			li.style.backgrounColor = 'transparent !important';
+
+			let errorDiv  = createErrorDiv(item.message, CSS.AON_INVOICE_ERROR );
+			li.appendChild(errorDiv);
+			ul.appendChild(li);
+		});
+		
+		let errorsCount = this.invoice.messages.length;
+		
+		customizeErrorsCards(errorsCard, errorsCount );
+	}
 
 	onChangeInvoiceTotal(value) {
 		this.invoice.setTotal(value);
-		this.setFocus(this.TOTAL);
+		// this.setFocus(this.TOTAL);
 		this.reload();
 		if(this.autosave) this.save();
 	}
@@ -720,11 +1096,18 @@ export class AonInvoice extends AonElement {
 		card.setContent(table);
 
 		table.addRow(); // ----- ROW 1
+		
+		let div = this.createDiv();
+		div.className = CSS.AON_FLEX;
+		table.addCell(div, '4');
+		
 		if(this.invoice.isEmitida()) {
-
 			// ----- SERIE
-			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
-			table.addCell(serie);
+			let serieSpan = this.createTableSpan("20%", "2px");
+			div.appendChild(serieSpan);
+
+			let serie = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.SERIE, MSG.SERIE);
+			serieSpan.appendChild(serie);
 			serie.setMaxlength(5);
 			serie.addEventListener(EVENT.AON_KEYUP, (e) => {
 				serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
@@ -739,14 +1122,17 @@ export class AonInvoice extends AonElement {
 
 			// ----- NUMBER
 
-			let number = new AonInput();
+			let numberSpan = this.createTableSpan("30%", "2px");
+			div.appendChild(numberSpan);
+
+			let number = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
+			number.title = MSG.NUMBER;
 			number.value = this.invoice.number;
-
-			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
+			numberSpan.appendChild(number);
 			if(this.invoice.isInbox()) {
 				getSalesSeries({}).then(r => {
 					this.series = r;
@@ -762,22 +1148,28 @@ export class AonInvoice extends AonElement {
 			}
 		} else {
 			// ----- REFERENCE
+			let referenceSpan = this.createTableSpan("45%", "2px");
+			div.appendChild(referenceSpan);
 
-			let reference = new AonInput();
+			let reference = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 			reference.id = this.REFERENCE;
 			reference.description = MSG.REFERENCE;
+			reference.title = MSG.REFERENCE;
 			reference.value = this.invoice.reference;
 			reference.readonly = this.invoice.isReadonly();
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
 				if(this.autosave) this.save();
 			});
-			table.addCell(reference, '2');
+			referenceSpan.appendChild(reference);
 		}
 
 		// ----- DATE
 
-		let date = new AonDate();
+		let dateSpan = this.createTableSpan("30%", "2px");
+		div.appendChild(dateSpan);
+
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.DATE;
 		date.title = MSG.DATE;
 		if(this.invoice.isReadonly())
@@ -786,17 +1178,30 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
+
 		date.value = this.invoice.date;
-		
+		dateSpan.appendChild(date);
+		date.value = this.invoice.date;
+	
 		// ----- TOTAL
 
+		let totalSpan = this.createTableSpan("25%", "0px");
+		div.appendChild(totalSpan);
+
 		let total = this.createAonNumber(this.TOTAL, MSG.TOTAL, this.invoice.total);
+		total.value;
 		total.onChange(() => this.onChangeInvoiceTotal(total.value));
-		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
+		if(this.invoice.taxes.length > 1 || this.invoice.details.length > 0)
+			total.disabled = CONSTANT.TRUE;
+		totalSpan.appendChild(total);
+		// ***** OLD THEME
+		total.readonly = this.invoice.isReadonly()
+		|| this.invoice.taxes.length > 1
+		|| this.invoice.details.length > 0;
+		// *****
 
 		table.addRow(); // ----- ROW 2
 
@@ -855,7 +1260,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- CATEGORY
 
-		let category = new AonSelect();
+		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		category.id = this.CATEGORY;
 		category.title = MSG.CATEGORY;
 		category.autocomplete = true;
@@ -871,29 +1276,6 @@ export class AonInvoice extends AonElement {
 			category.value = this.invoice.getCategory();
 		});
 
-		// // ----- PAYMETHOD
-
-		// let paymethod = new AonSelect();
-		// paymethod.id = this.PAYMETHOD;
-		// paymethod.title = MSG.PAYMETHOD;
-		// paymethod.autocomplete = true;
-		// // paymethod.options = JSON.stringify(Paymethods);
-		// paymethod.readonly = this.invoice.isReadonly();
-		// paymethod.addEventListener(EVENT.SELECT, () => {
-		// 	this.invoice.setPaymethod(paymethod.value);
-		// 	this.setFocus(paymethod.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
-		
-		// getPaymethods({}).then(paymethods => {
-		// 	let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-		// 	paymethod.options = JSON.stringify(pms);
-		// 	if(this.invoice.finances.length === 1) {
-		// 		paymethod.value = this.invoice.finances[0].paymethod;
-		// 	}
-		// });
 
 		getWorkplaces().then(r => {
 			if(!this.invoice.workplace && r.length > 0) {
@@ -902,7 +1284,7 @@ export class AonInvoice extends AonElement {
 			if(r.length > 1) {
 				table.addRow();
 				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
-				let workplace = new AonSelect();
+				let workplace =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 				workplace.id = this.WORKPLACE;
 				workplace.title = MSG.WORKPLACE;
 				workplace.autocomplete = true;
@@ -1024,9 +1406,15 @@ export class AonInvoice extends AonElement {
 
 		table.addRow(); // ----- ROW 1
 
-		// ----- TRANSACTION TYPE
+		let div = this.createDiv();
+		div.className = CSS.AON_FLEX;
+		table.addCell(div, '4');
 
-		let transaction = new AonSelect();
+		// ----- TRANSACTION TYPE
+		let transactionSpan = this.createTableSpan("50%", "2px");
+		div.appendChild(transactionSpan);
+
+		let transaction =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		transaction.id = this.TRANSACTION_TYPE;
 		transaction.title = MSG.TRANSACTION_TYPE;
 		transaction.options = JSON.stringify(Transactions);
@@ -1038,20 +1426,24 @@ export class AonInvoice extends AonElement {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(transaction, '2');
+		transactionSpan.appendChild(transaction);
 
 		// ----- ACTIVITY TYPE
+		let activitySpan = this.createTableSpan("50%", "0px");
+		div.appendChild(activitySpan);
 
-		let activity = new AonSelect();
+		let activity =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		activity.id = this.ACTIVITY;
 		activity.title = MSG.ACTIVITY;
 		activity.readonly = this.invoice.isReadonly();
 		activity.setAlias("id", "description");
 		activity.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setActivity(activity.getValueObject());
+			this.setFocus(activity.id);
+			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(activity, '2');
+		activitySpan.appendChild(activity);
 		getCompanyActivities({}).then(activities => {
 			if(activities.length > 0) {
 				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
@@ -1113,14 +1505,14 @@ export class AonInvoice extends AonElement {
 			// this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
 		}
 
-		if(this.invoice.isNacional()){
+		if(this.invoice.isNacional() && !this.invoice.isExempt()){
 			for(let i = 0; i < this.invoice.taxes.length; i++) {
 				let tax = this.invoice.taxes[i];
 				if(TaxType.IVA === tax.tax)
 					this.printTax(taxesTable, tax, i);
 			}
 		}
-		if(this.invoice.isNacional() || this.invoice.isCcm()){
+		if(this.invoice.isNacional() || this.invoice.isCcm()) {
 			for(let i = 0; i < this.invoice.taxes.length; i++) {
 				let tax = this.invoice.taxes[i];
 				if(TaxType.IRPF === tax.tax) {
@@ -1159,9 +1551,9 @@ export class AonInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				if(!this.invoice.isNacional()) {
+				if(!this.invoice.isNacional() || this.invoice.isExempt()) {
 					// TODO
-				} else { 
+				} else {
 					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 					this.invoice.addTax();
 					this.reload();
@@ -1169,7 +1561,7 @@ export class AonInvoice extends AonElement {
 				}
 			});
 			irpfTable.addCell(addButton);
-			if(!this.invoice.isNacional()) {
+			if(!this.invoice.isNacional() || this.invoice.isExempt()) {
 				addButton.setDisabled(true);
 			}
 		}
@@ -1180,7 +1572,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked);
+			this.invoice.setWithholding(irpf.checked, this.configuration.withholdingPercent);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1191,7 +1583,7 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 
-		let irpfType = new AonSelect();
+		let irpfType =  LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		irpfType.id = 'irpfwithholdingTYpe';
 		irpfType.title = 'Tipo IRPF';
 		irpfType.setAlias('id', 'name');
@@ -1199,6 +1591,7 @@ export class AonInvoice extends AonElement {
 			irpfType.disabled = 'true';
 		}
 		irpfType.setOptions(WithholdingType);
+
 		irpfType.addEventListener(EVENT.SELECT, () => {
 			let detail = WithholdingType.find(v => v.id == irpfType.value);
 			this.invoice.setWithholdingType(detail);
@@ -1209,8 +1602,8 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val;
-		}
+			irpfType.value = val || this.configuration.withholdingPercent;
+		} 
 	}
 
 	onChangeRegistry(registry) { 
@@ -1272,7 +1665,7 @@ export class AonInvoice extends AonElement {
 		// ----- TAX PERCENT
 
 		tax.type = tax.type || tax.tax;
-		let percentage = new AonSelect();
+		let percentage = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '% ' + getTaxTypeName(tax.type, this.isMobile());
 		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type));
@@ -1287,6 +1680,10 @@ export class AonInvoice extends AonElement {
 		percentage.readonly = this.invoice.isReadonly() 
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
+
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			percentage.disabled = CONSTANT.TRUE;
+		
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1298,13 +1695,18 @@ export class AonInvoice extends AonElement {
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
 
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			base.disabled = CONSTANT.TRUE;
+
 		// ----- TAX QUOTA
 
 		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
 
 		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
 		taxesTable.addCell(quota);
-		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
+		quota.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 || tax.type.includes('IRPF');
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			quota.disabled = CONSTANT.TRUE;
 
 		// ----- TAX DELETE
 
@@ -1374,7 +1776,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 
-		let description = new AonSuggestion();
+		let description = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.addEventListener(EVENT.AON_KEYUP, (e) => {
@@ -1413,6 +1815,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);		
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL OPTIONS
 
@@ -1443,13 +1846,20 @@ export class AonInvoice extends AonElement {
 	}
 
 	createAonNumber(id, title, value) {
-		let aonNumber = this.createAonElement(new AonNumber(), id, title);
+		let aonNumber = this.createAonElement(LS.isNewTheme() ? new AonNewNumber() : new AonNumber(), id, title);
 		aonNumber.format = CONSTANT.TRUE;
 		aonNumber.decimals = "2";
 		aonNumber.readonly = this.invoice.isReadonly();
-		aonNumber.value = value;
+		aonNumber.value = value || 0.0;
 		return aonNumber;
 	}
+
+	createTableSpan(width, marginRight){
+		let span = this.createSpan();
+		span.style.width= width;
+		span.style.marginRight = marginRight;
+		return span;
+	}	
 
 	onChangeDetail(detail, i, dialog) {
 		this.invoice.setDetail(detail, i);
@@ -1488,14 +1898,14 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 
-		let description = new AonAutosizeTextarea();
+		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
 		description.addEventListener(EVENT.AON_KEYUP, (e) => {
 			if(description.value.length > 2) {
-				let data = { value: description.value};
+				let data = { value: description.getValue()};
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {
 						return {
@@ -1554,10 +1964,11 @@ export class AonInvoice extends AonElement {
 		let td5 = table.addCell(amount);
 		td5.style.verticalAlign = "bottom";
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
-			let vat = new AonSelect();
+			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + i;
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
@@ -1633,7 +2044,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 		
-		let description = new AonSuggestion();
+		let description = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		description.id = this.DETAIL_DESCRIPTION + 'Dialog' + i;
 		description.title = MSG.CONCEPT;
 		description.addEventListener(EVENT.AON_KEYUP, () => {
@@ -1667,7 +2078,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt() &&  (!detail.prepayment || detail.prepayment == 'false')) {
-			let vat = new AonSelect();
+			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
@@ -1726,12 +2137,13 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
 
-		let category = new AonSelect();
+		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		category.id = this.DETAIL_CATEGORY + i;
 		category.title = MSG.CATEGORY;
 		category.autocomplete = true;
@@ -1750,7 +2162,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- BIEN AFECTO
 		// TODO
-		let bienAfecto = new AonSelect();
+		let bienAfecto = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
 		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
 		bienAfecto.autocomplete = true;
@@ -1868,7 +2280,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + 'Dialog' + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
@@ -1878,14 +2290,14 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date);
 		date.value = finance.due_date;
+		table.addCell(date);
 		
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = new AonSelect();
+		let paymethod = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		paymethod.id =this.FINANCE_PAYMETHOD + 'Dialog' + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
@@ -1910,7 +2322,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 		
-		let bankAccount = new AonSuggestion();
+		let bankAccount = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		bankAccount.id = this.FINANCE_BANK_ACCOUNT + 'Dialog' + i;
 		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
@@ -1949,7 +2361,7 @@ export class AonInvoice extends AonElement {
 		
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
@@ -1959,8 +2371,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date);
 		date.value = finance.due_date;
+		table.addCell(date);
 
 		// ----- FINANCE AMOUNT
 
@@ -2001,7 +2413,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
+		let date = LS.isNewTheme() ? new AonNewDate() : new AonDate();
 		date.id = this.FINANCE_DUE_DATE + i;
 		date.title = MSG.DATE; //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
@@ -2011,13 +2423,13 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
+		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
 		dateCell.style.width = '15%';
-		date.value = finance.due_date;
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = new AonSelect();
+		let paymethod = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		paymethod.id = this.FINANCE_PAYMETHOD + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
@@ -2070,7 +2482,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 
-		let bankAccount = new AonSuggestion();
+		let bankAccount = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
 		bankAccount.id = this.FINANCE_BANK_ACCOUNT + i;
 		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
@@ -2208,6 +2620,8 @@ export class AonInvoice extends AonElement {
 			 	: this.getInvoice().file.path;
 			viewer.width = fileDiv.offsetWidth;
 			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
+			viewer.addEventListener(EVENT.PRINT_IMAGE, () => { getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printImageTextLayer(t)); } );
+			viewer.addEventListener(EVENT.PRINT_PDF_PAGE, (e) => { if ( !e.detail.text ) getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printPdfTextLayer(e.detail.page, t)); } );
 			fileDiv.appendChild(viewer);
 		}
 		this.buildDetailCard();
@@ -2243,7 +2657,7 @@ export class AonInvoice extends AonElement {
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
-			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 			getAeatCertificates().then(certs => {
 				certSelect.setOptions(certs.map(s => {
 					return {
@@ -2406,7 +2820,7 @@ export class AonInvoice extends AonElement {
 			value: 'ticket',
 		}];
 
-		let type = new AonSelect();
+		let type = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		type.id = this.TYPE;
 		type.title = MSG.TYPE;
 		type.setOptions(types);
@@ -2521,7 +2935,7 @@ export class AonInvoice extends AonElement {
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("FACTURAE");
 		let div  =this.createDiv();
-		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 		div.appendChild(certSelect);
 		getAeatCertificates().then(certs => {
 			certSelect.setOptions(certs.map(s => {
@@ -2586,7 +3000,7 @@ export class AonInvoice extends AonElement {
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle("Anular");
-			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
 			getAeatCertificates().then(certs => {
 				certSelect.setOptions(certs.map(s => {
 					return {

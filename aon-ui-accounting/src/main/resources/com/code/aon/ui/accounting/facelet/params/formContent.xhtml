@@ -88,6 +88,13 @@
 
  				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
  					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="Ajuste imposición directa"/>
+					<ui:param name="lookupSuffix" value="ACC_DIRECT_TAX_ADJUST_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDirectTaxAdjustAccount}" />
+				</ui:include>
+				
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
  					<ui:param name="lookupLabel" value="#{bundle.accounting_def_dua_vat}"/>
 					<ui:param name="lookupSuffix" value="ACC_DEF_DUA_VAT_ACC" />
 					<ui:param name="lookupTo" value="#{accAppParams.accDefDuaVatAccount}" />

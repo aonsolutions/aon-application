@@ -241,6 +241,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRSellerIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
 		@Override public Property<Date> getRSellerStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
 		@Override public Property<Date> getRSellerEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}	
+		@Override public Property<Byte> getRSellerStatusProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.STATUS);}	
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {

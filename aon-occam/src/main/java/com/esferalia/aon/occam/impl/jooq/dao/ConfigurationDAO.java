@@ -138,14 +138,6 @@ public class ConfigurationDAO {
 		return conf;
 	}
 	
-	private static Item getOcrDefaultItem(AONContext ctx) {
-		int itemId = AppParamDAO.fetchIntValue(ctx, AppParam.OCR_DEFAULT_ITEM);
-		if (AonMathUtils.isNotZero(itemId)) {
-			return ItemDAO.get(ctx, itemId);
-		}
-		return null;
-	}
-
 	private static AonConfiguration getBasicConfiguration(AONContext ctx, ConfigParams params) {
 		AonConfiguration conf = new AonConfiguration()
 				.setDomain( DomainDAO.getDomain(ctx, ctx.getDomainId()) )
@@ -159,14 +151,6 @@ public class ConfigurationDAO {
 				.setAonSolutions(false);
 		}
 		return conf;
-	}
-
-	private static AccountingRegistry getDefaultCreditor(AONContext ctx) {
-		return AccountingRegistryDAO.getAccountingRegistries(ctx, f -> 
-				(f.getDocumentProperty().isNull().or(f.getDocumentProperty().eq(" ")).or(f.getDocumentProperty().eq("")))
-				.and(f.getNameProperty().like("%vario%")))
-				.filter( ar -> ar.getType() == AccountingRegistryType.CREDITOR)
-				.findFirst().orElse(null);
 	}
 
 	private static Account getAccount(AONContext ctx, AppParam param ) {
@@ -184,6 +168,22 @@ public class ConfigurationDAO {
 	// ********************************************************************************************
 	// ********************************************************************************************
 	
+	public static Item getOcrDefaultItem(AONContext ctx) {
+		int itemId = AppParamDAO.fetchIntValue(ctx, AppParam.OCR_DEFAULT_ITEM);
+		if (AonMathUtils.isNotZero(itemId)) {
+			return ItemDAO.get(ctx, itemId);
+		}
+		return null;
+	}
+
+	public static AccountingRegistry getDefaultCreditor(AONContext ctx) {
+		return AccountingRegistryDAO.getAccountingRegistries(ctx, f -> 
+				(f.getDocumentProperty().isNull().or(f.getDocumentProperty().eq(" ")).or(f.getDocumentProperty().eq("")))
+				.and(f.getNameProperty().like("%vario%")))
+				.filter( ar -> ar.getType() == AccountingRegistryType.CREDITOR)
+				.findFirst().orElse(null);
+	}
+
 	public static interface IAppParamFiller {
 		void fill(AONContext ctx, AonConfiguration config, String value);
 	}
@@ -276,6 +276,7 @@ public class ConfigurationDAO {
 			.setDefaultPaidRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_RET_ACC) )
 			.setDefaultCashAccount( getAccount(ctx, AppParam.ACC_DEFAULT_CASH_ACC) )
 			.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
+			.setDirectTaxAdjustAccount( getAccount(ctx, AppParam.ACC_DIRECT_TAX_ADJUST_ACC) )
 			.setDefaultDUAVatAccount( getAccount(ctx, AppParam.ACC_DEF_DUA_VAT_ACC) )
 			.setDefaultDUADutyAccount( getAccount(ctx, AppParam.ACC_DEF_DUA_DUTY_ACC) )
 			.setDefaultSalary( getAccount(ctx, AppParam.ACC_DEFAULT_SALARY_ACC ) )

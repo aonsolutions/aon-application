@@ -773,12 +773,12 @@ public class SistemaRED {
 			final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee,
 			final Date startdate, final SistemaRED.ContractType contractType, final float baseCot, final int cotDays,
 			final Optional<Date> fATEP, final Optional<SistemaRED.AccidentType> accidentType,
-			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation)
+			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			SistemaREDITPart.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP,
-					accidentType, licenseNumber, cias, occupation);
+					accidentType, licenseNumber, cias, occupation, job, jobDescription);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}

@@ -43,6 +43,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOARSc
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022PrintBIZKAIAScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902023ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902023ARABAScript2;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
@@ -71,6 +73,8 @@ public class Mod390HFScriptTest extends AbstractOccamTest {
 		test( mod, Model3902022ARABAResultScript.values() );
 		test( mod, Model3902022ARABARScript1.values() );
 		test( mod, Model3902022ARABAScript2.values() );
+		test( mod, Model3902023ARABARScript1.values() );
+		test( mod, Model3902023ARABAScript2.values() );
 		test( mod, Model3902017PrintARABAScript.values() );
 	}
 	

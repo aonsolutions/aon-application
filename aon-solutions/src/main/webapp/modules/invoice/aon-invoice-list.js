@@ -3,7 +3,7 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates, getInvofoxDocuments } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates, getInvofoxDocuments, getInvofoxDocument } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -136,23 +136,12 @@ export class AonInvoiceList extends AonElement {
 					invoice.icon = MATERIAL_ICONS.CIRCLE;
 					invoice.aonIcon = "invofox";
 					invoice.icon_title = "Recibida"
-					if(invoice.status === "processing") {
-						invoice.icon_color = '#bbb';
-					}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
-						invoice.icon_color = 'red';
-					} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
-						invoice.icon_color = 'orange';
-					} else if(invoice.status === "approved" || invoice.status === "exported") {
-						invoice.icon_color = 'green';
-					 } else invoice.icon_color = "#5f6368";
+					invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 					aonInvoiceTable.addRow(invoice, () => {
-						let iframe = this.createElement(TAG.IFRAME);
-						iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
-						iframe.style.height = '100%';
-						iframe.style.width = '100%';
-						iframe.style.border = '0';
-						this.getApplication().setContent(iframe);
+						getInvofoxDocument(invoice.id).then( doc => {
+							this.aonInvoice(doc, i);
+						}); 
 					},() => {});
 				});
 			});
@@ -179,23 +168,12 @@ export class AonInvoiceList extends AonElement {
 						invoice.icon = MATERIAL_ICONS.CIRCLE;
 						invoice.aonIcon = "invofox";
 						invoice.icon_title = "Recibida"
-						if(invoice.status === "processing") {
-							invoice.icon_color = '#bbb';
-						}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
-							invoice.icon_color = 'red';
-						} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
-							invoice.icon_color = 'orange';
-						} else if(invoice.status === "approved" || invoice.status === "exported") {
-							invoice.icon_color = 'green';
- 						} else invoice.icon_color = "#5f6368";
+						invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 						aonInvoiceTable.addRow(invoice, () => {
-							let iframe = this.createElement(TAG.IFRAME);
-							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
-							iframe.style.height = '100%';
-							iframe.style.width = '100%';
-							iframe.style.border = '0';
-							this.getApplication().setContent(iframe);
+							getInvofoxDocument(invoice.id).then( doc => {
+								this.aonInvoice(doc, i);
+							}); 
 						},() => {});
 					});
 				});
@@ -272,7 +250,22 @@ export class AonInvoiceList extends AonElement {
 			if(inv.isPending()) return '#8A8A8A';
  		}
 	}
-
+	
+	getOcrInvoiceStatusIconColor(invoice) {
+		let inv = new Invoice(invoice);
+		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+			return '#bbb';
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED, CONSTANT.EXPORTED)) {
+			return 'green';
+		} else if(inv.isOcrStatus(CONSTANT.ERROR, CONSTANT.REJECTED, CONSTANT.DISCARDED)) {
+			return 'red';
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION, CONSTANT.PENDING_DECISSION)) {
+			return 'orange';
+		} else { 
+			return "#5f6368";
+		}
+	}
+	
 	addInvoiceActions() {
 		this.removeInvoiceActions();
 		let aonInvoice = this.getElement('aonInvoice');

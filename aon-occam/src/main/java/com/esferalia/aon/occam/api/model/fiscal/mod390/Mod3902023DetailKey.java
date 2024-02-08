@@ -236,9 +236,16 @@ public enum Mod3902023DetailKey implements Serializable {
 		return readonly;
 	}
 	public boolean isSurcharge() {
-		return (this == C0036 || this == C0600
-			|| this == C0602 || this == C0042
-			|| this == C0044 || this == C0102);
+		return (this == C0664
+			|| this == C0036 
+			|| this == C0666
+			|| this == C0600
+			|| this == C0602 
+			|| this == C0042
+			|| this == C0044 
+			|| this == C0046
+			|| this == C0102
+			);
 	}
 	public boolean isProrrataEnabled() {
 		return prorrata;

@@ -14,6 +14,8 @@ export class Domain {
     scope;
     maxDefinedUsers;
     definedUsers;
+    aonStatus;
+    aonCustomer;
 
     constructor(domain) {
         if(domain) {
@@ -29,6 +31,8 @@ export class Domain {
            this.scope = domain.scope;
            this.maxDefinedUsers = domain.maxDefinedUsers;
            this.definedUsers = domain.definedUsers;
+           this.aonStatus = domain.aonStatus;
+           this.aonCustomer = domain.aonCustomer;
         } else {
             this.id = LS.getDomainId();
             this.name = LS.getDomainName();
@@ -141,6 +145,22 @@ export class Domain {
     setDefinedUsers(definedUsers) {
         this.definedUsers = definedUsers;
         return this;
+    }
+
+    getAonStatus() {
+        return this.aonStatus;
+    }
+
+    setAonStatus(aonStatus) {
+        this.aonStatus = aonStatus;
+    }
+
+    getAonCustomer() {
+        return this.aonCustomer;
+    }
+
+    setAonCustomer(aonCustomer) {
+        this.aonCustomer = aonCustomer;
     }
 
     isOffice(){
