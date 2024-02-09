@@ -5781,6 +5781,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteRegistryAddress(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryAddress(ctx, id);
+		}
+	}
+	
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
