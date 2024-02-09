@@ -383,7 +383,7 @@ public class OLDVATDAO  {
 			.setQuota(quota)
 			.setSurchargeQuota(surchargeQuota)
 			.setDeductibleQuota(deductibleQuota)
-			.setAmount347( vat.isOtherISP() || (vat.isExtracommunityPurchase() && vat.isService()) ? base : (base + quota + surchargeQuota) );
+			.setAmount347( vat.isOtherISP() || ((vat.isExtracommunityPurchase() || vat.isExtracommunityExpenses()) && vat.isService()) ? base : (base + quota + surchargeQuota) );
 			//.setAmount347(!vat.isOtherISP()?(base + quota + surchargeQuota):base);
 	}
 	
@@ -437,7 +437,7 @@ public class OLDVATDAO  {
 				
 				//.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
 				.setAmount347( invoiceTransactionType == InvoiceTransactionType.OTHER_ISP 
-				  || (invoiceType == InvoiceType.PURCHASE && invoiceTransactionType == InvoiceTransactionType.EXTRACOMMUNITY && isService)				
+				  || ((invoiceType == InvoiceType.PURCHASE || invoiceType == InvoiceType.EXPENSES) && invoiceTransactionType == InvoiceTransactionType.EXTRACOMMUNITY && isService)				
 				? rec.getValue(INVOICE_TAX.BASE) : (rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) )
 								
 				.setHasRetention( hasRetention(
