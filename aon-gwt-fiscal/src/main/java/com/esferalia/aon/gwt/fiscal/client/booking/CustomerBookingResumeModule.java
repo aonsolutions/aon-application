@@ -1,7 +1,8 @@
-package com.esferalia.aon.gwt.fiscal.client.registry;
+package com.esferalia.aon.gwt.fiscal.client.booking;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
@@ -35,12 +36,7 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
@@ -93,6 +89,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat formatBillingDate = DateTimeFormat.getFormat("MM/yyyy");
 	
+	// Api
+	private BookingApi bookingApi;
+	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+	private boolean isLocalDev = false;
+	
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -111,6 +112,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
 		
 		this.opt = opt;
+		this.bookingApi = new BookingApi(SESSION_API);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		this.opt.getParentWidget().add(dockLayoutPanel);
@@ -128,8 +130,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			public void onSuccess(LinkedList<Customer> customers) {
 				if(customers != null && !customers.isEmpty()) {
 					customer = customers.get(0);
-					loadModule();
 				}
+				loadModule();
 			}
 			
 			@Override
@@ -180,8 +182,29 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		dockLayoutPanel.add(scrollPanel);
 			
+		checkCustomerDomains();
 		getBookingResume();
+	}
+	
+	private void checkCustomerDomains() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
+		String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+		String endPoint = "/ms/api/domain/" + customer.getId().toString();
+		
+		this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
+			
+			@Override
+			public void onSuccess(List<DomainCompany> domainCompanies) {
+				AonMessagePanel.hideMessage(messagePanel);
+                setBookingCustomer(customer, domainCompanies);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 	
 	private void setBookingCustomer(Customer customer, List<DomainCompany> customerDomains) {
@@ -381,7 +404,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				syncDomains();
+				updateBookingRitems();
 			}
 		});
 	}
@@ -618,47 +641,27 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 	}
 
-
+	// ---------- Dominios (methods)
+	
 	private void syncCustomerToDomain() {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios ...");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//		urlBuilder.setHost("localhost:8080");
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
+		String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+		String endPoint = "/ms/api/domain/";
 		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-
-		                String responseBody = response.getText();
-		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-		                AonMessagePanel.hideMessage(messagePanel);
-		                showSelectSyncDomainsDialog(companies);
-		                
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
+			
+			@Override
+			public void onSuccess(List<DomainCompany> domainCompanies) {
+				AonMessagePanel.hideMessage(messagePanel);
+				showSelectSyncDomainsDialog(domainCompanies);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 	
 	private void showSelectSyncDomainsDialog(List<DomainCompany> companies) {
@@ -668,20 +671,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			protected void onAccept(DomainCompany domainCompany) {
 				// Unsync Domain aonCustomer
             	AonMessagePanel.showLoading(messagePanel, "Vinculando dominio del cliente " + customer.getName() + " ...");
-        		
-        		// Create the base URL
-        		String baseUrl = "/ms/api/domain/";
-
-        		// Create a URL builder and add query parameters
-        		UrlBuilder urlBuilder = new UrlBuilder();
-        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//        		urlBuilder.setHost("localhost:8080");
-        		urlBuilder.setHost("aon.solutions"); 
-        		urlBuilder.setPath(baseUrl);
-        		
-        		// Create the request builder with the complete URL
-        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+            	
+            	String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+        		String endPoint = "/ms/api/domain/";
         		
         		JSONObject body = new JSONObject();
         		body.put("customer", new JSONNumber(customer.getId()));
@@ -690,212 +682,112 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
         		domains.set(0, DomainCompanyJSON.domainCompanyToJSON(domainCompany));
         		body.put("domains", domains);
         		
-        		try {
-        		    // Send the request
-        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-        		        public void onResponseReceived(Request request, Response response) {
-        		            if (response.getStatusCode() == 200) {
-        		            	
-        		            	AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
-        		        		
-        		        		// Create the base URL
-        		        		String baseUrl = "/ms/api/domain/booking-customer/";
-
-        		        		// Create a URL builder and add query parameters
-        		        		UrlBuilder urlBuilder = new UrlBuilder();
-        		        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-        		        		urlBuilder.setHost(Window.Location.getHost()); 
-        		        		urlBuilder.setPath(baseUrl);
-        		        		
-        		        		// Create the request builder with the complete URL
-        		        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-        		        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-        		        		
-        		        		requestBuilder.setHeader("domain_name", options.getDomainName());
-        		        		requestBuilder.setHeader("domain_login", options.getUser());
-        		        		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
-        		        		
-        		        		JSONObject body = new JSONObject();
-        		        		body.put("customer", new JSONNumber(customer.getId()));
-        		        		
-        		        		try {
-        		        		    // Send the request
-        		        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-        		        		        public void onResponseReceived(Request request, Response response) {
-        		        		            if (response.getStatusCode() == 200) {
-        		        		            	
-        		        		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
-        		        	            		
-        		        		            	Timer timer = new Timer() {
-        		        		           		     @Override
-        		        		           		     public void run() {
-        		        		           		    	AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
-        		        		           				
-        		        		           				// Create the base URL
-        		        		           				String baseUrl = "/ms/api/domain/" + customer.getId().toString();
-
-        		        		           				// Create a URL builder and add query parameters
-        		        		           				UrlBuilder urlBuilder = new UrlBuilder();
-        		        		           				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//        		        		           				urlBuilder.setHost("localhost:8080");
-        		        		           				urlBuilder.setHost("aon.solutions"); 
-        		        		           				urlBuilder.setPath(baseUrl);
-        		        		           				
-        		        		           				// Create the request builder with the complete URL
-        		        		           				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-        		        		           				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-        		        		           				
-        		        		           				try {
-        		        		           				    // Send the request
-        		        		           				    requestBuilder.sendRequest(null, new RequestCallback() {
-        		        		           				        public void onResponseReceived(Request request, Response response) {
-        		        		           				            if (response.getStatusCode() == 200) {
-        		        		           				            	
-        		        		           				                String responseBody = response.getText();
-        		        		           				                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-        		        		           				                AonMessagePanel.hideMessage(messagePanel);
-        		        		           				                
-        		        		           				                setBookingCustomer(customer, companies);
-        		        		           				                
-        		        		           				            } else {
-        		        		           				            	AonMessagePanel.showError(messagePanel, response.getText());
-        		        		           				            }
-        		        		           				        }
-
-        		        		           						public void onError(Request request, Throwable exception) {
-        		        		           							AonMessagePanel.showError(messagePanel, exception.getMessage());
-        		        		           				        }
-        		        		           				    });
-        		        		           				} catch (RequestException e) {
-        		        		           					AonMessagePanel.showError(messagePanel, e.getMessage());
-        		        		           				} 
-        		        		           		     }
-        		        		           		};
-        		        		           		timer.schedule(2500);
-        		          		           		
-        		        		            } else {
-        		        		            	AonMessagePanel.showError(messagePanel, response.getText());
-        		        		            }
-        		        		        }
-
-        		        				public void onError(Request request, Throwable exception) {
-        		        					AonMessagePanel.showError(messagePanel, exception.getMessage());
-        		        		        }
-        		        		    });
-        		        		} catch (RequestException e) {
-        		        			AonMessagePanel.showError(messagePanel, e.getMessage());
-        		        		}
-        		            	
-          		           		
-        		            } else {
-        		            	AonMessagePanel.showError(messagePanel, response.getText());
-        		            }
-        		        }
-
-        				public void onError(Request request, Throwable exception) {
-        					AonMessagePanel.showError(messagePanel, exception.getMessage());
-        		        }
-        		    });
-        		} catch (RequestException e) {
-        			AonMessagePanel.showError(messagePanel, e.getMessage());
-        		}
+        		bookingApi.syncDomainCustomer(host, endPoint, body, new AsyncCallback<Void>() {
+        			
+        			@Override
+        			public void onSuccess(Void success) {
+        				syncCustomerBooking();
+        			}
+        			
+        			@Override
+        			public void onFailure(Throwable exception) {
+        				AonMessagePanel.showError(messagePanel, exception.getMessage());
+        			}
+        		});
+        		
 			}
 		};
+	}
+	
+	private void syncCustomerBooking() {
+		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
+		
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/domain/booking-customer/";
+		
+		JSONObject body = new JSONObject();
+		body.put("customer", new JSONNumber(customer.getId()));
+		
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+		
+		bookingApi.syncCustomerBooking(host, endPoint, headers, body, new AsyncCallback<Response>() {
+			
+			@Override
+			public void onSuccess(Response response) {
+				AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+        		
+            	Timer timer = new Timer() {
+           		     @Override
+           		     public void run() {
+           		    	checkCustomerDomains();
+           		     }
+           		};
+           		timer.schedule(2500);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 	
 	private void unSyncDomain(DomainCompany domainCompany) {
 		AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/domain/booking/";
 		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));
 		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
+		bookingApi.unsyncCustomerBooking(host, endPoint, body, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void success) {
+				AonMessagePanel.showLoading(messagePanel, "Desvinculando dominio del cliente " + customer.getName() + " ...");
+				
+				String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+        		String endPoint = "/ms/api/domain/";
+        		
+        		JSONObject body = new JSONObject();
+        		
+        		JSONArray domains = new JSONArray();
+        		domains.set(0, DomainCompanyJSON.domainCompanyToJSON(domainCompany));
+        		body.put("domains", domains);
+        		
+        		bookingApi.unsyncDomainCustomer(host, endPoint, body, new AsyncCallback<Void>() {
+        			
+        			@Override
+        			public void onSuccess(Void success) {
+        				AonMessagePanel.showSuccess(messagePanel, "Dominio desvinculado del cliente correctamente");
 		            	
-		            	// Unsync Domain aonCustomer
-		            	AonMessagePanel.showLoading(messagePanel, "Desvinculando dominio del cliente " + customer.getName() + " ...");
-		        		
-		        		// Create the base URL
-		        		String baseUrl = "/ms/api/domain/";
-
-		        		// Create a URL builder and add query parameters
-		        		UrlBuilder urlBuilder = new UrlBuilder();
-		        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//		        		urlBuilder.setHost("localhost:8080");
-		        		urlBuilder.setHost("aon.solutions"); 
-		        		urlBuilder.setPath(baseUrl);
-		        		
-		        		// Create the request builder with the complete URL
-		        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-		        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		        		
-		        		JSONObject body = new JSONObject();
-		        		
-		        		JSONArray domains = new JSONArray();
-		        		domains.set(0, DomainCompanyJSON.domainCompanyToJSON(domainCompany));
-		        		body.put("domains", domains);
-		        		
-		        		try {
-		        		    // Send the request
-		        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        		        public void onResponseReceived(Request request, Response response) {
-		        		            if (response.getStatusCode() == 200) {
-		        		            	
-		        		            	AonMessagePanel.showSuccess(messagePanel, "Dominio desvinculado del cliente correctamente");
-		        		            	
-		        		            	Timer timer = new Timer() {
-			       		           		     @Override
-			       		           		     public void run() {
-			       		           		    	// Remove unsync domain from customerDomains
-			       		           		    	customerDomains = customerDomains.stream().filter(domainCompanyIt -> !domainCompanyIt.getDomain().getId().equals(domainCompany.getDomain().getId())).collect(Collectors.toList());
-			       		           		    	setBookingCustomer(customer, customerDomains);
-			       		           		     }
-			       		           		};	
-			       		           		timer.schedule(2500);
-		        		            	
-		          		           		
-		        		            } else {
-		        		            	AonMessagePanel.showError(messagePanel, response.getText());
-		        		            }
-		        		        }
-
-		        				public void onError(Request request, Throwable exception) {
-		        					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        		        }
-		        		    });
-		        		} catch (RequestException e) {
-		        			AonMessagePanel.showError(messagePanel, e.getMessage());
-		        		}
-		            	
-  		           		
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		            	Timer timer = new Timer() {
+   		           		     @Override
+   		           		     public void run() {
+   		           		    	// Remove unsync domain from customerDomains
+   		           		    	customerDomains = customerDomains.stream().filter(domainCompanyIt -> !domainCompanyIt.getDomain().getId().equals(domainCompany.getDomain().getId())).collect(Collectors.toList());
+   		           		    	setBookingCustomer(customer, customerDomains);
+   		           		     }
+   		           		};	
+   		           		timer.schedule(2500);
+        			}
+        			
+        			@Override
+        			public void onFailure(Throwable exception) {
+        				AonMessagePanel.showError(messagePanel, exception.getMessage());
+        			}
+        		});
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 
 	private String formatDate(Date date) {
@@ -906,129 +798,58 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private void getBookingResume() {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
-		// Create the base URL
 		Integer customerId = getCustomer();
-		String baseUrl = "/ms/api/domain/" + customerId.toString();
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//		urlBuilder.setHost("localhost:8080");
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
 		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+		String endPoint = "/ms/api/domain/" + customerId.toString();
 		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	
-		                String responseBody = response.getText();
-		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-		                AonMessagePanel.hideMessage(messagePanel);
-		                
-		                AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n de " + companies.get(0).getDomain().getName());
-		                
-		                String baseUrl = "/ms/api/booking/";
-					
-						// Create a URL builder and add query parameters
-						UrlBuilder urlBuilder = new UrlBuilder();
-						urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//						urlBuilder.setHost("localhost:8080");
-						urlBuilder.setHost("aon.solutions"); 
-						urlBuilder.setPath(baseUrl);
-						
-						// Create the request builder with the complete URL
-						RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-						requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-						requestBuilder.setHeader("domain_name", companies.get(0).getDomain().getName());
-						requestBuilder.setHeader("domain_id", companies.get(0).getDomain().getId().toString());
-						
-						try {
-						    // Send the request
-						    requestBuilder.sendRequest(null, new RequestCallback() {
-						        public void onResponseReceived(Request request, Response response) {
-						            if (response.getStatusCode() == 200) {
-						            	String domainBookingJson = response.getText();
-						            	domainBooking = BookingJSON.parseBookingJSON(JSONParser.parseStrict(domainBookingJson).isObject());
-						            	AonMessagePanel.hideMessage(messagePanel);
-						            	createDomainBookingResume();
-						            	createDomainChildsBookingResume();
-						            	
-						            	// Create the base URL
-					            		String baseUrl = "/ms/api/domain/" + customerId.toString();
-
-					            		// Create a URL builder and add query parameters
-					            		UrlBuilder urlBuilder = new UrlBuilder();
-					            		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//					            		urlBuilder.setHost("localhost:8080");
-					            		urlBuilder.setHost("aon.solutions"); 
-					            		urlBuilder.setPath(baseUrl);
-					            		
-					            		// Create the request builder with the complete URL
-					            		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-					            		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-					            		
-					            		try {
-					            		    // Send the request
-					            		    requestBuilder.sendRequest(null, new RequestCallback() {
-					            		        public void onResponseReceived(Request request, Response response) {
-					            		            if (response.getStatusCode() == 200) {
-					            		            	
-					            		                String responseBody = response.getText();
-					            		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-					            		                AonMessagePanel.hideMessage(messagePanel);
-					            		                
-					            		                setBookingCustomer(customer, companies);
-					            		                
-					            		            } else {
-					            		            	AonMessagePanel.showError(messagePanel, response.getText());
-					            		            }
-					            		        }
-
-					            				public void onError(Request request, Throwable exception) {
-					            					AonMessagePanel.showError(messagePanel, exception.getMessage());
-					            		        }
-					            		    });
-					            		} catch (RequestException e) {
-					            			AonMessagePanel.showError(messagePanel, e.getMessage());
-					            		}
-						            }
-						        }
-
-								public void onError(Request request, Throwable exception) {
-									AonMessagePanel.showError(messagePanel, exception.getMessage());
-						        }
-						    });
-						} catch (RequestException e) {
-							AonMessagePanel.showError(messagePanel, e.getMessage());
-						}
-		                
-		                
-		                
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
+			
+			@Override
+			public void onSuccess(List<DomainCompany> domainCompanies) {
+				AonMessagePanel.hideMessage(messagePanel);
+                
+				if(domainCompanies != null && !domainCompanies.isEmpty()) {
+	                
+                	AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n de " + domainCompanies.get(0).getDomain().getName());
+                	
+                	String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+            		String endPoint =  "/ms/api/booking/";
+            		
+            		HashMap<String, String> header = new HashMap<>();
+            		header.put("domain_name", domainCompanies.get(0).getDomain().getName());
+            		header.put("domain_id", domainCompanies.get(0).getDomain().getId().toString());
+            		
+            		bookingApi.getBooking(host, endPoint, header, new AsyncCallback<Booking>() {
+            			
+            			@Override
+            			public void onSuccess(Booking booking) {
+            				AonMessagePanel.hideMessage(messagePanel);
+            				domainBooking = booking;
+            				createDomainBookingResume();
+                        	createDomainChildsBookingResume();
+            			}
+            			
+            			@Override
+            			public void onFailure(Throwable exception) {
+            				AonMessagePanel.showError(messagePanel, exception.getMessage());
+            			}
+            		});
+                }
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 		
 	}
 
 	private void createDomainBookingResume() {
 		domainPanel.clear();
 		
-		Grid domainTable = new Grid(0, 7);
+		Grid domainTable = new Grid(0, 8);
 		domainTable.clear();
 		domainTable.setWidth("100%");
 
@@ -1041,6 +862,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		Label users = new Label("USUARIOS");
 		Label portalUsers = new Label("USR. PORTAL");
 		Label type = new Label("TIPO");
+		Label action = new Label("");
 		
 		name.addStyleName(AON.CSS.aonHeaderTable());
 		booking.addStyleName(AON.CSS.aonHeaderTable());
@@ -1049,6 +871,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		users.addStyleName(AON.CSS.aonHeaderTable());
 		portalUsers.addStyleName(AON.CSS.aonHeaderTable());
 		type.addStyleName(AON.CSS.aonHeaderTable());
+		action.addStyleName(AON.CSS.aonHeaderTable());
 
 		domainTable.setWidget(row, 0, name);
 		domainTable.setWidget(row, 1, booking);
@@ -1057,6 +880,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.setWidget(row, 4, users);
 		domainTable.setWidget(row, 5, portalUsers);
 		domainTable.setWidget(row, 6, type);
+		domainTable.setWidget(row, 7, action);
+		
 		
 		domainTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1065,6 +890,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+		domainTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
 		
 		domainTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
 		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
@@ -1072,6 +898,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
 		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
 		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(100, Unit.PX);
+		domainTable.getColumnFormatter().getElement(7).getStyle().setWidth(25, Unit.PX);
 		
 		int newRow = domainTable.insertRow(domainTable.getRowCount());
 		
@@ -1094,6 +921,16 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		Label portalUsersLabel = new Label(portalUsersCount + "");
 		
 		Label typeLabel = new Label(domainBooking.getType().getName());
+		
+		HTMLPanel buttonPanel = new HTMLPanel("");
+		buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonPanel.getElement().getStyle().setProperty("min-width", "25px");
+		
+		AonTableButton bookingInfoBtn = new AonTableButton("Ver contrataciones", AON.CSS.aonIconInfo());
+		bookingInfoBtn.addClickHandler(e -> {
+			new CustomerBookingDialog(options, getCustomer());
+		});
+		buttonPanel.add(bookingInfoBtn);
 				
 		domainTable.setWidget(newRow, 0, domainNameLabel);
 		domainTable.setWidget(newRow, 1, bookingLabel);
@@ -1102,6 +939,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.setWidget(newRow, 4, usersLabel);
 		domainTable.setWidget(newRow, 5, portalUsersLabel);
 		domainTable.setWidget(newRow, 6, typeLabel);
+		domainTable.setWidget(newRow, 7, buttonPanel);
 		
 		if (newRow % 2 == 0) {
 			domainNameLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1112,6 +950,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			portalUsersLabel.addStyleName(AON.CSS.aonOddTableRow());
 			typeLabel.addStyleName(AON.CSS.aonOddTableRow());
 			
+			buttonPanel.addStyleName(AON.CSS.aonOddTableRow());
+			bookingInfoBtn.addStyleName(AON.CSS.aonOddTableRow());
+			
 			domainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
@@ -1119,12 +960,14 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			domainTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
+			domainTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
 		}
 		
 		domainTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+		domainTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
 		
 		domainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
 		
@@ -1316,157 +1159,102 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				// Create the base URL
-				String baseUrl = "/ms/api/domain/remote/";
-
-				// Create a URL builder and add query parameters
-				UrlBuilder urlBuilder = new UrlBuilder();
-				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//				urlBuilder.setHost("localhost:8080");
-				urlBuilder.setHost("aon.solutions"); 
-				urlBuilder.setPath(baseUrl);
+				String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+				String endPoint = "/ms/api/domain/remote/";
 				
-				// Create the request builder with the complete URL
-				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				HashMap<String, String> header = new HashMap<>();
+				header.put("domain_name", url);
+				header.put("domain_id", domainId.toString());
 				
-				requestBuilder.setHeader("domain_name", url);
-				requestBuilder.setHeader("domain_id", domainId.toString());
-				
-				try {
-				    // Send the request
-				    requestBuilder.sendRequest(null, new RequestCallback() {
-				        public void onResponseReceived(Request request, Response response) {
-				            if (response.getStatusCode() == 200) {
-				            	Window.open("https://" + url, "_blank", "");
-				            } else {
-				            	AonMessagePanel.showError(messagePanel, response.getText());
-				            }
-				        }
-
-						public void onError(Request request, Throwable exception) {
-							AonMessagePanel.showError(messagePanel, exception.getMessage());
-				        }
-				    });
-				} catch (RequestException e) {
-					AonMessagePanel.showError(messagePanel, e.getMessage());
-				}	
+				bookingApi.enableDomainRemote(host, endPoint, header, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void success) {
+						Window.open("https://" + url, "_blank", "");
+					}
+					
+					@Override
+					public void onFailure(Throwable exception) {
+						AonMessagePanel.showError(messagePanel, exception.getMessage());
+					}
+				});	
 			}
 		});
-	}
-	
-	private void syncDomains() {
-		updateBookingRitems();
 	}
 	
 	private void updateBookingRitems() {
 		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking-customer/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		requestBuilder.setHeader("domain_name", options.getDomainName());
-		requestBuilder.setHeader("domain_login", options.getUser());
-		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/domain/booking-customer/";
 		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));
 		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	
-		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
-	            		
-		            	Timer timer = new Timer() {
-		           		     @Override
-		           		     public void run() {
-		           		    	setBookingCustomer(customer, customerDomains);;
-		           		     }
-		           		};
-		           		timer.schedule(2500);
-		           		
-		           		Timer logTimer = new Timer() {
-  		           		     @Override
-  		           		     public void run() {
-  		           		    	 showSyncLogs(response.getText());
-  		           		     }
-  		           		};
-  		           		logTimer.schedule(4500);
-  		           		
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+		
+		bookingApi.syncCustomerBooking(host, endPoint, headers, body, new AsyncCallback<Response>() {
+			
+			@Override
+			public void onSuccess(Response response) {
+				AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+        		
+            	Timer timer = new Timer() {
+           		     @Override
+           		     public void run() {
+           		    	setBookingCustomer(customer, customerDomains);
+           		     }
+           		};
+           		timer.schedule(2500);
+           		
+           		Timer logTimer = new Timer() {
+           		     @Override
+           		     public void run() {
+           		    	 showSyncLogs(response.getText());
+           		     }
+           		};
+           		logTimer.schedule(4500);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 	
 	private void unSyncDomains() {
 		AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/domain/booking/";
 		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));
 		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	
-		            	AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
-	            		
-		            	Timer timer = new Timer() {
-		           		     @Override
-		           		     public void run() {
-		           		    	setBookingCustomer(customer, customerDomains);;
-		           		     }
-		           		};
-		           		timer.schedule(2500);
-  		           		
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		bookingApi.unsyncCustomerBooking(host, endPoint, body, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void success) {
+				AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+        		
+            	Timer timer = new Timer() {
+           		     @Override
+           		     public void run() {
+           		    	setBookingCustomer(customer, customerDomains);;
+           		     }
+           		};
+           		timer.schedule(2500);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 	
 	private void showSyncLogs(String response) {
@@ -1494,76 +1282,57 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private void openUserTooltip(Domain domain) {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo usuarios para el dominio " + domain.getDescription() + " ...");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/user/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//		urlBuilder.setHost("localhost:8080"); 
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
+		String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+		String endPoint = "/ms/api/user/";
 		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		HashMap<String, String> header = new HashMap<>();
+		header.put("domain_name", domain.getName());
+		header.put("domain_id", domain.getId().toString());
 		
-		requestBuilder.setHeader("domain_name", domain.getName());
-		requestBuilder.setHeader("domain_id", domain.getId().toString());
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String responseBody = response.getText();
-		            	List<User> users = DomainCompanyJSON.parseUsersJSONArr(responseBody);
-		            	
-		            	HTMLPanel container = new HTMLPanel("");
-		        		container.addStyleName(AON.CSS.aonFlexColumn());
-		        		container.getElement().getStyle().setProperty("margin", "0 1rem");
-		        		
-		        		users.forEach(user -> {
-		        			HTMLPanel row = new HTMLPanel("");
-		        			row.addStyleName(AON.CSS.aonItemFlex());
-		        			
-		        			Label name = new Label("(" + user.getLogin() + ") " + user.getName());
-		        			
-		        			AonTableButton copy = new AonTableButton("Copiar login", AON.CSS.aonIconCopy());
-		        			copy.addClickHandler(e -> copyToClipboard(user.getLogin()));
-		        			
-		        			row.add(copy);
-		        			row.add(name);
-		        			
-		        			container.add(row);
-		        		});
-		            	
-		        		AonDialog dialog = new AonDialog("Usuarios " + domain.getDescription(), container);
-            			dialog.info();
-		        		
-						AonMessagePanel.hideMessage(messagePanel);
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				private final native void copyToClipboard(String text) /*-{
-					var textField = $doc.createElement('textarea');
-			        textField.value = text;
-			        $doc.body.appendChild(textField);
-			        textField.select();
-			        $doc.execCommand('copy');
-			        $doc.body.removeChild(textField);
-				}-*/;
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		bookingApi.getDomainUsers(host, endPoint, header, new AsyncCallback<List<User>>() {
+			
+			@Override
+			public void onSuccess(List<User> users) {
+				HTMLPanel container = new HTMLPanel("");
+        		container.addStyleName(AON.CSS.aonFlexColumn());
+        		container.getElement().getStyle().setProperty("margin", "0 1rem");
+        		
+        		users.forEach(user -> {
+        			HTMLPanel row = new HTMLPanel("");
+        			row.addStyleName(AON.CSS.aonItemFlex());
+        			
+        			Label name = new Label("(" + user.getLogin() + ") " + user.getName());
+        			
+        			AonTableButton copy = new AonTableButton("Copiar login", AON.CSS.aonIconCopy());
+        			copy.addClickHandler(e -> copyToClipboard(user.getLogin()));
+        			
+        			row.add(copy);
+        			row.add(name);
+        			
+        			container.add(row);
+        		});
+            	
+        		AonDialog dialog = new AonDialog("Usuarios " + domain.getDescription(), container);
+    			dialog.info();
+    			
+				AonMessagePanel.hideMessage(messagePanel);
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
+	
+	private final native void copyToClipboard(String text) /*-{
+		var textField = $doc.createElement('textarea');
+	    textField.value = text;
+	    $doc.body.appendChild(textField);
+	    textField.select();
+	    $doc.execCommand('copy');
+	    $doc.body.removeChild(textField);
+	}-*/;
 
 	// -------------------------------- TOOLBAR
 	
