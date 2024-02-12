@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.registry;
+package com.esferalia.aon.gwt.fiscal.client.booking;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;

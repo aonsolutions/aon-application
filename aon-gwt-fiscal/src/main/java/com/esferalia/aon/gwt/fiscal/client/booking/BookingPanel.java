@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.registry;
+package com.esferalia.aon.gwt.fiscal.client.booking;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,6 +28,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFeeDialog;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
