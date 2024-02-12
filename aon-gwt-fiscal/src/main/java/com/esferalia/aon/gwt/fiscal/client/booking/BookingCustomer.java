@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.registry;
+package com.esferalia.aon.gwt.fiscal.client.booking;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,13 +13,14 @@ import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSelectionDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSyncSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSyncSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFeeDialog;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
