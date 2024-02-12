@@ -19,6 +19,10 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperating
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.ddff.AeatDatosGenerales;
+import com.esferalia.aon.occam.api.model.ddff.AeatDomicilio;
+import com.esferalia.aon.occam.api.model.ddff.AeatFiscalData;
+import com.esferalia.aon.occam.api.model.ddff.AeatTitular;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -74,11 +78,10 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class Asserts {
 	
@@ -121,7 +124,7 @@ public class Asserts {
 			fail( msg + " actual List is not Empty");
 		if ( (expected != null && !expected.isEmpty()) 
 			&& (actual == null || actual.isEmpty()))  
-			fail( msg + " actual List is Empty");
+			fail( msg + " actual List is Empty; expected " + expected.size());
 		if ( expected != null && actual != null) {
 			assertEquals(" sizes not fit", expected.size(), actual.size());	
 		}
@@ -1188,4 +1191,75 @@ public class Asserts {
 			assertEquals("Status", expected.getStatus().toString(), actual.getStatus().toString());
 		}
 	}
+	
+	public static void assertEqualsAeatFiscalData(AeatFiscalData expected, AeatFiscalData actual) {
+		if (expected != null && actual != null) {
+			assertEquals("Date", expected.getDate(), actual.getDate());
+			assertEqualsCollection( "AeatFiscalData Datos Generales",expected.getDatosGenerales(), actual.getDatosGenerales());
+			AonCollectionUtils.range( AonCollectionUtils.size(expected.getDatosGenerales()) )
+				.forEach( i -> assertEqualsAeatFiscalDataDatosGenerales(expected.getDatosGenerales().get(i), actual.getDatosGenerales().get(i)));
+			assertEqualsCollection( "AeatFiscalData Titulares",expected.getTitulares(), actual.getTitulares());
+			AonCollectionUtils.range( AonCollectionUtils.size(expected.getTitulares()) )
+				.forEach( i -> assertEqualsAeatFiscalDataTitulares(expected.getTitulares().get(i), actual.getTitulares().get(i)));
+			assertEqualsCollection( "AeatFiscalData Domicilios",expected.getDomicilios(), actual.getDomicilios());
+			AonCollectionUtils.range( AonCollectionUtils.size(expected.getDomicilios()) )
+				.forEach( i -> assertEqualsAeatFiscalDataDomicilios(expected.getDomicilios().get(i), actual.getDomicilios().get(i)));
+		}
+	}
+	
+	private static void assertEqualsAeatFiscalDataDatosGenerales(AeatDatosGenerales expected, AeatDatosGenerales actual) {
+		if (expected != null && actual != null) {
+			assertEquals("estadoCivil", expected.getEstadoCivil(), actual.getEstadoCivil());
+			assertEquals("conyugeNoResidente", expected.isConyugeNoResidente(), actual.isConyugeNoResidente());
+			assertEquals("conyugeNoResidenteUE", expected.isConyugeNoResidenteUE(), actual.isConyugeNoResidenteUE());
+		}
+		
+	}
+	private static void assertEqualsAeatFiscalDataDomicilios(AeatDomicilio expected, AeatDomicilio actual) {
+		if (expected != null && actual != null) {
+			assertEquals("tipoVia", expected.getTipoVia(), actual.getTipoVia());
+			assertEquals("codVia", expected.getCodVia() , actual.getCodVia());
+			assertEquals("nombreLargo", expected.getNombreLargo() , actual.getNombreLargo());
+			assertEquals("nombreCorto", expected.getNombreCorto() , actual.getNombreCorto());
+			assertEquals("numeracion", expected.getNumeracion() , actual.getNumeracion());
+			assertEquals("numero", expected.getNumero() , actual.getNumero());
+			assertEquals("calificadorNumero", expected.getCalificadorNumero() , actual.getCalificadorNumero());
+			assertEquals("bloque", expected.getBloque() , actual.getBloque());
+			assertEquals("portal", expected.getPortal() , actual.getPortal());
+			assertEquals("escalera", expected.getEscalera() , actual.getEscalera());
+			assertEquals("planta", expected.getPlanta() , actual.getPlanta());
+			assertEquals("puerta", expected.getPuerta() , actual.getPuerta());
+			assertEquals("datosComplementarios", expected.getDatosComplementarios() , actual.getDatosComplementarios());	
+			assertEquals("poblacion", expected.getPoblacion() , actual.getPoblacion());
+			assertEquals("codigoPostal", expected.getCodigoPostal() , actual.getCodigoPostal());
+			assertEquals("codigoMunicipio", expected.getCodigoMunicipio() , actual.getCodigoMunicipio());
+			assertEquals("municipio", expected.getMunicipio() , actual.getMunicipio());
+			assertEquals("codigoProvincia", expected.getCodigoProvincia() , actual.getCodigoProvincia());
+			assertEquals("provincia", expected.getProvincia() , actual.getProvincia());
+			assertEquals("referenciaCatastral", expected.getReferenciaCatastral() , actual.getReferenciaCatastral());
+			assertEquals("fechaModif", expected.getFechaModif() , actual.getFechaModif());
+		}
+	}
+	
+	private static void assertEqualsAeatFiscalDataTitulares(AeatTitular expected, AeatTitular actual) {
+		if (expected != null && actual != null) {
+			assertEquals("nif", expected.getNif() , actual.getNif());
+			assertEquals("apellidosNombre", expected.getApellidosNombre() , actual.getApellidosNombre());
+			assertEquals("discapacidadIRPF", expected.getDiscapacidadIRPF(), actual.getDiscapacidadIRPF());
+			assertEquals("discapacidad990", expected.getDiscapacidad990() , actual.getDiscapacidad990());
+			assertEquals("fechaNacimiento", expected.getFechaNacimiento() , actual.getFechaNacimiento());
+			assertEquals("sexo", expected.getSexo() , actual.getSexo());
+			assertEquals("fechaFallecimiento", expected.getFechaFallecimiento() , actual.getFechaFallecimiento());
+			assertEquals("comunidadAutonoma", expected.getComunidadAutonoma() , actual.getComunidadAutonoma());
+			assertEquals("IBAN", expected.getIBAN() , actual.getIBAN());
+			assertEquals("SWIFT", expected.getSWIFT() , actual.getSWIFT());
+			assertEquals("fechaAdquisicionViviendaHabitual", expected.getFechaAdquisicionViviendaHabitual() , actual.getFechaAdquisicionViviendaHabitual());
+			assertEquals("numeroPrestamoHipotecario", expected.getNumeroPrestamoHipotecario() , actual.getNumeroPrestamoHipotecario());
+			assertEquals("porcentajePrestamo", expected.getPorcentajePrestamo() , actual.getPorcentajePrestamo());
+			assertEquals("deduccionViviendaEjercicioAnterior", expected.isDeduccionViviendaEjercicioAnterior() , actual.isDeduccionViviendaEjercicioAnterior());
+			assertEquals("iglesiaCatolica", expected.isIglesiaCatolica() , actual.isIglesiaCatolica());
+			assertEquals("finesSociales", expected.isFinesSociales() , actual.isFinesSociales());
+		}
+	}
+	
 }

@@ -50,6 +50,7 @@ import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.RespuestaCorrecta;
 import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.ServicioConsultasDirectas;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ddff.json.AeatFiscalDataJSON;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
@@ -75,6 +76,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.ddff.AeatFiscalData;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
@@ -101,6 +103,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.occam.server.fiscal.ddff.AeatFiscalDataTypeParser;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
@@ -131,7 +134,9 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class ModelAdmonUtils {
 	
-	private static final String ERROR_TEMPLATE_START = "<html>"
+	private static final String JAVA_11_HTTP_CLIENT_BOT = "Java 11 HttpClient Bot";
+	
+	private static final String HTML_TEMPLATE_START = "<html>"
 			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
 			+"<body>";
 	private static final String ERROR_TEMPLATE_AEAT = "<div style=\""
@@ -160,7 +165,7 @@ public class ModelAdmonUtils {
 			+"\">";
 	private static final String ERROR_TEMPLATE_BODY = "<li>{0}</li>";
 	private static final String ERROR_TEMPLATE_AFTER = "</ul>";
-	private static final String ERROR_TEMPLATE_END = "</body></html>";
+	private static final String HTML_TEMPLATE_END = "</body></html>";
 
 	private ModelAdmonUtils() {
 		
@@ -231,7 +236,7 @@ public class ModelAdmonUtils {
 	private static synchronized  void giveRedirectBack( HttpClient httpClient, HttpServletResponse resp, String location, MimeType mimeType) throws IOException, InterruptedException {
 		HttpRequest locationRequest = HttpRequest.newBuilder()
 				.uri(URI.create( location ))
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
 				.GET()
 				.build();
 		HttpResponse<byte[]> locationResponse = httpClient
@@ -244,7 +249,7 @@ public class ModelAdmonUtils {
 	}
 	public static synchronized  void giveExceptionBack( HttpServletResponse resp, boolean fromAEAT, String ... msgs)  {
 		StringBuilder buff = new StringBuilder();
-		buff.append(ERROR_TEMPLATE_START);
+		buff.append(HTML_TEMPLATE_START);
 		if (fromAEAT) {
 			buff.append(ERROR_TEMPLATE_AEAT);	
 		}
@@ -256,7 +261,7 @@ public class ModelAdmonUtils {
 			buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, msg));
 		}
 		buff.append(ERROR_TEMPLATE_AFTER);
-		buff.append(ERROR_TEMPLATE_END);
+		buff.append(HTML_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}
 	 
@@ -313,10 +318,12 @@ public class ModelAdmonUtils {
 
 		@Override
 		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// nothing
 		}
 
 		@Override
 		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// nothing
 		}
 
 		@Override
@@ -825,7 +832,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
 				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
 				.build();
 			HttpResponse<byte[]> response = httpClient
@@ -918,7 +925,7 @@ public class ModelAdmonUtils {
 			
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
 				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
 				.build();
@@ -1004,7 +1011,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)				
 				.setHeader( "modelo", FiscalModelUtils.getModelName(model) )          // Modelo a presentar
 				.setHeader( "ejercicio", AonNumberUtils.toString( model.getYear()))   // Ejercicio de presentación
 				.setHeader( "periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName())  // Periodo del modelo
@@ -1124,7 +1131,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)				
 				.setHeader( "idenvio", idShipment )                             // Identificador único de un envío, generado en la operación de Inicialización. 
 				.setHeader( "numbloque", AonNumberUtils.toString(blockNumber))  // Indica el bloque de datos que se envía.
 				.setHeader( "codificacion", "UTF-8") 							// Indica el juego de caracteres usado para remitir el bloque con los registros Tipo 2 en el cuerpo de la petición.				
@@ -1198,7 +1205,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)				
 				.setHeader( "idenvio", idShipment )	  // Identificador único de un envío en estado FINALIZADO O	PRESENTADO			
 				.setHeader( "codificacion", "UTF-8")  // Indica el juego de caracteres usado para recuperar la información		
 				.POST(HttpRequest.BodyPublishers.ofString(""))
@@ -1302,7 +1309,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)				
 				.setHeader( "idenvio", idShipment )              // Identificador único de un envío en estado FINALIZADO
 				.setHeader( "firnif", aeatParams.getDocument())  // Forma parte de la Firma no criptográfica. NIF del titular del certificado que realiza la presentación
 				.setHeader( "firnombre", aeatParams.getName())   // Forma parte de la Firma no criptográfica. NOMBRE/RAZÓN SOCIAL del titular del certificado que realiza la presentación
@@ -1413,7 +1420,7 @@ public class ModelAdmonUtils {
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
 				.setHeader( "firnif", aeatParams.getDocument())
 				.setHeader( "firnombre", aeatParams.getName())
 				.setHeader( "fir", "FirmaBasica")
@@ -1582,7 +1589,7 @@ public class ModelAdmonUtils {
 	
 	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
 		StringBuilder buff = new StringBuilder();
-		buff.append(ERROR_TEMPLATE_START);		
+		buff.append(HTML_TEMPLATE_START);		
 		buff.append(ERROR_TEMPLATE_BEFORE);
 		for (ArrayList<String> al : erroresGlobal) {
 			buff.append("<li>");
@@ -1606,8 +1613,127 @@ public class ModelAdmonUtils {
 			buff.append("</li>");
 		}
 		buff.append(ERROR_TEMPLATE_AFTER);
-		buff.append(ERROR_TEMPLATE_END);
+		buff.append(HTML_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}		
 
+	public static void checkAddress(HttpServletResponse resp, AEATParams aeatParams) {
+		try {
+			String urlParameters = MessageFormat.format(
+				"EJERCICIO={0}"
+				+"&NIF={1}"
+						
+				,"2022"
+				,aeatParams.getDocument()
+			);
+			
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+			
+			String url = "https://www1.agenciatributaria.gob.es/wlpl/TOAG-JDIT/IsRatificadoExJson";
+			
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+			String body = new String(response.body());
+			if (response.statusCode() == 200) {
+				try {
+					JSONObject respObject0 = new JSONObject( body );
+					JSONObject respObject1 = respObject0.optJSONObject("respuesta");
+					boolean ratificado = respObject1.optBoolean("domicilioRatificado");
+					if (ratificado) {
+						ModelAdmonUtils.giveExceptionBack(resp, "Agencia Tributaria tiene constacia de la ratificación del domicilio" );	
+					} else {
+						ModelAdmonUtils.giveExceptionBack(resp, "Agencia Tributaria NO tiene constacia de la ratificación del domicilio" );
+					}
+				} catch (Exception e) {
+					ModelAdmonUtils.giveExceptionBack(resp, "No se ha podido leer la respuesta de la Agencia Tributaria" );
+				}
+			} else {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+		}
+	}
+
+	public static AeatFiscalData fiscalData(HttpServletResponse resp, AEATParams aeatParams) {
+		try {
+			String urlParameters = MessageFormat.format(
+				"nif={0}"
+				+"&pdp={1}"
+				,aeatParams.getDocument()
+				,"S"
+			);
+			
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+			
+			String url = "https://www1.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF22Pei";
+			
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.USER_AGENT  , JAVA_11_HTTP_CLIENT_BOT)
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			if (response.statusCode() == 200) {
+				AeatFiscalData fiscalData = AeatFiscalDataTypeParser.parse( response.body() );
+				JSONObject json = AeatFiscalDataJSON.to( fiscalData );
+				if (json != null) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					AonIOUtils.write(json.toString(), baos);
+					if (resp != null) {
+						ModelAdmonUtils.giveBase64Back(resp, baos.toByteArray(), MimeType.JSON);
+					}
+				} else {
+					fiscalData.setError("No se han encontrado datos");
+					if (resp != null) {
+						ModelAdmonUtils.giveExceptionBack(resp, fiscalData.getError());
+					} 
+				}
+				return fiscalData;
+			} else {
+				if (resp != null) {
+					ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				} 
+				return  new AeatFiscalData()
+					.setError(response.statusCode() + " - " + "Error al realizar la petición");
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+			return new AeatFiscalData().setError( "500 - "+e.getMessage());
+		} catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			if (resp != null) {
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			}
+			return new AeatFiscalData().setError( "500 - "+e.getMessage());
+		}
+	}
 }

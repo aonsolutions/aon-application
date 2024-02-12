@@ -25,6 +25,10 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.ddff.AeatComunidadAutonoma;
+import com.esferalia.aon.occam.api.model.ddff.AeatDiscapacidad;
+import com.esferalia.aon.occam.api.model.ddff.AeatEstadoCivil;
+import com.esferalia.aon.occam.api.model.ddff.AeatSexo;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
@@ -72,6 +76,10 @@ import com.github.javafaker.Faker;
 
 public class AonRandom {
 	private static Faker faker = new Faker( new Locale("es"));
+
+	public static boolean bool() {
+		return gt(50);
+	}
 	
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) >= threshold;
@@ -130,6 +138,9 @@ public class AonRandom {
     }
     public static int getInt( int from, int to) {
     	return number(from, to);
+    }
+    public static int getInt( int to) {
+    	return number(0, to);
     }
     
     public static double getPercent() {
@@ -583,5 +594,28 @@ public class AonRandom {
 		return list.get( getInt(0, (list.size() - 1) ) );
 	}
 	
+	public static AeatEstadoCivil getRandomEstadoCivil(int nullThreshold) {
+    	return gt(nullThreshold)
+			?AeatEstadoCivil.values()[faker.random().nextInt(AeatEstadoCivil.values().length)]
+			:null;
+	}
+
+	public static AeatDiscapacidad getRandomDiscapacidad(int nullThreshold) {
+    	return gt(nullThreshold)
+			?AeatDiscapacidad.values()[faker.random().nextInt(AeatDiscapacidad.values().length)]
+			:null;
+	}
+
+	public static AeatSexo getRandomSexo(int nullThreshold) {
+    	return gt(nullThreshold)
+			?AeatSexo.values()[faker.random().nextInt(AeatSexo.values().length)]
+			:null;
+	}
+
+	public static AeatComunidadAutonoma getRandomComunidadAutonoma(int nullThreshold) {
+    	return gt(nullThreshold)
+			?AeatComunidadAutonoma.values()[faker.random().nextInt(AeatComunidadAutonoma.values().length)]
+			:null;
+	}
 }
 

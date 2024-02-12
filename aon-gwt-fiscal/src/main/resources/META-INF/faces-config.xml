@@ -36,6 +36,14 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== COMUNICAION AEAT ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_aeatCenter</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/aeat/aeatModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- =================== RAWDOC ========================== -->
 	<navigation-rule>
 		<navigation-case>

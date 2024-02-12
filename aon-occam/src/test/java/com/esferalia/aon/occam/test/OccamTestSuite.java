@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
+import com.esferalia.aon.occam.test.ddff.AeatFiscalDataTestSuite;
 import com.esferalia.aon.occam.test.delivery.DeliveryTest;
 import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 	WorkgroupTestSuite.class,
 	ProjectTestSuite.class,
 	PayrollTestSuite.class,
+	AeatFiscalDataTestSuite.class,
 	FiscalTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 	OfferTest.class,

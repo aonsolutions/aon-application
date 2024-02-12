@@ -358,9 +358,15 @@
 											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="SII"/>
 											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="SII"/>
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="SII - Suministro Inmediato de Información" />
-											
 										</aon:commandLink>
-									</aon:div>		
+									</aon:div>
+									<aon:div>
+										<aon:commandLink id="gwt_aeatCenter-fiscal" action="gwt_aeatCenter-fiscal" 
+											title="Comunicación con AEAT" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="AEAT"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label" value="Consultas a la Agencia Tributaria" />
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class AonCollectionUtils {
@@ -67,4 +68,11 @@ public class AonCollectionUtils {
 	public static <T> boolean isNotEmpty(T[] array) {
 		return !isEmpty(array);
 	}
+	
+	public static IntStream range( int to) {
+		if ( to <= 0) return IntStream.empty();
+		return IntStream.range(0, to); 
+	}
+	
+	
 }

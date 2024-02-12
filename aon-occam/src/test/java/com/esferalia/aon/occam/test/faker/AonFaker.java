@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -23,6 +23,10 @@ import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.ddff.AeatDatosGenerales;
+import com.esferalia.aon.occam.api.model.ddff.AeatDomicilio;
+import com.esferalia.aon.occam.api.model.ddff.AeatFiscalData;
+import com.esferalia.aon.occam.api.model.ddff.AeatTitular;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -97,6 +101,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
@@ -1237,6 +1242,77 @@ public class AonFaker {
 				.setMedias(medias)
 				.setBanks(new LinkedList<>())
 				.setRecordDatas(new LinkedList<>());
+	}
+
+	public static AeatFiscalData getAeatFiscalData() {
+		AeatFiscalData ffdd = new AeatFiscalData().setDate( AonRandom.getPastDate(5) );
+		if ( AonRandom.bool() ) {
+			AonCollectionUtils.range( AonRandom.getInt(10) )
+				.forEach( i -> ffdd.addDatosGenerales( getAeatFiscalDataDatosGenerales() ));
+		}
+		if ( AonRandom.bool() ) {
+			AonCollectionUtils.range( AonRandom.getInt(5) )
+				.forEach( i -> ffdd.addTitular( getAeatFiscalDataTitulares() ));
+		}
+		if ( AonRandom.bool() ) {
+			AonCollectionUtils.range( AonRandom.getInt(10) )
+				.forEach( i -> ffdd.addDomicilio( getAeatFiscalDataDomicilio() ));
+		}
+		return ffdd;
+	}
+	
+	public static AeatDatosGenerales getAeatFiscalDataDatosGenerales() {
+		return new AeatDatosGenerales()
+			.setEstadoCivil( AonRandom.getRandomEstadoCivil(10) )
+			.setConyugeNoResidente( AonRandom.bool() )	
+			.setConyugeNoResidenteUE( AonRandom.bool() );
+	}
+	
+	private static AeatTitular getAeatFiscalDataTitulares() {
+		return new AeatTitular()
+			.setNif(AonRandom.string(50, 20))
+			.setApellidosNombre(AonRandom.string(50, 20))
+			.setDiscapacidadIRPF( AonRandom.getRandomDiscapacidad(10) )
+			.setDiscapacidad990( AonRandom.getRandomDiscapacidad(10) )
+			.setFechaNacimiento( AonRandom.getPastDate(50) )
+			.setSexo( AonRandom.getRandomSexo(10) )
+			.setFechaFallecimiento( AonRandom.getPastDate(50) )
+			.setComunidadAutonoma( AonRandom.getRandomComunidadAutonoma(10)) 
+			.setIBAN(AonRandom.string(50, 20))
+			.setSWIFT(AonRandom.string(50, 20))
+			.setFechaAdquisicionViviendaHabitual( AonRandom.getPastDate(50) )
+			.setNumeroPrestamoHipotecario(AonRandom.string(50, 20))
+			.setPorcentajePrestamo(AonRandom.getPercent())
+			.setDeduccionViviendaEjercicioAnterior( AonRandom.bool() )
+			.setIglesiaCatolica( AonRandom.bool() )
+			.setFinesSociales( AonRandom.bool() )
+			;
+	}
+	
+	private static AeatDomicilio getAeatFiscalDataDomicilio() {
+		return new AeatDomicilio()
+			.setFechaModif( AonRandom.getPastDate(50) )
+			.setTipoVia(AonRandom.string(50, 20))
+			.setCodVia(AonRandom.string(50, 20))
+			.setNombreLargo(AonRandom.string(50, 20))
+			.setNombreCorto(AonRandom.string(50, 20))
+			.setNumeracion(AonRandom.string(50, 20))
+			.setNumero(AonRandom.string(50, 20))
+			.setCalificadorNumero(AonRandom.string(50, 20))
+			.setBloque(AonRandom.string(50, 20))
+			.setPortal(AonRandom.string(50, 20))
+			.setEscalera(AonRandom.string(50, 20))
+			.setPlanta(AonRandom.string(50, 20))
+			.setPuerta(AonRandom.string(50, 20))
+			.setDatosComplementarios(AonRandom.string(50, 20))
+			.setPoblacion(AonRandom.string(50, 20))
+			.setCodigoPostal(AonRandom.string(50, 20))
+			.setCodigoMunicipio(AonRandom.string(50, 20))
+			.setMunicipio(AonRandom.string(50, 20))
+			.setCodigoProvincia(AonRandom.string(50, 20))
+			.setProvincia(AonRandom.string(50, 20))
+			.setReferenciaCatastral(AonRandom.string(50, 20))
+			;
 	}
 }
 

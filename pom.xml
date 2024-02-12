@@ -63,6 +63,7 @@
 		<module>aon-watson</module>
 		<module>aon-occam</module>
 		<module>aon-occam-mod200</module>
+		<module>aon-occam-mod100</module>
 		
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>
@@ -304,7 +305,7 @@
                         <id>central-repository</id>
                         <name>Central Repository</name>
                         <layout>default</layout>
-                        <url>https://mvnrepository.com/repos/central</url>
+                        <url>https://repo1.maven.org/maven2/</url>
                         <releases>
                                 <enabled>true</enabled>
                                 <updatePolicy>never</updatePolicy>
@@ -318,7 +319,7 @@
                         <id>repo1.maven.org</id>
                         <name>Central Repository 1</name>
                         <layout>default</layout>
-                        <url>https://repo1.maven.org/maven2/</url>
+                        <url>https://repo1.maven.org/maven3/</url>
                         <releases>
                                 <enabled>true</enabled>
                                 <updatePolicy>never</updatePolicy>

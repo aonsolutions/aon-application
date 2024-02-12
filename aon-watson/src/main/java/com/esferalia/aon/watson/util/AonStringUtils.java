@@ -5828,6 +5828,9 @@ public class AonStringUtils {
 	public static String defaultIfBlank(String str) {
 		return isBlank(str) ? EMPTY : str;
 	}
+	public static String nullIfBlank(String str) {
+		return isBlank(str) ? null : str;
+	}
 	
 	public static <T> T mapIfNotBlank(String str, Function<String,T> function) {
 		return isBlank(str) ? null : function.apply(str);
