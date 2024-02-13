@@ -588,6 +588,7 @@ export const EnterpriseApps = [
   "timecontrol",
   "management",
   "messenger",
+  "invofox",
   "ocr",
   "aio",
   "bidoq",
