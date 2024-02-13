@@ -14,8 +14,11 @@ import com.esferalia.aon.payroll.calculator.sql.SmartSQLContractSettleCalculator
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import java.util.Calendar;
+import java.util.Collection;
 
 public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorContext {
 
@@ -60,8 +63,8 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 			
 			
 			@Override
-			protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
-				super.loadContractData(ctx, startDate, noHolidaysEndDate != null ? noHolidaysEndDate: endDate);
+			protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
+				return super.loadContractData(ctx, startDate, noHolidaysEndDate != null ? noHolidaysEndDate: endDate);
 			}
 			
 			private Date getNoHolidaysEndDate() {
