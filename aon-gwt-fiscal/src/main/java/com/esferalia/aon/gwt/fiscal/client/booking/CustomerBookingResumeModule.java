@@ -78,6 +78,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private AonToolbarButton backBtn;
 	private ListBox enterprisesView;
+	private AonToolbarButton refreshBtn;
 	
 	private Booking domainBooking;
 	
@@ -142,6 +143,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 
 	private void loadModule() {
+		dockLayoutPanel.clear();
+		
 		createToolbar();
 		dockLayoutPanel.addNorth(toolbar, 50);
 		
@@ -292,6 +295,10 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		Label domainTypeLabel  = new Label("Cliente");
 		Label idLabel = new Label(this.customer.getId().toString());
 		Label schemaLabel = new Label(this.customer.getDomain().getName());
+		
+		if(AonStringUtils.isNotBlank(this.customer.getName()))
+			toolbar.setTitle("Resumen Contrataci\u00f3n (" + this.customer.getName() + ")");
+		
 		Label descriptionLabel = new Label(this.customer.getName());
 		Label documentLabel = new Label(this.customer.getDocument());
 		Label statusLabel = new Label(this.customer.getStatus().getDescription());
@@ -1037,8 +1044,12 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
 			childAppsDiff.sort((o1, o2) -> o1.compareTo(o2));
 			
+			Integer portalUsersCount = null == domainChild.getUsers() ? 0 : (int) domainChild.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
+			List<User> activeUsers = domainChild.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
+
 			// If empresasfacturables has no child app skip
-			if(!allEnterprises && childAppsDiff.size() == 0) continue;
+			if(!allEnterprises && childAppsDiff.size() == 0 && 0 == domainChild.getMaxDefinedUsers()) continue;
 			
 			// Grid widgets columns
 			Label domainNameLabel  = new Label(domainChild.getDescription());
@@ -1055,10 +1066,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			Label statusLabel = new Label(statusMessage);
 			statusLabel.setTitle(AonStringUtils.equalsIgnoreCase(statusMessage, "Expirado") ? ("F. expiraci\u00f3n : " + formatDate(domainChild.getExpirationDate())) : "");
 			
-			Integer portalUsersCount = null == domainChild.getUsers() ? 0 : (int) domainChild.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
-			List<User> activeUsers = domainChild.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
-			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
-
 			Label usersLabel = new Label(activeUsersDiff + " / " + domainChild.getMaxDefinedUsers());
 			
 			Label portalUsersLabel = new Label(portalUsersCount + "");
@@ -1354,6 +1361,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		enterprisesView.addChangeHandler(e -> onEnterprisesView());
 		
 		toolbar.add(enterprisesView);
+		
+		refreshBtn = new AonToolbarButton("Recargar", AON.CSS.aonIconRefresh());
+		refreshBtn.addClickHandler(e -> loadModule());
+		
+		toolbar.add(refreshBtn);
 	}
 
 	public static native void back()
