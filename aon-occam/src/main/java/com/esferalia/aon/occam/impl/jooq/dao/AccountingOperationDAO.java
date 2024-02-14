@@ -310,7 +310,7 @@ public class AccountingOperationDAO {
 					// Facturas o apuntes que van a todas las actividades (activity=null),  
 					// al sacarlas en cada actividad, debe salir la parte proporcional, de 
 					// forma equitativa, segun las actividades que haya (1/2, 1/3, 1/4, ...)
-					if (act == null && count > 1) {
+					if (params.getActivity() != null && act == null && count > 1) {
 						base = AonMathUtils.round(base/count);
 						quota = AonMathUtils.round(quota/count);
 						deductibleQuota = AonMathUtils.round(deductibleQuota/count);
