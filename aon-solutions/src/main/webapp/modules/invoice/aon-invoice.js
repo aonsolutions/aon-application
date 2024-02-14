@@ -1372,8 +1372,9 @@ export class AonInvoice extends AonElement {
 			});
 			div.appendChild(farmer);
 			if(this.invoice.isEmitida() && !this.invoice.isNacional() ) {
-				if(this.invoice.isWithholdingFarmer())
+				if(this.invoice.isWithholdingFarmer()){
 					this.invoice.setWithholdingFarmer(false);
+				}
 				farmer.setDisabled(true);
 			}
 			farmer.checked = this.invoice.isWithholdingFarmer();
@@ -1899,7 +1900,7 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-
+		
 		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
@@ -1993,7 +1994,7 @@ export class AonInvoice extends AonElement {
 			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
 				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0){
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2104,7 +2105,7 @@ export class AonInvoice extends AonElement {
 				detail.percentage = 21.0;
 			}
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
