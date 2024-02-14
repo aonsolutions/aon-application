@@ -935,6 +935,20 @@ export class Invoice {
     return this;
   }
 
+  resetFinances() {
+    let finance = this.finances.length > 0
+        ? this.finances[0] :
+        {
+          due_date: this.date,
+          paymethod: this.paymethod,
+          amount: this.total,
+          iban: ''
+        };
+
+    finance.total = this.total;
+    this.finances = [finance];
+  }
+
   calculateFinances() {
     if(this.finances.length === 0) {
       if(!this.paymethod) this.paymethod = 'CASH';
