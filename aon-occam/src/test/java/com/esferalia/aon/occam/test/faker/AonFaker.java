@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.ddff.AeatCotizacionAutonomo;
 import com.esferalia.aon.occam.api.model.ddff.AeatDatosGenerales;
 import com.esferalia.aon.occam.api.model.ddff.AeatDomicilio;
 import com.esferalia.aon.occam.api.model.ddff.AeatFiscalData;
@@ -1258,6 +1259,10 @@ public class AonFaker {
 			AonCollectionUtils.range( AonRandom.getInt(10) )
 				.forEach( i -> ffdd.addDomicilio( getAeatFiscalDataDomicilio() ));
 		}
+		if ( AonRandom.bool() ) {
+			AonCollectionUtils.range( AonRandom.getInt(10) )
+				.forEach( i -> ffdd.addCotizacionAutonomo( getAeatFiscalDataCotizacionAutonomo() ));
+		}
 		return ffdd;
 	}
 	
@@ -1286,6 +1291,14 @@ public class AonFaker {
 			.setDeduccionViviendaEjercicioAnterior( AonRandom.bool() )
 			.setIglesiaCatolica( AonRandom.bool() )
 			.setFinesSociales( AonRandom.bool() )
+			;
+	}
+	
+	private static AeatCotizacionAutonomo getAeatFiscalDataCotizacionAutonomo() {
+		return new AeatCotizacionAutonomo()
+			.setNumeroAfiliacion(AonRandom.string(50, 12))
+			.setRegCotizacion( AonRandom.getRandomRegCotizacion(-1) )
+			.setImporte(AonRandom.getDouble(0 , 10000 ))
 			;
 	}
 	

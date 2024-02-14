@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperating
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.ddff.AeatCotizacionAutonomo;
 import com.esferalia.aon.occam.api.model.ddff.AeatDatosGenerales;
 import com.esferalia.aon.occam.api.model.ddff.AeatDomicilio;
 import com.esferalia.aon.occam.api.model.ddff.AeatFiscalData;
@@ -1204,6 +1205,9 @@ public class Asserts {
 			assertEqualsCollection( "AeatFiscalData Domicilios",expected.getDomicilios(), actual.getDomicilios());
 			AonCollectionUtils.range( AonCollectionUtils.size(expected.getDomicilios()) )
 				.forEach( i -> assertEqualsAeatFiscalDataDomicilios(expected.getDomicilios().get(i), actual.getDomicilios().get(i)));
+			assertEqualsCollection( "AeatFiscalData CotizacionesAutonomo",expected.getCotizacionesAutonomo(), actual.getCotizacionesAutonomo());
+			AonCollectionUtils.range( AonCollectionUtils.size(expected.getCotizacionesAutonomo()) )
+				.forEach( i -> assertEqualsAeatFiscalDataCotizacionesAutonomo(expected.getCotizacionesAutonomo().get(i), actual.getCotizacionesAutonomo().get(i)));
 		}
 	}
 	
@@ -1259,6 +1263,14 @@ public class Asserts {
 			assertEquals("deduccionViviendaEjercicioAnterior", expected.isDeduccionViviendaEjercicioAnterior() , actual.isDeduccionViviendaEjercicioAnterior());
 			assertEquals("iglesiaCatolica", expected.isIglesiaCatolica() , actual.isIglesiaCatolica());
 			assertEquals("finesSociales", expected.isFinesSociales() , actual.isFinesSociales());
+		}
+	}
+	
+	private static void assertEqualsAeatFiscalDataCotizacionesAutonomo(AeatCotizacionAutonomo expected, AeatCotizacionAutonomo actual) {
+		if (expected != null && actual != null) {
+			assertEquals("NumeroAfiliacion", expected.getNumeroAfiliacion() , actual.getNumeroAfiliacion());
+			assertEquals("RegCotizacion", expected.getRegCotizacion() , actual.getRegCotizacion());
+			assertEquals("Importe", expected.getImporte() , actual.getImporte());
 		}
 	}
 	

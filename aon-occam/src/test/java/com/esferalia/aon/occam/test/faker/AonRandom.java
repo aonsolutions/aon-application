@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.ddff.AeatComunidadAutonoma;
 import com.esferalia.aon.occam.api.model.ddff.AeatDiscapacidad;
 import com.esferalia.aon.occam.api.model.ddff.AeatEstadoCivil;
+import com.esferalia.aon.occam.api.model.ddff.AeatRegCotizacion;
 import com.esferalia.aon.occam.api.model.ddff.AeatSexo;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -615,6 +616,12 @@ public class AonRandom {
 	public static AeatComunidadAutonoma getRandomComunidadAutonoma(int nullThreshold) {
     	return gt(nullThreshold)
 			?AeatComunidadAutonoma.values()[faker.random().nextInt(AeatComunidadAutonoma.values().length)]
+			:null;
+	}
+
+	public static AeatRegCotizacion getRandomRegCotizacion(int nullThreshold) {
+    	return gt(nullThreshold)
+			?AeatRegCotizacion.values()[faker.random().nextInt(AeatRegCotizacion.values().length)]
 			:null;
 	}
 }

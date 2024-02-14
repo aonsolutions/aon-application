@@ -74,7 +74,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	}
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_NIF = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_NIF = (tit,tab) -> {
 		if (AonStringUtils.isNotBlank(tit.getNif())) {
 			tab.addRow()
 				.addCell(new Label("NIF") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -82,7 +82,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_APELLIDOS_NOMBRE = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_APELLIDOS_NOMBRE = (tit, tab) -> {
 		if (AonStringUtils.isNotBlank(tit.getApellidosNombre())) {
 			tab.addRow()
 				.addCell(new Label("Apellidos y Nombre"), AON.CSS.aonTableLabel())
@@ -90,7 +90,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DISCAPACIDAD_IRPF = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DISCAPACIDAD_IRPF = (tit,tab) -> {
 	if (tit.getDiscapacidadIRPF() != null) {
 			tab.addRow()
 				.addCell(new Label("Discapacidad-IRPF"), AON.CSS.aonTableLabel())
@@ -98,7 +98,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DISCAPACIDAD_990 = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DISCAPACIDAD_990 = (tit, tab) -> {
 		if (tit.getDiscapacidad990() != null) {
 			tab.addRow()
 				.addCell(new Label("Discapacidad-990"), AON.CSS.aonTableLabel())
@@ -106,7 +106,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_NACIMIENTO = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_NACIMIENTO = (tit,tab) -> {
 		if (tit.getFechaNacimiento() != null ) {
 			tab.addRow()
 				.addCell(new Label("Fecha de nacimiento"), AON.CSS.aonTableLabel())
@@ -114,7 +114,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_SEXO = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_SEXO = (tit, tab) -> {
 		if (tit.getSexo() != null ) {
 			tab.addRow()
 				.addCell(new Label("Sexo"), AON.CSS.aonTableLabel())
@@ -122,7 +122,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_FALLECIMIENTO = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_FALLECIMIENTO = (tit, tab) -> {
 		if (tit.getFechaFallecimiento() != null) {
 			tab.addRow()
 				.addCell(new Label("Fecha de fallecimiento"), AON.CSS.aonTableLabel())
@@ -130,7 +130,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_COMUNIDAD_AUTONOMA = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_COMUNIDAD_AUTONOMA = (tit, tab) -> {
 		if (tit.getComunidadAutonoma() != null) {
 			tab.addRow()
 				.addCell(new Label("Comunidad aut\u00F3noma"), AON.CSS.aonTableLabel())
@@ -138,7 +138,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_IBAN = (tit, tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_IBAN = (tit, tab) -> {
 		if (AonStringUtils.isNotBlank(tit.getIBAN())) {
 			tab.addRow()
 				.addCell(new Label("IBAN"), AON.CSS.aonTableLabel())
@@ -146,7 +146,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_SWIFT = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_SWIFT = (tit,tab) -> {
 		if (AonStringUtils.isNotBlank(tit.getSWIFT())) {
 			tab.addRow()
 				.addCell(new Label("SWIFT"), AON.CSS.aonTableLabel())
@@ -154,7 +154,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 			}
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_ADQUISICION_VIVIENDA_HABITUAL = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FECHA_ADQUISICION_VIVIENDA_HABITUAL = (tit,tab) -> {
 		if (tit.getFechaAdquisicionViviendaHabitual() != null) {
 			tab.addRow()
 				.addCell(new Label("Fecha adquisici\u00F3n vivienda habitual"), AON.CSS.aonTableLabel())
@@ -162,7 +162,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_NUMERO_PRESTAMO_HIPOTECARIO = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_NUMERO_PRESTAMO_HIPOTECARIO = (tit,tab) -> {
 		if (AonStringUtils.isNotBlank(tit.getNumeroPrestamoHipotecario())) {
 			tab.addRow()
 				.addCell(new Label("N\u00FAmero de pr\u00E9stamo hipotecario"), AON.CSS.aonTableLabel())
@@ -170,7 +170,7 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_PORCENTAJE_PRESTAMO = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_PORCENTAJE_PRESTAMO = (tit,tab) -> {
 		if (AonMathUtils.isNotZero(tit.getPorcentajePrestamo())) {
 			tab.addRow()
 				.addCell(new Label("Porcentaje del pr\u00E9stamo destinado a la compra de la vivienda habitual"), AON.CSS.aonTableLabel())
@@ -178,18 +178,18 @@ public class AeatFiscalDataTitularesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DEDUCCION_VIVIENDA_EJERCICIO_ANTERIOR = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_DEDUCCION_VIVIENDA_EJERCICIO_ANTERIOR = (tit,tab) -> {
 		tab.addRow()
 			.addCell(new Label("Deducci\u00F3n en vivienda ejercicio anterior"), AON.CSS.aonTableLabel())
 			.addCell(AeatFiscalDataPanel.getBooleanLabel(tit.isDeduccionViviendaEjercicioAnterior()))	;
 	};
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_IGLESIA_CATOLICA = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_IGLESIA_CATOLICA = (tit,tab) -> {
 		tab.addRow()
 			.addCell(new Label("Asignaci\u00F3n a la iglesia cat\u00F3lica"), AON.CSS.aonTableLabel())
 			.addCell(AeatFiscalDataPanel.getBooleanLabel(tit.isIglesiaCatolica()))	;
 	};
 	
-	public static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FINES_SOCIALES = (tit,tab) -> {
+	private static final BiConsumer<AeatTitular,AonDisplayGrid> TITULAR_FINES_SOCIALES = (tit,tab) -> {
 		tab.addRow()
 			.addCell(new Label("Asignaci\u00F3n a otros fines sociales"), AON.CSS.aonTableLabel())
 			.addCell(AeatFiscalDataPanel.getBooleanLabel(tit.isFinesSociales()));

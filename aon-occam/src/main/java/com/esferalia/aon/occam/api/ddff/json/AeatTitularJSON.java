@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.ddff.AeatDiscapacidad;
 import com.esferalia.aon.occam.api.model.ddff.AeatSexo;
 import com.esferalia.aon.occam.api.model.ddff.AeatTitular;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AeatTitularJSON {
 	

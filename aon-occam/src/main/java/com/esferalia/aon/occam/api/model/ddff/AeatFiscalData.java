@@ -14,6 +14,7 @@ public class AeatFiscalData implements Serializable {
 	private List<AeatDatosGenerales> datosGenerales;
 	private List<AeatTitular> titulares;
 	private List<AeatDomicilio> domicilios;
+	private List<AeatCotizacionAutonomo> cotizacionesAutonomo;
 
 	public String getError() {
 		return error;
@@ -74,5 +75,21 @@ public class AeatFiscalData implements Serializable {
 		this.domicilios.add(domicilio);
 		return this;
 	}
+	
+	public List<AeatCotizacionAutonomo> getCotizacionesAutonomo() {
+		return cotizacionesAutonomo;
+	}
+	public AeatFiscalData setCotizacionesAutonomo(List<AeatCotizacionAutonomo> cotizacionesAutonomo) {
+		this.cotizacionesAutonomo = cotizacionesAutonomo;
+		return this;
+	}
+	public AeatFiscalData addCotizacionAutonomo(AeatCotizacionAutonomo cotizacionAutonomo) {
+		if (this.cotizacionesAutonomo == null) {
+			this.cotizacionesAutonomo = new LinkedList<>();
+		}
+		this.cotizacionesAutonomo.add(cotizacionAutonomo);
+		return this;
+	}
 
+	
 }

@@ -17,6 +17,7 @@ public interface AeatJSONConstants {
 	String COMUNIDAD_AUTONOMA  = "comunidadAutonoma";
 	String CONYUGE_NO_RESIDENTE = "conyugeNoResidente";
 	String CONYUGE_NO_RESIDENTE_UE = "conyugeNoResidenteUE";
+	String COTIZACIONES_AUTONOMO = "cotizacionesAutonomo";
 	
 	// ----------------------------------------------[D]
 	String DATE = "date";
@@ -42,6 +43,7 @@ public interface AeatJSONConstants {
 	// ----------------------------------------------[I]
 	String IBAN = "IBAN";
 	String IGLESIA_CATOLICA = "iglesiaCatolica";
+	String IMPORTE = "importe";
 
 	// ----------------------------------------------[N]
 	String MUNICIPIO = "municipio";
@@ -52,6 +54,7 @@ public interface AeatJSONConstants {
 	String NOMBRE_LARGO = "nombreLargo";
 	String NUMERACION = "numeracion";
 	String NUMERO = "numero";
+	String NUMERO_AFILIACION = "numeroAfiliacion";
 	String NUMERO_PRESTAMO_HIPOTECARIO = "numeroPrestamoHipotecario";
 	
 	// ----------------------------------------------[P]
@@ -64,6 +67,7 @@ public interface AeatJSONConstants {
 	
 	// ----------------------------------------------[R]
 	String REFERENCIA_CATASTRAL = "referenciaCatastral";
+	String REG_COTIZACION = "regCotizacion";
 	
 	// ----------------------------------------------[S]
 	String SEXO = "sexo";

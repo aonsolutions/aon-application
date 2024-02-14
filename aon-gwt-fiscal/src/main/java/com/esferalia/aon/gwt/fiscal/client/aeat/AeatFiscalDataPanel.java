@@ -34,6 +34,7 @@ public class AeatFiscalDataPanel extends SimpleLayoutPanel {
 		container.add( new AeatFiscalDataDatosGeneralesPanel(data) );
 		container.add( new AeatFiscalDataTitularesPanel(data) );
 		container.add( new AeatFiscalDataDomicilioPanel(data) );
+		container.add( new AeatFiscalDataCotizacionAutonomoPanel(data) );
 	}
 
 	private Widget title(AeatFiscalData data) {

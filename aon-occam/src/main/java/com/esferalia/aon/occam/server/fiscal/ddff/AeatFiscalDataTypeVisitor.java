@@ -7,10 +7,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.occam.api.model.ddff.AeatComunidadAutonoma;
+import com.esferalia.aon.occam.api.model.ddff.AeatCotizacionAutonomo;
 import com.esferalia.aon.occam.api.model.ddff.AeatDatosGenerales;
 import com.esferalia.aon.occam.api.model.ddff.AeatDiscapacidad;
 import com.esferalia.aon.occam.api.model.ddff.AeatDomicilio;
 import com.esferalia.aon.occam.api.model.ddff.AeatEstadoCivil;
+import com.esferalia.aon.occam.api.model.ddff.AeatRegCotizacion;
 import com.esferalia.aon.occam.api.model.ddff.AeatFiscalDataType.AeatFiscalDataTypeContext;
 import com.esferalia.aon.occam.api.model.ddff.AeatFiscalDataType.IAeatFiscalDataTypeVisitor;
 import com.esferalia.aon.occam.api.model.ddff.AeatSexo;
@@ -134,6 +136,19 @@ public class AeatFiscalDataTypeVisitor implements IAeatFiscalDataTypeVisitor {
 			);
 		}
 	}
+	
+	/**
+	 * Cotizaciones de autónomos
+	 */
+	@Override 
+	public void visitCT(AeatFiscalDataTypeContext ctx) {
+		ctx.getFiscalData().addCotizacionAutonomo( new AeatCotizacionAutonomo()
+			.setNumeroAfiliacion(getString(ctx.getLine(), 8, 12 ))
+			.setRegCotizacion( AeatRegCotizacion.getByValue( getString(ctx.getLine(), 20, 4) ))
+			.setImporte( getDouble(ctx.getLine(), 24, 17 ))
+		);
+	}
+
 
 	// ************************************************************************** [PENDIENTE]
 	// 
@@ -156,7 +171,6 @@ public class AeatFiscalDataTypeVisitor implements IAeatFiscalDataTypeVisitor {
 	@Override public void visitTV(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
 	@Override public void visitAR(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
 	@Override public void visitAT(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
-	@Override public void visitCT(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
 	@Override public void visitAG(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
 	@Override public void visitIP(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}
 	@Override public void visitSB(AeatFiscalDataTypeContext ctx) {/*Not implemented yet!*/}

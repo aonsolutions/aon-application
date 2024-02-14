@@ -57,7 +57,7 @@ public class AeatFiscalDataDatosGeneralesPanel extends AonGroupPanel {
 		}
 	}
 	
-	public static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> ESTADO_CIVIL = (dat, tab) -> {
+	private static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> ESTADO_CIVIL = (dat, tab) -> {
 		if (dat.getEstadoCivil() != null ) {
 			tab.addRow()
 				.addCell(new Label("Estado_Civil"), AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -65,13 +65,13 @@ public class AeatFiscalDataDatosGeneralesPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> CONYUGE_NO_RESIDENTE = (tit,tab) -> {
+	private static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> CONYUGE_NO_RESIDENTE = (tit,tab) -> {
 		tab.addRow()
 			.addCell(new Label("C\u00F3nyuge no residente"), AON.CSS.aonTableLabel())
 			.addCell(AeatFiscalDataPanel.getBooleanLabel(tit.isConyugeNoResidente()));
 	};
 
-	public static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> CONYUGE_NO_RESIDENTE_UE = (tit,tab) -> {
+	private static final BiConsumer<AeatDatosGenerales,AonDisplayGrid> CONYUGE_NO_RESIDENTE_UE = (tit,tab) -> {
 		tab.addRow()
 			.addCell(new Label("C\u00F3nyuge no residente que residee en UE/EE"), AON.CSS.aonTableLabel())
 			.addCell(AeatFiscalDataPanel.getBooleanLabel(tit.isConyugeNoResidenteUE()));

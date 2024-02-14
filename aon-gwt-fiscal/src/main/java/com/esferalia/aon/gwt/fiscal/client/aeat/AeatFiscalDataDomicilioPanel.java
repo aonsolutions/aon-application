@@ -77,7 +77,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	}
 	
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> TIPO_VIA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> TIPO_VIA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getTipoVia())) {
 			tab.addRow()
 				.addCell(new Label("Tipo de v\u00EDa") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -85,7 +85,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> COD_VIA  = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> COD_VIA  = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getCodVia())) {
 			tab.addRow()
 				.addCell(new Label("Codigo de v\u00EDa") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -93,7 +93,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> NOMBRE_LARGO  = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> NOMBRE_LARGO  = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getNombreLargo())) {
 			tab.addRow()
 				.addCell(new Label("Nombre largo de la v\u00EDa") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -101,7 +101,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> NOMBRE_CORTO = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> NOMBRE_CORTO = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getNombreCorto())) {
 			tab.addRow()
 				.addCell(new Label("Nombre corto de la v\u00EDa") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -109,7 +109,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> NUMERACION = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> NUMERACION = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getNumeracion())) {
 			tab.addRow()
 				.addCell(new Label("Tipo de numeraci\u00F3n") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -117,7 +117,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> NUMERO = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> NUMERO = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getNumero())) {
 			tab.addRow()
 				.addCell(new Label("N\u00FAmero") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -126,7 +126,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 	};
 	
 
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> CALIFICADOR_NUMERO = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> CALIFICADOR_NUMERO = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getCalificadorNumero())) {
 			tab.addRow()
 				.addCell(new Label("Calificador numero") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -134,7 +134,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> BLOQUE = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> BLOQUE = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getBloque())) {
 			tab.addRow()
 				.addCell(new Label("Bloque") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -142,7 +142,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 	
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> PORTAL = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> PORTAL = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getPortal())) {
 			tab.addRow()
 				.addCell(new Label("Portal") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -150,7 +150,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> ESCALERA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> ESCALERA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getEscalera())) {
 			tab.addRow()
 				.addCell(new Label("Escalera") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -158,7 +158,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> PLANTA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> PLANTA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getPlanta())) {
 			tab.addRow()
 				.addCell(new Label("Planta-piso") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -166,7 +166,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};	
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> PUERTA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> PUERTA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getPuerta())) {
 			tab.addRow()
 				.addCell(new Label("Puerta") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -174,7 +174,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> DATOS_COMPLEMENTARIOS = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> DATOS_COMPLEMENTARIOS = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getDatosComplementarios())) {
 			tab.addRow()
 				.addCell(new Label("Datos complementarios") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -182,7 +182,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};	
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> POBLACION = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> POBLACION = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getPoblacion())) {
 			tab.addRow()
 				.addCell(new Label("Poblacion") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -190,7 +190,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_POSTAL = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_POSTAL = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getCodigoPostal())) {
 			tab.addRow()
 				.addCell(new Label("Codigo postal") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -198,7 +198,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};	
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_MUNICIPIO = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_MUNICIPIO = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getCodigoMunicipio())) {
 			tab.addRow()
 				.addCell(new Label("Codigo de municipio INE") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -206,7 +206,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> MUNICIPIO = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> MUNICIPIO = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getMunicipio())) {
 			tab.addRow()
 				.addCell(new Label("Municipio") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -214,7 +214,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_PROVINCIA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> CODIGO_PROVINCIA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getCodigoProvincia())) {
 			tab.addRow()
 				.addCell(new Label("Codigo de provincia") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -222,7 +222,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> PROVINCIA = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> PROVINCIA = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getProvincia())) {
 			tab.addRow()
 				.addCell(new Label("Provincia") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -230,7 +230,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> REFERENCIA_CATASTRAL = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> REFERENCIA_CATASTRAL = (dom,tab) -> {
 		if (AonStringUtils.isNotBlank(dom.getReferenciaCatastral())) {
 			tab.addRow()
 				.addCell(new Label("Referencia catastral") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )
@@ -238,7 +238,7 @@ public class AeatFiscalDataDomicilioPanel extends AonGroupPanel {
 		}
 	};
 		
-	public static final BiConsumer<AeatDomicilio,AonDisplayGrid> FECHA_MODIF = (dom,tab) -> {
+	private static final BiConsumer<AeatDomicilio,AonDisplayGrid> FECHA_MODIF = (dom,tab) -> {
 		if (dom.getFechaModif() != null) {
 			tab.addRow()
 				.addCell(new Label("Fecha de modificaci\u00F3n") , AON.CSS.aonTableLabel(), AON.CSS.aonWidth300() )

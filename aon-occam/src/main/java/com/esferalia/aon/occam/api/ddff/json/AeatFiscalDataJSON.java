@@ -36,6 +36,7 @@ public class AeatFiscalDataJSON {
 			.setDatosGenerales( AeatDatosGeneralesJSON.from(json.optJSONArray( AeatJSONConstants.DATOS_GENERALES)))
 			.setTitulares( AeatTitularJSON.from(json.optJSONArray( AeatJSONConstants.TITULARES)))
 			.setDomicilios( AeatDomicilioJSON.from(json.optJSONArray( AeatJSONConstants.DOMICILIOS)))
+			.setCotizacionesAutonomo( AeatCotizacionAutonomoJSON.from(json.optJSONArray( AeatJSONConstants.COTIZACIONES_AUTONOMO)))
 			;
 	}
 	
@@ -57,6 +58,7 @@ public class AeatFiscalDataJSON {
 			.putOpt(AeatJSONConstants.DATOS_GENERALES, AeatDatosGeneralesJSON.to(data.getDatosGenerales()))
 			.putOpt(AeatJSONConstants.TITULARES, AeatTitularJSON.to(data.getTitulares()))
 			.putOpt(AeatJSONConstants.DOMICILIOS, AeatDomicilioJSON.to(data.getDomicilios()))
+			.putOpt(AeatJSONConstants.COTIZACIONES_AUTONOMO, AeatCotizacionAutonomoJSON.to(data.getCotizacionesAutonomo()))
 			;
 	}
 	
