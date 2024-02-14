@@ -78,17 +78,17 @@ public class MainConfigComunica extends MainEntryPoint{
 		}
 
 		@Override
-		protected void fireWarningMessage(Map<String, String> warningMap) {
+		protected <T> void fireWarningMessage(Map<String, T> warningMap) {
 			// Nothing to do here
 		}
 		
 		@Override
-		protected void fireInfoMessage(Map<String, String> warningMap) {
+		protected <T> void fireInfoMessage(Map<String, T> warningMap) {
 			// Nothing to do here
 		}
 
 		@Override
-		protected void fireLoadingMessage(String message) {
+		protected <T> void fireLoadingMessage(T message) {
 			// Nothing to do here
 		}
 
