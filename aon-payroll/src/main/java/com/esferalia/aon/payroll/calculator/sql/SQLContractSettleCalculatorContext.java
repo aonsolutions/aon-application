@@ -59,6 +59,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -258,14 +259,14 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	}
 	
 	@Override
-	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
+	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
 		//Fix CONTRACT_EDN with real endDate
 		loadTotalDays(ctx);
 		fixSalaryEnd(ctx);
 		fixContractCompleteVariable(ctx);
 		
 		loadQuoteVariables(ctx, addDays2Date(super.getEnd(), 1) , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
-		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+		return super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
 	}
 	
 	private void loadQuoteVariables(ExpressionContext ctx, Date noHolidaysStartDate, Date noHolidaysEndDate) {

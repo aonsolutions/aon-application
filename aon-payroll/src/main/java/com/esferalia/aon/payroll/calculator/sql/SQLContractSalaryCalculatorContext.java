@@ -4670,13 +4670,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				return isMonthly();
 			}
 		});
-		/*
-		 * this.implicitExpressionContext.addVariable(COMPENSATION_DAYS, new
-		 * LazyTimedVariable<Double>() {
-		 * 
-		 * @Override public Double create() { return getCompensationDays(); }
-		 * });
-		 */
 
 		this.implicitExpressionContext.setVariable(SENIORITY_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
@@ -4703,11 +4696,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.gross(x, %2$s, %3$s ); };",
 						SELF, START, END, GROSS),
 				this.startDate, this.getEnd());
-//		loadExpression(this.contractExpressionContext, LIQUID,
-//				String.format(
-//						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.liquid(x, %2$s, %3$s ); };",
-//						SELF, START, END, LIQUID),
-//				this.startDate, this.getEnd());
+
 		MethodStub __netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "__neto");
 		this.contractExpressionContext.setVariable("__NETO", __netoStub, this.startDate, this.getEnd());
 		MethodStub netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "neto");
@@ -4724,29 +4713,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		hook.beforeLoadLeaves(contractExpressionContext);
 
 		loadContractLeave(this.contractExpressionContext);
-		loadContractData(this.contractExpressionContext);
+		
+		Collection<ITimedObject<IExpression>> undefined = loadContractData(this.contractExpressionContext);
+		
 		loadPersonData(this.contractExpressionContext);
 
-//		if (!containsVariable(ACTUAL_DAYS)) {
-//			this.contractExpressionContext.putVariable(ACTUAL_DAYS, new LazyTimedVariable<Double>() {
-//				@Override
-//				public Double create() {
-//					return getActualDays();
-//				}
-//			});
-//		}
-		
-		
-
-		hook.beforeLoadDaysContextVariables(contractExpressionContext);
+		hook.beforeLoadDaysContextVariables(this.contractExpressionContext);
 		// --------------------------------------------------------------------
 		// WEEK_HOURS, WORKED_DAYS and so on. These variables
 		//
-		loadDaysContextVariables(contractExpressionContext);
+		loadDaysContextVariables(this.contractExpressionContext);
 		
-		ContextFunctions.loadDaysFunctions(contractExpressionContext, contractStartDate, contractEndDate);
+		ContextFunctions.loadDaysFunctions(this.contractExpressionContext, contractStartDate, contractEndDate);
 		
-		autoFracionate(contractExpressionContext, contractStartDate, contractEndDate, ContextVariable.ADDITIONAL_HOURS);
+		loadExpressions(this.contractExpressionContext, undefined);
+		
+		autoFracionate(this.contractExpressionContext, contractStartDate, contractEndDate, ContextVariable.ADDITIONAL_HOURS);
 	}
 	
 	private static void autoFracionate(ExpressionContext context, Date contractStartDate, Date contractEndDate, ContextVariable ...contextVars) {
@@ -5762,17 +5744,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	/*
-	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
-	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
-	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
-	 */
-	protected void loadContractData(ExpressionContext ctx) throws SQLException {
-		loadContractData(ctx, contractStartDate, contractEndDate);
+	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx) throws SQLException {
+	    	Collection<ITimedObject<IExpression>> undefined = 
+	    		loadContractData(ctx, contractStartDate, contractEndDate);
 		Date irpfDate = getIrpfDate();
 		if (irpfDate != null && irpfDate.after(contractEndDate)) {
-			loadContractData(ctx, irpfDate, irpfDate);
+		    undefined.addAll(loadContractData(ctx, irpfDate, irpfDate));
 		}
+		return undefined;
 	}
 
 	protected void loadExpression(ExpressionContext ctx, String name, String script, Date start, Date end)
@@ -5789,15 +5768,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	/*
-	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
-	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
-	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
-	 */
-	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
+	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
 		ResultSet rs = null;
+		List<ITimedObject<IExpression>> failed = new LinkedList<>();
+		List<ITimedObject<IExpression>> undefined = new LinkedList<>();
 		try {
-			List<ITimedObject<IExpression>> failed = new LinkedList<ITimedObject<IExpression>>();
 			
 			Date dbContractEndDate = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
 			
@@ -5820,11 +5795,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					ctx.addExpression(expr, start, end);
 
 				} catch (UndefinedVariablesException e) {
-					failed.add(new TimedObject<IExpression>(expr, new Period(start, end)));
+					failed.add(new TimedObject<>(expr, new Period(start, end)));
 				} catch (CheckException e) {
 
 				} catch (Exception e) {
-					// TODO: \BF Que hacemos con esta excepcion ?
+					// TODO: 
 				}
 			}
 
@@ -5835,6 +5810,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					ctx.addExpression(expr, period.getStart(), period.getEnd());
 
 				} catch (UndefinedVariablesException e) {
+				    	undefined.add(timedExpr);
 					onUndefinedData(timedExpr.getValue(), e.getMessage(), timedExpr.getPeriod().getStart(),
 							timedExpr.getPeriod().getEnd(), e.getVariableNames());
 				} catch (Exception e) {
@@ -5846,6 +5822,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				rs.close();
 			}
 		}
+		return failed;
 	}
 
 	protected void onIrpf(IrpfOutcome irpfOutcome) {
@@ -5980,6 +5957,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				rs.close();
 			}
 		}
+	}
+	
+	protected void loadExpressions(ExpressionContext ctx, Collection<ITimedObject<IExpression>> expressions ) {
+		for (ITimedObject<IExpression> expression : expressions) {
+			try {
+				Period period = expression.getPeriod();
+				IExpression expr = expression.getValue();
+				ctx.addExpression(expr, period.getStart(), period.getEnd());
+
+			} catch (UndefinedVariablesException e) {
+				onUndefinedData(expression.getValue(), e.getMessage(), expression.getPeriod().getStart(),
+						expression.getPeriod().getEnd(), e.getVariableNames());
+			} catch (Exception e) {
+			}
+		}	    
 	}
 	
 	private boolean isMonthly() {

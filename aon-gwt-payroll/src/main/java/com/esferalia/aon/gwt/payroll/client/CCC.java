@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -36,7 +37,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -80,7 +80,7 @@ public abstract class CCC extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			onLaboralLife(new Date());
+			onLaboralLife(DateUtils.getFirstDayOfMonth(new Date()));
 		}
 	}
 	
@@ -811,9 +811,10 @@ public abstract class CCC extends ResizeComposite {
 	protected abstract Set<Entry<Integer, String>> getActivities();
 	protected abstract List<EnterpriseCCC> getEnterpriseCCCs();
 	
-	protected abstract void fireWarningMessage(Map<String, String> warningMap);
-	protected abstract void fireInfoMessage(Map<String, String> warningMap);
-	protected abstract void fireLoadingMessage(String message);
+	protected abstract <T> void fireWarningMessage(Map<String, T> warningMap);
+	protected abstract <T> void fireInfoMessage(Map<String, T> warningMap);
+	protected abstract <T> void fireLoadingMessage(T message);
+
 	protected abstract void hideMessage();
 	
 	protected abstract void showPDF(String dataURI, boolean isLaboralLife);
@@ -883,7 +884,7 @@ public abstract class CCC extends ResizeComposite {
 	}
 	
 	public void onLaboralLife(Date date) {
-		fireLoadingMessage("Obteniendo vida laboral ...");
+		fireLoadingMessage("Obteniendo Informe de Vida Laboral ...");
 		impl.getCCCLaboralLife(regime, ccc, date, new Date(), new AsyncCallback<String>() {
 			
 			@Override
