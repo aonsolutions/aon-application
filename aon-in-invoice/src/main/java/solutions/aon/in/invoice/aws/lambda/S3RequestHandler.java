@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.esferalia.aon.occam.api.json.NewsJSON;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -179,8 +180,14 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 		    .setTitle(format(TITLE, companyName))
 		    .setDescription(format(DESCRIPTION, companyName ))
 		    .setWorkgroup(new Workgroup().setDescription(WORKGROUP));
+	    JSONObject taskJSON ;
 	    
-	    JSONObject taskJSON =  AonTask.newTask(s3EventObject.getDomain(), s3EventObject.getUser(), task );
+	    try {
+		taskJSON =  AonTask.newTask(s3EventObject.getDomain(), s3EventObject.getUser(), task );
+	    } catch ( Exception t ) {
+		taskJSON = new JSONObject()
+		.put("id", Integer.MAX_VALUE );
+	    }
 	    
 	    loadBatchTaskJSON = newLoadBatchTask(loadBatchJSON, taskJSON);
 	    S3.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
