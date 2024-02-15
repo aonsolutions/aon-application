@@ -76,7 +76,7 @@ class NordigenAPI {
 	
 	static final String SECRET_ID = "f3559685-bbec-45c4-9dfa-f01721e7190e";
 	static final String SECRET_KEY = "35bc90403b8ef02b19cddda29bb58ec97383ed85bffc265736438aaba88fe7cc61b586cb9f3b45eb0327c7a1bc16bff8ba2416db4ff58bc8f24752a02defe133";
-	private static final String HOST = "ob.nordigen.com";
+	private static final String HOST = "bankaccountdata.gocardless.com";
 	private static final String BASE_URL = "https://"+HOST+"/";
 	static final String API_URL = "api/v2/";
 	static final String REFRESH_URL = "refresh/";
