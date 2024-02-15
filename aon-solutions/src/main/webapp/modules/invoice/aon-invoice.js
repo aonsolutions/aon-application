@@ -1371,8 +1371,10 @@ export class AonInvoice extends AonElement {
 				if(this.autosave) this.save();
 			});
 			div.appendChild(farmer);
-			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-				this.invoice.setWithholdingFarmer(false);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional() ) {
+				if(this.invoice.isWithholdingFarmer()){
+					this.invoice.setWithholdingFarmer(false);
+				}
 				farmer.setDisabled(true);
 			}
 			farmer.checked = this.invoice.isWithholdingFarmer();
@@ -1603,7 +1605,7 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val || this.configuration ? this.configuration.withholdingPercent : undefined;
+			irpfType.value = val || (this.configuration ? this.configuration.withholdingPercent : undefined);
 		} 
 	}
 
@@ -1898,7 +1900,7 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-
+		
 		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
@@ -1992,7 +1994,7 @@ export class AonInvoice extends AonElement {
 			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
 				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0){
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2103,7 +2105,7 @@ export class AonInvoice extends AonElement {
 				detail.percentage = 21.0;
 			}
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2214,6 +2216,10 @@ export class AonInvoice extends AonElement {
 			card.id = this.FINANCE;
 			card.title = MSG.EXPIRATIONS;
 			parent.appendChild(card);
+			card.addTitleButton("Resetear", MATERIAL_ICONS.AUTORENEW, false, () => {
+				this.invoice.resetFinances();
+				this.reload();
+			});
 		}
 
 		let table = this.getElement(this.FINANCE_TABLE);

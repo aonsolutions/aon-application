@@ -214,11 +214,12 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-      
       this.details.forEach((detail,i) => {
-        detail.percentage = 0.0;
-        detail.vat = 0.0;
-        this.setDetail(detail, i);
+        if(detail.percentage !== 0.0 || detail.vat !== 0.0){
+          detail.percentage = 0.0;
+          detail.vat = 0.0;
+          this.setDetail(detail, i);
+        }
       });
     }
     return this;
@@ -518,7 +519,7 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-
+      
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;
         detail.vat = 0.0;
@@ -933,6 +934,23 @@ export class Invoice {
       this.finances[i].bank_account = bankAccount;
     });
     return this;
+  }
+
+  resetFinances() {
+
+    let finance = {
+          due_date: this.date,
+          paymethod: this.paymethod,
+          amount: this.total,
+          iban: ''
+        };
+
+    if(this.finances.length > 0) {
+        finance.paymethod = this.finances[0].paymethod;
+        finance.iban = this.finances[0].iban;
+    }
+
+    this.finances = [finance];
   }
 
   calculateFinances() {
