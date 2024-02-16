@@ -211,7 +211,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildRawdocOptions() {
-		let pendingOptions = (this.isBeta() && this.getDur().isOcr()) ? 
+		let pendingOptions =  this.getDur().isInvofox() ? 
 		[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_OCR,
@@ -581,7 +581,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	preview(el, files) {
-		if(this.isBeta() && this.getDur().isOcr()) {
+		if(this.getDur().hasInvofox()) {
 			let uploadToast = this.getElement('aonUploadToast');
 			if(!uploadToast){ 
 				uploadToast = new AonUploadToast();
@@ -680,13 +680,13 @@ export class AonInvoicePanel extends AonElement {
 				// 	approved, 
 				// 	exported, 
 				// 	error ]
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['pendingCorrection', 'approved', 'error', 'discarded']}); 
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['pendingCorrection', 'pendingDecission', 'approved', 'error', 'discarded']}); 
 				break;
 			case OPTION.RAWDOC_OCR_EXPORTED.id:
 				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['exported']}); 
 				break;
 			case OPTION.RAWDOC_OCR_REJECTED.id:
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['rejected']}); 
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['rejected' ]}); 
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});

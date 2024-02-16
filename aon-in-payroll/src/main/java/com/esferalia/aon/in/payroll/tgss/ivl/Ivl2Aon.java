@@ -1,6 +1,8 @@
 package com.esferalia.aon.in.payroll.tgss.ivl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 
@@ -35,10 +37,11 @@ public class Ivl2Aon {
 	this.parentDomainName = parentDomainName;
     }
 
-    public void check(File file) {
+    public void check(File file, IvlParserListener ...listeners) {
 	try {
 	    dslContext.transaction( configuration ->  {
-		IvlcccParser.parse(file, new JooqIvl2Contract(configuration.dsl(), parentDomainName)); 
+		IvlParserListener ivlListener = new IvlCompositeListener().add(new JooqIvl2Contract(configuration.dsl(), parentDomainName)).add(listeners);
+		IvlcccParser.parse(file, ivlListener); 
 		throw new RollbackException();
 	    });
 	} catch ( RollbackException rollback ) {
@@ -46,22 +49,30 @@ public class Ivl2Aon {
 	}
     }
     
-    public void insert(File file) {
+    public void insert(File file, IvlParserListener ...listeners) {
 	dslContext.transaction( configuration ->  {
-	    IvlcccParser.parse(file, new JooqIvl2Contract(configuration.dsl(), parentDomainName));   
+	    IvlParserListener ivlListener = new IvlCompositeListener().add(new JooqIvl2Contract(configuration.dsl(), parentDomainName)).add(listeners);
+	    IvlcccParser.parse(file, ivlListener);   
 	    // Implicit commit executed here
 	});
     }
     
-    public void insert(InputStream is) {
+    public void insert(InputStream is, IvlParserListener ...listeners) {
 	dslContext.transaction( configuration ->  {
-	    IvlcccParser.parse(is, new JooqIvl2Contract(configuration.dsl(), parentDomainName));   
+	    IvlParserListener ivlListener = new IvlCompositeListener().add(new JooqIvl2Contract(configuration.dsl(), parentDomainName)).add(listeners);
+	    IvlcccParser.parse(is, ivlListener);   
 	    // Implicit commit executed here
 	});
     }
     
-    public static void insert(DSLContext dslContext, String parentDomainName, InputStream is ) {
-	new Ivl2Aon(dslContext, parentDomainName).insert(is);
+    public static void insert(DSLContext dslContext, String parentDomainName, byte [] data, IvlParserListener ...listeners ) throws IOException {
+	try ( InputStream is = new ByteArrayInputStream(data)) {
+	    new Ivl2Aon(dslContext, parentDomainName).insert(is, listeners);
+	}
+    }
+
+    public static void insert(DSLContext dslContext, String parentDomainName, InputStream is, IvlParserListener ...listeners) {
+	new Ivl2Aon(dslContext, parentDomainName).insert(is, listeners);
     }
 
 }

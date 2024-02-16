@@ -99,7 +99,6 @@ export class AonAddress extends AonElement {
 
     this.getElement(aonInput.INPUT).style.cursor = 'pointer';
     aonInput.addEventListener(EVENT.CLICK, () => {
-      alert(this.isReadonly());
       if (!this.isReadonly()) {
         let divEdit = this.getElement(this.EDIT);
         if (divEdit.style.display === "block") {

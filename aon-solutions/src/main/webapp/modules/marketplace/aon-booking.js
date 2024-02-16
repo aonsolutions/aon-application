@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {ConsultancyBookingApps, BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -7,31 +7,41 @@ import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 
-import '../../components/aon-card.js';
-import '../../components/aon-icon-button.js';
 import '../../components/aon-icon.js';
 
 import { CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonToast } from '../../components/aon-toast.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
 import { AonSelect } from '../../components/aon-select.js';
-import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonTab } from '../../components/aon-tab.js';
+import { AonBookingInvoiceList } from './aon-booking-invoice-list.js';
+
+import * as GWT from '../../gwt/gwt.js';
+import * as LS from '../../services/localStorageService.js';
+
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
+	TABS;
 	USER_NUMBER;
 	APP;
 	SAVE_DIALOG;
 	EDIT_TYPE_DIALOG;
+	CONFIGURATION_DIALOG;
+	CONTENT;
 	apps;
 	users;
 	definedUsers;
 	dur;
 	domainPayer;
+
+	options
 
 	get id() {
 		return this.getAttribute('id');
@@ -46,16 +56,16 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
-		this.initialize();
 		getDomainUserRoles({reload: true}).then(r => {
 			this.dur = new DomainUserRoles(r);
+			this.initialize();
 			this.domainPayer = this.dur.isDomainPayer();
 			this.apps = this.dur.getDomainApps();
 			if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
 				this.completeDomainApps(this.dur);
 			this.users = this.dur.maxDefinedUsers;
 			this.definedUsers = this.dur.definedUsers;
-			this.build(this.dur);
+			this.build();
 		});
 	}
 
@@ -71,15 +81,26 @@ export class AonBooking extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'aonBooking';
+		this.CONTENT = this.id + 'Content';
+		this.TABS = this.id + 'Tabs';
 		this.APP = this.id + 'App';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.USER_NUMBER = this.id + 'UserNumber';
 		this.SAVE_DIALOG = this.id + 'SaveDialog';
 		this.EDIT_TYPE_DIALOG = this.id + 'EditTypeDialog';
+		this.CONFIGURATION_DIALOG = this.id + 'ConfigurationDialog';
 		this.apps = [];
+
+		if(this.getDur().domain.aonCustomer){
+			this.options = [
+				{ title: MSG.BOOKING, fn: () => this.buildBooking()},
+				{ title: MSG.BOOKING_RESUME, fn: () => this.buildBookingResume()},
+				{ title: MSG.INVOICES, fn: () => this.buildInvoices()}
+			];
+		} else this.options = [{ title: MSG.BOOKING, fn: () => this.buildBooking()}];
 	}
 
-	build(dur) {
+	build() {
 		let toolbar = new AonToolbar();
 		toolbar.id = this.TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
@@ -87,10 +108,26 @@ export class AonBooking extends AonElement {
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.saveDialog());
 
-		let content = this.createElement(TAG.DIV);
-		content.className = CSS.AON_SUB_CONTENT;
+		this.buildTabs();
+
+		let content = this.createDiv(this.CONTENT, CSS.AON_TAB_SUB_CONTENT);
 		this.appendChild(content);
 
+		this.buildBooking();
+
+	}
+
+	buildTabs() {
+		let tab = new AonTab();
+		tab.id = this.TABS;
+		tab.setOptions(this.options);
+		this.appendChild(tab);
+	}
+	
+	buildBooking() {
+		const dur = this.getDur();
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
 		this.buildUser(content);
 
 		if(dur.getDomain().isConsultancy()){
@@ -112,13 +149,39 @@ export class AonBooking extends AonElement {
 				this.buildApps(content, BookingApps, dur);
 			}
 			this.buildTitle(content, MSG.SERVICES);
-			this.buildApps(content, Services, dur);
+			if(this.isConsole() || this.isBeta()) 
+				this.buildApps(content, ConsoleServices, dur);
+			else this.buildApps(content, Services, dur);
 	
 			this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
 			this.buildApps(content, ClassicApps, dur);
 		}
 	}
-	
+
+	buildBookingResume() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+
+		GWT.load(GWT.BOOKING_RESUME, this.CONTENT);
+	}
+
+	buildInvoices() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+		let invoiceList = new AonBookingInvoiceList();
+		invoiceList.setDur(this.getDur())
+		content.appendChild(invoiceList);
+
+	}
+
+	getDur() {
+		return this.dur;
+	}
+
+	setDur(dur) {
+		this.dur = dur;
+	}
+
 	getGestionPacks(){
 		if(this.dur.getDomain().isGarage())
 			return this.dur.isEnterpriseChild()
@@ -178,12 +241,13 @@ export class AonBooking extends AonElement {
 		div1.style.width = '250px';
 		div.appendChild(div1);
 
-		let users = new AonInput();
+		let users = LS.isNewTheme() ? new AonNewInput() : new AonInput();
 		users.id = 'users1';
 		users.description = 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')';
+		users.title = 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')';
 		users.value = this.users;
 		div1.appendChild(users);
-		users.onChange(r => this.users = users.value);
+		users.onChange(() => this.users = users.value);
 		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');
 
 		if(this.dur.getDomain().isDomainManagement() && this.isBeta()){
@@ -192,7 +256,7 @@ export class AonBooking extends AonElement {
 			div2.style.width = '250px';
 			div.appendChild(div2);
 
-			let companies = new AonSelect();
+			let companies = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			companies.id = 'companies';
 			companies.value = -1;
 			companies.title = 'Empresas';
@@ -235,7 +299,7 @@ export class AonBooking extends AonElement {
 			span2.className = 'aonAppTitle';
 			span2.innerHTML = app.title;
 			span.appendChild(span2);
-			if(app.domainType && this.dur.isConsoleUser()) {
+			if(app.domainType && (this.isConsole() || this.dur.isConsoleUser())) {
 				span2.style.cursor = 'pointer';
 				span2.addEventListener(EVENT.CLICK, () => this.editTypeDialog());
 			}
@@ -309,7 +373,7 @@ export class AonBooking extends AonElement {
 
 			if(!app.domainType)
 				span.appendChild(buttons);
-			else if (this.dur.isConsoleUser()){
+			else if (this.isConsole() || this.dur.isConsoleUser()){
 				let domainPayer = new AonSwitch();
 				domainPayer.id = this.APP + app.app + 'DomainPayment';
 				domainPayer.title = 'Dominio Pagador';

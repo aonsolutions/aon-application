@@ -212,6 +212,7 @@ class PECListener  implements IdcParserListener {
 		{
 			put("01", "CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E"); 	// Cuota empresarial por AT y EP, Cuotas de recaudación	conjunta
 			put("03", "CGC_E"); 							// Cuota empresarial por Contingencias Comunes
+			put("43", "CGC_E"); 							// Contingencias Comunes  
 			put("51", "CUOTA_EMPRESARIAL"); 					// Cuota Empresarial - Horas extras			
 			put("57", "CUOTA_EMPRESARIAL"); 					// Cuota Total
 			put("68", "CGC_E + IT_E + IMS_E"); 					// Contingencias Comunes y Profesionales - Cuota Total
@@ -223,6 +224,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> DEDUCTION_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("08", "-CGC -FP -DESMPL"); 	// 
+			put("43", "-CGC"); 	// 
 		}
 	};
 

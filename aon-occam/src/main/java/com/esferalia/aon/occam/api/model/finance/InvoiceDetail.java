@@ -98,8 +98,9 @@ public class InvoiceDetail implements Serializable {
 		return investAssetData;
 	}
 	
-	public void setInvestAssetData(InvestAsset investAssetData) {
+	public InvoiceDetail setInvestAssetData(InvestAsset investAssetData) {
 		this.investAssetData = investAssetData;
+		return this;
 	}
 	
 	public Integer getInvestAsset() {

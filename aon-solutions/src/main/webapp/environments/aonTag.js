@@ -25,6 +25,8 @@ export const SECTION = 'section';
 export const IFRAME = 'iframe';
 export const PRE = 'pre';
 export const TEXTAREA = 'textarea';
+export const SRIPT = 'script';
+export const LINK = 'link';
 
 // COMPONENTS
 
@@ -174,3 +176,5 @@ export const AON_MOBILE_MENU = 'aon-mobile-menu';
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
 
 export const AON_QUANTITY = 'aon-quantity';
+
+export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';

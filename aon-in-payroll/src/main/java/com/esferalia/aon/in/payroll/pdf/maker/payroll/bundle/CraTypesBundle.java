@@ -72,6 +72,7 @@ public class CraTypesBundle   extends ListResourceBundle{
 		{"59","Vacaciones no disfrutadas retribuidas tras fallecimiento"},
 		{"60","Vacaciones retribuidas no disfrutadas. Cotización durante contrato"},
 		{"61","Pluses de transporte y de distancia"},
+		{"62","Gastos de teletrabajo"},
 		{"100","Prestaciones"},
 		
 		

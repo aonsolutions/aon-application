@@ -188,6 +188,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -5780,6 +5781,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteRegistryAddress(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryAddress(ctx, id);
+		}
+	}
+	
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
@@ -7638,6 +7645,36 @@ public class AON {
 	public static void deletePayMethod(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getFinance().deletePayMethod(ctx, id); 
+		}
+	}
+
+	// INVOFOX CONFIGURATION
+	
+	public static InvofoxConfiguration getInvofoxConfiguration(Domain domain, User user) {
+		return getInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	}
+		
+	public static InvofoxConfiguration getInvofoxConfiguration(Domain domain, String login) {
+		return getInvofoxConfiguration(domain.getName(), domain.getId(), login);
+	}
+		
+	public static InvofoxConfiguration getInvofoxConfiguration(String domainName, Integer domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getInvofoxConfiguration(ctx);
+		}
+	}
+	
+	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, User user, InvofoxConfiguration config) {
+		return saveInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
+	}
+		
+	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, String login, InvofoxConfiguration config) {
+		return saveInvofoxConfiguration(domain.getName(), domain.getId(), login, config);
+	}
+		
+	public static InvofoxConfiguration saveInvofoxConfiguration(String domainName, Integer domainId, String login, InvofoxConfiguration config) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveInvofoxConfiguration(ctx, config);
 		}
 	}
 	

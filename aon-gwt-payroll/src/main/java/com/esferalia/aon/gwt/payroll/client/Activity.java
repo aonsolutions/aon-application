@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -75,18 +76,20 @@ public abstract class Activity extends ResizeComposite {
 		}
 
 		@Override
-		protected void fireWarningMessage(Map<String, String> warningMap) {
-			Activity.this.fireWarningMessage(warningMap);
+		protected <T> void fireWarningMessage(Map<String, T> warningMap) {
+			Activity.this.fireWarningMessage(toStringMap(warningMap));
 		}
 		
 		@Override
-		protected void fireInfoMessage(Map<String, String> warningMap) {
-			Activity.this.fireInfoMessage(warningMap);
+		protected <T> void fireInfoMessage(Map<String, T> warningMap) {
+		    Activity.this.fireInfoMessage(toStringMap(warningMap));
 		}
 
 		@Override
-		protected void fireLoadingMessage(String message) {
-			Activity.this.fireLoadingMessage(message);
+		protected <T> void fireLoadingMessage(T message) {
+		    if ( message == null ){
+			    Activity.this.fireLoadingMessage(message.toString());
+		    }
 		}
 
 		@Override
@@ -97,6 +100,13 @@ public abstract class Activity extends ResizeComposite {
 		@Override
 		protected void showPDF(String dataURI, boolean isLaboralLife) {
 			Activity.this.showPDF(dataURI, isLaboralLife);
+		}
+		
+		private <T> Map<String,String> toStringMap(Map<String,T> map) {
+		    return
+		    map.entrySet().stream()
+		    .filter(e -> e.getValue() != null )
+		    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString() ));
 		}
 		
 	}

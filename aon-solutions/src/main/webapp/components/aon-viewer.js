@@ -1,11 +1,13 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, EVENT, TAG, URL_PDF_VIEWER } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG, PDFJS_WORKER_URL, PDFJS_VIEWER_STYLESHEET_URL, CSS, PDFJS_PDF_URL } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
 export class AonViewer extends AonElement {
 
 	_scale;
+	AON_IMG_DIV;
+	AON_TEXT_DIV;
 	AON_VIEWER_DIV;
 	AON_CANVAS_DIV;
 	PDF;
@@ -40,6 +42,8 @@ export class AonViewer extends AonElement {
 	set width(width) {
 		this.setAttribute('width', width);
 	}
+	
+	setImgText
 
 	constructor() {
 		super();
@@ -79,6 +83,7 @@ export class AonViewer extends AonElement {
 
 	initialize(){
 		this._scale = 1;
+		this.AON_IMG_DIV  = "aonViewerImgDiv";
 		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
 		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";	
 	}
@@ -89,6 +94,7 @@ export class AonViewer extends AonElement {
 
 	buildButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
+		div.style.zIndex = "3";
 		div.style.visibility = 'hidden';
 		div.style.display = "flex";
 		div.style.flexDirection = "column";
@@ -177,6 +183,7 @@ export class AonViewer extends AonElement {
 
 	printImage() {
 		let img = this.createElement(TAG.IMG);
+		img.id = this.AON_IMG_DIV;
 		img.style.width = '100%';
 		img.src = this.file;
 		img.onerror = () =>{
@@ -184,6 +191,51 @@ export class AonViewer extends AonElement {
 			this.notSupport(this.type);
 		}
 		this.appendChild(img);
+		this.dispatchEvent(new CustomEvent(EVENT.PRINT_IMAGE));
+	}
+	
+	printImageTextLayer(textContent) {
+		this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
+			console.log(JSON.stringify(textContent));
+			
+			let img = this.getElement(this.AON_IMG_DIV);
+			
+			let page = textContent.pages[0];
+			
+			let textLayerDiv = this.createElement(TAG.DIV);
+			textLayerDiv.className = CSS.PDFJS_TEXT_LAYER;
+		    textLayerDiv.style.width = `${img.width}px`;
+		    textLayerDiv.style.height = `${img.height}px`;
+			textLayerDiv.style.top = `${img.offsetTop}px`;
+			textLayerDiv.style.left = `${img.offsetLeft}px`;
+			textLayerDiv.style.setProperty("--scale-factor", img.width / page.width );
+			this.append(textLayerDiv);
+
+			page.items.forEach(item => {
+				console.log(JSON.stringify(item));
+				let itemSpan = this.createElement(TAG.SPAN);
+				itemSpan.innerText = item.str;
+	
+				itemSpan.style.top = `${item.top / page.height * 100.00}%`;
+				itemSpan.style.left = `${item.left / page.width * 100.00}%`;
+				itemSpan.style.width = `${item.width / page.width * 101.00}%`;
+				itemSpan.style.height = `${item.height / page.height * 101.00}%`;
+				/*
+				itemSpan.style.top = `${item.top * screenPPI}px`;
+				itemSpan.style.left = `${item.left * screenPPI}px`;
+				itemSpan.style.width = `${item.width * screenPPI}px`;
+				itemSpan.style.height = `${item.height * screenPPI}px`;
+				*/			
+				
+				itemSpan.style.setProperty('overflow', `hidden`);
+				itemSpan.style.setProperty('role', 'presentation');
+				itemSpan.style.setProperty('font-family', 'sans-serif');
+				itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height * 2}px)`);
+	
+				textLayerDiv.appendChild(itemSpan);
+			});
+		});		
+		
 	}
 
 	notSupport(type, reason) {
@@ -222,19 +274,27 @@ export class AonViewer extends AonElement {
 		}
 		return ai;
 	}
-
-	printPdf(scalation) {
+	
+	// renderPdf(pdf) {
+	// 	for(let page = 1; page <= pdf.numPages; page++) {
+	// 		pdf.getPage(page).then(renderPage);
+	// 	}
+	// }
+	
+	printPdf(zoom) {
 		document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 
-		const div = this.getElement(this.AON_CANVAS_DIV);
-		const width = this.getAttribute('width');
+		
+ 		const div = this.getElement(this.AON_CANVAS_DIV);
+		div.className = CSS.PDFJS_PDF_VIEWER; 
+		//div.style.setProperty('--scale-factor', scale.toString());
 
-		this.waitLib().then(pdfjsLib=>{
-			// pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
-			pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://sig.aonsolutions.org/html/build/pdf.worker.js';
-			// Asynchronous download of PDF
-			//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
-			// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+		const width = this.getAttribute('width');
+		
+		this.wait4PdfJsLib().then(pdfjsLib => {
+			
+			pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+			
 	
 			//const loadingTask = pdfjsLib.getDocument({
 			//	url: this.file
@@ -253,34 +313,51 @@ export class AonViewer extends AonElement {
 				this.PDF = pdf;
 				console.log('PDF loaded');
 				// Fetch the first page
-				// let pageNumber = 1;
 				for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-					let c = this.getElement('canvas' + pageNumber);
-					if(c) c.parentElement.removeChild(c);
+					
+					// Remove old canvas if exist. 
+					let oldCanvas = this.getElement('canvas' + pageNumber);
+					if ( oldCanvas ) { 
+						oldCanvas.parentElement.removeChild(oldCanvas);
+					}
+					// Remove old textLayer if exist. 
+					let oldTextlayerDiv = this.getElement('textLayerDiv' + pageNumber);
+					if ( oldTextlayerDiv ) { 
+						oldTextlayerDiv.parentElement.removeChild(oldTextlayerDiv);
+					}
+					
 					const canvas = this.createElement(TAG.CANVAS);
 					canvas.id = 'canvas' + pageNumber;
 					canvas.style.border = '1px solid #ebebeb';
+					// Append the canvas to the pdf container div
 					div.appendChild(canvas);
 	
 					pdf.getPage(pageNumber).then((page) =>  {
 						console.log('Page loaded');
 	
-						let scale = scalation || 1;
+						let scale = zoom || 1;
 						let viewport = page.getViewport({ scale });
 						if (width) {
 							scale = width / viewport.width;
 							viewport = page.getViewport({ scale });
 						}
-	
-						// Prepare canvas using PDF page dimensions
-						//var canvas = document.getElementById('the-canvas');
-						// const canvasPage = this.getElement('canvas' + pageNumber) || this.createElement(TAG.CANVAS);
-						// canvasPage.id = 'canvas' + pageNumber;
-	
+	 					
+	 					div.style.setProperty("--scale-factor", viewport.scale);
+
 						const context = canvas.getContext('2d');
 						canvas.height = viewport.height;
 						canvas.width = viewport.width;
-	
+						
+						let textLayerDiv = this.createElement(TAG.DIV);
+						textLayerDiv.id = 'textLayerDiv' + pageNumber;
+						textLayerDiv.className = CSS.PDFJS_TEXT_LAYER;
+					    textLayerDiv.style.width = `${viewport.width}px`;
+					    textLayerDiv.style.height = `${viewport.height}px`;
+						textLayerDiv.style.top = `${canvas.offsetTop}px`;
+						textLayerDiv.style.left = `${canvas.offsetLeft}px`;
+
+						div.appendChild(textLayerDiv);
+						
 						// Render PDF page into canvas context
 						const renderContext = {
 							canvasContext: context,
@@ -290,6 +367,29 @@ export class AonViewer extends AonElement {
 						renderTask.promise.then( ()=> {
 							console.log('Page rendered');
 						});
+						
+						this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
+							// clean viewer implicit styles.
+							document.body.style.setProperty('background-color', 'transparent');
+							
+							page.getTextContent().then((textContent) => {
+								pdfjsLib.renderTextLayer({
+									textDivs: [],
+									viewport: viewport,
+									container: textLayerDiv,
+									textContentSource: textContent
+								});
+								console.log(JSON.stringify(textContent));
+								let text = textContent.items.map( item => item.str).join();
+								this.dispatchEvent(new CustomEvent(EVENT.PRINT_PDF_PAGE, {
+									detail:{
+										text: text,
+										page: pageNumber
+									}
+								}));
+							});
+						});
+			
 					});
 				}
 			},  (reason)=> {			// PDF loading error
@@ -297,6 +397,39 @@ export class AonViewer extends AonElement {
 			});
 		}).catch(err=>{
 			console.log(err);
+		});
+	}
+
+	printPdfTextLayer(pageIndex, textContent) {
+		
+		console.log(JSON.stringify(textContent));
+		
+		let screenPPI = this.getScreenPPI() * 0.80;
+		let page = textContent.pages[pageIndex-1];
+		
+		let textLayerDiv = this.getElement(`textLayerDiv${pageIndex}`);
+		
+		page.items.forEach(item => {
+			let itemSpan = this.createElement(TAG.SPAN);
+			itemSpan.innerText = item.str;
+
+			itemSpan.style.top = `${item.top / page.height * 100.00}%`;
+			itemSpan.style.left = `${item.left / page.width * 100.00}%`;
+			itemSpan.style.width = `${item.width / page.width * 100.00}%`;
+			itemSpan.style.height = `${item.height / page.height * 100.00}%`;
+			/*
+			itemSpan.style.top = `${item.top * screenPPI}px`;
+			itemSpan.style.left = `${item.left * screenPPI}px`;
+			itemSpan.style.width = `${item.width * screenPPI}px`;
+			itemSpan.style.height = `${item.height * screenPPI}px`;
+			*/			
+			
+			itemSpan.style.setProperty('role', 'presentation');
+			itemSpan.style.setProperty('font-family', 'sans-serif');
+			console.log(`calc(var(--scale-factor)*${item.height * screenPPI}px)`);
+			itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height * screenPPI}px)`);
+
+			textLayerDiv.appendChild(itemSpan);
 		});
 	}
 
@@ -359,22 +492,22 @@ export class AonViewer extends AonElement {
 		});
 	}
 
-	waitLib(){
+
+	wait4PdfJsLib(){
 		return new Promise((resolve,reject)=>{
-			const timeout = 100;// 10 seg
 			let i = 0;
-			let pdfjsLib = undefined;
-			let element = undefined;
+			const timeout = 100;// 10 seg
 			let interval = setInterval(()=> {
 				i++;
-				element = this.querySelector(`script[src='${URL_PDF_VIEWER}']` );
-				pdfjsLib = window['pdfjs-dist/build/pdf'];
+				let element = this.querySelector(`script[src='${PDFJS_PDF_URL}']` );
+				let { pdfjsLib } = globalThis;
 				if (element && pdfjsLib) {
 					clearInterval(interval);
 					resolve(pdfjsLib);
 				} else if (!element) { // CREATE ELEMENT
 					let script = document.createElement("script");
-					script.src = URL_PDF_VIEWER;
+					script.type = "module";
+					script.src = PDFJS_PDF_URL;
 					this.appendChild(script);
 				}  else if(i >= timeout){
 					clearInterval(interval);
@@ -383,6 +516,37 @@ export class AonViewer extends AonElement {
 			}, 100); // check every 100ms
 		});
 	}
+	
+	loadCSS( href ) {
+	    return new Promise((resolve, reject)=>{
+			if ( document.querySelector(`link[href='${href}']`)){
+				resolve();
+			} else {
+		        const link = document.createElement(TAG.LINK);
+		        link.href = href;
+		        link.rel  = 'stylesheet';
+		        document.head.appendChild(link);
+		        link.onload = function() { 
+		            resolve(); 
+		            console.log( 'CSS has loaded!' ); 
+		        };
+	        }
+	    });
+	}
+	
+	getScreenPPI(){
+		let ppiDiv = document.createElement(TAG.DIV);
+		ppiDiv.style.width = "1in";
+		ppiDiv.style.padding = "0px";
+		ppiDiv.style.padding = "hidden";
+		
+		this.appendChild(ppiDiv);
+		let screenPPI = ppiDiv.offsetWidth;  
+		this.removeChild(ppiDiv);		
+		
+		return screenPPI;
+	}
+
 }
 if (!window.customElements.get(TAG.AON_VIEWER)) {
 	window.customElements.define(TAG.AON_VIEWER, AonViewer);

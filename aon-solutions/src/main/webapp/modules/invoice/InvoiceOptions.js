@@ -186,7 +186,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const CONFIGURATION_SII_TBAI = {
     id: CONSTANT.CONFIGURATION_SII_TBAI.initCap(),
     name: MSG.SII_TICKETBAI,
-    icon: MATERIAL_ICONS.SETTING    
+    icon: MATERIAL_ICONS.SETTINGS    
   }   
 
   export const PENDING_DOCUMENTS = {

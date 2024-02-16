@@ -216,8 +216,11 @@ public class AccountingOperationDAO {
                 		.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(OP_DETAIL_ACC_ID))
                 		)
                 .leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte)2)))  // Retención IRPF
-                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
+                
+                //.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
+                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal( OP_ACTIVITY ))
                 .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+                
                 .leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
                 
                 .where(OP_DOMAIN.equal(domain))		                
@@ -249,8 +252,10 @@ public class AccountingOperationDAO {
 						.setPercent(Objects.requireNonNullElse(rec.getValue(vatInvoiceTax.PERCENTAGE), 0.0))
 						.setSurchargePercent(Objects.requireNonNullElse(rec.getValue(vatInvoiceTax.SURCHARGE),0.0))
 						// Nuevos datos para el Libro Registro AEAT
+						
 						.setActivityType(getActivityType(rec.getValue(IAE.SECTION),rec.getValue(IAE.EPIGRAPH))) // Actividad - Tipo							
-						.setActivityIAE(AonStringUtils.trimToEmpty(rec.getValue(IAE.EPIGRAPH)))					// Actividad - Epígrafe							
+						.setActivityIAE(AonStringUtils.trimToEmpty(rec.getValue(IAE.EPIGRAPH)))					// Actividad - Epígrafe
+						
 						.setInvoiceType(getInvoiceType( rec ))                 // Tipo de Factura									
 						.setConceptType(rec.getValue(conceptType))   // Concepto de Ingreso/Gasto
 						.setInvoiceSeries(rec.getValue(INVOICE.SERIES))  // Factura - Serie							 
@@ -305,7 +310,7 @@ public class AccountingOperationDAO {
 					// Facturas o apuntes que van a todas las actividades (activity=null),  
 					// al sacarlas en cada actividad, debe salir la parte proporcional, de 
 					// forma equitativa, segun las actividades que haya (1/2, 1/3, 1/4, ...)
-					if (act == null && count > 1) {
+					if (params.getActivity() != null && act == null && count > 1) {
 						base = AonMathUtils.round(base/count);
 						quota = AonMathUtils.round(quota/count);
 						deductibleQuota = AonMathUtils.round(deductibleQuota/count);
