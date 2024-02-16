@@ -949,7 +949,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				Integer contractType = Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType());
 				
 				boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
-				boolean hasExtensionComuniation = false; //AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
+				boolean hasExtensionComuniation = AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
 				boolean canExtension = contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521;
 				
 				boolean hasTransform = null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getTransformDate();
@@ -969,7 +969,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
 				
 				separatorAdds.setVisible(canExtension || canTransform || hasExtension || hasTransform);
-				contractExtension.setVisible(canExtension && !hasExtension);
+				contractExtension.setVisible(canExtension);
 				contractTransform.setVisible(canTransform && !hasTransform);
 				deleteContractExtension.setVisible(hasExtension);
 				deleteContractTransform.setVisible(hasTransform);
@@ -978,7 +978,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				sendBasicCopy.setVisible(hasCertificateSEPE && !hasCbc);
 				sendContract.setVisible(hasCertificateSEPE && !hasCto);
 				sendContractTransform.setVisible(hasCertificateSEPE && hasTransform && !hasTransformComuniation);
-				sendContractExtension.setVisible(hasCertificateSEPE && hasExtension && !hasExtensionComuniation);
+				sendContractExtension.setVisible(hasCertificateSEPE && hasExtension);
 				removeContract.setVisible(hasCertificateSEPE && hasCto);
 				removeContractTransform.setVisible(hasCertificateSEPE && hasTransform && hasTransformComuniation);
 			} catch (Exception e) {

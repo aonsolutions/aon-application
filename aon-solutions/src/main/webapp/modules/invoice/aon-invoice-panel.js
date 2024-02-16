@@ -581,7 +581,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	preview(el, files) {
-		if(this.getDur().isInvofox()) {
+		if(this.getDur().hasInvofox()) {
 			let uploadToast = this.getElement('aonUploadToast');
 			if(!uploadToast){ 
 				uploadToast = new AonUploadToast();

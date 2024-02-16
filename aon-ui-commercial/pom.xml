@@ -66,12 +66,6 @@
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
-      <artifactId>aon.geozone</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
       <artifactId>aon.marketing</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

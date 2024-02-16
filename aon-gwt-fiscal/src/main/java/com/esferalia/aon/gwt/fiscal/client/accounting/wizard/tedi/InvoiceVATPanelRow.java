@@ -26,6 +26,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
@@ -128,7 +129,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void paintRow(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		if (vatPanel.getGrid().getRowCount() > rowIndex) {
 			int cellCount = vatPanel.getGrid().getCellCount( rowIndex );
-			for (int idx = 0; idx < cellCount; ++idx) {
+			for (int idx = (cellCount - 1); idx >= 0; --idx) {
 				vatPanel.getGrid().removeCell(rowIndex,idx);
 			}
 		}

@@ -33,10 +33,23 @@
 			</g:DeckPanel>
 		</g:north>
 		<g:center>
-			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexColumn}">
+			<g:HTMLPanel ui:field="mainHtmlPanel" styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="messagePanel" />
 				<g:DeckPanel ui:field="mainDeckPanel">
-					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
+					<g:SimpleLayoutPanel ui:field="mainCCCPanel">
+						<g:TabLayoutPanel ui:field="cccTabLayoutPanel" barUnit='EM' barHeight='3' >
+							<g:tab >
+								<!--  g:customHeader size='7' ><g:InlineLabel styleName="aon-icon-logo" ></g:InlineLabel></g:customHeader-->
+								<g:header size="7">CCCs</g:header>
+								<g:HTMLPanel ui:field="activityCCCPanel" styleName="{style.mainPanel}"/>
+							</g:tab>
+							<g:tab>
+								<!--  g:customHeader size='7' ><g:InlineLabel styleName="aon-icon-segsocial-small" title="CCCs Asignados" ></g:InlineLabel></g:customHeader-->
+								<g:header size="7">CCCs Asignados</g:header>
+								<g:HTMLPanel ui:field="assignedCCCPanel" styleName="{style.mainPanel}"/>
+							</g:tab>
+						</g:TabLayoutPanel>
+					</g:SimpleLayoutPanel>
 					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
 						<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 					</g:SimpleLayoutPanel> 

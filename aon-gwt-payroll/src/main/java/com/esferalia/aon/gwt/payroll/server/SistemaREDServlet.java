@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,9 +19,12 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,6 +66,7 @@ import jakarta.servlet.http.Part;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
+import solutions.aon.seg.social.SistemaREDCCC;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Idc;
 
@@ -110,6 +115,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			case CERTIFICATE:
 				doCertificatePost(req, resp);
 				break;
+			case ASSIGNED_CCCS:
+				doAssignedCCCsPost(req, resp);
+				break;
 			case UP2DATE_REPORT:
 				doUp2DateReportPost(req, resp);
 				break;
@@ -129,6 +137,41 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}
 	}
 	
+	private void doAssignedCCCsPost(HttpServletRequest req, HttpServletResponse resp)
+		throws IOException, SegSocialException, SQLException  {
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+		try ( Connection connection = getConnection(req) ) {
+        		Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+        		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+        		
+		    	resp.setContentType("application/json");
+        		Collection<SistemaREDCCC.CCC> cccs = new LinkedList<>();
+        		PrintStream out = new PrintStream(resp.getOutputStream());
+        		out.print("[");
+        		SistemaREDCCC.getAssignedCCCs(certificate.getData(), certificate.getPassword(), certificate.getType(),
+        			ccc -> {
+        			    if ( !cccs.isEmpty() ) {
+        				out.print(",");
+        			    }
+        			    out.printf("{ \"regime\":\"%s\", \"province\": \"%s\", \"number\": \"%s\", \"enterpriseName\":\"%s\", \"type\":\"%s\" }%n", 
+        				    ccc.getRegime(),
+        				    ccc.getProvince(),
+        				    ccc.getNumber(),
+        				    ccc.getEntrepriseName(),
+        				    ccc.getType()
+        				    );
+        			    out.flush();
+        			    cccs.add(ccc);
+        			});
+        		out.print("]");
+        		resp.setStatus(HttpServletResponse.SC_OK);
+		}
+	    
+	}
+
 	private void doCalcs(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException, SegSocialException {
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());

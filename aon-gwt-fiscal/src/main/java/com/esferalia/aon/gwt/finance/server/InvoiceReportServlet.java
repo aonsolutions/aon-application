@@ -145,11 +145,23 @@ public class InvoiceReportServlet extends HttpServlet {
 							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))
 							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))
 							.and(workplaces.length==0?p.getIdProperty().isNotNull():p.getWorkplaceProperty().in(workplaces))
-							.and(p.getRSellerIdProperty().isNull().or(
-									p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
-									.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))	
-									.and(p.getRSellerStatusProperty().eq((byte)0))	
-							))
+							.and(
+									p.getRSellerIdProperty().isNull().or(
+										(
+											p.getRSellerStartDateProperty().between(new java.sql.Date(fromDate.getTime()), new java.sql.Date(toDate.getTime()))
+											.or(
+													p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
+													.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))		
+											)
+										)
+										.and(p.getRSellerStatusProperty().eq((byte)0))
+									)
+							)
+//							.and(p.getRSellerIdProperty().isNull().or(
+//									p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
+//									.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))	
+//									.and(p.getRSellerStatusProperty().eq((byte)0))	
+//							))
 							;
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	

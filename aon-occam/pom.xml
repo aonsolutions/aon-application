@@ -133,7 +133,7 @@
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.storage</artifactId>
 			<version>${project.version}</version>
-			<scope>copmpile</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>

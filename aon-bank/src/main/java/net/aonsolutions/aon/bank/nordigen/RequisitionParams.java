@@ -80,7 +80,8 @@ class RequisitionParams {
 			.put("user_language", this.userLanguage != null ? this.userLanguage.getLanguage() : null)
 			.put("ssn", this.ssn)
 			.put("account_selection", this.accountSelection)
-			.put("redirect_immediate", this.redirectImmediate);
+			// .put("redirect_immediate", this.redirectImmediate)
+			;
 	}
 	
 }

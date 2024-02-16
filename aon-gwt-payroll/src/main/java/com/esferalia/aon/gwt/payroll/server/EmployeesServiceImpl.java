@@ -5704,7 +5704,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public EmployeeContractInfo setEmployeeInfoDataBase(String domainName, EmployeeContractInfo newEmployeeInfo) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
+			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo, domainName);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

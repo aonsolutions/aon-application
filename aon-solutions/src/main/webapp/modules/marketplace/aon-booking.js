@@ -162,7 +162,7 @@ export class AonBooking extends AonElement {
 		let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
 
-		GWT.load(GWT.BOOKING_PANEL, this.CONTENT);
+		GWT.load(GWT.BOOKING_RESUME, this.CONTENT);
 	}
 
 	buildInvoices() {

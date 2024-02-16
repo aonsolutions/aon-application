@@ -391,13 +391,15 @@ public class JooqIvl2Contract implements IvlParserListener {
 		, DOMAIN.OWNER
 		, DOMAIN.PARENT
 		, DOMAIN.DESCRIPTION
+		, DOMAIN.ENABLEHEREDITY
 		)
 	.select(
 		DSL.select(
 		DSL.concat(DSL.value(name + "-"), DOMAIN.NAME)
 		, DOMAIN.OWNER
 		, DOMAIN.ID
-		, DSL.val(description))
+		, DSL.val(description)
+		, DSL.val((byte)1))
 		.from(DOMAIN)
 		.where(DOMAIN.NAME.eq(domainName)))
 	.returning()
