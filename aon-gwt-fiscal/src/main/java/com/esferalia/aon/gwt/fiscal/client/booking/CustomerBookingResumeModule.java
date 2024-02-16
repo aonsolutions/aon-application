@@ -856,7 +856,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private void createDomainBookingResume() {
 		domainPanel.clear();
 		
-		Grid domainTable = new Grid(0, 8);
+		Grid domainTable = new Grid(0, 10);
 		domainTable.clear();
 		domainTable.setWidth("100%");
 
@@ -864,17 +864,21 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 		Label name = new Label("DOMINIO");
 		Label booking = new Label("EXTENSIONES CONTRATADAS");
-		Label bookingNum = new Label("N\u00b0 EXTENSIONES");
 		Label enterprises = new Label("EMPRESAS");
-		Label users = new Label("USUARIOS");
+		Label bookingNum = new Label("N\u00b0 EXTEN.");
+		Label status = new Label("ESTADO");
+		Label expiration = new Label("F. EXPIRACI\u00f3N");
+		Label users = new Label("USR.");
 		Label portalUsers = new Label("USR. PORTAL");
 		Label type = new Label("TIPO");
 		Label action = new Label("");
 		
 		name.addStyleName(AON.CSS.aonHeaderTable());
 		booking.addStyleName(AON.CSS.aonHeaderTable());
-		bookingNum.addStyleName(AON.CSS.aonHeaderTable());
 		enterprises.addStyleName(AON.CSS.aonHeaderTable());
+		bookingNum.addStyleName(AON.CSS.aonHeaderTable());
+		status.addStyleName(AON.CSS.aonHeaderTable());
+		expiration.addStyleName(AON.CSS.aonHeaderTable());
 		users.addStyleName(AON.CSS.aonHeaderTable());
 		portalUsers.addStyleName(AON.CSS.aonHeaderTable());
 		type.addStyleName(AON.CSS.aonHeaderTable());
@@ -882,13 +886,14 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 		domainTable.setWidget(row, 0, name);
 		domainTable.setWidget(row, 1, booking);
-		domainTable.setWidget(row, 2, bookingNum);
-		domainTable.setWidget(row, 3, enterprises);
-		domainTable.setWidget(row, 4, users);
-		domainTable.setWidget(row, 5, portalUsers);
-		domainTable.setWidget(row, 6, type);
-		domainTable.setWidget(row, 7, action);
-		
+		domainTable.setWidget(row, 2, enterprises);
+		domainTable.setWidget(row, 3, bookingNum);
+		domainTable.setWidget(row, 4, status);
+		domainTable.setWidget(row, 5, expiration);
+		domainTable.setWidget(row, 6, users);
+		domainTable.setWidget(row, 7, portalUsers);
+		domainTable.setWidget(row, 8, type);
+		domainTable.setWidget(row, 9, action);
 		
 		domainTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -898,14 +903,18 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		domainTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
+		domainTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		
 		domainTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
-		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
-		domainTable.getColumnFormatter().getElement(3).getStyle().setWidth(100, Unit.PX);
-		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(100, Unit.PX);
-		domainTable.getColumnFormatter().getElement(7).getStyle().setWidth(25, Unit.PX);
+		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
+		domainTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
+		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(70, Unit.PX);
+		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(100, Unit.PX);
+		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+		domainTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+		domainTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
+		domainTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
 		
 		int newRow = domainTable.insertRow(domainTable.getRowCount());
 		
@@ -921,6 +930,12 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		List<Domain> activeChilds = domainBooking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
 		Label enterprisesLabel = new Label(activeChilds.size() + " / " + childs.size());
 		enterprisesLabel.setTitle(activeChilds.size() + " empresas activas / " + childs.size() + " empresas");
+		
+		String statusMessage = domainBooking.getDomain().getExpirationDate() != null && domainBooking.getDomain().getExpirationDate().before(new Date()) ? "Expirado" : (domainBooking.getDomain().isActive() ? "Activo" : "Inactivo");
+		Label statusLabel = new Label(statusMessage);
+		statusLabel.setTitle(AonStringUtils.equalsIgnoreCase(statusMessage, "Expirado") ? ("F. expiraci\u00f3n : " + formatDate(domainBooking.getDomain().getExpirationDate())) : "");
+		
+		Label expirationLabel = new Label(formatDate(domainBooking.getDomain().getExpirationDate()));
 		
 		Label usersLabel = new Label(domainBooking.getNumberOfUsers() + " / " + domainBooking.getDomain().getMaxDefinedUsers());
 		
@@ -941,17 +956,21 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				
 		domainTable.setWidget(newRow, 0, domainNameLabel);
 		domainTable.setWidget(newRow, 1, bookingLabel);
-		domainTable.setWidget(newRow, 2, bookingNumLabel);
-		domainTable.setWidget(newRow, 3, enterprisesLabel);
-		domainTable.setWidget(newRow, 4, usersLabel);
-		domainTable.setWidget(newRow, 5, portalUsersLabel);
-		domainTable.setWidget(newRow, 6, typeLabel);
-		domainTable.setWidget(newRow, 7, buttonPanel);
+		domainTable.setWidget(newRow, 2, enterprisesLabel);
+		domainTable.setWidget(newRow, 3, bookingNumLabel);
+		domainTable.setWidget(newRow, 4, statusLabel);
+		domainTable.setWidget(newRow, 5, expirationLabel);
+		domainTable.setWidget(newRow, 6, usersLabel);
+		domainTable.setWidget(newRow, 7, portalUsersLabel);
+		domainTable.setWidget(newRow, 8, typeLabel);
+		domainTable.setWidget(newRow, 9, buttonPanel);
 		
 		if (newRow % 2 == 0) {
 			domainNameLabel.addStyleName(AON.CSS.aonOddTableRow());
 			bookingLabel.addStyleName(AON.CSS.aonOddTableRow());
 			bookingNumLabel.addStyleName(AON.CSS.aonOddTableRow());
+			statusLabel.addStyleName(AON.CSS.aonOddTableRow());
+			expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
 			enterprisesLabel.addStyleName(AON.CSS.aonOddTableRow());
 			usersLabel.addStyleName(AON.CSS.aonOddTableRow());
 			portalUsersLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -968,12 +987,15 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			domainTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
 			domainTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
+			domainTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
+			domainTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
 		}
 		
 		domainTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+		domainTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
 		domainTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
 		
 		domainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
@@ -985,7 +1007,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		boolean allEnterprises = enterprisesView.getSelectedIndex() == 1;
 		domainChildsPanel.clear();
 		
-		Grid domainChildsTable = new Grid(0, 7);
+		Grid domainChildsTable = new Grid(0, 9);
 		domainChildsTable.clear();
 		domainChildsTable.setWidth("100%");
 
@@ -993,27 +1015,33 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 		Label name = new Label("EMPRESA");
 		Label booking = new Label("EXTENSIONES CONTRATADAS");
-		Label bookingNum = new Label("N\u00b0 EXTENSIONES");
+		Label bookingNum = new Label("N\u00b0 EXTEN.");
 		Label status = new Label("ESTADO");
-		Label users = new Label("USUARIOS");
+		Label expiration = new Label("F. EXPIRACI\u00f3N");
+		Label users = new Label("USR.");
 		Label portalUsers = new Label("USR. PORTAL");
 		Label type = new Label("TIPO");
+		Label action = new Label("");
 		
 		name.addStyleName(AON.CSS.aonHeaderTable());
 		booking.addStyleName(AON.CSS.aonHeaderTable());
 		bookingNum.addStyleName(AON.CSS.aonHeaderTable());
 		status.addStyleName(AON.CSS.aonHeaderTable());
+		expiration.addStyleName(AON.CSS.aonHeaderTable());
 		users.addStyleName(AON.CSS.aonHeaderTable());
 		portalUsers.addStyleName(AON.CSS.aonHeaderTable());
 		type.addStyleName(AON.CSS.aonHeaderTable());
+		action.addStyleName(AON.CSS.aonHeaderTable());
 
 		domainChildsTable.setWidget(row, 0, name);
 		domainChildsTable.setWidget(row, 1, booking);
 		domainChildsTable.setWidget(row, 2, bookingNum);
 		domainChildsTable.setWidget(row, 3, status);
-		domainChildsTable.setWidget(row, 4, users);
-		domainChildsTable.setWidget(row, 5, portalUsers);
-		domainChildsTable.setWidget(row, 6, type);
+		domainChildsTable.setWidget(row, 4, expiration);
+		domainChildsTable.setWidget(row, 5, users);
+		domainChildsTable.setWidget(row, 6, portalUsers);
+		domainChildsTable.setWidget(row, 7, type);
+		domainChildsTable.setWidget(row, 8, action);
 		
 		domainChildsTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		domainChildsTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1022,13 +1050,17 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainChildsTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		domainChildsTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		domainChildsTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+		domainChildsTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		domainChildsTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
 		
 		domainChildsTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(3).getStyle().setWidth(100, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(6).getStyle().setWidth(100, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(2).getStyle().setWidth(70, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(4).getStyle().setWidth(100, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+		domainChildsTable.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
 		
 		List<String> parentApps = domainBooking.getApps().stream().map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
 		List<Domain> childsDomain = domainBooking.getResume().getChilds();
@@ -1066,6 +1098,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			Label statusLabel = new Label(statusMessage);
 			statusLabel.setTitle(AonStringUtils.equalsIgnoreCase(statusMessage, "Expirado") ? ("F. expiraci\u00f3n : " + formatDate(domainChild.getExpirationDate())) : "");
 			
+			Label expirationLabel = new Label(formatDate(domainChild.getExpirationDate()));
+			
 			Label usersLabel = new Label(activeUsersDiff + " / " + domainChild.getMaxDefinedUsers());
 			
 			Label portalUsersLabel = new Label(portalUsersCount + "");
@@ -1081,6 +1115,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				usersLabel.setTitle("Existe mas usuarios activos que contratados");
 			}
 			
+			Label actionLabel = new Label("");
+			
 			// Add row
 			int newRow = domainChildsTable.insertRow(domainChildsTable.getRowCount());
 			
@@ -1088,18 +1124,22 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			domainChildsTable.setWidget(newRow, 1, bookingLabel);
 			domainChildsTable.setWidget(newRow, 2, bookingNumLabel);
 			domainChildsTable.setWidget(newRow, 3, statusLabel);
-			domainChildsTable.setWidget(newRow, 4, usersLabel);
-			domainChildsTable.setWidget(newRow, 5, portalUsersLabel);
-			domainChildsTable.setWidget(newRow, 6, typeLabel);
+			domainChildsTable.setWidget(newRow, 4, expirationLabel);
+			domainChildsTable.setWidget(newRow, 5, usersLabel);
+			domainChildsTable.setWidget(newRow, 6, portalUsersLabel);
+			domainChildsTable.setWidget(newRow, 7, typeLabel);
+			domainChildsTable.setWidget(newRow, 8, actionLabel);
 			
 			List<Label> rowLabels = new ArrayList<>();
 			rowLabels.add(domainNameLabel);
 			rowLabels.add(bookingLabel);
 			rowLabels.add(bookingNumLabel);
 			rowLabels.add(statusLabel);
+			rowLabels.add(expirationLabel);
 			rowLabels.add(usersLabel);
 			rowLabels.add(portalUsersLabel);
 			rowLabels.add(typeLabel);
+			rowLabels.add(actionLabel);
 			
 			for(Label label : rowLabels) {
 				label.addMouseOverHandler(e -> addHighlightRow(domainChildsTable, newRow));
@@ -1111,9 +1151,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				bookingLabel.addStyleName(AON.CSS.aonOddTableRow());
 				bookingNumLabel.addStyleName(AON.CSS.aonOddTableRow());
 				statusLabel.addStyleName(AON.CSS.aonOddTableRow());
+				expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
 				usersLabel.addStyleName(AON.CSS.aonOddTableRow());
 				portalUsersLabel.addStyleName(AON.CSS.aonOddTableRow());
 				typeLabel.addStyleName(AON.CSS.aonOddTableRow());
+				actionLabel.addStyleName(AON.CSS.aonOddTableRow());
 				
 				domainChildsTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
 				domainChildsTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
@@ -1122,12 +1164,15 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				domainChildsTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
 				domainChildsTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
 				domainChildsTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
+				domainChildsTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
+				domainChildsTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
 			}
 			
 			domainChildsTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);
 			domainChildsTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
 			domainChildsTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			domainChildsTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			domainChildsTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
 			
 			domainChildsTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
 		}
