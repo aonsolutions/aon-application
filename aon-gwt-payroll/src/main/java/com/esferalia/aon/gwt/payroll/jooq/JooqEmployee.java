@@ -954,7 +954,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "EXTENSION_DATE")) {
 				contractData.setHasExtension(true);
 				try {
-					contractData.setExtensionDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+					if(null == contractData.getExtensionDate() || contractData.getExtensionDate().before(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION))) )
+						contractData.setExtensionDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
