@@ -143,6 +143,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
@@ -323,7 +324,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
-		OCRInvoiceBuilder.fillRegistry(ctx, invoice);
+	    	OCRInvoiceBuilder.fillRegistry(ctx, AON.getConfiguration(ctx), invoice);
 	    } catch (OCRTooManyOwnersException e) {
 	    } catch ( OCROwnerNotFoundException e ) {
 		Registry registry = new Registry( )

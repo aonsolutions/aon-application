@@ -31,7 +31,7 @@ public class InvofoxToAonTestCase {
 	private static final String X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
 
 	@Test
-	@Disabled("Until default product test has been done")
+	//@Disabled("Until default product test has been done")
 	void getValidDocument() {
 		// String documentId = "648088d6c632f4000891fa82";
 		// String documentId = "648991a57e00c10008d56923"; // BIP & DRIVE

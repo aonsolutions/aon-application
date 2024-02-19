@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1906,5 +1907,22 @@ public class InvoiceDAO {
 			.where(INVOICE.ID.eq(invoiceId))
 			.execute();
 		ctx.log().info("UPDATE ACTIVITY: Invoice {0}: Activity {1}. {2} filas.",invoiceId, activity, count);
+	}
+	
+	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select( ITEM.fields())
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+				.join(ITEM).on(ITEM.ID.eq(INVOICE_DETAIL.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.where(INVOICE.REGISTRY.eq(registry))
+					.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.orderBy(INVOICE.ID.desc(), INVOICE_DETAIL.LINE.asc())
+			.limit(1)
+			.fetch()
+			.stream()
+			.map( ItemFiller::build )
+			.findFirst();		
 	}
 }
