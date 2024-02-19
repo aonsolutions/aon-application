@@ -577,8 +577,14 @@ public class AonNordigen  {
 	}
 	
 	private static NordigenException mapException(Exception exception) throws IllegalArgumentException{
-		JSONObject errJson = new JSONObject(exception.getMessage());
-		String err = errJson.getString("result");
+		exception.printStackTrace();
+		String err = null;
+		try {
+			JSONObject errJson = new JSONObject(exception.getMessage());
+			err = errJson.getString("result");
+		} catch (Exception e) {
+			err = exception.getMessage();
+		}
 		return new NordigenException(err);						
 	}
 

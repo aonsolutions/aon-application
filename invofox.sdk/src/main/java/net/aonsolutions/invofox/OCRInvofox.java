@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import net.aonsolutions.invofox.json.OCRCompaniesResponseJSON;
 import net.aonsolutions.invofox.json.OCRCompanyJSON;
 import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
+import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
@@ -26,6 +27,7 @@ import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
 import net.aonsolutions.invofox.model.OCRCompanyResponse;
+import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
@@ -204,6 +206,7 @@ public class OCRInvofox {
 		return get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
 	}
 	
+
 	public static OCRDocumentsResponse getCompanyInvoices(String apiKey, String apiUrl, String taxId) {
 		OCRCompaniesResponse resp = getCompanies(apiKey, apiUrl, OCRCompanyParams.get().withTaxId(taxId));
 		Optional<List<OCRCompany>> companiesOpt = resp.getCompanies(); 
@@ -219,6 +222,11 @@ public class OCRInvofox {
 	public static OCRDocumentResponse getDocument(String apiKey, String apiUrl, String documentId) {
 		return get(apiKey, MessageFormat.format(getDocumentURL(apiUrl), documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
+	
+	public static OCRDocumentResponse putDocument(String apiKey, String apiUrl, OCRDocument document) {
+		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), document.getId().orElseThrow(IllegalArgumentException::new)), OCRDocumentJSON.to(document), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
+
 	public static OCRDocumentResponse markAsExported(String apiKey, String apiUrl, String documentId) {
 		JSONObject putData = new JSONObject();
 		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
