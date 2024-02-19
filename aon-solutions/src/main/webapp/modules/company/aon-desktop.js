@@ -1469,8 +1469,8 @@ export class AonDesktop extends AonElement {
 			});
 
 			this.SIDENAV_ACTIVITY_SUMMARY.push({
-				name: MSG.REJECTED_INVOICES,
-				icon: MATERIAL_ICONS.REPORT,
+				name: MSG.PENDING_REVIEW,
+				icon: MATERIAL_ICONS.ERROR,
 				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();

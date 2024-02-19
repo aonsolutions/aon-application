@@ -135,7 +135,7 @@ export class AonInvoiceList extends AonElement {
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					invoice.icon = MATERIAL_ICONS.CIRCLE;
 					invoice.aonIcon = "invofox";
-					invoice.icon_title = "Recibida"
+					invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
 					invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 					aonInvoiceTable.addRow(invoice, () => {
@@ -167,7 +167,7 @@ export class AonInvoiceList extends AonElement {
 						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 						invoice.icon = MATERIAL_ICONS.CIRCLE;
 						invoice.aonIcon = "invofox";
-						invoice.icon_title = "Recibida"
+						invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
 						invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 						aonInvoiceTable.addRow(invoice, () => {
@@ -251,6 +251,29 @@ export class AonInvoiceList extends AonElement {
  		}
 	}
 	
+	getOcrInvoiceStatusIconTitle(invoice) {
+		let inv = new Invoice(invoice);
+		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+			return MSG.PROCCESSING;
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED)) {
+			return MSG.APPROVED;
+		} else if(inv.isOcrStatus(CONSTANT.EXPORTED)) {
+			return MSG.EXPORTED;
+		} else if(inv.isOcrStatus(CONSTANT.ERROR)){
+			return MSG.ERROR;
+		} else if(inv.isOcrStatus(CONSTANT.REJECTED)){
+			return MSG.REJECTED;
+		} else if(inv.isOcrStatus(CONSTANT.DISCARDED)) {
+			return MSG.DISCARDED;
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION)) {
+			return MSG.PENDING_CORRECTION;
+		}else if(inv.isOcrStatus(CONSTANT.PENDING_DECISSION)) {
+			return MSG.PENDING_DECISSION;
+		} else { 
+			return "";
+		}
+	}
+
 	getOcrInvoiceStatusIconColor(invoice) {
 		let inv = new Invoice(invoice);
 		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {

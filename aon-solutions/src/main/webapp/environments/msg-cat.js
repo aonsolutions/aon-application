@@ -302,6 +302,8 @@ export const PAYSHEETS = 'Nòminas';
 export const PENDING = 'Pendent';
 export const PENDING_DOCUMENTS = 'Documents Pendents'
 export const PENDING_INVOICES = 'Factures Pendents';
+export const PENDING_REVIEW = 'Pendent de Revisió';
+export const PENDING_TASKS = 'Tasques Pendents';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
@@ -354,7 +356,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";
-
+export const REVIEW = "Revisar";
 
 // ----- S
 

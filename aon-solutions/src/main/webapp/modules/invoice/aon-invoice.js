@@ -412,7 +412,7 @@ export class AonInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
@@ -2747,7 +2747,7 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REJECT_INVOICE);
+		d.setTitle(MSG.REVIEW);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
