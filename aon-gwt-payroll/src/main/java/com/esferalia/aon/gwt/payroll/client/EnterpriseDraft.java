@@ -169,6 +169,21 @@ public abstract class EnterpriseDraft extends Composite {
 			enterpriseDraftObject.setScope(scopeId);
 			setHasChange(true);
 		}
+		
+		@Override
+		public void onEnterprisePaySsMutualChange() {
+			String paySsMutual = String.valueOf(this.enterprisePaySsMutual.getSelectedValue());
+			enterpriseDraftObject.setPaySsMutual(paySsMutual);
+			setHasChange(true);
+		}
+
+		@Override
+		public void onnterprisePayAuthorizationKeyChange() {
+			String payAuthorizationKey = this.enterprisePayAuthorizationKey.getValue();
+			enterpriseDraftObject.setPayAuthorizationKey(payAuthorizationKey);
+			setHasChange(true);
+		}
+			
 
 		@Override
 		public void fireErrorMessage(Map<String, String> messages) {
@@ -333,6 +348,9 @@ public abstract class EnterpriseDraft extends Composite {
 		enterprise.checkPaysheetSendType(enterpriseDraftObject.getPaysheetSendEmail());
 		
 		enterprise.enterpriseAgreement.setValue(enterpriseDraftObject.getAgreementDescription());
+		
+		enterprise.enterprisePayAuthorizationKey.setValue(enterpriseDraftObject.getPayAuthorizationKey());
+		setSelectedValueLB(enterprise.enterprisePaySsMutual, enterpriseDraftObject.getPaySsMutual());
 	}
 	
 	public EnterpriseDraftObject getEnterpriseDraftObject() {
@@ -421,6 +439,9 @@ public abstract class EnterpriseDraft extends Composite {
 					showSuccessMessage(new HashMap<String, String>(){{ put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente"); }});
 					onSaved.accept(enterpriseDraftObject.getEnterpriseInfo());
 					setHasChange(false);
+					
+					setEnterpriseDraftObject(enterpriseDraftObject);
+					
 				}, 
 				t -> showSuccessMessage(new HashMap<String, String>(){{ put("Error", t.getMessage()); }})
 		);

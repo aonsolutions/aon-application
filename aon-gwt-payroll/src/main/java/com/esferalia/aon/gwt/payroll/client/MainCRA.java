@@ -659,7 +659,7 @@ public class MainCRA extends MainEntryPoint {
 		// Get first day of previus month
 		findingDate = DateUtils.addMonths2Date(findingDate, -1);
 		findingDate = DateUtils.getFirstDayOfMonth(findingDate);
-		findingDateCRA = period.getEnd();
+		findingDateCRA = null == period.getEnd() ? new Date() : period.getEnd();
 		findingDateCRA = DateUtils.getFirstDayOfMonth(findingDateCRA);
 	}
 
