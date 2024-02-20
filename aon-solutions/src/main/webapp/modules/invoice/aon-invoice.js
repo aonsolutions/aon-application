@@ -1,8 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent } from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getPaymethod, getInvofoxTextContent, getInvofoxDocument } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -88,12 +88,13 @@ export class AonInvoice extends AonElement {
    		super();
 	}
 
-	connectedCallback () {
+	async connectedCallback () {
 		this.initialize();
 		this.buildDur().then(r => {
 			this.build();
 		});
 		
+		this.configuration = await getInvoiceConfiguration();
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
@@ -115,9 +116,7 @@ export class AonInvoice extends AonElement {
 			}
 		});
 
-		getInvoiceConfiguration().then(r => {
-            this.configuration = r;
-        });
+
 	}
 
 	initialize(){
@@ -413,7 +412,7 @@ export class AonInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
@@ -434,7 +433,7 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
-		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION, CONSTANT.ERROR, CONSTANT.DISCARDED ) ) {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 		}
@@ -721,7 +720,7 @@ export class AonInvoice extends AonElement {
 							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
 							break;
 						case ErrKey.TAX_BASE: 
-							this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+							this.getElement(`${this.TAX_BASE}${err.context.line}`).addError(getMessageHTML(err));
 							break;
 						case ErrKey.TAX_QUOTA: 
 							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
@@ -787,7 +786,7 @@ export class AonInvoice extends AonElement {
 							break;
 					}
 				} catch ( e ) {
-					console.error(e);
+					//console.error(e);
 				}
 			});
 		}
@@ -1194,9 +1193,11 @@ export class AonInvoice extends AonElement {
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
-		if(this.invoice.taxes.length > 1 || this.invoice.details.length > 0)
+		if(LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
+		if(!LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+			total.disabled = CONSTANT.TRUE;
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
 		|| this.invoice.taxes.length > 1
@@ -1370,8 +1371,10 @@ export class AonInvoice extends AonElement {
 				if(this.autosave) this.save();
 			});
 			div.appendChild(farmer);
-			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-				this.invoice.setWithholdingFarmer(false);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional() ) {
+				if(this.invoice.isWithholdingFarmer()){
+					this.invoice.setWithholdingFarmer(false);
+				}
 				farmer.setDisabled(true);
 			}
 			farmer.checked = this.invoice.isWithholdingFarmer();
@@ -1572,7 +1575,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked, this.configuration.withholdingPercent);
+			this.invoice.setWithholding(irpf.checked, this.configuration ? this.configuration.withholdingPercent : undefined);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1602,7 +1605,7 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val || this.configuration.withholdingPercent;
+			irpfType.value = val || (this.configuration ? this.configuration.withholdingPercent : undefined);
 		} 
 	}
 
@@ -1897,7 +1900,7 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-
+		
 		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
@@ -1991,7 +1994,7 @@ export class AonInvoice extends AonElement {
 			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
 				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0){
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2102,7 +2105,7 @@ export class AonInvoice extends AonElement {
 				detail.percentage = 21.0;
 			}
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2213,6 +2216,10 @@ export class AonInvoice extends AonElement {
 			card.id = this.FINANCE;
 			card.title = MSG.EXPIRATIONS;
 			parent.appendChild(card);
+			card.addTitleButton("Resetear", MATERIAL_ICONS.AUTORENEW, false, () => {
+				this.invoice.resetFinances();
+				this.reload();
+			});
 		}
 
 		let table = this.getElement(this.FINANCE_TABLE);
@@ -2292,7 +2299,8 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
-		
+		date.value = finance.due_date;
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
@@ -2373,6 +2381,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		table.addCell(date);
+		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
 
@@ -2425,6 +2434,7 @@ export class AonInvoice extends AonElement {
 		});
 		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
+		date.value = finance.due_date;
 		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
@@ -2686,7 +2696,9 @@ export class AonInvoice extends AonElement {
 		} else if(this.accept) {
 			this.getApplication().startLoader();
 			this.accept = false;
-			acceptInvoice(this.getInvoice()).then(r => {
+			acceptInvoice(this.getInvoice())
+			.then(r => {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				this.invoice = new Invoice(r);
 				this.getApplication().stopLoader(); 
 				this.reload();
@@ -2695,6 +2707,15 @@ export class AonInvoice extends AonElement {
 				this.getApplication().stopLoader(); 
 				this.showError(e)
 			});
+		}
+	}
+	
+	setInvofoxState(publicState) {
+		try {
+			let invofoxDocumentId = this.getInvofoxDocumentId();
+			saveInvofoxDocument({_id: invofoxDocumentId , publicState: publicState});
+		}  catch ( e ){
+			
 		}
 	}
 
@@ -2716,10 +2737,17 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
+		
+		if ( this.isInvofoxInvoice() ) {
+			this.setInvofoxState(CONSTANT.REJECTED);
+			this.back();
+			return;
+		}
+			
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REJECT_INVOICE);
+		d.setTitle(MSG.REVIEW);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -2985,6 +3013,14 @@ export class AonInvoice extends AonElement {
 		else if(this.invoice.isRejected()) {
 			return 'Rechazado'
 		} else return 'Papelera';
+	}
+	
+	isInvofoxInvoice() {
+		return this.getInvofoxDocumentId();
+	}
+		
+	getInvofoxDocumentId(){
+		return this.invoice.insight?.invofoxId;	
 	}
 
 	trashInvoice() {

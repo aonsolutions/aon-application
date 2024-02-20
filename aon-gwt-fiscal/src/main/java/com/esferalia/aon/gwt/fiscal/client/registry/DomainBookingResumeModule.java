@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -19,15 +19,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -61,6 +55,10 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	// Api
+	private BookingApi bookingApi;
+	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+	
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -76,6 +74,7 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 		AON.ensureInjected();
 		
 		this.opt = opt;
+		this.bookingApi = new BookingApi(SESSION_API);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		this.opt.getParentWidget().add(dockLayoutPanel);
@@ -123,39 +122,24 @@ public class DomainBookingResumeModule extends MainEntryPoint {
 	private void getBookingResume() {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n del dominio... ");
 		
-		// Create the base URL
-		String baseUrl = "/ms/api/booking/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
+		String host = Window.Location.getHost();
+		String endPoint =  "/ms/api/booking/";
 		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String domainBookingJson = response.getText();
-		            	domainBooking = BookingJSON.parseBookingJSON(JSONParser.parseStrict(domainBookingJson).isObject());
-		            	AonMessagePanel.hideMessage(messagePanel);
-		            	createDomainBookingResume();
-		            	createDomainChildsBookingResume();
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
+		this.bookingApi.getBooking(host, endPoint, new AsyncCallback<Booking>() {
+			
+			@Override
+			public void onSuccess(Booking booking) {
+				AonMessagePanel.hideMessage(messagePanel);
+				domainBooking = booking;
+				createDomainBookingResume();
+            	createDomainChildsBookingResume();
+			}
+			
+			@Override
+			public void onFailure(Throwable exception) {
+				AonMessagePanel.showError(messagePanel, exception.getMessage());
+			}
+		});
 	}
 
 	private void createDomainBookingResume() {

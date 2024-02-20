@@ -303,6 +303,8 @@ export const PAYSHEETS = 'Paysheets';
 export const PENDING = 'Pending';
 export const PENDING_DOCUMENTS = 'Pending Documents';
 export const PENDING_INVOICES = 'Pending Invoices';
+export const PENDING_REVIEW = 'Pending Review';
+export const PENDING_TASKS = 'Pending Tasks';
 export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
@@ -355,6 +357,7 @@ export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Review';
 
 // ----- S
 

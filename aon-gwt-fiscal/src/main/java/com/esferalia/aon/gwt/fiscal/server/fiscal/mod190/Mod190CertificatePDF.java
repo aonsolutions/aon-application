@@ -25,7 +25,7 @@ import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 public class Mod190CertificatePDF {
 
-	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");
+	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");	
 	private static final Font TITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
 	private static final Font SUBTITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 9, Font.BOLD);
 	private static final Font CELL_LABEL_FONT = new Font(Font.FontFamily.HELVETICA, 7);
@@ -144,18 +144,49 @@ public class Mod190CertificatePDF {
 		addEmptyCell(table2);
 		addSmallLabelCenterCell(table2, "Gastos deducibles (art. 19.2 [letras a), b) y c)] de la Ley del Impuesto)");
 		
-		for (int i = 0; i < 4; i++) {
-			// Estos importes no se calculan actualmente en el certificado, por lo tanto se imprime directamente cero
-			addNumericBodyCell(table2, 0); 
-			addEmptyCell(table2);
-			addNumericBodyCell(table2, 0);
-			addEmptyCell(table2);
-			addNumericBodyCell(table2, 0);
-			addEmptyCell(table2);
-			addNumericBodyCell(table2, 0);
-			addEmptyCell(table2);
-			addNumericBodyCell(table2, 0);		
-		}
+		// Atrasos linea 1
+		addCenterBodyCell(table2, detail.getDelay1().getYear() == 0 ? " " : Integer.toString(detail.getDelay1().getYear()));  // Ejercicio de devengo
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay1().getPerception());  // Importe integro satisfecho
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay1().getRetention());  // Retenciones practicadas
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay1().getApplicableReduction());  // Reducciones 
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay1().getDeducibleExpense());	// Gastos
+		
+		// Atrasos linea 2
+		addCenterBodyCell(table2, detail.getDelay2().getYear() == 0 ? " " : Integer.toString(detail.getDelay2().getYear()));  // Ejercicio de devengo
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay2().getPerception());  // Importe integro satisfecho
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay2().getRetention());  // Retenciones practicadas
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay2().getApplicableReduction());  // Reducciones 
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay2().getDeducibleExpense());	// Gastos
+		
+		// Atrasos linea 3
+		addCenterBodyCell(table2, detail.getDelay3().getYear() == 0 ? " " : Integer.toString(detail.getDelay3().getYear()));  // Ejercicio de devengo
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay3().getPerception());  // Importe integro satisfecho
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay3().getRetention());  // Retenciones practicadas
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay3().getApplicableReduction());  // Reducciones 
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay3().getDeducibleExpense());	// Gastos
+		
+		// Atrasos linea 4
+		addCenterBodyCell(table2, detail.getDelay4().getYear() == 0 ? " " : Integer.toString(detail.getDelay4().getYear()));  // Ejercicio de devengo
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay4().getPerception());  // Importe integro satisfecho
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay4().getRetention());  // Retenciones practicadas
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay4().getApplicableReduction());  // Reducciones 
+		addEmptyCell(table2);
+		addNumericBodyCell(table2, detail.getDelay4().getDeducibleExpense());	// Gastos
 		
 		PdfPCell c1 = new PdfPCell();
 		c1.setColspan(10);
@@ -621,6 +652,10 @@ public class Mod190CertificatePDF {
 	
 	private PdfPCell addBodyCell(PdfPTable table, String text) {
 		return addBodyCell(table, text, 1, Rectangle.BOX, Element.ALIGN_LEFT);
+	}
+	
+	private PdfPCell addCenterBodyCell(PdfPTable table, String text) {
+		return addBodyCell(table, text, 1, Rectangle.BOX, Element.ALIGN_CENTER);
 	}
 	
 	private PdfPCell addNumericBodyCell(PdfPTable table, double amount) {

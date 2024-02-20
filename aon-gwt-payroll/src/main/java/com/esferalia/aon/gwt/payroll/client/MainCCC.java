@@ -1,13 +1,20 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.endsWith;
+import static com.esferalia.aon.watson.util.AonStringUtils.trim;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -15,30 +22,46 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.IvlService;
+import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDCCC;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SuggestOracle.Request;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -48,6 +71,8 @@ public class MainCCC extends MainEntryPoint{
 	// ----------------------------------------------- CCC Implementation
 	
 	private class CCCWidgetImpl extends CCC {
+	    
+	    	Label loadingLabel;
 
 		@Override
 		protected void onInsertRow() {
@@ -60,7 +85,7 @@ public class MainCCC extends MainEntryPoint{
 				showCCCMessage();
 			else {
 				showCCCTable();
-				mainCCCObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
+				mainCCCObject.getCCCs().forEach(CCCWidgetImpl.this::insertRow);
 			}
 		}
 
@@ -93,18 +118,18 @@ public class MainCCC extends MainEntryPoint{
 		}
 
 		@Override
-		protected void fireWarningMessage(Map<String, String> messages) {
+		protected <T> void fireWarningMessage(Map<String, T> messages) {
 			AonMessagePanel.showWarning(messagePanel, messages);
 		}
 		
 		@Override
-		protected void fireInfoMessage(Map<String, String> messages) {
+		protected <T> void fireInfoMessage(Map<String, T> messages) {
 			AonMessagePanel.showInfo(messagePanel, messages);
 		}
 
 		@Override
-		protected void fireLoadingMessage(String message) {
-			AonMessagePanel.showLoading(messagePanel, message);
+		protected <T> void fireLoadingMessage(T message) {
+			loadingLabel = AonMessagePanel.showLoading(messagePanel, message);
 		}
 
 		@Override
@@ -118,7 +143,160 @@ public class MainCCC extends MainEntryPoint{
 			pdfViewer.open(dataURI);
 		}
 		
+		protected void setLoadingMessage(String text) {
+			loadingLabel.setText(text);
+		}
+
+		protected void setLoadingMessage(SafeHtml html) {
+			((HTML) loadingLabel).setHTML(html);
+		}
 	}
+	public class CCCAssignedWidgetImpl extends CCCWidgetImpl {
+	    
+	    private int limit = 100;
+	    
+	    List<EnterpriseCCC> enterpriseCCCs ;
+	    private MultiWordSuggestOracle cccSuggestOracle;
+	    private MultiWordSuggestOracle enterpriseNameSuggestOracle;
+	    
+	    
+	    public CCCAssignedWidgetImpl() {
+		super();
+		customizeHead();
+	    }
+	    
+	    @Override
+	    protected Set<Entry<Integer, String>> getActivities() {
+	        return Collections.emptySet();
+	    }
+	    
+	    @Override
+	    public void insertRow(EnterpriseCCC enterpriseCCC) {
+	        this.insertRowUI(enterpriseCCC);
+	        
+	        enterpriseCCCs.add(enterpriseCCC);
+	        cccSuggestOracle.add(enterpriseCCC.getCcc());
+	        enterpriseNameSuggestOracle.add(enterpriseCCC.getEnterpriseName());
+	        
+	        MainCCC.log(enterpriseCCC.getEnterpriseName() + ", " + enterpriseCCC.getCcc() );
+	        
+	    }
+	    
+	    private void insertRowUI(EnterpriseCCC enterpriseCCC) {
+	        if ( cccDataTable.getRowCount() >= limit ) 
+	            return;
+	        super.insertRow(enterpriseCCC);
+	        int row = cccDataTable.getRowCount() - 1;
+	        Label enterpriseNamelabel = new Label(enterpriseCCC.getEnterpriseName());
+	        cccDataTable.setWidget(row, 0, enterpriseNamelabel );
+	    }
+	    
+	    
+	    private void customizeHead() {
+		enterpriseCCCs = new ArrayList<>();
+		
+		int row = cccDataTableHeader.getRowCount() -1;
+		TextBox enterpriseNameTextBox = new TextBox();
+		cccDataTableHeader.setWidget(row, 0, enterpriseNameTextBox);
+		enterpriseNameSuggestOracle = new MultiWordSuggestOracle();
+		enterpriseNameTextBox.getElement().getStyle().setWidth(95, Unit.PCT);
+		
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.setStyleName(style.flexEvenly());
+		hPanel.addStyleName(style.widthAll());
+		Label typeLabel = new Label("0111");
+		typeLabel.setVisible(false);
+		AonTableButton cccButton = new AonTableButton("", AON.CSS.aonIconValid());
+		cccButton.setVisible(false);
+		TextBox cccTextBox = new TextBox();
+		cccTextBox.addStyleName("aon-inputText");
+		cccTextBox.addStyleName(style.inputTextHeight());
+		cccTextBox.getElement().getStyle().setProperty("width", "65%");
+		
+		hPanel.add(typeLabel);
+		hPanel.add(cccTextBox);
+		hPanel.add(cccButton);
+
+		cccDataTableHeader.setWidget(row, 2, hPanel);
+		cccSuggestOracle = new MultiWordSuggestOracle();
+
+		Timer cccTimer = newTimer(() -> filterByCCC(cccTextBox.getText()) );
+		cccTextBox.addKeyUpHandler(e -> cccTimer.schedule(2000));
+		Timer enterpriseNameTimer = newTimer(() -> filterByEnterpriseName(enterpriseNameTextBox.getText()));
+		enterpriseNameTextBox.addKeyUpHandler(e -> enterpriseNameTimer.schedule(2000));
+		
+	    }
+	    
+	    
+	    private void filterByCCC(String query ) {
+		if (AonStringUtils.isBlank(query)) {
+		    clearRows();
+		    enterpriseCCCs.stream().limit(limit).forEach(this::insertRowUI);
+		    return;
+		}
+		Request request = new Request(query, limit);
+		cccSuggestOracle.requestSuggestions(request, (req, res) -> {
+		    Set<String> cccs = res.getSuggestions().stream().map(Suggestion::getReplacementString)
+			    .collect(Collectors.toSet());
+		    clearRows();
+		    cccs.stream()
+		    .flatMap(this::getCCCByCCC)
+		    .forEach(this::insertRowUI);
+		});
+	    }
+
+	    private void filterByEnterpriseName(String query ) {
+		if (AonStringUtils.isBlank(query)) {
+		    clearRows();
+		    enterpriseCCCs.stream().limit(limit).forEach(this::insertRowUI);
+		    return;
+		}
+		Request request = new Request(query, limit);
+		enterpriseNameSuggestOracle.requestSuggestions(request, (req, res) -> {
+		    Set<String> enterprisesNames = res.getSuggestions().stream().map(Suggestion::getReplacementString)
+			    .collect(Collectors.toSet());
+		    clearRows();
+		    
+		    enterprisesNames.forEach( MainCCC::log);
+		    enterprisesNames.stream().flatMap(this::getCCCByName).forEach(ccc -> MainCCC.log("  *" + ccc.getEnterpriseName() ));
+		    
+		    enterprisesNames.stream()
+		    .flatMap(this::getCCCByName)
+		    .forEach(this::insertRowUI);
+		});
+	    }
+	    
+	    private void clearRows() {
+		while ( cccDataTable.getRowCount() > 0 )
+		    cccDataTable.removeRow(0);
+	    }
+	    
+	    private Timer newTimer(Runnable runnable) {
+		return new Timer() {
+		  @Override
+		    public void run() {
+		      runnable.run();
+		    }  
+		};
+	    }
+
+	    private Stream<EnterpriseCCC> getCCCByName(String enterpriseName) {
+		return enterpriseCCCs.stream()
+		.filter(ccc -> AonStringUtils.equals(ccc.getEnterpriseName(), enterpriseName))
+		.limit(1);
+	    }
+	    
+	    private Stream<EnterpriseCCC> getCCCByCCC(String ccc) {
+		return enterpriseCCCs.stream()
+		.filter(enterpriseCCC -> AonStringUtils.equalsIgnoreCase(enterpriseCCC.getCcc(), ccc))
+		.limit(1);
+	    }
+	    
+	    private  int getEnterpriseCCCCount() {
+		return enterpriseCCCs.size();
+	    }
+	    
+ 	}
 
 	// ----------------------------------------------- UiBinder
 	
@@ -135,6 +313,10 @@ public class MainCCC extends MainEntryPoint{
 		String container();
 		String widthAll();
 	}
+	
+	
+	@UiField
+	HTMLPanel mainHtmlPanel;
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -155,13 +337,22 @@ public class MainCCC extends MainEntryPoint{
 	DeckPanel mainDeckPanel;
 	
 	@UiField
-	HTMLPanel mainPanel;
+	HTMLPanel activityCCCPanel;
 	
+	@UiField
+	HTMLPanel assignedCCCPanel;
+
 	@UiField
 	SimpleLayoutPanel scrolledPDFPanel;
 
 	@UiField
 	FullViewer pdfViewer;
+	
+	@UiField
+	TabLayoutPanel cccTabLayoutPanel;
+	
+	@UiField
+	SimpleLayoutPanel mainCCCPanel;
 	
 	// --------------------------------------------- Import Form
 	
@@ -172,7 +363,8 @@ public class MainCCC extends MainEntryPoint{
 	
 	private MainCCCObject mainCCCObject;
 	
-	private CCC cccWidget;
+	private CCCWidgetImpl activityCCCWidget;
+	private CCCAssignedWidgetImpl assignedCCCWidget;
 	
 	private AonToolbarButton acceptButton;
 	private AonToolbarButton undoAllButton;
@@ -182,7 +374,8 @@ public class MainCCC extends MainEntryPoint{
 	// ----------------------------------------------- Constructor
 
 	public MainCCC() {	
-		cccWidget = new CCCWidgetImpl();
+		activityCCCWidget = new CCCWidgetImpl();
+		assignedCCCWidget = new CCCAssignedWidgetImpl();
 		
 		this.toolbar = new AonToolbar("C\u00F3digo Cuentas Cotizaci\u00F3n");
 		this.toolbarPDFViewer = new AonToolbar("C\u00F3digo Cuentas Cotizaci\u00F3n");
@@ -200,16 +393,35 @@ public class MainCCC extends MainEntryPoint{
 		
 		dockLayoutPanel.addStyleName(style.container());
 		
+		mainCCCPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
 		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
 		
-		mainPanel.add(cccWidget);
-		mainPanel.addStyleName(style.widthAll());
+		activityCCCPanel.add(activityCCCWidget);
+		activityCCCPanel.addStyleName(style.widthAll());
 		
+		assignedCCCPanel.add(assignedCCCWidget);
+		assignedCCCPanel.addStyleName(style.widthAll());
+		
+		List<HandlerRegistration> tabLayoutHadlers = new ArrayList<>();
+		tabLayoutHadlers.add( 
+		cccTabLayoutPanel.addSelectionHandler( e -> {
+		    if ( e.getSelectedItem() == 0 ) {
+			return;
+		    }
+		    if ( assignedCCCWidget.getRowCount() > 0 ) { 
+			return;
+		    }
+		    assignedCCCWidget.calculateScrollPanelHeightMainCCC();
+		    assignedCCCWidget.fireLoadingMessage(toSafeHtml("Consultando CCCs asignados."));
+		    getAssignedCCCs(this::onAssignedCCCSuccess,this::onAssignedCCCFailure, this::onAssignedCCCDone);
+		    tabLayoutHadlers.forEach(HandlerRegistration::removeHandler);
+		}));
+
 		initUploadForm();
 		
 		
 	}
-
+	
 	// ----------------------------------------------- onModuleLoad
 	
 	@Override
@@ -221,9 +433,9 @@ public class MainCCC extends MainEntryPoint{
 		this.mainCCCObject = mainCCCObject;
 		this.mainCCCObject.getMainCCCInfo(
 				s -> {
-					cccWidget.setDomain(mainCCCObject.getDomain());
-					cccWidget.onInsertRows();
-					cccWidget.calculateScrollPanelHeightMainCCC();
+					activityCCCWidget.setDomain(mainCCCObject.getDomain());
+					activityCCCWidget.onInsertRows();
+					activityCCCWidget.calculateScrollPanelHeightMainCCC();
 					setHasChange(false);
 				}, f -> {});
 	}
@@ -236,7 +448,13 @@ public class MainCCC extends MainEntryPoint{
 	    uploadForm.setAction(IvlService.IVL_URL);
 	    uploadForm.setMethod(FormPanel.METHOD_POST);
 	    uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-	    uploadForm.addSubmitCompleteHandler(e ->  cccWidget.fireInfoMessage(Collections.singletonMap("IVL", e.getResults())) );
+	    uploadForm.addSubmitCompleteHandler(response ->  { 
+		try {
+		    activityCCCWidget.fireInfoMessage(Collections.singletonMap("IVL", toSafeHtml(response.getResults())));
+		} catch ( IllegalArgumentException e ) {
+		    activityCCCWidget.fireInfoMessage(Collections.singletonMap("IVL", response.getResults()));
+		}
+	    } );
 	    
 	    
 	    FlowPanel formPanel = new FlowPanel();
@@ -251,15 +469,22 @@ public class MainCCC extends MainEntryPoint{
 	    
 	    
 	    uploadForm.add(formPanel);
-	    mainPanel.add(uploadForm);
+	    mainHtmlPanel.add(uploadForm);
 	}
 	
 	private void uploadFile() {
 	    fileUpload.click();
 	    fileUpload.addChangeHandler( e -> {
-		    cccWidget.fireLoadingMessage("Importando vida laboral ...");
+		    activityCCCWidget.fireLoadingMessage(toSafeHtml("Importando <b>Informe Vida Laboral de un C&oacute;digo de Cuenta de Cotizaci&oacute;n</b>..."));
 		    uploadForm.submit();
 	    });
+	}
+
+	/**
+	 * @return
+	 */
+	private SafeHtml toSafeHtml(String html) {
+	    return new SafeHtmlBuilder().appendHtmlConstant(html).toSafeHtml();
 	}
 	
 	// ----------------------------------------------- Toolbar
@@ -284,10 +509,10 @@ public class MainCCC extends MainEntryPoint{
 				public void onAccept() {
 					mainCCCObject.getMainCCCInfo(
 							s -> {
-								cccWidget.setDomain(mainCCCObject.getDomain());
-								cccWidget.resetPreview();
-								cccWidget.onInsertRows();
-								cccWidget.calculateScrollPanelHeightMainCCC();
+								activityCCCWidget.setDomain(mainCCCObject.getDomain());
+								activityCCCWidget.resetPreview();
+								activityCCCWidget.onInsertRows();
+								activityCCCWidget.calculateScrollPanelHeightMainCCC();
 								setHasChange(false);
 							}, f -> {});
 				}
@@ -300,7 +525,7 @@ public class MainCCC extends MainEntryPoint{
 		toolbar.add(checkUpdateCert);
 		
 		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
-		createCCCBtn.addClickHandler(e -> cccWidget.onAddNewCCC());
+		createCCCBtn.addClickHandler(e -> activityCCCWidget.onAddNewCCC());
 		toolbar.add(createCCCBtn);
 		
 		AonToolbarButton importBtn = new AonToolbarButton(AON.MSG.importAction() , AON.CSS.aonIconUploadFile() );
@@ -331,10 +556,10 @@ public class MainCCC extends MainEntryPoint{
 			
 			mainCCCObject.getMainCCCInfo(
 					su -> {
-						cccWidget.setDomain(mainCCCObject.getDomain());
-						cccWidget.resetPreview();
-						cccWidget.onInsertRows();
-						cccWidget.calculateScrollPanelHeightMainCCC();
+						activityCCCWidget.setDomain(mainCCCObject.getDomain());
+						activityCCCWidget.resetPreview();
+						activityCCCWidget.onInsertRows();
+						activityCCCWidget.calculateScrollPanelHeightMainCCC();
 						setHasChange(false);
 					}, f -> {});
 		}, f -> {
@@ -383,7 +608,7 @@ public class MainCCC extends MainEntryPoint{
 			monthListBox.setLastMonth(lastMonth);
 			monthListBox.setPageSize(52);
 			monthListBox.setVisibleRange(0, 52);
-			monthListBox.addChangeHandler(e -> this.cccWidget.onLaboralLife(monthListBox.getSelected()));
+			monthListBox.addChangeHandler(e -> this.activityCCCWidget.onLaboralLife(monthListBox.getSelected()));
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
 			toolbarPDFViewer.add(monthListBox);
@@ -407,16 +632,86 @@ public class MainCCC extends MainEntryPoint{
 	}
 	
 	private void importIvl(String data) {
-	    cccWidget.fireLoadingMessage("Importando Informe de Vida Laboral ...");
+	    activityCCCWidget.fireLoadingMessage(toSafeHtml("Importando <b>Informe Vida Laboral de un C&oacute;digo de Cuenta de Cotizaci&oacute;n</b>..."));
 	    upload(data, 
-		    message -> cccWidget.fireInfoMessage(Collections.singletonMap("IVL", message)), 
-		    exception -> cccWidget.fireWarningMessage(Collections.singletonMap("IVL", exception.getMessage())) );
+		    message -> activityCCCWidget.fireInfoMessage(Collections.singletonMap("IVL", toSafeHtml(message))), 
+		    exception -> activityCCCWidget.fireWarningMessage(Collections.singletonMap("IVL", exception.getMessage())) );
 	}
 
 	private void setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
 		acceptButton.setEnabled(this.hasChange);
 		undoAllButton.setEnabled(this.hasChange);
+	}
+	
+	private void onAssignedCCCDone() {
+	    assignedCCCWidget.hideMessage();
+	}
+	
+	private void onAssignedCCCFailure(HttpException exception) {
+	    assignedCCCWidget.fireWarningMessage(Collections.singletonMap(SistemaREDService.ASSIGNED_CCCS, exception.getMessage()));
+	}
+
+	private void onAssignedCCCSuccess(EnterpriseCCC enterpriseCCC) {
+	    assignedCCCWidget.insertRow(enterpriseCCC);
+	    assignedCCCWidget.setLoadingMessage(toSafeHtml(enterpriseCCC.getEnterpriseName() + " <b>" + enterpriseCCC.getCcc() + "</b> (" + assignedCCCWidget.getEnterpriseCCCCount() + " CCCs )" ));
+	}
+
+	protected static void getAssignedCCCs(Consumer<EnterpriseCCC> onSuccess, Consumer<HttpException> onFailure,  Runnable onDone) {
+	    
+	    Set<String> assignedCCCs = new HashSet<>();
+	    
+	    XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+	    
+	    xmlHttpRequest.setOnReadyStateChange(xhr -> {
+
+		int state = xhr.getReadyState();
+		
+		String text = xhr.getResponseText();
+		if ( AonStringUtils.isNotEmpty(text)) {
+		    String json ; 
+		    if ( endsWith(trim(text), "]") ) {
+			json = text;
+		    } else {
+			json = text + "]";
+		    }
+		    JsArray<JsSistemaREDCCC> jsCCCs = JsonUtils.safeEval(json);
+		    for (int i = 0; i < jsCCCs.length(); i++) {
+			JsSistemaREDCCC jsCCC = jsCCCs.get(i);
+			EnterpriseCCC enterpriseCCC = new EnterpriseCCC();
+			enterpriseCCC.setType((byte)0);
+			enterpriseCCC.setCcc(jsCCC.getCCC());
+			enterpriseCCC.setGeozoneCode(jsCCC.getProvince());
+			enterpriseCCC.setEnterpriseName(jsCCC.getEnterpriseName());
+			enterpriseCCC.setGeozoneDescription(ProvinceContract.getName(jsCCC.getProvince()));
+			if ( assignedCCCs.add(jsCCC.getHashCode()) ) {
+			    onSuccess.accept(enterpriseCCC);
+			}
+		    }
+		}
+
+		if (state != XMLHttpRequest.DONE )
+			return;
+		
+		int status = xhr.getStatus();
+		// Failure 1xx, 3xx, 4xx, 5xxx 
+		if (status < 200 && status >= 300)
+			onFailure.accept(new HttpException(status, xhr.getResponseText()));
+		
+		onDone.run();
+		
+	    });
+
+
+	    Map<String, String> datas = new HashMap<>();
+	    datas.put(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser());
+	    datas.put(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+	    
+	    String queryString = datas.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("&"));
+	    
+	    xmlHttpRequest.open("GET", SistemaREDService.SISTEMA_RED_URL + "/" + SistemaREDService.ASSIGNED_CCCS + "?" + queryString);
+	    xmlHttpRequest.send();
+
 	}
 
 	protected static void upload(String data, Consumer<String> onSuccess, Consumer<HttpException> onFailure ) {
@@ -493,8 +788,19 @@ public class MainCCC extends MainEntryPoint{
 	}
 	
 	
+	
 	static native String btoa(byte[] data) /*-{
 	    return btoa(data);
 	}-*/;
+	
+	public static native void log (String message ) /*-{
+		console.log(message);
+	}-*/;
+
+        public static native void error (String message ) /*-{
+        	console.error(message);
+        }-*/;
+	
+	
 	
     }

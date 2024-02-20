@@ -460,7 +460,7 @@ public class AON {
 		}
 	}
 	
-	public static AonConfiguration getConfiguration(CloseableAONContext ctx) {
+	public static AonConfiguration getConfiguration(AONContext ctx) {
 		return getConfiguration(ctx, null);  
 	}
 	
@@ -5778,6 +5778,12 @@ public class AON {
 	public static RegistryAddress save(String domainName, Integer domainId, String login, RegistryAddress address) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().save(ctx, address);
+		}
+	}
+	
+	public static void deleteRegistryAddress(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryAddress(ctx, id);
 		}
 	}
 	

@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE3034;
+import net.aonsolutions.db.up2date.config.InsertIAE848889;
 import net.aonsolutions.db.up2date.finance.InvoiceInfoLroeUpdate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
@@ -423,7 +424,8 @@ public class Up2Date {
 	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
 	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
 	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
-	    CodinucovaInvoiceTaxFix.INSTANCE
+	    CodinucovaInvoiceTaxFix.INSTANCE,
+	    InsertIAE848889.INSERT_IAE_848889
 	};
 
     // ------------------------------------------------------------------------

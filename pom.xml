@@ -102,7 +102,6 @@
 		<module>aon-company</module>
 		<module>aon-config</module>
 		<module>aon-customer</module>
-		<module>aon-geozone</module>
 		<module>aon-groupware</module>
 		<module>aon-project</module>
 		<module>aon-registry</module>
@@ -127,8 +126,13 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
-		<!--module>aon-pms</module-->
 		<module>aon-academy</module>
+		
+		<!--  OBSOLETE
+		<module>aon-pms</module>
+		<module>aon-geozone</module>
+ 		-->
+
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>
@@ -171,6 +175,7 @@
 		<module>aon-seg-social</module>
 		<module>aon-in-invoice</module>
 		<module>aon-in-payroll</module>
+		<module>aon-in-pdf</module>
 
 		
 		<module>aon-jasper-report</module>

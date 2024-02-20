@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -32,7 +33,7 @@ class OCRInvoiceBuilderRegistry {
 	
 		protected boolean fillRegistry(OCRContext ocr, Predicate<AccountingRegistry> filterExpression) {
 		    try {
-			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), filterExpression, ocr.getInvoice());
+			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), ocr.getConfig(), filterExpression, ocr.getInvoice());
 			return true;
 		    } catch (OCRTooManyOwnersException e) {
 			ocr.add(TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
@@ -101,7 +102,9 @@ class OCRInvoiceBuilderRegistry {
 		,new TicketFiller() 
 	};
 	
-	public static final void fillRegistry (AONContext aonCtx,  Predicate<AccountingRegistry> filterExpression, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException  {
+	public static final void fillRegistry (AONContext aonCtx,
+			AonConfiguration config,
+			Predicate<AccountingRegistry> filterExpression, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException  {
 		LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
 				.getAccountingRegistries(aonCtx, f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 				.filter(filterExpression)
@@ -121,7 +124,7 @@ class OCRInvoiceBuilderRegistry {
 						.setAlias(ar.getAlias())
 						.setNationality(ar.getNationality())
 					);
-				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, null));
+				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, config));
 				
 				return;
 			} else {

@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -35,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
@@ -85,7 +85,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 
 public class RegistryImpl implements IRegistry{
 	
@@ -774,6 +773,12 @@ public class RegistryImpl implements IRegistry{
 	public RegistryAddress save(AONContext ctx, RegistryAddress registryAddress) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryAddressDAO.save(ctx, registryAddress));
+	}
+	
+	@Override
+	public void deleteRegistryAddress(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryAddressDAO.delete(ctx, id));
 	}
 
 	@Override

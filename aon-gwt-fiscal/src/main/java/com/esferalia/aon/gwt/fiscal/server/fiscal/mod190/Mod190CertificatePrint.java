@@ -4,12 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
@@ -18,6 +12,12 @@ import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.DocumentException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Mod190 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model190CertificatePrint" })
 public class Mod190CertificatePrint extends HttpServlet {
@@ -73,45 +73,57 @@ public class Mod190CertificatePrint extends HttpServlet {
 	}
 	
 	public void createEmployeeCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map){
-		if (detail.getKey().equals("A") || detail.getKey().equals("L") || detail.getKey().equals("E") || detail.getKey().equals("F")){
+		if (detail.getKey().equals("A") || detail.getKey().equals("L") || detail.getKey().equals("E") || detail.getKey().equals("F")) {
 			RetentionCertificate cert = null;
 			if(map.containsKey(detail.getDocument())){
 				cert = map.get(detail.getDocument());
 			} else {
 				cert = new RetentionCertificate();
+				cert.setDelay1(new RetentionCertificate());
+				cert.setDelay2(new RetentionCertificate());
+				cert.setDelay3(new RetentionCertificate());
+				cert.setDelay4(new RetentionCertificate());
 			}
 
-			if (detail.getKey().equals("A") || detail.getKey().equals("E") || detail.getKey().equals("F")){
-				cert = completeCertificate(mod190, detail, cert, detail.getKey());
-			}
-			
-			// TODO: ¿se debe pedir en el 190?
-			cert.setForecastPlanContributions(0);
-			
-			// TODO: ¿se debe pedir en el 190?
-			cert.setDependencyContributions(0);
-			
-			if (detail.getKey().equals("A") || detail.getKey().equals("E") || detail.getKey().equals("F")){
-				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction());
-				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());
-			}
-			
-			cert.setDelay1(obtainRetentionCertificate(mod190.getYear()-1));
-			cert.setDelay2(obtainRetentionCertificate(mod190.getYear()-2));
-			cert.setDelay3(obtainRetentionCertificate(mod190.getYear()-3));
-			cert.setDelay4(obtainRetentionCertificate(mod190.getYear()-4));
-			
-			cert.setRefund1(obtainRefunds(mod190.getYear()-1));
-			cert.setRefund2(obtainRefunds(mod190.getYear()-2));
-			cert.setRefund3(obtainRefunds(mod190.getYear()-3));
-			
-			if (detail.getKey().equals("L")){
-				if(detail.getSubKey().equals("01")){
-					cert.setJourneyDiet(cert.getJourneyDiet() + detail.getPerception());
-				} else if(detail.getSubKey().equals("05") || detail.getSubKey().equals("20")){
-					cert.setIncomeExemption(cert.getIncomeExemption() + detail.getPerception());
+			// Datos correspondientes al ejercicio de devengo del modelo
+			if (detail.getAccrualYear() == 0 || detail.getAccrualYear() == mod190.getYear()) { 
+	     		
+				if (detail.getKey().equals("A") || detail.getKey().equals("E") || detail.getKey().equals("F")){
+	     			cert = completeCertificate(mod190, detail, cert, detail.getKey());
+	     			// Reducciones y Gastos
+					cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction());
+					cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());
 				}
+				
+				if (detail.getKey().equals("L")){
+					if(detail.getSubKey().equals("01")){
+						cert.setJourneyDiet(cert.getJourneyDiet() + detail.getPerception());
+					} else if(detail.getSubKey().equals("05") || detail.getSubKey().equals("20")){
+						cert.setIncomeExemption(cert.getIncomeExemption() + detail.getPerception());
+					}
+				}
+				
+				cert.setForecastPlanContributions(0); // ESTE DATO NO ESTA EN EL MODELO 190
+				cert.setDependencyContributions(0);   // ESTE DATO NO ESTA EN EL MODELO 190
+				
+			} else {
+				// Datos correspondientes a atrasos (devengo ejercicios anteriores)
+				if (cert.getYear() == 0)
+					cert = completeCertificate(mod190, detail, cert, null);				
+				if (cert.getDelay1().getYear() == 0 || detail.getAccrualYear() == cert.getDelay1().getYear())
+					cert.setDelay1(completeDelay(detail, cert.getDelay1()));				
+				else if (cert.getDelay2().getYear() == 0 || detail.getAccrualYear() == cert.getDelay2().getYear())
+					cert.setDelay2(completeDelay(detail, cert.getDelay2()));				
+				else if (cert.getDelay3().getYear() == 0 || detail.getAccrualYear() == cert.getDelay3().getYear())
+					cert.setDelay3(completeDelay(detail, cert.getDelay3()));				
+				else if (cert.getDelay4().getYear() == 0 || detail.getAccrualYear() == cert.getDelay4().getYear())
+					cert.setDelay4(completeDelay(detail, cert.getDelay4()));
 			}
+			
+			// ESTOS DATOS NO ESTAN EN EL MODELO 190
+//			cert.setRefund1(obtainRefunds(mod190.getYear()-1));
+//			cert.setRefund2(obtainRefunds(mod190.getYear()-2));
+//			cert.setRefund3(obtainRefunds(mod190.getYear()-3));
 			
 			map.put(cert.getEmployeeDocument(), cert);
 		}
@@ -155,7 +167,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 		cert.setId(null);
 		cert.setDomain(mod190.getDomain());
 		cert.setName(mod190.getName());
-		cert.setYear(detail.getAccrualYear()>0?detail.getAccrualYear():mod190.getYear());
+		cert.setYear(mod190.getYear());
 		cert.setEnterpriseName(mod190.getName());
 		cert.setEnterpriseDocument(mod190.getDocument());
 		cert.setEmployeeName(detail.getName());
@@ -171,21 +183,20 @@ public class Mod190CertificatePrint extends HttpServlet {
 		
 		return cert;
 	}
-
-	// Rendimientos satisfechos en el ejercicio correspondientes a ejercicios
-	// anteriores (atrasos)
-	private RetentionCertificate obtainRetentionCertificate(int year) {
-		// TODO
-		 
-		return null;
-	}
 	
-	// Cantidades reintegradas por el perceptor en el ejercicio por haber sido
-	// indebida o excesivamente percibidas en ejercicios anteriores (reintegros)
-	private RetentionCertificate obtainRefunds(int year) {
-		// TODO
-		
-		return null;
+	private RetentionCertificate completeDelay(Mod190Detail detail, RetentionCertificate cert) {
+		cert.setYear(detail.getAccrualYear()); // Ejercicio de devengo
+		cert.setPerception(cert.getPerception() + detail.getPerception() + detail.getPerceptionIL() + detail.getInKindPerception() + detail.getInKindPerceptionIL() ); // Importe integro satisfecho
+		cert.setRetention(cert.getRetention() + detail.getRetention() + detail.getRetentionIL() + detail.getInKindOutputDeposit() + detail.getInKindOutputDepositIL()); // Retenciones practicadas
+		cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction()); // Reducciones 
+		cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());  // Gastos
+		return cert;
 	}
+
+//	// Cantidades reintegradas por el perceptor en el ejercicio por haber sido
+//	// indebida o excesivamente percibidas en ejercicios anteriores (reintegros)
+//	private RetentionCertificate obtainRefunds(int year) {
+//		return null;
+//	}
 
 }
