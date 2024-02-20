@@ -215,13 +215,12 @@ public class Cra {
 					Integer salaryId = salaryRecord.get(SALARY.ID);
 					
 					// Get salaryPayment type of salary
-					Byte salaryPaymentType = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
+					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
 							.limit(1)
-							.fetchOne()
-							.getValue(SALARY_PAYMENT.TYPE);
+							.fetchOne();
 					
-					if(salaryPaymentType == (byte) 33) continue;
+					if(null == salaryPaymentTypeRecord || salaryPaymentTypeRecord.get(SALARY_PAYMENT.TYPE) == (byte) 33) continue;
 					
 					// Get salaryData of salary
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
@@ -265,7 +264,7 @@ public class Cra {
 							JSONArray cres = new JSONArray();
 							
 							// Get CRA type -> Same CRA type for all salaryData of a Salary
-							PaymentType typeCRA = PaymentType.values()[salaryPaymentType];
+							PaymentType typeCRA = PaymentType.values()[salaryPaymentTypeRecord.get(SALARY_PAYMENT.TYPE)];
 							
 							// Try to add Cre to Cres
 							addCreToCres(craAmount, typeCRA, cres);
