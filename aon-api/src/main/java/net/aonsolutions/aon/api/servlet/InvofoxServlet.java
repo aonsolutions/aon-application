@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TediErrorJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
@@ -51,6 +52,7 @@ import net.aonsolutions.aon.tedi.invofox.OCRZeroValueException;
 import net.aonsolutions.invofox.OCRCompanyParams;
 import net.aonsolutions.invofox.OCRDocumentsParams;
 import net.aonsolutions.invofox.OCRInvofox;
+import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRAddress;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
@@ -119,6 +121,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
+				.addRoute(DOCUMENT, InvofoxServlet::updateDocument)
 				.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
 				.apply();
 			
@@ -140,6 +143,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
@@ -226,9 +230,20 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return InvofoxConfigurationJSON.toJSON(AON.getInvofoxConfiguration(api.getDomain(), api.getUser()));
 	}
 	
-	public static JSONObject saveConfiguration(AonApiData api) {
+	private static JSONObject saveConfiguration(AonApiData api) {
 		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationJSON.fromJSON(api.getData());
 		return InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), invofoxConfiguration));
+	}
+	
+	private static JSONObject updateDocument(AonApiData api) {
+	    OCRDocument document = OCRDocumentJSON.from(api.getData());
+	    try (CloseableAONContext aonContext = AONContext.getAONContext(api.getDomain().getName(),
+		    api.getUser().getLogin())) {
+		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+		OCRDocumentResponse response = OCRInvofox.putDocument(invofoxConfiguration.getApiKey(),
+			invofoxConfiguration.getApiUrl(), document);
+		return response.getDocument().map(OCRDocumentJSON::to).orElseThrow(RuntimeException::new);
+	    }
 	}
 	
 //	INVOICE_DOMAIN
@@ -309,7 +324,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
-		OCRInvoiceBuilder.fillRegistry(ctx, invoice);
+	    	OCRInvoiceBuilder.fillRegistry(ctx, AON.getConfiguration(ctx), invoice);
 	    } catch (OCRTooManyOwnersException e) {
 	    } catch ( OCROwnerNotFoundException e ) {
 		Registry registry = new Registry( )

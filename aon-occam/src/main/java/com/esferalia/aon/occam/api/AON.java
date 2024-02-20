@@ -460,7 +460,7 @@ public class AON {
 		}
 	}
 	
-	public static AonConfiguration getConfiguration(CloseableAONContext ctx) {
+	public static AonConfiguration getConfiguration(AONContext ctx) {
 		return getConfiguration(ctx, null);  
 	}
 	

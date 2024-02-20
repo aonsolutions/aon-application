@@ -1,8 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent } from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getPaymethod, getInvofoxTextContent, getInvofoxDocument } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -412,7 +412,7 @@ export class AonInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
@@ -433,7 +433,7 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
-		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION, CONSTANT.ERROR, CONSTANT.DISCARDED ) ) {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 		}
@@ -720,7 +720,7 @@ export class AonInvoice extends AonElement {
 							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
 							break;
 						case ErrKey.TAX_BASE: 
-							this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
+							this.getElement(`${this.TAX_BASE}${err.context.line}`).addError(getMessageHTML(err));
 							break;
 						case ErrKey.TAX_QUOTA: 
 							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
@@ -786,7 +786,7 @@ export class AonInvoice extends AonElement {
 							break;
 					}
 				} catch ( e ) {
-					console.error(e);
+					//console.error(e);
 				}
 			});
 		}
@@ -2696,7 +2696,9 @@ export class AonInvoice extends AonElement {
 		} else if(this.accept) {
 			this.getApplication().startLoader();
 			this.accept = false;
-			acceptInvoice(this.getInvoice()).then(r => {
+			acceptInvoice(this.getInvoice())
+			.then(r => {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				this.invoice = new Invoice(r);
 				this.getApplication().stopLoader(); 
 				this.reload();
@@ -2705,6 +2707,15 @@ export class AonInvoice extends AonElement {
 				this.getApplication().stopLoader(); 
 				this.showError(e)
 			});
+		}
+	}
+	
+	setInvofoxState(publicState) {
+		try {
+			let invofoxDocumentId = this.getInvofoxDocumentId();
+			saveInvofoxDocument({_id: invofoxDocumentId , publicState: publicState});
+		}  catch ( e ){
+			
 		}
 	}
 
@@ -2726,10 +2737,17 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
+		
+		if ( this.isInvofoxInvoice() ) {
+			this.setInvofoxState(CONSTANT.REJECTED);
+			this.back();
+			return;
+		}
+			
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REJECT_INVOICE);
+		d.setTitle(MSG.REVIEW);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -2995,6 +3013,14 @@ export class AonInvoice extends AonElement {
 		else if(this.invoice.isRejected()) {
 			return 'Rechazado'
 		} else return 'Papelera';
+	}
+	
+	isInvofoxInvoice() {
+		return this.getInvofoxDocumentId();
+	}
+		
+	getInvofoxDocumentId(){
+		return this.invoice.insight?.invofoxId;	
 	}
 
 	trashInvoice() {

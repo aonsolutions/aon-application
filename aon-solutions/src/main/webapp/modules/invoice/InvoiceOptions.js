@@ -38,7 +38,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 
   export const RAWDOC_INBOX = {
     id: CONSTANT.RAWDOC_INBOX.initCap(),
-    name: MSG.INVOICES,
+    name: MSG.PROFORMA,
     icon: MATERIAL_ICONS.INBOX,
     clickable: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
@@ -67,8 +67,8 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.REJECTEDS,
-    icon: MATERIAL_ICONS.REPORT
+    name: MSG.PENDING_REVIEW,
+    icon: MATERIAL_ICONS.ERROR
   }
   
   export const RAWDOC_DRAFT = {
