@@ -15,6 +15,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
+import javax.xml.transform.TransformerException;
+
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
@@ -679,12 +681,18 @@ class SistemaREDMov {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-			webClient.getOptions().setJavaScriptEnabled(true);
+			
 			webClient.getOptions().setUseInsecureSSL(true);
-			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage(
+			
+//			webClient.getOptions().setJavaScriptEnabled(true);
+//			webClient.getOptions().setUseInsecureSSL(true);
+//			webClient.getOptions().setThrowExceptionOnScriptError(false);
+//			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			
+			XmlPage xmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
+			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
 					.orElseThrow();
 
@@ -700,7 +708,7 @@ class SistemaREDMov {
 			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_3")).click();
 
 			if (pageAux instanceof XmlPage) {
-				XmlPage xmlPage = (XmlPage) pageAux;
+				xmlPage = (XmlPage) pageAux;
 				DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
 				if(null == employeesHtml || employeesHtml.isEmpty()) employeesHtml = xmlPage.querySelectorAll("TRABAJADOR");
 				EmployeeBuilder builder = new EmployeeBuilder();
@@ -734,13 +742,20 @@ class SistemaREDMov {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			
 			String message = null;
+			
 			webClient.getOptions().setUseInsecureSSL(true);
-			webClient.getOptions().setJavaScriptEnabled(true);
-			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage(
+			
+//			webClient.getOptions().setUseInsecureSSL(true);
+//			webClient.getOptions().setJavaScriptEnabled(true);
+//			webClient.getOptions().setThrowExceptionOnScriptError(false);
+//			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			
+			XmlPage xmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
+			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
 			Integer ident = 1; // NIF DEFAULT
 			if (Toolkit.getIdentityType(ipf).equals("6")) {
 				ident = 3; // NIE
@@ -762,7 +777,7 @@ class SistemaREDMov {
 
 			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_2")).click();
 			if (pageAux instanceof XmlPage) {
-				XmlPage xmlPage = (XmlPage) pageAux;
+				xmlPage = (XmlPage) pageAux;
 				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
 				if(employeeHtml == null)
 					employeeHtml = xmlPage.querySelector("USUARIO_RED");
@@ -802,6 +817,10 @@ class SistemaREDMov {
 			}
 
 			return builder.build();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

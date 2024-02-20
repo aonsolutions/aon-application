@@ -503,7 +503,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    ArrayList<String> nssList = new ArrayList<>();
 		    nssList.add(nss);	
 		    
-		    List<Employee> list = ServicioREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+		    Collection<Employee> list = SistemaRED.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+		    
+//		    List<Employee> list = ServicioREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
 		    for (Employee employee : list) {
 				JSONObject json = new JSONObject();
 				json.put("ipf", employee.getIpf());
