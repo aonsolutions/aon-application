@@ -675,14 +675,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
-			
 			tbaiValidation(invoice);
-
-			Invoice lastInvoice = AON.getLastSaleInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), 
-					invoice.getSeries());
-			if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
-				throw new Exception("Existe una factura con la misma serie y fecha posterior.");
-			}
 		}
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);

@@ -885,12 +885,12 @@ export class Invoice {
 
   calculateTaxFromDetail() {
     this.taxes = this.isWithholding() ? [this.getWitholdingTax()] : [];
-    
     this.details.forEach( (detail, i) => {
+      detail = this.calculateDetail(detail);
       if(!detail.prepayment || detail.prepayment === CONSTANT.FALSE) {
-        if(this.taxes.filter(f => f.percentage === detail.percentage).length > 0) {
+        if(this.taxes.filter(f => f.percentage == detail.percentage).length > 0) {
             this.taxes.forEach((tax, i) => {
-            if(tax.percentage === detail.percentage){
+            if(tax.percentage == detail.percentage){
              tax.base = tax.base + detail.amount;
              tax.quota = tax.quota + detail.quota;
              tax.surcharge_quota = tax.surcharge_quota + detail.surcharge_quota;
