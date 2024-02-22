@@ -26,9 +26,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -116,6 +118,26 @@ public class PrintParametersController implements Serializable {
 		com.esferalia.aon.occam.api.model.ApplicationParameter personalized = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.REPORT_saleInvoice);
 		
 		return personalized.isEmpty() && ( appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue()));
+	}
+	private List<SelectItem> saleInvoiceTemplates;
+
+	public List<SelectItem> getSaleInvoiceTemplates() {
+		if(saleInvoiceTemplates == null || saleInvoiceTemplates.isEmpty()) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			saleInvoiceTemplates = new LinkedList<>();
+		
+			String name = SaleInvoiceTemplate.DEFAULT.getName(locale);
+			SelectItem item = new SelectItem(SaleInvoiceTemplate.DEFAULT, name);
+			saleInvoiceTemplates.add(item);
+		
+			if(getSaleInvoiceParams().getSaleInvoiceTemplate() != null 
+					&& !SaleInvoiceTemplate.DEFAULT.equals(getSaleInvoiceParams().getSaleInvoiceTemplate())) {
+				String name2 = getSaleInvoiceParams().getSaleInvoiceTemplate().getName(locale);
+				SelectItem item2 = new SelectItem(getSaleInvoiceParams().getSaleInvoiceTemplate(), name2);
+				saleInvoiceTemplates.add(item2);
+			}
+		}
+		return saleInvoiceTemplates;
 	}
 	
 	public SaleInvoiceFooter getSaleInvoiceFooter() {

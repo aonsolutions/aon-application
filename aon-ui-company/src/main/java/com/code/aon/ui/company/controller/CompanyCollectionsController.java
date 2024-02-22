@@ -58,7 +58,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getItemTagTemplate(){
 		if (itemTagTemplate == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			itemTagTemplate = new LinkedList<SelectItem>();
+			itemTagTemplate = new LinkedList<>();
 			ItemTagTemplate[] list = ItemTagTemplate.values();
 			for (ItemTagTemplate o : list) {
 				String name = o.getName(locale);
@@ -71,7 +71,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getFinancePaymentTemplates(){
 		if (financePaymentTemplate == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			financePaymentTemplate = new LinkedList<SelectItem>();
+			financePaymentTemplate = new LinkedList<>();
 			FinancePaymentTemplate[] list = FinancePaymentTemplate.values();
 			for (FinancePaymentTemplate o : list) {
 				String name = o.getName(locale);
@@ -85,7 +85,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getShortReportPrintOptions() {
 		if (simpleReportPrintOptions == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			simpleReportPrintOptions = new LinkedList<SelectItem>();
+			simpleReportPrintOptions = new LinkedList<>();
 			ReportPrintOption[] list = ReportPrintOption.values();
 			for (ReportPrintOption o : list) {
 				if(o!=ReportPrintOption.LEFT_SIDE){
@@ -101,7 +101,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getReportPrintOptions() {
 		if (reportPrintOptions == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			reportPrintOptions = new LinkedList<SelectItem>();
+			reportPrintOptions = new LinkedList<>();
 			ReportPrintOption[] list = ReportPrintOption.values();
 			for (ReportPrintOption o : list) {
 				String name = o.getName(locale);
@@ -116,7 +116,7 @@ public class CompanyCollectionsController implements Serializable {
 		if (saleInvoiceTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-			saleInvoiceTemplates = new LinkedList<SelectItem>();
+			saleInvoiceTemplates = new LinkedList<>();
 			SaleInvoiceTemplate[] st = SaleInvoiceTemplate.values();
 			for (SaleInvoiceTemplate template : st) {
 				boolean skip = false;

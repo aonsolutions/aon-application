@@ -95,7 +95,7 @@
 								<aon:selectOneMenu id="Sale_invoice_template"
 									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" 
 									disabled="#{printParams.saleInvoiceDefault}">
-									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+									<f:selectItems value="#{printParams.saleInvoiceTemplates}" />
 									<a4j:support event="onchange" reRender="globalConfigPrintParametersForm" ajaxSingle="#{true}" />
 								</aon:selectOneMenu>
 								
