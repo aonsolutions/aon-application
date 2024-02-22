@@ -339,7 +339,7 @@ public class PrintParametersController implements Serializable {
 		}
 		
 		public String getSaleInvoiceTemplateValue(){
-			return saleInvoiceTemplate==null ? SaleInvoiceTemplate.STANDARD.getValue() : saleInvoiceTemplate.getValue();
+			return saleInvoiceTemplate==null ? SaleInvoiceTemplate.DEFAULT.getValue() : saleInvoiceTemplate.getValue();
 		}
 		
 		public String getInvoicePrintTemplateValue(){
@@ -371,7 +371,7 @@ public class PrintParametersController implements Serializable {
 		
 		public List<SelectItem> getCustomSaleInvoiceTemplateNames(){
 			File customDirectory = new File( CUSTOM_REPORT_TEMPLATE_PATH );
-			List<SelectItem> list = new LinkedList<SelectItem>();
+			List<SelectItem> list = new LinkedList<>();
 			if ( customDirectory.exists() && customDirectory.canRead() ) {
 				for(File file: customDirectory.listFiles()){
 					if(file.isDirectory()){
