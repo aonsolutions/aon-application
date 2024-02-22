@@ -119,7 +119,7 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
-		} else if(aonInvoiceTable && filter.status === CONSTANT.RAWDOC_OCR){
+		} else if(aonInvoiceTable && filter.status === CONSTANT.OCR_INBOX){
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
 			getInvofoxDocuments(filter).then(r => {
@@ -152,7 +152,7 @@ export class AonInvoiceList extends AonElement {
 		this.more = true;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
-			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
+			if(this.getFilter().status === CONSTANT.OCR_INBOX) {
 				getInvofoxDocuments(this.getFilter()).then(r => {
 					aonInvoiceTable.removeRows();
 					aonInvoiceTable.selected = [];
