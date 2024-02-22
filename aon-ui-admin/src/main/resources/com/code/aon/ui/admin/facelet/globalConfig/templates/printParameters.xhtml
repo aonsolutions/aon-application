@@ -64,7 +64,7 @@
 					<aon:outputLabel value="#{bundle.finance_sale_invoice_management_module}" />
 				</f:facet>
 				
-				<aon:if test="#{aonRole.sysAdmin}">
+				<aon:if test="#{aonRole.sysAdmin and printParams.saleInvoiceParams.customReportTemplate}">
 					<aon:panel style="width:350px;">
 						<f:facet name="header">
 							<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
