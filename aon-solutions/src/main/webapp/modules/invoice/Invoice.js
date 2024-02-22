@@ -768,6 +768,11 @@ export class Invoice {
   }
 
   calculateTaxFromTotal() {
+    let withholdingPercentage = 0.0;
+    if(this.isWithholding() && this.taxes.filter(f => TaxType.IRPF === f.tax).length > 0){
+      withholdingPercentage = this.taxes.filter(f => TaxType.IRPF === f.tax)[0].percentage;
+    }
+    let base = 0.0;
     if(this.isEmitida() && (!this.isNacional() || this.isExempt())){
       this.taxes = [{
           tax:TaxType.IVA,
@@ -778,29 +783,50 @@ export class Invoice {
           surcharge: 0.0,
           surcharge_quota: 0.0
       }];
-    } else if (this.taxes.length === 0) {
+    } else if (this.taxes.filter(f => TaxType.IVA === f.tax).length === 0) {
+      this.taxes = [];
       let div = this.isSurcharge() ? 1.262 : 1.21;
+      if(this.isWithholding() && withholdingPercentage > 0){
+        div = div - (withholdingPercentage/100);
+      }
+      base = round(Number(this.total) / div);
 			let tax = {
 				tax: TaxType.IVA,
 				type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,
 				percentage: 21.0,
-				base: round(Number(this.total) / div),
-				quota: round(Number(this.total / 1.21) * 0.21),
+				base: base,
+				quota: round(base * 0.21),
         surcharge: this.isSurcharge() ? 5.2 : 0.0,
-        surcharge_quota: this.isSurcharge() ? round(Number(this.total / 1.052) * 0.052) : 0.0
+        surcharge_quota: this.isSurcharge() ? round(base * 0.052) : 0.0
 		 	};
 			this.taxes.push(tax);
-		} else if(this.taxes.length === 1){
-			let tax = this.taxes[0];
+		} else if(this.taxes.filter(f => TaxType.IVA === f.tax).length === 1){
+			let tax = this.taxes.filter(f => TaxType.IVA === f.tax)[0];
+      this.taxes=[];
       const p = (this.isSurcharge() ? tax.percentage + getSurchargeByVat(tax.percentage) : tax.percentage) / 100;
-      const p0 = p + 1;
-
-      tax.base = round(Number(this.total) / p0);
+      let p0 = p + 1;
+      if(this.isWithholding() && withholdingPercentage > 0){
+        p0 = p0 - (withholdingPercentage/100);
+      }
+      base = round(Number(this.total) / p0);
+      tax.base = base;
 			tax.quota = round(tax.base / 100 * tax.percentage);
 			tax.surcharge = this.isSurcharge() ? getSurchargeByVat(tax.percentage) : 0.0;
       tax.surcharge_quota = round(tax.base / 100 * tax.surcharge);
-      this.taxes[0] = tax;
+      this.taxes.push(tax);
 		}
+
+    if(this.isWithholding() && withholdingPercentage > 0) {
+			let irpf = {
+				tax: TaxType.IRPF,
+				type: TaxType.IRPF,
+				percentage: withholdingPercentage,
+				base: base,
+				quota: round(base * (withholdingPercentage/100)),
+
+		 	};
+      this.taxes.push(irpf);
+    }
   }
 
   getWitholdingTax() {
