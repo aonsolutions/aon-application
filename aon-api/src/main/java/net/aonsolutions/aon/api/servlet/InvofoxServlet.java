@@ -68,6 +68,7 @@ import net.aonsolutions.invofox.model.OCRLine;
 import net.aonsolutions.invofox.model.OCRLoginToken;
 import net.aonsolutions.invofox.model.OCRPage;
 import net.aonsolutions.invofox.model.OCRSeverity;
+import net.aonsolutions.invofox.model.OCRType;
 import net.aonsolutions.invofox.model.OCRWord;
 import solutions.aon.aws.s3.S3;
 
@@ -185,6 +186,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
 	    }
 	    
+	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+	    Optional<String> companyActsLike = Optional.ofNullable(JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE));
+	    
+	    
 	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
 	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken()
@@ -203,13 +208,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    //ocrDocumentParams.withType(OCRType.ticket);
 		    ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
 		    ocrDocumentParams.withCompany(company.getId()).skiping(page * perPage);
+		    type.ifPresent( ocrDocumentParams::withType);
+		    //companyActsLike.ifPresent( ocrDocumentParams::withCompanyActsLike);
 		    publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
 		    ocrDocumentParams.limit(perPage); 
 		    
 		    OCRDocumentsResponse response = OCRInvofox
 			    .getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
-		    response.getDocuments().orElse(new LinkedList<>()).stream().forEach(r -> {
+		    response.getDocuments().orElse(new LinkedList<>()).stream()
+		    .forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId().get());
 			json.put("reference", r.getData().get().getDocumentNumber().get().getValue().orElse(""));
