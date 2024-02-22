@@ -93,7 +93,8 @@
 						<aon:div>
 							<aon:if test="#{!printParams.saleInvoiceParams.customReportTemplate}">
 								<aon:selectOneMenu id="Sale_invoice_template"
-									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" >
+									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" 
+									disabled="#{printParams.saleInvoiceDefault}">
 									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
 									<a4j:support event="onchange" reRender="globalConfigPrintParametersForm" ajaxSingle="#{true}" />
 								</aon:selectOneMenu>
