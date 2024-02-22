@@ -331,17 +331,21 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1p.setPesoNeto2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaPesoNeto(null);
 		seh1p.setUnidadDeMedidaParaElPesoNeto(null);
-		if(detail != null && detail.getItem() != null) {
-			seh1p.setPesoNeto1_AAC_(quantity * detail.getItem().getPackMeasurement());			
-			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
-				seh1p.setUnidadDeMedidaParaElPesoNeto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
-			}
-		}
 
 		seh1p.setPesoBruto1_AAD_(null);
 		seh1p.setPesoBruto2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaPesoBruto(null);
 		seh1p.setUnidadDeMedidaParaElPesoBruto(null);
+		if(detail != null && detail.getItem() != null) {
+			seh1p.setPesoNeto1_AAC_(quantity * detail.getItem().getPackMeasurement());
+			seh1p.setPesoBruto1_AAD_(quantity * detail.getItem().getPackMeasurement());
+			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
+				seh1p.setUnidadDeMedidaParaElPesoNeto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+				seh1p.setUnidadDeMedidaParaElPesoBruto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			}
+		}
+
+
 		seh1p.setDimensionDeAltura1_HT_(null);
 		seh1p.setDimensionDeAltura2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaAltura(null);
