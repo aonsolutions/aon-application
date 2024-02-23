@@ -293,18 +293,11 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			
-			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			XmlPage xmlPage = webClient.getPage(BASE_URI);
+			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
-
-//			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			
-//			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-//			
-//			form.getInputByName(ARQ_SPM_OUT).remove(); 
-//			
-//			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 
 			if (job.isPresent()) {				
 				((HtmlInput) htmlPage.getElementById("puestoTrabajo")).setValue(job.get());
@@ -323,7 +316,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
 					webClient.waitForBackgroundJavaScript(5000);
-			    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
 			    	
 					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					
@@ -331,9 +324,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
-			    webClient.waitForBackgroundJavaScript(5000);
-			    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
-				    	
+				    webClient.waitForBackgroundJavaScript(5000);
+				    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+				    
 					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 					
 					cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
@@ -362,7 +355,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			XmlPage xmlPage = validate.click();
+			xmlPage = validate.click();
 			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
@@ -383,7 +376,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 				SistemaRED.SituationEmployee situationEmployee, Date fbaja, Date falta, Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, 
 				SistemaRED.CauseType causeType, Optional<String> licenseNumber, Optional<String> cias)
-				throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+				throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -447,7 +440,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static byte[] registerItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
-			Date fconfirmation, Optional<String> npartConfimation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+			Date fconfirmation, Optional<String> npartConfimation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -546,11 +539,14 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static byte[] getITReportImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String nss, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess)
-			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			
+			XmlPage xmlPage = webClient.getPage(BASE_URI);
+			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			htmlPage = setUrlParseRemoveXml(htmlPage, (HtmlAnchor)htmlPage.getElementById("PEST_5"));
@@ -583,7 +579,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	
 	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Date date,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
-			throws IOException, InterruptedException, SegSocialException {
+			throws IOException, InterruptedException, SegSocialException, TransformerException {
 		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 
@@ -642,7 +638,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		if(null!=contingencyOption) contingencyOption.click();
 
 		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-		htmlPage = accept.click();
+		
+		XmlPage xmlPage = accept.click();
+		htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
 		
 		HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
