@@ -1928,6 +1928,7 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			detail.prepayment = ("PREPAYMENT" === e.detail.item.product.type);
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
 			this.reload();
