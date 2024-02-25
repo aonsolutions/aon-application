@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sun Feb 25 18:48:33 CET 2024
+@default-jboss-thirdparty-releases-https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1708883273451
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+@default-jboss-public-repository-group-https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1708883312883
+https\://repo1.maven.org/maven2/.lastUpdated=1708883236583
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=Could not transfer artifact es.aeat\:ModRet2024\:jar\:sources\:1.2 from/to jboss-public-repository-group (https\://repository.jboss.org/nexus/content/groups/public-jboss/)\: status code\: 503, reason phrase\: Service Unavailable (503)
+https\://repo.maven.apache.org/maven2/.lastUpdated=1708883313005
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact es.aeat\:ModRet2024\:jar\:sources\:1.2 from/to central-repository (https\://mvnrepository.com/repos/central)\: status code\: 403, reason phrase\: Forbidden (403)
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1708883236181
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1708883236297
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=Could not transfer artifact es.aeat\:ModRet2024\:jar\:sources\:1.2 from/to jboss-thirdparty-releases (https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases)\: status code\: 503, reason phrase\: Service Unavailable (503)
+https\://repo.maven.apache.org/maven2/.error=
