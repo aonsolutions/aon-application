@@ -593,7 +593,8 @@ class SistemaREDI {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA-CI.html");
 			
 			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
-			htmlPage = certSSRequest.click();
+			XmlPage xXmlPage = certSSRequest.click();
+			htmlPage = HtmlUnitToolkit.tranformXmlPage(xXmlPage);
 				
 			handleSepeExceptions(htmlPage);
 			
