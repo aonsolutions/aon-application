@@ -19,20 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.InsertIAE3034;
 import net.aonsolutions.db.up2date.config.InsertIAE848889;
-import net.aonsolutions.db.up2date.finance.InvoiceInfoLroeUpdate;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
+import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
 import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
-import net.aonsolutions.db.up2date.payroll.AlterContractDeductionExpression;
-import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
-import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
-import net.aonsolutions.db.up2date.tgss.BasesMin2024Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
-import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
-import net.aonsolutions.db.up2date.tgss.SMI2024Update;
 
 public class Up2Date {
 
@@ -417,15 +407,17 @@ public class Up2Date {
 	    // AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
 	    // AlterNoteTagLength.ALTERNOTETAGLENGTH,
 	    // AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
-	    // AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
+	    // AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE,
 	    // InsertIAE3034.INSERT_IAE_3034,
 	    // AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
 	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
 	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
-	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE
+	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE,
 	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
 	    CodinucovaInvoiceTaxFix.INSTANCE,
-	    InsertIAE848889.INSERT_IAE_848889
+	    InsertIAE848889.INSERT_IAE_848889,
+	    
+	    DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN
 	};
 
     // ------------------------------------------------------------------------
