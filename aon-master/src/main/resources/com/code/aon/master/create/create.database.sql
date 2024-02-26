@@ -2766,6 +2766,7 @@ CREATE TABLE `domain` (
   `scope` int DEFAULT NULL COMMENT 'Identificador del Ambito',
   `subDomainSuffix` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Sufijo de los Dominio Hijo',
   `enableHeredity` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene deshabilitado la herencia de registros o no',
+  `domain_payer` int DEFAULT NULL COMMENT 'Dominio Pagador',
   `domainManagement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene capacidad de MultiDominio o no',
   `disableDomainManagement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene deshabilitado el mantenimiento de Dominios o no',
   `maxDocumentSize` int DEFAULT NULL COMMENT 'Tamao Maximo de los Documentos',
