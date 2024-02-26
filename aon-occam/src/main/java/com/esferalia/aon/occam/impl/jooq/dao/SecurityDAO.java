@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
 import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
 import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -429,7 +431,11 @@ public class SecurityDAO {
 	}
 	
 	public static void deleteSession(AONContext ctx, User user) {
-		ctx.getDslContext().delete(SESSION).where(SESSION.USER_ID.eq(user.getId()));
+		 List<Integer> sessions = ctx.getDslContext().select(SESSION.ID).from(SESSION).where(SESSION.USER_ID.eq(user.getId())).fetch()
+		.stream().map(r-> r.getValue(SESSION.ID)).toList();
+		
+		 ctx.getDslContext().delete(ACTION_ENTRY).where(ACTION_ENTRY.SESSION_ID.in(sessions)).execute();
+		 ctx.getDslContext().delete(SESSION).where(SESSION.USER_ID.eq(user.getId())).execute();
 	}
 	
 	private static void deleteMailAccount(AONContext ctx, User user) {
