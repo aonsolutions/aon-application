@@ -54,6 +54,17 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	public void testTotalLiquid() throws ExpressionException, SQLException {
 	}
 	
+	@Test
+	@Override
+	public void testDeductHomeLoan() throws ExpressionException, SQLException, SalaryException {
+		
+	}
+	
+	@Test
+	@Override
+	public void testIrpf2024() throws ExpressionException, SQLException, SalaryException {
+	}
+
 	@Override
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
@@ -367,11 +378,6 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		
 	}
 	
-	@Test
-	@Override
-	public void testDeductHomeLoan() throws ExpressionException, SQLException, SalaryException {
-		
-	}
 
 	
 }

@@ -1040,7 +1040,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
 					}
 				}, 
-				new String[] {"2000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {"2500.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
 				new String[] {"BASE_IRPF * PORCENTAJE_IRPF / 100.00 "}, 
 				null);
 		//@formatter:off
@@ -1078,7 +1078,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(( 2000.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
+		Assert.assertEquals(( 2500.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
 		
 		Collection<SalaryDeduction> deductions = settle.getSalaryDeductions();
 		org.junit.Assert.assertEquals(1, deductions.size());

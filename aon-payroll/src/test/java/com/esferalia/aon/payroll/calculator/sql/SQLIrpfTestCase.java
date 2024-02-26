@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -69,6 +70,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
@@ -4450,6 +4452,64 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testIrpf2024() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.PRINCIPAL, 
+				getFirstDayOfYear(getToday()),
+				null,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C100.getValue());
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+					}
+				}, new String[] { 
+						"1260.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+						new String[] {
+						"BASE_CGC * 4.70 / 100.00", // CGC 
+						"BASE_CGC * 0.12 / 100.00", // MEI
+						"BASE_CGP * 1.55 / 100.00", // FP
+						"BASE_CGP * 0.10 / 100.00", // DESMPL
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+				}
+				, null
+				,null);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext january2024Ctx =  
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		january2024Ctx.setListener(irpfOutcome -> {
+			assertAnnualRemuneration( 15120.00, irpfOutcome.getIrpfResult().getAnnualRemuneration(), DELTA);
+			assertDeduccibleExpenses(978.26, irpfOutcome.getIrpfResult().getDeducciblesExpenses(), DELTA);
+			org.junit.Assert.assertEquals(0.25, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
+		});
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>( new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP))).calculate(january2024Ctx);
+		
+		startDate = add( getFirstDayOfYear(getToday()), Calendar.MONTH, 2 );
+		endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext march2024Ctx =  
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		march2024Ctx.setListener(irpfOutcome -> {
+			assertAnnualRemuneration( 15120.00, irpfOutcome.getIrpfResult().getAnnualRemuneration(), DELTA);
+			assertDeduccibleExpenses(978.26, irpfOutcome.getIrpfResult().getDeducciblesExpenses(), DELTA);
+			org.junit.Assert.assertEquals(0.00, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
+		});
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>( new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP))).calculate(march2024Ctx);
+		
+		
+		
+
+	}
 	// ------------------------------------------------------------------------
 
 	protected void assertAnnualRemuneration(double expected,
@@ -4475,6 +4535,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	protected void assertDeduccibleExpenses(double expected,
 			double deduccibleExpenses) {
 		assertEquals(expected, deduccibleExpenses);
+	}
+
+	protected void assertDeduccibleExpenses(double expected,
+			double deduccibleExpenses, double delta ) {
+		assertEquals(expected, deduccibleExpenses, delta);
 	}
 	protected void assertIrpf(double expected,
 			double base, double percent, double delta) {

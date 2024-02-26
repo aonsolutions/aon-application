@@ -10,8 +10,12 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -19,6 +23,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesEntrada2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesError2022;
@@ -31,6 +37,9 @@ import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesError2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesSalida2024;
 
 class ServicioCalculo {
+	
+	public static final Date FEBRUARY_2023 = AonDateUtils.getDate(2023, Calendar.FEBRUARY , 1);
+	public static final Date FEBRUARY_2024 = AonDateUtils.getDate(2024, Calendar.FEBRUARY , 8);
 
     // Al servicio se le pasará por el método POST del protocolo http una cadena de
     // caracteres encapsulada como si fuese desde un formulario. Las variables irán
@@ -63,7 +72,7 @@ class ServicioCalculo {
 	}
     }
 
-    static String procesarFicheroXml(String ficheroEntrada, Integer ejercicio)
+    static String procesarFicheroXml(String ficheroEntrada, Integer ejercicio, Integer periodo)
 	    throws IOException {
 	URL url = new URL("https://www2.agenciatributaria.gob.es/wlpl/PRET-C200/mc");
 	
@@ -73,7 +82,7 @@ class ServicioCalculo {
 
 	Map<String, String> params = new HashMap<>();
 	params.put("EJER", ejercicio.toString());
-	params.put("PER", "0");
+	params.put("PER", periodo.toString());
 	params.put("F01", ficheroEntrada);
 
 	con.setDoOutput(true);
@@ -107,7 +116,7 @@ class ServicioCalculo {
 	    StringWriter writer = new StringWriter();
 	    marshaller.marshal(entrada2022, writer);
 	    
-	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2022);
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2022,0);
 	    
 	    try {
 		    StringReader reader = new StringReader(str);
@@ -129,13 +138,13 @@ class ServicioCalculo {
 	    }
     }
     
-    public static  AEATRetencionesSalida2023 procesarFicheroXML(AEATRetencionesEntrada2023 entrada2023) throws JAXBException, IrpfCalculateException, IOException {
+    public static  AEATRetencionesSalida2023 procesarFicheroXML(AEATRetencionesEntrada2023 entrada2023, Date fecha) throws JAXBException, IrpfCalculateException, IOException {
 	    Marshaller marshaller = JAXBContext.newInstance(
 		    AEATRetencionesEntrada2023.class).createMarshaller();
 	    StringWriter writer = new StringWriter();
 	    marshaller.marshal(entrada2023, writer);
 	    
-	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2023);
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2023, fecha.before(FEBRUARY_2023) ? 0 : 1);
 	    
 	    try {
 		    StringReader reader = new StringReader(str);
@@ -157,13 +166,13 @@ class ServicioCalculo {
 	    }
     }
 
-    public static  AEATRetencionesSalida2024 procesarFicheroXML(AEATRetencionesEntrada2024 entrada2024) throws JAXBException, IrpfCalculateException, IOException {
+    public static  AEATRetencionesSalida2024 procesarFicheroXML(AEATRetencionesEntrada2024 entrada2024, Date fecha) throws JAXBException, IrpfCalculateException, IOException {
 	    Marshaller marshaller = JAXBContext.newInstance(
 		    AEATRetencionesEntrada2024.class).createMarshaller();
 	    StringWriter writer = new StringWriter();
 	    marshaller.marshal(entrada2024, writer);
 	    
-	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2024);
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2024, fecha.before(FEBRUARY_2024) ? 0 : 1);
 	    
 	    try {
 		    StringReader reader = new StringReader(str);
@@ -211,7 +220,7 @@ class ServicioCalculo {
 	    AEATRetencionesEntrada2024 entrada2024 = (AEATRetencionesEntrada2024)
 	    JAXBContext.newInstance(AEATRetencionesEntrada2024.class).createUnmarshaller().unmarshal( ejemploEntrada2024Reader );
     	
-	    AEATRetencionesSalida2024 salida2024 = procesarFicheroXML(entrada2024);
+	    AEATRetencionesSalida2024 salida2024 = procesarFicheroXML(entrada2024, FEBRUARY_2024);
 	    JAXBContext.newInstance(AEATRetencionesSalida2024.class).createMarshaller().marshal(salida2024, System.out);
 	}
     }
@@ -261,24 +270,24 @@ class ServicioCalculo {
 	    	+ "</AEATRetencionesEntrada2023>";
 
     private static final String EJEMPLOENTRADA2024 = 
-	    	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-	    	+ "<AEATRetencionesEntrada2024>\n"
-	    	+ "<IdDoc>\n"
-	    	+ "<CodModelo>RET</CodModelo>\n"
-	    	+ "<Ejercicio>2024</Ejercicio>\n"
-	    	+ "</IdDoc>\n"
-	    	+ "<Retenedor>\n"
-	    	+ "<Nif>Z7896423E</Nif>\n"
-	    	+ "<ApellidosNombre>LINUX FOUNDATION</ApellidosNombre>\n"
-	    	+ "<Retenido>\n"
-	    	+ "<Nif>87449445H</Nif>\n"
-	    	+ "<ApellidosNombre>TORVALDS BENEDICT LINUS</ApellidosNombre>\n"
-	    	+ "<Nacimiento>1982</Nacimiento>\n"
-	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>\n"
-	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>\n"
-	    	+ "<RetribAnuales>17594.52</RetribAnuales>\n"
-	    	+ "<Cotizaciones>1153.08</Cotizaciones>\n"
-	    	+ "</Retenido>\n"
-	    	+ "</Retenedor>"
-	    	+ "</AEATRetencionesEntrada2024>";
+	    	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+	    	+ "<AEATRetencionesEntrada2024>"
+	    	+ "<IdDoc>"
+	    	+ "<CodModelo>RET</CodModelo>"
+	    	+ "<Ejercicio>2024</Ejercicio>"
+	    	+ "</IdDoc>"
+	    	+ "<Retenedor>"
+	    	+ "<Nif>Z7896423E</Nif>"
+	    	+ "<ApellidosNombre>LINUX FOUNDATION</ApellidosNombre>"
+	    	+ "<Retenido><Nif>87449445H</Nif><ApellidosNombre>TORVALDS BENEDICT LINUS</ApellidosNombre>"
+	    	+ "<Nacimiento>1974</Nacimiento>"
+	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>"
+	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>"
+	    	+ "<RetribAnuales>15120.00</RetribAnuales>"
+	    	+ "<Cotizaciones>978.26</Cotizaciones>"
+	    	+ "</Retenido>"
+	    	+ "</Retenedor></AEATRetencionesEntrada2024>";
+
+    
+
 }
