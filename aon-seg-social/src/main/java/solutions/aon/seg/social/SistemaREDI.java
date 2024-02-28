@@ -610,23 +610,23 @@ class SistemaREDI {
 					throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
 				
 				XmlPage authXmlPage = htmlPage.getElementById("enlace_" + auth).click();
-				htmlPage = HtmlUnitToolkit.tranformXmlPage(authXmlPage);
+				htmlPage = HtmlUnitToolkit.transformXmlPage(authXmlPage);
 			}
 			
 			htmlPage.getElementById("radio_Opcion3").click();
 			HtmlInput criBusCccNaf = (HtmlInput) htmlPage.getElementById("criBusCccNaf") ;
 			criBusCccNaf.setValue(regime+ccc);
 			XmlPage xmlPage  = htmlPage.getElementById("botBuscar").click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 
 			xmlPage = htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc).click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			xmlPage = htmlPage.getElementById("ENVIO_13").click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			xmlPage = htmlPage.getElementById("ENVIO_15").click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 
 			for (HtmlAnchor anchor : htmlPage.getAnchors()) {
 			    if ( "documento".equals(anchor.getAttribute("data-pc_tipo"))) {
