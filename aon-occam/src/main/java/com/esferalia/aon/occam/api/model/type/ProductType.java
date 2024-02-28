@@ -47,4 +47,8 @@ public enum ProductType implements Serializable {
 		}
 		return null;
 	}
+	
+	public boolean isAuxiliary() {
+		return AUXILIARY.equals(this);
+	}
 }

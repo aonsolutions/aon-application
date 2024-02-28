@@ -100,6 +100,10 @@ public class DeliveryPackagingDAO {
 	
 	public static List<DeliveryPackaging> getList(AONContext ctx, DeliveryPackagingFilter filter, Options... options) {
 		return getStream(ctx, filter, options)
+			.map(d -> {
+				d.getItem().setItemComposition(ItemCompositionDAO.getList(ctx, f -> f.getItemProperty().eq(d.getItem().getId())));
+				return d;
+			})
 			.collect(Collectors.toList());
 	}
 
