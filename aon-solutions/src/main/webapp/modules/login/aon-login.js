@@ -46,7 +46,6 @@ export class AonLogin extends AonElement {
     this.appendChild(div);
 
     let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_VERTICAL_CENTER);
     div2.classList.add(CSS.AON_WIDTH_300);
     div2.style.top = '47%';
     if(!this.isMobile()){
