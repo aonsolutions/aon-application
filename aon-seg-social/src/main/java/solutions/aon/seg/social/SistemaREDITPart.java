@@ -570,11 +570,14 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static byte[] getITReportImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String nss, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess)
-			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			
+			XmlPage xmlPage = webClient.getPage(BASE_URI);
+			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			htmlPage = setUrlParseRemoveXml(htmlPage, (HtmlAnchor)htmlPage.getElementById("PEST_5"));

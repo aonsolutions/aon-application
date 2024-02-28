@@ -1293,6 +1293,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DESCANSO_MENSUAL", "PLUS_DESCANSO_M");
 		variablesMap.put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO_D");
 		variablesMap.put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO_H");
+		variablesMap.put("PLUS_DESCANSO_FESTIVOS_MENSUAL", "DESCANSO_FEST_M");
 		variablesMap.put("PLUS_DESCANSO_FESTIVOS_DIARIO", "DESCANSO_FEST_D");
 		variablesMap.put("PLUS_DESCANSO_FESTIVOS_HORAS", "DESCANSO_FEST_H");
 		variablesMap.put("PLUS_DESGASTE_MATERIAL_ANUAL", "DESGASTE_MATERIAL_A");

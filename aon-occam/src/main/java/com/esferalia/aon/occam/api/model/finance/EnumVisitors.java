@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 public class EnumVisitors {
 
 	public static interface IAccountEntryUpdateVisitor {
+		IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper);

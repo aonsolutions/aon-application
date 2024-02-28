@@ -64,7 +64,7 @@
 					<aon:outputLabel value="#{bundle.finance_sale_invoice_management_module}" />
 				</f:facet>
 				
-				<aon:if test="#{aonRole.sysAdmin}">
+				<aon:if test="#{aonRole.sysAdmin and printParams.saleInvoiceParams.customReportTemplate}">
 					<aon:panel style="width:350px;">
 						<f:facet name="header">
 							<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
@@ -93,8 +93,9 @@
 						<aon:div>
 							<aon:if test="#{!printParams.saleInvoiceParams.customReportTemplate}">
 								<aon:selectOneMenu id="Sale_invoice_template"
-									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" >
-									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" 
+									disabled="#{printParams.saleInvoiceDefault}">
+									<f:selectItems value="#{printParams.saleInvoiceTemplates}" />
 									<a4j:support event="onchange" reRender="globalConfigPrintParametersForm" ajaxSingle="#{true}" />
 								</aon:selectOneMenu>
 								

@@ -1191,16 +1191,16 @@ export class AonInvoice extends AonElement {
 		total.value;
 		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 		total.readonly = this.invoice.isReadonly()
-			|| this.invoice.taxes.length > 1
+			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
-		if(LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+		if(LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
-		if(!LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+		if(!LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
-		|| this.invoice.taxes.length > 1
+		|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 		|| this.invoice.details.length > 0;
 		// *****
 
@@ -1297,7 +1297,7 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				});
 				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-			} else this.invoice.setWorkplace(r[0].id);
+			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
 		}).catch(e => {
 			console.error(e);
 		});
@@ -1928,6 +1928,7 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			detail.prepayment = ("PREPAYMENT" === e.detail.item.product.type);
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
 			this.reload();
