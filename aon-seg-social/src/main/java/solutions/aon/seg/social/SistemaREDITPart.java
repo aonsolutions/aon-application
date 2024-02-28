@@ -52,6 +52,7 @@ import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
 import org.htmlunit.util.WebConnectionWrapper;
+import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -576,7 +577,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			XmlPage xmlPage = webClient.getPage(BASE_URI);
-			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			

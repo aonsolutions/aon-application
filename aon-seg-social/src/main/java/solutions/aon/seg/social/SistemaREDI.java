@@ -594,7 +594,7 @@ class SistemaREDI {
 			
 			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
 			XmlPage xXmlPage = certSSRequest.click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xXmlPage);
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xXmlPage);
 				
 			handleSepeExceptions(htmlPage);
 			
