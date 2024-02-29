@@ -198,6 +198,14 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OCR = 'ocr';
+export const OCR_ERROR = 'ocrError';
+export const OCR_INBOX = 'ocr';
+export const OCR_INBOX_ISSUED = 'ocrInboxIssued';
+export const OCR_INBOX_RECEIVED = 'ocrInboxReceived';
+export const OCR_INBOX_TICKET = 'ocrInboxTicket';
+export const OCR_REJECTED = 'ocrRejected';
+export const OCR_EXPORTED = 'ocrExported';
+export const OCR_DISCARDED = 'ocrDiscarded';
 export const OBJECT = 'object';
 export const OFFER = 'offer';
 export const OFF = 'off';
@@ -238,9 +246,6 @@ export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
-export const RAWDOC_OCR = 'rawdocOcr';
-export const RAWDOC_OCR_REJECTED = 'rawdocOcrRejected';
-export const RAWDOC_OCR_EXPORTED = 'rawdocOcrExported';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const RECEIVER = 'receiver';

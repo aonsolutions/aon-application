@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -100,8 +101,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		    Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 		    
 		    Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domainName, domainId, userLogin).toList();
-		    
+		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domainName, domainId, userLogin).collect(Collectors.toList());		    
 		    List<Integer> itIds = new ArrayList<Integer>();
 
 		    for (CCCInfo ccc : cccs) {
@@ -429,8 +429,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// N=no se acredita carencia;
 			// P=consulta la Dirección Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "N":
-				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+			case "S":
+				if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
 				break;
 			default:
 				break;

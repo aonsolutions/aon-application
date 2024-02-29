@@ -793,6 +793,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIETA_TERRITORIO_NACIONAL_DIARIO", "DIETA_TERRIT_NAC");
 		variablesMap.put("DIETA_TERRITORIO_NACIONAL_MENSUAL", "DIETA_TERRIT_NAC");
 		variablesMap.put("DIETA_TRANSPORTE_URBANO_DIARIO", "D_TRANSPORTE_URBANO_D");
+		variablesMap.put("DIETA_TRASLADO_EMPRESA_ANUAL", "TRASLADO_EMPRESA_A");
 		variablesMap.put("DIETA_TRASLADO_EMPRESA_POBLACION_HASTA_1_MILLON_HABITANTES_MENSUAL", "T_EMPRESA_POBL_1MH_M");
 		variablesMap.put("DIETA_TRASLADO_EMPRESA_POBLACION_HASTA_MAS_DE_1_MILLON_HABITANTES_MENSUAL", "T_EMPRESA_POBL_M_1MH_M");
 		variablesMap.put("DIETA_TRAMO_1_DIARIO", "D_TRAMO_1_D");
@@ -820,6 +821,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIRECCION_URGENTE_MENOS_DE_150_001_HABITANTES_HORAS", "DIRECCION_U_L_1500");
 		variablesMap.put("DISPOSITIVO_DE_LOCALIZACION_MENSUAL", "DISP_LOCALIZ_M");
 		variablesMap.put("DISPOSITIVO_DE_LOCALIZACION_HORAS", "DISP_LOCALIZ_H");
+		variablesMap.put("DOBLE_DE_LUCES_DIARIO", "DOBLE_LUCES_D");
 		variablesMap.put("DOS_O_MAS_MOTORES_MENSUAL", "2_O_MAS_MOTORES_M");
 		variablesMap.put("ECONOMATO_MENSUAL", "ECONOMATO_M");
 		variablesMap.put("EN_ESPECIE_ANUAL", "EN_ESPECIE_A");
@@ -1186,6 +1188,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PATRONA_MENSUAL", "PATRONA_M");
 		variablesMap.put("PENSIONES_ANUAL", "PENSIONES_A");
 		variablesMap.put("PENSIONES_MENSUAL", "PENSIONES_M");
+		variablesMap.put("PENSIONES_DIARIO", "PENSIONES_D");
 		variablesMap.put("PEQUEÑOS_REPARACIONES_MENSUAL", "PEQ_REPARACIONES_M");
 		variablesMap.put("PERNOCTA_Y_DESAYUNO_DIARIO", "PERNOCTA_DES_D");
 		variablesMap.put("PISCINA_DE_ADULTOS_MENSUAL", "PISCINA_ADULTOS_M");
@@ -1290,6 +1293,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DESCANSO_MENSUAL", "PLUS_DESCANSO_M");
 		variablesMap.put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO_D");
 		variablesMap.put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO_H");
+		variablesMap.put("PLUS_DESCANSO_FESTIVOS_MENSUAL", "DESCANSO_FEST_M");
 		variablesMap.put("PLUS_DESCANSO_FESTIVOS_DIARIO", "DESCANSO_FEST_D");
 		variablesMap.put("PLUS_DESCANSO_FESTIVOS_HORAS", "DESCANSO_FEST_H");
 		variablesMap.put("PLUS_DESGASTE_MATERIAL_ANUAL", "DESGASTE_MATERIAL_A");

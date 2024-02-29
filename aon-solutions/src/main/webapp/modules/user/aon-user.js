@@ -12,20 +12,23 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, TAG } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
-import { getNextUser, getPreviousUser, getUsers, updateUser } from './UserCache.js';
+import { getNextUser, getPreviousUser, getUsers, updateUser, deleteUserCache } from './UserCache.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonInput } from '../../components/aon-input.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
+import { AonCard } from '../../components/aon-card.js';
 
 export class AonUser extends AonElement {
 
 	SWITCH;
 	SELECT;
 	TOOLBAR;
+	CONTENT;
 
 	user;
 	dur;
@@ -87,6 +90,65 @@ export class AonUser extends AonElement {
 		this.init();
   	}
 
+	build2() {
+		this.buildToolbar();
+		if(this.isMobile()) 
+			this.buildMobileContent();
+		else this.buildContent();
+		
+	}
+
+	buildToolbar() {
+		let toolbar = new AonToolbar();
+		toolbar.id = this.TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = MSG.USER;
+
+		this.appendChild(toolbar);
+
+
+		if(!this.hasAttribute('showToolbar')) toolbar.style.display = 'none';
+		toolbar.removeButtons();
+		if(!this.isOnlyAuth() && getUsers().length > 1) {
+			toolbar.addButton2(ACTION.NEXT, () => this.next());
+			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
+			toolbar.addSeparator();
+		}
+		if(!this.isOnlyAuth() && this.user && this.user.uuid)
+			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
+		if(!this.isAutosave())
+			toolbar.addButton2(ACTION.SAVE, () => this.save());
+		if(!this.isOnlyAuth() && this.user.id)
+			toolbar.addButton2(ACTION.DELETE, () => this.delete());
+		if(!this.isOnlyAuth()) 
+			toolbar.addButton2(ACTION.BACK, () => this.back());
+	}
+
+	buildContent() {
+		let content = this.createDiv(this.CONTENT, CSS.AON_SUB_CONTENT);
+		content.style.display = 'flex';
+		content.style.width = '100%';	
+		this.appendChild(content);
+
+		let div = this.createDiv("aonConfigurationUserDiv");
+		div.style.width = '50%';
+		content.appendChild(div);
+
+		let userCardTitle = MSG.USER + (this.user.login ? ' (' + this.user.login + ')' : '');
+		let userCard = this.createAonElement(new AonCard(), "aonConfigurationUserCard", userCardTitle);
+		div.appendChild(userCard);
+
+		if(this.hasSecurity()) {
+			let securityCard = this.createAonElement(new AonCard(), "aonConfigurationUserSecurityCard", MSG.PERMISSIONS);
+			content.appendChild(securityCard);
+		}
+	}
+
+	buildMobileContent() {
+		let content = this.createDiv(this.CONTENT, CSS.AON_MOBILE_SUB_CONTENT);
+		this.appendChild(content);
+	}
+
 	init() {
 		this.initialize();
 		this.user = this.user || {};
@@ -123,7 +185,9 @@ export class AonUser extends AonElement {
 		this.SWITCH = this.SWITCH || this.id + 'Switch';
 		this.SELECT = this.SELECT || this.id + 'Select';
 		this.TOOLBAR = this.TOOLBAR || this.id + 'Toolbar';
+		this.CONTENT = this.CONTENT || this.id + 'Content';
 		this.apps = [];
+		this.user = this.user || {};
 	}
 
 	getDur() {
@@ -166,8 +230,8 @@ export class AonUser extends AonElement {
 
 		if(this.user && this.hasAttribute('showApps')) {
 			this.buildPermissionButtons();
-			for (let key in AllApps){
-				if(this.hasApp(AllApps[key])){
+			for (let key in AllApps) {
+				if(this.hasApp(AllApps[key])) {
 					this.apps.push(AllApps[key].app);
 				}
 			}
@@ -422,7 +486,10 @@ export class AonUser extends AonElement {
    	 	d.setContentHTML(`Estás seguro de eliminar el usuario`);
     	d.addAcceptAction(() => {
 			let data = { user: this.user.id};
-			deleteUser(data).then(() => this.back());
+			deleteUser(data).then(() => {
+				deleteUserCache();
+				this.back()
+			});
     	});
     	d.open();
 	}

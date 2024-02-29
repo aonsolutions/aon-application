@@ -119,6 +119,10 @@ public class Product implements Serializable{
 		this.status = status;
 		return this;
 	}
+	
+	public boolean isAuxiliary() {
+		return getType().isAuxiliary();
+	}
 
 	public ProductType getType() {
 		if(type == null) 

@@ -224,6 +224,16 @@ public class EnterpriseDraftObject {
 		return null;
 	}
 	
+	public String getPayAuthorizationKey() {
+		Optional<EnterpriseData> payAuthorizationKey = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
+		return payAuthorizationKey.isPresent() ? payAuthorizationKey.get().getExpression() : null;
+	}
+	
+	public String getPaySsMutual() {
+		Optional<EnterpriseData> paySsMutual = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
+		return paySsMutual.isPresent() ? paySsMutual.get().getExpression() : null;
+	}
+	
 	// ----------------------------------------------  SETTERS  -------------------------------------------------
 	
 	public void setName(String name) {
@@ -409,6 +419,32 @@ public class EnterpriseDraftObject {
 				.setEnterprise(enterprise.getId())
 				.setName("agreement")
 				.setExpression(agreementId));
+	}
+	
+	public void setPaySsMutual(String paySsMutual) {
+		Optional<EnterpriseData> paySsMutualRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
+		if(paySsMutualRM.isPresent()) {
+			paySsMutualRM.get().setExpression(paySsMutual);
+			paySsMutualRM.get().setIsRemoved(AonStringUtils.isBlank(paySsMutual));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_ss_pension_plan_mutual_PAY")
+				.setExpression(paySsMutual));
+	}
+	
+	public void setPayAuthorizationKey(String payAuthorizationKey) {
+		Optional<EnterpriseData> payAuthorizationKeyRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
+		if(payAuthorizationKeyRM.isPresent()) {
+			payAuthorizationKeyRM.get().setExpression(payAuthorizationKey);
+			payAuthorizationKeyRM.get().setIsRemoved(AonStringUtils.isBlank(payAuthorizationKey));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_authorization_key_PAY")
+				.setExpression(payAuthorizationKey));
 	}
 		
 }

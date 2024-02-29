@@ -129,6 +129,7 @@ export const DELETED_DATA = "The data has been deleted successfully";
 export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
 export const DEUTSCH = 'German';
+export const DISCARDED = 'Discarded';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
@@ -278,6 +279,7 @@ export const NUMBER = 'Number';
 export const NUMBER_OF_USERS = 'Number of users';
 
 // ----- O
+export const OCR = 'OCR';
 export const OBSERVATION = 'Observation';
 export const OFFICE = 'Office';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Only domains without any linked customer";
@@ -303,6 +305,8 @@ export const PAYSHEETS = 'Paysheets';
 export const PENDING = 'Pending';
 export const PENDING_DOCUMENTS = 'Pending Documents';
 export const PENDING_INVOICES = 'Pending Invoices';
+export const PENDING_REVIEW = 'Pending Review';
+export const PENDING_TASKS = 'Pending Tasks';
 export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
@@ -355,6 +359,7 @@ export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Review';
 
 // ----- S
 

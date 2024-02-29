@@ -119,7 +119,7 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
-		} else if(aonInvoiceTable && filter.status === CONSTANT.RAWDOC_OCR){
+		} else if(aonInvoiceTable && filter.status === CONSTANT.OCR_INBOX){
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
 			getInvofoxDocuments(filter).then(r => {
@@ -135,7 +135,7 @@ export class AonInvoiceList extends AonElement {
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					invoice.icon = MATERIAL_ICONS.CIRCLE;
 					invoice.aonIcon = "invofox";
-					invoice.icon_title = "Recibida"
+					invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
 					invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 					aonInvoiceTable.addRow(invoice, () => {
@@ -152,7 +152,7 @@ export class AonInvoiceList extends AonElement {
 		this.more = true;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
-			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
+			if(this.getFilter().status === CONSTANT.OCR_INBOX) {
 				getInvofoxDocuments(this.getFilter()).then(r => {
 					aonInvoiceTable.removeRows();
 					aonInvoiceTable.selected = [];
@@ -167,7 +167,7 @@ export class AonInvoiceList extends AonElement {
 						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 						invoice.icon = MATERIAL_ICONS.CIRCLE;
 						invoice.aonIcon = "invofox";
-						invoice.icon_title = "Recibida"
+						invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
 						invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 						aonInvoiceTable.addRow(invoice, () => {
@@ -251,6 +251,29 @@ export class AonInvoiceList extends AonElement {
  		}
 	}
 	
+	getOcrInvoiceStatusIconTitle(invoice) {
+		let inv = new Invoice(invoice);
+		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+			return MSG.PROCCESSING;
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED)) {
+			return MSG.APPROVED;
+		} else if(inv.isOcrStatus(CONSTANT.EXPORTED)) {
+			return MSG.EXPORTED;
+		} else if(inv.isOcrStatus(CONSTANT.ERROR)){
+			return MSG.ERROR;
+		} else if(inv.isOcrStatus(CONSTANT.REJECTED)){
+			return MSG.REJECTED;
+		} else if(inv.isOcrStatus(CONSTANT.DISCARDED)) {
+			return MSG.DISCARDED;
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION)) {
+			return MSG.PENDING_CORRECTION;
+		}else if(inv.isOcrStatus(CONSTANT.PENDING_DECISSION)) {
+			return MSG.PENDING_DECISSION;
+		} else { 
+			return "";
+		}
+	}
+
 	getOcrInvoiceStatusIconColor(invoice) {
 		let inv = new Invoice(invoice);
 		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {

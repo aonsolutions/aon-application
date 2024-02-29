@@ -928,14 +928,6 @@
   font-size: 1.3rem;
 }
 
-.aonVerticalCenter {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-
 .aonClip {
   clip: rect(0px, 250px, 112px, 0px) !important;
   opacity: 1;
@@ -982,6 +974,8 @@
 .aonFormCenter {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .aonConnected {
