@@ -1571,7 +1571,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createFeeHeader() {
-		feeTable = new Grid(0, 12);
+		feeTable = new Grid(0, 13);
 		feeTable.clear();
 		feeTable.setWidth("100%");
 
@@ -1587,6 +1587,7 @@ public class CustomerFee extends MainEntryPoint {
 
 		Label customer = new Label("CLIENTE");
 		Label status = new Label("ESTADO");
+		Label line = new Label("LINEA");
 		Label concept = new Label("CONCEPTO");
 		Label period = new Label("PERIODO");
 		Label quantity = new Label("CANTIDAD");
@@ -1603,6 +1604,7 @@ public class CustomerFee extends MainEntryPoint {
 		select.getElement().getStyle().setPaddingLeft(0, Unit.PX);
 		customer.addStyleName(AON.CSS.aonHeaderTable());
 		status.addStyleName(AON.CSS.aonHeaderTable());
+		line.addStyleName(AON.CSS.aonHeaderTable());
 		concept.addStyleName(AON.CSS.aonHeaderTable());
 		period.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
@@ -1616,15 +1618,16 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 0, select);
 		feeTable.setWidget(row, 1, customer);
 		feeTable.setWidget(row, 2, status);
-		feeTable.setWidget(row, 3, concept);
-		feeTable.setWidget(row, 4, period);
-		feeTable.setWidget(row, 5, quantity);
-		feeTable.setWidget(row, 6, price);
-		feeTable.setWidget(row, 7, discount);
-		feeTable.setWidget(row, 8, startDate);
-		feeTable.setWidget(row, 9, billingDate);
-		feeTable.setWidget(row, 10, endDate);
-		feeTable.setWidget(row, 11, info);
+		feeTable.setWidget(row, 3, line);
+		feeTable.setWidget(row, 4, concept);
+		feeTable.setWidget(row, 5, period);
+		feeTable.setWidget(row, 6, quantity);
+		feeTable.setWidget(row, 7, price);
+		feeTable.setWidget(row, 8, discount);
+		feeTable.setWidget(row, 9, startDate);
+		feeTable.setWidget(row, 10, billingDate);
+		feeTable.setWidget(row, 11, endDate);
+		feeTable.setWidget(row, 12, info);
 
 		feeTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1638,23 +1641,25 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonHeaderSticky());
+		feeTable.getCellFormatter().addStyleName(row, 12, AON.CSS.aonHeaderSticky());
 
 		scrollPanel.add(feeTable);
 	}
 	
 	private void setColumnWidth() {
 		feeTable.getColumnFormatter().getElement(0).getStyle().setWidth(2, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(1).getStyle().setWidth(20, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(1).getStyle().setWidth(18, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(2).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(3).getStyle().setWidth(19, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(4).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(5).getStyle().setWidth(5, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(6).getStyle().setWidth(8, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(3).getStyle().setWidth(3, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(4).getStyle().setWidth(18, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(5).getStyle().setWidth(8, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(6).getStyle().setWidth(5, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(7).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(8).getStyle().setWidth(9, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(8).getStyle().setWidth(8, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(9).getStyle().setWidth(9, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(10).getStyle().setWidth(9, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(11).getStyle().setWidth(3, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(11).getStyle().setWidth(9, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(12).getStyle().setWidth(3, Unit.PCT);
 	}
 	
 	private void disableMoreData() {
@@ -1698,6 +1703,8 @@ public class CustomerFee extends MainEntryPoint {
 		statusListBox.setWidth("85px");
 		setInputStyle(statusListBox);
 		setSelectedValueLB(statusListBox, fee.getCustomer().getStatus().getDescription());
+		
+		Label lineLabel = new Label(fee.getLine().toString());
 
 		AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(fee, row);
 		conceptTextArea.setWidth("95%");
@@ -1801,6 +1808,7 @@ public class CustomerFee extends MainEntryPoint {
 		checkRowAndModify(feeTable, row, fee, select);
 		checkRowAndModify(feeTable, row, fee, customerLabel);
 		checkRowAndModify(feeTable, row, fee, statusListBox);
+		checkRowAndModify(feeTable, row, fee, lineLabel);
 		checkRowAndModify(feeTable, row, fee, conceptTextArea);
 		checkRowAndModify(feeTable, row, fee, periodListBox);
 		checkRowAndModify(feeTable, row, fee, quantityTextBox);
@@ -1814,18 +1822,19 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 0, select);
 		feeTable.setWidget(row, 1, customerLabel);
 		feeTable.setWidget(row, 2, statusListBox);
-		feeTable.setWidget(row, 3, conceptTextArea);
-		feeTable.setWidget(row, 4, periodListBox);
-		feeTable.setWidget(row, 5, quantityTextBox);
-		feeTable.setWidget(row, 6, priceTextBox);
-		feeTable.setWidget(row, 7, discountTextBox);
-		feeTable.setWidget(row, 8, startDateBox);
-		feeTable.setWidget(row, 9, billingDatePanel);
-		feeTable.setWidget(row, 10, endDateBox);
-		feeTable.setWidget(row, 11, infoBtn);
+		feeTable.setWidget(row, 3, lineLabel);
+		feeTable.setWidget(row, 4, conceptTextArea);
+		feeTable.setWidget(row, 5, periodListBox);
+		feeTable.setWidget(row, 6, quantityTextBox);
+		feeTable.setWidget(row, 7, priceTextBox);
+		feeTable.setWidget(row, 8, discountTextBox);
+		feeTable.setWidget(row, 9, startDateBox);
+		feeTable.setWidget(row, 10, billingDatePanel);
+		feeTable.setWidget(row, 11, endDateBox);
+		feeTable.setWidget(row, 12, infoBtn);
 
 		feeTable.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		feeTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
+		feeTable.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
 		feeTable.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 		feeTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
 		feeTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
@@ -1833,6 +1842,7 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);
 		feeTable.getCellFormatter().getElement(row, 10).getStyle().setTextAlign(TextAlign.CENTER);
 		feeTable.getCellFormatter().getElement(row, 11).getStyle().setTextAlign(TextAlign.CENTER);
+		feeTable.getCellFormatter().getElement(row, 12).getStyle().setTextAlign(TextAlign.CENTER);
 
 		if (row % 2 == 0) {
 			feeTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonOddTableRow());
@@ -1847,6 +1857,7 @@ public class CustomerFee extends MainEntryPoint {
 			feeTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
 			feeTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonOddTableRow());
 			feeTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonOddTableRow());
+			feeTable.getCellFormatter().addStyleName(row, 12, AON.CSS.aonOddTableRow());
 		}
 
 		feeTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
