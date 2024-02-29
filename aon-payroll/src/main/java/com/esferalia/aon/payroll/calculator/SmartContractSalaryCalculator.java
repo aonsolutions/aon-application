@@ -494,6 +494,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				//|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
+				|| isPPE(payment) 
 				|| isFixBaseCgcMinPayment(payment) 
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
@@ -2188,6 +2189,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //		return Double.toString(Math.round(d * 10000000.00) / 10000000.00 );		
 	}
 	
+	private static boolean isPPE(IContractPayment p) {
+		return AonStringUtils.equals ( "PPE", p.getName());
+	}
+
 	private static boolean isFixBaseCgcMinPayment(IContractPayment p) {
 		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/") 
 				|| AonStringUtils.equals(p.getQuoteExpression(), String.format("%s", ContextVariable.CGC_BASE_MIN))  ;
