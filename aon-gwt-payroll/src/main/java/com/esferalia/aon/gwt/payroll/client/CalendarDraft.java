@@ -507,8 +507,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	}
  
 	private void getItemLoadIndex() {
-		nameValueListBoxSelected = calendarDraftObjectData
-				.getHolidayDescription();
+		nameValueListBoxSelected = calendarDraftObjectData.getHolidayDescription();
 		
 		for (int x = 0; x < holidayList.getItemCount(); x++) {
 			if (Integer.parseInt(holidayList.getValue(x)) == nameValueListBoxSelected)
