@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.config.InsertIAE848889;
 import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
 import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
+import net.aonsolutions.db.up2date.payroll.PPEInsert;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 
 public class Up2Date {
@@ -416,8 +417,8 @@ public class Up2Date {
 	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
 	    CodinucovaInvoiceTaxFix.INSTANCE,
 	    InsertIAE848889.INSERT_IAE_848889,
-	    
-	    DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN
+	    DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
+	    PPEInsert.PPE_INSERT
 	};
 
     // ------------------------------------------------------------------------
