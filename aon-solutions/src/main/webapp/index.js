@@ -1,4 +1,5 @@
 import * as LS from './services/localStorageService.js';
+import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';
 import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
@@ -27,19 +28,12 @@ window.setResumeApp = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RESUME_APP, {detail:data}));
 }
 
-const isMobile = () => {
-    const reg = new RegExp(/mobile/i);
-    const navigatorPlatform = navigator.platform.toLowerCase();
-    const navigatorUserAgent = navigator.userAgent.toLowerCase();
-    return navigatorPlatform.match(reg) || navigatorUserAgent.match(reg) ||  webkitRequestMobile(); 
-}
-
 const load = () => {
     LS.setAonSolutions(true);
     favicon();  
     loadScriptFirebase();
     document.body.appendChild(new AonModule());
-    if(!isMobile() && !LS.isNewTheme()) document.body.className = 'aonBodyBeta';
+    if(!UA.isMobile() && !LS.isNewTheme()) document.body.className = 'aonBodyBeta';
     loadScripts(); 
     window.loadScripts = () => loadScripts();
 }
@@ -91,7 +85,7 @@ const loadScripts = () => {
         loadScript("https://www.gstatic.com/charts/loader.js")
     ];
 
-    if(!isMobile()){
+    if(!UA.isMobile()){
         promises.push(loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"));
     }
 
