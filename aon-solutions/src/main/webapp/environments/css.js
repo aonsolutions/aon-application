@@ -73,7 +73,6 @@ export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
-export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
 export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
