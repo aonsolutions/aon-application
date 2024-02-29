@@ -50,6 +50,10 @@ export const updateUser = (user) => {
   users[index] = user;
 }
 
+export const deleteUserCache = () => {
+  users.splice(i, 1);
+}
+
 export const getIndex = () => {
   return index;
 }

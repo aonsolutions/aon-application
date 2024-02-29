@@ -202,7 +202,7 @@ export const DELIVERY = 'Albarán de Venta';
 export const DESCRIPTION = MSG.DESCRIPTION;
 export const DETAILED = MSG.DETAILED;
 export const DEUTSCH = MSG.DEUTSCH;
-export const DISCARDED = "Descartada";
+export const DISCARDED = MSG.DISCARDED;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOMAIN = "Dominio"; //TODO
@@ -432,6 +432,7 @@ export const NOTE = MSG.NOTE;
 export const NOTICE = "Noticia"; //TODO
 // ----- O
 
+export const OCR = MSG.OCR;
 export const OBSERVATION = MSG.OBSERVATION;
 export const OFFICE = MSG.OFFICE;
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;

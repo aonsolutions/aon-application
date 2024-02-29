@@ -41,9 +41,11 @@ public class OCRDocumentsParams extends OCRParams {
 		return this; 
 	}
 	
+
 	public OCRDocumentsParams withType( OCRType param ) { return append( OCRNames.TYPE, param.toString());}
 	public OCRDocumentsParams withPublicState( OCRSeverity param) { return append( OCRNames.PUBLIC_STATE, param.toString());}
 	public OCRDocumentsParams withCompany( String param) { return append( OCRNames.COMPANY, param);}
+	public OCRDocumentsParams withCompanyActsLike( String param) { return append( OCRNames.DATA + "." + OCRNames.COMPANY_ACTS_LIKE + "." + OCRNames.VALUE, param);}
 	public OCRDocumentsParams skiping(int param) { return append( OCRNames.SKIP, param);}
 	public OCRDocumentsParams limit(int param) { return append( OCRNames.LIMIT, param);}
 

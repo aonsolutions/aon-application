@@ -663,9 +663,6 @@ public class SaleInvoiceController extends InvoiceController {
 								
 				if(invoice.getNumber() < 1) {
 					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
-					if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
-						throw new Exception("Existe una factura con la misma serie y fecha posterior.");
-					}
 					Integer number = lastInvoice.getNumber() > 0
 							? lastInvoice.getNumber() + 1 : 1;
 					invoice.setNumber(number);

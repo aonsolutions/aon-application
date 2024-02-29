@@ -1674,6 +1674,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
 
 				@Override
+				public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
+					updatePanel.addCell(new InlineLabel());
+					paintToggleButton( false );
+					return wrapper;
+				}
+
+				@Override
 				public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
 					updatePanel.addCell(new InlineLabel());
 					paintToggleButton( false );

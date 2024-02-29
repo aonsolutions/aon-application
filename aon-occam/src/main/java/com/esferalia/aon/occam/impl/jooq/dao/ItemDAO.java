@@ -451,18 +451,16 @@ public class ItemDAO {
 		}
 		
 		public static Item build(Record r) {
-			return build(r, ITEM)
-				.setProduct(checkField(r, PRODUCT.ID)
-					? ProductFiller.buildProduct(r)
-					: new Product().setId(getValue(r, ITEM.PRODUCT)));
-			
+			return build(r, ITEM, PRODUCT);
 		}
 		
-		public static Item build(Record r, com.esferalia.aon.jooq.tables.Item alias) {
+		public static Item build(Record r, com.esferalia.aon.jooq.tables.Item alias, com.esferalia.aon.jooq.tables.Product palias) {
 			return new Item()
 				.setId(getValue(r, alias.ID))
 				.setDomain(new Domain().setId(getValue(r, alias.DOMAIN)))
-				.setProduct(new Product().setId(getValue(r, alias.PRODUCT)))
+				.setProduct(checkField(r, palias.ID)
+						? ProductFiller.build(r, palias)
+						: new Product().setId(getValue(r, alias.PRODUCT)))
 				.setDetail(getValue(r, alias.DETAIL))
 				.setDetail2(getValue(r, alias.DETAIL2))
 				.setDetail3(getValue(r, alias.DETAIL3))

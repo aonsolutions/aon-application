@@ -129,6 +129,7 @@ export const DELETED_DATA = "The data has been deleted successfully";
 export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
 export const DEUTSCH = 'German';
+export const DISCARDED = 'Discarded';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
@@ -278,6 +279,7 @@ export const NUMBER = 'Number';
 export const NUMBER_OF_USERS = 'Number of users';
 
 // ----- O
+export const OCR = 'OCR';
 export const OBSERVATION = 'Observation';
 export const OFFICE = 'Office';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Only domains without any linked customer";

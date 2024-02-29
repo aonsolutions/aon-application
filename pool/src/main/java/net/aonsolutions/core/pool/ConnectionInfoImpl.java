@@ -1,5 +1,7 @@
 package net.aonsolutions.core.pool;
 
+import static net.aonsolutions.core.pool.AonDataSource.CONFIGURATION_PATH;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +28,7 @@ class ConnectionInfoImpl extends ConnectionInfo{
 	static final String JDBC_URL_PROPERTY = "jdbcUrl";
 	static final String TIMEZONE_PROPERTY = "timezone";
 	static final String DRIVER_CLASS_PROPERTY = "driverClass";
-	static final String DEFAULT_CONFIG_FILE = "/etc/aon-aio/connection";
+	static final String DEFAULT_CONFIG_FILE = CONFIGURATION_PATH + "/connection";
 	static final String MYSQL_SCHEMA = "information_schema";
 
 	private static final String SELECT_SCHEMAS = "SELECT t.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as t WHERE t.TABLE_NAME = 'domain'";

@@ -77,7 +77,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getAddressTypes() {
     	if ( addressTypes == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-    		addressTypes = new LinkedList<SelectItem>();
+    		addressTypes = new LinkedList<>();
     		for( AddressType type : AddressType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
@@ -90,7 +90,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getStreetTypes() {
     	if ( streetTypes == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-	        streetTypes = new LinkedList<SelectItem>();
+	        streetTypes = new LinkedList<>();
 	        for( StreetType type : StreetType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
@@ -103,7 +103,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getMediaTypes() {
     	if ( mediaTypes == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-	        mediaTypes = new LinkedList<SelectItem>();
+	        mediaTypes = new LinkedList<>();
 	        for( MediaType type : MediaType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
@@ -116,7 +116,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getRegistryTypes() {
     	if ( registryTypes == null) {
     		Locale locale = AonUtil.getCurrentLocale();
-	        registryTypes = new LinkedList<SelectItem>();
+	        registryTypes = new LinkedList<>();
 	        for( RegistryType type : RegistryType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
@@ -127,7 +127,7 @@ public class RegistryCollectionsController implements Serializable {
     }
     
     public List<SelectItem> getRelationships() throws ManagerBeanException{
-    	List<SelectItem> relationships = new LinkedList<SelectItem>();
+    	List<SelectItem> relationships = new LinkedList<>();
     	IManagerBean relationshipBean = BeanManager.getManagerBean(Relationship.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(relationshipBean.getFieldName(IEntityAlias.RELATIONSHIP_DESCRIPTION));
@@ -143,7 +143,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getGenders() {
     	if ( genders == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-	        genders = new LinkedList<SelectItem>();
+	        genders = new LinkedList<>();
 	        for( Gender gender : Gender.values() ) {
 	            String name = gender.getName(locale); 
 	            SelectItem item = new SelectItem(gender, name);
@@ -156,7 +156,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getMaritalStatuses() {
     	if ( maritalStatuses == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-		    maritalStatuses = new LinkedList<SelectItem>();
+		    maritalStatuses = new LinkedList<>();
 	        for( MaritalStatus status : MaritalStatus.values() ) {
 	            String name = status.getName(locale); 
 	            SelectItem item = new SelectItem(status, name);
@@ -169,7 +169,7 @@ public class RegistryCollectionsController implements Serializable {
     public List<SelectItem> getRegistryAttachmentTypes() {
     	if ( registryAttachmentTypes == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
-	    	registryAttachmentTypes = new LinkedList<SelectItem>();
+	    	registryAttachmentTypes = new LinkedList<>();
 	        for( RegistryAttachmentType status : RegistryAttachmentType.values() ) {
 	            String name = status.getName(locale); 
 	            SelectItem item = new SelectItem(status, name);
@@ -182,9 +182,9 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getNoteTypes() {
 		if ( noteTypes == null ) {
 			Locale locale = AonUtil.getCurrentLocale();
-			noteTypes = new LinkedList<SelectItem>();
+			noteTypes = new LinkedList<>();
 			for( NoteType type : NoteType.values() ) {
-				if ((type != NoteType.OBSERVATION) && (type != NoteType.OBSERVATION)) {
+				if ((type != NoteType.OBSERVATION)) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
 					noteTypes.add(item);
@@ -197,7 +197,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getDocumentTypes() {
 		if ( documentTypes == null ) {
 			Locale locale = AonUtil.getCurrentLocale();
-			documentTypes = new LinkedList<SelectItem>();
+			documentTypes = new LinkedList<>();
 			for( DocumentType type : DocumentType.values() ) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
@@ -210,7 +210,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getTaxRegimes() {
 		if ( taxRegimes == null ) {
 			Locale locale = AonUtil.getCurrentLocale();
-			taxRegimes = new LinkedList<SelectItem>();
+			taxRegimes = new LinkedList<>();
 			for( TaxRegime taxRegime : TaxRegime.values() ) {
 					String name = taxRegime.getName(locale);
 					SelectItem item = new SelectItem(taxRegime, name);
@@ -229,7 +229,7 @@ public class RegistryCollectionsController implements Serializable {
     }
     
     private List<SelectItem> getSegments( boolean onlyId ) throws ManagerBeanException{
-    	List<SelectItem> segments = new LinkedList<SelectItem>();
+    	List<SelectItem> segments = new LinkedList<>();
     	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(segmentBean.getFieldName(IEntityAlias.SEGMENT_NAME));
@@ -246,7 +246,7 @@ public class RegistryCollectionsController implements Serializable {
     }
     
 	public List<SelectItem> getUsers() throws ManagerBeanException {
-		List<SelectItem> users = new LinkedList<SelectItem>();
+		List<SelectItem> users = new LinkedList<>();
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(userBean.getFieldName(IEntityAlias.USER_NAME));
@@ -260,7 +260,7 @@ public class RegistryCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getAllRegistryBanks(Registry registry) throws ManagerBeanException {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
+		List<SelectItem> rBanks = new LinkedList<>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
@@ -274,7 +274,7 @@ public class RegistryCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getActiveRegistryBanks(Registry registry) throws ManagerBeanException {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
+		List<SelectItem> rBanks = new LinkedList<>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
@@ -306,7 +306,7 @@ public class RegistryCollectionsController implements Serializable {
 	}
 	
 	public static List<SelectItem> getCategoryList( List<Category> categories ) {
-		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<>();
 		for (Category category : categories) {
 			list.add( AonUtil.getSelectItem(category, category.getName()));
 		}
@@ -321,7 +321,7 @@ public class RegistryCollectionsController implements Serializable {
 	}	
 
     public List<String> getAddInfoAttributes() throws ManagerBeanException{
-    	List<String> addInfos = new LinkedList<String>();
+    	List<String> addInfos = new LinkedList<>();
     	IManagerBean addInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(addInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
@@ -346,7 +346,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getRegistryItemStatuses() {
 		if ( registryItemStatuses == null ) {
 			Locale locale = AonUtil.getCurrentLocale();
-			registryItemStatuses = new LinkedList<SelectItem>();
+			registryItemStatuses = new LinkedList<>();
 			for (RegistryItemStatus status : RegistryItemStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -364,7 +364,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getRegistrySellerStatuses() {
 		if ( registrySellerStatuses == null ) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			registrySellerStatuses = new LinkedList<SelectItem>();
+			registrySellerStatuses = new LinkedList<>();
 			for (RegistrySellerStatus status : RegistrySellerStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -382,7 +382,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getRegistrySellerTypes() {
 		if ( registrySellerTypes == null ) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			registrySellerTypes = new LinkedList<SelectItem>();
+			registrySellerTypes = new LinkedList<>();
 			for (RegistrySellerType status : RegistrySellerType.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
@@ -393,7 +393,7 @@ public class RegistryCollectionsController implements Serializable {
 	}
 	
 	public static List<SelectItem> getQuestionValues( Question question ) throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<>();
 		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), question.getId());
@@ -414,7 +414,7 @@ public class RegistryCollectionsController implements Serializable {
 	public List<SelectItem> getQuestionTypes() {
 		if ( questionTypes == null ) {
 			Locale locale = AonUtil.getCurrentLocale();
-			questionTypes = new LinkedList<SelectItem>();
+			questionTypes = new LinkedList<>();
 			for (QuestionType auditLevel : QuestionType.values()) {
 				String name = auditLevel.getName(locale);
 				SelectItem item = new SelectItem(auditLevel, name);

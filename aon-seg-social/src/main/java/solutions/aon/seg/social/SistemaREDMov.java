@@ -691,7 +691,7 @@ class SistemaREDMov {
 			
 			XmlPage xmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
-			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
 					.orElseThrow();
@@ -754,7 +754,7 @@ class SistemaREDMov {
 			
 			XmlPage xmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
-			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			Integer ident = 1; // NIF DEFAULT
 			if (Toolkit.getIdentityType(ipf).equals("6")) {

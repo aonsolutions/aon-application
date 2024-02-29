@@ -7,11 +7,14 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getElConstains;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +37,8 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
+import org.htmlunit.WebResponse;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
@@ -46,6 +51,7 @@ import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
+import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
@@ -288,13 +294,35 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
 			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		
+		
+		byte[] certificateData = certificateInputStream.readAllBytes();
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
 			
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setRedirectEnabled(true);
 			
-			XmlPage xmlPage = webClient.getPage(BASE_URI);
-			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			
+			new WebConnectionWrapper(webClient) {
+				@Override
+				public WebResponse getResponse(WebRequest request) throws IOException {
+					WebResponse response = super.getResponse(request);
+					if ("text/xml".equals(response.getContentType()) ){
+						try (WebClient xmlClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType) ) {
+							response = HtmlUnitToolkit.transformXmlPage(xmlClient, response);
+						} catch (Exception e) {
+						}
+					}
+					return response;
+				}
+			};
+			
+			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			//XmlPage xmlPage = webClient.getPage(BASE_URI);
+			//HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
@@ -314,24 +342,27 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlInput cotDaysInput = null;
 			
 			switch (contractType) {
-				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
-					webClient.waitForBackgroundJavaScript(5000);
-					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
-			    	
-					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-					
-					cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
-					cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
+			case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+				webClient.waitForBackgroundJavaScript(5000);
+				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+				
+
+				wait4(htmlPage, p -> p.getElementById("#sumaBaseCot"))
+						.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+
+				cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
+				cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
-				case RESTO_Y_AUTONOMOS:
-				    webClient.waitForBackgroundJavaScript(5000);
-				    htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
-				    
-					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-					
-					cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
-					cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
+			case RESTO_Y_AUTONOMOS:
+				webClient.waitForBackgroundJavaScript(30000);
+				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+
+				wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+
+				cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
+				cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
 				break;
+				
 			}
 			
 			if(fATEP.isPresent()) {
@@ -355,8 +386,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			xmlPage = validate.click();
-			htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			//XmlPage xmlPage = validate.click();
+			//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			htmlPage = validate.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
 			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
@@ -545,7 +577,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			XmlPage xmlPage = webClient.getPage(BASE_URI);
-			HtmlPage htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
@@ -638,10 +670,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		if(null!=contingencyOption) contingencyOption.click();
 
 		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-		
-		XmlPage xmlPage = accept.click();
-		htmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
-		
+		//XmlPage xmlPage = accept.click();
+		//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+		htmlPage = accept.click();
 		HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
 		return htmlPage;
@@ -847,5 +878,31 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 		}
 		return firstColumn;
+	}
+	
+	public static void main(String[] args) throws IOException, SegSocialException, ParseException {
+		try ( InputStream is = new FileInputStream("/home/rtrepiana/Downloads/aon.p12")) {
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("19/02/2024");
+			registerItBaja(
+					is, 
+					"Alma1981", 
+					"PKCS12", 
+					"0111", 
+					"11120424045", 
+					"111046070246", 
+					SistemaRED.Contingencies.ENFERMEDAD_COMUN, 
+					SistemaRED.SituationEmployee.ACTIVO, 
+					startDate, 
+					SistemaRED.ContractType.RESTO_Y_AUTONOMOS, 
+					1260.0f, 
+					30, 
+					Optional.of(startDate), 
+					Optional.empty(), 
+					Optional.empty(), 
+					Optional.empty(), 
+					Optional.empty(), 
+					Optional.of("Marketing"), 
+					Optional.of("Las propias de Marketing"));
+		}
 	}
 }
