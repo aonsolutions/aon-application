@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSyncSelectionDialog;
@@ -20,28 +21,40 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -52,6 +65,10 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CustomerBookingResumeModule extends MainEntryPoint {
 	
@@ -71,7 +88,17 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private HTMLPanel domainsPanel;
 	
 	private HTMLPanel domainPanel;
+	
+	private AonToolbarSmallButton toolbarDomainChildsDiscBtn;
 	private HTMLPanel domainChildsPanel;
+	private Grid domainChildsTable;
+	
+	private AonToolbarSmallButton toolbarCustomerFeeDiscBtn;
+	private AonToolbarSmallButton toolbarCustomerFeeSaveBtn;
+	private AonToolbarSmallButton toolbarCustomerFeeUndoBtn;
+	private HTMLPanel customerFeePanel;
+	private Grid customerFeeTable;
+	private LinkedList<Fee> customerFeeList;
 	
 	private HTMLPanel messagePanel;
 
@@ -89,6 +116,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat formatBillingDate = DateTimeFormat.getFormat("MM/yyyy");
+	
+	private boolean isChildsOpen = true;
+	private boolean isCustomerFeeOpen = true;
 	
 	// Api
 	private BookingApi bookingApi;
@@ -172,11 +202,16 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainChildsPanel = new HTMLPanel("");
 		domainChildsPanel.addStyleName(AON.CSS.aonFlexColumn());
 		
+		customerFeePanel = new HTMLPanel("");
+		customerFeePanel.addStyleName(AON.CSS.aonFlexColumn());
+		
 		container.add(customerPanel);
 		container.add(domainsPanel);
 		
 		container.add(domainPanel);
 		container.add(domainChildsPanel);
+		
+		container.add(customerFeePanel);
 		
 		mainContainer.add(messagePanel);
 		mainContainer.add(container);
@@ -802,6 +837,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		return formatDate.format(date);
 	}
 
+	// ---------- BookingResume
+	
 	private void getBookingResume() {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
@@ -835,6 +872,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
             				domainBooking = booking;
             				createDomainBookingResume();
                         	createDomainChildsBookingResume();
+                        	
+                        	// Init onLoad CustomerFee
+                    		getCustomerFees();
             			}
             			
             			@Override
@@ -1003,11 +1043,29 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainPanel.add(domainTable);
 	}
 	
+	private AonToolbarSmall createDomainChildsToolbar() {
+		AonToolbarSmall toolbar = new AonToolbarSmall("Empresas Hijas");
+		
+		toolbarDomainChildsDiscBtn = new AonToolbarSmallButton("Desplegar Empresas Hijas", AON.CSS.aonIconDown());
+		toolbarDomainChildsDiscBtn.addClickHandler(e -> {
+			isChildsOpen = !isChildsOpen;
+			handleIcon(toolbarDomainChildsDiscBtn, isChildsOpen);
+			if(isChildsOpen) domainChildsTable.getElement().getStyle().clearDisplay();
+			else domainChildsTable.getElement().getStyle().setDisplay(Display.NONE);
+		});
+		
+		toolbar.add(toolbarDomainChildsDiscBtn);
+		
+		return toolbar;
+	}
+	
 	private void createDomainChildsBookingResume() {
 		boolean allEnterprises = enterprisesView.getSelectedIndex() == 1;
 		domainChildsPanel.clear();
 		
-		Grid domainChildsTable = new Grid(0, 9);
+		domainChildsPanel.add(createDomainChildsToolbar());
+		
+		domainChildsTable = new Grid(0, 9);
 		domainChildsTable.clear();
 		domainChildsTable.setWidth("100%");
 
@@ -1193,6 +1251,585 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		for(int column=0; column < grid.getColumnCount(); column++) {
 			grid.getWidget(row, column).removeStyleName(AON.CSS.aonRowHighlight());
 			grid.getCellFormatter().removeStyleName(row, column, AON.CSS.aonRowHighlight());
+		}
+	}
+	
+	// ---------- CustomerFees
+	
+	private AonToolbarSmall createCustomerFeeToolbar() {
+		AonToolbarSmall toolbar = new AonToolbarSmall("Cuotas");
+		
+		toolbarCustomerFeeDiscBtn = new AonToolbarSmallButton("Desplegar Cuotas", AON.CSS.aonIconDown());
+		toolbarCustomerFeeDiscBtn.addClickHandler(e -> {
+			isCustomerFeeOpen = !isCustomerFeeOpen;
+			handleIcon(toolbarCustomerFeeDiscBtn, isCustomerFeeOpen);
+			if(isCustomerFeeOpen) customerFeeTable.getElement().getStyle().clearDisplay();
+			else customerFeeTable.getElement().getStyle().setDisplay(Display.NONE);
+		});
+		
+		toolbar.add(toolbarCustomerFeeDiscBtn);
+		
+		return toolbar;
+	}
+	
+	private void getCustomerFees() {
+		Integer customerId = getCustomer();
+		
+		CustomerFeeParams params = new CustomerFeeParams();
+		params.setDomain(options.getDomain());
+		params.setCustomer(customerId);
+		
+		params.setLimit(Integer.MAX_VALUE);
+		params.setOffset(0);
+		
+		SERVICE.getCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+				new AsyncCallback<LinkedList<Fee>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(LinkedList<Fee> customerFeeListDB) {
+						customerFeeList = customerFeeListDB;
+						createCustomerFees();
+					}
+				});		
+	}
+	
+	private void createCustomerFees() {
+		customerFeePanel.clear();
+		
+		customerFeePanel.add(createCustomerFeeToolbar());
+		
+		customerFeeTable = new Grid(0, 10);
+		customerFeeTable.clear();
+		customerFeeTable.setWidth("100%");
+
+		int row = customerFeeTable.insertRow(customerFeeTable.getRowCount());
+
+		Label line = new Label("LINEA");
+		Label concept = new Label("CONCEPTO");
+		Label period = new Label("PERIODO");
+		Label quantity = new Label("CANTIDAD");
+		Label price = new Label("PRECIO");
+		Label discount = new Label("DESCUENTO");
+		Label startDate = new Label("F. DESDE");
+		startDate.setTitle("F. DESDE FACTURACI\u00f3N");
+		Label billingDate = new Label("F. FACTURACI\u00f3N");
+		Label endDate = new Label("F. HASTA");
+		endDate.setTitle("F. HASTA FACTURACI\u00f3N");
+		
+		HTMLPanel buttons = new HTMLPanel("");
+		buttons.addStyleName(AON.CSS.aonItemFlex());
+		toolbarCustomerFeeUndoBtn = new AonToolbarSmallButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
+		toolbarCustomerFeeUndoBtn.setEnabled(false);
+		toolbarCustomerFeeUndoBtn.addClickHandler(e -> {
+			AonDialog dialog = new AonDialog("Deshacer cambios cuotas",
+					new HTML("Se va a proceder a deshacer los cambios, sin guardar, efectuados en las cuotas..<br>\u00bfRealmente quiere deshacer los cambios efectuados\u003f"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {}
+
+				@Override
+				public void onAccept() {
+					getCustomerFees();	
+				}
+			});
+		});
+		buttons.add(toolbarCustomerFeeUndoBtn);
+		
+		toolbarCustomerFeeSaveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		toolbarCustomerFeeSaveBtn.setEnabled(false);
+		toolbarCustomerFeeSaveBtn.addClickHandler(e -> {
+			AonMessagePanel.showLoading(messagePanel, "Guardando cuotas ...");
+			SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), customerFeeList,
+					new AsyncCallback<Integer>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error guardando cuotas: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(Integer updates) {
+							AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+							toolbarCustomerFeeUndoBtn.setEnabled(false);
+							toolbarCustomerFeeSaveBtn.setEnabled(false);
+							getCustomerFees();
+						}
+					});
+		});
+		buttons.add(toolbarCustomerFeeSaveBtn);
+		
+		line.addStyleName(AON.CSS.aonHeaderTable());
+		concept.addStyleName(AON.CSS.aonHeaderTable());
+		period.addStyleName(AON.CSS.aonHeaderTable());
+		quantity.addStyleName(AON.CSS.aonHeaderTable());
+		price.addStyleName(AON.CSS.aonHeaderTable());
+		discount.addStyleName(AON.CSS.aonHeaderTable());
+		startDate.addStyleName(AON.CSS.aonHeaderTable());
+		billingDate.addStyleName(AON.CSS.aonHeaderTable());
+		endDate.addStyleName(AON.CSS.aonHeaderTable());
+		buttons.addStyleName(AON.CSS.aonHeaderTable());
+
+		customerFeeTable.setWidget(row, 0, line);
+		customerFeeTable.setWidget(row, 1, concept);
+		customerFeeTable.setWidget(row, 2, period);
+		customerFeeTable.setWidget(row, 3, quantity);
+		customerFeeTable.setWidget(row, 4, price);
+		customerFeeTable.setWidget(row, 5, discount);
+		customerFeeTable.setWidget(row, 6, startDate);
+		customerFeeTable.setWidget(row, 7, billingDate);
+		customerFeeTable.setWidget(row, 8, endDate);
+		customerFeeTable.setWidget(row, 9, buttons);
+		
+		customerFeeTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().getElement(row, 9).getStyle().setZIndex(1);
+		
+		customerFeeTable.getColumnFormatter().getElement(0).getStyle().setWidth(4, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(1).getStyle().setWidth(38, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(2).getStyle().setWidth(8, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(3).getStyle().setWidth(5, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(4).getStyle().setWidth(8, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(5).getStyle().setWidth(8, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(6).getStyle().setWidth(9, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(7).getStyle().setWidth(9, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(8).getStyle().setWidth(9, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(9).getStyle().setWidth(10, Unit.PCT);
+		
+		for(Fee fee : customerFeeList) {
+
+			int newRow = customerFeeTable.insertRow(customerFeeTable.getRowCount());
+			
+			Label lineLabel = new Label(fee.getLine().toString());
+			
+			AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(customerFeeTable, fee, newRow);
+			conceptTextArea.setWidth("95%");
+			conceptTextArea.setValue(fee.getDescription());
+
+			ListBox periodListBox = createPeriodListBox(customerFeeTable, fee, newRow);
+			periodListBox.setWidth("100px");
+			setInputStyle(periodListBox);
+			setSelectedValueLB(periodListBox, fee.getPeriod().getValue().toString());
+
+			TextBox quantityTextBox = new TextBox();
+			quantityTextBox.setWidth("50px");
+			setInputStyle(quantityTextBox);
+			quantityTextBox.setValue(null == fee.getQuantity() ? "" : fee.getQuantity().toString());
+			quantityTextBox.addValueChangeHandler(e -> {
+				fee.setQuantity(Double.parseDouble(e.getValue()));
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+
+			TextBox priceTextBox = new TextBox();
+			priceTextBox.setWidth("80px");
+			setInputStyle(priceTextBox);
+			priceTextBox.setValue(null == fee.getPrice() ? "" : fee.getPrice().toString());
+			priceTextBox.addValueChangeHandler(e -> {
+				fee.setPrice(Double.parseDouble(e.getValue()));
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+
+			TextBox discountTextBox = new TextBox();
+			discountTextBox.setWidth("80px");
+			setInputStyle(discountTextBox);
+			discountTextBox.setValue(null == fee.getDiscountExpr() ? "" : fee.getDiscountExpr());
+			discountTextBox.addValueChangeHandler(e -> {
+				String expression = e.getValue();
+				String result = e.getValue();
+				
+				try {
+					if(AonStringUtils.contains(expression, ",") && AonStringUtils.contains(expression, "."))
+						expression= expression.replaceAll("\\.", "");
+					expression= expression.replaceAll(",", ".");
+					
+					Double expressionValue = evalExpression(expression);
+					result = null == expressionValue ? "" : expressionValue.toString();
+					fee.setDiscount(Double.parseDouble(result));
+				} catch (Exception ex) {
+					AonMessagePanel.showWarning(messagePanel, new HTML("La expresi\u00f3n de <b>Descuento</b> que ha introducido no es correcta"));
+				}
+				
+				fee.setDiscountExpr(expression);
+				setModifyColor(customerFeeTable, fee, newRow);
+				
+			});
+			
+			AonDateBox startDateBox = new AonDateBox();
+			startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			startDateBox.addStyleName("gwt-TextBox");
+			setInputStyle(startDateBox);
+			startDateBox.setValue(fee.getStartDate());
+			startDateBox.addValueChangeHandler(e -> {
+				fee.setStartDate(e.getValue());
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+
+			HTMLPanel billingDatePanel = new HTMLPanel("");
+			billingDatePanel.addStyleName(AON.CSS.aonItemFlex());
+			
+			ListBox monthLB = createMonthListBox();
+			TextBox yearTB = createYearTextBox();
+			
+			monthLB.addChangeHandler(e -> {
+				fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearTB.getValue()));
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+			
+			yearTB.addValueChangeHandler(e -> {
+				fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearTB.getValue()));
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+			
+			setSelectedValueLB(monthLB, fee.getBillingDate().getMonth() + "");
+			yearTB.setValue((fee.getBillingDate().getYear() + 1900) + "");
+			
+			billingDatePanel.add(monthLB);
+			billingDatePanel.add(yearTB);
+
+			AonDateBox endDateBox = new AonDateBox();
+			endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			endDateBox.addStyleName("gwt-TextBox");
+			setInputStyle(endDateBox);
+			endDateBox.setValue(fee.getEndDate());
+			endDateBox.addValueChangeHandler(e -> {
+				fee.setEndDate(e.getValue());
+				setModifyColor(customerFeeTable, fee, newRow);
+			});
+			
+			AonToolbarSmallButton infoBtn = new AonToolbarSmallButton("", AON.CSS.aonIconInfo());
+			infoBtn.setTitle(createFeeInfo(fee));
+			
+			checkFeeStatus(startDateBox, endDateBox, fee);
+
+			checkRowAndModify(customerFeeTable, newRow, fee, lineLabel);
+			checkRowAndModify(customerFeeTable, newRow, fee, conceptTextArea);
+			checkRowAndModify(customerFeeTable, newRow, fee, periodListBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, quantityTextBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, priceTextBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, discountTextBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, startDateBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, billingDatePanel);
+			checkRowAndModify(customerFeeTable, newRow, fee, endDateBox);
+			checkRowAndModify(customerFeeTable, newRow, fee, infoBtn);
+
+			customerFeeTable.setWidget(newRow, 0, lineLabel);
+			customerFeeTable.setWidget(newRow, 1, conceptTextArea);
+			customerFeeTable.setWidget(newRow, 2, periodListBox);
+			customerFeeTable.setWidget(newRow, 3, quantityTextBox);
+			customerFeeTable.setWidget(newRow, 4, priceTextBox);
+			customerFeeTable.setWidget(newRow, 5, discountTextBox);
+			customerFeeTable.setWidget(newRow, 6, startDateBox);
+			customerFeeTable.setWidget(newRow, 7, billingDatePanel);
+			customerFeeTable.setWidget(newRow, 8, endDateBox);
+			customerFeeTable.setWidget(newRow, 9, infoBtn);
+
+			customerFeeTable.getCellFormatter().getElement(newRow, 0).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 8).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 9).getStyle().setTextAlign(TextAlign.CENTER);
+			
+			if (newRow % 2 == 0) {
+				lineLabel.addStyleName(AON.CSS.aonOddTableRow());
+				conceptTextArea.addStyleName(AON.CSS.aonOddTableRow());
+				periodListBox.addStyleName(AON.CSS.aonOddTableRow());
+				quantityTextBox.addStyleName(AON.CSS.aonOddTableRow());
+				priceTextBox.addStyleName(AON.CSS.aonOddTableRow());
+				discountTextBox.addStyleName(AON.CSS.aonOddTableRow());
+				startDateBox.addStyleName(AON.CSS.aonOddTableRow());
+				billingDatePanel.addStyleName(AON.CSS.aonOddTableRow());
+				endDateBox.addStyleName(AON.CSS.aonOddTableRow());
+				infoBtn.addStyleName(AON.CSS.aonOddTableRow());
+				
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 3, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
+			}
+			
+			customerFeeTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+		}
+		
+		customerFeePanel.add(customerFeeTable);
+	}
+	
+	private TextBox createYearTextBox() {
+		TextBox tb = new TextBox();
+		tb.setMaxLength(4);
+		tb.setHeight("2em");
+		tb.setWidth("4em");
+		tb.setAlignment(TextAlignment.CENTER);
+		tb.getElement().getStyle().setProperty("padding", "0 5px");
+		tb.getElement().getStyle().setProperty("placeholder", "aaaa");
+		
+		return tb;
+	}
+	
+	private ListBox createMonthListBox() {
+		ListBox lb = new ListBox();
+		lb.setHeight("2em");
+		lb.getElement().getStyle().setProperty("padding", "0 5px");
+
+		lb.addItem("-", "");
+		lb.addItem("Ene.", "0");
+		lb.addItem("Feb.", "1");
+		lb.addItem("Mar.", "2");
+		lb.addItem("Abr.", "3");
+		lb.addItem("May.", "4");
+		lb.addItem("Jun.", "5");
+		lb.addItem("Jul.", "6");
+		lb.addItem("Ago.", "7");
+		lb.addItem("Sep.", "8");
+		lb.addItem("Oct.", "9");
+		lb.addItem("Nov.", "10");
+		lb.addItem("Dic.", "11");
+
+		return lb;
+	}
+
+	private Date createBillingDate(String monthStr, String yearStr) {
+		if(AonStringUtils.isBlank(monthStr) || AonStringUtils.isBlank(yearStr))
+			return null;
+		
+		return new Date(Integer.parseInt(yearStr) - 1900, Integer.parseInt(monthStr), 1);
+	}
+
+	private void checkFeeStatus(AonDateBox startDateBox, AonDateBox endDateBox, Fee fee) {
+		if(null != fee.getEndDate() && fee.getEndDate().before(fee.getBillingDate())) {
+			endDateBox.getElement().getStyle().setColor("red");
+			endDateBox.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			endDateBox.setTitle("La fecha fin es anterior a la fecha de facturaci\u00f3n");
+		} else if(null != fee.getStartDate() && fee.getStartDate().after(fee.getBillingDate())) {
+			startDateBox.getElement().getStyle().setColor("red");
+			startDateBox.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			startDateBox.setTitle("La fecha inicio es posterior a la fecha de facturaci\u00f3n");
+		}
+	}
+
+	private ListBox createStatusListBox(Grid table, Fee fee, int row) {
+		ListBox lb = new ListBox();
+		lb.addItem("Activo", "Activo");
+		lb.addItem("Inactivo", "Inactivo");
+		lb.addItem("Bloqueado", "Bloqueado");
+		lb.addChangeHandler(e -> {
+			fee.getCustomer().setStatus(RegistryStatus.safeValueOf(lb.getSelectedValue()));
+			setModifyColor(table, fee, row);
+			
+		});
+		return lb;
+	}
+
+	private ListBox createPeriodListBox(Grid table, Fee fee, int row) {
+		ListBox lb = new ListBox();
+		lb.addItem("Sin periodo", "0");
+		lb.addItem("Mensual", "1");
+		lb.addItem("Bimensual", "2");
+		lb.addItem("Trimestral", "3");
+		lb.addItem("Cuatrimestral", "4");
+		lb.addItem("Semestral", "5");
+		lb.addItem("Anual", "6");
+		lb.addChangeHandler(e -> {
+			fee.setPeriod(BillingPeriod.safeValueOf(lb.getSelectedValue()));
+			setModifyColor(table, fee, row);
+		});
+		return lb;
+	}
+
+	private String createFeeInfo(Fee fee) {
+		String tooltip = "";
+		
+		tooltip += "Seguridad: " + fee.getSecurityLevel().getName();
+		tooltip += "\nC. Trabajo: " + fee.getWorkplace().getDescription();
+		
+		if(null != fee.getSeller() && AonStringUtils.isNotBlank(fee.getSeller().getName())) tooltip += "\nComercial: " + fee.getSeller().getName();
+		if(null != fee.getInvoicingGroup() && AonStringUtils.isNotBlank(fee.getInvoicingGroup().getDescription())) tooltip += "\nG. Facturac\u00f3n: " + fee.getInvoicingGroup().getDescription();
+		if(null != fee.getProject() && AonStringUtils.isNotBlank(fee.getProject().getName())) tooltip += "\nProyecto: " + fee.getProject().getName();
+		
+		return tooltip;
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+		String text = str;
+		int indexToFind = 0;
+		for (int i = 0; i < lBox.getItemCount(); i++) {
+			if (lBox.getValue(i).equals(text)) {
+				indexToFind = i;
+				break;
+			}
+		}
+		lBox.setSelectedIndex(indexToFind);
+	}
+
+	private void checkRowAndModify(Grid grid, int row, Fee fee, Widget widget) {
+		if (row % 2 == 0)
+			widget.addStyleName(AON.CSS.aonOddTableRow());
+
+		if (fee.isModify()) {
+			widget.addStyleName(AON.CSS.aonModifyTableRow());
+
+			grid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonModifyTableRow());
+		} else {
+			widget.removeStyleName(AON.CSS.aonModifyTableRow());
+
+			grid.getCellFormatter().removeStyleName(row, 0, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 1, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 2, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 3, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 4, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 5, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 6, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 7, AON.CSS.aonModifyTableRow());
+			grid.getCellFormatter().removeStyleName(row, 8, AON.CSS.aonModifyTableRow());
+		}
+
+	}
+	
+	private void setModifyColor(Grid table, Fee fee, int row) {
+		table.getCellFormatter().addStyleName(row, 0, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 1, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 2, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 3, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 4, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 5, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 6, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 7, AON.CSS.aonModifyTableRow());
+		table.getCellFormatter().addStyleName(row, 8, AON.CSS.aonModifyTableRow());
+		
+		table.getWidget(row, 0).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 1).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 2).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 3).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 4).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 5).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 6).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 7).addStyleName(AON.CSS.aonModifyTableRow());
+		table.getWidget(row, 8).addStyleName(AON.CSS.aonModifyTableRow());
+		
+		toolbarCustomerFeeUndoBtn.setEnabled(true);
+		toolbarCustomerFeeSaveBtn.setEnabled(true);
+		
+		fee.setModify(true);
+	}
+	
+	private void setInputStyle(Widget widget) {
+		widget.setHeight("2em");
+		widget.getElement().getStyle().setProperty("padding", "0 5px");
+	}
+	
+	// ------------------------------------------ Eval Expression
+	
+	public double evalExpression(String expression) {
+		return calculate(expression);
+	}
+
+	public final native double calculate(String expression) /*-{
+		return eval(expression);
+	}-*/;
+	
+	// ------------------------------------------ AutoResizeTextArea
+
+	public class AutoResizeTextArea extends TextArea implements ValueChangeHandler<String>, KeyUpHandler {
+
+		private final int MIN_HEIGHT = 20;
+		private Fee fee;
+		private int row;
+		private Grid table;
+
+		public AutoResizeTextArea(Grid table, Fee fee, int row) {
+			super();
+			this.table = table;
+			this.fee = fee;
+			this.row = row;
+			this.getElement().getStyle().setProperty("resize", "none");
+			addKeyUpHandler(this);
+			addValueChangeHandler(this);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void setText(String text) {
+			super.setText(text);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void setValue(String text) {
+			super.setValue(text);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void onKeyUp(KeyUpEvent event) {
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+			this.fee.setDescription(event.getValue());
+			setModifyColor(this.table, this.fee, this.row);
+		}
+
+		private void adjustHeight() {
+			int scrollHeight = getElement().getScrollHeight();
+			int offsetHeight = getElement().getOffsetHeight();
+			int clientHeight = getElement().getClientHeight();
+			int newHeight = Math.max(scrollHeight, MIN_HEIGHT);
+			if (newHeight > offsetHeight || newHeight > clientHeight) {
+				DOM.setStyleAttribute(getElement(), "height", newHeight + "px");
+			}
+		}
+	}
+	
+	private void handleIcon(AonToolbarSmallButton button, boolean open) {
+		if (open) {
+			button.removeStyleName(AON.CSS.aonIconLeft());
+			button.addStyleName(AON.CSS.aonIconDown());
+
+			if (button.equals(toolbarDomainChildsDiscBtn))
+				button.setTitle("Colapsar Empresas Hijas");
+			if (button.equals(toolbarCustomerFeeDiscBtn))
+				button.setTitle("Colapsar Cuotas");
+		} else {
+			button.removeStyleName(AON.CSS.aonIconDown());
+			button.addStyleName(AON.CSS.aonIconLeft());
+
+			if (button.equals(toolbarDomainChildsDiscBtn))
+				button.setTitle("Desplegar Empresas Hijas");
+			if (button.equals(toolbarCustomerFeeDiscBtn))
+				button.setTitle("Desplegar Cuotas");
 		}
 	}
 	
