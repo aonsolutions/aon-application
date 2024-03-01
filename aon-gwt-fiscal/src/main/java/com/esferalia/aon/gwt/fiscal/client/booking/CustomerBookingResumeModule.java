@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.booking;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -1414,7 +1415,17 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 			int newRow = customerFeeTable.insertRow(customerFeeTable.getRowCount());
 			
-			Label lineLabel = new Label(fee.getLine().toString());
+			TextBox lineTextBox = new TextBox();
+			lineTextBox.setValue(fee.getLine().toString());
+			lineTextBox.setWidth("50px");
+			lineTextBox.addValueChangeHandler(e -> {
+				try {
+					Short newLine = Short.parseShort(lineTextBox.getValue());
+					reorderAndSaveLine(fee, newLine, customerFeeList);
+				} catch (NumberFormatException ex) {
+					AonMessagePanel.showError(messagePanel, "El valor de la linea debe ser un entero");
+				}
+			});
 			
 			AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(customerFeeTable, fee, newRow);
 			conceptTextArea.setWidth("95%");
@@ -1515,7 +1526,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			
 			checkFeeStatus(startDateBox, endDateBox, fee);
 
-			checkRowAndModify(customerFeeTable, newRow, fee, lineLabel);
+			checkRowAndModify(customerFeeTable, newRow, fee, lineTextBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, conceptTextArea);
 			checkRowAndModify(customerFeeTable, newRow, fee, periodListBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, quantityTextBox);
@@ -1526,7 +1537,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			checkRowAndModify(customerFeeTable, newRow, fee, endDateBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, infoBtn);
 
-			customerFeeTable.setWidget(newRow, 0, lineLabel);
+			customerFeeTable.setWidget(newRow, 0, lineTextBox);
 			customerFeeTable.setWidget(newRow, 1, conceptTextArea);
 			customerFeeTable.setWidget(newRow, 2, periodListBox);
 			customerFeeTable.setWidget(newRow, 3, quantityTextBox);
@@ -1548,7 +1559,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			customerFeeTable.getCellFormatter().getElement(newRow, 9).getStyle().setTextAlign(TextAlign.CENTER);
 			
 			if (newRow % 2 == 0) {
-				lineLabel.addStyleName(AON.CSS.aonOddTableRow());
+				lineTextBox.addStyleName(AON.CSS.aonOddTableRow());
 				conceptTextArea.addStyleName(AON.CSS.aonOddTableRow());
 				periodListBox.addStyleName(AON.CSS.aonOddTableRow());
 				quantityTextBox.addStyleName(AON.CSS.aonOddTableRow());
@@ -1577,6 +1588,65 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		customerFeePanel.add(customerFeeTable);
 	}
 	
+	private void reorderAndSaveLine(Fee fee, short newLine, LinkedList<Fee> customerFeeList) {
+		
+		customerFeeList.sort((o1, o2) -> o1.getLine().compareTo(o2.getLine()));
+		
+		HashSet<Short> existingNumber = new HashSet<>();
+		existingNumber.add(newLine);
+		
+		for(int i=0; i<customerFeeList.size(); i++) {
+			
+			// Si es el que se esta actualizando se salta
+			if(customerFeeList.get(i).equals(fee) || customerFeeList.get(i).getLine() < newLine) { 
+				existingNumber.add(customerFeeList.get(i).getLine());
+				
+				if(customerFeeList.get(i).equals(fee)) existingNumber.add(newLine);
+				
+				continue;
+			}
+			
+			// Si es la linea que se quiere insertar, o mayor se le suma una
+			else if(customerFeeList.get(i).getLine() == newLine) {
+				customerFeeList.get(i).setLine((short) (customerFeeList.get(i).getLine() + 1));
+				customerFeeList.get(i).setModify(true);
+				
+				existingNumber.add(customerFeeList.get(i).getLine());
+			}
+			
+			// Si es mayor se le suma una
+			else if(customerFeeList.get(i).getLine() > newLine) {
+				customerFeeList.get(i).setLine((short) (existingNumber.stream().collect(Collectors.toList()).get(existingNumber.size() - 1) + 1));
+				customerFeeList.get(i).setModify(true);
+				
+				existingNumber.add(customerFeeList.get(i).getLine());
+			}
+			
+		}
+		
+		fee.setLine(newLine);
+		fee.setModify(true);
+		
+		// Guardar Cuotas
+		AonMessagePanel.showLoading(messagePanel, "Guardando cuotas ...");
+		SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), customerFeeList,
+				new AsyncCallback<Integer>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error guardando cuotas: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Integer updates) {
+						AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+						toolbarCustomerFeeUndoBtn.setEnabled(false);
+						toolbarCustomerFeeSaveBtn.setEnabled(false);
+						getCustomerFees();
+					}
+				});
+	}
+
 	private TextBox createYearTextBox() {
 		TextBox tb = new TextBox();
 		tb.setMaxLength(4);
