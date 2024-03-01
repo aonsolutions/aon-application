@@ -217,10 +217,11 @@ public class Cra {
 					// Get salaryPayment type of salary
 					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 							.limit(1)
 							.fetchOne();
 					
-					if(null == salaryPaymentTypeRecord || salaryPaymentTypeRecord.get(SALARY_PAYMENT.TYPE) == (byte) 33) continue;
+					if(null == salaryPaymentTypeRecord) continue;
 					
 					// Get salaryData of salary
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
@@ -372,8 +373,8 @@ public class Cra {
 					
 						Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
 								.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 								.and(SALARY_PAYMENT.TYPE.ne((byte)6))
-								.and(SALARY_PAYMENT.TYPE.ne((byte)33))
 								.fetch();
 						
 						for(Record salaryPayment : salaryPayments) {
@@ -443,7 +444,7 @@ public class Cra {
 		// GET Salaries_Payment from Salary to get CRA type 
 		Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryRecord.get(SALARY.ID)))
-				.and(SALARY_PAYMENT.TYPE.ne((byte)33))
+				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 				.orderBy(SALARY_PAYMENT.TYPE)
 				.fetch();
 		
