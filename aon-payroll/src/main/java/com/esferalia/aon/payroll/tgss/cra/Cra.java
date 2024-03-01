@@ -123,12 +123,12 @@ public class Cra {
 			
 			// ----------- NOMINAS
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-					.join(ENTERPRISE_CCC)
-					.on(ENTERPRISE_CCC.CCC.eq(SALARY.CCC))
 					.join(CONTRACT)
 					.on(CONTRACT.ID.eq(SALARY.CONTRACT))
 					.join(PERSON)
 					.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+					.join(ENTERPRISE_CCC)
+					.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
 					.where(SALARY.START_DATE.ge(startDateSQL))
 					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
