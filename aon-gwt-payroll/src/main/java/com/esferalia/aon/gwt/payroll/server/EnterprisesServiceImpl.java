@@ -2036,6 +2036,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -4819,6 +4820,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void duplicateContract(String domainName, String user, List<EmployeeContractInfo> employees, java.util.Date newStartDate) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqContrataContract.duplicateContract(connection, employees, newStartDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	// ------------------------------------------------ Pension Plan AFI
+
+	@Override
+	public String checkPensionPlanAFI(String domainName, String user, long date, List<Integer> cccIdList) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeAFI.checkPensionPlanAFI(connection, date, cccIdList);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}

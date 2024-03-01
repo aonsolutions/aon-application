@@ -453,4 +453,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate) throws IllegalArgumentException;
 
+	// ------------------------------------------------ Pension Plan AFI
+	
+	String checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList);
+
 }
