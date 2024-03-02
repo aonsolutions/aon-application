@@ -29,6 +29,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeduction;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeductions;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherPayments;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getPPEs;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getPrestSS;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSalaries;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSingleDeductionByType;
@@ -51,6 +52,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -304,6 +307,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		List<PDFPayment> nonSalaries = getComplementosSalariales(allPayments);
 		List<PDFPayment> prestSS = getPrestSS(allPayments);
 		List<PDFPayment> indemns = getIndemns(allPayments);
+		List<PDFPayment> ppes = getPPEs(allPayments);
 		
 		List<PDFPayment> infos = getInfos(allPayments);
 		List<PDFPayment> notes = getNotes(allPayments);
@@ -348,6 +352,13 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawText(contents, "Prestaciones e indemnizaciones de la Seguridad Social", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(prestSS);
+
+			if ( !ppes.isEmpty() ) {
+				drawText(contents, "Aportación empresarial al plan de pensiones de empleo", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+				y -= LITTLE_LINE_JUMP;
+				drawOrLine(ppes);
+			}
+
 			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(others);
