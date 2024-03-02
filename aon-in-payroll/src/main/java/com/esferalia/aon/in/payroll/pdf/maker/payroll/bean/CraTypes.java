@@ -2,12 +2,11 @@
 
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.INFO;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.NOTE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.PPE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.WARNING;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 
 public class CraTypes {	
 
@@ -79,6 +78,8 @@ public class CraTypes {
 			case 61: return words.getString("61");
 			case 62: return words.getString("62");
 			case 100: return words.getString("100");
+
+			case PPE: return words.getString(Integer.toString(PPE));
 
 			case INFO: return words.getString(Integer.toString(INFO));
 			case NOTE: return words.getString(Integer.toString(NOTE));

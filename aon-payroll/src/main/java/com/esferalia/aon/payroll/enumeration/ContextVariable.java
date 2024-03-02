@@ -427,6 +427,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String NOTE = "NOTA";
 	public static final String CAUTION = "ADVERTENCIA";
 	
+	public static final String PPE = "PPE";
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
