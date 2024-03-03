@@ -2,9 +2,13 @@ import { get, post, put, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 const CUSTOMERS = `${API_URL}/customers`;
+const CARRIERS = `${API_URL}/carriers`;
+const CREDITORS = `${API_URL}/creditors`;
+const SUPPLIERS = `${API_URL}/suppliers`;
 const SEGMENTS = `${API_URL}/segments`;
 const RELATIONSHIP = `${API_URL}/relationship`;
 const EMAILS = `emails`;
+const TRANSACTION = `transaction`;
 
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
 export const saveRegistry = (data) => put(`${API_URL}/registry`, data);
@@ -17,10 +21,17 @@ export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
 export const getSegments = (data) => get(SEGMENTS, data);
 
 export const getCreditor = (data) => post(`${API_URL}/creditor`, data);
+export const getCreditorTransaction = (data) => get(`${CREDITORS}/${data.id}/${TRANSACTION}`, data);
 export const saveCreditor = (data) => put(`${API_URL}/creditor`, data);
 
 export const getSupplier = (data) => post(`${API_URL}/supplier`, data);
+export const getSupplierTransaction = (data) => get(`${SUPPLIERS}/${data.id}/${TRANSACTION}`, data);
 export const saveSupplier = (data) => put(`${API_URL}/supplier`, data);
+
+export const getCarriers = (data) => get(CARRIERS, data);
+export const getCarrier = (data) => get(`${CARRIERS}/${data.id}`, data);
+export const getCarrierEmails = (data) => post(`${CARRIERS}/${data.id}/${EMAILS}`, data);
+export const saveCarrier = (data) => put(`${CARRIERS}/${data.id}`, data);
 
 export const getRegistries = (data) => get(`${API_URL}/suggestion/registry`, data);
 

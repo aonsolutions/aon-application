@@ -65,6 +65,7 @@ export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
 export const AON_NEW_NUMBER = 'aon-new-number';
 export const AON_REGISTRY = 'aon-registry';
+export const AON_REGISTRY_SUGGESTION = 'aon-registry-suggestion';
 export const AON_SEARCH = 'aon-search';
 export const AON_SEARCH_BOX = 'aon-search-box';
 export const AON_SELECT = 'aon-select';
@@ -114,6 +115,11 @@ export const AON_SUPPLIER = 'aon-supplier';
 export const AON_SUPPLIER_LIST = 'aon-supplier-list';
 export const AON_MOBILE_SUPPLIER = 'aon-mobile-supplier';
 export const AON_MOBILE_SUPPLIER_LIST = 'aon-mobile-supplier-list';
+
+export const AON_CARRIER = 'aon-carrier';
+export const AON_CARRIER_LIST = 'aon-carrier-list';
+export const AON_MOBILE_CARRIER = 'aon-mobile-carrier';
+export const AON_MOBILE_CARRIER_LIST = 'aon-mobile-carrier-list';
 
 export const AON_CREDITOR = 'aon-creditor';
 export const AON_CREDITOR_LIST = 'aon-creditor-list';
@@ -181,3 +187,5 @@ export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH
 export const AON_QUANTITY = 'aon-quantity';
 
 export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';
+
+export const AON_MARKETING = 'aon-marketing';
