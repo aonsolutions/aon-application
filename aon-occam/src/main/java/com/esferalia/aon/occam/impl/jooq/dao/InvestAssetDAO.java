@@ -197,20 +197,19 @@ public class InvestAssetDAO {
 
 		public static InvestAsset build(Record r) {
 			return new InvestAsset()
-				.setId(r.getValue(INVEST_ASSET.ID))
-				.setDomain(r.getValue(INVEST_ASSET.DOMAIN))
-				.setDescription(r.getValue(INVEST_ASSET.DESCRIPTION))
+				.setId(getValue(r, INVEST_ASSET.ID))
+				.setDomain(getValue(r, INVEST_ASSET.DOMAIN))
+				.setDescription(getValue(r, INVEST_ASSET.DESCRIPTION))
 				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
 						? EnterpriseActivityFiller.build(r)
-						: new EnterpriseActivity().setId(r.getValue(INVEST_ASSET.ACTIVITY)))						
-				.setType(InvestAssetType.safeValueOf(r.getValue(INVEST_ASSET.TYPE)))
-				.setRegime(InvestAssetRegime.safeValueOf(r.getValue(INVEST_ASSET.REGIME)))
-				.setStartDate(r.getValue(INVEST_ASSET.START_DATE))
-				.setEndDate(r.getValue(INVEST_ASSET.END_DATE))
-				.setRetentionPercent(r.getValue(INVEST_ASSET.RETENTION_PERCENT))
-				.setVatPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
-				.setPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
-				.setProperties(r.getValue(INVEST_ASSET.PROPERTIES));
+						: new EnterpriseActivity().setId(getValue(r, INVEST_ASSET.ACTIVITY)))						
+				.setType(InvestAssetType.safeValueOf(getValue(r, INVEST_ASSET.TYPE)))
+				.setRegime(InvestAssetRegime.safeValueOf(getValue(r, INVEST_ASSET.REGIME)))
+				.setStartDate(getValue(r, INVEST_ASSET.START_DATE))
+				.setEndDate(getValue(r, INVEST_ASSET.END_DATE))
+				.setRetentionPercent(getDouble(r, INVEST_ASSET.RETENTION_PERCENT))
+				.setVatPercent(getDouble(r, INVEST_ASSET.VAT_PERCENT))
+				.setProperties(getValue(r, INVEST_ASSET.PROPERTIES));
 		}
 	}
 }

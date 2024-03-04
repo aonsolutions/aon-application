@@ -107,6 +107,7 @@ public final class IJsonNames {
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
 	public static final String COMPANY = "company";
+	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";
 	public static final String COMPOSITION = "composition";
 	public static final String COMPOSITION_ITEM = "compositionItem";
@@ -139,6 +140,7 @@ public final class IJsonNames {
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
+	public static final String DATA = "data";
 	public static final String DATE = "date";
 	public static final String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	public static final String DAYS_TO_EXPIRE = "daysToExpire";
@@ -448,6 +450,8 @@ public final class IJsonNames {
 	public static final String PURCHASES_RATIO = "purchasesRatio";
 	public static final String PURCHASE_VALUATED = "purchaseValuated";
 	public static final String PYMNT_DAYS = "pymntDays";
+	public static final String PUBLIC_STATE = "publicStatus";
+	
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";

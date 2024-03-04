@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.ISalaryFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryGroup;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryPercent;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -98,6 +99,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
@@ -137,6 +139,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req, false);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/models390") ) {
+				response(req, resp, getFiscalModels390(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/estimations") ) {
 				response(req, resp, getFiscalModelsEstimations(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
@@ -188,6 +192,35 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod130DAO.getMod130s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			
+			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
+			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
+			boolean testEnvironment = AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.FS_AEAT_TEST_ENV));
+			
+			JSONArray jsonModels = new JSONArray();
+
+			models.forEach(model-> {
+				try {
+					jsonModels.put(FiscalModelJSON.toJSON(model)
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
+							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
+							.put("nrc", model.getNrc())
+							);
+					
+				}
+				catch (Exception e) {
+					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
+				}
+			});
+
+			return jsonModels; 
+		} 
+	}
+	
+	private JSONArray getFiscalModels390(AonApiData api) {
+		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
+			LinkedList<FiscalModel> models = new LinkedList<>();
+			models.addAll( Mod390HFDAO.getMod390HFs(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
 			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
@@ -329,8 +362,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams);
 			
 			// IRPF PROFESIONAL
-			TreeMap<Double, IrpfSummaryPercent> professionalMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL).getMap().get(WithholdingType.PROFESSIONAL).getMap();
-			Double professionalAmount = professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
+			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);
+			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap ? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
+			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfProfessionalJson = new JSONObject();
 			irpfProfessionalJson.put("description", "IRPF Profesional");
@@ -338,8 +372,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			jsonModels.put(irpfProfessionalJson);
 			
 			// IRPF PROFESIONAL
-			TreeMap<Double, IrpfSummaryPercent> rentinglMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO).getMap().get(WithholdingType.RENTING).getMap();
-			Double rentingAmount = rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
+			IrpfSummaryGroup rentingIRPFlMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO);
+			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap ? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
+			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfRentingJson = new JSONObject();
 			irpfRentingJson.put("description", "IRPF Arrendamiento");

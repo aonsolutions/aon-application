@@ -545,10 +545,10 @@ public class Mod347DAO {
 			throw new AonCoreException(
 				MessageFormat.format("La longitud del num. documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
 				,declared.getDocument(),declared.getName()));
-		} 
-		if (AonStringUtils.length(declared.getOperatorNif()) > 15) {									
+		}		
+		if (AonStringUtils.length(declared.getOperatorNif()) > 17) {									
 			throw new AonCoreException(
-				MessageFormat.format("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. [{0} - {1}]"
+				MessageFormat.format("La longitud del NIF Operador Comunitario/Extracomunitario no puede ser mayor de 17 caracteres. [{0} - {1}]"
 				,declared.getOperatorNif(),declared.getName()));
 			
 		}
@@ -745,15 +745,20 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
-		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion), que cumplan los filtros 
+		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion) o Servicios Extracomunitarios, que cumplan los filtros 
 		getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
-				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY))
+				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) )) 
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
 					// Ventas ISP, se ponen como Nacionales, por que no hay que marcar ISP en las ventas en el 347, solo en las compras
-					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP)
+					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
+					}
+					// Compras extracomunitarias de servicios se tratan como si fueran ISP
+					if (vat.getInvoiceType() == InvoiceType.PURCHASE && vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) {
+						vat.setTransaction( InvoiceTransactionType.OTHER_ISP );
+					}
 				})
 				.forEach( vat -> {
 						// Añadir la factura al registro que corresponda del declarado
@@ -803,7 +808,7 @@ public class Mod347DAO {
 							declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
 	
 							declared.setVatAccrual(vat.isVatAccrualRegime());
-							declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
+							declared.setIsp( vat.getTransaction() == InvoiceTransactionType.OTHER_ISP );
 						
 							declared.setFirstQuarterAmount(0.0);
 							declared.setSecondQuarterAmount(0.0);
@@ -964,7 +969,7 @@ public class Mod347DAO {
 			: AonStringUtils.substring(declared.getOperatorNif(),2); 
 		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 			.filter( vat -> AonStringUtils.equals(vat.getRegistryDocument(),registryDocument))
-		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY) &&  // Nacional o ISP o intracomunitarias 
+			.filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) ) &&  // Nacional o ISP o intracomunitarias o servicios extracomunitarios
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
 	                    );  
@@ -975,8 +980,8 @@ public class Mod347DAO {
 				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
 				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
 			)
-			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
-			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
+			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )				
+			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )
 			.filter(vat ->  !(mod347.isExcludeRetention() && vat.hasRetention()))
 			.filter(vat ->  !(mod347.isExcludeIntracommunity() && vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY));
 		

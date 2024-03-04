@@ -182,6 +182,8 @@ public class MainContrataITObject {
 								days, 
 								it.getStartDate(), 
 								null, 
+								itEmployee.getContractInfo().getAgreementCategory(),
+								"Las propias de " + itEmployee.getContractInfo().getAgreementCategory(),
 								new AsyncCallback<Void>() {
 									
 									@Override

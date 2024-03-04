@@ -19,6 +19,8 @@ public class EnterpriseCCC implements Serializable {
 	private boolean useByCra = false;
 	private boolean isDeleted = false;
 	
+	private String enterpriseName;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -95,6 +97,14 @@ public class EnterpriseCCC implements Serializable {
 	public EnterpriseCCC setUseByCra(boolean useByCra) {
 		this.useByCra = useByCra;
 		return this;
+	}
+	
+	public String getEnterpriseName() {
+	    return enterpriseName;
+	}
+	
+	public void setEnterpriseName(String enterpriseName) {
+	    this.enterpriseName = enterpriseName;
 	}
 	
 }

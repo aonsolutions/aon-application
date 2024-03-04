@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -603,25 +604,46 @@ public class InvoiceAutoComplete {
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
 			Integer scope;
 			User user = SecurityDAO.getUser(ctx.getContext());	
-			Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
 			
-			if(s == null) {
-				Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
-				if(scopes != null && scopes.length > 0)
-					scope = scopes[0];
-				else {
-					s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-						f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
-					if(s == null) {
-						s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
-							.setDescription("GENERAL")
-							.setDomain(inv.getDomain()));
+			if(inv.getDomain().equals(user.getDomain())) {
+				Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
+				
+				if(s == null) {
+					Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
+					if(scopes != null && scopes.length > 0)
+						scope = scopes[0];
+					else {
+						s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
+							f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
+						if(s == null) {
+							s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+								.setDescription("GENERAL")
+								.setDomain(inv.getDomain()));
+						}
+						scope = s.getId();
 					}
-					scope = s.getId();
+				} else scope = s.getId();
+			} else {
+				Scope s = null;
+				List<Scope> list = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
+					f.getDomainProperty().eq(inv.getDomain())).toList();
+				if(list != null && !list.isEmpty()) {
+					s = list.stream().filter(f -> "GENERAL".equalsIgnoreCase(f.getDescription())).findFirst().orElse(null);
+					if(s == null) {
+						s = list.stream().findFirst().orElse(null);
+					}
 				}
-			} else scope = s.getId();
-			inv.setScope(new Scope().setId(scope));
+
+				if(s == null) {
+					s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+						.setDescription("GENERAL")
+						.setDomain(inv.getDomain()));
+				}
+				scope = s.getId();
+			}	
+			inv.setScope(new Scope().setId(scope));				
 		}
+
 	};
 	
 

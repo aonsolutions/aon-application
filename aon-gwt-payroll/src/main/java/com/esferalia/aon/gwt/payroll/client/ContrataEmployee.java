@@ -183,7 +183,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 
-	// ------------------------------------------------- ContractClausesUIImpl
+	// ------------------------------------------------- ContractOtherDataImpl
 
 	public class ContractOtherDataImpl extends ContractOtherData {
 
@@ -239,6 +239,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		
 		@Override
+		protected void onExportBasicCopyPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportBasicCopy(consumer, failure);
+		}
+		
+		@Override
 		protected void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
 			exportContract(consumer, failure, true);
 		}
@@ -287,6 +292,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(isTransform,
+							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							e -> failure.accept(e));
+				}
+			}, f -> failure.accept(f));
+		}
+		
+		private void exportBasicCopy(Consumer<String> consumer, Consumer<Throwable> failure) {
+			showLoading("Generando borrador de la copia basica");
+			contrataEmployeeObject.getContractOtherInfo(s -> {
+				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+					contrataEmployeeObject.getContractSpecificData(su -> {
+						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+						contrataEmployeeObject.saveBasicCopyExport(
+								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								e -> failure.accept(e));
+					}, f -> failure.accept(f));
+				else {
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+					contrataEmployeeObject.saveBasicCopyExport(
 							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
 							e -> failure.accept(e));
 				}
@@ -943,7 +969,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
 				
 				separatorAdds.setVisible(canExtension || canTransform || hasExtension || hasTransform);
-				contractExtension.setVisible(canExtension && !hasExtension);
+				contractExtension.setVisible(canExtension);
 				contractTransform.setVisible(canTransform && !hasTransform);
 				deleteContractExtension.setVisible(hasExtension);
 				deleteContractTransform.setVisible(hasTransform);
@@ -952,7 +978,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				sendBasicCopy.setVisible(hasCertificateSEPE && !hasCbc);
 				sendContract.setVisible(hasCertificateSEPE && !hasCto);
 				sendContractTransform.setVisible(hasCertificateSEPE && hasTransform && !hasTransformComuniation);
-				sendContractExtension.setVisible(hasCertificateSEPE && hasExtension && !hasExtensionComuniation);
+				sendContractExtension.setVisible(hasCertificateSEPE && hasExtension);
 				removeContract.setVisible(hasCertificateSEPE && hasCto);
 				removeContractTransform.setVisible(hasCertificateSEPE && hasTransform && hasTransformComuniation);
 			} catch (Exception e) {
@@ -999,6 +1025,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ExportBasicCopyCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportBasicCopy();
+		}
+	}
+	
 	class ExportExtensionContractCommand implements ScheduledCommand {
 
 		@Override
@@ -1041,6 +1075,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public AttachContextMenu() {
 			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
+			exportContract = addMenuItem("Borrador Copia Basica", new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(), "exportBasicCopy");
 			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)", new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
 			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)", new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
 			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n", new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");
@@ -1211,6 +1246,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeCalendar
 	private HTMLPanel employeeCalendarButtons;
+	private ListBox calendarYaerLB;
 
 	// EmployeeContractIrpf
 	private HTMLPanel employeeContractIrpfButtons;
@@ -1555,6 +1591,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+			
+			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
+			employeeCalendar.setYearLB(calendarYaerLB);
+			
 			success.accept("");
 		});
 	}
@@ -1572,6 +1612,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 			tabLayOutPanel.selectTab(selectedTab, true);
+			
+			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
+			employeeCalendar.setYearLB(calendarYaerLB);
+			
 			success.accept("");
 		});
 	}
@@ -2639,10 +2683,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		utilityButton.addClickHandler(e -> employeeCalendar.onUtility(e));
 		hPanel.add(utilityButton);
 
-		ListBox yearLB = new ListBox();
-		employeeCalendar.initializeYearLB(yearLB);
-		employeeCalendar.setYearLB(yearLB);
-		hPanel.add(yearLB);
+		calendarYaerLB = new ListBox();
+		hPanel.add(calendarYaerLB);
 
 		return hPanel;
 	}

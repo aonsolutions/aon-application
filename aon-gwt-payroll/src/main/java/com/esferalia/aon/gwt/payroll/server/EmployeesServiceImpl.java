@@ -5704,7 +5704,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public EmployeeContractInfo setEmployeeInfoDataBase(String domainName, EmployeeContractInfo newEmployeeInfo) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
+			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo, domainName);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6089,6 +6089,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			if(isTransform) JooqContractPDF.saveDraftContractTransform(domainName, domainId, contractId, pdfBytes);
 			else JooqContractPDF.saveDraftContract(domainName, domainId, contractId, pdfBytes);
+			
+		} catch (SQLException | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void fillBasicCopy(String domainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+
+			byte[] pdfBytes = JooqContractPDF.copyBasicFill(connection, domainId, parentDomainId, contractId,
+					contractType, formativeLvl);
+
+			JooqContractPDF.saveDraftCopyBasic(domainName, domainId, contractId, pdfBytes);
 			
 		} catch (SQLException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());

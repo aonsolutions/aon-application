@@ -1,8 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -24,7 +24,6 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonNumber } from '../../components/aon-number.js';
-import { AonRegistry } from '../../components/aon-registry.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonSuggestion } from '../../components/aon-suggestion.js';
@@ -40,6 +39,8 @@ import { AonNewSuggestion } from '../../components/aon-new-suggestion.js';
 import { AonNewNumber } from '../../components/aon-new-number.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonNewTextarea } from '../../components/aon-new-textarea.js';
+import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
+
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -88,12 +89,13 @@ export class AonInvoice extends AonElement {
    		super();
 	}
 
-	connectedCallback () {
+	async connectedCallback () {
 		this.initialize();
 		this.buildDur().then(r => {
 			this.build();
 		});
 		
+		this.configuration = await getInvoiceConfiguration();
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
@@ -115,9 +117,7 @@ export class AonInvoice extends AonElement {
 			}
 		});
 
-		getInvoiceConfiguration().then(r => {
-            this.configuration = r;
-        });
+
 	}
 
 	initialize(){
@@ -413,9 +413,9 @@ export class AonInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
-		}
+		} 
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
@@ -434,6 +434,9 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION, CONSTANT.ERROR, CONSTANT.DISCARDED ) ) {
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
@@ -681,92 +684,113 @@ export class AonInvoice extends AonElement {
 			
 		};
 		
-		this.invoice.messages
-		.filter( err => err.context )
-		//.filter( err => !err.context.line )
-		.forEach( (err, i ) => {
-			try {
-				switch ( err.context.key ){
-					case ErrKey.DOMAIN: 
-						break;
-					case ErrKey.WORKPLACE: 
-						break;
-					case ErrKey.TYPE: 
-						break;
-					case ErrKey.BASES_QUOTAS: 
-						break;
-					case ErrKey.SERIES: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.DUPLICATED_SERIES_NUMBER: 
-						this.getElement(this.SERIE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.NUMBER: 
-					case ErrKey.REFERENCE_CODE: 
-					case ErrKey.DUPLICATED_REFERENCE_CODE: 
-						this.getElement(this.REFERENCE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TRANSACTION: 
-						break;
-					case ErrKey.ISSUE_DATE: 
-						this.getElement(this.DATE).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_DATE: 
-						break;
-					case ErrKey.TAX_RATE: 
-						this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_BASE: 
-						this.getElement(`${this.TAX_BASE}${err.context.line}` ).addError(getMessageHTML(err));
-						break;
-					case ErrKey.TAX_QUOTA: 
-						this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
-						break;
-					case ErrKey.SCOPE: 
-						break;
-					case ErrKey.REGISTRY: 
-						break;
-					case ErrKey.AMBIGUOUS_REGISTRY: 
-						break;
-					case ErrKey.RDOCUMENT:{
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+		if(this.invoice.messages) {
+			this.invoice.messages
+			.filter( err => err.context )
+			//.filter( err => !err.context.line )
+			.forEach( (err, i ) => {
+				try {
+					switch ( err.context.key ){
+						case ErrKey.DOMAIN: 
+							break;
+						case ErrKey.WORKPLACE: 
+							break;
+						case ErrKey.TYPE: 
+							break;
+						case ErrKey.BASES_QUOTAS: 
+							break;
+						case ErrKey.SERIES: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.DUPLICATED_SERIES_NUMBER: 
+							this.getElement(this.SERIE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.NUMBER: 
+						case ErrKey.REFERENCE_CODE: 
+						case ErrKey.DUPLICATED_REFERENCE_CODE: 
+							this.getElement(this.REFERENCE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TRANSACTION: 
+							break;
+						case ErrKey.ISSUE_DATE: 
+							this.getElement(this.DATE).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_DATE: 
+							break;
+						case ErrKey.TAX_RATE: 
+							this.getElement(`${this.TAX_PERCENTAGE}${err.context.line}` ).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_BASE: 
+							this.getElement(`${this.TAX_BASE}${err.context.line}`).addError(getMessageHTML(err));
+							break;
+						case ErrKey.TAX_QUOTA: 
+							this.getElement(`${this.TAX_QUOTA}${err.context.line}`).addError(getMessageHTML(err));
+							break;
+						case ErrKey.IRPF_RATE: {
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_PERCENTAGE}${line}` ).addError(getMessageHTML(err));
+							break;
 						}
-						break;
-					case ErrKey.RDOCUMENT_COUNTRY: 
-						break;
-					case ErrKey.RNAME: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.NAME).addError(getMessageHTML(err));
+						case ErrKey.IRPF_BASE: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_BASE}${line}` ).addError(getMessageHTML(err));
+							break;
 						}
-						break;
-					case ErrKey.ADDRESS: { 
-							let registry = this.getElement(this.REGISTRY); 
-							registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+						case ErrKey.IRPF_QUOTA: { 
+							let line = this.getElement(this.TAX_TABLE2).rows - 1;
+							this.getElement(`${this.TAX_QUOTA}${line}`).addError(getMessageHTML(err));
+							break;
 						}
-						break;
-					case ErrKey.DETAIL_DESCRIPTION: 
-						break;
-					case ErrKey.DETAILS: 
-						break;
-					case ErrKey.ACCOUNT_ENTRY: 
-						break;
-					case ErrKey.FINANCE_AMOUNT_ZERO: 
-						break;
-					case ErrKey.FINANCE_WRONG_DUE_DATE: 
-						break;
-					case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
-						break;
-					case ErrKey.TOTAL: 
-						this.getElement(this.TOTAL).addError(getMessageHTML(err));
-						break;
-					default:
-						break;
+						case ErrKey.SCOPE: 
+							break;
+						case ErrKey.REGISTRY: 
+							break;
+						case ErrKey.AMBIGUOUS_REGISTRY: 
+							break;
+						case ErrKey.RDOCUMENT:{
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.DOCUMENT).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.RDOCUMENT_COUNTRY: 
+							break;
+						case ErrKey.RNAME: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.NAME).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.ADDRESS: { 
+								let registry = this.getElement(this.REGISTRY); 
+								registry.getElement(registry.ADDRESS).addError(getMessageHTML(err));
+							}
+							break;
+						case ErrKey.DETAIL_DESCRIPTION: 
+							break;
+						case ErrKey.DETAILS: 
+							break;
+						case ErrKey.ACCOUNT_ENTRY: 
+							break;
+						case ErrKey.FINANCE_AMOUNT_ZERO: 
+							break;
+						case ErrKey.FINANCE_WRONG_DUE_DATE: 
+							break;
+						case ErrKey.FINANCE_WRONG_ACCOUNT_BANK: 
+							break;
+						case ErrKey.TOTAL: 
+							this.getElement(this.TOTAL).addError(getMessageHTML(err));
+							break;
+						case ErrKey.PAY_METHOD: 
+							let line = err.context.line || 0; 
+							this.getElement(`${this.FINANCE_PAYMETHOD}${line}`).addError(getMessageHTML(err));
+							break;
+						default:
+							break;
+					}
+				} catch ( e ) {
+					//console.error(e);
 				}
-			} catch ( e ) {
-				console.error(e);
-			}
-		});
+			});
+		}
 	}
 
 	buildMessagesCard(parent) {
@@ -1168,12 +1192,16 @@ export class AonInvoice extends AonElement {
 		total.value;
 		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 		total.readonly = this.invoice.isReadonly()
-			|| this.invoice.taxes.length > 1
+			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
+		if(LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
+			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
+		if(!LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
+			total.disabled = CONSTANT.TRUE;
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
-		|| this.invoice.taxes.length > 1
+		|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 		|| this.invoice.details.length > 0;
 		// *****
 
@@ -1192,42 +1220,49 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(customer, '4');	
 		} else {
-			let registry = new AonRegistry();
+			let registry = new AonRegistrySuggestion();
 			registry.id = this.REGISTRY;
+			registry.showAddress = true;
 			registry.types = this.invoice.getRegistryType();
-			registry.value = this.invoice.getRegistry();
+			// registry.value = this.invoice.getRegistry();
 			registry.setRegistry(this.invoice.getRegistry());
-			registry.readonly = this.invoice.isReadonly();
-			registry.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setRegistry(registry.getRegistry());
-				if(this.autosave) this.save();
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
 			});
-			registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
-				this.invoice.setRegistry(registry.getRegistry());
-				getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
-					this.invoice.setPaymethod(rpm.paymethod.id);
-					getPaymethod(rpm.paymethod.id).then(pm => {
-						if(pm.type === 'NEGOTIABLE_DOCUMENT') {
-							getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-								this.invoice.setBankAccount(crpm.bank.bank_account);
-								this.reload();
-							});
-							// getRegistryBanks(this.company.id).then(r => {
-							// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
-							// 	this.reload();
-							// });	
-						} else if(pm.type === 'BANK_TRANSFER'){
-							this.invoice.setBankAccount(rpm.bank.bank_account);
-							this.reload();
-						} else {
-							this.invoice.setBankAccount("");
-							this.reload();
-						}
-					});
-				});
-				if(this.autosave) this.save();
-			});
-			table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
+			table.addCell(registry, '6');
+			
+			// registry.readonly = this.invoice.isReadonly();
+			// registry.addEventListener(EVENT.CHANGE, () => {
+			// 	this.invoice.setRegistry(registry.getRegistry());
+			// 	if(this.autosave) this.save();
+			// });
+			// registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
+			// 	this.invoice.setRegistry(registry.getRegistry());
+			// 	getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
+			// 		this.invoice.setPaymethod(rpm.paymethod.id);
+			// 		getPaymethod(rpm.paymethod.id).then(pm => {
+			// 			if(pm.type === 'NEGOTIABLE_DOCUMENT') {
+			// 				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
+			// 					this.invoice.setBankAccount(crpm.bank.bank_account);
+			// 					this.reload();
+			// 				});
+			// 				// getRegistryBanks(this.company.id).then(r => {
+			// 				// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
+			// 				// 	this.reload();
+			// 				// });	
+			// 			} else if(pm.type === 'BANK_TRANSFER'){
+			// 				this.invoice.setBankAccount(rpm.bank.bank_account);
+			// 				this.reload();
+			// 			} else {
+			// 				this.invoice.setBankAccount("");
+			// 				this.reload();
+			// 			}
+			// 		});
+			// 	});
+			// 	if(this.autosave) this.save();
+			// });
+			// table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
 		}
 
 		table.addRow(); // ----- ROW 3
@@ -1270,7 +1305,7 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				});
 				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-			} else this.invoice.setWorkplace(r[0].id);
+			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
 		}).catch(e => {
 			console.error(e);
 		});
@@ -1344,8 +1379,10 @@ export class AonInvoice extends AonElement {
 				if(this.autosave) this.save();
 			});
 			div.appendChild(farmer);
-			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-				this.invoice.setWithholdingFarmer(false);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional() ) {
+				if(this.invoice.isWithholdingFarmer()){
+					this.invoice.setWithholdingFarmer(false);
+				}
 				farmer.setDisabled(true);
 			}
 			farmer.checked = this.invoice.isWithholdingFarmer();
@@ -1546,7 +1583,7 @@ export class AonInvoice extends AonElement {
 
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked);
+			this.invoice.setWithholding(irpf.checked, this.configuration ? this.configuration.withholdingPercent : undefined);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -1565,6 +1602,7 @@ export class AonInvoice extends AonElement {
 			irpfType.disabled = 'true';
 		}
 		irpfType.setOptions(WithholdingType);
+
 		irpfType.addEventListener(EVENT.SELECT, () => {
 			let detail = WithholdingType.find(v => v.id == irpfType.value);
 			this.invoice.setWithholdingType(detail);
@@ -1575,11 +1613,11 @@ export class AonInvoice extends AonElement {
 		irpfType.readonly = this.invoice.isReadonly();
 		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
 			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
-			irpfType.value = val;
-		}
+			irpfType.value = val || (this.configuration ? this.configuration.withholdingPercent : undefined);
+		} 
 	}
 
-	onChangeRegistry(registry) { 
+	async onChangeRegistry(registry) { 
 		this.invoice.setRegistry(registry);
 		if(registry.paymethod) {
 			this.invoice.setPaymethod(registry.paymethod.paymethod.id);
@@ -1614,6 +1652,13 @@ export class AonInvoice extends AonElement {
 			});				
 		}
 		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
+		else {
+			let transactionJSON = await getSupplierTransaction({id: registry.id})
+			if(!transactionJSON.transaction)
+				transactionJSON = await getCreditorTransaction({id: registry.id})
+			if(transactionJSON.transaction)
+				this.invoice.setTransaction(transactionJSON.transaction);
+		}
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
 
@@ -1653,6 +1698,10 @@ export class AonInvoice extends AonElement {
 		percentage.readonly = this.invoice.isReadonly() 
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
+
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			percentage.disabled = CONSTANT.TRUE;
+		
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1664,13 +1713,18 @@ export class AonInvoice extends AonElement {
 			|| this.invoice.details.length > 0
 			|| tax.type.includes('IRPF');
 
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			base.disabled = CONSTANT.TRUE;
+
 		// ----- TAX QUOTA
 
 		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
 
 		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
 		taxesTable.addCell(quota);
-		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
+		quota.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 || tax.type.includes('IRPF');
+		if(this.invoice.details.length > 0 || tax.type.includes('IRPF'))
+			quota.disabled = CONSTANT.TRUE;
 
 		// ----- TAX DELETE
 
@@ -1779,6 +1833,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);		
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL OPTIONS
 
@@ -1860,7 +1915,7 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-
+		
 		let description = LS.isNewTheme() ? new AonNewTextarea() : new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
@@ -1868,7 +1923,7 @@ export class AonInvoice extends AonElement {
 		description.value = detail.description;
 		description.addEventListener(EVENT.AON_KEYUP, (e) => {
 			if(description.value.length > 2) {
-				let data = { value: description.value};
+				let data = { value: description.getValue()};
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {
 						return {
@@ -1888,6 +1943,7 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			detail.prepayment = ("PREPAYMENT" === e.detail.item.product.type);
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
 			this.reload();
@@ -1927,6 +1983,7 @@ export class AonInvoice extends AonElement {
 		let td5 = table.addCell(amount);
 		td5.style.verticalAlign = "bottom";
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
@@ -1953,7 +2010,7 @@ export class AonInvoice extends AonElement {
 			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
 				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0){
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2064,7 +2121,7 @@ export class AonInvoice extends AonElement {
 				detail.percentage = 21.0;
 			}
 			if(detail.percentage) vat.value = detail.percentage;
-		} else {
+		} else if(detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
@@ -2099,6 +2156,7 @@ export class AonInvoice extends AonElement {
 		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
+		amount.disabled = CONSTANT.TRUE;
 
 		table.addRow(); // ----- ROW 4
 
@@ -2174,6 +2232,10 @@ export class AonInvoice extends AonElement {
 			card.id = this.FINANCE;
 			card.title = MSG.EXPIRATIONS;
 			parent.appendChild(card);
+			card.addTitleButton("Resetear", MATERIAL_ICONS.AUTORENEW, false, () => {
+				this.invoice.resetFinances();
+				this.reload();
+			});
 		}
 
 		let table = this.getElement(this.FINANCE_TABLE);
@@ -2251,9 +2313,10 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
+		date.value = finance.due_date;
 		table.addCell(date);
 		date.value = finance.due_date;
-		
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
@@ -2332,6 +2395,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
+		date.value = finance.due_date;
 		table.addCell(date);
 		date.value = finance.due_date;
 
@@ -2384,9 +2448,10 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		let dateCell = table.addCell(date);
-		dateCell.style.width = '15%';
 		date.value = finance.due_date;
+		let dateCell = table.addCell(date);
+		date.value = finance.due_date;
+		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
 
@@ -2581,6 +2646,8 @@ export class AonInvoice extends AonElement {
 			 	: this.getInvoice().file.path;
 			viewer.width = fileDiv.offsetWidth;
 			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
+			viewer.addEventListener(EVENT.PRINT_IMAGE, () => { getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printImageTextLayer(t)); } );
+			viewer.addEventListener(EVENT.PRINT_PDF_PAGE, (e) => { if ( !e.detail.text ) getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printPdfTextLayer(e.detail.page, t)); } );
 			fileDiv.appendChild(viewer);
 		}
 		this.buildDetailCard();
@@ -2645,7 +2712,9 @@ export class AonInvoice extends AonElement {
 		} else if(this.accept) {
 			this.getApplication().startLoader();
 			this.accept = false;
-			acceptInvoice(this.getInvoice()).then(r => {
+			acceptInvoice(this.getInvoice())
+			.then(r => {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				this.invoice = new Invoice(r);
 				this.getApplication().stopLoader(); 
 				this.reload();
@@ -2654,6 +2723,15 @@ export class AonInvoice extends AonElement {
 				this.getApplication().stopLoader(); 
 				this.showError(e)
 			});
+		}
+	}
+	
+	setInvofoxState(publicState) {
+		try {
+			let invofoxDocumentId = this.getInvofoxDocumentId();
+			saveInvofoxDocument({_id: invofoxDocumentId , publicState: publicState});
+		}  catch ( e ){
+			
 		}
 	}
 
@@ -2675,10 +2753,17 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
+		
+		if ( this.isInvofoxInvoice() ) {
+			this.setInvofoxState(CONSTANT.REJECTED);
+			this.back();
+			return;
+		}
+			
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REJECT_INVOICE);
+		d.setTitle(MSG.REVIEW);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -2944,6 +3029,14 @@ export class AonInvoice extends AonElement {
 		else if(this.invoice.isRejected()) {
 			return 'Rechazado'
 		} else return 'Papelera';
+	}
+	
+	isInvofoxInvoice() {
+		return this.getInvofoxDocumentId();
+	}
+		
+	getInvofoxDocumentId(){
+		return this.invoice.insight?.invofoxId;	
 	}
 
 	trashInvoice() {

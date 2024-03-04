@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.BienAfectoIRPFYOIVAEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
@@ -206,6 +207,8 @@ public class LROE140_2_1 extends LROE140 {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
+			if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+			if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 			r.setEpigrafe(invoice.getEpigraph());
 
 			r.setBaseImponible(Double.toString(tax.getBase()));	
@@ -219,7 +222,11 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
-			r.setImporteGastoIRPF(Double.toString(tax.getBase()));
+			if(!AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
+				r.setConcepto(detail.getAccountCode().substring(0,3));
+				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
+				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
+			}
 					
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
@@ -231,8 +238,10 @@ public class LROE140_2_1 extends LROE140 {
 //			r.setPorcentajeCompensacionREAGYP("");
 //			r.setImporteCompensacionREAGYP("");
 			if(invoice.getInvestAsset() != null) {
+				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
+					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
-				r.setReferenciaBien(Integer.toString(detail.getInvestAssetData().getId()));
+				r.setReferenciaBien(Integer.toString(ia));
 			}
 			
 			renta.getDetalleRentaIVA().add(r);
@@ -355,6 +364,8 @@ public class LROE140_2_1 extends LROE140 {
 		FiltroConsultaGastosConFacturaType filtro = new FiltroConsultaGastosConFacturaType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
 		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		filtro.setEpigrafe(invoice.getEpigraph());
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
 		filtro.setNumPaginaConsulta(1);

@@ -8,12 +8,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,14 +43,17 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.seres.SeresUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class ConnectDeliveryWriterOccam  implements Serializable {
@@ -106,7 +107,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		rectl.seh1c = createSEH1CRecord(delivery, codes);
 		rectl.seh1dList = createSEH1DList(delivery, codes);
 //		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
-		rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);
+		if(packageData != null) {
+			rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);			
+		} else if(!delivery.getPackaging().isEmpty()) {
+			rectl.seh1pList = createSEH1PList2(delivery, codes);
+		}
+
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -220,12 +226,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<IngenetPackaging> packageList = getPackageList(packageData);
 		List<IngenetPackaging> ssccList = packageList.stream().filter(f -> f.hasSscc()).collect(Collectors.toCollection(LinkedList::new));
 		
-		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null);
+		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null, null, codes);
 		mainPackage.seh1lList = new ArrayList<>();
 		list.add(mainPackage);
 
-		LinkedList<Integer> lineList = new LinkedList<>();
-		Integer auxLine = ssccList.size();
+//		LinkedList<Integer> lineList = new LinkedList<>();
+//		Integer auxLine = ssccList.size();
 		for (Integer i = 0; i < ssccList.size(); i++) {
 			IngenetPackaging sscc = ssccList.get(i);
 
@@ -236,142 +242,59 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			Short env = aux != null ? aux.getEnv().shortValue() : sscc.getEnv().shortValue();
 			DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == env).findFirst().orElse(new DeliveryDetail());
 			Double quantity = auxDetail.getQuantity();
-			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc());
+			
+			
+			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc(), detail, codes);
 			packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
 			packaging.seh1lList = new ArrayList<>();
-			Integer line = sscc.getLin();
-			if(lineList.contains(line)) {
-			    line = auxLine;
-			    auxLine = auxLine - 1;
-			}
-			lineList.add(line);
+			Integer line = i + 1;
 			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, quantity, codes));
 			list.add(packaging);
 		}
 		
 		return list;
 	}
-	
 
-	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
+	private List<SEH1P> createSEH1PList2(Delivery delivery, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
-		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
-				? getDetailList(delivery.getId()).stream()
-						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
-						.collect(Collectors.toList())
-				: delivery.getDetails();
 		
-		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
-		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
-		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
-		Map<Integer, String> ssccMap = DeliveryPackages.loadSSCCMap(packageData);
+		SEH1P mainPackage = createSEH1PRecord(1, delivery.getPackaging().size(), "201", null, null, codes);
+		mainPackage.seh1lList = new ArrayList<>();
+		list.add(mainPackage);
 		
-		int mainPackageLine = 0;
-		int packageLine = 0;
-		int mainPackageSize = 0;
-		for(Entry<Integer, List<Integer>> entry: level1Map.entrySet()) {
-			Integer level1Key = entry.getKey();
-			List<Integer> packageLineList = entry.getValue();
+		for (Integer i = 0; i < delivery.getPackaging().size(); i++) {
+			DeliveryPackaging dp = delivery.getPackaging().get(i);
+			if(!dp.getItem().getItemComposition().isEmpty()) {
+				ItemComposition ic = dp.getItem().getItemComposition().get(0);
+				Item item = ic.getComposition();
+				
+				Double boxQuantity = ic.getQuantity();
+				if(item.getStockUnitTag().getId().equals(item.getPackMeasurementTag().getId())) {
+					boxQuantity = ic.getQuantity() / item.getPackMeasurement();
+					boxQuantity = boxQuantity / item.getPackUnits().doubleValue();	
+				} else if(item.getStockUnitTag().getId().equals(item.getPackUnitsTag().getId())) {
+					boxQuantity = ic.getQuantity() / item.getPackUnits().doubleValue();	
+				}    
+				boxQuantity = AonMathUtils.round(boxQuantity);
+				
+				SEH1P packaging  = createSEH1PRecord(i + 2, boxQuantity.intValue(), "CT", dp.getItem().getSerialNumber(), null, codes);
+				packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
-			// MAIN-PACKAGE
-			mainPackageSize = (int)detailList.stream()
-				.filter(detail->packageLineList.contains((int)detail.getLine()))
-				.mapToDouble(DeliveryDetail::getQuantity).sum();
-			mainPackageLine = ++packageLine;
-			SEH1P mainPackage = createSEH1PRecord(mainPackageLine, mainPackageSize, "201", null);
-			mainPackage.seh1lList = new ArrayList<>();
-			list.add(mainPackage);
-			
-			// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
-			for(Entry<Integer, List<Integer>> entry2: level2Map.entrySet()){
-				Integer level2Key = entry2.getKey();
-				if(packageLineList.contains(level2Key)){		
-					List<Integer> level2LineList = entry2.getValue();
-					for(int level2LineId: level2LineList){
-						DeliveryDetail level2Detail = detailList.get(level2LineId-1);
-						if(!isPackageItem(level2Detail.getItem().getId())) {
-							Integer mainPackageKey = level1Map.get(level1Key).get(0);
-							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
-							int lineNumber = mainPackage.seh1lList.size()+1;
-							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null, codes));
-						} else {
-							SEH1P subPackage = null;
-							
-							// PRODUCT OVER SUB-PACKAGE, IF EXIST
-							List<Integer> level3List = level3Map.get((int)level2Detail.getLine());
-							List<Integer> level3LineList = level3List != null
-									? new LinkedList<>(level3List)
-									: new LinkedList<>();
-							for(int level3LineId: level3LineList){
-								DeliveryDetail level3Detail = detailList.get(level3LineId-1);
-								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));
-								if(p==null && subPackage==null){
-									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT", ssccMap.get(level2Key));
-									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-									subPackage.seh1lList = new ArrayList<>();
-									list.add(subPackage);
-								}
-								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key), codes);
-							}
-						}
-					}
-				}				
-			}	
+				packaging.seh1lList = new ArrayList<>();
+
+				Integer line = i + 1;
+
+				packaging.seh1lList.add(createSEH1LRecord(line, delivery, ic, boxQuantity, codes));
+
+				list.add(packaging);
+			}
 		}
-		
 		return list;
 	}
-	
-	private void completePackageSSCC(SEH1P seh1p, String sscc) {
-		seh1p.setNumeroSerial1ONumeroDeIdentificacionInferior(StringUtils.leftPad(sscc, 18, "0"));
-	}
-	
-	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
-			String sscc, EdiCodes codes) {
-		String seralNumber = detail.getItem().getSerialNumber();
-		boolean success = false;
-		for(SEH1P p: list){
-			if( StringUtils.isBlank(p.getNumeroSerial1ONumeroDeIdentificacionInferior())
-					|| StringUtils.equals(sscc, p.getNumeroSerial1ONumeroDeIdentificacionInferior()) ){
-				for(SEH1L l: p.seh1lList){
-					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
-							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity, codes);
-						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
-						if(packageQuantity!=null){
-							p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
-						}
-						success = true;
-					}
-				}
-			}
-		}
-		if(!success){
-			int lineNumber = targetPackage.seh1lList.size()+1;
-			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity, codes));
-		}
-	}
-	
-	private SEH1P searchExistingPackage(List<SEH1P> list, DeliveryDetail detail, String sscc) {
-		String seralNumber = detail.getItem().getSerialNumber();
-		boolean success = false;
-		SEH1P p = null;
-		Iterator<SEH1P> packageIt = list.iterator();
-		while(packageIt.hasNext() && !success){
-			p = packageIt.next();
-			if( StringUtils.isBlank(p.getNumeroSerial1ONumeroDeIdentificacionInferior())
-					|| StringUtils.equals(sscc, p.getNumeroSerial1ONumeroDeIdentificacionInferior()) ){
-				Iterator<SEH1L> lineIt = p.seh1lList.iterator();
-				while(lineIt.hasNext() && !success){
-					SEH1L l = lineIt.next();
-					success = StringUtils.equals(l.getNumeroDeLote_NB_(), seralNumber);
-				}
-			}
-		}
-		return success?p:null;
-	}
 
+		
+	
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();
 		createSEH1GRecord(delivery);
@@ -435,7 +358,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Secuencia de embalajes
 	 */
-	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format, String sscc) {
+	private SEH1P createSEH1PRecord(int lineNumber, Integer quantity, String format, String sscc, DeliveryDetail detail, EdiCodes codes) {
 		SEH1P seh1p = new SEH1P();
 		seh1p.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		seh1p.setNumeroDeJerarquiaPadreDeEmbalaje(null);
@@ -445,14 +368,33 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1p.setTipoDeEmbalaje_Codificado(format);
 		seh1p.setTipoDeEmbalaje_TextoLibre(null);
 		seh1p.setResponsabilidadPagoTransporteDeEmbalaje(null);
-		seh1p.setPesoNeto1_AAC_(null);
+		seh1p.setPesoNeto1_AAC_(null);			
 		seh1p.setPesoNeto2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaPesoNeto(null);
 		seh1p.setUnidadDeMedidaParaElPesoNeto(null);
+
 		seh1p.setPesoBruto1_AAD_(null);
 		seh1p.setPesoBruto2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaPesoBruto(null);
 		seh1p.setUnidadDeMedidaParaElPesoBruto(null);
+		if(detail != null && detail.getItem() != null) {
+			double q = 0.0;
+			double packUnits = detail.getItem().getPackUnits();
+			if(quantity ==null) {
+				q = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
+			} else {
+				q = packUnits * quantity;
+			}
+			
+			seh1p.setPesoNeto1_AAC_(q * detail.getItem().getPackMeasurement());
+			seh1p.setPesoBruto1_AAD_(q * detail.getItem().getPackMeasurement());
+			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
+				seh1p.setUnidadDeMedidaParaElPesoNeto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+				seh1p.setUnidadDeMedidaParaElPesoBruto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			}
+		}
+
+
 		seh1p.setDimensionDeAltura1_HT_(null);
 		seh1p.setDimensionDeAltura2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaAltura(null);
@@ -514,14 +456,13 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
 		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
-		if(isEroski(delivery.getCustomer().getDocument())) {
-            seh1l.setSeh1b(createSEH1BRecord(detail));
-		}
+		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
+		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
 		double quantity = 0.0;
 		double packUnits = detail.getItem().getPackUnits();
 		if(packageQuantity==null) {
-			quantity = obtainPackageQuantity(detail, codes.getCustomerEdiCode());
+			quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
@@ -590,6 +531,110 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 
 	/**
+	 * Línea de artículos
+	 */
+	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, ItemComposition ic, Double packageQuantity, EdiCodes codes) {
+		Item item = ic.getComposition();
+		if(item.getExpireDate() == null && item.getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(item.getSerialDate(), item.getProduct().getDaysToExpire());
+			item.setExpireDate(expireDate);			
+		}
+		
+		Integer customerId = delivery.getCustomer().getId();
+		String productCustomerCode = obtainProductCustomerCode(item, customerId);
+		
+		Item base = AON.getItem(new Domain().setId(domainId).setName(domainName), login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getProductProperty().eq(item.getProduct().getId()))
+			.and(f.getSerialNumberProperty().isNull()));
+		
+		SEH1L seh1l = new SEH1L();
+		seh1l.setNumeroDeLineaDelArticulo(lineNumber);
+		seh1l.setCodigoEANDelArticulo(productCustomerCode);
+		seh1l.setDescripcionDelArticulo(item.getProduct().getName());
+		seh1l.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
+		seh1l.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
+		seh1l.setNumeroVariablePromocional_PV_(null);
+		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
+		seh1l.setCodigoACU_ACU_(null);
+		seh1l.setNumeroDeLote_NB_(item.getSerialNumber());
+		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
+		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
+		seh1l.setSeh1b(createSEH1BRecord(item));
+		
+		double quantity = 0.0;
+		double packUnits = item.getPackUnits();
+		if(packageQuantity == null) {
+			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerEdiCode());
+		} else {
+			quantity = packUnits * packageQuantity;
+		}
+
+		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
+			seh1l.setCantidadEnviada_12_(quantity * item.getPackUnits() * item.getPackMeasurement());
+			if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
+				seh1l.setUnidadDeMedidaCantidadEnviada(
+						StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			}
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackUnits() * item.getPackMeasurement());
+		} else {
+			seh1l.setCantidadEnviada_12_(quantity);
+			seh1l.setUnidadDeMedidaCantidadEnviada(null);
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		}
+
+//		Date fechaCaducidad = detail.getItem().getExpireDate() != null
+//				? detail.getItem().getExpireDate()
+//				: detail.getItem().getSerialDate();
+//		if(fechaCaducidad != null)
+//			seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(fechaCaducidad));
+		seh1l.setCalificadorReferencia1(null);
+		seh1l.setNumeroReferencia1(null);
+		seh1l.setFecha_horaReferencia1_102_203_(null);
+		seh1l.setCalificadorReferencia2(null);
+		seh1l.setNumeroReferencia2(null);
+		seh1l.setFecha_horaReferencia2_102_203_(null);
+		seh1l.setCalificadorReferencia3(null);
+		seh1l.setNumeroReferencia3(null);
+		seh1l.setFecha_horaReferencia3_102_203_(null);
+		seh1l.setUnidadesEnAgrupacionSuperior_45E_(null);
+		seh1l.setCodigoEANAdicional(null);
+		seh1l.setCantidadSinCargo_192_(null);
+		seh1l.setCalificadorCantidadAdicional(null);
+		seh1l.setCantidadAdicional(null);
+		seh1l.setUnidadDeMedidaCantidadAdicional(null);
+		seh1l.setNumeroDeSerieDelArticulo_SN_(item.getSerialNumber());
+		seh1l.setNumeroArticuloFabricante_MF_(null);
+		seh1l.setNumeroDeLineaReferencia1(null);
+		seh1l.setNumeroDeLineaReferencia2(null);
+		seh1l.setNumeroDeLineaReferencia3(null);
+		seh1l.setDiferenciaEnCantidadPedida_21_(null);
+		seh1l.setCodigoDiscrepancia(null);
+		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
+		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null) {
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+		}
+		seh1l.setDimensionDeTemperatura1_TC_(null);
+		seh1l.setDimensionDeTemperatura2(null);
+		seh1l.setUnidadDeMedidaParaLaTemperatura(null);
+		seh1l.setDenominacionComercial(null);
+		seh1l.setDenominacionCientifica(null);
+		seh1l.setPaisDeCaptura_produccion_cosecha_cria(null);
+		seh1l.setZonaFAODeCaptura(null);
+		seh1l.setMetodoDeProduccion(null);
+		seh1l.setCodigoDePresentacion(null);
+		seh1l.setCodigoFAODeLaEspecie(null);
+		seh1l.setFechaOPeriodoDeCaptura(null);
+		seh1l.setFechaDeProduccion(null);
+		seh1l.setArteDePesca(null);
+		seh1l.setInformacionDeCongelado(null);
+		seh1l.setFechaDeCongelacion_91E_(null);
+		return seh1l;
+	}
+
+	
+	/**
 	 * Desglose cantidad/Localizaciones
 	 */
 	private SEH1G createSEH1GRecord(Delivery delivery) {
@@ -609,17 +654,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Información de lotes
 	 */
-	private SEH1B createSEH1BRecord(DeliveryDetail deliveryDetail) {
-		if(deliveryDetail.getItem().getExpireDate() == null && deliveryDetail.getItem().getProduct().isPerishable()) {
-			Date expireDate = AonDateUtils.addDays(deliveryDetail.getItem().getSerialDate(), deliveryDetail.getItem().getProduct().getDaysToExpire());
-			deliveryDetail.getItem().setExpireDate(expireDate);			
+	private SEH1B createSEH1BRecord(Item item) {
+		if(item.getExpireDate() == null && item.getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(item.getSerialDate(), item.getProduct().getDaysToExpire());
+			item.setExpireDate(expireDate);			
 		}
 		
-		Date fechaCaducidad = deliveryDetail.getItem().getExpireDate() != null	
-				? deliveryDetail.getItem().getExpireDate()
-				: deliveryDetail.getItem().getSerialDate();
+		Date fechaCaducidad = item.getExpireDate() != null	
+				? item.getExpireDate()
+				: item.getSerialDate();
 		
-		String date = SeresUtils.dateTimeFormat().format(deliveryDetail.getItem().getSerialDate());
+		String date = SeresUtils.dateTimeFormat().format(item.getSerialDate());
 		SEH1B seh1b = new SEH1B();
 		seh1b.setCodigoInstrucciones("36E");
 		seh1b.setMarcasDeEnvio(null);
@@ -630,7 +675,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1b.setCalificadorDeCantidad_11_12_(null);
 		seh1b.setCantidad(null);
 		seh1b.setCalificadorNumeroIdentidad("BX");
-		seh1b.setNumeroIdentidad(deliveryDetail.getItem().getSerialNumber());
+		seh1b.setNumeroIdentidad(item.getSerialNumber());
 		seh1b.setFechaDeEnvasadoOEmpaquetado_365__102_203_(date);
 		seh1b.setFechaProduccion_fabricacion_94__102_203_(null);
 		return seh1b;
@@ -751,16 +796,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				&& item.getSerialDate() == null;
 	}
 	
-	private Double obtainPackageQuantity(DeliveryDetail detail,
-			String customerPackingTag) {
-		if(detail!=null && customerPackingTag!=null){
-			OldItem item = getItem(detail.getItem().getId());
-			Double quantity = detail.getQuantity();
-			Tag itemPackFormatTag = item.getPackFormatTag();
-			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
-			Tag itemPackingTag = item.getPackUnitsTag();
-			double itemPackMeasurement = item.getPackMeasurement();
-			double itemPackUnits = item.getPackUnits();
+	private Double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
+		if(customerPackingTag!=null){
+			OldItem oldItem = getItem(item.getId());
+			Tag itemPackFormatTag = oldItem.getPackFormatTag();
+			Tag itemPackMeasurementTag = oldItem.getPackMeasurementTag();
+			Tag itemPackingTag = oldItem.getPackUnitsTag();
+			double itemPackMeasurement = oldItem.getPackMeasurement();
+			double itemPackUnits = oldItem.getPackUnits();
 			if (customerPackingTag != null && itemPackingTag != null
 					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
 				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {

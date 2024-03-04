@@ -431,9 +431,9 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			// N=no se acredita carencia;
 			// P=consulta la Direcci? Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "N":
-				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
-				break;
+				case "N":
+					if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+					break;
 			default:
 				break;
 			}

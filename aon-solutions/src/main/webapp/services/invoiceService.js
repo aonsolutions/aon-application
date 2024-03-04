@@ -1,6 +1,6 @@
-import { post, get, remove, put, getInvofox } from "./request.js";
+import { post, get, remove, put, getInvofox, getSig } from "./request.js";
 import { openFileUrl } from "./fileService.js";
-import { API_URL } from "../environments/environments.js";
+import { API_URL, SIG_URL } from "../environments/environments.js";
 
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
@@ -17,6 +17,8 @@ export const invoiceSelection = (inv) => invoice = inv;
 export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
+
+export const getSigInvoices = (data) => getSig(`${SIG_URL}/${API_URL}/invoice`, data);
 
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
@@ -52,5 +54,10 @@ export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invo
 export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data);
 
 export const getInvofoxDocument = (id) => get(`${API_URL}/invofox/document`, {id: id});
+export const saveInvofoxDocument = (data) => put(`${API_URL}/invofox/document`, data);
+
+export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});
+export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configuration`, data);
+export const saveInvofoxConfiguration = (data) => put(`${API_URL}/invofox/configuration`, data);
 
 export const getChargePayments = (data) => get(`${API_URL}/charge_payments`, data);

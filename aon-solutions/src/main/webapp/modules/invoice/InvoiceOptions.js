@@ -1,5 +1,23 @@
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
 
+  export const OCR_INBOX_ISSUED = {
+    id: CONSTANT.OCR_INBOX_ISSUED.initCap(),
+    name: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE
+  }
+
+  export const OCR_INBOX_RECEIVED = {
+    id: CONSTANT.OCR_INBOX_RECEIVED.initCap(),
+    name: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE
+  }
+
+  export const OCR_INBOX_TICKET = {
+    id: CONSTANT.OCR_INBOX_TICKET.initCap(),
+    name: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT
+  }
+
   export const RAWDOC_INBOX_ISSUED = {
     id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
     name: MSG.ISSUEDS,
@@ -38,22 +56,49 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 
   export const RAWDOC_INBOX = {
     id: CONSTANT.RAWDOC_INBOX.initCap(),
-    name: MSG.INVOICES,
+    name: MSG.PROFORMA,
     icon: MATERIAL_ICONS.INBOX,
     clickable: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
 
-  export const RAWDOC_OCR = {
-    id: CONSTANT.RAWDOC_OCR.initCap(),
-    name: 'OCR',
-    icon: 'find_in_page'
+  export const OCR_ERROR = {
+    id: CONSTANT.OCR_ERROR.initCap(),
+    name: MSG.ERRORS,
+    icon: MATERIAL_ICONS.ERROR
   }
+
+  export const OCR_REJECTED = {
+    id: CONSTANT.OCR_REJECTED.initCap(),
+    name: MSG.TRASH,
+    icon: MATERIAL_ICONS.DELETE
+  }
+
+  export const OCR_DISCARDED = {
+    id: CONSTANT.OCR_REJECTED.initCap(),
+    name: MSG.DISCARDED,
+    icon: MATERIAL_ICONS.REPORT
+  }
+
+  export const OCR_EXPORTED = {
+    id: CONSTANT.OCR_EXPORTED.initCap(),
+    name: MSG.EXPORTED,
+    icon: MATERIAL_ICONS.DONE
+  }
+
+  export const OCR_INBOX = {
+    id: CONSTANT.OCR_INBOX.initCap(),
+    name: MSG.INVOICES,
+    icon: MATERIAL_ICONS.INBOX,
+    clickable: true,
+    options: [OCR_INBOX_ISSUED, OCR_INBOX_RECEIVED, OCR_INBOX_TICKET]
+ }
+
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.REJECTEDS,
-    icon: MATERIAL_ICONS.REPORT
+    name: MSG.PENDING_REVIEW,
+    icon: MATERIAL_ICONS.ERROR
   }
   
   export const RAWDOC_DRAFT = {
@@ -171,7 +216,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const CONFIGURATION_SII_TBAI = {
     id: CONSTANT.CONFIGURATION_SII_TBAI.initCap(),
     name: MSG.SII_TICKETBAI,
-    icon: MATERIAL_ICONS.SETTING    
+    icon: MATERIAL_ICONS.SETTINGS    
   }   
 
   export const PENDING_DOCUMENTS = {

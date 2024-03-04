@@ -856,8 +856,15 @@ public class Mod3902023 extends Mod390  {
 		,Mod3902023DetailKey.C0030,Mod3902023DetailKey.C0650,Mod3902023DetailKey.C0032};
 
 	private static final Mod3902023DetailKey[] C0047_FORMULA = new Mod3902023DetailKey[]{ 
-		 Mod3902023DetailKey.C0034,Mod3902023DetailKey.C0036,Mod3902023DetailKey.C0600,Mod3902023DetailKey.C0602
-		,Mod3902023DetailKey.C0042,Mod3902023DetailKey.C0044,Mod3902023DetailKey.C0046};
+		 Mod3902023DetailKey.C0034
+		,Mod3902023DetailKey.C0664 
+		,Mod3902023DetailKey.C0036
+		,Mod3902023DetailKey.C0666
+		,Mod3902023DetailKey.C0600
+		,Mod3902023DetailKey.C0602
+		,Mod3902023DetailKey.C0042
+		,Mod3902023DetailKey.C0044
+		,Mod3902023DetailKey.C0046};
 
 	private static final Mod3902023DetailKey[] C0049_FORMULA = {
 		 Mod3902023DetailKey.C0191,Mod3902023DetailKey.C0725

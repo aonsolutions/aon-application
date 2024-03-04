@@ -37,6 +37,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class JooqEnterprise {
 
@@ -277,13 +278,17 @@ public class JooqEnterprise {
 							.fetch(ENTERPRISE.REGISTRY)))
 				.fetch(ENTERPRISE_ACTIVITY.ID)))
 			.and(ENTERPRISE_CCC.TYPE.ne((byte)6))
-			.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
+//			.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
 			.and(CONTRACT.SS_REGIME.ne((byte) 3))
 			.and(
-				(SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
+				((SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
 				.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
+				.or(SALARY.CHARGE_DATE.between(findPeriod, findEndPeriod).and(SALARY.TYPE.eq((byte)3)))
+				
+			)
 			.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 			.fetch();
+		
 		
 		System.err.println("enterpriseCCCActivities START");
 		
@@ -384,6 +389,20 @@ public class JooqEnterprise {
 		} catch ( Exception t){
 			return SSRegimeType.GENERAL;
 		}
+	}
+
+	public static List<Integer> getEnterpriseActiveContracts(Connection connection, Integer domainId, java.util.Date date) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		return dslContext.select(CONTRACT.ID)
+			.from(CONTRACT)
+			.where(CONTRACT.DOMAIN.eq(domainId))
+			.and(CONTRACT.END_DATE.ge(parseDateSql(date)).or(CONTRACT.END_DATE.isNull()))
+			.fetch(CONTRACT.ID);
+	}
+
+	private static Date parseDateSql(java.util.Date date) {
+		return null == date ? null : new Date(AonDateUtils.getMonthFirstDay(date).getTime());
 	}
 	
 }

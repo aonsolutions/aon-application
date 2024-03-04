@@ -203,6 +203,13 @@ export const REJECT = {
     icon: MATERIAL_ICONS.REPORT
 };
 
+export const REVIEW = {
+    id: CONSTANT.REJECT.initCap(),
+    name: MSG.REVIEW,
+    title: MSG.REVIEW,
+    icon: MATERIAL_ICONS.ERROR
+};
+
 export const REJECT_INVOICE = {
     id: CONSTANT.REJECT_INVOICE.initCap(),
     name: MSG.REJECT_INVOICE,

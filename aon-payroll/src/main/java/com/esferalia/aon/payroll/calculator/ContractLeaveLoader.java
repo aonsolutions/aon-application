@@ -695,24 +695,27 @@ public class ContractLeaveLoader {
 		} catch (Exception e) {
 		}
 		
-		
+		Boolean monthlyAdjust = null;
 		try {
-        		Boolean monthlyAdjust = ctx.getVariable(MONTHLY_ADJUST, p.getStart(), p.getEnd(), Boolean.class );
+        		monthlyAdjust = ctx.getVariable(MONTHLY_ADJUST, p.getStart(), p.getEnd(), Boolean.class );
         		if (Boolean.FALSE == monthlyAdjust )
         		    return days;
         	} catch (Exception e) {
         	}
 		
-		try {
-			boolean isPartial = 
-			ctx.getVariables(PARTIAL_FACTOR, p.getStart(), p.getEnd())
-			.stream().map( v -> v.getValue(v.getPeriod()))
-			.filter( Number.class::isInstance )
-			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
-			if (isPartial)
-				return days;
-		} catch (Exception e) {
+		if ( monthlyAdjust != Boolean.TRUE ) {
+        		try {
+        			boolean isPartial = 
+        			ctx.getVariables(PARTIAL_FACTOR, p.getStart(), p.getEnd())
+        			.stream().map( v -> v.getValue(v.getPeriod()))
+        			.filter( Number.class::isInstance )
+        			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
+        			if (isPartial)
+        				return days;
+        		} catch (Exception e) {
+        		}
 		}
+		
 //		try {
 //			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
 //			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )

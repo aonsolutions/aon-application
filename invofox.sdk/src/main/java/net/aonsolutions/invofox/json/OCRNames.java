@@ -17,12 +17,15 @@ public final class OCRNames {
 	public static final String APPLIED_WORKFLOW = "appliedWorkflow";
 	public static final String APPROVAL_INFO = "approvalInfo";
 	public static final String APPROVED_BY = "approvedBy";	
+	public static final String APPROVED = "approved";	
+	
 	// ---------------------------------------------------------------------------------------------	[B] 
 	public static final String BEGINNING = "beginning";
 	public static final String BOX = "box";
 	public static final String BOXES = "boxes";
 	public static final String BREAKDOWNS = "breakdowns";
 	public static final String BUCKET = "bucket";
+	public static final String BOUNDING_BOX = "boundingBox";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CHANNEL = "channel";
 	public static final String CLIENT_CODE = "clientCode";
@@ -30,6 +33,7 @@ public final class OCRNames {
 	public static final String CODE = "code";
 	public static final String COMMENTS = "comments";
 	public static final String COMPANY = "company";
+	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String CONFIDENCE = "confidence";
 	public static final String CONTRACT_REF = "contractRef";
 	public static final String COORDINATES = "coordinates";
@@ -45,6 +49,7 @@ public final class OCRNames {
 	public static final String DATE = "date";
 	public static final String DELIVERY_NOTE_REF = "deliveryNoteRef";
 	public static final String DESCRIPTION = "description";
+	public static final String DISCARDED = "discarded";
 	public static final String DISCOUNT_AMOUNT = "discountAmount";
 	public static final String DISCOUNT_BASE_AMOUNT = "discountBaseAmount";
 	public static final String DISCOUNT_RATE = "discountRate";
@@ -58,6 +63,9 @@ public final class OCRNames {
 	public static final String ERRORS = "errors";
 	public static final String EXPIRATION = "expiration";
 	public static final String EXPORTS = "exports";
+	public static final String EXPORTED = "exported";
+	
+	
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FEES_AMOUNT = "feesAmount";
 	public static final String FEES_BASE_AMOUNT = "feesBaseAmount";
@@ -119,9 +127,12 @@ public final class OCRNames {
 	public static final String PAGES = "pages";
 	public static final String PATH = "path";
 	public static final String PAYMENT_METHOD = "paymentMethod";
+	public static final String PENDINGCORRECTION = "pendingCorrection";
+	public static final String PENDINGDECISSION = "pendingDecission";
 	public static final String POSTAL_CODE = "postalCode";
 	public static final String PREFIX = "prefix";
 	public static final String PREVIOUS  = "previous";
+	public static final String PROCESSING = "processing";
 	public static final String PUBLIC_STATE = "publicState";
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
@@ -142,6 +153,8 @@ public final class OCRNames {
 	public static final String REF = "ref";
 	public static final String REGION = "region";
 	public static final String RESULT = "result";
+	public static final String REJECTED = "rejected";
+	
 	// ---------------------------------------------------------------------------------------------	[S]
 	public static final String SERIES_CODE = "seriesCode";
 	public static final String SERVICE_ADDRESS = "serviceAddress";
@@ -154,6 +167,7 @@ public final class OCRNames {
 	public static final String SUB_REGION = "subRegion";
 	public static final String SUPPLY_NUMBER = "supplyNumber";
 	public static final String SWIFT = "SWIFT";
+	public static final String SORT = "sort";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TAX_BASE_UNIT_PRICE = "taxBaseUnitPrice";
 	public static final String TAX_CLASS = "taxClass";
@@ -189,6 +203,7 @@ public final class OCRNames {
 	public static final String WIDTH = "width";
 	public static final String WITHHOLDING_TAX_RATE = "withholdingTaxRate";
 	public static final String WITHHOLDING_TAX_AMOUNT = "withholdingTaxAmount";
+	public static final String WORDS = "words";
 	// ---------------------------------------------------------------------------------------------	[X]
 	// ---------------------------------------------------------------------------------------------	[Y]
 	// ---------------------------------------------------------------------------------------------	[Z]

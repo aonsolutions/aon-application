@@ -119,7 +119,7 @@ export class AonUploadToast extends AonElement {
 
 	upload(type, file, data, success, error) {
 		if("invoice" === type){
-			if(this.isBeta() && this.getDur().isOcr()) {
+			if(this.isInvofox()) {
 				s3UploadInvoice(file, this.JOB_ID, data, success, error);
 			} else {
 				uploadInvoice2(file, success, error);
@@ -154,6 +154,12 @@ export class AonUploadToast extends AonElement {
 
 	getDur() {
 		return this.dur;
+	}
+	
+	isInvofox() {
+		console.log(JSON.stringify(this.dur));
+		console.log(this.dur.isInvofox());
+		return this.dur.isInvofox();
 	}
 
 }

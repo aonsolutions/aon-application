@@ -119,7 +119,7 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
-		} else if(aonInvoiceTable && filter.status === CONSTANT.RAWDOC_OCR){
+		} else if(aonInvoiceTable && filter.status === CONSTANT.OCR_INBOX){
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
 			getInvofoxDocuments(filter).then(r => {
@@ -135,28 +135,13 @@ export class AonInvoiceList extends AonElement {
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					invoice.icon = MATERIAL_ICONS.CIRCLE;
 					invoice.aonIcon = "invofox";
-					invoice.icon_title = "Recibida"
-					if(invoice.status === "processing") {
-						invoice.icon_color = '#bbb';
-					}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
-						invoice.icon_color = 'red';
-					} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
-						invoice.icon_color = 'orange';
-					} else if(invoice.status === "approved" || invoice.status === "exported") {
-						invoice.icon_color = 'green';
-					 } else invoice.icon_color = "#5f6368";
+					invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
+					invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 					aonInvoiceTable.addRow(invoice, () => {
-						let iframe = this.createElement(TAG.IFRAME);
-						iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
-						iframe.style.height = '100%';
-						iframe.style.width = '100%';
-						iframe.style.border = '0';
-						console.log("load");
-						console.log(JSON.stringify(invoice));
-						let document = getInvofoxDocument(invoice.id); 
-						console.log(JSON.stringify(document));
-						this.getApplication().setContent(iframe);
+						getInvofoxDocument(invoice.id).then( doc => {
+							this.aonInvoice(doc, i);
+						}); 
 					},() => {});
 				});
 			});
@@ -167,7 +152,7 @@ export class AonInvoiceList extends AonElement {
 		this.more = true;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
-			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
+			if(this.getFilter().status === CONSTANT.OCR_INBOX) {
 				getInvofoxDocuments(this.getFilter()).then(r => {
 					aonInvoiceTable.removeRows();
 					aonInvoiceTable.selected = [];
@@ -182,16 +167,8 @@ export class AonInvoiceList extends AonElement {
 						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 						invoice.icon = MATERIAL_ICONS.CIRCLE;
 						invoice.aonIcon = "invofox";
-						invoice.icon_title = "Recibida"
-						if(invoice.status === "processing") {
-							invoice.icon_color = '#bbb';
-						}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
-							invoice.icon_color = 'red';
-						} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
-							invoice.icon_color = 'orange';
-						} else if(invoice.status === "approved" || invoice.status === "exported") {
-							invoice.icon_color = 'green';
- 						} else invoice.icon_color = "#5f6368";
+						invoice.icon_title = this.getOcrInvoiceStatusIconTitle(invoice);
+						invoice.icon_color = this.getOcrInvoiceStatusIconColor(invoice);
 
 						aonInvoiceTable.addRow(invoice, () => {
 							getInvofoxDocument(invoice.id).then( doc => {
@@ -273,7 +250,45 @@ export class AonInvoiceList extends AonElement {
 			if(inv.isPending()) return '#8A8A8A';
  		}
 	}
+	
+	getOcrInvoiceStatusIconTitle(invoice) {
+		let inv = new Invoice(invoice);
+		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+			return MSG.PROCCESSING;
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED)) {
+			return MSG.APPROVED;
+		} else if(inv.isOcrStatus(CONSTANT.EXPORTED)) {
+			return MSG.EXPORTED;
+		} else if(inv.isOcrStatus(CONSTANT.ERROR)){
+			return MSG.ERROR;
+		} else if(inv.isOcrStatus(CONSTANT.REJECTED)){
+			return MSG.REJECTED;
+		} else if(inv.isOcrStatus(CONSTANT.DISCARDED)) {
+			return MSG.DISCARDED;
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION)) {
+			return MSG.PENDING_CORRECTION;
+		}else if(inv.isOcrStatus(CONSTANT.PENDING_DECISSION)) {
+			return MSG.PENDING_DECISSION;
+		} else { 
+			return "";
+		}
+	}
 
+	getOcrInvoiceStatusIconColor(invoice) {
+		let inv = new Invoice(invoice);
+		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+			return '#bbb';
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED, CONSTANT.EXPORTED)) {
+			return 'green';
+		} else if(inv.isOcrStatus(CONSTANT.ERROR, CONSTANT.REJECTED, CONSTANT.DISCARDED)) {
+			return 'red';
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION, CONSTANT.PENDING_DECISSION)) {
+			return 'orange';
+		} else { 
+			return "#5f6368";
+		}
+	}
+	
 	addInvoiceActions() {
 		this.removeInvoiceActions();
 		let aonInvoice = this.getElement('aonInvoice');

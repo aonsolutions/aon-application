@@ -69,7 +69,8 @@ public class AonDialog extends AonCustomDialog {
 			public void execute() {
 				center();
 				show();
-				cancelButton.setFocus(true); 
+				if(null != cancelButton)
+					cancelButton.setFocus(true); 
 			}
 		});
 	}

@@ -27,6 +27,7 @@ public class CreditorsServlet extends AonApiHttpServlet {
 	
 	public static final String CREDITORS = "/";
 	public static final String CREDITOR = "/:id";
+	public static final String CREDITOR_TRANSACTION = "/:id/transaction";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -51,6 +52,7 @@ public class CreditorsServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(CREDITORS, CreditorsServlet::getCreditors)
 				.addRoute(CREDITOR, CreditorsServlet::getCreditor)
+				.addRoute(CREDITOR_TRANSACTION, CreditorsServlet::getCreditorTransaction)
 				.apply();
 			
 			response(req, resp, object);
@@ -80,10 +82,23 @@ public class CreditorsServlet extends AonApiHttpServlet {
 		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
 				? api.getData().optInt(IJsonNames.REGISTRY)
 				: api.getData().optInt(IJsonNames.ID);
-		Creditor creditor = AON.getCreditor(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id)).get();
+		Creditor creditor = AON.getCreditor(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id)).orElse(new Creditor());
 		JSONObject object = CreditorJSON.toJSON(creditor);
 		
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), id, null);
+	}
+	
+	private static JSONObject getCreditorTransaction(AonApiData api) {
+		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
+				? api.getData().optInt(IJsonNames.REGISTRY)
+				: api.getData().optInt(IJsonNames.ID);
+		Creditor creditor = AON.getCreditor(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id))
+				.orElse(new Creditor());
+		JSONObject object = new JSONObject();
+		if(creditor != null && !creditor.isEmpty() && creditor.getTransaction() != null) {
+			object.put(IJsonNames.TRANSACTION, creditor.getTransaction().getTediName());
+		}
+		return object;
 	}
 	
 	private static JSONArray getCreditors(AonApiData api) {

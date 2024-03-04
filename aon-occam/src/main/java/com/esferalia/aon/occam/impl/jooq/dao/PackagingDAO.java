@@ -1,15 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -17,12 +17,10 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
-import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -41,11 +39,9 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
-import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 
 public class PackagingDAO {
 	
@@ -86,6 +82,7 @@ public class PackagingDAO {
 			boolean contain = false;
 			for(ItemComposition r : item.getItemComposition()) {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				if(productMap.containsKey(productId)) {
 					contain = true;
@@ -101,6 +98,7 @@ public class PackagingDAO {
 			List<Integer> ps = new LinkedList<>();
 			item.getItemComposition().stream().forEach(r -> {
 				Item i = ItemDAO.get(ctx, r.getCompositionItemId());
+				r.setComposition(i);
 				Integer productId = i.getProduct().getId();
 				ps.add(productId);
 			});
@@ -203,16 +201,23 @@ public class PackagingDAO {
 			}
 		});
 		
+		// TODO Marcar como descatalogados todos los item de envases (sscc).
 	}
 	
 	public static PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging) {
 		Delivery delivery = DeliveryDAO.get(ctx, packaging.getDelivery());
-		
 		Integer deliveryId = delivery.getId();
 		// Container
 		Item container = null;
+		
+		Item containerBase = null; 
+		
 		if(packaging.getContainer().getItem() != null) {
 			container = ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(packaging.getContainer().getItem()));
+			Integer containerProductId = container.getProduct().getId();
+			containerBase = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getProductProperty().eq(containerProductId))
+					.and(f.getSerialNumberProperty().isNull()));
 			// AÑADIR A DELIVERY PACKAGING SI NO EXISTE YA.
 			Integer cId = container.getId();
 			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(cId)
@@ -224,10 +229,10 @@ public class PackagingDAO {
 						.setItem(container));
 			}
 		} else if(packaging.getContainer().getProduct() != null){
-			Item base = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+			containerBase = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getProductProperty().eq(packaging.getContainer().getProduct()))
 					.and(f.getSerialNumberProperty().isNull()));
-			container = ItemDAO.save(ctx, base.copy()
+			container = ItemDAO.save(ctx, containerBase.copy()
 					.setSerialNumber(generateSSCC(ctx))
 					.setSerialDate(new Date()));
 			// CREAR ITEM DEL ENVASADO.
@@ -283,16 +288,17 @@ public class PackagingDAO {
 				dd.setQuantity(dd.getQuantity() + ic.getQuantity());
 				DeliveryDetailDAO.save(ctx, dd);
 			} else {
+				Item compositionItem = ItemDAO.get(ctx, ic.getCompositionItemId());
 				Integer line = delivery.getDetails().size() + 1;
 				dd = new DeliveryDetail()
 					.setDelivery(new Delivery().setId(deliveryId))
 					.setDomain(ctx.getDomainId())
-					.setDescription(ic.getComposition().getDescription())
+					.setDescription(compositionItem.getDescription())
 					.setDiscountExpression(sd.getDiscountExpression().getDiscountExpr())
 					.setPrice(sd.getPrice())
 					.setSalesDetail(sd.getId())
 					.setQuantity(ic.getQuantity())
-					.setItem(new Item().setId(ic.getCompositionItemId()))
+					.setItem(compositionItem)
 					.setLine(line.shortValue());
 				DeliveryDetailDAO.save(ctx, dd);
 			}
@@ -307,9 +313,75 @@ public class PackagingDAO {
 			sd.setStatus(sd.getQuantity() != sd.getDelivered() 
 					? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
 			SalesDetailDAO.save(ctx, sd);
+			
+			processItemBox(ctx, delivery, productId, ic.getQuantity());
+		}
+		
+		// Añadir envase en delivery detail.
+		Integer containerBaseId = containerBase.getId();
+		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+				.and(f.getItem().eq(containerBaseId)));
+		if(dd.getId() != null) {
+			dd.setQuantity(dd.getQuantity() + 1); // TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
+			DeliveryDetailDAO.save(ctx, dd);
+		} else {
+			Integer line = delivery.getDetails().size() + 1;
+			dd = new DeliveryDetail()
+				.setDelivery(new Delivery().setId(deliveryId))
+				.setDomain(ctx.getDomainId())
+				.setDescription(AonStringUtils.isBlank(containerBase.getDescription())
+						? containerBase.getProduct().getName() : containerBase.getDescription())
+				.setDiscountExpression("0.0")
+				.setPrice(0.0)
+				.setQuantity(1)// TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
+				.setItem(containerBase)
+				.setLine(line.shortValue());
+			DeliveryDetailDAO.save(ctx, dd);
 		}
 	
 		return packaging;
+	}
+	
+	private static void processItemBox(AONContext ctx, Delivery delivery, Integer productId, double quantity) {
+		Item base = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getProductProperty().eq(productId))
+				.and(f.getSerialNumberProperty().isNull()));
+		
+		ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getItemProperty().eq(base.getId()));
+		if(ic != null) {
+			Double boxQuantity = quantity;
+			if(base.getStockUnitTag().getId().equals(base.getPackMeasurementTag().getId())) {
+				boxQuantity = quantity / base.getPackMeasurement();
+				boxQuantity = boxQuantity / base.getPackUnits().doubleValue();	
+			} else if(base.getStockUnitTag().getId().equals(base.getPackUnitsTag().getId())) {
+				boxQuantity = quantity / base.getPackUnits().doubleValue();	
+			}    
+			boxQuantity = AonMathUtils.round(boxQuantity);
+			
+			Item box = ic.getComposition();
+		
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+					.and(f.getItem().eq(box.getId())));
+			if(dd.getId() != null) {
+				dd.setQuantity(dd.getQuantity() + boxQuantity);
+				DeliveryDetailDAO.save(ctx, dd);
+			} else {
+				Integer line = delivery.getDetails().size() + 1;
+				dd = new DeliveryDetail()
+					.setDelivery(new Delivery().setId(delivery.getId()))
+					.setDomain(ctx.getDomainId())
+					.setDescription(AonStringUtils.isBlank(box.getDescription())
+							? box.getProduct().getName() : box.getDescription())
+					.setDiscountExpression("0.0")
+					.setPrice(0.0)
+					.setQuantity(boxQuantity)
+					.setItem(box)
+					.setLine(line.shortValue());
+				DeliveryDetailDAO.save(ctx, dd);
+			}
+			
+			// TODO STOCK DE CAJAS... 
+		}
 	}
 	
 	private static Elaboration processElaboration(AONContext ctx, Packaging packaging, Warehouse warehouse) {

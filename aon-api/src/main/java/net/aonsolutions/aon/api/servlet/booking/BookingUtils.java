@@ -33,13 +33,13 @@ public class BookingUtils {
 		return new BookingUtils();
 	}
 	
-	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking) {
+	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking, boolean console) {
 		String subject = "Modificación de Contratación en " + domain.getName();
 		String body = content(domain, user, newBooking);
 
 		SESMessage msg = new SESMessage()
 				.setAlias("AON Solutions | Contrataciones")
-				.setTo(domain.getOwner())
+				.setTo(console ? "admin@aonsolutions.es" : domain.getOwner())
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
 				.addBcc("asignacion@aonsolutions.es")

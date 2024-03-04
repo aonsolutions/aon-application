@@ -302,6 +302,8 @@ export const PAYSHEETS = 'Nominak';
 export const PENDING = 'Zain';
 export const PENDING_DOCUMENTS = 'Zain Dauden Fitxategiak'; 
 export const PENDING_INVOICES = 'Zain Dauden Fakturak'
+export const PENDING_REVIEW = 'Berrikuspenaren zain';
+export const PENDING_TASKS = 'Zain Dauden Zereginak';
 export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
@@ -354,6 +356,7 @@ export const RESTORED_DATA = 'Datuak zuzen berreskuratu dira';
 export const RESTORE_INVOICE = 'Faktura Berreskuratu';
 export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Berrikusi';
 
 // ----- S
 

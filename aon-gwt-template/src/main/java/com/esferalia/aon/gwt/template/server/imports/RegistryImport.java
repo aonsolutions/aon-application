@@ -128,7 +128,16 @@ public class RegistryImport extends Import {
 			return;
 		}
 
-		if(IConstants.CIF.equalsIgnoreCase(title)) {
+		if(IConstants.TIPO_DOCUMENTO.equalsIgnoreCase(title) || IConstants.TIPO_DE_DOCUMENTO.equalsIgnoreCase(title)) {
+			reg.getRegistry().setDocumentType(DocumentType.safeValueOf(o.toString()));
+		}
+		
+		if(IConstants.PAIS_DOCUMENTO.equalsIgnoreCase(title) || IConstants.PAIS_DE_DOCUMENTO.equalsIgnoreCase(title)
+			|| IConstants.PAIS2_DOCUMENTO.equalsIgnoreCase(title) || IConstants.PAIS2_DE_DOCUMENTO.equalsIgnoreCase(title)) {
+			reg.getRegistry().setDocumentCountry(Country.safeValueOf(o.toString()));
+		}
+		
+		if(IConstants.CIF.equalsIgnoreCase(title) || IConstants.DOCUMENTO.equalsIgnoreCase(title)) {
 			reg.getRegistry().setDocument(o.toString());
 			reg.getAccount().setAlias(o.toString());
 			return;
@@ -214,6 +223,9 @@ public class RegistryImport extends Import {
 
 		if(IConstants.PAIS2.equalsIgnoreCase(title) || IConstants.PAIS.equalsIgnoreCase(title)) {
 			reg.getRegistry().setNationality(Country.safeValueOf(o.toString()));
+			if(reg.getRegistry().getDocumentCountry() == null) {
+				reg.getRegistry().setDocumentCountry(Country.safeValueOf(o.toString()));
+			}
 			return;
 		}
 		

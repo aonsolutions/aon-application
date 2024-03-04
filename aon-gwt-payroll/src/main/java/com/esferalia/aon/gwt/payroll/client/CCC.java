@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -79,7 +80,7 @@ public abstract class CCC extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			onLaboralLife(new Date());
+			onLaboralLife(DateUtils.getFirstDayOfMonth(new Date()));
 		}
 	}
 	
@@ -93,19 +94,19 @@ public abstract class CCC extends ResizeComposite {
 		public TgssContextMenu() {
 			
 			employeesWorking = addItem("Trabajadores en situacion de alta", new EmployeesWorkingCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			employeesWorking.ensureDebugId("employeesWorking");
 			
 			employeePrevMov = addItem("Movimientos previos de trabajadores", new EmployeePrevMovCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			employeePrevMov.ensureDebugId("employeePrevMov");
 			
 			idc = addItem("IDC", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			idc.ensureDebugId("idc");
 			
 			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn(), AON.CSS.aonNowrap());
 			laboralLife.ensureDebugId("laboralLife");
 			
 		}
@@ -440,7 +441,18 @@ public abstract class CCC extends ResizeComposite {
 			this.ccc = cccInfo.getCcc();
 			NativeEvent nativeEvent = e.getNativeEvent();
 			contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-			contextMenu.show();
+			contextMenu.setPopupPositionAndShow((offsetWidth, offsetHeight) ->  {
+				int clientX = e.getClientX();
+				int clientY = e.getClientY();
+				
+				int clientWidth = Window.getClientWidth();
+				int clientHeight = Window.getClientHeight();
+				
+				int left = Math.min(clientX, clientWidth - ( offsetWidth + 10 )  );
+				int top = Math.min(clientY, clientHeight - ( offsetHeight + 10 ) );
+				
+				contextMenu.setPopupPosition(left, top);
+			});
 		});
 		buttonsPanel.add(tgssMenu);
 		
@@ -799,9 +811,10 @@ public abstract class CCC extends ResizeComposite {
 	protected abstract Set<Entry<Integer, String>> getActivities();
 	protected abstract List<EnterpriseCCC> getEnterpriseCCCs();
 	
-	protected abstract void fireWarningMessage(Map<String, String> warningMap);
-	protected abstract void fireInfoMessage(Map<String, String> warningMap);
-	protected abstract void fireLoadingMessage(String message);
+	protected abstract <T> void fireWarningMessage(Map<String, T> warningMap);
+	protected abstract <T> void fireInfoMessage(Map<String, T> warningMap);
+	protected abstract <T> void fireLoadingMessage(T message);
+
 	protected abstract void hideMessage();
 	
 	protected abstract void showPDF(String dataURI, boolean isLaboralLife);
@@ -871,7 +884,7 @@ public abstract class CCC extends ResizeComposite {
 	}
 	
 	public void onLaboralLife(Date date) {
-		fireLoadingMessage("Obteniendo vida laboral ...");
+		fireLoadingMessage("Obteniendo Informe de Vida Laboral ...");
 		impl.getCCCLaboralLife(regime, ccc, date, new Date(), new AsyncCallback<String>() {
 			
 			@Override

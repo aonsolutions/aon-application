@@ -69,8 +69,11 @@ import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryAddressValidation;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -97,8 +100,8 @@ public class JooqEmployee {
 		return getEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), contract);
 	}
 	
-	public static EmployeeContractInfo setEmployeeInfo(Connection conn, EmployeeContractInfo newEmployeeInfo) {
-		return setEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), newEmployeeInfo);
+	public static EmployeeContractInfo setEmployeeInfo(Connection conn, EmployeeContractInfo newEmployeeInfo, String domainName) {
+		return setEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), newEmployeeInfo, domainName);
 	}
 	
 	public static String setEmployeeAFIChanges(Connection conn, Integer contractId, java.util.Date newDate,
@@ -951,7 +954,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "EXTENSION_DATE")) {
 				contractData.setHasExtension(true);
 				try {
-					contractData.setExtensionDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+					if(null == contractData.getExtensionDate() || contractData.getExtensionDate().before(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION))) )
+						contractData.setExtensionDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -1272,7 +1276,7 @@ public class JooqEmployee {
 		}
 	}
 	
-	private static EmployeeContractInfo setEmployeeInfoDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
+	private static EmployeeContractInfo setEmployeeInfoDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo, String domainName) {
 		
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
 		EmployeeInfo employeeData = employeeContractInfo.getEmployeeInfo();
@@ -1353,7 +1357,10 @@ public class JooqEmployee {
 			
 		} else {
 			if(employeeData.getRaddressId() != null) {
-				dslContext.delete(RADDRESS).where(RADDRESS.ID.eq(employeeData.getRaddressId())).execute();
+				// Es por asegurar que no se borra ninguna dirección que tenga foreign keys con facturas.
+				System.out.println("Borrando RegistryAddress con id: " + rAddressId );
+				AON.deleteRegistryAddress(domainName, domain, "", rAddressId);
+				//dslContext.delete(RADDRESS).where(RADDRESS.ID.eq(employeeData.getRaddressId())).execute();
 			}
 		}
 		

@@ -33,31 +33,31 @@ export const TaxType = {
 
 export const WithholdingType = [
   {
-    id: CONSTANT.PROFESSIONAL,
+    id: "PROFESSIONAL",
     name: "Profesional (G/01) - 15%",
     description: "Actividades profesionales con carácter general.",
     percentage: 15.0
   },
   {
-    id: CONSTANT.RENTING,
+    id: "RENTING",
     name: "Arrendamiento - 19%",
     description: "Arrendamiento o subarrendamiento de bienes inmuebles urbanos.",
     percentage: 19.0
   },
    {
-    id: CONSTANT.MOVABLE_CAPITAL,
+    id: "MOVABLE_CAPITAL",
     name: "Cap. Mobiliario (A) - 19%",
     description: "Derivados de la participación en fondos propios de entidades.",
     percentage: 19.0
   },
    {
-    id: CONSTANT.FARMER,
+    id: "FARMER",
     name: "Agrícola (H/01) - 2%",
     description: "Actividades agrícolas y ganaderas en general.",
     percentage: 2.0
   },
    {
-    id: CONSTANT.TRANSPORT_OPERATOR,
+    id: "TRANSPORT_OPERATOR",
     name: "Est. Obj. (H/04) - 1%",
     description: "Determinadas actividades empresariales en Estimación Objetiva.",
     percentage: 1.0
@@ -314,6 +314,9 @@ export const ErrKey = {
 	TAX_RATE: 'TAX_RATE',
 	TAX_BASE: 'TAX_BASE',
 	TAX_QUOTA: 'TAX_QUOTA',
+	IRPF_RATE: 'IRPF_RATE',
+	IRPF_BASE: 'IRPF_BASE',
+	IRPF_QUOTA: 'IRPF_QUOTA',
 	SCOPE: 'SCOPE',
 	REGISTRY: 'REGISTRY',
 	AMBIGUOUS_REGISTRY: 'AMBIGUOUS_REGISTRY',
@@ -327,5 +330,7 @@ export const ErrKey = {
 	FINANCE_AMOUNT_ZERO: 'FINANCE_AMOUNT_ZERO',
 	FINANCE_WRONG_DUE_DATE: 'FINANCE_WRONG_DUE_DATE',
 	FINANCE_WRONG_ACCOUNT_BANK: 'FINANCE_WRONG_ACCOUNT_BANK',
-	TOTAL: 'TOTAL'
+	TOTAL: 'TOTAL',
+	PAY_METHOD: 'PAY_METHOD'
+	
 };

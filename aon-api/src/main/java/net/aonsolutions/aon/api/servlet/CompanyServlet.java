@@ -474,7 +474,10 @@ public class CompanyServlet extends AonApiHttpServlet{
 			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
-		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking);
+		boolean console = api.getUser() != null && api.getUser().getDomain() != null 
+				&& api.getUser().getDomain() == 0;
+		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking, console);
+
 		return new JSONObject();
 	}
 	

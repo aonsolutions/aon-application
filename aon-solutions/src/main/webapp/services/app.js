@@ -435,10 +435,23 @@ export const ALMA = {
 
 export const OCR = {
   app: "ocr",
-  title: "OCR",
+  title: "OCR | Asistente Registro Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
+  price: " ", // 'Desde 45€/mes'
+};
+
+
+export const INVOFOX = {
+  app: "invofox",
+  title: "OCR | INVOFOX",
+  description: "Gestor OCR | INVOFOX.",
+  icon: AON_ICONS.AON_OCR,
+  icon: 'invofox',
+  color: "#35A86C",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
@@ -575,6 +588,7 @@ export const EnterpriseApps = [
   "timecontrol",
   "management",
   "messenger",
+  "invofox",
   "ocr",
   "aio",
   "bidoq",
@@ -802,6 +816,7 @@ export const Packs = {
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
 export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,
@@ -818,6 +833,7 @@ export const AllApps = {
   GROUPWARE,
   WAREHOUSE,
   OCR,
+  INVOFOX,
   CONVENIOS,
   BANK,
   AON_SOLUTIONS,
@@ -834,6 +850,7 @@ export const AllApps2 = {
   FISCAL,
   PAYROLL,
   OCR,
+  INVOFOX,
   AON_SOLUTIONS,
   ALMA,
   COMUNICA,

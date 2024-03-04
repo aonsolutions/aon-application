@@ -222,7 +222,7 @@ export class AonInput extends AonElement {
     this.SPAN = this.id + 'Span';
     this.DIV = this.id + 'Div';
     this.ICON = this.id + 'Icon';
-    this.LABEL = this.id + 'Label'
+    this.LABEL = this.id + 'Label';
     this.ICON_LABEL = this.id + 'IconLabel';
     this.INPUT = this.id + 'Input';
     this.DESCRIPTION = this.id + 'Description';

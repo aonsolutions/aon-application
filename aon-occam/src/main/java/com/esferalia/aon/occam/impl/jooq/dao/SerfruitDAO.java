@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -94,6 +96,9 @@ public class SerfruitDAO {
 	}
 	
 	private static SelectConditionStep<Record> selectFull(AONContext ctx, SalesFilter filter) {
+		com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
+		com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+		
 		 return ctx.getDslContext().select()
 			.from(SALES)
 			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
@@ -111,6 +116,9 @@ public class SerfruitDAO {
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
 			.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(SALES.SHIPPING_ADDRESS))
+			.leftOuterJoin(child).on(child.ID.eq(RADDRESS.GEOZONE))
+			.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE))
+			.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
 			.where(SalesDAO.SALES_PROPERTIES.getConditions(filter))
 			.and(ELABORATION.STATUS.eq(ElaborationStatus.PENDING.value()));
 	}
@@ -179,7 +187,7 @@ public class SerfruitDAO {
 				return sd.getSales().getId();
 			}).distinct().forEach(id -> {
 				Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
-				boolean notDelivered = ss.getDetails().stream().filter(f -> f.getQuantity() != f.getDelivered()).count() > 0;
+				boolean notDelivered = ss.getDetails().stream().filter(f -> f.getStatus() != null && !f.getStatus().equals(SalesDetailStatus.SETTLED)).count() > 0;
 				if(!notDelivered) {
 					ss.setStatus(SalesStatus.SERVED);
 					SalesDAO.save(ctx, ss);

@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceBatchProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.watson.AonError;
@@ -118,7 +118,7 @@ public class InvoiceBatchDAO {
 				.setId(r.getValue(INVOICE_BATCH.ID))
 				.setDomain(r.getValue(INVOICE_BATCH.DOMAIN))
 				.setDate(r.getValue(INVOICE_BATCH.DATE))
-				.setType(OldInvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_BATCH.TYPE)))
+				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_BATCH.TYPE)))
 				.setOperation(InvoiceCommunicationOperation.safeValueOf(r.getValue(INVOICE_BATCH.OPERATION)))
 				.setDataResponse(r.getValue(INVOICE_BATCH.DATA_RESPONSE))
 				.setCreationUser(r.getValue(INVOICE_BATCH.CREATION_USER));

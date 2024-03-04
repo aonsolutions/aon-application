@@ -19,13 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.InsertIAE3034;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2023;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2023;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2024Insert;
-import net.aonsolutions.db.up2date.payroll.Holidays2024Insert;
-import net.aonsolutions.db.up2date.tgss.BasesMax2024Update;
-import net.aonsolutions.db.up2date.tgss.MEI2024Insert;
+import net.aonsolutions.db.up2date.config.InsertIAE848889;
+import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
+import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
+import net.aonsolutions.db.up2date.payroll.PPEInsert;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 
 public class Up2Date {
 
@@ -379,11 +377,9 @@ public class Up2Date {
 	    // Holidays2024Insert.HOLIDAYS2024INSERT,
 	    // IrpfEuskadi2024Insert.IRPFEUSKADI2024INSERT,
 	    // MEI2024Insert.MEI2024INSERT,
-	    BasesMax2024Update.BASESMAX2024UPDATE,
-
-	    // ----------------------------------------------------------------
-	    // Important, not remove
-	    //
+	    // BasesMax2024Update.BASESMAX2024UPDATE,
+	    // SMI2024Update.SMI2024UPDATE,
+	    // BasesMin2024Update.BASESMIN2024UPDATE,
 	    // AlterRitem.ALTER_RITEM,
 	    // AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
 	    // AlterInvestAsset.ALTER_INVEST_ASSET,
@@ -403,19 +399,26 @@ public class Up2Date {
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
 	    // AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-	    //RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
-	    //DeliveryInfoCreation.DELIVERY_INFO_CREATION,
-	    //DeliveryInfoInsert.DELIVERY_INFO_INSERT,
-	    //SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
-	    //CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
-	    //AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
-	    //AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
-	    //AlterNoteTagLength.ALTERNOTETAGLENGTH,
-	    //AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
-	    //AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE
-		  //InsertIAE3034.INSERT_IAE_3034,
-	    AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
-	    AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023
+	    // RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    // DeliveryInfoCreation.DELIVERY_INFO_CREATION,
+	    // DeliveryInfoInsert.DELIVERY_INFO_INSERT,
+	    // SalesDetailAddDeliveryColumn.SALES_DETAIL_ADD_DELIVERY_COLUMN,
+	    // CraBatchResetDateUpdate.CRABATCHRESETDATEUPDATE,
+	    // AlterNoteArchiveTag.ALTERNOTEARCHIVETAG,
+	    // AlterNoteDropNoteTag.ALTERNOTEDROPNOTETAG,
+	    // AlterNoteTagLength.ALTERNOTETAGLENGTH,
+	    // AlterFsMod190Detail2023.ALTER_FS_MODEL_190_DETAIL_2023,
+	    // AddColumnActivityExemptionCause.ADD_COLUMN_ACTIVITY_EXEMPTION_CAUSE,
+	    // InsertIAE3034.INSERT_IAE_3034,
+	    // AlterFsMod193Detail2023.ALTER_FS_MODEL_193_DETAIL_2023,
+	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
+	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
+	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE,
+	    HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
+	    CodinucovaInvoiceTaxFix.INSTANCE,
+	    InsertIAE848889.INSERT_IAE_848889,
+	    DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
+	    PPEInsert.PPE_INSERT
 	};
 
     // ------------------------------------------------------------------------

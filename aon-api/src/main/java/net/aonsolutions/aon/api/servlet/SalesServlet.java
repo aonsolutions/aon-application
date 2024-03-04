@@ -105,7 +105,7 @@ public class SalesServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONArray getSales(AonApiData api) {
-		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT) || IJsonNames.SERFRUIT.equals(api.getUser().getLogin())) {
 			return getSerfruitSales(api);
 		} else return getAonSales(api);
 	}

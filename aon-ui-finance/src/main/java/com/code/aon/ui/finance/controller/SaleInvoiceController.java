@@ -81,8 +81,8 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -526,8 +526,12 @@ public class SaleInvoiceController extends InvoiceController {
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			Integer number = AON.getInvoiceMinNumber(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, invoice.getSeries());
 			invoice.setNumber(number < 0 ? number : -1);
+
 		}
-		super.accept();
+		setTbaiUrl(null);
+		if(!isTbaiInvoice()) {
+			super.accept();
+		} else AonUtil.addErrorMessage("La factura ya se ha emitido a TicketBAI");
 	}
 	
 	@Override
@@ -659,9 +663,6 @@ public class SaleInvoiceController extends InvoiceController {
 								
 				if(invoice.getNumber() < 1) {
 					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
-					if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
-						throw new Exception("Existe una factura con la misma serie y fecha posterior.");
-					}
 					Integer number = lastInvoice.getNumber() > 0
 							? lastInvoice.getNumber() + 1 : 1;
 					invoice.setNumber(number);
@@ -940,7 +941,7 @@ public class SaleInvoiceController extends InvoiceController {
 	public boolean isInvoiceTbaiAccepted() {
 		Invoice inv = (Invoice) getTo();
 		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
-				.and(f.getTypeProperty().eq(OldInvoiceCommunicationType.LROE_1_1.value())));
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
 		return info.getStatus().isAccepted();
 	}
 	

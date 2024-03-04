@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -480,9 +481,9 @@ public class InvoiceDAO {
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-//			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getIdProperty().eq(id)));
-			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
-			.collect(Collectors.toCollection(LinkedList::new)));
+			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(id)));
+//			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
+//			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
@@ -1425,6 +1426,22 @@ public class InvoiceDAO {
 		}
 	}
 	
+	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NORMAL_RECTIFIER.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifiedInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifierInvoice)))
+		.execute();
+		
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifierInvoice)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+			.and(INVOICE.ID.eq(rectifiedInvoice)))
+		.execute();
+	}
+	
 	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
 		Invoice inv = getInvoice(ctx, invoiceId);
 		if (inv == null) {
@@ -1890,5 +1907,22 @@ public class InvoiceDAO {
 			.where(INVOICE.ID.eq(invoiceId))
 			.execute();
 		ctx.log().info("UPDATE ACTIVITY: Invoice {0}: Activity {1}. {2} filas.",invoiceId, activity, count);
+	}
+	
+	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select( ITEM.fields())
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+				.join(ITEM).on(ITEM.ID.eq(INVOICE_DETAIL.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.where(INVOICE.REGISTRY.eq(registry))
+					.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.orderBy(INVOICE.ID.desc(), INVOICE_DETAIL.LINE.asc())
+			.limit(1)
+			.fetch()
+			.stream()
+			.map( ItemFiller::build )
+			.findFirst();		
 	}
 }

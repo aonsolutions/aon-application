@@ -3,6 +3,7 @@
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
+  --aonWarning: #e6970a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
@@ -883,6 +884,12 @@
   overflow-y: auto;
 }
 
+.aonTabSubContent {
+  position: relative;
+  height: calc(100vh - 182px);
+  overflow-y: auto;
+}
+
 .aonContent::-webkit-scrollbar {
   display: none;
 }
@@ -919,14 +926,6 @@
 .aonVerticalMiddle {
   vertical-align: middle;
   font-size: 1.3rem;
-}
-
-.aonVerticalCenter {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
 }
 
 .aonClip {
@@ -975,6 +974,8 @@
 .aonFormCenter {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .aonConnected {
@@ -2096,11 +2097,11 @@ aon-access-card{
 
 .aonError .material-icons {
 	font-size: 20px;
-	color: rgb(232, 49, 81);
+	color: var(--aonError);
 }
 
 .aonWarning .material-icons {
 	font-size: 20px;
-	color: rgb(230, 151, 10);
+	color: var(--aonWarning);
 	
 }

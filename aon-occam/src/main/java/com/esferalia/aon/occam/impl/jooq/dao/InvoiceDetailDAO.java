@@ -6,11 +6,12 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -21,18 +22,20 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
+import org.jooq.SelectSeekStep1;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
@@ -81,26 +84,29 @@ public class InvoiceDetailDAO {
 	
 	
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceDetailFilter filter){	
+	public static SelectSeekStep1<Record, Short> select(AONContext ctx, InvoiceDetailFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(INVOICE_DETAIL)
-				.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
+				.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter))
+				.orderBy(INVOICE_DETAIL.LINE);
 	}
 	
-	public static SelectConditionStep<Record> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
+	public static SelectSeekStep1<Record, Short> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
         return ctx.getDslContext()
                 .select()
                 .from(INVOICE_DETAIL)
-                .join(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
-                .join(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-                .join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-                .leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
-                .leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
-                .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
-                .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
-                .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-                .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
+                .leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+                .leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+                .leftOuterJoin(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
+                .leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+                .leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
+                .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.eq(INVOICE_DETAIL.SELLER))
+                .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.eq(INVOICE_DETAIL.WAREHOUSE))
+                .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
+                .leftOuterJoin(INVEST_ASSET).on(INVEST_ASSET.ID.eq(INVOICE_DETAIL.INVEST_ASSET))
+                .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter))
+                .orderBy(INVOICE_DETAIL.LINE);
     }
 	
 	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter){	
@@ -268,6 +274,10 @@ public class InvoiceDetailDAO {
 					.setAccount(getValue(r,ACCOUNT.ID))
 					.setAccountCode(getValue(r, ACCOUNT.CODE))
 					.setAccountDescription(getValue(r, ACCOUNT.DESCRIPTION))
+					.setInvestAsset(getValue(r, INVOICE_DETAIL.INVEST_ASSET))
+					.setInvestAssetData(checkField(r, INVEST_ASSET.ID)
+							? InvestAssetFiller.build(r) 
+							: new InvestAsset().setId(getValue(r, INVOICE_DETAIL.INVEST_ASSET)))
 					.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 					.setSourceId(r.getValue(INVOICE_DETAIL.SOURCE_ID));
 		}

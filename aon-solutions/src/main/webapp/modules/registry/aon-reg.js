@@ -353,7 +353,7 @@ export class AonReg extends AonElement {
 
 		statusDiv = this.createElement(TAG.DIV);
 		statusDiv.id = id;
-		statusDiv.title = "Estado del cliente";
+		statusDiv.title = MSG.STATUS;
 		statusDiv.style.display = "flex";
 		statusDiv.style.columnGap = "5px";
 		statusDiv.style.border = "1px solid";

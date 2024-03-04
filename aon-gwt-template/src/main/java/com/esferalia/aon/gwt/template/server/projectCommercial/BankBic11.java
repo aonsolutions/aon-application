@@ -142,10 +142,7 @@ public class BankBic11 {
 		addValue( new BankBic11("3187","BCOEESMM187","CAJA RURAL DEL SUR"));
 		addValue( new BankBic11("3190","BCOEESMM190","CAJA RURAL ALBACETE C. REAL CUENCA"));
 		addValue( new BankBic11("3191","BCOEESMM191","CAJA RURAL DE ARAGON"));
-
-
-
-		
+		addValue( new BankBic11("3023","BCOEESMM023","CAJA RURAL DE GRANADA"));
 	}
 	
 	private static void addValue( BankBic11 value ) {

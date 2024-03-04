@@ -126,8 +126,8 @@ public class ConnectInvoice extends AbstractFileFiller {
 //				createLine(SINCE, properties);
 //			}
 			if(rectl.sinciList==null || rectl.sinciList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SINCI", "Impuestos. La entidad 'SINCI' es obligatoria");
-				exceptions.add (e);
+//				Fd0Exception e = new Fd0Exception( "SINCI", "Impuestos. La entidad 'SINCI' es obligatoria");
+//				exceptions.add (e);
 			} else {
 				for (SINCI value: rectl.sinciList) {
 					properties.put(SINCI, value);

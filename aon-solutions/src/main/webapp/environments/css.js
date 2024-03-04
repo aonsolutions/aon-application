@@ -68,11 +68,11 @@ export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
 export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
+export const AON_TAB_SUB_CONTENT = 'aonTabSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
-export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
 export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
@@ -188,8 +188,11 @@ export const AON_INPUT_BOX = 'aonInputBox';
 export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
 export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
 export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
+export const AON_INPUT_BOX_LABEL_INPUT_WARNING = 'aonInputBoxLabelInputWarning'
+export const AON_INPUT_BOX_LABEL_SPAN_WARNING = 'aonInputBoxLabelSpanWarning'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+export const AON_INPUT_MSG_WARNING = 'aonInputMsgWarning';
 
 
 // aon-new-textarea.css
@@ -414,6 +417,13 @@ export const DIALOG_CANCEL = 'dialogCancel';
 
 // Color
 export const AON_COLOR_FULL = 'colorFull';
+
+
+// PDF.js
+export const PDFJS_PDF_VIEWER = 'pdfViewer';
+export const PDFJS_TEXT_LAYER = 'textLayer';
+
+
 
 /**
  * Name to CSS variable conversion.

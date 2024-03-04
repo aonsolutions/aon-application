@@ -17,6 +17,7 @@ public class NordigenAccountTransaction implements Serializable {
 	private NordigenAccountAmount transactionAmount;
 	private String remittanceInformationUnstructured;
 	private String remittanceInformationStructured;
+	private String[] remittanceInformationUnstructuredArray;
 	private String purposeCode;
 	private String bankTransactionCode;
 	private String proprietaryBankTransactionCode;
@@ -83,6 +84,13 @@ public class NordigenAccountTransaction implements Serializable {
 	}
 	public NordigenAccountTransaction setRemittanceInformationStructured(String remittanceInformationStructured) {
 		this.remittanceInformationStructured = remittanceInformationStructured;
+		return this;
+	}
+	public String[] getRemittanceInformationUnstructuredArray() {
+		return remittanceInformationUnstructuredArray; 
+	}
+	public NordigenAccountTransaction setRemittanceInformationUnstructuredArray(String[] remittanceInformationUnstructuredArray) {
+		this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
 		return this;
 	}
 	public String getPurposeCode() {

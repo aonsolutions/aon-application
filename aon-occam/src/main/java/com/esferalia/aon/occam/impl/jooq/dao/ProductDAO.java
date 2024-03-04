@@ -222,42 +222,46 @@ public class ProductDAO {
 		}
 		
 		public static Product buildProduct(Record r) {
+			return build(r, PRODUCT);
+		}
+		
+		public static Product build(Record r, com.esferalia.aon.jooq.tables.Product alias) {
 			return new Product()
-					.setId(getValue(r, PRODUCT.ID))
-					.setName(getValue(r, PRODUCT.NAME))
-					.setDomain(new Domain().setId(getValue(r, PRODUCT.DOMAIN)))
+					.setId(getValue(r, alias.ID))
+					.setName(getValue(r, alias.NAME))
+					.setDomain(new Domain().setId(getValue(r, alias.DOMAIN)))
 					.setBrand(checkField(r, BRAND.ID)
 						? BrandFiller.build(r)
-						: new Brand().setId(getValue(r, PRODUCT.BRAND)))
+						: new Brand().setId(getValue(r, alias.BRAND)))
 					.setCategory(checkField(r, PCATEGORY.ID)
 							? ProductCategoryFiller.build(r)
-							: new ProductCategory().setId(getValue(r, PRODUCT.CATEGORY)))
-					.setCode(getValue(r, PRODUCT.CODE))
-					.setComposition(getBoolean(r, PRODUCT.COMPOSITION))
-					.setCompositionPrice(getBoolean(r, PRODUCT.COMPOSITION_PRICE))
-					.setInventoriable(getBoolean(r, PRODUCT.INVENTORIABLE))
-					.setKind(ProductKind.safeValueOf(getValue(r, PRODUCT.KIND)))
-					.setLotable(getBoolean(r, PRODUCT.LOTABLE))
-					.setManufactured(getBoolean(r, PRODUCT.MANUFACTURED))
-					.setPackaged(getBoolean(r, PRODUCT.PACKAGED))
-					.setPurchaseAccount(new Account().setId(getValue(r, PRODUCT.PURCHASE_ACCOUNT)))
+							: new ProductCategory().setId(getValue(r, alias.CATEGORY)))
+					.setCode(getValue(r, alias.CODE))
+					.setComposition(getBoolean(r, alias.COMPOSITION))
+					.setCompositionPrice(getBoolean(r, alias.COMPOSITION_PRICE))
+					.setInventoriable(getBoolean(r, alias.INVENTORIABLE))
+					.setKind(ProductKind.safeValueOf(getValue(r, alias.KIND)))
+					.setLotable(getBoolean(r, alias.LOTABLE))
+					.setManufactured(getBoolean(r, alias.MANUFACTURED))
+					.setPackaged(getBoolean(r, alias.PACKAGED))
+					.setPurchaseAccount(new Account().setId(getValue(r, alias.PURCHASE_ACCOUNT)))
 					.setRetention(checkField(r, RETENTION_ALIAS.ID)
 							? TaxFiller.build(r, RETENTION_ALIAS)
-							: new Tax().setType(TaxType.RETENTION).setId(getValue(r, PRODUCT.RETENTION)))
-					.setSalesAccount(new Account().setId(getValue(r, PRODUCT.SALES_ACCOUNT)))
-					.setSerializable(getBoolean(r, PRODUCT.SERIALIZABLE))
-					.setStatus(ProductStatus.safeValueOf(getValue(r, PRODUCT.STATUS)))
-					.setType(ProductType.safeValueOf(getValue(r, PRODUCT.TYPE)))
+							: new Tax().setType(TaxType.RETENTION).setId(getValue(r, alias.RETENTION)))
+					.setSalesAccount(new Account().setId(getValue(r, alias.SALES_ACCOUNT)))
+					.setSerializable(getBoolean(r, alias.SERIALIZABLE))
+					.setStatus(ProductStatus.safeValueOf(getValue(r, alias.STATUS)))
+					.setType(ProductType.safeValueOf(getValue(r, alias.TYPE)))
 					.setVat(checkField(r, VAT_ALIAS.ID)
 						? TaxFiller.build(r, VAT_ALIAS)
-						: new Tax().setType(TaxType.VAT).setId(getValue(r, PRODUCT.VAT)))
-					.setPerishable(getBoolean(r, PRODUCT.PERISHABLE))
-					.setDaysToExpire(getValue(r, PRODUCT.DAYS_TO_EXPIRE))
-					.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
-					.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
-					.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
-					.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER));
-		}		
+						: new Tax().setType(TaxType.VAT).setId(getValue(r, alias.VAT)))
+					.setPerishable(getBoolean(r, alias.PERISHABLE))
+					.setDaysToExpire(getValue(r, alias.DAYS_TO_EXPIRE))
+					.setCreationDate(getValue(r, alias.CREATION_DATE))
+					.setCreationUser(getValue(r, alias.CREATION_USER))
+					.setModificationDate(getValue(r, alias.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, alias.MODIFICATION_USER));
+		}
 		
 	}
 }

@@ -66,6 +66,7 @@ export const AON_BLUE = 'Azul Aon';
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const APPLICATIONS = MSG.APPLICATIONS;
 export const APPLICATION = "Aplicación";//TODO
+export const APPROVED = 'Aprobada'; // TODO
 export const ASESOR = MSG.ASESOR;
 export const ATTACH_FILES_DRAGGING_DROPPING = MSG.ATTACH_FILES_DRAGGING_DROPPING;
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND;
@@ -96,6 +97,7 @@ export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
 export const BOOKING_PANEL = MSG.BOOKING_PANEL;
+export const BOOKING_RESUME = "Resumen de Contratación"; // TODO
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
@@ -200,6 +202,7 @@ export const DELIVERY = 'Albarán de Venta';
 export const DESCRIPTION = MSG.DESCRIPTION;
 export const DETAILED = MSG.DETAILED;
 export const DEUTSCH = MSG.DEUTSCH;
+export const DISCARDED = MSG.DISCARDED;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOMAIN = "Dominio"; //TODO
@@ -242,9 +245,11 @@ export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const EXPIRED = MSG.EXPIRED;
 export const ESTIMATED_TIME = "Tiempo estimado";
+export const ERROR = 'Error';
 export const ERRORS = MSG.ERRORS;
 export const ERR_EMPTY_VALUE = "Campos sin valor";
 export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
+export const EXPORTED = "Exportadas";
 
 // ----- F
 
@@ -427,6 +432,7 @@ export const NOTE = MSG.NOTE;
 export const NOTICE = "Noticia"; //TODO
 // ----- O
 
+export const OCR = MSG.OCR;
 export const OBSERVATION = MSG.OBSERVATION;
 export const OFFICE = MSG.OFFICE;
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
@@ -450,9 +456,12 @@ export const PAYROLL = "Laboral";//TODO
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;
 export const PENDING = MSG.PENDING;
+export const PENDING_CORRECTION = "Pendiente de Corrección";
+export const PENDING_DECISSION = "Pendiente de Decisión";
 export const PENDING_DOCUMENTS = MSG.PENDING_DOCUMENTS;
 export const PENDING_INVOICES = MSG.PENDING_INVOICES;
-export const PENDING_TASKS = 'Tareas Pendientes';//TODO
+export const PENDING_REVIEW = MSG.PENDING_REVIEW;
+export const PENDING_TASKS = MSG.PENDING_TASKS;
 export const PENDINGS = MSG.PENDINGS;
 export const PERSONALIZED = 'Personalizado';
 export const PERSONALIZED_THEME = 'Tema Personalizado';
@@ -466,20 +475,22 @@ export const PRICE = MSG.PRICE;
 export const PRINT = MSG.PRINT;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
 export const PRINTER = 'Impresora';
+export const PROCCESSING = 'Procesando';
+export const PROCESS = "Trámite"; //TODO
+export const PROCESS_TYPE = "Tipo de trámite"; //TODO
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
 export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO
 export const PRODUCT = MSG.PRODUCT;
 export const PRODUCT_NOT_EMPTY = MSG.PRODUCT_NOT_EMPTY;
 export const PRODUCT_MUST_BE_SELECTED = MSG.PRODUCT_MUST_BE_SELECTED;
 export const PRODUCTS = MSG.PRODUCTS;
-export const PROVINCE = MSG.PROVINCE;
-export const PROCESS_TYPE = "Tipo de trámite"; //TODO
-export const PROCESS = "Trámite"; //TODO
 export const PROFIT = "Beneficio"; // TODO
+export const PROFORMA = "Proforma"; 
 export const PROJECT = "Proyecto"; //TODO
 export const PROJECTS = "Proyectos"; //TODO
-export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PROTOCOL = "Protocolo";
+export const PROVINCE = MSG.PROVINCE;
+export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PARENT = "Padre"; // TODO
 
 // ----- Q
@@ -531,6 +542,7 @@ export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Régimen"; // TODO
 export const RGPD_URL = 'RGPD Url';
 export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; //TODO
+export const REVIEW = MSG.REVIEW;
 
 // ----- S
 

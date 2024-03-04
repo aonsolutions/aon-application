@@ -419,9 +419,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	public Integer getHolidayDescription() {
-		
 		if ( myHolidaysDrafts.isEmpty() == false)
-			return myHolidaysDrafts.get(myHolidaysDrafts.size() - 1).getHoliday();
+			return myHolidaysDrafts.get(0).getHoliday();
+//			return myHolidaysDrafts.get(myHolidaysDrafts.size() - 1).getHoliday();
 
 		else if ( generalHolidays.isEmpty() == false)
 			return generalHolidays.get(0).getId();

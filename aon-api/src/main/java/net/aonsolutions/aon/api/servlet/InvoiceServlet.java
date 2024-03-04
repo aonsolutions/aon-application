@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
@@ -39,14 +40,15 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -59,8 +61,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -79,7 +83,6 @@ import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
-import net.aonsolutions.aon.tedi.TediException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -95,6 +98,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		Date from;
 		Date to;
+		Integer registry;
 		
 		public String getDescription() {
 			return description;
@@ -165,6 +169,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		public InvoiceFilter setRecorded(Byte recorded) {
 			this.recorded = recorded;
+			return this;
+		}
+		
+		public Integer getRegistry() {
+			return registry;
+		}
+		
+		public InvoiceFilter setRegistry(Integer registry) {
+			this.registry = registry;
 			return this;
 		}
 	}
@@ -315,6 +328,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					? api.getData().optString(IConstants.TYPE).split(","): null)
 				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
 				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setRegistry(JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY))
 				.setPage(api.getData().optInt("page"))
 				.setPerPage(api.getData().optInt("per_page"));
 			return getInvoices(api.getDomain(), api.getUser().getLogin(), filter);
@@ -385,7 +399,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
 			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
 				f.getInvoiceProperty().eq(invoiceId)
-				.and(f.getTypeProperty().eq(OldInvoiceCommunicationType.LROE_1_1.value())));
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE.value())));
 			accepted = info.isAccepted() || info.isAcceptedWithErrors();
 		}
 
@@ -458,6 +472,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
     	if(invoiceFilter.getRecorded() != null) {
     		filter = filter.and(f.getStatusProperty().eq(invoiceFilter.getRecorded()));
+    	}
+    	
+    	if(invoiceFilter.getRegistry() != null) {
+    		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
     	}
     	
     	if(invoiceFilter.getPage() != null) {
@@ -657,14 +675,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
-			
 			tbaiValidation(invoice);
-
-			Invoice lastInvoice = AON.getLastSaleInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), 
-					invoice.getSeries());
-			if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
-				throw new Exception("Existe una factura con la misma serie y fecha posterior.");
-			}
 		}
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
@@ -842,6 +853,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getConfiguration(AonApiData api) {
+		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
+		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
+		Tax withholdingPercent = AON.getTax(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), withholdingPercentId);
+		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
+
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
@@ -850,6 +866,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("tbai", getTbaiConfiguration(api));
 		json.put("sii", getSiiConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
+		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
+		json.put("invofox", InvofoxServlet.getConfiguration(api));
 		return json;
 	}
 	
@@ -879,11 +897,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
 		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
 		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
+		
+		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
+				InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), 
+						InvofoxConfigurationJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), "invofox")))) 
+				: new JSONObject();
+		
 		return new JSONObject()
 			.put("administration", administration.name())	
 			.put("print", print)
 			.put("tbai", tbai)
 			.put("sii", sii)
+			.put("invofox", invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
 	

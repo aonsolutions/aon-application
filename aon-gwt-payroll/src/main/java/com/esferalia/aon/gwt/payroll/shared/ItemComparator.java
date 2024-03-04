@@ -42,14 +42,23 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		    }
 		}
 
-		for ( String bonus: new String [] {"BONIF" }  ) {
-		    boolean bonus0 = Objects.equals(bonus, name0);
-		    boolean bonus1 = Objects.equals(bonus, name1);
-		    if (bonus0) {
-			
-			return bonus1 ? compareByOrder(description0, description1) : 1; // p1 < p0
-		    } else if (bonus1) {
-			return -1; // p0 < p1
+		for (String bonus : new String[] { "BONIF" }) {
+			boolean bonus0 = Objects.equals(bonus, name0);
+			boolean bonus1 = Objects.equals(bonus, name1);
+			if (bonus0) {
+				return bonus1 ? compareByOrder(description0, description1) : 1; // p1 < p0
+			} else if (bonus1) {
+				return -1; // p0 < p1
+			}
+		}
+
+		for ( String special: new String [] {"PPE", "FIX_BASE_CGC_MIN", "PPE_E" }  ) {
+		    boolean special0 = Objects.equals(special, name0);
+		    boolean special1 = Objects.equals(special, name1);
+		    if (special0 && !special1 ) {
+		    	return 1; // p1 < p0
+		    } else if (!special0 && special1 ) {
+		    	return -1; // p0 < p1
 		    }
 		}
 

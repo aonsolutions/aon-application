@@ -104,8 +104,8 @@ public class OCRField implements Serializable {
 	    fieldNamesDescriptionsMap.put("totalAmount", "Total");
 	    fieldNamesDescriptionsMap.put("totalGrossAmount", "Total");
 	    fieldNamesDescriptionsMap.put("totalDueAmount", "Total a pagar");
-	    fieldNamesDescriptionsMap.put("withholdingTaxRate", "withholdingTaxRate");
-	    fieldNamesDescriptionsMap.put("withholdingTaxAmount", "Tasas");
+	    fieldNamesDescriptionsMap.put("withholdingTaxRate", "Tipo retención (%)");
+	    fieldNamesDescriptionsMap.put("withholdingTaxAmount", "Retención");
 	    fieldNamesDescriptionsMap.put("totalFeesAmount", "totalFeesAmount");
 	    fieldNamesDescriptionsMap.put("totalDiscountAmount", "Descuento");
 	    fieldNamesDescriptionsMap.put("reimbursableExpensesAmount", "reimbursableExpensesAmount");

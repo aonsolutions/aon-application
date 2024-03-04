@@ -39,8 +39,6 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.Salary.Payment;
-import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
@@ -60,11 +58,12 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -151,12 +150,13 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	
 
 	@Override
-	protected void loadContractData(ExpressionContext ctx) throws SQLException {
-		super.loadContractData(ctx);
+	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx) throws SQLException {
+	    	Collection<ITimedObject<IExpression>> undefined = super.loadContractData(ctx);
 		try {
 			fixMonthVariables(ctx);
 		} catch (ExpressionException e) {
 		}
+		return undefined;
 	}
 	
 	@Override

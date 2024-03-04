@@ -30,6 +30,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.IrpfDataAscendantsRecord;
@@ -80,6 +81,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				,SALARY_PAYMENT.AMOUNT
 				,SALARY_PAYMENT.IRPF
 				
+				,CONTRACT.ID
 				,CONTRACT.SS_REGIME
 				
 				,PERSON.REGISTRY
@@ -107,7 +109,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 				Date chargeDate = rec.getValue(SALARY.CHARGE_DATE);
 				Integer chargeYear = AonDateUtils.getYear(chargeDate);
 				final Integer accrualYear = (!AonNumberUtils.equals(issueYear, chargeYear))
-						? issueYear 
+						? (AonNumberUtils.equals(mod190.getYear(),issueYear)? null : issueYear) 
 						: null;
 				Byte p = rec.getValue(SALARY_PAYMENT.TYPE);
 				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[p.intValue()];
@@ -324,12 +326,16 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						
 						// Esto es el total de aportacion? Si es así estaría bien saber cuanto aporta por devengo de tipo En Especie
-						Record ifpfCTA = ctx.getDslContext().select().from(SALARY_DATA)
+						// Puede existir mas de una entrada en la tabla salaryData
+						Result<Record> ifpfCTAs = ctx.getDslContext().select().from(SALARY_DATA)
 							.where(SALARY_DATA.NAME.eq("IRPF_CTA_ESP"))
 							.and(SALARY_DATA.SALARY.eq(rec.getValue(SALARY.ID)))
-							.fetchOne();
+							.fetch();
 						
-						double ifpfCTAESP = ifpfCTA == null ? 0.00 : Double.parseDouble(ifpfCTA.get(SALARY_DATA.EXPRESSION));
+						double ifpfCTAESP = ifpfCTAs.stream()
+								.map(ifpfCTA ->  ifpfCTA == null ? 0.00 : Double.parseDouble(ifpfCTA.get(SALARY_DATA.EXPRESSION)))
+								.reduce(0.00, (a, b) -> a + b);
+						
 						double irpfQuotaEnterprise = 0.00;
 						irpfQuotaEnterprise = irpfQuota - ifpfCTAESP;
 						
@@ -500,7 +506,9 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 			if (descs != null && !descs.isEmpty()) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
-					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
+					Integer birthYear = desc.getBirthYear();
+					if (birthYear == null) birthYear = Integer.valueOf(0);
+					int descYear = desc.getAdoptionYear() == null?birthYear:desc.getAdoptionYear();
 					boolean lessThan3 = ( curYear - 3 ) <=  descYear;
 					boolean disability = desc.getDisabilityLevel() != null;
 					boolean disability33 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 0;

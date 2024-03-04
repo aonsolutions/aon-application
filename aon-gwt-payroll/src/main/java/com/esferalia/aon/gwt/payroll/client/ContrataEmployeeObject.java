@@ -290,6 +290,19 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void saveBasicCopyExport(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillBasicCopy(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void saveContractExtensionExport(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.fillContractExtension(employeeData, contractData, new AsyncCallback<Void>() {
 			@Override

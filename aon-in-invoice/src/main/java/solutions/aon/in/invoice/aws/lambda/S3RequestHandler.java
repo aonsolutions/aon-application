@@ -17,11 +17,14 @@ import org.json.JSONObject;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.esferalia.aon.occam.api.json.NewsJSON;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 
+import net.aonsolutions.aon.api.AonInvofox;
 import net.aonsolutions.aon.api.AonTask;
 import solutions.aon.aws.s3.S3EventObject;
 import solutions.aon.in.invoice.aws.lambda.Invofox.DocumentType;
@@ -72,9 +75,10 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     static void handleS3EventObject(S3EventObject s3EventObject) {
 	
 	try {
-	    String companyId =  getCompanyId(s3EventObject);
+	    InvofoxConfiguration invofoxConfiguration = getInvofoxConfiguration(s3EventObject);
+	    String companyId =  getCompanyId(invofoxConfiguration, s3EventObject);
 	    String downloadURL = getDowloadURL(s3EventObject); 
-	    JSONObject loadBatchTaskJSON = getLoadBatchTask(companyId, s3EventObject);
+	    JSONObject loadBatchTaskJSON = getLoadBatchTask(invofoxConfiguration, companyId, s3EventObject);
 	    String loadBatchId = getLoadBatchId(loadBatchTaskJSON);
 	    
 	    JSONObject clientData = 
@@ -90,7 +94,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 		    )
 	    ;
 	    
-	    Invofox.loadDocuments(DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
+	    loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
 	    
 	    documentSent(s3EventObject, loadBatchTaskJSON, downloadURL);
 	    
@@ -107,6 +111,10 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	} 
     }
     
+    static InvofoxConfiguration getInvofoxConfiguration(S3EventObject s3Object) throws URISyntaxException, IOException, InterruptedException {
+	return AonInvofox.getInvofoxConfiguration(s3Object.getDomain(), s3Object.getUser());
+    }
+    
     static String getDowloadURL(S3EventObject s3Object) {
 	return S3.getDownloadURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
     }
@@ -115,15 +123,19 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	return s3Object.getPrefix() + "/" + s3Object.getDomain() + "/" + s3Object.getDocument() + "/" + s3Object.getUser() + "/" + s3Object.getJob() + "/" + "loadbatch";
     }
 
-    public static String getCompanyId(S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
+    public static String getCompanyId(InvofoxConfiguration invofoxConfiguration, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
+	return getCompanyId(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), s3EventObject);
+    }
+
+    public static String getCompanyId(String invofoxApiKey, String invofoxApiUrl, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
 	try {
-	    return Invofox.getCompanyId(s3EventObject.getDocument());
+	    return Invofox.getCompanyId(invofoxApiKey, invofoxApiUrl, s3EventObject.getDocument());
 	} catch ( NoSuchCompanyException ne) {
 	    try {
 		String companyName = getCompanyName(s3EventObject);
-		return Invofox.newCompany(s3EventObject.getDocument(), companyName, Collections.emptyMap());
+		return Invofox.newCompany(invofoxApiKey, invofoxApiUrl, s3EventObject.getDocument(), companyName, Collections.emptyMap());
 	    } catch ( AlreadyCompanyExistsException ae ) {
-		return Invofox.getCompanyId(s3EventObject.getDocument()); 
+		return Invofox.getCompanyId(invofoxApiKey, invofoxApiUrl, s3EventObject.getDocument()); 
 	    }
 	}
     }
@@ -142,7 +154,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	}
     }
 
-    public static JSONObject getLoadBatchTask(String companyId, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
+    public static JSONObject getLoadBatchTask(InvofoxConfiguration invofoxConfiguration, String companyId, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
+	return getLoadBatchTask(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), companyId, s3EventObject);
+    }
+
+    public static JSONObject getLoadBatchTask(String invofoxApiKey, String invofoxApiUrl, String companyId, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
 	JSONObject loadBatchTaskJSON = newLoadBatchTask(LOAD_BATCH_WAIT_ID);
 	String loadBatchKey = getLoadBatchKey(s3EventObject);
 	
@@ -157,15 +173,21 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    // Write semaphore, if present other lambdas must wait.  
 	    S3.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
 	    
-	    JSONObject loadBatchJSON = Invofox.newLoadBatch(companyId);
+	    JSONObject loadBatchJSON = Invofox.newLoadBatch(invofoxApiKey, invofoxApiUrl, companyId);
 	    // new issue for this batch, and don't wait for it
 	    String companyName = getCompanyName(s3EventObject);
 	    Task task = new Task()
 		    .setTitle(format(TITLE, companyName))
 		    .setDescription(format(DESCRIPTION, companyName ))
 		    .setWorkgroup(new Workgroup().setDescription(WORKGROUP));
+	    JSONObject taskJSON ;
 	    
-	    JSONObject taskJSON =  AonTask.newTask(s3EventObject.getDomain(), s3EventObject.getUser(), task );
+	    try {
+		taskJSON =  AonTask.newTask(s3EventObject.getDomain(), s3EventObject.getUser(), task );
+	    } catch ( Exception t ) {
+		taskJSON = new JSONObject()
+		.put("id", Integer.MAX_VALUE );
+	    }
 	    
 	    loadBatchTaskJSON = newLoadBatchTask(loadBatchJSON, taskJSON);
 	    S3.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
@@ -173,6 +195,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	}
 	return loadBatchTaskJSON;
     }
+    
+    protected static JSONObject loadDocuments(InvofoxConfiguration invofoxConfiguration, DocumentType type, String companyId, String loadBatchId, JSONObject clientData , String ...downloadURLs) throws URISyntaxException, IOException, InterruptedException {
+	return Invofox.loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURLs);
+    }
+    
     
     static String documentSent(S3EventObject s3EventObject, JSONObject loadBatchTaskJSON, String downloadURL) throws URISyntaxException, IOException, InterruptedException {
 	

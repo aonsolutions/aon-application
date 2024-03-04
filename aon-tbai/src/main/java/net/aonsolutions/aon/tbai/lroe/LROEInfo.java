@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 
@@ -73,21 +73,8 @@ public class LROEInfo {
 		return this;
 	}
 	
-	public OldInvoiceCommunicationType getCommunicationType() {
-		if("1.1".equals(getSubcapitulo())) {
-			return OldInvoiceCommunicationType.LROE_1_1;
-		} else if("1.2".equals(getSubcapitulo())) {
-			return OldInvoiceCommunicationType.LROE_1_2;
-		} else if("1.3".equals(getSubcapitulo())) {
-			return OldInvoiceCommunicationType.LROE_1_3;
-		} else if("2.1".equals(getSubcapitulo())) {
-			return OldInvoiceCommunicationType.LROE_2_1;
-		} else if("2.2".equals(getSubcapitulo())) {
-			return OldInvoiceCommunicationType.LROE_2_2;
-		} else if("2".equals(getCapitulo())) {
-			return OldInvoiceCommunicationType.LROE_2;
-		}
-		return null;
+	public InvoiceCommunicationType getCommunicationType() {
+		return InvoiceCommunicationType.LROE;
 	}
 	
 	public InvoiceCommunicationOperation getCommunicationOperation() {

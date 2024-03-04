@@ -133,6 +133,7 @@ import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -2002,6 +2003,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public Period getMinMaxCraDate(String domain, String user) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			return JooqCRA.getMinMaxCraDate(domainId, userId, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
@@ -2023,6 +2036,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -3368,7 +3382,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
 			String contingency, String situation_employee, String licenseNumber,
 			String cias, String occupation, java.util.Date startdate, String contractType,
-			float baseCot, int cotDays, java.util.Date fATEP, String accidentType) {
+			float baseCot, int cotDays, java.util.Date fATEP, String accidentType, String job, String jobDescription) {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3394,7 +3408,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)),
 					Optional.of(licenseNumber), 
 					Optional.of(cias),
-					Optional.of(occupation));
+					Optional.of(occupation),
+					Optional.of(job),
+					Optional.of(jobDescription));
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -4809,6 +4825,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	// ------------------------------------------------ Pension Plan AFI
+
+	@Override
+	public String checkPensionPlanAFI(String domainName, String user, long date, List<Integer> cccIdList) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeAFI.checkPensionPlanAFI(connection, date, cccIdList);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
 	// ------------------------------------------------ Partes IT
 
 	@Override
@@ -4836,6 +4863,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			.setDni(employeeInfo.getDocument())
 			.setStartDate(it.getStartDate()) //FECHA DE BAJA
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
+			.setJob(contractInfo.getAgreementCategory())
+			.setJobDescription("Las propias de " + contractInfo.getAgreementCategory())
 			;
 			
 			if(it.getEndDate()!=null) {				

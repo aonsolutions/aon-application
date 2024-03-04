@@ -2,7 +2,7 @@ package com.esferalia.aon.in.payroll.tgss.ivl;
 
 import java.util.Date;
 
-interface IvlParserListener {
+public interface IvlParserListener {
 
     default void onEnterprise(String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
 	    String docType, String docNumber, String enterpriseAddress, String enterpriseCity, String enterpriseCP,

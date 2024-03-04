@@ -240,7 +240,19 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> salaries = new HashSet<>();
-		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
+
+		Stream<IrpfBreakdown> stream = null;
+		if (mustApplyReplacementSearch(mod111)) {
+			Mod111 previous = Mod111DAO.getSamePeriodEffectiveModels( ctx, mod111 )
+				.findFirst()
+				.orElse(null);
+			stream = Stream.concat(
+				((previous == null) ? Stream.empty(): IRPFDAO.getModelSalaryIrpfBreakdown(ctx, previous))
+				,IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111));
+		} else {
+			stream = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111);
+		}
+		stream
 			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addSalary(salaries, kbr))
@@ -325,4 +337,39 @@ public abstract class Mod111Declaration {
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
 	public abstract Mod111Key[] getSamePeriodExplainKeys();
 	
+
+
+//	public static Stream<IrpfBreakdown> getReplacementSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
+//		Integer replacedId = ctx.getDslContext()
+//			.select(FS_MODEL.ID)
+//				.from(FS_MODEL)
+//				.join(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
+//				.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+//				.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+//				.and(FS_MODEL.YEAR.eq(fm.getYear()))
+//				.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+//				.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
+//				.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.lt(fm.getId()))
+//				.orderBy(FS_MODEL.ID.desc())
+//				.fetch()
+//				.stream()
+//				.map(rec -> rec.getValue(FS_MODEL.ID))
+//				.findFirst()
+//				.orElse(null)
+//				;
+//		return replacedId==null
+//			? Stream.empty()
+//			: getSalaryIrpfBreakdownSelect(ctx)
+//				.innerJoin(ALCATRAZ).on(ALCATRAZ.SALARY.equal(SALARY.ID))
+//				.where(SALARY.DOMAIN.equal(fm.getDomain()))
+//					.and(ALCATRAZ.FS_MODEL.eq( replacedId ))
+//					.and(SALARY.IRPF_BASE.ne( 0.0 ))
+//					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+//				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_NAME)
+//				.fetch()
+//				.stream()
+//				.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
+//				.flatMap(List::stream);
+//	}
 }

@@ -63,6 +63,8 @@ public class Finance implements Serializable, HasAudit {
 
 	private boolean recordable;
 	
+	private Date paidDate;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -486,9 +488,18 @@ public class Finance implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+
+	public Date getPaidDate() {
+		return paidDate;
+	}
+
+	public Finance setPaidDate(Date paidDate) {
+		this.paidDate = paidDate;
+		return this;
+	}
+	
 	// ---------------------------------------------------------- 
 
-	
 	public boolean isRemoved() {
 		return removed;
 	}

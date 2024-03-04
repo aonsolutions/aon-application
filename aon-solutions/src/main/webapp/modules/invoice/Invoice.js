@@ -51,7 +51,7 @@ export class Invoice {
   workplace;
   
   messages;
-
+  
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -125,6 +125,7 @@ export class Invoice {
       this.tbaiUrl = invoice.tbaiUrl || '';
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
+      this.insight = invoice.insight || {};
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
@@ -213,11 +214,12 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-      
       this.details.forEach((detail,i) => {
-        detail.percentage = 0.0;
-        detail.vat = 0.0;
-        this.setDetail(detail, i);
+        if(detail.percentage !== 0.0 || detail.vat !== 0.0){
+          detail.percentage = 0.0;
+          detail.vat = 0.0;
+          this.setDetail(detail, i);
+        }
       });
     }
     return this;
@@ -264,7 +266,7 @@ export class Invoice {
   }
 
   setTotal(total){
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateTaxFromTotal();
     this.calculateFinances();
     return this;
@@ -328,6 +330,10 @@ export class Invoice {
 
   isRawdoc() {
     return this.isInbox() || this.isRejected() || this.isDraft();
+  }
+
+  isOcrStatus(...publicStates) {
+	return publicStates.some( publicState =>  this.status.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
   }
 
   isInbox() {
@@ -446,13 +452,14 @@ export class Invoice {
     return this.withholding && this.withholding != CONSTANT.FALSE;
   }
 
-  setWithholding(withholding) {
+  setWithholding(withholding, def) {
     this.withholding = withholding;
+    let wt = def ? WithholdingType.find(v => v.id == def) : undefined;
     if(this.isNacional() && !this.isExempt()) {
-      this.calculateWithholdingFromTax();
+      this.calculateWithholdingFromTax(wt);
       this.calculateTotalFromTax();
     } else {
-      this.calculateWithholdingFromDetail();
+      this.calculateWithholdingFromDetail(wt);
       this.calculateTotalFromDetail();
     }
     this.details.forEach((detail, i) => {
@@ -512,7 +519,7 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-
+      
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;
         detail.vat = 0.0;
@@ -596,7 +603,7 @@ export class Invoice {
         : (this.isWithholdingFarmer() ? 2.0 : 15.0);
 
       let wt = withholdingType ? withholdingType.id
-        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+        : (this.isWithholdingFarmer() ? "FARMER" : "PROFESSIONAL");
 
       let tax = {
         tax: TaxType.IRPF,
@@ -660,7 +667,7 @@ export class Invoice {
         : (this.isWithholdingFarmer() ? 2.0 : 15.0);
 
       let wt = withholdingType ? withholdingType.id
-        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+        : (this.isWithholdingFarmer() ? "FARMER" : "PROFESSIONAL");
 
       let tax = {
         tax: TaxType.IRPF,
@@ -761,6 +768,11 @@ export class Invoice {
   }
 
   calculateTaxFromTotal() {
+    let withholdingPercentage = 0.0;
+    if(this.isWithholding() && this.taxes.filter(f => TaxType.IRPF === f.tax).length > 0){
+      withholdingPercentage = this.taxes.filter(f => TaxType.IRPF === f.tax)[0].percentage;
+    }
+    let base = 0.0;
     if(this.isEmitida() && (!this.isNacional() || this.isExempt())){
       this.taxes = [{
           tax:TaxType.IVA,
@@ -771,29 +783,50 @@ export class Invoice {
           surcharge: 0.0,
           surcharge_quota: 0.0
       }];
-    } else if (this.taxes.length === 0) {
+    } else if (this.taxes.filter(f => TaxType.IVA === f.tax).length === 0) {
+      this.taxes = [];
       let div = this.isSurcharge() ? 1.262 : 1.21;
+      if(this.isWithholding() && withholdingPercentage > 0){
+        div = div - (withholdingPercentage/100);
+      }
+      base = round(Number(this.total) / div);
 			let tax = {
 				tax: TaxType.IVA,
 				type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,
 				percentage: 21.0,
-				base: round(Number(this.total) / div),
-				quota: round(Number(this.total / 1.21) * 0.21),
+				base: base,
+				quota: round(base * 0.21),
         surcharge: this.isSurcharge() ? 5.2 : 0.0,
-        surcharge_quota: this.isSurcharge() ? round(Number(this.total / 1.052) * 0.052) : 0.0
+        surcharge_quota: this.isSurcharge() ? round(base * 0.052) : 0.0
 		 	};
 			this.taxes.push(tax);
-		} else if(this.taxes.length === 1){
-			let tax = this.taxes[0];
+		} else if(this.taxes.filter(f => TaxType.IVA === f.tax).length === 1){
+			let tax = this.taxes.filter(f => TaxType.IVA === f.tax)[0];
+      this.taxes=[];
       const p = (this.isSurcharge() ? tax.percentage + getSurchargeByVat(tax.percentage) : tax.percentage) / 100;
-      const p0 = p + 1;
-
-      tax.base = round(Number(this.total) / p0);
+      let p0 = p + 1;
+      if(this.isWithholding() && withholdingPercentage > 0){
+        p0 = p0 - (withholdingPercentage/100);
+      }
+      base = round(Number(this.total) / p0);
+      tax.base = base;
 			tax.quota = round(tax.base / 100 * tax.percentage);
 			tax.surcharge = this.isSurcharge() ? getSurchargeByVat(tax.percentage) : 0.0;
       tax.surcharge_quota = round(tax.base / 100 * tax.surcharge);
-      this.taxes[0] = tax;
+      this.taxes.push(tax);
 		}
+
+    if(this.isWithholding() && withholdingPercentage > 0) {
+			let irpf = {
+				tax: TaxType.IRPF,
+				type: TaxType.IRPF,
+				percentage: withholdingPercentage,
+				base: base,
+				quota: round(base * (withholdingPercentage/100)),
+
+		 	};
+      this.taxes.push(irpf);
+    }
   }
 
   getWitholdingTax() {
@@ -878,12 +911,12 @@ export class Invoice {
 
   calculateTaxFromDetail() {
     this.taxes = this.isWithholding() ? [this.getWitholdingTax()] : [];
-    
     this.details.forEach( (detail, i) => {
+      detail = this.calculateDetail(detail);
       if(!detail.prepayment || detail.prepayment === CONSTANT.FALSE) {
-        if(this.taxes.filter(f => f.percentage === detail.percentage).length > 0) {
+        if(this.taxes.filter(f => f.percentage == detail.percentage).length > 0) {
             this.taxes.forEach((tax, i) => {
-            if(tax.percentage === detail.percentage){
+            if(tax.percentage == detail.percentage){
              tax.base = tax.base + detail.amount;
              tax.quota = tax.quota + detail.quota;
              tax.surcharge_quota = tax.surcharge_quota + detail.surcharge_quota;
@@ -918,7 +951,7 @@ export class Invoice {
       total = total - Number(tax.quota);
     });
 
-    this.total = total;
+    this.total = round(Number(total));
     this.calculateFinances();
   }
 
@@ -927,6 +960,23 @@ export class Invoice {
       this.finances[i].bank_account = bankAccount;
     });
     return this;
+  }
+
+  resetFinances() {
+
+    let finance = {
+          due_date: this.date,
+          paymethod: this.paymethod,
+          amount: this.total,
+          iban: ''
+        };
+
+    if(this.finances.length > 0) {
+        finance.paymethod = this.finances[0].paymethod;
+        finance.iban = this.finances[0].iban;
+    }
+
+    this.finances = [finance];
   }
 
   calculateFinances() {
@@ -949,6 +999,8 @@ export class Invoice {
         this.finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });
+      this.total = round(Number(this.total));
+      financeTotal = round(Number(financeTotal));
       if(this.total != financeTotal) {
         let bankAccount = this.finances[0].bank_account;
         let finance = {

@@ -786,6 +786,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
+					String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 

@@ -1,10 +1,12 @@
 package solutions.aon.seg.social.toolkit;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
@@ -20,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.LogFactory;
 import org.htmlunit.BrowserVersion;
@@ -46,9 +49,11 @@ import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.parser.HTMLParser;
 import org.htmlunit.html.parser.HTMLParserListener;
 import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.util.WebResponseWrapper;
 import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CSSParseException;
@@ -75,6 +80,13 @@ public class HtmlUnitToolkit {
 			}
 		}
 		return Optional.empty();
+	}
+
+	public static WebClient getWebClient(final byte[] certificateData, final String certificatePassword,
+			final String certificateType) throws SegSocialException, IOException {
+		try ( ByteArrayInputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return getWebClientCert(certificateInputStream, certificatePassword, certificateType);
+		}
 	}
 
 	// GET THE WEB CLIENT OF HTMLUNIT
@@ -353,6 +365,16 @@ public class HtmlUnitToolkit {
 		return page;
 	}
 	
+	public static HtmlPage selectOption(HtmlPage htmlPage, String id, String value) throws IOException {
+		HtmlSelect htmlSelect = (HtmlSelect) htmlPage.getElementById(id);
+		htmlSelect.focus();
+		htmlSelect.click();
+		htmlPage = htmlSelect.getOptionByValue(value).click();
+		htmlSelect.blur();
+		return htmlPage;
+	}
+	
+	
 	//Method to disable all the HtmlUnit web client logs
 	public static void disableLogging (WebClient webClient) {
 		LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
@@ -456,7 +478,7 @@ public class HtmlUnitToolkit {
 		}
 	}
 
-	public static HtmlPage tranformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
+	public static HtmlPage transformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
 		WebClient webClient = xmlPage.getWebClient();
 	    
 	    String xslStylesheet = getXslStylesheet(xmlPage);
@@ -500,6 +522,76 @@ public class HtmlUnitToolkit {
 	    return htmlPage;
 	}
 	
+	public static WebResponse transformXmlPage(WebClient webClient, WebResponse response) throws IOException, TransformerException {
+	    URL xslURL = getXslStylesheet(response);
+	    
+	    XmlPage xslPage = webClient.getPage(xslURL);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new StreamSource(response.getContentAsStream());
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+		    URL hrefURL = new URL( xslURL, href);
+		    XmlPage hrefPage = webClient.getPage(hrefURL);
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+	    
+	    
+	    
+	    return new WebResponseWrapper(response) {
+
+	    	private String content = out.toString();
+	    	
+	    	@Override
+	    	public String getContentType() {
+	    		return super.getContentType()
+	    				.replace("xml", "html");
+	    	}
+	    	
+	    	@Override
+	    	public long getContentLength() {
+	    		return content.getBytes().length;
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString() {
+	    		return getContentAsString(getContentCharset());
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString(Charset encoding) {
+	    		return new String(content.getBytes(encoding));
+	    	}
+
+	    	@Override
+	    	public InputStream getContentAsStream() throws IOException {
+	    		return new ByteArrayInputStream(content.getBytes());
+	    	}
+	    	
+	    	
+	    	
+	    };
+	    
+	}
+
 	public static HtmlPage loadHtmlCodeIntoCurrentWindow(final WebClient webClient,  final String htmlCode, final URL url) throws IOException {
 	    final HTMLParser htmlParser = webClient.getPageCreator().getHtmlParser();
 	    final WebWindow webWindow = webClient.getCurrentWindow();
@@ -514,12 +606,18 @@ public class HtmlUnitToolkit {
 	
 	public static String getXslStylesheet (XmlPage xmlPage) throws MalformedURLException {
 	    
-	    Matcher matcher = Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(xmlPage.getWebResponse().getContentAsString());
+	    return getXslStylesheet(xmlPage.getWebResponse()).toString();
+	    
+	}
+
+	public static URL getXslStylesheet (WebResponse response) throws MalformedURLException {
+	    
+	    Matcher matcher = Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(response.getContentAsString());
 	    matcher.find();
 	    String href = matcher.group("href");
 
-	    URL url = xmlPage.getWebResponse().getWebRequest().getUrl();
-	    return new URL(url, href).toString();
+	    URL url = response.getWebRequest().getUrl();
+	    return new URL(url, href);
 	    
 	}
 }
