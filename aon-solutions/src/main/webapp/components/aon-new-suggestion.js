@@ -78,9 +78,12 @@ export class AonNewSuggestion extends AonNewInput {
     if (CONSTANT.TITLE === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).description = newValue;
     }
+
     if (CONSTANT.DISABLED === name) {
       let el = this.getElement(this.INPUT);
       el.setAttribute(CONSTANT.DISABLED, newValue);
+      if(newValue == CONSTANT.FALSE)
+        el.removeAttribute(CONSTANT.DISABLED); 
     }
   }
 

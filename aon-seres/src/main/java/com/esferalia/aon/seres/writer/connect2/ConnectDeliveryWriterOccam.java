@@ -226,7 +226,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<IngenetPackaging> packageList = getPackageList(packageData);
 		List<IngenetPackaging> ssccList = packageList.stream().filter(f -> f.hasSscc()).collect(Collectors.toCollection(LinkedList::new));
 		
-		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null, null);
+		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null, null, codes);
 		mainPackage.seh1lList = new ArrayList<>();
 		list.add(mainPackage);
 
@@ -244,16 +244,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			Double quantity = auxDetail.getQuantity();
 			
 			
-			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc(), detail);
+			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc(), detail, codes);
 			packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
 			packaging.seh1lList = new ArrayList<>();
-//			Integer line = sscc.getLin();
-//			if(lineList.contains(line)) {
-//			    line = auxLine;
-//			    auxLine = auxLine - 1;
-//			}
-//			lineList.add(line);
 			Integer line = i + 1;
 			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, quantity, codes));
 			list.add(packaging);
@@ -265,7 +259,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private List<SEH1P> createSEH1PList2(Delivery delivery, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
 		
-		SEH1P mainPackage = createSEH1PRecord(1, delivery.getPackaging().size(), "201", null, null);
+		SEH1P mainPackage = createSEH1PRecord(1, delivery.getPackaging().size(), "201", null, null, codes);
 		mainPackage.seh1lList = new ArrayList<>();
 		list.add(mainPackage);
 		
@@ -284,7 +278,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				}    
 				boxQuantity = AonMathUtils.round(boxQuantity);
 				
-				SEH1P packaging  = createSEH1PRecord(i + 2, boxQuantity.intValue(), "CT", dp.getItem().getSerialNumber(), null);
+				SEH1P packaging  = createSEH1PRecord(i + 2, boxQuantity.intValue(), "CT", dp.getItem().getSerialNumber(), null, codes);
 				packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
 				packaging.seh1lList = new ArrayList<>();
@@ -364,7 +358,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Secuencia de embalajes
 	 */
-	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format, String sscc, DeliveryDetail detail) {
+	private SEH1P createSEH1PRecord(int lineNumber, Integer quantity, String format, String sscc, DeliveryDetail detail, EdiCodes codes) {
 		SEH1P seh1p = new SEH1P();
 		seh1p.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		seh1p.setNumeroDeJerarquiaPadreDeEmbalaje(null);
@@ -384,8 +378,16 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1p.setCodigoSignificacionDeLaMedidaPesoBruto(null);
 		seh1p.setUnidadDeMedidaParaElPesoBruto(null);
 		if(detail != null && detail.getItem() != null) {
-			seh1p.setPesoNeto1_AAC_(detail.getQuantity() * detail.getItem().getPackMeasurement());
-			seh1p.setPesoBruto1_AAD_(detail.getQuantity() * detail.getItem().getPackMeasurement());
+			double q = 0.0;
+			double packUnits = detail.getItem().getPackUnits();
+			if(quantity ==null) {
+				q = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
+			} else {
+				q = packUnits * quantity;
+			}
+			
+			seh1p.setPesoNeto1_AAC_(q * detail.getItem().getPackMeasurement());
+			seh1p.setPesoBruto1_AAD_(q * detail.getItem().getPackMeasurement());
 			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
 				seh1p.setUnidadDeMedidaParaElPesoNeto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 				seh1p.setUnidadDeMedidaParaElPesoBruto(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
