@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -203,7 +204,10 @@ public class OCRInvofox {
 	
 	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentsResponse getDocuments(String apiKey, String apiUrl, OCRDocumentsParams params) {
-		return get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+		OCRDocumentsResponse documentsResponse = get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		documentsResponse.setDocuments(documents);
+		return documentsResponse;
 	}
 	
 
