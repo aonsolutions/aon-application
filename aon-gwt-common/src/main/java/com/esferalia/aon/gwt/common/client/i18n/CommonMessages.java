@@ -683,6 +683,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
+	@DefaultMessage("Mostrar mas datos")
+	String showMoreData();
+
 	@DefaultMessage("{0} - {1} de {2}")
 	String exactPagerData(int start, int end, int count);
 

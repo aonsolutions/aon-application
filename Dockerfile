@@ -1,4 +1,4 @@
-FROM tomcat:10-jdk17
+FROM tomcat:11.0-jdk21-openjdk
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -126,7 +126,7 @@ ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Enable all algorithms
-RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /opt/java/openjdk/conf/security/java.security
+RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /usr/local/openjdk-21/conf/security/java.security
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
