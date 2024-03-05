@@ -275,7 +275,7 @@ export class AonCustomerSuggestion extends AonElement {
       }
       this.clearElement(div);
 
-      if(this.customer.address.id && this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
+      if(this.customer.address && this.customer.address.id && this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
         let table = new AonBasicTable();
 		    table.id = this.ADDRESS_TABLE;
 		    div.appendChild(table);
