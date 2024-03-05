@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -338,6 +339,8 @@ public class PayrollTemplate implements IPayrollTemplate {
 		    }
 		    y -= 5;
 		});
+	
+	
 	for (int log : new int[] { IPayrollTemplate.INFO, IPayrollTemplate.NOTE, IPayrollTemplate.WARNING }) {
 	    ArrayList<PDFPayment> logs = accruals.get().get(log);
 	    if (logs != null && !logs.isEmpty()) {
@@ -518,6 +521,8 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    final String unemploymentTitle = text("DESEMPLEO");
 	    final String profesFormTitle = text("FORMACION PROFESIONAL");
 	    final String fogasaTitle = text("FONDO DE GARANTIA SALARIAL");
+	    
+	    
 
 	    final String extraHoursTitle = "4. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
 	    final String forceMajeureTitle = text("FUERZA MAYOR O");
@@ -727,6 +732,7 @@ public class PayrollTemplate implements IPayrollTemplate {
 	return words.getString(name);
     }
     
+
     private static boolean isNotLog(int key) {
 	return !Objects.equals(key, IPayrollTemplate.INFO)
 		&& !Objects.equals(key, IPayrollTemplate.NOTE) 

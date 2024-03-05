@@ -1,22 +1,22 @@
-import { AonElement } from '../../../components/AonElement.js';
-import { getRegistries, getRegistryAddress, getCustomer } from '../../../services/service.js';
+import { AonElement } from '../../components/AonElement.js';
+import { getRegistries, getRegistryAddress, getRegistry } from '../../services/service.js';
 
-import { AonSuggestion} from '../../../components/aon-suggestion.js';
+import { AonSuggestion} from '../../components/aon-suggestion.js';
 
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
-import { AonAddress } from '../../../components/aon-address.js';
-import { RegistryType } from '../../../models/enums.js';
-import { AonSelect } from '../../../components/aon-select.js';
-import { AonBasicTable } from '../../../components/aon-basic-table.js';
-import { AonIconButton } from '../../../components/aon-icon-button.js';
-import { Address } from '../../../models/registry/Address.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { AonAddress } from '../../components/aon-address.js';
+import { RegistryType } from '../../models/enums.js';
+import { AonSelect } from '../../components/aon-select.js';
+import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+import { Address } from '../../models/registry/Address.js';
 
-import * as LS from '../../../services/localStorageService.js';
-import { AonNewSuggestion } from '../../../components/aon-new-suggestion.js';
-import { AonNewSelect } from '../../../components/aon-new-select.js';
-import { Countries } from '../../../services/country.js';
+import * as LS from '../../services/localStorageService.js';
+import { AonNewSuggestion } from '../../components/aon-new-suggestion.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
+import { Countries } from '../../services/country.js';
 
-export class AonCustomerSuggestion extends AonElement {
+export class AonRegistrySuggestion extends AonElement {
 
   OPTIONS;
   OPTIONS_UL;
@@ -27,9 +27,9 @@ export class AonCustomerSuggestion extends AonElement {
   options;
   selected;
   showAddress;
-  customer;
+  registry;
   showAddressList;
-
+  types;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -63,12 +63,16 @@ export class AonCustomerSuggestion extends AonElement {
     this.init();
 	}
 
-  setCustomer(customer){
-    this.customer = customer;
+  setRegistry(registry){
+    this.registry = registry;
+  }
+  
+  setTypes(types){
+    this.types = types;
   }
 
   initialize() {
-    this.id = this.id || 'aonCustomerSuggestion';
+    this.id = this.id || 'aonRegistrySuggestion';
     this.OPTIONS = this.id + 'Options';
     this.OPTIONS_UL = this.OPTIONS + 'Ul';
     this.OPTIONS_LI = this.OPTIONS + 'Li';
@@ -86,7 +90,7 @@ export class AonCustomerSuggestion extends AonElement {
     this.selected = -1;
     this.showAddress = this.showAddress || false;
     this.showAddressList = true;
-    this.customer = this.customer || {name: '', document: ''};
+    this.registry = this.registry || {name: '', document: ''};
   }
 
   build(){
@@ -99,12 +103,12 @@ export class AonCustomerSuggestion extends AonElement {
       document,
       additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
     };
-    getCustomer(data).then(r => {
+    getRegistry(data).then(r => {
       if(r.id) {
-        this.updateCustomer(customer);
+        this.updateRegistry(registry);
       } else {
-        if(!this.customer) this.customer = {};
-        this.customer.document = document;
+        if(!this.registry) this.registry = {};
+        this.registry.document = document;
       }
       this.buildAddress();
       this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
@@ -112,8 +116,8 @@ export class AonCustomerSuggestion extends AonElement {
   }
 
   onChangeName(name) {
-    if(!this.customer) this.customer = {};
-    this.customer.name = name;
+    if(!this.registry) this.registry = {};
+    this.registry.name = name;
     this.buildAddress();
     this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
   }
@@ -123,7 +127,7 @@ export class AonCustomerSuggestion extends AonElement {
       let options = this.getElement(this.OPTIONS);
       options.style.marginTop = "-80px";
     }
-    let data = { types: [RegistryType.CUSTOMER], document: value};
+    let data = { types: this.types, document: value};
     this.onKeyup(event, data, value);
   }
 
@@ -132,7 +136,7 @@ export class AonCustomerSuggestion extends AonElement {
       let options = this.getElement(this.OPTIONS);
       options.style.marginTop = "-16px";
     }
-    let data = { types: [RegistryType.CUSTOMER], name: value};
+    let data = { types: this.types, name: value};
     this.onKeyup(event, data, value);
   }
 
@@ -156,7 +160,7 @@ export class AonCustomerSuggestion extends AonElement {
         let li2 = this.getElement(this.OPTIONS_LI + this.selected);
         if(li2) li2.style.backgroundColor = '#f1f1f1';
      } else if (e.keyCode == '13' || e.key == 'Enter') {
-        this.updateCustomer(this.options[this.selected].registry);
+        this.updateRegistry(this.options[this.selected].registry);
         this.closeOptions();
      } else {
        if(value.length > 2) {
@@ -191,13 +195,13 @@ export class AonCustomerSuggestion extends AonElement {
       })
     );
     country.readonly = this.isReadonly();
-    country.value = this.customer.documentCountry || 'ES';
+    country.value = this.registry.documentCountry || 'ES';
     country.addEventListener(EVENT.SELECT, () => {
-      this.customer.documentCountry = country.value;
+      this.registry.documentCountry = country.value;
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     span0.appendChild(country);
-    if(this.customer.id) country.disabled = true;
+    if(this.registry.id) country.disabled = true;
 
     let span1 = this.createElement(TAG.SPAN);
     span1.style.width="25%";
@@ -206,11 +210,11 @@ export class AonCustomerSuggestion extends AonElement {
 
     let document = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.DOCUMENT, MSG.NIF);
     document.readonly = this.isReadonly();
-    document.value = this.customer.document;
+    document.value = this.registry.document;
     document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
     document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
     span1.appendChild(document);
-    if(this.customer.id) document.disabled = true;
+    if(this.registry.id) document.disabled = true;
 
     let span2 = this.createElement(TAG.SPAN);
     span2.style.width="55%";
@@ -218,12 +222,12 @@ export class AonCustomerSuggestion extends AonElement {
 
     let name = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.NAME, MSG.BUSINESS_NAME);
     name.name = CONSTANT.NAME;
-    name.value = this.customer.name;
+    name.value = this.registry.name;
     name.readonly = this.isReadonly();
     name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
     name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
     span2.appendChild(name);
-    if(this.customer.id) name.disabled = true;
+    if(this.registry.id) name.disabled = true;
 
     let removeRegistry = new AonIconButton();
     removeRegistry.id = this.REMOVE_REGISTRY;
@@ -232,9 +236,9 @@ export class AonCustomerSuggestion extends AonElement {
     removeRegistry.style.paddingTop = '13px';
     removeRegistry.style.marginRight = '3px';
     removeRegistry.style.marginLeft = '4px';
-    removeRegistry.style.display = !this.isReadonly() && this.customer.id ? 'block' : 'none';
+    removeRegistry.style.display = !this.isReadonly() && this.registry.id ? 'block' : 'none';
     removeRegistry.addEventListener(EVENT.CLICK, () => {
-      this.customer = {};
+      this.registry = {};
       country.value = 'ES';
       country.disabled = false;
       name.value = '';
@@ -275,7 +279,7 @@ export class AonCustomerSuggestion extends AonElement {
       }
       this.clearElement(div);
 
-      if(this.customer.address.id && this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
+      if(this.registry.address.id && this.registry.addresses && this.registry.addresses.length > 0 && this.showAddressList) { 
         let table = new AonBasicTable();
 		    table.id = this.ADDRESS_TABLE;
 		    div.appendChild(table);
@@ -286,10 +290,10 @@ export class AonCustomerSuggestion extends AonElement {
         addressList.id = this.ADDRESS_LIST;
         addressList.title = MSG.ADDRESS;
         addressList.setAlias('id', 'fullAddress');
-        addressList.setOptions(this.customer.addresses);
-        addressList.value = this.customer.address.id;
+        addressList.setOptions(this.registry.addresses);
+        addressList.value = this.registry.address.id;
         addressList.addEventListener(EVENT.CHANGE, () => {
-          this.customer.address = this.customer.addresses.filter(f => f.id == addressList.value)[0];
+          this.registry.address = this.registry.addresses.filter(f => f.id == addressList.value)[0];
           this.dispatchEvent(new Event(EVENT.CUSTOMER_CHANGE));
         });
 
@@ -299,7 +303,7 @@ export class AonCustomerSuggestion extends AonElement {
         addAddress.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
         addAddress.addEventListener(EVENT.CLICK, () => {
           this.showAddressList = false;
-          this.customer.address = new Address();
+          this.registry.address = new Address();
           this.buildAddress();
         });
         let td = table.addCell(addressList);
@@ -316,15 +320,15 @@ export class AonCustomerSuggestion extends AonElement {
         address.id = this.ADDRESS;
         address.title = MSG.ADDRESS;
         address.readonly = this.isReadonly();
-        address.setAddress(this.customer.address);
+        address.setAddress(this.registry.address);
         address.addEventListener(EVENT.CHANGE, () => {
-          this.customer.address = address.getAddress();
+          this.registry.address = address.getAddress();
           this.dispatchEvent(new Event(EVENT.CUSTOMER_CHANGE));
         });
 
         let td = table.addCell(address);
 	  		td.style.width = '100%';
-        if(!this.showAddressList || (this.customer.addresses && this.customer.addresses.length > 0)) {
+        if(!this.showAddressList || (this.registry.addresses && this.registry.addresses.length > 0)) {
           let listAddress = new AonIconButton();
           listAddress.id = this.ADDRESS_LIST_BUTTON;
           listAddress.title = MSG.ADDRESS;
@@ -332,7 +336,7 @@ export class AonCustomerSuggestion extends AonElement {
           listAddress.icon = MATERIAL_ICONS.PLAYLIST_ADD_CIRCLE;
           listAddress.addEventListener(EVENT.CLICK, () => {
             this.showAddressList = true;
-            this.customer.address = this.customer.addresses.filter(f => f.main)[0]
+            this.registry.address = this.registry.addresses.filter(f => f.main)[0]
             this.buildAddress();
           });
           table.addCell(listAddress);
@@ -360,7 +364,7 @@ export class AonCustomerSuggestion extends AonElement {
         li.innerHTML = options[i].name;
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
-          this.updateCustomer(options[i].registry);
+          this.updateRegistry(options[i].registry);
         });
         ul.appendChild(li);
       }
@@ -385,16 +389,16 @@ export class AonCustomerSuggestion extends AonElement {
   }
 
   isShowAddress() {
-    return this.showAddress && this.customer && this.customer.name && this.customer.document;
+    return this.showAddress && this.registry && this.registry.name && this.registry.document;
   }
 
-  getCustomer() {
-    return this.customer;
+  getRegistry() {
+    return this.registry;
   }
 
-  updateCustomer(registry) {
+  updateRegistry(registry) {
     if(registry) {
-      this.customer = registry;
+      this.registry = registry;
       let docCountry = this.getElement(this.DOCUMENT_COUNTRY);
       if(docCountry) docCountry.value = registry.documentCountry;
       let doc = this.getElement(this.DOCUMENT);
@@ -409,7 +413,7 @@ export class AonCustomerSuggestion extends AonElement {
         let rr = this.getElement(this.REMOVE_REGISTRY);
         if(rr) rr.style.display = 'block';
         getRegistryAddress(data).then(ra => {
-            this.customer.address = ra;          
+            this.registry.address = ra;          
             this.buildAddress();
             this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
         });
@@ -424,10 +428,10 @@ export class AonCustomerSuggestion extends AonElement {
           additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
         };
 
-        getCustomer(data).then(r => {
-          this.customer = r;
-          if(this.customer && this.customer.addresses) {
-            this.customer.address = this.customer.addresses.filter(f => f.main)[0]; 
+        getRegistry(data).then(r => {
+          this.registry = r;
+          if(this.registry && this.registry.addresses) {
+            this.registry.address = this.registry.addresses.filter(f => f.main)[0]; 
           }
           this.buildAddress();
           this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
@@ -440,25 +444,25 @@ export class AonCustomerSuggestion extends AonElement {
   }
 
   init() {
-    if(this.customer) {
-      if(this.customer.global){
-        let data = {registry: this.customer.id, global: this.customer.global};
+    if(this.registry) {
+      if(this.registry.global){
+        let data = {registry: this.registry.id, global: this.registry.global};
         getRegistryAddress(data).then(ra => {
-            this.customer.address = ra;          
+            this.registry.address = ra;          
             this.build();
         });
-      } else if(this.customer.id) {
+      } else if(this.registry.id) {
         let data = {
-          id: this.customer.id,
+          id: this.registry.id,
           additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
         };
-        getCustomer(data).then(r => {
-          let address = this.customer.address;
-          this.customer = r;
-          this.customer.address = address;
+        getRegistry(data).then(r => {
+          let address = this.registry.address;
+          this.registry = r;
+          this.registry.address = address;
 
-          if(this.customer && this.customer.addresses && this.customer.addresses.length > 0) {
-            this.customer.address = this.customer.address || this.customer.addresses.filter(f => f.main)[0]; 
+          if(this.registry && this.registry.addresses && this.registry.addresses.length > 0) {
+            this.registry.address = this.registry.address || this.registry.addresses.filter(f => f.main)[0]; 
           }
           this.build();
         });
@@ -477,6 +481,6 @@ export class AonCustomerSuggestion extends AonElement {
   }
 }
 
-if(!window.customElements.get(TAG.AON_CUSTOMER_SUGGESTION)){
-	window.customElements.define(TAG.AON_CUSTOMER_SUGGESTION, AonCustomerSuggestion);
+if(!window.customElements.get(TAG.AON_REGISTRY_SUGGESTION)){
+	window.customElements.define(TAG.AON_REGISTRY_SUGGESTION, AonRegistrySuggestion);
 }

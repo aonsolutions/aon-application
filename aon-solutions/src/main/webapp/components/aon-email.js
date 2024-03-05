@@ -1,4 +1,4 @@
-import { MSG, TAG } from '../environments/environments.js'
+import { MSG, EVENT, TAG } from '../environments/environments.js'
 import { AonNewInput } from './aon-new-input.js';
 
 export class AonEmail extends AonNewInput {

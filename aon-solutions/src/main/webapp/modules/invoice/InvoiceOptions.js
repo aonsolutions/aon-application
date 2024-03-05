@@ -68,6 +68,12 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.ERROR
   }
 
+  export const OCR_TRASH = {
+    id: CONSTANT.OCR_REJECTED.initCap(),
+    name: MSG.TRASH,
+    icon: MATERIAL_ICONS.DELETE
+  }
+
   export const OCR_REJECTED = {
     id: CONSTANT.OCR_REJECTED.initCap(),
     name: MSG.TRASH,
@@ -84,6 +90,12 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     id: CONSTANT.OCR_EXPORTED.initCap(),
     name: MSG.EXPORTED,
     icon: MATERIAL_ICONS.DONE
+  }
+
+  export const OCR_PENDING = {
+    id: CONSTANT.OCR_PENDING.initCap(),
+    name: MSG.PENDING_REVIEW,
+    icon: MATERIAL_ICONS.ERROR
   }
 
   export const OCR_INBOX = {

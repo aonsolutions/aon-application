@@ -40,6 +40,11 @@ public class SupplierDAO {
 	
 	public static final com.esferalia.aon.jooq.tables.Registry SUPPLIER_ALIAS = REGISTRY.as("registry_supplier");
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
+	
+	private SupplierDAO() {
+		
+	}
+	
 	public static class SupplierPropertiesDAO extends RegistryPropertiesDAO implements SupplierProperties {
 		
 		protected Condition[] getConditions(SupplierFilter filter) {
