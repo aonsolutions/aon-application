@@ -54,7 +54,7 @@ export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
-
+export const CAMPAIGN = 'campaign';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
@@ -238,6 +238,7 @@ export const PROCESSING = 'processing'
 // ----- Q
 
 export const QUANTITY = 'quantity';
+export const QUESTION = 'question';
 export const QUOTA = 'quota';
 
 // ----- R
@@ -306,6 +307,7 @@ export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
+export const SURVEY = 'survey';
 
 // ----- T
 
@@ -313,6 +315,7 @@ export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
 export const TAGS = 'tags';
+export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';

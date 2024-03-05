@@ -4433,40 +4433,59 @@ public class AON {
 		}
 	}
 	
-	
 	// ------------------ CARRIER 
-	
-	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getCarrierStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+
+	public static Carrier getCarrier(Domain domain, User user, Integer id) {
+		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id));
 	}
 	
-	public static LinkedList<Carrier> getCarrierList(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		return getCarrierStream(domainName, domainId, login, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Carrier getCarrier(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		return getCarrierStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Carrier());
+	public static Carrier getCarrier(Domain domain, String login, Integer id) {
+		return getCarrier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id) {
 		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static Carrier insertCarrier(String domainName, Integer domainId, String login, Carrier carrier) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertCarrier(ctx, carrier);
-		} finally {
-			if (ctx != null) ctx.close();
+	public static Carrier getCarrier(Domain domain, User user, CarrierFilter filter, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+	
+	public static Carrier getCarrier(Domain domain, String login, CarrierFilter filter, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), login, filter, options);
+	}
+	
+	public static Carrier getCarrier(String domainName, Integer domainId, String login, CarrierFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCarrier(ctx, filter, options);
+		} 
+	}
+
+	public static Stream<Carrier> getCarrierStream(Domain domain, User user, CarrierFilter filter, Options...options) {
+		return getCarrierStream(domain, user.getLogin(), filter, options);
+	}
+	
+	public static Stream<Carrier> getCarrierStream(Domain domain, String login, CarrierFilter filter, Options...options) {
+		return getCarrierStream(domain, login, filter, options);
+	}
+	
+	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCarrierStream(ctx, filter, options);
+		} 
+	}
+
+	public static Carrier saveCarrier(Domain domain, User user, Carrier carrier) {
+		return saveCarrier(domain.getName(), domain.getId(), user.getLogin(), carrier);
+	}
+	
+	public static Carrier saveCarrier(Domain domain, String login, Carrier carrier) {
+		return saveCarrier(domain.getName(), domain.getId(), login, carrier);
+	}
+	
+	public static Carrier saveCarrier(String domainName, Integer domainId, String login, Carrier carrier) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCarrier(ctx, carrier);
 		}
 	}
 	
