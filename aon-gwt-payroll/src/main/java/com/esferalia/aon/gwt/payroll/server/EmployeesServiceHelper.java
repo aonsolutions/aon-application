@@ -97,14 +97,13 @@ import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.Setup;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
-import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -889,48 +888,49 @@ public class EmployeesServiceHelper {
 				return null;
 			});
 			
+			if(contract.getEndDate() == null || sqlDate.before(contract.getEndDate())) {
+				
+				LinkedList<ContractData> dataList = PAYROLL
+				.getContractDataList(domainName, domainId, userLogin, p -> 
+				p.getContractProperty().eq(contractId)
+				.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
+				);
 			
-			LinkedList<ContractData> dataList = PAYROLL
-			.getContractDataList(domainName, domainId, userLogin, p -> 
-			p.getContractProperty().eq(contractId)
-			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
-			);
-			
-			
-			// check tipo_contrato == tc2 			
-			if ( employee.getContractType().isPresent() ) {
-				String ssContractType = employee.getContractType().get();
-				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedContractType()
-							.setAonContractType(aonContractType)
-							.setSsContractType(ssContractType)
-							.setVariables(Collections.singletonList(
-									new StringVariable.Builder()
-									.setName(TC2.getName())
-									.setStartDate(employee.getStartDate())
-									.create()))
-							);
+				// check tipo_contrato == tc2 			
+				if ( employee.getContractType().isPresent() ) {
+					String ssContractType = employee.getContractType().get();
+					String aonContractType = getString(dataList, ContextVariable.TC2, "");
+					if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedContractType()
+								.setAonContractType(aonContractType)
+								.setSsContractType(ssContractType)
+								.setVariables(Collections.singletonList(
+										new StringVariable.Builder()
+										.setName(TC2.getName())
+										.setStartDate(employee.getStartDate())
+										.create()))
+								);
+					}
 				}
-			}
-			
-			// check grupo_cotizacion == quote_group 
-			if ( employee.getQuoteGroup().isPresent()) {
-				String ssQuoteGroup = employee.getQuoteGroup().get();
-				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
-				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedQuoteGroup()
-							.setAonQuoteGroup(aonQuoteGroup)
-							.setSsQuoteGroup(ssQuoteGroup)
-							.setVariables(Collections.singletonList(
-									new StringVariable.Builder()
-									.setName(QUOTE_GROUP.getName())
-									.setStartDate(employee.getStartDate())
-									.create()))
-							);
-				} 
+				
+				// check grupo_cotizacion == quote_group 
+				if ( employee.getQuoteGroup().isPresent()) {
+					String ssQuoteGroup = employee.getQuoteGroup().get();
+					String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
+					if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedQuoteGroup()
+								.setAonQuoteGroup(aonQuoteGroup)
+								.setSsQuoteGroup(ssQuoteGroup)
+								.setVariables(Collections.singletonList(
+										new StringVariable.Builder()
+										.setName(QUOTE_GROUP.getName())
+										.setStartDate(employee.getStartDate())
+										.create()))
+								);
+					} 
+				}
 			}
 			
 			
