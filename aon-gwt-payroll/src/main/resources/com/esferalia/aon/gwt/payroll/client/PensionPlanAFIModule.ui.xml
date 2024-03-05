@@ -1,0 +1,152 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:Style type="com.esferalia.aon.gwt.payroll.client.PensionPlanAFIModule.MyStyle">
+			
+		.bold{
+			font-weight: bold;
+		}
+		
+		.paddingDays{
+			padding: 2px;
+		}
+		
+		.widthDays{
+			width: 18px;
+		}
+		
+		.textCenter{
+			text-align: center;
+		}
+		
+		.paddingText{
+			padding: 0px 0px 0px 5px;
+		}
+		
+		.widthFirstColumn{
+			width: 200px;
+		}
+		
+		.m5{
+			margin: 5px;
+		}
+		
+		.mt40{
+			margin-top: 40px !important;
+		}
+	    
+	    .tableStylePanel{
+			height: 100%;
+		    width: 100%;
+		}
+		
+		.widthAll{
+			width: 100%
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.mt10{
+			margin-top: 15px;
+		}
+		
+		.p10{
+			padding: 10px;
+		}
+		
+		.subTitleSearch{
+			min-width: 100px;
+			text-align: left;
+			margin-left: 20px;
+			font-size: 14px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			margin-right: 10px;
+		}
+		
+		.ml115{
+			margin-left: 115px;
+		}
+		
+		.ml10{
+			margin-left: 10px;
+		}
+	
+		.headerStyle{
+			background: none;
+			background-color: #f6f6f6;
+			border-bottom: #ddd 1px solid;
+			padding: 5px 1em;
+			height: 14.4px;
+			font-weight: bold;
+			font-size: 0.8em;
+			text-transform: uppercase;
+			border-right: 1px solid #c4c0c9;
+			overflow: hidden;
+			width: auto;
+		}
+		
+		.cellStyle{
+			background: none;
+			border-bottom: #ddd 1px solid;
+			padding: 5px 1em;
+			height: 14.4px;
+			font-size: 0.9em;
+			text-transform: uppercase;
+			overflow: hidden;
+			width: auto;
+		}
+		
+	</ui:Style>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:center>
+		
+			<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll} {style.flexColumn}">
+				<g:ScrollPanel height="100%" styleName="{style.p5}">
+					<g:VerticalPanel styleName="{style.tableStylePanel} {style.p10} {style.mt40}">
+						
+						<g:HTMLPanel ui:field="messagePanel" />
+						
+						<g:HTMLPanel styleName="aon-panelGrid-search">
+							<g:HTMLPanel styleName="aon-panelGrid-search-info">
+								<g:Label styleName="aon-panelGrid-search-info-internal">DATOS CREACIÓN AFI</g:Label>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">Empresa</g:Label>
+								<g:Label ui:field="enterprise"></g:Label>
+								<g:ListBox ui:field="enterpriseList"></g:ListBox>						
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">CCC</g:Label>
+								<g:ListBox ui:field="cccsLB"></g:ListBox>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:CheckBox ui:field="allCCCs" styleName="{style.ml115}"></g:CheckBox>
+								<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> Todos los CCCs</g:Label>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">P. Liquidación</g:Label>
+								<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
+								<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu {style.ml10}"></g:ListBox>					
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+				 		
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:HTMLPanel>
+		
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>
