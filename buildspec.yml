@@ -101,12 +101,12 @@ phases:
       #  || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"AON-APPLICATION","imageUri":"%s/aon-application:%s"}
+        {"name":"CADIZ-APPLICATION","imageUri":"%s/aon-application:%s"}
         ]' $REPOSITORIO_URI ${TAG:=snapshot} > applicationimgdef.json
       - cat applicationimgdef.json
       - |
         printf '[
-        {"name":"AON-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        {"name":"CADIZ-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
         ]' $REPOSITORIO_URI ${TAG:=snapshot} > solutionsimgdef.json
       - cat solutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
