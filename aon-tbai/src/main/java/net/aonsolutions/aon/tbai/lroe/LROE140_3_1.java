@@ -52,6 +52,8 @@ public class LROE140_3_1 extends LROE140 {
 	
 	private BienAltaType buildBien(Invoice invoice, InvestAsset investAsset) {
 		BienAltaType bien = new BienAltaType();
+		if(investAsset.getActivity().getEpigraph().equals("183320")) investAsset.getActivity().setEpigraph("183321");
+		if(investAsset.getActivity().getEpigraph().equals("183310")) investAsset.getActivity().setEpigraph("183311");
 		bien.setEpigrafe(investAsset.getActivity().getEpigraph());
 		bien.setReferenciaBien(investAsset.getDescription());
 		bien.setFechaInicioUtilizacion(AonDateUtils.format(investAsset.getStartDate(), DATE_FORMAT));

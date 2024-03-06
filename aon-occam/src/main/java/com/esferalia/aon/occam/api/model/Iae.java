@@ -63,6 +63,9 @@ public class Iae implements Serializable{
 		while (str.length() < 6) {
 			str = str + "0";
 		}
+		
+		if(str.equals("183320")) str = "183321";
+		if(str.equals("183310")) str = "183311";
 		return str;		
 	}
 	
