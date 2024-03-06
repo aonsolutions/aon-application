@@ -61,6 +61,8 @@ public class LROE140_6 extends LROE140 {
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		detalleRenta.setEpigrafe(invoice.getEpigraph());
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();
