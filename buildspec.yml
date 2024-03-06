@@ -23,9 +23,9 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID $AWS_DEFAULT_REGION
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      #- echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID $AWS_DEFAULT_REGION
+      #- $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      #- REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
       - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID eu-south-2
       - $(aws ecr get-login --no-include-email --region eu-south-2)
       - REPOSITORIO_URI=$AWS_ACCOUNT_ID.dkr.ecr.eu-south-2.amazonaws.com
@@ -40,10 +40,10 @@ phases:
       - mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
       - echo Building TEST Docker images...
       - docker build --no-cache -t aonsolutions/aon-application:test .
-      - docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
-      - docker push $REPOSITORY_URI/aon-application:test      
+      #- docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
+      #- docker push $REPOSITORY_URI/aon-application:test      
       - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
-      - mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      - mysql -h $(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') -u dbuser --password=serubd2000 < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
       - |
         docker run \
         -e DB_USER=dbuser \
@@ -74,9 +74,9 @@ phases:
       - docker build --no-cache -t aonsolutions/aon-application:${TAG:=snapshot} .
       # - docker build --no-cache -t aonsolutions/aon-db-up2date:${TAG:=snapshot} ./aon-db-up2date
       - docker build --no-cache -t aonsolutions/aon-solutions:${TAG:=snapshot} -f ./aon-solutions/Dockerfile .
-      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
       - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
       - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
@@ -88,27 +88,27 @@ phases:
       - echo Entered the post_build phase...
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
-      - docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
-      - docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
-      - |
-        [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
-        && docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:hotfix \
-        && docker push $REPOSITORY_URI/aon-solutions:hotfix \
-        || echo $COMMIT_MESSAGE
-      - |
-        printf '[
-        {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
-        ]' $REPOSITORY_URI ${TAG:=snapshot} > snapshotimgdef.json
-      - cat snapshotimgdef.json
+      #- |
+      #  [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
+      #  && docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:hotfix \
+      #  && docker push $REPOSITORY_URI/aon-solutions:hotfix \
+      #  || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-        ]' $REPOSITORY_URI ${TAG:=snapshot} > snapshotsolutionsimgdef.json
-      - cat snapshotsolutionsimgdef.json
+        {"name":"AON-APPLICATION","imageUri":"%s/aon-application:%s"}
+        ]' $REPOSITORIO_URI ${TAG:=snapshot} > applicationimgdef.json
+      - cat applicationimgdef.json
+      - |
+        printf '[
+        {"name":"AON-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        ]' $REPOSITORIO_URI ${TAG:=snapshot} > solutionsimgdef.json
+      - cat solutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
@@ -131,8 +131,8 @@ artifacts:
   files:
     - aon-oauth2.jar
     - aon-in-payroll.jar
-    - snapshotimgdef.json
-    - snapshotsolutionsimgdef.json
+    - applicationimgdef.json
+    - solutionsimgdef.json
     # - location
   #name: $(date +%Y-%m-%d)
   #discard-paths: yes
