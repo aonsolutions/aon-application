@@ -31,6 +31,12 @@ export const TAGS = {
   icon: MATERIAL_ICONS.PRINT
 }
 
+export const CARRIER = {
+  id: CONSTANT.CARRIER.initCap(),
+  name: MSG.CARRIERS,
+  icon: MATERIAL_ICONS.LOCAL_SHIPPING
+}
+
 export const WarehouseSidenav = {
   WAREHOUSES: {
     id: CONSTANT.WAREHOUSES.initCap(),

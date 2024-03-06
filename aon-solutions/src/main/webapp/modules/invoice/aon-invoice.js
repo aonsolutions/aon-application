@@ -1627,9 +1627,11 @@ export class AonInvoice extends AonElement {
 						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
 					getRegistryPaymethod({registry: this.company.id}).then(crpm => {
 						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						ba.value = crpm.bank.bank_account;
-						finance.bank_account = ba.value;
-						this.invoice.setFinance(finance, i);
+						if(ba) {
+							ba.value = crpm.bank.bank_account;
+							finance.bank_account = ba.value;
+							this.invoice.setFinance(finance, i);
+						}	
 					});
 					// getRegistryBanks(this.company.id).then(r => {
 				   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
