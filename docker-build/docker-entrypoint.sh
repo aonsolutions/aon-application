@@ -2,13 +2,8 @@
 set -eo pipefail
 shopt -s nullglob
 
-echo 'Initializing database'
-sudo -u mysql mysqld --initialize-insecure
-echo 'Database initialized'
 
-sed -i -s 's/^\s*\(bind-address.*\)$/# \1/' /etc/my.cnf.d/mysql-server.cnf
-
-sudo -u mysql mysqld --datadir='/var/lib/mysql' --sql-mode=0 --default-time-zone='+01:00' &
+sudo -u mysql mysqld --datadir='/var/lib/mysql' --sql-mode=0 --default-time-zone='+01:00'  &
 
 
 mysql=( mysql -uroot -hlocalhost )
@@ -37,6 +32,9 @@ fi
 	GRANT ALL ON *.* TO 'dbuser'@'localhost';
 EOSQL
 
+
+mysql -h127.0.0.1 -udbuser --password=serubd2000 -e "SELECT 1" &> /dev/null
+
 echo
 echo 'MySQL init process done. Ready for start up.'
 echo
@@ -57,8 +55,8 @@ if [ "$i" = 0 ]; then
         exit 1
 fi
 
-docker load < /root/tomcat:10-jdk17.tar
-docker load < /root/openjdk:17-slim.tar
+docker load < /root/openjdk:21-slim.tar
+docker load < /root/tomcat:11.0-jdk21-openjdk.tar
 
 echo
 echo 'Docker init process done. Ready for start up.'

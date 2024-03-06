@@ -324,4 +324,7 @@ public interface EnterprisesServiceAsync {
 	
 	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
+	// ------------------------------------------------ Pension Plan AFI
+	
+	void checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 }

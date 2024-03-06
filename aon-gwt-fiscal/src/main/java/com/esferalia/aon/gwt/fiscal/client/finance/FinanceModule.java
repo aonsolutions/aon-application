@@ -885,7 +885,12 @@ public class FinanceModule extends MainEntryPoint {
 		regName.setTitle(rname);
 		
 		Label payMethod = new Label(finance.getPayMethodName());
-		Label amount = new Label(AON.FMT.format(finance.getAmount()));
+		Label amount = new Label(AON.FMT.format(finance.getAmount() + finance.getExpenses()));
+		
+		if(0.00 != finance.getExpenses()) {
+			amount.setStyleName(AON.CSS.aonColorRed());
+			amount.setTitle("Importe: " + AON.FMT.format(finance.getAmount()) + ", Gastos: " + AON.FMT.format(finance.getExpenses()));
+		}
 		
 		FinanceActionsPanel actionsPanel = new FinanceActionsPanel(finance, this.isPayroll, new FinanceModuleCallback() {
 			

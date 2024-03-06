@@ -138,8 +138,10 @@ public interface IRegistry {
 	public int deleteRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
 	
 	// ------------------- CARRIER
-	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);
-	public Carrier insertCarrier(AONContext ctx, Carrier carrier);
+	public Carrier getCarrier(AONContext ctx, CarrierFilter filter, Options...options);
+	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter, Options...options);
+	public Carrier saveCarrier(AONContext ctx, Carrier carrier);
+	public void deleteCarrier(AONContext ctx, Integer id);
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);

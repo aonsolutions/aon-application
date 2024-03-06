@@ -837,18 +837,6 @@ public class RegistryOldDAO {
 		}
 	}
 	
-	// ------------------- CARRIER
-
-	@Deprecated
-	public static Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter){
-		return CarrierDAO.getStream(ctx, filter);
-	}
-	
-	@Deprecated
-	public static Carrier insertCarrier(AONContext ctx, Carrier carrier){
-		return CarrierDAO.save(ctx, carrier);
-	}
-	
 	// ------------------- CREDITOR
 
 	/**

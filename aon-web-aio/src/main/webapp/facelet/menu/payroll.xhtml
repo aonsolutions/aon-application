@@ -186,7 +186,18 @@
 										action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
-								</aon:div>							 
+								</aon:div>		
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_pensionPlanAFIPayroll"
+										action="gwt_pensionPlanAFIPayroll"
+										title="AFI - Reducciones por contribuciones a planes de pensiones de empleo">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="AFI - Reduc. contribuciones planes de pensiones" />
+									</aon:commandLink>
+								</aon:div>					 
 								<!--
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"

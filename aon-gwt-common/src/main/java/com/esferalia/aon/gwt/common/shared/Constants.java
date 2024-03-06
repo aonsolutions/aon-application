@@ -37,4 +37,6 @@ public interface Constants {
 	public static final String EMPLOYEE_SEARCH_PARAM = "employeeSearch";
 	
 	public static final String CONTRACT_VARIABLES_MODULE = "ContractVariablesModule";
+	
+	public static final String AFI_PENSION_PLAN_ENTRY_POINT = "AFIPensionPlan";
 }
