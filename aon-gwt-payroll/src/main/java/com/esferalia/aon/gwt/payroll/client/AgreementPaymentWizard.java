@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
@@ -1787,11 +1788,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			String startMonth = extraStartDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
 			else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
+			else startMonth = "01/" + startMonth;
 			extra.setStartDate(startMonth + extraStartDateYear.getSelectedValue());
 			
 			String endMonth = extraEndDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
 			else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
+			else endMonth = getLastDayOfMonth(Integer.parseInt(endMonth)) + "/" + endMonth;
 			extra.setEndDate(endMonth + extraEndDateYear.getSelectedValue());
 			extra.setIssueDate(extraIssueDate.getValue());
 			
@@ -1803,6 +1806,37 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			} else
 				paymentExtra.setMonth(null);
 			}
+	}
+
+	private String getLastDayOfMonth(int month) {
+		switch (month) {
+		case 1:
+			return "31";
+		case 2:
+			return "28";
+		case 3:
+			return "31";
+		case 4:
+			return "30";
+		case 5:
+			return "31";
+		case 6:
+			return "30";
+		case 7:
+			return "31";
+		case 8:
+			return "31";
+		case 9:
+			return "30";
+		case 10:
+			return "31";
+		case 11:
+			return "30";
+		case 12:
+			return "31";
+		default:
+			return null;
+		}
 	}
 
 //	private void createExtra(Payment paymentExtra) {
