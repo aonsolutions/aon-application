@@ -184,23 +184,21 @@
 									</h:panelGrid>
 							</aon:div>
 							
-							<aon:if test="#{marketplace.suitePortal}">
-								<aon:div styleClass="aon-menu-desktop-element">
-									<h:panelGrid columns="3" styleClass="aon-width-all">
-										<aon:outputText styleClass="aon-menu-desktop-element-line" />
-										<aon:div>
-											<aon:commandLink id="gwt_rawdoc-accounting"
-												rendered="#{actionDenied.renderedOption('gwt_rawdoc-accounting')}"
-												action="gwt_rawdoc-accounting"
-												title="Documentos Pendientes">
-												<aon:outputText styleClass="material-icons aon-menu-desktop-element-icon" value="list" />
-												<aon:outputText styleClass="aon-menu-desktop-element-text" value="Documentos Pendientes" />
-											</aon:commandLink>	
-										</aon:div>
-										<aon:outputText styleClass="material-icons aon-menu-desktop-element-go" value="keyboard_arrow_right" />
-									</h:panelGrid>
-								</aon:div>
-							</aon:if>
+							<aon:div styleClass="aon-menu-desktop-element">
+								<h:panelGrid columns="3" styleClass="aon-width-all">
+									<aon:outputText styleClass="aon-menu-desktop-element-line" />
+									<aon:div>
+										<aon:commandLink id="gwt_rawdoc-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_rawdoc-accounting')}"
+											action="gwt_rawdoc-accounting"
+											title="Documentos Pendientes">
+											<aon:outputText styleClass="material-icons aon-menu-desktop-element-icon" value="list" />
+											<aon:outputText styleClass="aon-menu-desktop-element-text" value="Documentos Pendientes" />
+										</aon:commandLink>	
+									</aon:div>
+									<aon:outputText styleClass="material-icons aon-menu-desktop-element-go" value="keyboard_arrow_right" />
+								</h:panelGrid>
+							</aon:div>
 						</aon:panelGrid>
 					</aon:if>
 
