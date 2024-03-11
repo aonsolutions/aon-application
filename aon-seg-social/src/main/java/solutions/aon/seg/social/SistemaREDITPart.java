@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,6 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
-import org.htmlunit.WebRequest;
-import org.htmlunit.WebResponse;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
@@ -298,26 +297,15 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 		byte[] certificateData = certificateInputStream.readAllBytes();
 		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
+			WebConnectionWrapper wrapper =HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap())) {
 			
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setRedirectEnabled(true);
 			
 			
-			new WebConnectionWrapper(webClient) {
-				@Override
-				public WebResponse getResponse(WebRequest request) throws IOException {
-					WebResponse response = super.getResponse(request);
-					if ("text/xml".equals(response.getContentType()) ){
-						try (WebClient xmlClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType) ) {
-							response = HtmlUnitToolkit.transformXmlPage(xmlClient, response);
-						} catch (Exception e) {
-						}
-					}
-					return response;
-				}
-			};
+			//HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap());
 			
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			//XmlPage xmlPage = webClient.getPage(BASE_URI);
