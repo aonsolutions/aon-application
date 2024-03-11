@@ -148,6 +148,20 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
+	protected CustomerFeeDialog(RegistryModuleOptions options, Customer customer) {
+		setCaption("Creador Cuota");
+		
+		this.isNewFee = true;
+		this.customer = customer;
+		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
 	protected CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer) {
 		setCaption("Creador Cuota");
 		

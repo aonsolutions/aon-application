@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Fee implements Serializable{
 
@@ -247,7 +248,7 @@ public class Fee implements Serializable{
 	}
 	
 	public String getDiscountExpr() {
-		if(discountExpr == null) {
+		if(discountExpr == null || AonStringUtils.isBlank(discountExpr)) {
 			this.discountExpr = "0.0";
 		}
 		return discountExpr;

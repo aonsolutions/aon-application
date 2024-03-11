@@ -35,7 +35,7 @@ public class CustomerFeeParams implements Serializable {
 	private String quantity;
 	
 	private String workplace;
-	private String seller;
+	private Integer seller;
 	private String invoicingGroup;
 	private Integer project;
 	
@@ -187,10 +187,10 @@ public class CustomerFeeParams implements Serializable {
 		this.workplace = workplace;
 		return this;
 	}
-	public String getSeller() {
+	public Integer getSeller() {
 		return seller;
 	}
-	public CustomerFeeParams setSeller(String seller) {
+	public CustomerFeeParams setSeller(Integer seller) {
 		this.seller = seller;
 		return this;
 	}
