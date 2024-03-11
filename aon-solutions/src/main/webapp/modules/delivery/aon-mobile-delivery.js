@@ -176,7 +176,15 @@ export class AonMobileDelivery extends AonElement {
 	// ACTIONS
 
 	accept() {
-		acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
+		let d = this.getApplication().getDialog();
+   	 	d.clear();
+    	if(!this.isMobile()) d.width = '400px';
+    	d.setTitle(MSG.ACCEPT);
+   	 	d.setContentHTML(`Estás seguro de finalizar el proceso.`);
+    	d.addAcceptAction(() => {
+			acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
+    	});
+    	d.open();
 	}
 
 	back() {

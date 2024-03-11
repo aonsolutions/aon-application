@@ -3362,40 +3362,29 @@ public class AON {
 	// ********************************************
 
 	public static Stream<Warehouse> getWarehouseStream(String domainName, Integer domainId, String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouseStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Warehouse getWarehouse(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Warehouse getWarehouse(String domainName, Integer domainId, String login, WarehouseFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouse(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
-
-	public static LinkedList<Warehouse> getWarehouseList(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getWarehouseStream(ctx, filter)
-					.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	
+	public static Warehouse saveWarehouse(String domainName, Integer domainId, String login, Warehouse warehouse) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getWarehouse().saveWarehouse(ctx, warehouse);
 		}
 	}
+	
+	public static void deleteWarehouse(String domainName, Integer domainId, String login, Integer warehouseId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deleteWarehouse(ctx, warehouseId);
+		}
+	}
+	
 	
 	public static Stream<IncomeDetail> getIncomeDetails(String domainName,
 			Integer domainId, String login, IncomeFilter filter) {
