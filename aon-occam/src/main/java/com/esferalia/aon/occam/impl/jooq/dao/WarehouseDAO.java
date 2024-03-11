@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.WarehouseValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -179,11 +180,13 @@ public class WarehouseDAO {
 	}
 	
 	public static Warehouse save(AONContext ctx, Warehouse warehouse) {
+		WarehouseValidation.autocomplete(ctx, warehouse);
+		WarehouseValidation.validate(ctx, warehouse);
+		
 		return warehouse.getId() != null 
 			? update(ctx, warehouse)
 			: insert(ctx, warehouse);
 	}
-	
 	
 	public static Warehouse update(AONContext ctx, Warehouse warehouse) {
 		ctx.getDslContext().update(WAREHOUSE)
@@ -207,6 +210,18 @@ public class WarehouseDAO {
 			.returning(WAREHOUSE.ID).fetchOne().getId();
 		return warehouse.setId(id);
 	}	
+	
+	public static void delete(AONContext ctx, Integer warehouseId) {
+		WarehouseValidation.validateDeletion(ctx, warehouseId);
+		delete(ctx, f -> f.getIdProperty().eq(warehouseId));
+	}
+	
+	private static void delete(AONContext ctx, WarehouseFilter filter) {
+		ctx.getDslContext().delete(WAREHOUSE)
+		.where(WAREHOUSE_PROPERTIES.getConditions(filter))
+		.execute();
+	}
+	
 	
 	public static WarehouseTransfer getWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
 		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))

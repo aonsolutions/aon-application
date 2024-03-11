@@ -5,6 +5,7 @@ export const UNDEFINED = 'undefined';
 
 export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
+export const ACTIVE = 'active';
 export const ACTIVITY = 'activity';
 export const ACTIVITY_NAME = 'activityName';
 export const ADD = 'add';
