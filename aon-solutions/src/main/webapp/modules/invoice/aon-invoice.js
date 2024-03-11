@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -416,7 +416,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
-		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
+		if((this.isInvofoxInvoice() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
@@ -2703,9 +2703,14 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		if(this.invoice.isSelfconta()){
+		if(this.invoice.isSelfconta() || this.isInvofoxInvoice() || this.isBeta()) {
 			recordSelfconta(this.getInvoice())
-				.then(r => this.back())
+				.then(r => {
+					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader(); 
+					this.reload();
+				})
 				.catch(e => this.showError(e));
 		}	else {
 				let aonInvoice = this.getElement('aonInvoice');
