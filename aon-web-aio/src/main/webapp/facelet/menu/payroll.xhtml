@@ -474,7 +474,7 @@
 											actionListener="#{holiday.onEditSearch}"
 											value="#{bundle.calendar_holidays}" />
 									</aon:div>
-									<aon:if test="#{domainSwitcher.alphaUser}">
+									<aon:if test="#{domainSwitcher.alphaUser or domainSwitcher.cuidadosInclusivos}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_contractVariablesPayroll"
 												action="gwt_contractVariablesPayroll"
