@@ -77,7 +77,7 @@ phases:
       #- docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
       #- docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
       #- docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-db-up2date:${TAG:=snapshot} $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
       - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
       - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
       #- mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-oauth2 clean install
