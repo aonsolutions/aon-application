@@ -6769,6 +6769,12 @@ public class AON {
 		}
 	}
 	
+	public static Certificate getOneCertificate(String domainName, Integer domainId, String login, Integer userId, Integer certificateId) throws IllegalArgumentException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getOneCertificate(ctx, domainId, userId, certificateId);
+		}
+	}
+	
 	public static List<Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
