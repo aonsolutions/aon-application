@@ -2765,6 +2765,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Fee> getFullFeeList(String domainName, Integer domainId, String login, CustomerFeeParams customerFeeParams){
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFullFeeList(ctx, customerFeeParams);
+		}
+	}
+	
 	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
 		return getFeeStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));

@@ -288,6 +288,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public LinkedList<Fee> getFullFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getFullFeeList(ctx, customerFeeParams));
+	}
+	
+	@Override
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getFeeStream(ctx, filter));
