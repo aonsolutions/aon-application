@@ -107,9 +107,13 @@ export const BOLD = "Negrita"; //TODO
 
 // ----- C
 
+export const CAMPAIGN = "Campaña";
+export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
 export const CAU = "Cau";// TODO
+export const CARRIER = "Agencia de Transporte"; // TODO
+export const CARRIERS = "Agencias de Transporte"; // TODO
 export const CATALAN = MSG.CATALAN;
 export const CATEGORIES = MSG.CATEGORIES;
 export const CERTIFICATE = MSG.CERTIFICATE;
@@ -226,6 +230,7 @@ export const EDIT_CATEGORY = MSG.EDIT_CATEGORY;
 export const EDIT_FILE = MSG.EDIT_FILE;
 export const EDIT_FILES = MSG.EDIT_FILES;
 export const EDIT_TAG = MSG.EDIT_TAG;
+export const EDIT_WAREHOUSE = MSG.EDIT_WAREHOUSE;
 export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const ELABORATION = "Elaboración"
 export const ELABORATIONS = "Elaboraciones"
@@ -496,8 +501,10 @@ export const PARENT = "Padre"; // TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
-export const QUOTA = MSG.QUOTA;
 export const QUERY = "Consulta"; //TODO
+export const QUESTION = "Pregunta"; //TODO
+export const QUESTIONS = "Preguntas"; // TODO
+export const QUOTA = MSG.QUOTA;
 export const QUOTE_GROUP = "Grupo de cotización";//TODO
 // ----- R
 
@@ -589,6 +596,8 @@ export const SUPPORT = MSG.SUPPORT;
 export const SURCHARGE = MSG.SURCHARGE;
 export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
+export const SURVEY = "Cuestionario"; // TODO
+export const SURVEYS = "Cuestionarios"; // TODO
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
@@ -600,6 +609,8 @@ export const TAG = MSG.TAG;
 export const TASK = "Tarea"; //TODO
 export const TASKS = "Tareas"; //TODO
 export const TAGS = MSG.TAGS;
+export const TARGET = "Cliente Potencial"; //TODO
+export const TARGETS = "Clientes Potenciales"; //TODO
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
 export const TAXES_DETAIL = MSG.TAXES_DETAIL;

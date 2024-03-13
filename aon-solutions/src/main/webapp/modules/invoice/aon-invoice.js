@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -416,7 +416,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
-		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
+		if((this.isInvofoxInvoice() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
@@ -1463,45 +1463,6 @@ export class AonInvoice extends AonElement {
 			}
 		});
 
-		// ----- SURCHARGE
-
-		// let surcharge = new AonSwitch();
-		// surcharge.id = this.SURCHARGE;
-		// surcharge.title = MSG.SURCHARGE_RE;
-		// surcharge.readonly = this.invoice.isReadonly();
-		// surcharge.addEventListener(EVENT.CHANGE, () => {
-		// 	this.invoice.setSurcharge(surcharge.checked);
-		// 	this.setFocus(surcharge.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(surcharge);
-		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-		// 	this.invoice.setSurcharge(false);
-		// 	surcharge.setDisabled(true);
-		// }
-		// surcharge.checked = this.invoice.isSurcharge();
-
-
-		// ----- WITHHOLDING FARMER
-
-		// let farmer = new AonSwitch();
-		// farmer.id = this.WITHHOLDING_FARMER;
-		// farmer.title = MSG.WITHHOLDING_FARMER;
-		// farmer.readonly = this.invoice.isReadonly();
-		// farmer.addEventListener(EVENT.CHANGE, () => {
-		// 	this.invoice.setWithholdingFarmer(farmer.checked);
-		// 	this.setFocus(farmer.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(farmer);
-		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-		// 	this.invoice.setWithholdingFarmer(false);
-		// 	farmer.setDisabled(true);
-		// }
-		// farmer.checked = this.invoice.isWithholdingFarmer();
-
 		// ----- TAXES
 
 		let taxesTable = this.getElement(this.TAX_TABLE2);
@@ -1512,11 +1473,11 @@ export class AonInvoice extends AonElement {
 		}
 		taxesTable.removeRows();
 
-		if(this.invoice.isCcm()) {
+		// if(this.invoice.isCcm()) {
 			// this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
-		}
+		// }
 
-		if(this.invoice.isNacional() && !this.invoice.isExempt()){
+		if(this.invoice.isVatEnabled()){
 			for(let i = 0; i < this.invoice.taxes.length; i++) {
 				let tax = this.invoice.taxes[i];
 				if(TaxType.IVA === tax.tax)
@@ -1562,9 +1523,7 @@ export class AonInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				if(!this.invoice.isNacional() || this.invoice.isExempt()) {
-					// TODO
-				} else {
+				if(this.invoice.isVatEnabled()) {
 					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 					this.invoice.addTax();
 					this.reload();
@@ -1572,9 +1531,7 @@ export class AonInvoice extends AonElement {
 				}
 			});
 			irpfTable.addCell(addButton);
-			if(!this.invoice.isNacional() || this.invoice.isExempt()) {
-				addButton.setDisabled(true);
-			}
+			addButton.setDisabled(!this.invoice.isVatEnabled());
 		}
 
 		let irpf = new AonSwitch();
@@ -1627,9 +1584,11 @@ export class AonInvoice extends AonElement {
 						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
 					getRegistryPaymethod({registry: this.company.id}).then(crpm => {
 						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						ba.value = crpm.bank.bank_account;
-						finance.bank_account = ba.value;
-						this.invoice.setFinance(finance, i);
+						if(ba) {
+							ba.value = crpm.bank.bank_account;
+							finance.bank_account = ba.value;
+							this.invoice.setFinance(finance, i);
+						}	
 					});
 					// getRegistryBanks(this.company.id).then(r => {
 				   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
@@ -1641,9 +1600,11 @@ export class AonInvoice extends AonElement {
 				 		|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
 				   	getRegistryBanks(this.invoice.getRegistry().id).then(r => {
 						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					  	ba.value = r[0] ? r[0].bank_account : "";
-					   	finance.bank_account = ba.value;
-					   	this.invoice.setFinance(finance, i);
+						if(ba) {
+							ba.value = r[0] ? r[0].bank_account : "";
+							finance.bank_account = ba.value;
+							this.invoice.setFinance(finance, i); 
+						}
 				   	});
 				} else { 
 					finance.bank_account = "";
@@ -1986,7 +1947,7 @@ export class AonInvoice extends AonElement {
 		amount.disabled = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
+		if(this.invoice.isVatEnabled()) {
 			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + i;
 			vat.title = '%IVA';
@@ -2091,12 +2052,12 @@ export class AonInvoice extends AonElement {
 			this.printDetailDialog(this.invoice.details[i], i);
 		});
 
-		table.addCell(description, this.invoice.isNacional() && !this.invoice.isExempt() && (!detail.prepayment || detail.prepayment == 'false') ? '3' : '4');
+		table.addCell(description, this.invoice.isVatEnabled() && (!detail.prepayment || detail.prepayment == 'false') ? '3' : '4');
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional() && !this.invoice.isExempt() &&  (!detail.prepayment || detail.prepayment == 'false')) {
+		if(this.invoice.isVatEnabled() &&  (!detail.prepayment || detail.prepayment == 'false')) {
 			let vat = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
@@ -2473,9 +2434,11 @@ export class AonInvoice extends AonElement {
 
 				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
 					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					ba.value = crpm.bank.bank_account;
-					finance.bank_account = ba.value;
-					this.invoice.setFinance(finance, i);
+					if(ba) {
+						ba.value = crpm.bank.bank_account;
+						finance.bank_account = ba.value;
+						this.invoice.setFinance(finance, i);
+					}
 				});
 				// getRegistryBanks(this.company.id).then(r => {
 				// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
@@ -2487,15 +2450,19 @@ export class AonInvoice extends AonElement {
 				|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
 				getRegistryBanks(this.invoice.getRegistry().id).then(r => {
 					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					ba.value = r[0] ? r[0].bank_account : "";
-					finance.bank_account = ba.value;
-					this.invoice.setFinance(finance, i);
+					if(ba) {
+						ba.value = r[0] ? r[0].bank_account : "";
+						finance.bank_account = ba.value;
+						this.invoice.setFinance(finance, i);
+					}
 				});
 			} else {
 				let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-				ba.value = "";
-				finance.bank_account = "";
-				this.invoice.setFinance(finance, i);
+				if(ba) {
+					ba.value = "";
+					finance.bank_account = "";
+					this.invoice.setFinance(finance, i);
+				}
 			}
 		});
 		let paymethodCell = table.addCell(paymethod);
@@ -2736,9 +2703,14 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		if(this.invoice.isSelfconta()){
+		if(this.invoice.isSelfconta() || this.isInvofoxInvoice() || this.isBeta()) {
 			recordSelfconta(this.getInvoice())
-				.then(r => this.back())
+				.then(r => {
+					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader(); 
+					this.reload();
+				})
 				.catch(e => this.showError(e));
 		}	else {
 				let aonInvoice = this.getElement('aonInvoice');

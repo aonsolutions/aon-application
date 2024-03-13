@@ -307,7 +307,7 @@ public class WarehouseServlet extends HttpServlet{
 				carrier.setDomain(domain);
 				carrier.setName("TRANSPORTE");
 				
-				carrier = AON.insertCarrier(domain.getName(), domain.getId(), login, carrier);
+				carrier = AON.saveCarrier(domain.getName(), domain.getId(), login, carrier);
 			}
 			carrierPacking = new CarrierPacking()
 					.setDomain(domain.getId())

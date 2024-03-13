@@ -80,6 +80,7 @@ export const AON_DIV_BUTTON = 'aonDivButton';
 export const AON_SEARCH_BOX = 'aonSearchBox';
 export const AON_SEARCH_BOX_BETA = 'aonSearchBoxBeta';
 export const AON_FORM_CENTER = 'aonFormCenter';
+export const AON_FORM_CENTER_ANDROID_APP = 'aonFormCenterAndroidApp';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';

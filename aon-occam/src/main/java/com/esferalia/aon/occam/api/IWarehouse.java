@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -55,6 +55,8 @@ public interface IWarehouse {
 	// 	***********************************************
 	Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter);
 	Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter);
+	Warehouse saveWarehouse(AONContext ctx, Warehouse warehouse);
+	void deleteWarehouse(AONContext ctx, Integer id);
 	
 	// 	***********************************************
 	// 	************************************ INCOME ***

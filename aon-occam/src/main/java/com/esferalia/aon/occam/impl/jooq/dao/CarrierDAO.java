@@ -17,6 +17,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.CarrierValidation;
 
 public class CarrierDAO {
 	
@@ -63,7 +65,7 @@ public class CarrierDAO {
 				.where(CARRIER_PROPERTIES.getConditions(filter));	
 	}
 
-	public static Carrier get(AONContext ctx, CarrierFilter filter){
+	public static Carrier get(AONContext ctx, CarrierFilter filter, Options...options){
 		return select(ctx, filter).limit(1).fetch().stream().map(new CarrierFiller())
 			.findFirst()
 			.orElse(new Carrier());
@@ -73,15 +75,31 @@ public class CarrierDAO {
 		return get(ctx, f -> f.getRegistryProperty().eq(id));
 	}
 	
-	public static Stream<Carrier> getStream(AONContext ctx, CarrierFilter filter){
+	public static Stream<Carrier> getStream(AONContext ctx, CarrierFilter filter, Options...options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
 		return select(ctx, filter)
 			.orderBy(CARRIER_ALIAS.NAME)
 			.fetch().stream().map(new CarrierFiller());
 	}	
 	
+	public static Stream<Carrier> getStream(AONContext ctx, CarrierFilter filter, Options options){
+		if(options.isPagination()) {
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		} else return getStream(ctx, filter);
+	}	
+	
+	public static Stream<Carrier> getStream(AONContext ctx, CarrierFilter filter, Integer page, Integer perPage){
+		return select(ctx, filter)
+			.orderBy(CARRIER_ALIAS.NAME)
+			.limit(perPage).offset(perPage* (page - 1))
+			.fetch().stream().map(new CarrierFiller());
+	}
+	
 	public static Carrier save(AONContext ctx, Carrier carrier) {
 		ctx.checkWrite();
-		// TODO AUTOCOMPLETE && VALIDATION
+		CarrierValidation.autocomplete(ctx, carrier);
+		CarrierValidation.validate(ctx, carrier);
 		boolean nullId = (carrier.getId() == null); 
 		carrier.copy(RegistryDAO.save(ctx, carrier));
 		return nullId || get(ctx, carrier.getId()).isEmpty()
@@ -110,10 +128,11 @@ public class CarrierDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id){
+		CarrierValidation.validateDeletion(ctx, id);
 		delete(ctx, f -> f.getRegistryProperty().eq(id));
 	}
 	
-	public static void delete(AONContext ctx, CarrierFilter filter){
+	private static void delete(AONContext ctx, CarrierFilter filter){
 		ctx.getDslContext().delete(CARRIER)
 		.where(CARRIER_PROPERTIES.getConditions(filter))
 		.execute();

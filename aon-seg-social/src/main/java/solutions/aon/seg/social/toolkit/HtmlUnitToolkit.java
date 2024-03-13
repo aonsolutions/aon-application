@@ -3,11 +3,16 @@ package solutions.aon.seg.social.toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -53,6 +58,7 @@ import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.parser.HTMLParser;
 import org.htmlunit.html.parser.HTMLParserListener;
 import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.util.WebResponseWrapper;
 import org.htmlunit.xml.XmlPage;
 
@@ -522,39 +528,47 @@ public class HtmlUnitToolkit {
 	    return htmlPage;
 	}
 	
-	public static WebResponse transformXmlPage(WebClient webClient, WebResponse response) throws IOException, TransformerException {
+	public static WebResponse transformXmlPage(WebClient webClient, WebResponse response, Map<String,String> variables, Map<URI,String> uriCache ) throws IOException, TransformerException {
 	    URL xslURL = getXslStylesheet(response);
 	    
 	    XmlPage xslPage = webClient.getPage(xslURL);
-	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument(), xslURL.toExternalForm());
 
-	    Source xmlSource = new StreamSource(response.getContentAsStream());
-
+	    Source xmlSource = new StreamSource(response.getContentAsStream(), response.getWebRequest().getUrl().toExternalForm());
+	    
 	    StringWriter out = new StringWriter();
 	    Result outputTarget = new StreamResult(out);
-
+	    
 	    URIResolver uriResolver = (href, base) -> {
-		try {
-		    URL hrefURL = new URL( xslURL, href);
-		    XmlPage hrefPage = webClient.getPage(hrefURL);
-		    return new DOMSource(hrefPage.getXmlDocument());
-		} catch ( MalformedURLException e ) {
-		    throw new TransformerException(e);
-		}
-		catch (FailingHttpStatusCodeException | IOException e) {
-		    throw new TransformerException(e);
-		}
-	    };
+			try {
+				URI hrefURI = new URI(base).resolve(href);
+			    
+			    if ( uriCache.containsKey(hrefURI )) {
+				    return new StreamSource(new StringReader(uriCache.get(hrefURI)), hrefURI.toURL().toExternalForm());
+			    }
 
+			    XmlPage hrefPage = webClient.getPage(hrefURI.toURL());
+			    WebResponse hrefResponse = hrefPage.getWebResponse();
+			    String hrefContent = hrefResponse.getContentAsString();
+			    for (Map.Entry<String,String> variable : variables.entrySet()) {
+			    	hrefContent = hrefContent.replace("$"+variable.getKey(), variable.getValue());
+				}
+			    uriCache.put(hrefURI, hrefContent);
+			    return new StreamSource(new StringReader(hrefContent), hrefPage.getBaseURI() );
+			    //return new DOMSource(hrefPage.getXmlDocument(), hrefPage.getBaseURI() );
+			} catch (FailingHttpStatusCodeException | IOException | URISyntaxException e) {
+			    throw new TransformerException(e);
+			} 
+	    };
+	    
+	    
 	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
 	    transformerFactory.setURIResolver(uriResolver);
-
+	    
 	    Transformer transformer = transformerFactory.newTransformer(xslSource);
 	    transformer.setURIResolver(uriResolver);
-
+	    
 	    transformer.transform(xmlSource, outputTarget);
-	    
-	    
 	    
 	    return new WebResponseWrapper(response) {
 
@@ -619,5 +633,24 @@ public class HtmlUnitToolkit {
 	    URL url = response.getWebRequest().getUrl();
 	    return new URL(url, href);
 	    
+	}
+
+	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
+			String certificateType, Map<String,String> variables) {
+		return 
+		new WebConnectionWrapper(webClient) {
+			Map<URI,String> cache = new HashMap<>();
+			@Override
+			public WebResponse getResponse(WebRequest request) throws IOException {
+				WebResponse response = super.getResponse(request);
+				if ("text/xml".equals(response.getContentType()) ){
+					try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
+						response = transformXmlPage(xmlClient, response, variables, cache);
+					} catch (Exception e) {
+					}
+				}
+				return response;
+			}
+		};
 	}
 }

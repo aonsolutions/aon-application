@@ -178,7 +178,7 @@ public class InvoiceDetailDAO {
 	public static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext().update(INVOICE_DETAIL)
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getId())
+		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
 		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset())
 		.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
 		.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
@@ -197,6 +197,7 @@ public class InvoiceDetailDAO {
 		.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
 		.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
 		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+		.where(INVOICE_DETAIL.ID.eq(invoiceDetail.getId()))
 		.execute();
 		return invoiceDetail;
 	}
