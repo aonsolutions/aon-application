@@ -232,7 +232,6 @@
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
-		<!--module>aon-micro-services</module-->
 		<module>aon-solutions</module>
 
 
