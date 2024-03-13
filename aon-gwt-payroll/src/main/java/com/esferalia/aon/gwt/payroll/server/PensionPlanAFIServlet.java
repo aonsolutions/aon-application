@@ -23,7 +23,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "PensionPlan-AFI", urlPatterns = { "/aon_gwt_payroll/pension_plan_afi/*" })
 public class PensionPlanAFIServlet extends HttpServlet {
 	
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat dateFormatter2 = new SimpleDateFormat("ddMMyyyy");
 	
 	@SuppressWarnings("deprecation")
@@ -56,8 +55,7 @@ public class PensionPlanAFIServlet extends HttpServlet {
 			String hour = currentDate.getHours() < 10 ? "0"+currentDate.getHours() : currentDate.getHours()+"";
 			String minutes = currentDate.getMinutes() < 10 ? "0"+currentDate.getMinutes() : currentDate.getMinutes()+"";
 			String fileName = day + month + hour + minutes;
-			dateFormatter.applyPattern("yyyy/MM/dd");
-			response.setContentType("text/html;charset=utf-8"/*MimeType.MIME_RTF.getName()*/);
+			response.setContentType("text/html;charset=utf-8");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".AFI\"");
 			ServletOutputStream output = response.getOutputStream();
