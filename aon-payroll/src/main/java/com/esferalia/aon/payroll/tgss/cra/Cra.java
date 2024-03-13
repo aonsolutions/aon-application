@@ -123,12 +123,12 @@ public class Cra {
 			
 			// ----------- NOMINAS
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-					.join(ENTERPRISE_CCC)
-					.on(ENTERPRISE_CCC.CCC.eq(SALARY.CCC))
 					.join(CONTRACT)
 					.on(CONTRACT.ID.eq(SALARY.CONTRACT))
 					.join(PERSON)
 					.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+					.join(ENTERPRISE_CCC)
+					.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
 					.where(SALARY.START_DATE.ge(startDateSQL))
 					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
@@ -215,13 +215,13 @@ public class Cra {
 					Integer salaryId = salaryRecord.get(SALARY.ID);
 					
 					// Get salaryPayment type of salary
-					Byte salaryPaymentType = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
+					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 							.limit(1)
-							.fetchOne()
-							.getValue(SALARY_PAYMENT.TYPE);
+							.fetchOne();
 					
-					if(salaryPaymentType == (byte) 33) continue;
+					if(null == salaryPaymentTypeRecord) continue;
 					
 					// Get salaryData of salary
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
@@ -265,7 +265,7 @@ public class Cra {
 							JSONArray cres = new JSONArray();
 							
 							// Get CRA type -> Same CRA type for all salaryData of a Salary
-							PaymentType typeCRA = PaymentType.values()[salaryPaymentType];
+							PaymentType typeCRA = PaymentType.values()[salaryPaymentTypeRecord.get(SALARY_PAYMENT.TYPE)];
 							
 							// Try to add Cre to Cres
 							addCreToCres(craAmount, typeCRA, cres);
@@ -373,8 +373,8 @@ public class Cra {
 					
 						Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
 								.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 								.and(SALARY_PAYMENT.TYPE.ne((byte)6))
-								.and(SALARY_PAYMENT.TYPE.ne((byte)33))
 								.fetch();
 						
 						for(Record salaryPayment : salaryPayments) {
@@ -444,7 +444,7 @@ public class Cra {
 		// GET Salaries_Payment from Salary to get CRA type 
 		Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryRecord.get(SALARY.ID)))
-				.and(SALARY_PAYMENT.TYPE.ne((byte)33))
+				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
 				.orderBy(SALARY_PAYMENT.TYPE)
 				.fetch();
 		

@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.irpf;
 
-import static java.util.Calendar.JANUARY;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,7 +34,7 @@ import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import es.aeat.pret.rw13.jaxb.TipoComputo;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.Regularizacion;
@@ -99,7 +97,6 @@ import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenedorEntrada2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenedorError2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenedorSalida2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenidoEntrada2024;
-import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenidoEntrada2024.ResidenciaCeutaMelilla;
 import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenidoError2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.TipoRetenidoSalida2024;
 
@@ -115,8 +112,7 @@ public class IrpfCalculator {
 	}
 
 	public static IrpfOutcome calculateIrpf(IIrpfCalculatorContext ctx, Date date) {
-		int year = AonDateUtils.get(date, Calendar.YEAR);
-		int month = AonDateUtils.get(date, Calendar.MONTH);
+		int year = AonDateUtils.getYear(date);
 		IrpfOutcome irpfOutcome;
 		if ( year == 2020 ) {
 		    irpfOutcome = calculateIrpf2020(ctx);
@@ -124,12 +120,10 @@ public class IrpfCalculator {
 		    irpfOutcome = calculateIrpf2021(ctx);
 		} else if ( year == 2022 ) {
 		    irpfOutcome = calculateIrpf2022(ctx);
-		} else if ( year == 2023 && month == JANUARY ) {  
-		    irpfOutcome = calculateIrpfJanuary2023(ctx);
 		} else if ( year == 2023 ){		
-		    irpfOutcome = calculateIrpf2023(ctx);
+		    irpfOutcome = calculateIrpf2023(ctx, date);
 		} else {
-		    irpfOutcome = calculateIrpf2024(ctx);
+		    irpfOutcome = calculateIrpf2024(ctx, date);
 		}
 		
 		irpfOutcome.getIrpfResult()
@@ -179,8 +173,8 @@ public class IrpfCalculator {
 
 	// ------------------------------------------------------------------- 2023
 
-	public static IrpfOutcome calculateIrpf2023(IIrpfCalculatorContext ctx) {
-		AEATRetencionesSalida2023 aeatRetencionesSalida2023 = calculate2023(ctx);
+	public static IrpfOutcome calculateIrpf2023(IIrpfCalculatorContext ctx, Date date) {
+		AEATRetencionesSalida2023 aeatRetencionesSalida2023 = calculate2023(ctx, date);
 		List<TipoRetenedorSalida2023> retenedores = aeatRetencionesSalida2023
 				.getRetenedor();
 		TipoRetenedorSalida2023 retenedorSalida2023 = retenedores.get(0);
@@ -190,21 +184,10 @@ public class IrpfCalculator {
 		return transfom(ctx, retenidoSalida2023);
 	}
 
-	public static IrpfOutcome calculateIrpfJanuary2023(IIrpfCalculatorContext ctx) {
-		AEATRetencionesSalida2023 aeatRetencionesSalida2023 = calculateJanuary2023(ctx);
-		List<TipoRetenedorSalida2023> retenedores = aeatRetencionesSalida2023
-				.getRetenedor();
-		TipoRetenedorSalida2023 retenedorSalida2023 = retenedores.get(0);
-		List<TipoRetenidoSalida2023> retenidos = retenedorSalida2023
-				.getRetenido();
-		TipoRetenidoSalida2023 retenidoSalida2023 = retenidos.get(0);
-		return transfom(ctx, retenidoSalida2023);
-	}
+	// ------------------------------------------------------------------- 2024
 
-	// ------------------------------------------------------------------- 2023
-
-	public static IrpfOutcome calculateIrpf2024(IIrpfCalculatorContext ctx) {
-		AEATRetencionesSalida2024 aeatRetencionesSalida2024 = calculate2024(ctx);
+	public static IrpfOutcome calculateIrpf2024(IIrpfCalculatorContext ctx, Date date) {
+		AEATRetencionesSalida2024 aeatRetencionesSalida2024 = calculate2024(ctx, date);
 		List<TipoRetenedorSalida2024> retenedores = aeatRetencionesSalida2024
 				.getRetenedor();
 		TipoRetenedorSalida2024 retenedorSalida2024 = retenedores.get(0);
@@ -1405,36 +1388,25 @@ public class IrpfCalculator {
 	}
 
 	protected static AEATRetencionesSalida2023 calculate2023(
-		IIrpfCalculatorContext ctx) {
+		IIrpfCalculatorContext ctx, Date date) {
         	ctx.next();
         
         	for (Calculate calculate : ForalCalculate.INSTANCES)
         		if (calculate.accept(ctx))
-        			return calculate.calculate2023(ctx);
+        			return calculate.calculate2023(ctx, date);
         
-        	return AEATCalculate.INSTANCE.calculate2023(ctx);
-	}
-
-	protected static AEATRetencionesSalida2023 calculateJanuary2023(
-		IIrpfCalculatorContext ctx) {
-        	ctx.next();
-        
-        	for (Calculate calculate : ForalCalculate.INSTANCES)
-        		if (calculate.accept(ctx))
-        			return calculate.calculate2023(ctx);
-        
-        	return AEATCalculate.INSTANCE.calculateJanuary2023(ctx);
+        	return AEATCalculate.INSTANCE.calculate2023(ctx, date);
 	}
 
 	protected static AEATRetencionesSalida2024 calculate2024(
-		IIrpfCalculatorContext ctx) {
+		IIrpfCalculatorContext ctx, Date date) {
         	ctx.next();
         
         	for (Calculate calculate : ForalCalculate.INSTANCES)
         		if (calculate.accept(ctx))
-        			return calculate.calculate2024(ctx);
+        			return calculate.calculate2024(ctx, date);
         
-        	return AEATCalculate.INSTANCE.calculate2024(ctx);
+        	return AEATCalculate.INSTANCE.calculate2024(ctx, date);
 	}
 
 	private static Integer toInteger(Byte b) {
@@ -1519,11 +1491,9 @@ public class IrpfCalculator {
 
 		AEATRetencionesSalida2022 calculate2022(IIrpfCalculatorContext ctx);
 
-		AEATRetencionesSalida2023 calculate2023(IIrpfCalculatorContext ctx);
+		AEATRetencionesSalida2023 calculate2023(IIrpfCalculatorContext ctx, Date date);
 
-		AEATRetencionesSalida2023 calculateJanuary2023(IIrpfCalculatorContext ctx);
-
-		AEATRetencionesSalida2024 calculate2024(IIrpfCalculatorContext ctx);
+		AEATRetencionesSalida2024 calculate2024(IIrpfCalculatorContext ctx, Date date);
 	}
 
 	private static class AEATCalculate implements Calculate {
@@ -1723,12 +1693,12 @@ public class IrpfCalculator {
 		}
 		@Override
 		public AEATRetencionesSalida2023 calculate2023(
-				IIrpfCalculatorContext ctx) {
+				IIrpfCalculatorContext ctx, Date date) {
 			try {
 				AEATRetencionesEntrada2023 aeatRetencionesEntrada2023 = AEATRetencionesEntradaFactory
 						.create2023(ctx);
 				
-				return calculate(aeatRetencionesEntrada2023);
+				return calculate(aeatRetencionesEntrada2023, date);
 			} catch (IOException e) {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (SQLException e) {
@@ -1799,90 +1769,13 @@ public class IrpfCalculator {
 			}
 		}
 
-		@Override
-		public AEATRetencionesSalida2023 calculateJanuary2023(
-				IIrpfCalculatorContext ctx) {
-			try {
-				AEATRetencionesEntrada2023 aeatRetencionesEntrada2023 = AEATRetencionesEntradaFactory
-						.create2023(ctx);
-				
-				return calculateJanuary(aeatRetencionesEntrada2023);
-			} catch (IOException e) {
-				throw new ExpressionExceptionWrapper(new ExpressionException(e));
-			} catch (SQLException e) {
-				throw new ExpressionExceptionWrapper(new ExpressionException(e));
-			} catch (JAXBException e) {
-				throw new ExpressionExceptionWrapper(new ExpressionException(e));
-			} catch (ExpressionException e) {
-				throw new ExpressionExceptionWrapper(e);
-			} catch (IrpfCalculateException e) {
-				AEATRetencionesError2023 error = e
-						.getAEATRetencionesError2023();
-
-				String message = null;
-				
-				List<String> messages = new LinkedList<>();
-				
-				error.getErrorGeneral().stream()
-				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoErrorGeneral::getDescripcion)
-				.forEach( messages::add );
-
-				List<TipoRetenedorError2023> retenedores = 
-				error.getRetenedor();
-
-				retenedores.stream()
-				.map(TipoRetenedorError2023::getError)
-				.filter(Objects::nonNull)
-				.map( net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion)
-				.forEach(messages::add);
-
-				List<TipoRetenidoError2023> retenidos =
-				retenedores.stream()
-				.map(TipoRetenedorError2023::getRetenido)
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
-				
-				// Errores 
-				retenidos.stream()
-				.map(TipoRetenidoError2023::getError)
-				.flatMap(List::stream)
-				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
-				.forEach( messages::add );
-
-				// Descendientes
-				retenidos.stream()
-				.map(TipoRetenidoError2023::getDescendiente)
-				.flatMap(List::stream)
-				.map(TipoRetenidoError2023.Descendiente::getError)
-				.flatMap(List::stream)
-				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
-				.forEach( messages::add );
-				
-				// Ascendientes
-				retenidos.stream()
-				.map(TipoRetenidoError2023::getAscendiente)
-				.flatMap(List::stream)
-				.map(TipoRetenidoError2023.Ascendiente::getError)
-				.flatMap(List::stream)
-				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
-				.forEach( messages::add )
-				;
-
-				message = messages.stream().findFirst().orElse("Error al calcular el IRPF");
-				
-
-				ExpressionException expressionException = new CheckException(
-						message);
-				throw new ExpressionExceptionWrapper(expressionException);
-			}
-		}
 		@Override
 		public AEATRetencionesSalida2024 calculate2024(
-				IIrpfCalculatorContext ctx) {
+				IIrpfCalculatorContext ctx, Date date) {
 			try {
 			    	AEATRetencionesEntrada2024 aeatRetencionesEntrada2024 = AEATRetencionesEntradaFactory.create2024(ctx);
 				
-				return calculate(aeatRetencionesEntrada2024);
+				return calculate(aeatRetencionesEntrada2024, date);
 			} catch (IOException e) {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (SQLException e) {
@@ -2099,7 +1992,7 @@ public class IrpfCalculator {
 		}
 
 		private AEATRetencionesSalida2023 calculate(
-			AEATRetencionesEntrada2023 entrada2023)
+			AEATRetencionesEntrada2023 entrada2023, Date fecha)
 			throws IrpfCalculateException, JAXBException, IOException {
         		try {
         			checkNullZeroRetribAnuales(entrada2023);
@@ -2107,12 +2000,12 @@ public class IrpfCalculator {
         			return newZeroAEATRetencionesSalida2023(entrada2023);
         		} 
         
-//			try {
-//			    return ServicioCalculo.procesarFicheroXML(entrada2023);
-//			} catch ( IrpfCalculateException e) {
-//			    throw e;
-//			} catch ( Exception e ) {
-//			} 
+				try {
+				    return ServicioCalculo.procesarFicheroXML(entrada2023, fecha);
+				} catch ( IrpfCalculateException e) {
+				    throw e;
+				} catch ( Exception e ) {
+				} 
 			
         		Marshaller marshaller = JAXBContext.newInstance(
         				AEATRetencionesEntrada2023.class).createMarshaller();
@@ -2124,61 +2017,18 @@ public class IrpfCalculator {
         				AEATRetencionesSalida2023.class.getSimpleName(), null);
         		File error2023File = File.createTempFile(
         				AEATRetencionesError2023.class.getSimpleName(), null);
-        
-        		es.aeat.pret.c200.mc.c231.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
-        				error2023File.getAbsolutePath(), null,
-        				salida2023File.getAbsolutePath());
-        		entrada2023File.delete();
-        		Unmarshaller unMarshaller = JAXBContext.newInstance(
-        				AEATRetencionesError2023.class).createUnmarshaller();
-        		try {
-        			AEATRetencionesError2023 error2023 = (AEATRetencionesError2023) unMarshaller
-        					.unmarshal(error2023File);
-        			error2023File.delete();
-        			throw new IrpfCalculateException(error2023);
-        		} catch (JAXBException e) {
-        		} catch (IllegalArgumentException e) {
+        		
+        		if ( fecha.before(ServicioCalculo.FEBRUARY_2023) ) {
+	        		es.aeat.pret.c200.mc.c230.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
+	        				error2023File.getAbsolutePath(), null,
+	        				salida2023File.getAbsolutePath());
+        		} else {
+	        		es.aeat.pret.c200.mc.c231.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
+	        				error2023File.getAbsolutePath(), null,
+	        				salida2023File.getAbsolutePath());
         		}
-        
-        		error2023File.delete();
-        		unMarshaller = JAXBContext.newInstance(
-        				AEATRetencionesSalida2023.class).createUnmarshaller();
-        		AEATRetencionesSalida2023 salida2023 = (AEATRetencionesSalida2023) unMarshaller
-        				.unmarshal(salida2023File);
-        		salida2023File.delete();
-        		return salida2023;
-		}
+        		
 
-		private AEATRetencionesSalida2023 calculateJanuary(
-			AEATRetencionesEntrada2023 entrada2023)
-			throws IrpfCalculateException, JAXBException, IOException {
-        		try {
-        			checkNullZeroRetribAnuales(entrada2023);
-        		} catch (NullPointerException e) {
-        			return newZeroAEATRetencionesSalida2023(entrada2023);
-        		} 
-        
-//			try {
-//			    return ServicioCalculo.procesarFicheroXML(entrada2023);
-//			} catch ( IrpfCalculateException e) {
-//			    throw e;
-//			} catch ( Exception e ) {
-//			} 
-			
-        		Marshaller marshaller = JAXBContext.newInstance(
-        				AEATRetencionesEntrada2023.class).createMarshaller();
-        		File entrada2023File = File.createTempFile(
-        				AEATRetencionesEntrada2023.class.getSimpleName(), null);
-        		marshaller.marshal(entrada2023, entrada2023File);
-        
-        		File salida2023File = File.createTempFile(
-        				AEATRetencionesSalida2023.class.getSimpleName(), null);
-        		File error2023File = File.createTempFile(
-        				AEATRetencionesError2023.class.getSimpleName(), null);
-        
-        		es.aeat.pret.c200.mc.c230.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
-        				error2023File.getAbsolutePath(), null,
-        				salida2023File.getAbsolutePath());
         		entrada2023File.delete();
         		Unmarshaller unMarshaller = JAXBContext.newInstance(
         				AEATRetencionesError2023.class).createUnmarshaller();
@@ -2201,7 +2051,7 @@ public class IrpfCalculator {
 		}
 		
 		private AEATRetencionesSalida2024 calculate(
-			AEATRetencionesEntrada2024 entrada2024)
+			AEATRetencionesEntrada2024 entrada2024, Date fecha)
 			throws IrpfCalculateException, JAXBException, IOException {
 			try {
 				checkNullZeroRetribAnuales(entrada2024);
@@ -2210,7 +2060,7 @@ public class IrpfCalculator {
 			} 
 
 			try {
-			    return ServicioCalculo.procesarFicheroXML(entrada2024);
+			    return ServicioCalculo.procesarFicheroXML(entrada2024, fecha);
 			} catch ( IrpfCalculateException e) {
 			    throw e;
 			} catch ( Exception e ) {
@@ -2227,9 +2077,16 @@ public class IrpfCalculator {
 			File error2024File = File.createTempFile(
 					AEATRetencionesError2024.class.getSimpleName(), null);
 
-			es.aeat.pret.c200.mc.c240.ModuloCalculo.procesarFicheroXml(entrada2024File.getAbsolutePath(),
-					error2024File.getAbsolutePath(), null,
-					salida2024File.getAbsolutePath());
+    		if ( fecha.before(ServicioCalculo.FEBRUARY_2023) ) {
+				es.aeat.pret.c200.mc.c240.ModuloCalculo.procesarFicheroXml(entrada2024File.getAbsolutePath(),
+						error2024File.getAbsolutePath(), null,
+						salida2024File.getAbsolutePath());
+    		} else {
+				es.aeat.pret.c200.mc.c241.ModuloCalculo.procesarFicheroXml(entrada2024File.getAbsolutePath(),
+						error2024File.getAbsolutePath(), null,
+						salida2024File.getAbsolutePath());
+					
+			}
 			entrada2024File.delete();
 			Unmarshaller unMarshaller = JAXBContext.newInstance(
 					AEATRetencionesError2024.class).createUnmarshaller();
@@ -2887,7 +2744,7 @@ public class IrpfCalculator {
 
 		@Override
 		public AEATRetencionesSalida2023 calculate2023(
-				IIrpfCalculatorContext ctx) {
+				IIrpfCalculatorContext ctx, Date date) {
 			byte descendants = 0;
 			Iterable<Descendiente> descendientes = ctx.getDescendientes();
 			if (descendientes != null)
@@ -2967,7 +2824,7 @@ public class IrpfCalculator {
 		}
 		
 		@Override
-		public AEATRetencionesSalida2024 calculate2024(IIrpfCalculatorContext ctx) {
+		public AEATRetencionesSalida2024 calculate2024(IIrpfCalculatorContext ctx, Date date) {
 			byte descendants = 0;
 			Iterable<Descendiente> descendientes = ctx.getDescendientes();
 			if (descendientes != null)
@@ -3047,10 +2904,6 @@ public class IrpfCalculator {
 			return aeatRetencionesSalida;
 		}
 		
-		@Override
-		public AEATRetencionesSalida2023 calculateJanuary2023(IIrpfCalculatorContext ctx) {
-		    return calculate2023(ctx);
-		}
 	}
 
 }

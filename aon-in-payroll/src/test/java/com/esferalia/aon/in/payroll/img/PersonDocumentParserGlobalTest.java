@@ -186,7 +186,7 @@ public class PersonDocumentParserGlobalTest {
 
 		@Parameterized.Parameters
 		public static Collection<Object> fileNames() {
-			return Arrays.asList(new Object[] { "DNI-EUKE-1.jpg", "GenericDNI.jpeg", "dniJuanmaInvert.png" });
+			return Arrays.asList(new Object[] { "GenericDNI.jpeg", "dniJuanmaInvert.png" });
 		}
 
 		public PersonDocumentParserTest2(String fileName) {

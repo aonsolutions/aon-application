@@ -93,7 +93,7 @@ public class SistemaREDCCC {
 	    for (int i = 0; i < authorizedAnchors.size(); i++) {
 		HtmlAnchor authorizedAnchor = (HtmlAnchor) authorizedAnchors.get(i);
 		XmlPage authorizedXmlPage =  (XmlPage) authorizedAnchor.openLinkInNewWindow();
-		HtmlPage authorizedHtmlPage = HtmlUnitToolkit.tranformXmlPage(authorizedXmlPage);
+		HtmlPage authorizedHtmlPage = HtmlUnitToolkit.transformXmlPage(authorizedXmlPage);
 		getAssignedCCCs(authorizedHtmlPage, callback);
 	    }
 	    
@@ -132,7 +132,7 @@ public class SistemaREDCCC {
 
     private static XmlPage nextPage(XmlPage xmlPage) {
 	try {
-	    HtmlPage cccsHtmlPage = HtmlUnitToolkit.tranformXmlPage(xmlPage);
+	    HtmlPage cccsHtmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 	    return cccsHtmlPage.getElementById("SIGUIENTE").click();
 	} catch (IOException | TransformerException e) {
 	    throw new IllegalArgumentException(e);

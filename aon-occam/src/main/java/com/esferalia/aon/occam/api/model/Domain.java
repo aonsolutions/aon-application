@@ -197,6 +197,9 @@ public class Domain implements Serializable {
 	}
 	
 	public Integer getMaxTotalDocumentSize() {
+		if(maxTotalDocumentSize == null) {
+			maxTotalDocumentSize = 0;
+		}
 		return maxTotalDocumentSize;
 	}
 	

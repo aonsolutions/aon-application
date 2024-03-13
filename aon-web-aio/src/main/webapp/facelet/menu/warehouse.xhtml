@@ -184,18 +184,7 @@
 										actionListener="#{stockReport.onReportByItemValued}"
 										value="#{bundle.warehouse_stock_by_item_valued_module}" />
 								</aon:div>
-								<aon:if test="#{domainSwitcher.hotel || domainSwitcher.betaDomain}">
-		 							
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="consumptionControlAggregate"
-											action="gwt_consumption_templates" title="#{bundle.warehouse_consumption_control}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.warehouse_consumption_control}" />		
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>
-						
+														
 								<aon:if test="#{domainSwitcher.udapa}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_udapa_quality"

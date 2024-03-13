@@ -13,14 +13,28 @@ class PersonDocumentParsers {
     
     static PersonDocument parse(String text) {
     	PersonDocumentParserValidation.validateText(text);
-        IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
-                new DNICommonParser()
-        };
-        return Arrays.stream(parses)
-                .filter(e ->e.accept(text))
-                .map(e -> e.parse(text))
-                .findFirst()
-                .orElseThrow(() -> new PersonDocumentParserException("El formato no es soportado"));
+    	if (text.contains("ABIZENAK")) {
+    		 IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
+    	                new DNIBasqueParser()
+    	               
+    	        };
+    	        return Arrays.stream(parses)
+    	                .filter(e ->e.accept(text))
+    	                .map(e -> e.parse(text))
+    	                .findFirst()
+    	                .orElseThrow(() -> new PersonDocumentParserException("El formato no es soportado"));
+			
+		}else {
+			  IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
+		                new DNICommonParser()
+		        };
+		        return Arrays.stream(parses)
+		                .filter(e ->e.accept(text))
+		                .map(e -> e.parse(text))
+		                .findFirst()
+		                .orElseThrow(() -> new PersonDocumentParserException("El formato no es soportado"));
+		}
+      
     }
 
 	

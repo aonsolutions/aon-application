@@ -1,4 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
+import static net.aonsolutions.invofox.OCRDocumentsParams.normalize;
+
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Arrays;
@@ -68,6 +70,7 @@ import net.aonsolutions.invofox.model.OCRLine;
 import net.aonsolutions.invofox.model.OCRLoginToken;
 import net.aonsolutions.invofox.model.OCRPage;
 import net.aonsolutions.invofox.model.OCRSeverity;
+import net.aonsolutions.invofox.model.OCRType;
 import net.aonsolutions.invofox.model.OCRWord;
 import solutions.aon.aws.s3.S3;
 
@@ -81,6 +84,51 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static final String DOCUMENT = "/document";
 	public static final String TEXT_CONTENT= "/text_content";
 	public static final String CONFIGURATION= "/configuration";
+	
+	
+	public static enum CompanyActsLike {
+		ISSUER {
+			@Override
+			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
+				ocrDocumentsParams.withIssuerTaxId(ocrCompany.getTaxId().orElse("This must return false"));
+			}
+		},
+		RECIPIENT {
+			@Override
+			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
+				ocrDocumentsParams.withRecipientTaxId(ocrCompany.getTaxId().orElse("This must return false"));
+			}
+		},
+		UNKNOWN {
+			@Override
+			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
+				ocrDocumentsParams
+						.withPredicate(ocrDocument -> {
+								return ocrCompany.getTaxId().isEmpty() 
+								|| ocrDocument.getData().isEmpty()
+								|| (AonStringUtils.notEquals(normalize(ocrDocument.getData().get().getIssuerDocument()),
+										ocrCompany.getTaxId().get())
+										&& AonStringUtils.notEquals(normalize(ocrDocument.getData().get().getRecipientDocument()),
+												ocrCompany.getTaxId().get()));
+						}
+						);
+			}
+		},
+		;
+		
+		public abstract void withCompanyActsLike ( OCRCompany  ocrCompany, OCRDocumentsParams ocrDocumentsParams );
+		
+		public static Optional<CompanyActsLike> get(String name) {
+			for ( CompanyActsLike companyActsLike: CompanyActsLike.values() ) {
+				if ( AonStringUtils.equalsIgnoreCase(companyActsLike.name(), name) ) {
+					return Optional.of(companyActsLike);
+				}
+			}
+			return Optional.empty();
+		}
+		
+	}
+	
 	
 	@Override	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -139,6 +187,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),  documentId);
 	    OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
 	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
+	    Company company = AON.getCompany(api.getDomain(), api.getUser(),f -> f.getDomainProperty().eq(api.getDomain().getId()));
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
@@ -148,7 +197,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
 		    .map(invoice -> invoice.put("file", getFileJSON(ocrDocument)) )
-		    .map(invoice -> invoice.put("messages", getMessages(ocrDocument)))
+		    .map(invoice -> invoice.put("messages", getMessages(ocrDocument, company)))
 		    .map(invoice -> invoice.put("status", toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
 		    .map(invoice -> invoice.put("insight", new JSONObject().put( "invofoxId", ocrDocument.getId().orElse("") )))
 		    .orElseThrow(() -> new AonApiException("No such document"));
@@ -185,6 +234,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
 	    }
 	    
+	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+	    Optional<CompanyActsLike> companyActsLike = CompanyActsLike.get(JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE));
+	    
 	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
 	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken()
@@ -197,19 +249,20 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			.getCompanies(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), OCRCompanyParams.get().withTaxId(cp.getDocument()));
 		List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
 		if (!companies.isEmpty()) {
-		    OCRCompany company = companies.get(0);
+		    OCRCompany ocrCompany = companies.get(0);
 		    OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
-		    //ocrDocumentParams.withType(OCRType.invoice);
-		    //ocrDocumentParams.withType(OCRType.ticket);
+		    type.ifPresent( ocrDocumentParams::withType);
 		    ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
-		    ocrDocumentParams.withCompany(company.getId()).skiping(page * perPage);
+		    ocrDocumentParams.withCompany(ocrCompany.getId()).skiping(page * perPage);
+		    companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
 		    publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
 		    ocrDocumentParams.limit(perPage); 
 		    
 		    OCRDocumentsResponse response = OCRInvofox
 			    .getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
-		    response.getDocuments().orElse(new LinkedList<>()).stream().forEach(r -> {
+		    response.getDocuments().orElse(new LinkedList<>()).stream()
+		    .forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId().get());
 			json.put("reference", r.getData().get().getDocumentNumber().get().getValue().orElse(""));
@@ -395,7 +448,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
         
-        private static final JSONArray getMessages(OCRDocument ocrDocument) {
+        private static final JSONArray getMessages(OCRDocument ocrDocument, Company company) {
             List<JSONObject> messages = new LinkedList<>();
             ocrDocument.getValidationInfo().ifPresent(validationInfo -> 
         	validationInfo.getErrors().ifPresent(errors -> 
@@ -403,34 +456,50 @@ public class InvofoxServlet extends AonApiHttpServlet {
         	    )
         	)
             );
+            
+            ocrDocument.getData().ifPresent(ocrInvoice -> getMessages(ocrInvoice, company).forEach(message -> messages.add(TediErrorJSON.toJSON(message))));
+            
             return new JSONArray(messages);
         }
-        
+        private static final Collection<TediError> getMessages(OCRInvoice ocrInvoice, Company company) {
+        	
+        	
+			if (AonStringUtils.isBlank(ocrInvoice.getIssuerDocument()))
+				return Collections.emptyList();
+			if (AonStringUtils.equals(normalize(ocrInvoice.getIssuerDocument()), company.getDocument()))
+				return Collections.emptyList();
+			if (AonStringUtils.equals(normalize(ocrInvoice.getRecipientDocument()), company.getDocument()))
+				return Collections.emptyList();
+			
+			System.out.println(company.getDocument() + " = "  + ocrInvoice.getIssuerDocument() + " = " + ocrInvoice.getRecipientDocument() );
+        	
+        	return Collections.singleton(new TediError()
+        			.setLevel(TediLevel.ERR)
+        			.setCode("ERROR_ISSUER_RECIPIENT_MISMATCHED")
+        			.setMessage("Ni el emisor ni el receptor coinciden con la empresa."));
+        	
+        }
         private static final Collection<TediError> getMessages(OCRError ocrError) {
             
-            Collection<TediError> messages = 
-    	    ocrError.getFields()
-    	    .orElse(Collections.emptyList())
-    	    .stream()
-    	    .map(ocrField -> {
-    		TediError tediError = new TediError();
-		tediError.setLevel(getTediLevel(ocrError));
-		ocrError.getCode().ifPresent(tediError::setCode);
-		getTediContext(ocrField).ifPresent(tediError::setContext);
-		ocrError.getDescription().ifPresent(tediError::setMessage);
-		return tediError;
-    	    })
-    	    .collect(Collectors.toMap(TediError::getMessage, err -> err, ( err1, err2 ) -> err2 )).values();
+			Collection<TediError> messages = ocrError.getFields().orElse(Collections.emptyList()).stream()
+					.map(ocrField -> {
+						TediError tediError = new TediError();
+						tediError.setLevel(getTediLevel(ocrError));
+						ocrError.getCode().ifPresent(tediError::setCode);
+						getTediContext(ocrField).ifPresent(tediError::setContext);
+						ocrError.getDescription().ifPresent(tediError::setMessage);
+						return tediError;
+					}).collect(Collectors.toMap(TediError::getMessage, err -> err, (err1, err2) -> err2)).values();
 
-            if ( !messages.isEmpty() ) {
-		return messages;
-	    }
-	    
-	    TediError tediError = new TediError();
-	    tediError.setLevel(getTediLevel(ocrError));
-	    ocrError.getCode().ifPresent(tediError::setCode);
-	    ocrError.getDescription().ifPresent(tediError::setMessage);
-	    return Collections.singletonList(tediError);
+			if (!messages.isEmpty()) {
+				return messages;
+			}
+
+			TediError tediError = new TediError();
+			tediError.setLevel(getTediLevel(ocrError));
+			ocrError.getCode().ifPresent(tediError::setCode);
+			ocrError.getDescription().ifPresent(tediError::setMessage);
+			return Collections.singletonList(tediError);
 	    
         }
         

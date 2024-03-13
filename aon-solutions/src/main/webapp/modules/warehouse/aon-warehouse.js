@@ -3,14 +3,16 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { getDelivery, getWarehouses } from '../../services/warehouseService.js';
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
-import { AonMobileSalesList } from '../sales/aon-mobile-sales-list.js';
 import { AonMobileDeliveryList } from '../delivery/aon-mobile-delivery-list.js';
 import { AonMobileDelivery } from '../delivery/aon-mobile-delivery.js';
+import { AonDeliveryList } from '../delivery/aon-delivery-list.js';
+import { AonCarrierList } from '../registry/carrier/aon-carrier-list.js';
+import { AonMobileCarrierList } from '../registry/carrier/aon-mobile-carrier-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -91,6 +93,9 @@ export class AonWarehouse extends AonElement {
 		case TAGS.id:
 			this.aonDeliveryTag();
 			break;
+		case CARRIER.id:
+			this.aonCarriers();
+			break;
 		default:
 			this.aonElaboration();
 			break;
@@ -137,11 +142,19 @@ export class AonWarehouse extends AonElement {
 				this.getApplication().setContent(aonDelivery);
 			});
 		} else this.getApplication().setContent(new AonMobileDeliveryList());
+			// this.isMobile()
+			// ? new AonMobileDeliveryList() : new AonDeliveryList());
 	}
 
 	aonDeliveryTag() {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(new AonDeliveryTag());
+	}
+
+	aonCarriers() {
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(this.isMobile()
+			? new AonMobileCarrierList() : new AonCarrierList());
 	}
 
 }

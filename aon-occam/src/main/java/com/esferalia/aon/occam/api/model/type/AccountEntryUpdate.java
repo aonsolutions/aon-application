@@ -8,7 +8,8 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdat
 
 public enum AccountEntryUpdate  implements Serializable {
 	
-
+	MANUAL_TYPE ("Marcar como asiento manual") {
+		@Override public IAccountEntryWrapper visit(IAccountEntryUpdateVisitor visitor, IAccountEntryWrapper wrapper) { return visitor.visitManualType(wrapper);}},
 	OPENING_TYPE ("Marcar como asiento de apertura") {
 		@Override public IAccountEntryWrapper visit(IAccountEntryUpdateVisitor visitor, IAccountEntryWrapper wrapper) { return visitor.visitOpeningType(wrapper);}},
 	SECURITY_LEVEL ("Modificar confidencialidad") {

@@ -202,6 +202,7 @@ export class AonInvoicePanel extends AonElement {
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		})
+		this.buildOcrOptions();
 		this.buildRawdocOptions();
 		this.buildOfferOptions();
 		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
@@ -210,15 +211,27 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
+	buildOcrOptions() {
+		if ( this.getDur().isInvofox() ){
+			let ocrOptions =   
+			[ 
+				OPTION.OCR_INBOX,
+				OPTION.OCR_PENDING,
+				OPTION.OCR_TRASH 
+			];
+			let data = {
+				id: MSG.OCR,
+				title: MSG.OCR,
+				name: MSG.OCR,
+				app: Apps.INVOICE
+			}
+			this.getApplication().addSidenavOptions2(data, ocrOptions);
+		}
+	}
+
 	buildRawdocOptions() {
-		let pendingOptions =  this.getDur().isInvofox() ? 
+		let rawDocOptions  =
 		[ 
-			OPTION.RAWDOC_INBOX,
-			OPTION.RAWDOC_OCR,
-			OPTION.RAWDOC_REJECT, 
-			OPTION.RAWDOC_DRAFT
-		]
-		:[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
@@ -229,7 +242,7 @@ export class AonInvoicePanel extends AonElement {
 			name: MSG.PENDING_DOCUMENTS,
 			app: Apps.INVOICE
 		}
-		this.getApplication().addSidenavOptions2(data, pendingOptions);
+		this.getApplication().addSidenavOptions2(data, rawDocOptions);
 	}
 
 	buildInvoiceOptions() {
@@ -671,23 +684,45 @@ export class AonInvoicePanel extends AonElement {
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REJECTED});
 				break;
-			case OPTION.RAWDOC_OCR.id:
+			case OPTION.OCR_INBOX.id:
 				// [ processing, 
-				// 	pendingCorrection, 
-				// 	discarded, 
 				// 	pendingDecission, 
-				// 	rejected, 
-				// 	approved, 
 				// 	exported, 
+				// 	pendingCorrection, 
+				// 	approved, 
+				// 	rejected, 
+				// 	discarded, 
 				// 	error ]
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['pendingCorrection', 'pendingDecission', 'approved', 'error', 'discarded']}); 
+
+				// this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingCorrection']}); 
 				break;
-			case OPTION.RAWDOC_OCR_EXPORTED.id:
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['exported']}); 
+			case OPTION.OCR_INBOX_ISSUED.id:
+				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' }); 
 				break;
-			case OPTION.RAWDOC_OCR_REJECTED.id:
-				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR, page: 0, perPage: 50, publicStatus:['rejected' ]}); 
+			case OPTION.OCR_INBOX_RECEIVED.id:
+				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'}); 
 				break;
+			case OPTION.OCR_INBOX_TICKET.id:
+				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'}); 
+				break;
+			//case OPTION.OCR_EXPORTED.id:
+			//	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['exported']}); 
+			//	break;
+			case OPTION.OCR_PENDING.id:
+				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'}); 
+				break;
+			// case OPTION.OCR_ERROR.id:
+			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['error']}); 
+			// 	break;
+			case OPTION.OCR_TRASH.id:
+				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error' ]}); 
+				break;
+			// case OPTION.OCR_DISCARDED.id:
+			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded']}); 
+			// 	break;
+			// case OPTION.OCR_REJECTED.id:
+			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['rejected' ]}); 
+			// 	break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});
 				break;

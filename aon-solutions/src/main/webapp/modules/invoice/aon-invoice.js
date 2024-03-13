@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getInvofoxDocument } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -24,7 +24,6 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonNumber } from '../../components/aon-number.js';
-import { AonRegistry } from '../../components/aon-registry.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonSuggestion } from '../../components/aon-suggestion.js';
@@ -40,6 +39,8 @@ import { AonNewSuggestion } from '../../components/aon-new-suggestion.js';
 import { AonNewNumber } from '../../components/aon-new-number.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonNewTextarea } from '../../components/aon-new-textarea.js';
+import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
+
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -1191,16 +1192,16 @@ export class AonInvoice extends AonElement {
 		total.value;
 		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 		total.readonly = this.invoice.isReadonly()
-			|| this.invoice.taxes.length > 1
+			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
-		if(LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+		if(LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		totalSpan.appendChild(total);
-		if(!LS.isNewTheme() && (this.invoice.taxes.length > 1 || this.invoice.details.length > 0))
+		if(!LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
 			total.disabled = CONSTANT.TRUE;
 		// ***** OLD THEME
 		total.readonly = this.invoice.isReadonly()
-		|| this.invoice.taxes.length > 1
+		|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 		|| this.invoice.details.length > 0;
 		// *****
 
@@ -1219,42 +1220,49 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(customer, '4');	
 		} else {
-			let registry = new AonRegistry();
+			let registry = new AonRegistrySuggestion();
 			registry.id = this.REGISTRY;
+			registry.showAddress = true;
 			registry.types = this.invoice.getRegistryType();
-			registry.value = this.invoice.getRegistry();
+			// registry.value = this.invoice.getRegistry();
 			registry.setRegistry(this.invoice.getRegistry());
-			registry.readonly = this.invoice.isReadonly();
-			registry.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setRegistry(registry.getRegistry());
-				if(this.autosave) this.save();
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
 			});
-			registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
-				this.invoice.setRegistry(registry.getRegistry());
-				getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
-					this.invoice.setPaymethod(rpm.paymethod.id);
-					getPaymethod(rpm.paymethod.id).then(pm => {
-						if(pm.type === 'NEGOTIABLE_DOCUMENT') {
-							getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-								this.invoice.setBankAccount(crpm.bank.bank_account);
-								this.reload();
-							});
-							// getRegistryBanks(this.company.id).then(r => {
-							// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
-							// 	this.reload();
-							// });	
-						} else if(pm.type === 'BANK_TRANSFER'){
-							this.invoice.setBankAccount(rpm.bank.bank_account);
-							this.reload();
-						} else {
-							this.invoice.setBankAccount("");
-							this.reload();
-						}
-					});
-				});
-				if(this.autosave) this.save();
-			});
-			table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
+			table.addCell(registry, '6');
+			
+			// registry.readonly = this.invoice.isReadonly();
+			// registry.addEventListener(EVENT.CHANGE, () => {
+			// 	this.invoice.setRegistry(registry.getRegistry());
+			// 	if(this.autosave) this.save();
+			// });
+			// registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
+			// 	this.invoice.setRegistry(registry.getRegistry());
+			// 	getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
+			// 		this.invoice.setPaymethod(rpm.paymethod.id);
+			// 		getPaymethod(rpm.paymethod.id).then(pm => {
+			// 			if(pm.type === 'NEGOTIABLE_DOCUMENT') {
+			// 				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
+			// 					this.invoice.setBankAccount(crpm.bank.bank_account);
+			// 					this.reload();
+			// 				});
+			// 				// getRegistryBanks(this.company.id).then(r => {
+			// 				// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
+			// 				// 	this.reload();
+			// 				// });	
+			// 			} else if(pm.type === 'BANK_TRANSFER'){
+			// 				this.invoice.setBankAccount(rpm.bank.bank_account);
+			// 				this.reload();
+			// 			} else {
+			// 				this.invoice.setBankAccount("");
+			// 				this.reload();
+			// 			}
+			// 		});
+			// 	});
+			// 	if(this.autosave) this.save();
+			// });
+			// table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
 		}
 
 		table.addRow(); // ----- ROW 3
@@ -1297,7 +1305,7 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				});
 				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-			} else this.invoice.setWorkplace(r[0].id);
+			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
 		}).catch(e => {
 			console.error(e);
 		});
@@ -1609,7 +1617,7 @@ export class AonInvoice extends AonElement {
 		} 
 	}
 
-	onChangeRegistry(registry) { 
+	async onChangeRegistry(registry) { 
 		this.invoice.setRegistry(registry);
 		if(registry.paymethod) {
 			this.invoice.setPaymethod(registry.paymethod.paymethod.id);
@@ -1619,9 +1627,11 @@ export class AonInvoice extends AonElement {
 						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
 					getRegistryPaymethod({registry: this.company.id}).then(crpm => {
 						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						ba.value = crpm.bank.bank_account;
-						finance.bank_account = ba.value;
-						this.invoice.setFinance(finance, i);
+						if(ba) {
+							ba.value = crpm.bank.bank_account;
+							finance.bank_account = ba.value;
+							this.invoice.setFinance(finance, i);
+						}	
 					});
 					// getRegistryBanks(this.company.id).then(r => {
 				   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
@@ -1644,6 +1654,13 @@ export class AonInvoice extends AonElement {
 			});				
 		}
 		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
+		else {
+			let transactionJSON = await getSupplierTransaction({id: registry.id})
+			if(!transactionJSON.transaction)
+				transactionJSON = await getCreditorTransaction({id: registry.id})
+			if(transactionJSON.transaction)
+				this.invoice.setTransaction(transactionJSON.transaction);
+		}
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
 
@@ -1928,6 +1945,7 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			detail.prepayment = ("PREPAYMENT" === e.detail.item.product.type);
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
 			this.reload();

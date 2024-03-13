@@ -137,6 +137,14 @@ public abstract class Enterprise extends ResizeComposite {
 	@UiField
 	SuggestBox enterpriseAgreement;
 	
+	// TABLA TGSS
+	
+	@UiField
+	TextBox enterprisePayAuthorizationKey;
+	
+	@UiField
+	ListBox enterprisePaySsMutual;
+	
 	// -------------------------------------------------- Variables
 	
 	private List<Agreement> enterpriseAgreements;
@@ -188,6 +196,9 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetSendType.clear();
 		this.enterprisePaysheetSendEmail.setValue(null);
 		this.enterpriseAgreement.setValue(null);
+		
+		this.enterprisePayAuthorizationKey.setValue(null);
+		this.enterprisePaySsMutual.clear();
 	}
 
 	private void initializeListBox() {
@@ -215,6 +226,62 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
 		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
 		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
+		
+		this.enterprisePaySsMutual.addItem("-", "");
+		this.enterprisePaySsMutual.addItem("CNP PARTNERS SEGUROS Y REASEGUROS SA", "G0001");
+		this.enterprisePaySsMutual.addItem("ABANCA VIDA Y PENSIONES DE SEGUROS Y REASEGUROS S.A.U.", "G0002");
+		this.enterprisePaySsMutual.addItem("UNICORP VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0003");
+		this.enterprisePaySsMutual.addItem("BANKINTER SEGUROS DE VIDA", "G0006");
+		this.enterprisePaySsMutual.addItem("FIATC, MUTUA DE SEGUROS Y REASEGUROS", "G0010");
+		this.enterprisePaySsMutual.addItem("SA NOSTRA COMPA\u00d1IA DE SEGUROS DE VIDA SA", "G0012");
+		this.enterprisePaySsMutual.addItem("VIDA-CAIXA SA DE SEGUROS Y REASEGUROS", "G0021");
+		this.enterprisePaySsMutual.addItem("GENERALI ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0037");
+		this.enterprisePaySsMutual.addItem("CCM VIDA Y PENSIONES S.A. DE SEG.Y REAS", "G0048");
+		this.enterprisePaySsMutual.addItem("GESPENSION CAMINOS, S.A. E.G.F.P.", "G0067");
+		this.enterprisePaySsMutual.addItem("IBERCAJA PENSION,E.G.F.P. , S.A.U.", "G0079");
+		this.enterprisePaySsMutual.addItem("SANTANDER PENSIONES, S.A., E.G.F.P.", "G0080");
+		this.enterprisePaySsMutual.addItem("BBVA PENSIONES S.A. EGFP", "G0082");
+		this.enterprisePaySsMutual.addItem("BANSABADELL PENSIONES, E.G.F.P., S.A.", "G0085");
+		this.enterprisePaySsMutual.addItem("MEDIOLANUM PENSIONES, S.A., S.G.F.P.", "G0091");
+		this.enterprisePaySsMutual.addItem("MUTUALITAT DELS ENGINYERS MPS", "G0105");
+		this.enterprisePaySsMutual.addItem("GVC GAESCO PENSIONES,S.A. S.G.F.P.", "G0111");
+		this.enterprisePaySsMutual.addItem("MAPFRE VIDA PENSIONES,E.G.F.P.,S.A", "G0121");
+		this.enterprisePaySsMutual.addItem("LORETO MUTUA, MUTUALIDAD DE PREVISION SOCIAL", "G0124");
+		this.enterprisePaySsMutual.addItem("RGA RURAL PENSIONES S.A. EGFP", "G0131");
+		this.enterprisePaySsMutual.addItem("GESTION DE PREVISION Y PENSIONES EGFP S.A.", "G0133");
+		this.enterprisePaySsMutual.addItem("MUTUACTIVOS PENSIONES SGFP S.A.U", "G0135");
+		this.enterprisePaySsMutual.addItem("ARQUIPENSIONES EGFP, S.A.", "G0137");
+		this.enterprisePaySsMutual.addItem("PREVISION SANITARIA NACIONAL, MUTUA DE SEGUROS A PRIMA FIJA", "G0148");
+		this.enterprisePaySsMutual.addItem("MERCHBANC, E.G.F.P., S.A.", "G0153");
+		this.enterprisePaySsMutual.addItem("SEGUROS EL CORTE INGLES VIDA PENSIONES Y REASEGUROS S.A.U.", "G0154");
+		this.enterprisePaySsMutual.addItem("FONDITEL PENSIONES E.G.F.P.,S.A.", "G0162");
+		this.enterprisePaySsMutual.addItem("TARGOPENSIONES ENTIDAD GESTORA DE FONDOS DE PENSIONES, S.A.U", "G0172");
+		this.enterprisePaySsMutual.addItem("AXA PENSIONES,S.A., E.G.F.P.", "G0177");
+		this.enterprisePaySsMutual.addItem("BESTINVER PENSIONES E.G.F.P. ,S.A", "G0179");
+		this.enterprisePaySsMutual.addItem("LIBERBANK PENSIONES SGFP SA", "G0180");
+		this.enterprisePaySsMutual.addItem("RENTA 4 PENSIONES, S.A., E.G.F.P.", "G0185");
+		this.enterprisePaySsMutual.addItem("DEUTSCHE ZURICH PENSIONES, ENTIDAD GESTO ", "G0187");
+		this.enterprisePaySsMutual.addItem("NATIONALE-NEDERLANDEN VIDA COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.E", "G0190");
+		this.enterprisePaySsMutual.addItem("MARCH GESTION DE PENSIONES SGFP, S.A.", "G0197");
+		this.enterprisePaySsMutual.addItem("PUEYO PENSIONES E.G.F.P., S.A.", "G0198");
+		this.enterprisePaySsMutual.addItem("TREA PENSIONES, E.G.F.P., S.AU.", "G0202");
+		this.enterprisePaySsMutual.addItem("FINECO PREVISION", "G0207");
+		this.enterprisePaySsMutual.addItem("SURNE MUTUA DE SEGUROS Y REASEGUROS A PRIMA FIJA", "G0211");
+		this.enterprisePaySsMutual.addItem("CAJAMARVIDA, S.A. DE SEGUROS Y REASEGUROS", "G0214");
+		this.enterprisePaySsMutual.addItem("CAJA LABORAL PENSIONES S.A., G.F.P.", "G0217");
+		this.enterprisePaySsMutual.addItem("CASER PENSIONES ENTIDAD GESTORA DE FONDOS DE PENSIONES SA", "G0219");
+		this.enterprisePaySsMutual.addItem("DUNAS CAPITAL PENSIONES, S.G.F.P., S.A.U.", "G0224");
+		this.enterprisePaySsMutual.addItem("CAJA INGENIEROS VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0225");
+		this.enterprisePaySsMutual.addItem("AEGON ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0230");
+		this.enterprisePaySsMutual.addItem("LIBERBANK VIDA Y PENSIONES, DE SEGUROS Y REASEGUROS, S.A.", "G0231");
+		this.enterprisePaySsMutual.addItem("HERMANDAD NACIONAL DE ARQUITECTOS, ARQUITECTOS TECNICOS Y QUIMICOS, MPS", "G0232");
+		this.enterprisePaySsMutual.addItem("Abante Pensiones EGFP S.A.", "G0233");
+		this.enterprisePaySsMutual.addItem("KUTXABANK PENSIONES, E.G.F.P., S.A.U.", "G0234");
+		this.enterprisePaySsMutual.addItem("GCO GESTORA DE PENSIONES, EGFP, S.A.", "G0236");
+		this.enterprisePaySsMutual.addItem("UNION DEL DUERO, COMPA\u00d1IA DE SEGUROS DE VIDA, S.A.", "G0237");
+		this.enterprisePaySsMutual.addItem("COBAS PENSIONES SGFP SA", "G0238");
+		this.enterprisePaySsMutual.addItem("ALLIANZ, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0239");
+		this.enterprisePaySsMutual.addItem("SANTA LUCIA, S.A. COMPA\u00d1IA DE SEGUROS Y REASEGUROS", "G0240");
 	}
 
 	// ------------------------------------------------- UiHandlers
@@ -327,6 +394,16 @@ public abstract class Enterprise extends ResizeComposite {
 			onEnterpriseAgreementChange(null);
 	}
 	
+	@UiHandler("enterprisePaySsMutual")
+	void onEnterprisePaySsMutualChangeValue(ChangeEvent event) {
+		onEnterprisePaySsMutualChange();
+	}
+	
+	@UiHandler("enterprisePayAuthorizationKey")
+	void onEnterprisePayAuthorizationKeyChangeValue(ChangeEvent event) {
+		onnterprisePayAuthorizationKeyChange();
+	}
+	
 	// ------------------------------------------------- Abstract Methods
 	
 	// TABLA DATOS EMPRESA
@@ -356,6 +433,11 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	public abstract void fireErrorMessage(Map<String, String> messages);
 	public abstract void fireWarningMessage(Map<String, String> messages);
+	
+	// TABLA TGSS EMPRESA
+	
+	public abstract void onEnterprisePaySsMutualChange();
+	public abstract void onnterprisePayAuthorizationKeyChange();
 	
 	// ------------------------------------------------- Auxiliar Methods	
 	

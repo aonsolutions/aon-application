@@ -1011,6 +1011,12 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static boolean mustImportFromBreakdown(OCRInvoice ocrInvoice) {
+		// Mientras los se devuelvan las línea correctamente, se importa siempre el BreakDown
+		// En otro caso descomentar el método.
+		return Boolean.TRUE;
+		//----------------
+			
+		/*
 		double breakdownTax = Stream.of( ocrInvoice.getBreakdowns() )
 			.filter( Optional::isPresent )
 			.map( Optional::get )
@@ -1029,6 +1035,7 @@ public class OCRInvoiceBuilder {
 			.sum()
 		;
 		return AonMathUtils.notEquals(breakdownTax,linesTax);
+		*/
 	}
 
 	private static String extractDescription(OCRInvoiceBreakdown ocrBreakdown) {

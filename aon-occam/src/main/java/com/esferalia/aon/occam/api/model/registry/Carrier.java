@@ -32,6 +32,9 @@ public class Carrier extends Registry implements Serializable{
 	}
 	
 	public CarrierStatus getStatus() {
+		if(status == null) {
+			status = CarrierStatus.ACTIVE;
+		}
 		return status;
 	}
 

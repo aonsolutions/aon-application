@@ -10,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
-import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,13 +27,9 @@ import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
-import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.audit.AuditManager;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -47,7 +42,6 @@ public class CompanyCollectionsController implements Serializable {
 	private List<SelectItem> salarySendingMethods;
 	private List<SelectItem> enterpriseSalaryTemplates;
 	private List<SelectItem> salaryTemplates;
-	private List<SelectItem> saleInvoiceTemplates;
 	private List<SelectItem> reportPrintOptions;
 	private List<SelectItem> simpleReportPrintOptions;
 	private List<SelectItem> financePaymentTemplate;
@@ -58,7 +52,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getItemTagTemplate(){
 		if (itemTagTemplate == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			itemTagTemplate = new LinkedList<SelectItem>();
+			itemTagTemplate = new LinkedList<>();
 			ItemTagTemplate[] list = ItemTagTemplate.values();
 			for (ItemTagTemplate o : list) {
 				String name = o.getName(locale);
@@ -71,7 +65,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getFinancePaymentTemplates(){
 		if (financePaymentTemplate == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			financePaymentTemplate = new LinkedList<SelectItem>();
+			financePaymentTemplate = new LinkedList<>();
 			FinancePaymentTemplate[] list = FinancePaymentTemplate.values();
 			for (FinancePaymentTemplate o : list) {
 				String name = o.getName(locale);
@@ -85,7 +79,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getShortReportPrintOptions() {
 		if (simpleReportPrintOptions == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			simpleReportPrintOptions = new LinkedList<SelectItem>();
+			simpleReportPrintOptions = new LinkedList<>();
 			ReportPrintOption[] list = ReportPrintOption.values();
 			for (ReportPrintOption o : list) {
 				if(o!=ReportPrintOption.LEFT_SIDE){
@@ -101,7 +95,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getReportPrintOptions() {
 		if (reportPrintOptions == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			reportPrintOptions = new LinkedList<SelectItem>();
+			reportPrintOptions = new LinkedList<>();
 			ReportPrintOption[] list = ReportPrintOption.values();
 			for (ReportPrintOption o : list) {
 				String name = o.getName(locale);
@@ -112,44 +106,11 @@ public class CompanyCollectionsController implements Serializable {
 		return reportPrintOptions;
 	}
 	
-	public List<SelectItem> getSaleInvoiceTemplates() {
-		if (saleInvoiceTemplates == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-			saleInvoiceTemplates = new LinkedList<SelectItem>();
-			SaleInvoiceTemplate[] st = SaleInvoiceTemplate.values();
-			for (SaleInvoiceTemplate template : st) {
-				boolean skip = false;
-				
-				Integer domainId = ds.getDomainId();
-				if ( domainId != null ) {
-					Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
-					try {
-						if ( template == SaleInvoiceTemplate.GTA && !AuditManager.hasModule(domainId, appId, Module.GARAGE)){
-							skip = true;
-						} else if ( template == SaleInvoiceTemplate.HOTEL && !AuditManager.hasModule(domainId, appId, Module.HOTEL)){
-							skip = true;
-						}
-					} catch (Throwable e) {
-						skip = true;
-					}								
-				}
-				
-				if (! skip ) {
-					String name = template.getName(locale);
-					SelectItem item = new SelectItem(template, name);
-					saleInvoiceTemplates.add(item);					
-				}
-			}
-		}
-		return saleInvoiceTemplates;
-	}
-	
 	@Deprecated
 	public List<SelectItem> getSalaryTemplates() {
 		if (salaryTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salaryTemplates = new LinkedList<SelectItem>();
+			salaryTemplates = new LinkedList<>();
 			SalaryTemplate[] st = SalaryTemplate.values();
 			for (SalaryTemplate c : st) {
 				String name = c.getName(locale);
@@ -163,7 +124,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getSalarySendingMethods() {
 		if (salarySendingMethods == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salarySendingMethods = new LinkedList<SelectItem>();
+			salarySendingMethods = new LinkedList<>();
 			for( SalarySendingMethod type : SalarySendingMethod.values() ) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type.name(), name);
@@ -176,7 +137,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getEnterpriseSalaryTemplates() {
 		if (enterpriseSalaryTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			enterpriseSalaryTemplates = new LinkedList<SelectItem>();
+			enterpriseSalaryTemplates = new LinkedList<>();
 			for( EnterpriseSalaryTemplate type : EnterpriseSalaryTemplate.values() ) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type.getValue(), name);
@@ -187,7 +148,7 @@ public class CompanyCollectionsController implements Serializable {
 	}	
 	
     public List<SelectItem> getCompanyAddresses() throws ManagerBeanException {
-    	LinkedList<SelectItem> addresses = new LinkedList<SelectItem>();
+    	LinkedList<SelectItem> addresses = new LinkedList<>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if(iterator.hasNext()) {
@@ -213,7 +174,7 @@ public class CompanyCollectionsController implements Serializable {
     }
 
     public List<SelectItem> getAllCompanyBanks() throws ManagerBeanException {
-    	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
+    	LinkedList<SelectItem> banks = new LinkedList<>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if(iterator.hasNext()) {
@@ -232,7 +193,7 @@ public class CompanyCollectionsController implements Serializable {
     }
 
     public List<SelectItem> getActiveCompanyBanks() throws ManagerBeanException {
-    	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
+    	LinkedList<SelectItem> banks = new LinkedList<>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if(iterator.hasNext()) {
@@ -256,10 +217,11 @@ public class CompanyCollectionsController implements Serializable {
 	}
 
 	public void setEnterprise(Enterprise enterprise) {
+		
 	}
 
 	public List<SelectItem> getCurrentUserEnterprises() throws ManagerBeanException {
-		List<SelectItem> enterprises = new LinkedList<SelectItem>();
+		List<SelectItem> enterprises = new LinkedList<>();
    		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
    		Criteria criteria = new Criteria();
    		UserUtils.getInstance().addScopeFilterToCriteria(criteria, enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_SCOPE_ID));
@@ -284,6 +246,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 
 	public void setWorkPlace(WorkPlace workPlace) {
+
 	}
 
 	public int getWorkPlacesCount() throws ManagerBeanException {
@@ -294,7 +257,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
-		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
+		List<SelectItem> workPlaces = new LinkedList<>();
     	for(ITransferObject to: getCurrentUserWorkPlaceList()){
     		WorkPlace workPlace = (WorkPlace)to;
     		workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
@@ -313,14 +276,14 @@ public class CompanyCollectionsController implements Serializable {
 	public List<ITransferObject> getCurrentUserWorkPlaceList() throws ManagerBeanException {
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), Boolean.TRUE);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
 		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
 		return workPlaceBean.getList(criteria);
 	}
 	
 	public List<Integer> getCurrentUserWorkPlacesIds() throws ManagerBeanException {
-		List<Integer> list = new LinkedList<Integer>();
+		List<Integer> list = new LinkedList<>();
 		for(ITransferObject to: getCurrentUserWorkPlaceList()){
 			WorkPlace wp = (WorkPlace) to;
 			list.add(wp.getId());
@@ -329,7 +292,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getDepartments() throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<>();
 		IManagerBean bean = BeanManager.getManagerBean(Department.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(bean.getFieldName(IEntityAlias.DEPARTMENT_NAME));
@@ -346,7 +309,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getCompanyActivities() throws ManagerBeanException {
-		List<SelectItem> activities = new LinkedList<SelectItem>();
+		List<SelectItem> activities = new LinkedList<>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if (iterator.hasNext()) {
@@ -380,7 +343,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getActiveCompanyActivities() throws ManagerBeanException {
-		List<SelectItem> activities = new LinkedList<SelectItem>();
+		List<SelectItem> activities = new LinkedList<>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if (iterator.hasNext()) {
@@ -415,7 +378,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getCompanyInvestAssets() throws ManagerBeanException {
-		List<SelectItem> investAssets = new LinkedList<SelectItem>();
+		List<SelectItem> investAssets = new LinkedList<>();
 		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_DESCRIPTION));
@@ -433,7 +396,7 @@ public class CompanyCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getActiveCompanyInvestAssets() throws ManagerBeanException {
-		List<SelectItem> investAssets = new LinkedList<SelectItem>();
+		List<SelectItem> investAssets = new LinkedList<>();
 		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
 		Criteria criteria = new Criteria();
 		criteria.addNullExpression(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_END_DATE));
@@ -456,7 +419,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getInvestAssetTypes() {
 		if (investAssetTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
-			investAssetTypes = new LinkedList<SelectItem>();
+			investAssetTypes = new LinkedList<>();
 			for (InvestAssetType type : InvestAssetType.values()) {
 				SelectItem item = new SelectItem(type, type.getName(locale));
 				investAssetTypes.add(item);
@@ -468,7 +431,7 @@ public class CompanyCollectionsController implements Serializable {
 	public List<SelectItem> getInvestAssetRegimes() {
 		if (investAssetRegimes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
-			investAssetRegimes = new LinkedList<SelectItem>();
+			investAssetRegimes = new LinkedList<>();
 			for (InvestAssetRegime regime : InvestAssetRegime.values()) {
 				SelectItem item = new SelectItem(regime, regime.getName(locale));
 				investAssetRegimes.add(item);

@@ -75,7 +75,7 @@ export class AonAltaDirecta extends AonElement {
     paintView() {
         this.getApplication().removeToolbarOptions();
 
-        const toolbar = CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa1"});
+        const toolbar = CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa"});
         this.appendChild(toolbar);
 
         createFormComunica(this.id, this);
@@ -431,8 +431,9 @@ export class AonAltaDirecta extends AonElement {
         try {
             let resp = await getContractType();
 
-            if(!this.isManager()){
+            //if(!this.isManager()){
                 const { APP_COMUNICA_CONTRACTS } = this.APP_PARAMS;
+
                 if(APP_COMUNICA_CONTRACTS){
                     const contract = this.data && this.data.contract ? this.data.contract : "";
                     const enabled = APP_COMUNICA_CONTRACTS.split(',');
@@ -440,7 +441,7 @@ export class AonAltaDirecta extends AonElement {
                         resp = resp.filter(({value})=> enabled.some(v=> v == value) || value == contract );
                     }
                 }
-            }
+            //}
 
             let options = resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
             
@@ -452,8 +453,9 @@ export class AonAltaDirecta extends AonElement {
         try {
             let resp = await getQuoteGroup();
 
-            if(!this.isManager()){
+            //if(!this.isManager()){
                 const { APP_COMUNICA_QUOTE_GROUP } = this.APP_PARAMS;
+
                 if(APP_COMUNICA_QUOTE_GROUP){
                     const gc = this.data && this.data.gc ? this.data.gc : "";
                     const enabled = APP_COMUNICA_QUOTE_GROUP.split(',');
@@ -461,7 +463,7 @@ export class AonAltaDirecta extends AonElement {
                         resp = resp.filter(({value})=> enabled.some(v=> v == value) || value == gc  );
                     }
                 }
-            }
+            //}
 
             let options = sortBy(resp.map(r => ({ ...r, name: `${r.name}`, value: r.value})), 'name', 'asc');
 

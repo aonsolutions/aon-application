@@ -6,14 +6,23 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.PackagingDeliveryJSON;
 import com.esferalia.aon.occam.api.json.PackagingJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
+import com.esferalia.aon.seres.DeliveryUpload;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -118,9 +127,35 @@ public class PackagingServlet extends AonApiHttpServlet {
 	private JSONObject acceptDeliveryPackaging(AonApiData api) {
 		Integer deliveryId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		AON.acceptDeliveryPackaging(api.getDomain(), api.getUser(), deliveryId);
-		
-		// TODO SEND TO SERES!!
-		
+		seres(api, deliveryId);
 		return new JSONObject();
+	}
+	
+	private void seres(AonApiData api, Integer deliveryId) {
+		Delivery delivery = AON.getDelivery(api.getDomain(), api.getUser().getLogin(), f ->
+			f.getDomainProperty().eq(api.getDomain().getId())
+			.and(f.getIdProperty().eq(deliveryId)), new Options().setFull(true));
+		
+		System.out.println("SEND DELIVERY TO SERES - REGISTRY " + delivery.getCustomer().getId());
+		RegistryNote rNote = AON.getRegistryNote(api.getDomain(), api.getUser().getLogin(), f -> 
+			f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
+			.and(f.getRegistryProperty().eq(delivery.getCustomer().getId()))
+			.and(f.getDescriptionProperty().eq("SERES_AUTO_COMMIT_DELIVERY")));
+		
+		boolean autoSendDelivery = rNote!=null && rNote.getComments() != null 
+				&& rNote.getComments().trim().equalsIgnoreCase("true");
+		if(autoSendDelivery){
+			System.out.println("SEND DELIVERY TO SERES IS TRUE");
+			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
+			if(info.getSeresPath() == null)
+				info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
+			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
+			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
+			delivery.setEdiCodes(codes);
+			
+			
+			du.uploadDelivery(delivery);
+		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
+
 	}
 }

@@ -54,7 +54,7 @@ export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
-
+export const CAMPAIGN = 'campaign';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
@@ -198,6 +198,16 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OCR = 'ocr';
+export const OCR_ERROR = 'ocrError';
+export const OCR_INBOX = 'ocr';
+export const OCR_INBOX_ISSUED = 'ocrInboxIssued';
+export const OCR_INBOX_RECEIVED = 'ocrInboxReceived';
+export const OCR_INBOX_TICKET = 'ocrInboxTicket';
+export const OCR_REJECTED = 'ocrRejected';
+export const OCR_EXPORTED = 'ocrExported';
+export const OCR_DISCARDED = 'ocrDiscarded';
+export const OCR_PENDING = 'ocrPending';
+export const OCR_TRASH = 'ocrTrash';
 export const OBJECT = 'object';
 export const OFFER = 'offer';
 export const OFF = 'off';
@@ -230,6 +240,7 @@ export const PROCESSING = 'processing'
 // ----- Q
 
 export const QUANTITY = 'quantity';
+export const QUESTION = 'question';
 export const QUOTA = 'quota';
 
 // ----- R
@@ -238,9 +249,6 @@ export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
-export const RAWDOC_OCR = 'rawdocOcr';
-export const RAWDOC_OCR_REJECTED = 'rawdocOcrRejected';
-export const RAWDOC_OCR_EXPORTED = 'rawdocOcrExported';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const RECEIVER = 'receiver';
@@ -301,6 +309,7 @@ export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
+export const SURVEY = 'survey';
 
 // ----- T
 
@@ -308,6 +317,7 @@ export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
 export const TAGS = 'tags';
+export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';

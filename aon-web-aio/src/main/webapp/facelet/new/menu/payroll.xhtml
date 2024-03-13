@@ -179,7 +179,15 @@
 										action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
-								</aon:div>							 
+								</aon:div>	
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_pensionPlanAFIPayroll"
+										rendered="#{actionDenied.renderedOption('gwt_pensionPlanAFIPayroll')}"
+										action="gwt_pensionPlanAFIPayroll"
+										value="AFI - Reduc. contribuciones planes de pensiones" />
+								</aon:div>	
+													 
 								<!--
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"

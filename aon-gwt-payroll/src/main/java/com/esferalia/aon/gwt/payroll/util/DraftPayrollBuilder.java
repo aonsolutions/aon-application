@@ -168,7 +168,10 @@ public class DraftPayrollBuilder {
 				PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 				
 				int craKey = p.getType().ordinal();
-				if ( Objects.equals(ContextVariable.NOTE, p.getName())) {
+				if ( Objects.equals(ContextVariable.PPE, p.getName())) {
+				    craKey  = IPayrollTemplate.PPE;
+				    accrual.setAmount(p.getQuote());
+				} else if ( Objects.equals(ContextVariable.NOTE, p.getName())) {
 				    craKey  = IPayrollTemplate.NOTE;
 				} else if ( Objects.equals(ContextVariable.INFO, p.getName())) {
 				    craKey  = IPayrollTemplate.INFO;

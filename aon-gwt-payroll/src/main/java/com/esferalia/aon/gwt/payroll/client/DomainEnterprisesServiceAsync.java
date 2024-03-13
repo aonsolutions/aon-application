@@ -798,6 +798,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.duplicateContract(getCurrentDomainName(), getCurrentUser(), employees, newStartDate, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Pension Plan AFI
+	
+	public void checkPensionPlanAFI(long date, List<Integer> cccIdList, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.checkPensionPlanAFI(getCurrentDomainName(), getCurrentUser(), date, cccIdList, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -811,5 +817,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }
