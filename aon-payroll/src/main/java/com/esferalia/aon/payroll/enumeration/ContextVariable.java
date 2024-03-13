@@ -339,6 +339,8 @@ public enum ContextVariable implements IResourceable {
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
+	BASE_PPE("__PPE",  VariableType.DOUBLE, false),
+
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 
 	MEI_EMPLOYEE_PERCENT("PORCENTAJE_MEI", VariableType.DOUBLE,false), 

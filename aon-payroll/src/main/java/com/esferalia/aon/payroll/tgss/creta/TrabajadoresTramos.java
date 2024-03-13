@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -414,6 +416,10 @@ public class TrabajadoresTramos {
 							}
 							
 							@Override
+							public void visitPPE() {
+							}
+							
+							@Override
 							public void visitFormacionNormal() {
 							}
 
@@ -533,6 +539,15 @@ public class TrabajadoresTramos {
 							public void startVisit() {
 							}
 							
+							@Override
+							public void visitPPE() {
+								// Base de cotización sin aportación al plan de pensiones de empleo
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("301");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
 							@Override
 							public void visitFormacionNormal() {
 								// 3.1 Contratos para la formación (TRL 087)  
@@ -1114,6 +1129,7 @@ public class TrabajadoresTramos {
 							//TODO: Log this please
 						}
 						
+
 						trabajadorBuilder.addTramo(tramoBuilder.create());
 						
 					}
@@ -1177,6 +1193,10 @@ public class TrabajadoresTramos {
 				public void startVisit() {
 				}
 				
+				@Override
+				public void visitPPE() {
+				}
+
 				@Override
 				public void visitFormacionNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
@@ -1304,6 +1324,10 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitPPE() {
+				}
+
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
@@ -1425,6 +1449,10 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void startVisit() {
+				}
+				
+				@Override
+				public void visitPPE() {
 				}
 				
 				@Override
@@ -1558,6 +1586,10 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitPPE() {
+				}
+				
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
@@ -1678,6 +1710,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void endVisit() {
 			    state.endVisit();
+			}
+			
+			@Override
+			public void visitPPE() {
+				state.visitPPE();
 			}
 			
 			@Override
@@ -1861,6 +1898,7 @@ public class TrabajadoresTramos {
 	private static interface SalaryVisitor {
 	    	void endVisit();
 	    	void startVisit();
+		void visitPPE();
 		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
@@ -1967,7 +2005,9 @@ public class TrabajadoresTramos {
 		
 		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
-		if ( becarios )
+		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00;
+
+			if ( becarios )
 			if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
 			else if ( atEPPagoDelegado )
@@ -2093,7 +2133,10 @@ public class TrabajadoresTramos {
 		else if (tiempoCompleto)
 			grupoCotizacion.visit();		
 		else 
-			grupoCotizacion.visit();		
+			grupoCotizacion.visit();	
+		
+		if ( ppe )
+			visitor.visitPPE();
 		
 		
 	}

@@ -229,6 +229,41 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
+    public void testCretaPPE() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+	
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos 
+		= getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+		org.junit.Assert.assertEquals(1, bases.size());
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
+		double baseCgc = getDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 100.00 * 100);
+		
+    }
+
+
+
+    @Test
     public void testCretaFormacionEnAlternanciaNormal() throws ExpressionException, SQLException, SalaryException,
 	    JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 	Connection connection = getConnection();
@@ -2363,6 +2398,39 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
 	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo);
+
+    }
+
+    @Test
+    public void testCretaTrabajadoresYTramosPPE()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+	
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+	
+		Tramo tramo = tramos.get(0);
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+		
+		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
 
     }
 
@@ -8416,7 +8484,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	throw new AssertException("Dato Solicitado " + codigo + " Not Found");
     }
 
-    private static void assertDato(List<Dato> datos, String tipoDato, String codigo) {
+    private static double getDato(List<Dato> datos, String tipoDato, String codigo) {
+	for (Dato dato : datos) {
+	    if (dato.getCodigo().equals(codigo)) {
+	    	return Double.parseDouble(dato.getValor());
+	    }
+	}
+	throw new AssertException("Dato " + codigo + " Not Found");
+	}
+
+	private static void assertDato(List<Dato> datos, String tipoDato, String codigo) {
 	for (Dato dato : datos) {
 	    if (dato.getCodigo().equals(codigo)) {
 		Assert.assertEquals(tipoDato, dato.getTipoDato());
