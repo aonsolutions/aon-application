@@ -1171,7 +1171,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void setDirectPayDate() {
 		Date date = itStartDate.getValue();
 		if(null != date) {
-			date = DateUtils.addDays2Date(date, 365);
+			date = DateUtils.addMonths2Date(date, 18);
 			directPayDate.setValue(date);
 			this.it.setDirectPayDate(date);
 		}
