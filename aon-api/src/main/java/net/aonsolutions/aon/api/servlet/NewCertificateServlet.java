@@ -181,24 +181,23 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 	}
 	
 	private static void checkCertificateType(AonApiData api, Certificate certificate) {
-		List<CertificateType> list = new ArrayList<>();
 		List<Certificate> certificateList = AON.getCertificates(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
-		for(int i = 0; i < certificateList.size(); i++) {
-			if(!Objects.equals(certificate.getId(), certificateList.get(i).getId()))
-				list.addAll(certificateList.get(i).getTags());
+		checkCertificateForType(certificate, certificateList, CertificateOwner.USER);
+		checkCertificateForType(certificate, certificateList, CertificateOwner.ENTERPRISE);
+	}
+	
+	private static void checkCertificateForType(Certificate certificate, List<Certificate> certificateList, CertificateOwner owner) {
+		List<CertificateType> tagList = new ArrayList<>();
+		for(int i = 0; i < certificateList.size(); i++)
+			if(!Objects.equals(certificate.getId(), certificateList.get(i).getId()) && (certificateList.get(i).getOwner().equals(owner)))
+				tagList.addAll(certificateList.get(i).getTags());
+		if(certificate.getOwner().equals(owner) && (
+			(tagList.contains(CertificateType.AEAT) && certificate.getTags().contains(CertificateType.AEAT)) ||
+			(tagList.contains(CertificateType.SEPE) && certificate.getTags().contains(CertificateType.SEPE)) ||
+			(tagList.contains(CertificateType.TGSS) && certificate.getTags().contains(CertificateType.TGSS))
+		)){
+			throw new AonApiException("Error, ya tiene un certificado de este tipo.");
 		}
-		for(int i = 0; i < certificateList.size(); i++) {
-			if(certificateList.get(i).getOwner().equals(certificate.getOwner()) && 
-					(
-						(list.contains(CertificateType.AEAT) && certificate.getTags().contains(CertificateType.AEAT)) ||
-						(list.contains(CertificateType.SEPE) && certificate.getTags().contains(CertificateType.SEPE)) ||
-						(list.contains(CertificateType.TGSS) && certificate.getTags().contains(CertificateType.TGSS))
-					) 
-					){
-				throw new AonApiException("Error, ya tiene un certificado de este tipo.");
-			}
-		}
-			
 	}
 	
 	private static JSONObject putAction(AonApiData api) {
@@ -224,6 +223,7 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 		cert.setOwner(CertificateOwner.valueOf(owner));
 		cert.setData(null);
 		cert.setPassword(certPass.getPassword());
+		checkCertificateType(api, cert);
 		AON.saveCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), cert);
 		Certificate returnedCert = AON.getOneCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), id);
 		return toJSON(returnedCert);
