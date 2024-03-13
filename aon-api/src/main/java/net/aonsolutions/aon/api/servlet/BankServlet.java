@@ -240,16 +240,20 @@ public class BankServlet extends AonApiHttpServlet {
 		Occam occam = new Occam();
 		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 				.setUser(api.getUser().getLogin());
-		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-		JSONArray array = new JSONArray();
-		List<NordigenBankAccount> accounts = nc.getAccounts();
-		for (int i = 0; i < accounts.size(); i++) {
-			RegistryBank bank = accounts.get(i).getRbank();
-			array.put(RegistryBankJSON.toJSON(bank).put("logo",
-					getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")));
+		try {
+			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+			JSONArray array = new JSONArray();
+			List<NordigenBankAccount> accounts = nc.getAccounts();
+			for (int i = 0; i < accounts.size(); i++) {
+				RegistryBank bank = accounts.get(i).getRbank();
+				array.put(RegistryBankJSON.toJSON(bank).put("logo",
+						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")));
+			}
+			return array;
+		} catch (Exception e) {
+			return new JSONArray();
 		}
-
-		return array;
+	
 	}
 
 	private JSONArray getLinkedAccounts(AonApiData api) {
