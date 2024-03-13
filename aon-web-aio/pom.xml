@@ -552,6 +552,12 @@
       <artifactId>openid4java</artifactId>
       <version>0.9.7</version>
       <scope>compile</scope>
+      <exclusions>
+		  <exclusion>
+	          <groupId>xml-apis</groupId>
+	          <artifactId>xml-apis</artifactId>
+		  </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
