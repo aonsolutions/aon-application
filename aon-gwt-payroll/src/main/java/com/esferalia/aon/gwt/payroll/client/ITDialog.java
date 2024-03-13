@@ -610,6 +610,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		//PRINT BTN IT COMUNICA
 		if(this.it!=null && this.userComunica)
 			printBtnCommunicate();
+		else if(this.it!=null)
+		printBtnDownloadFDI();
 		
 	}
 	
@@ -1368,17 +1370,18 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
-		if(this.userComunica) {
-			Date checkDate = new Date(2023 - 1900, 3, 1);
-			if(new Date().before(checkDate))
-				buildBtnPart(itPart).ifPresent(btn->
-				     confirmationPartDataTable.setWidget(row, 5, btn)
-				);
-			
-			buildBtnPartPdf(itPart).ifPresent(btn->
-			    confirmationPartDataTable.setWidget(row, 6, btn)
-			);
-		}
+		// Not need this cause not send it any more
+//		if(this.userComunica) {
+//			Date checkDate = new Date(2023 - 1900, 3, 1);
+//			if(new Date().before(checkDate))
+//				buildBtnPart(itPart).ifPresent(btn->
+//				     confirmationPartDataTable.setWidget(row, 5, btn)
+//				);
+//			
+//			buildBtnPartPdf(itPart).ifPresent(btn->
+//			    confirmationPartDataTable.setWidget(row, 6, btn)
+//			);
+//		}
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1648,6 +1651,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		setOptionDisabled(causeLowPart, COVID_IT, true);
 	}
 	
+	//--------------DOWNLOAD FDI IT PART
+	private void printBtnDownloadFDI(){
+		if(itDialogObject!=null) {    //---ENTERPRISE DATA
+			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
+			
+			if(completeCcc!=null) {
+				Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
+				
+				bjOptional.ifPresent(part-> {
+					buildFDIBtnPart(part).ifPresent(btn-> itBaja.add(btn) );
+				});
+			}
+		}
+	}
+	
 	//--------------COMMUNICATE IT PART
 	private void printBtnCommunicate(){
 		for(ITPart part : it.getITParts()) {			
@@ -1694,6 +1712,15 @@ public abstract class ITDialog extends AonCustomDialog {
 					setViewPartComunica(part);
 				}
 			});
+			return Optional.of(btn);
+		}
+		return Optional.empty();
+	}
+	
+	private Optional<AonTableButton> buildFDIBtnPart(ITPart part) {
+		if(it.getId()!=null && part.getId()!=null) {
+			AonTableButton btn = new AonTableButton("Generar fichero FDI", AON.CSS.aonIconDownload()); 
+			btn.addClickHandler(e-> setViewPartFDI(part));
 			return Optional.of(btn);
 		}
 		return Optional.empty();
@@ -1849,6 +1876,40 @@ public abstract class ITDialog extends AonCustomDialog {
 		panel.add(communicateDialog);
 	}
 	
+	private void createFooterButtonsFDI() {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(style.buttonsPanel());
+		mainCommunicate.add(panel);
+		
+		Button closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		panel.add(closeBtnDialog);
+		
+		Button fdiDialog = new Button();
+		fdiDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		fdiDialog.setText("Descargar FDI");
+		fdiDialog.setAccessKey('A');
+		fdiDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+                downloadFDIItPart();
+			}
+		});
+		
+		panel.add(fdiDialog);
+	}
+	
 	protected void startLoading(boolean load) {
 		if(load) 
 			loading.show();
@@ -1945,6 +2006,26 @@ public abstract class ITDialog extends AonCustomDialog {
 		paintPanel(itPartTmp);
 
 		createFooterButtonsCommunicate();
+
+	}
+	
+	public void setViewPartFDI(ITPart itPart) {
+
+		listIT.setVisible(false);
+		deleteIT.setVisible(false);
+		backListIT.setVisible(true);
+		deckPanel.showWidget(2);
+		deckPanel.setWidth("620px");
+
+		mainCommunicate.clear();
+		
+		mainCommunicate.add(loading);
+		
+		itPartTmp = itPart;
+
+		paintPanel(itPartTmp);
+		
+		createFooterButtonsFDI();
 
 	}
 
@@ -2054,7 +2135,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCC.setStyleName("aon-inputText");
 		panel.add(baseCC);
 		baseCC.addChangeHandler(event->{
-			it.setDailyCGCBase(baseCC.getValue());
+			it.setDailyCGCBase(baseCC.getValue() / quoteDayInput.getValue().intValue());
 //			it.setRegulationBase(baseCC.getValue());
 		});
 		
@@ -2067,7 +2148,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCP.setStyleName("aon-inputText");
 		panel.add(baseCP);
 		baseCP.addChangeHandler(event->{
-			it.setDailyCGPBase(baseCP.getValue());
+			it.setDailyCGPBase(baseCP.getValue() / quoteDayInput.getValue().intValue());
 		});
 		baseCPEl.setVisible(isPaternity());
 		baseCP.setVisible(isPaternity());
@@ -2235,6 +2316,10 @@ public abstract class ITDialog extends AonCustomDialog {
 		onCommunicateITPart(it, itPartTmp);
 	}
     
+    private void downloadFDIItPart() {
+       onDownloadFDIITPart(it, itPartTmp);
+	}
+    
     private boolean isCommunicatePart(ITPart part){
         return part.getStatus()!=null && part.getStatus() == (byte)3;
     }
@@ -2272,6 +2357,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	protected abstract void onDelete(IT it);
 	
 	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
+	
+	protected abstract void onDownloadFDIITPart(IT it, ITPart itPart);
 	
 	protected abstract void onRemoveITPartTGSS(ItNotExist ItNotExist);
 	

@@ -1497,6 +1497,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
+			
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart itPart) {}
     		
     	};
     	
@@ -1539,13 +1542,19 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	        @Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
 				dialog.info();
 			}
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
+				dialog.info();
+			}
+
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart itPart) {
+				AonDialog dialog = new AonDialog("Info", new HTML("Descargar fichero FIE desde en el apartado Laboral > Partes IT"));
 				dialog.info();
 			}
 			
