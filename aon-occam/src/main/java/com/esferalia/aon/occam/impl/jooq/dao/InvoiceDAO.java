@@ -54,9 +54,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
-import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
-import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -103,7 +101,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
@@ -972,6 +969,14 @@ public class InvoiceDAO {
 		return ++next;
 	}
 	
+	
+	public static Invoice validate(AONContext ctx, Invoice invoice, Integer rawdocId) {
+		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
+		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
+		return invoice;
+	}
+	
 	public static Invoice accept(AONContext ctx, Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
@@ -1117,64 +1122,13 @@ public class InvoiceDAO {
 	private static void insertDetail(AONContext ctx, AonConfiguration config, Invoice invoice,InvoiceDetail detail) {
 		InvoiceValidation.validateDetail(ctx, config, detail);
 		beforeInsertDetail(ctx, config, invoice, detail);
-		InvoiceDetailRecord record = ctx.getDslContext()
-			.insertInto(INVOICE_DETAIL)
-			.set(INVOICE_DETAIL.DOMAIN,invoice.getDomain())
-			.set(INVOICE_DETAIL.INVOICE,invoice.getId())
-			.set(INVOICE_DETAIL.INVEST_ASSET,detail.getInvestAsset())
-			.set(INVOICE_DETAIL.PROJECT,detail.getProject())
-			.set(INVOICE_DETAIL.LINE,detail.getLine())
-			.set(INVOICE_DETAIL.ITEM,detail.getItem()==null?null : detail.getItem().getId())
-			.set(INVOICE_DETAIL.DESCRIPTION,
-					(AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
-						? MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
-						: detail.getDescription())
-			.set(INVOICE_DETAIL.QUANTITY,detail.getQuantity())
-			.set(INVOICE_DETAIL.PRICE,detail.getPrice())
-			.set(INVOICE_DETAIL.DISCOUNT_EXPR,detail.getDiscountExpression())
-			.set(INVOICE_DETAIL.SOURCE,detail.getSource().value() )
-			.set(INVOICE_DETAIL.SOURCE_ID,detail.getSourceId())
-			.set(INVOICE_DETAIL.TAXABLE_BASE,detail.getTaxableBase())
-			.set(INVOICE_DETAIL.TAXES,detail.getTaxes())
-			.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte( detail.isPrepayment() )) 
-			.set(INVOICE_DETAIL.SELLER,detail.getSeller() == null ? null : detail.getSeller().getId() )
-			.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
-			.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
-			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
-			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			.returning(INVOICE_DETAIL.ID)
-			.fetchOne();
-		detail.setId(record.getValue(INVOICE_DETAIL.ID));
+		detail.setDescription((AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
+				? MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
+				: detail.getDescription());
 		detail.setInvoice(invoice);
+		detail = InvoiceDetailDAO.save(ctx, detail);
 		ctx.log().debug("\tINSERT INVOICE_DETAIL detalles invoice: {0}",detail.getId());
 		afterInsertDetail(ctx, config, invoice, detail);
-	}
-	
-	private static void insertInvoiceTaxes(AONContext ctx, InvoiceDetail detail) {
-		for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-			InvoiceTaxRecord record =  ctx.getDslContext()
-				.insertInto(INVOICE_TAX)
-				.set(INVOICE_TAX.DOMAIN,detail.getDomain())
-				.set(INVOICE_TAX.INVOICE_DETAIL,detail.getId())
-				.set(INVOICE_TAX.TAX_TYPE, tax.getTaxType().value())
-				.set(INVOICE_TAX.BASE,tax.getBase())
-				.set(INVOICE_TAX.PERCENTAGE,tax.getPercentage())
-				.set(INVOICE_TAX.QUOTA,tax.getQuota())
-				.set(INVOICE_TAX.SURCHARGE,tax.getSurcharge())
-				.set(INVOICE_TAX.SURCHARGE_QUOTA,tax.getSurchargeQuota())
-				.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,tax.getVatDeductionType() == null
-						? VatDeductionType.WITH_RIGHT.value() 
-						: tax.getVatDeductionType().value())
-				.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null 
-						? WithholdingType.PROFESSIONAL.value() 
-						: tax.getWithholdingType().value())
-				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,tax.getDeductiblePercent())
-				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,tax.getDeductibleQuota())
-				.returning(INVOICE_TAX.ID)
-				.fetchOne();
-			tax.setId(record.getValue(INVOICE_TAX.ID));
-			ctx.log().debug("\t\tINSERT INVOICE_TAX tax: {0}",tax.getTaxType());
-		}
 	}
 	
 	public static Invoice update(AONContext ctx, Invoice invoice) {
@@ -1547,13 +1501,8 @@ public class InvoiceDAO {
 	private static void beforeInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		
 	}
+	
 	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
-		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-			if(detail.getDomain() == null) detail.setDomain(invoice.getDomain());
-			insertInvoiceTaxes(ctx,detail);
-		} else {
-			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
-		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
 			private static final long serialVersionUID = -9008741708561768671L;

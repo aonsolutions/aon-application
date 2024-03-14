@@ -120,6 +120,11 @@ export const RAWDOC = {
   entryPoint: 'RawdocModule'
 };
 
+export const RAWDOC_RECORD = {
+  module: GWT_FISCAL,
+  entryPoint: 'RawdocRecordModule'
+};
+
 export const MAIN_CONTRATA = {
   title: 'Contratos',
   module: GWT_PAYROLL,
@@ -208,4 +213,11 @@ export const BOOKING_RESUME = {
   name: MSG.BOOKING_RESUME,
   module: GWT_FISCAL,
   entryPoint: 'DomainBookingResume'
+}
+
+export const QUESTION = {
+  title: MSG.QUESTIONS,
+  name: MSG.QUESTIONS,
+  module: GWT_AIO,
+  entryPoint: 'QuestionModule',
 }
