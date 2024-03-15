@@ -24,6 +24,8 @@ import { AonOfficePanel } from './office/aon-office-panel.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonAppMenu } from './aon-app-menu.js';
 import { AonNotes } from './note/aon-notes.js';
+import { AonWarehouse } from './warehouse/aon-warehouse.js';
+import { AonMarketing } from './marketing/aon-marketing.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -200,7 +202,13 @@ export class AonNewMenu extends AonElement {
 			// 	break;
 			case Apps.OFFICE.app:
 				this.rootPanel(new AonOfficePanel());
-			break;
+				break;
+			case Apps.WAREHOUSE.app:
+				this.rootPanel(new AonWarehouse());
+				break;
+			case Apps.MARKETING.app:
+				this.rootPanel(new AonMarketing());
+				break;
 		}
 	}
 
@@ -686,6 +694,11 @@ export class AonNewMenu extends AonElement {
 			return this.isBeta() && !LS.isNewTheme();
 		else if(MenuApps.OFFICE.app === app.app){
 			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+		} else if(MenuApps.MARKETING.app === app.app){
+			return this.isBeta() && this.getDur().isMarketing();
+		} else if(MenuApps.WAREHOUSE.app === app.app){
+			const domain = this.getDur().getDomain();
+			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
 		}
 		else return false;
 	}

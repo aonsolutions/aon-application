@@ -547,12 +547,12 @@ export const MenuApps = {
   COMUNICA,
   AON_SALTRA,
   INVOICE,
-  // MARKETING,
   // TREASURY,
   DOCUMENTAL,
   TIMECONTROL,
   MESSENGER,
   WAREHOUSE,
+  MARKETING,
   // GROUPWARE,
   NOTES,
   TOOLS
@@ -618,6 +618,7 @@ export const Apps = {
   NOTES,
   WAREHOUSE,
   // GROUPWARE
+  MARKETING
 };
 
 export const ConsultancyBookingApps = {
