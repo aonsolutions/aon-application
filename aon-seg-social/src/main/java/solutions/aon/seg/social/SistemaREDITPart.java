@@ -307,9 +307,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			//HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap());
 			
-			HtmlPage htmlPage = webClient.getPage(BASE_URI);
-			//XmlPage xmlPage = webClient.getPage(BASE_URI);
-			//HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+//			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			XmlPage xmlPage = webClient.getPage(BASE_URI);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
@@ -342,7 +342,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
 			case RESTO_Y_AUTONOMOS:
-				webClient.waitForBackgroundJavaScript(30000);
+				webClient.waitForBackgroundJavaScript(5000);
 				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
 
 				wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
@@ -659,8 +659,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 
 		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		//XmlPage xmlPage = accept.click();
-		//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
-		htmlPage = accept.click();
+		//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage); 
+		XmlPage xmlPage = accept.click();
+		htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 		HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
 		return htmlPage;
