@@ -163,7 +163,7 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AccountingInvoice ai = new AccountingInvoice();
 
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
-	
+		
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 		String category = ti.optString("category");
@@ -301,103 +301,19 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static void checkRegistryAccounts(Domain domain, User user) {
-		String code1 = "4";
-		Account acc1 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code1);
-		if(acc1 == null || acc1.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code1)
-					.setDomain(domain.getId())
-					.setDescription("ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
 		
-		String code2 = "40";
-		Account acc2 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code2);
-		if(acc2 == null || acc2.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code2)
-					.setDomain(domain.getId())
-					.setDescription("ADMINISTRACIONES PÚBLICAS")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "40", "PROVEEDORES", null);
+		checkAccount(domain, user, "400", "Proveedores", null);
+		checkAccount(domain, user, "4000", "Proveedores", null);
 		
-		String code4 = "400";
-		Account acc4 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code4);
-		if(acc4 == null || acc4.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code4)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-		}
-
-		String code6 = "4000";
-		Account acc6 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code6);
-		if(acc6 == null || acc6.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code6)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "41", "ACREEDORES VARIOS", null);
+		checkAccount(domain, user, "410", "Acreedores por prestaciones de servicios", null);
+		checkAccount(domain, user, "4100", "Acreedores por prestaciones de servicios", null);
 		
-		String code8 = "41";
-		Account acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
-		if(acc8 == null || acc8.getId() == null) {
-			acc8 = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code8)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-		}
-		String code3 = "410";
-		Account acc3 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code3);
-		if(acc3 == null || acc3.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code3)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
-
-		String code5 = "4100";
-		Account acc5 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code5);
-		if(acc5 == null || acc5.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code5)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
-		
-		String code7 = "43";
-		Account acc7 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code7);
-		if(acc7 == null || acc7.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code7)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
-		String code9 = "430";
-		Account acc9 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code9);
-		if(acc9 == null || acc9.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code9)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
-		
-		String code10 = "4300";
-		Account acc10 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code10);
-		if(acc10 == null || acc10.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code10)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "43", "CLIENTES", null);
+		checkAccount(domain, user, "430", "Clientes", null);
+		checkAccount(domain, user, "4300", "Clientes", null);
 	}
 	
 	private static Account getDetaultPaidRetAccount(Domain domain, User user, AonConfiguration aonCtx) {
@@ -417,55 +333,16 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static Account getRaidRet(Domain domain, User user) {
-		String code1 = "4";
-		Account acc1 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code1);
-		if(acc1 == null || acc1.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code1)
-					.setDomain(domain.getId())
-					.setDescription("ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES")
-					.setActive(true));
-		}
-		
-		String code2 = "47";
-		Account acc2 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code2);
-		if(acc2 == null || acc2.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code2)
-					.setDomain(domain.getId())
-					.setDescription("ADMINISTRACIONES PÚBLICAS")
-					.setActive(true));
-		}
-		
-		String code4 = "473";
-		Account acc4 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code4);
-		if(acc4 == null || acc4.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code4)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, retenciones y pagos a cuenta.")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
+		checkAccount(domain, user, "47", "ADMINISTRACIONES PÚBLICAS", null);
+		checkAccount(domain, user, "473", "Hacienda Pública, retenciones y pagos a cuenta", null);
+		checkAccount(domain, user, "4730", "Hacienda Pública, retenciones y pagos a cuenta", null);
 
-		String code6 = "4730";
-		Account acc6 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code6);
-		if(acc6 == null || acc6.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code6)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, retenciones y pagos a cuenta.")
-					.setActive(true));
-		}
-		
 		String code8 = "473000000";
 		Account acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
 		if(acc8 == null || acc8.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code8)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, retenciones y pagos a cuenta.")
-					.setActive(true));
-			acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
+			acc8 = saveAccount(domain, user, code8, "Hacienda Pública, retenciones y pagos a cuenta.", null);
+
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), new ApplicationParameter()
 					.setDomain(domain.getId())
 					.setName(AppParam.ACC_DEFAULT_PAID_RET_ACC.name()))
@@ -475,55 +352,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static Account getChargedRet(Domain domain, User user) {
-		String code1 = "4";
-		Account acc1 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code1);
-		if(acc1 == null || acc1.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code1)
-					.setDomain(domain.getId())
-					.setDescription("ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES")
-					.setActive(true));
-		}
-		
-		String code2 = "47";
-		Account acc2 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code2);
-		if(acc2 == null || acc2.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code2)
-					.setDomain(domain.getId())
-					.setDescription("ADMINISTRACIONES PÚBLICAS")
-					.setActive(true));
-		}
-		
-		String code4 = "475";
-		Account acc4 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code4);
-		if(acc4 == null || acc4.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code4)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública acreedora por conceptos fiscales.")
-					.setActive(true));
-		}
-
-		String code6 = "4751";
-		Account acc6 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code6);
-		if(acc6 == null || acc6.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code6)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, acreedora por retenciones practicadas.")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
+		checkAccount(domain, user, "47", "ADMINISTRACIONES PÚBLICAS", null);
+		checkAccount(domain, user, "475", "Hacienda Pública acreedora por conceptos fiscales", null);
+		checkAccount(domain, user, "4751", "Hacienda Pública, acreedora por retenciones practicadas.", null);
 		
 		String code8 = "475100000";
 		Account acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
 		if(acc8 == null || acc8.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code8)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, acreedora por retenciones practicadas.")
-					.setActive(true));
-			acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
+			acc8 = saveAccount(domain, user, code8, "Hacienda Pública, acreedora por retenciones practicadas.", null);
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), new ApplicationParameter()
 					.setDomain(domain.getId())
 					.setName(AppParam.ACC_DEFAULT_CHARGED_RET_ACC.name()))
@@ -533,55 +370,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static Account getIVArepercutido(Domain domain, User user) {
-		String code1 = "4";
-		Account acc1 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code1);
-		if(acc1 == null || acc1.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code1)
-					.setDomain(domain.getId())
-					.setDescription("ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES")
-					.setActive(true));
-		}
-		
-		String code2 = "47";
-		Account acc2 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code2);
-		if(acc2 == null || acc2.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code2)
-					.setDomain(domain.getId())
-					.setDescription("ADMINISTRACIONES PÚBLICAS")
-					.setActive(true));
-		}
-		
-		String code3 = "477";
-		Account acc3 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code3);
-		if(acc3 == null || acc3.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code3)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
-
-		String code5 = "4770";
-		Account acc5 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code5);
-		if(acc5 == null || acc5.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code5)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
+		checkAccount(domain, user, "47", "ADMINISTRACIONES PÚBLICAS", null);
+		checkAccount(domain, user, "477", "Hacienda Pública, IVA repercutido", null);
+		checkAccount(domain, user, "4770", "Hacienda Pública, IVA repercutido", null);
 		
 		String code7 = "477000000";
 		Account acc7 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code7);
 		if(acc7 == null || acc7.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code7)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA repercutido")
-					.setActive(true));
-			acc7 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code7);
+			acc7 = saveAccount(domain, user, code7, "Hacienda Pública, IVA repercutido", null);
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), new ApplicationParameter()
 						.setDomain(domain.getId())
 						.setName(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC.name()))
@@ -592,55 +389,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static Account getIVAsoportado(Domain domain, User user) {
-		String code1 = "4";
-		Account acc1 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code1);
-		if(acc1 == null || acc1.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code1)
-					.setDomain(domain.getId())
-					.setDescription("ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES")
-					.setActive(true));
-		}
-		
-		String code2 = "47";
-		Account acc2 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code2);
-		if(acc2 == null || acc2.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code2)
-					.setDomain(domain.getId())
-					.setDescription("ADMINISTRACIONES PÚBLICAS")
-					.setActive(true));
-		}
-		
-		String code4 = "472";
-		Account acc4 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code4);
-		if(acc4 == null || acc4.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code4)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-		}
-
-		String code6 = "4720";
-		Account acc6 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code6);
-		if(acc6 == null || acc6.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code6)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-		}
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
+		checkAccount(domain, user, "47", "ADMINISTRACIONES PÚBLICAS", null);
+		checkAccount(domain, user, "472", "Hacienda Pública, IVA soportado", null);
+		checkAccount(domain, user, "4720", "Hacienda Pública, IVA soportado", null);
 		
 		String code8 = "472000000";
 		Account acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
 		if(acc8 == null || acc8.getId() == null) {
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-					.setCode(code8)
-					.setDomain(domain.getId())
-					.setDescription("Hacienda Pública, IVA soportado")
-					.setActive(true));
-			acc8 = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code8);
+			acc8 = saveAccount(domain, user, code8, "Hacienda Pública, IVA soportado", null);
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), new ApplicationParameter()
 					.setDomain(domain.getId())
 					.setName(AppParam.ACC_DEFAULT_PAID_VAT_ACC.name()))
@@ -650,61 +407,32 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private static void checkNivelInferior(Domain domain, User user, String account) {
-		if(account.length() > 1) {
-			String code = account.substring(0, 1);
-			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
-			if(acc == null || acc.getId() == null) {
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-						.setCode(code)
-						.setDomain(domain.getId())
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE SELFCONTA)")
-						.setAlias("SIN DESCRIPCIÓN")
-						.setActive(true));
-			}
-		}
+		if(account.length() > 1) checkAccount(domain, user, account.substring(0, 1), "SIN DESCRIPCIÓN", "SIN DESCRIPCIÓN");
+		if(account.length() > 2) checkAccount(domain, user, account.substring(0, 2), "SIN DESCRIPCIÓN", "SIN DESCRIPCIÓN");
+		if(account.length() > 3) checkAccount(domain, user, account.substring(0, 3), "SIN DESCRIPCIÓN", "SIN DESCRIPCIÓN");
+		if(account.length() > 4) checkAccount(domain, user, account.substring(0, 4), "SIN DESCRIPCIÓN", "SIN DESCRIPCIÓN");
+	}
+	
+	private static Account checkAccount(Domain domain, User user, String code, String description, String alias) {
+		Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
+		if(acc == null || acc.getId() == null) 
+			acc = saveAccount(domain, user, code, description, alias);
+		return acc;
+	}
+	
+	private static Account saveAccount(Domain domain, User user, String code, String description, String alias) {
+		return ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), 
+			new Account()
+				.setCode(code)
+				.setDomain(domain.getId())
+				.setDescription(description)
+				.setAlias(alias)
+				.setActive(true));
 		
-		if(account.length() > 2) {
-			String code = account.substring(0, 2);
-			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
-			if(acc == null || acc.getId() == null) {
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-						.setCode(code)
-						.setDomain(domain.getId())
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE SELFCONTA)")
-						.setAlias("SIN DESCRIPCIÓN")
-						.setActive(true));
-			}
-		}
-		
-		if(account.length() > 3) {
-			String code = account.substring(0, 3);
-			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
-			if(acc == null || acc.getId() == null) {
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-						.setCode(code)
-						.setDomain(domain.getId())
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE SELFCONTA)")
-						.setAlias("SIN DESCRIPCIÓN")
-						.setActive(true));
-			}
-		}
-		
-		if(account.length() > 4) {
-			String code = account.substring(0, 4);
-			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
-			if(acc == null || acc.getId() == null) {
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-						.setCode(code)
-						.setDomain(domain.getId())
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE SELFCONTA)")
-						.setAlias("SIN DESCRIPCIÓN")
-						.setActive(true));
-			}
-		}
 	}
 	
 	private static AccountEntry getEntryBase(Domain domain, String login, AonConfiguration aonCtx,AccountingInvoice ai) {
-		EnterpriseActivity ea = aonCtx.getMainActivity();
+		EnterpriseActivity ea = !ai.getInvoice().getActivity().isEmpty() ? ai.getInvoice().getActivity() : aonCtx.getMainActivity();
 		Integer activity = (ea==null?null:ea.getId());
 		Integer periodId = null;
 		if (ai.getInvoice().getIssueDate() != null) {
