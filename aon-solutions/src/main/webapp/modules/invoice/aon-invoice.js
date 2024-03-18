@@ -228,12 +228,14 @@ export class AonInvoice extends AonElement {
 		}
 
 		window.reloadInvoice = (invoiceId) => {
-			alert("AAAAAA");
-			alert(invoiceId);
-			getInvoice(invoiceId).then((inv) => {
-				this.invoice = new Invoice(inv);
-				this.reload();
-			});
+			if(invoiceId) {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+				getInvoice(invoiceId).then((inv) => {
+					this.invoice = new Invoice(inv);
+					this.reload();
+				});
+			} 
+
 		}
 	}
 
