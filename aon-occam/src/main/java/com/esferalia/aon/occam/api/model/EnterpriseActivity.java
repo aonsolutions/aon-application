@@ -113,5 +113,12 @@ public class EnterpriseActivity implements Serializable {
 		this.vatExemptionCause = vatExemptionCause;
 		return this;
 	}
+	
+	public boolean isEmpty() {
+		return getId() == null
+			&& getDescription() == null
+			&& getIae().isEmpty()
+			&& getCnae() == null;
+	}
 
 }
