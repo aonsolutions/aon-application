@@ -3,6 +3,8 @@ package com.code.aon.aio.controller;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.json.JSONObject;
+
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.ui.config.util.UserUtils;
@@ -100,6 +102,18 @@ public class DomainUserRolesController implements Serializable {
 		} else if(token == null) {
 			token = AonToken.build(getDur().getUser().getAuth(), AonDateUtils.addDays(new Date(), 1));
 		}
+		return token;
+	}
+	
+	public String generateToken() {
+		JSONObject tokenObject = new JSONObject();
+		String domainName = AonUtil.getDomainName();
+		String user = UserUtils.getInstance().getLoggedUser().getName();
+		tokenObject.put("user", user);
+		tokenObject.put("domain", domainName);
+
+
+		token = AonToken.build(tokenObject, AonDateUtils.addDays(new Date(), 1));
 		return token;
 	}
 	
