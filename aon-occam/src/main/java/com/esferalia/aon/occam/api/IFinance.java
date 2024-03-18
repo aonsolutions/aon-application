@@ -78,6 +78,8 @@ public interface IFinance {
 	void deleteInvoice(AONContext ctx, Integer invoiceId);
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
+	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
+
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);

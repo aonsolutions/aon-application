@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -244,6 +245,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== RAWDOC
 	//
 	private static final String RAWDOC_ENTRY_POINT = "RawdocModule";
+	private static final String RAWDOC_RECORD_ENTRY_POINT = "RawdocRecordModule";
 	//
 	//    ================================================================== CHECKIT
 	//
@@ -825,6 +827,21 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					RawdocModule rawdoc  = new RawdocModule();
+					rawdoc.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RAWDOC_RECORD_ENTRY_POINT)) {
+			GWT.runAsync(RawdocRecordModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					RawdocRecordModule rawdoc  = new RawdocRecordModule();
 					rawdoc.onModuleLoad();
 				}
 				

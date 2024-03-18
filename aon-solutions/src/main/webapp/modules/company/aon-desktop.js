@@ -47,6 +47,7 @@ import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/compan
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 import { AonDialog } from '../../components/aon-dialog.js';
+import { AonMarketing } from '../marketing/aon-marketing.js';
 
 export class AonDesktop extends AonElement {
 
@@ -1343,6 +1344,9 @@ export class AonDesktop extends AonElement {
 				case Apps.WAREHOUSE.app:
 					this.rootPanel(new AonWarehouse());
 					break;
+				case Apps.MARKETING.app:
+					this.rootPanel(new AonMarketing());
+					break;
 				case ClassicApps.AON_SOLUTIONS.app:
 					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
 					break;
@@ -1403,6 +1407,8 @@ export class AonDesktop extends AonElement {
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		}else if(Apps.MARKETING.app === app.app){
+			return this.getDur().isMarketing() && this.isBeta();
 		} else if(ClassicApps.AON_SOLUTIONS.app === app.app){
 			return this.getDur().isAon();	
 		} else if(ClassicApps.BIDOQ.app === app.app){
