@@ -1,5 +1,6 @@
 package org.aonsolutions.jsoup;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,17 +14,17 @@ import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Optional;
 
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.FormElement;
-import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
 
 public class IDCSegSocial {
@@ -35,11 +36,24 @@ public class IDCSegSocial {
 
 		String password = "Alma1981";
 		try (FileInputStream certificateIs = new FileInputStream("/home/ndiaz/Descargas/aon.p12")) {
-			getIDCDates(certificateIs, password, "011005185924", "0111", "01105360062");
+			byte[] certificateData = certificateIs.readAllBytes(); 
+			Collection<Date> dates = getIDCDates(certificateData, password, "011005185924", "0111", "01105360062");
+			if ( dates.size() > 0 )
+				getIDC(certificateData, password, "011005185924", "0111", "01105360062",dates.stream().findFirst().get());
+			
 		}
 	}
 
-	/**
+	public static Collection<Date> getIDCDates(byte[] certificateData, String password, String naf, String regime,
+			String ccc)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+		try (InputStream is = new ByteArrayInputStream(certificateData)) {
+			return getIDCDates(is, password, naf, regime, ccc);
+		}
+
+	}
+
+			/**
 	 * Gets the list of IDC's dates.
 	 * 
 	 * @param certificateIs
@@ -93,7 +107,97 @@ public class IDCSegSocial {
 		// <option value="Diferido">Diferido</option>
 		// </select>
 		//
-		jacadaForm.getElementById("ListaTipoImpresion").selectXpath("//option").forEach(option -> {
+		jacadaForm.getElementById("ListaTipoImpresion").selectXpath("option").forEach(option -> {
+			option.val(option.text());
+			option.attr("selected", "OnLine".equalsIgnoreCase(option.text()));
+		});
+
+		jacadaForm.getElementById("Ayuda").remove();
+		jacadaForm.getElementById("Sub2205901006").remove();
+				
+
+		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
+
+		// Here you need to extract dates form table.
+		// Not all dates, only start dates ( first column of dates ).
+
+		Element sub0900112078 = document.getElementById("Sub0900112078");
+
+		Collection<Element> cells = sub0900112078.select(new Evaluator() {
+			@Override
+			public boolean matches(Element root, Element element) {
+				return element.attr("id").startsWith("Sub0900112078_1_") && element.hasText();
+			}
+		});
+
+		ArrayList<Date> dates = new ArrayList<>(cells.size());
+
+		for (Element cell : cells) {
+				Date date = parse(cell.text());
+				dates.add(date);
+		}
+		jksFile.delete();
+		return dates;
+		
+	}
+	
+	public static Collection<Date> getIDC(byte[] certificateData, String password, String naf, String regime,
+			String ccc, Date date)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+		try (InputStream is = new ByteArrayInputStream(certificateData)) {
+			return getIDC(is, password, naf, regime, ccc, date);
+		}
+
+	}
+
+	public static Collection<Date> getIDC(InputStream certificateIs, String password, String naf, String regime,
+			String ccc, Date date)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+
+		File jksFile = setSSLCertificate(certificateIs, password);
+
+		//
+		// Same than code below, choose one or another it's about personal
+		//
+		// Connection connection = Jsoup.connect(IDC_URL);
+		// connection.timeout(5000);
+		// connection.ignoreHttpErrors(true);
+		// connection.followRedirects(true);
+		// Connection.Response response = connection.execute();
+
+		Document document = Jsoup.connect(IDC_URL).timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute()
+				.parse();
+
+		FormElement jacadaForm = (FormElement) document.getElementById("jacadaform");
+
+		jacadaForm.getElementById("SDFTESNAF").val(naf.substring(0, 2));
+		jacadaForm.getElementById("SDFNAF").val(naf.substring(2));
+
+		jacadaForm.getElementById("SDFTESCTA").val(ccc.substring(0, 2));
+		jacadaForm.getElementById("SDFCUENTA").val(ccc.substring(2));
+
+		jacadaForm.getElementById("SDFREGCTA").val(regime);
+		
+		String dateStr = FORMATTER.format(date);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		
+		//
+		// For <select> 'ListaTipoImpresion'. We need
+		// 1-. Select 'OnLine' option
+		// 2-. Set it's value to 'Online'.
+		//
+		// <select id='ListaTipoImpresion' ...>
+		// <option val=""></option>
+		// <option selected="true" value="Online" >OnLine</option>
+		// <option value="Diferido">Diferido</option>
+		// </select>
+		//
+		jacadaForm.getElementById("ListaTipoImpresion").selectXpath("option").forEach(option -> {
 			option.val(option.text());
 			option.attr("selected", "OnLine".equalsIgnoreCase(option.text()));
 		});
@@ -101,37 +205,67 @@ public class IDCSegSocial {
 		jacadaForm.getElementById("Ayuda").remove();
 		jacadaForm.getElementById("Sub2205901006").remove();
 
-
 		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
 
+		
+		jacadaForm = (FormElement) document.getElementById("jacadaform");
 
-		// Here you need to extract dates form table.
-		// Not all dates, only start dates ( first column of dates ).
+		jacadaForm.getElementById("Sub0900112078_0_0").selectXpath("option").forEach(option -> {
+			option.val(option.text());
+			option.attr("selected", "Select".equalsIgnoreCase(option.text()));
+		});		
+		
+		jacadaForm.getElementById("Ayuda").remove();
+		jacadaForm.getElementById("Sub2205001006").remove();
+		jacadaForm.getElementById("Sub2206101001").remove();
+		jacadaForm.getElementById("Sub2206301003").remove();
+		jacadaForm.getElementsByAttributeValue("name", "sequenceNumber").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "Scroll").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "keep").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "btn_j").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "acc").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "client").remove();
+		jacadaForm.getElementsByAttributeValue("name", "defaultbtn_null").remove();
+		jacadaForm.getElementById("focusedControl").val("tbl_cbo_Sub0900112078_0_0");
+		jacadaForm.getElementById("CommandEdit").val("EN");
+		jacadaForm.getElementById("FkeyButton").val("+");
 
-		Element Sub0900112078 = document.getElementById("Sub0900112078");
-
-		Collection<Element> cells = Sub0900112078.select(new Evaluator() {
-
-			@Override
-			public boolean matches(Element root, Element element) {
-
-				return element.attr("id").startsWith("Sub0900112078_1_") && element.hasText();
-			}
-		});
 		
 
-		ArrayList<Date> dates = new ArrayList<>();
 
-		for (Element cell : cells) {
-			Date date = FORMATTER.parse(cell.text());
-			dates.add(date);
-		}
 
-		Collections.sort(dates);
 
-		return dates;
+		
+
+		
+		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
+		
+		jacadaForm = (FormElement) document.getElementById("jacadaform");
+		
+		jacadaForm.getElementsByAttributeValue("name", "sequenceNumber").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "keep").remove();
+		jacadaForm.getElementsByAttributeValueStarting("name", "client").remove();
+		jacadaForm.getElementsByAttributeValue("name", "defaultbtn_null").remove();
+		jacadaForm.getElementById("focusedControl").val("tbl_cbo_Sub0900112078_0_0");
+		jacadaForm.getElementById("CommandEdit").val("EN");
+		jacadaForm.getElementById("FkeyButton").val("+");
+		
+
+		
+		jacadaForm.formData().forEach(keyVal -> {
+			System.out.println(keyVal.key() + " = " + keyVal.value());
+		});
+		Response pdf = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute();
+
+		System.out.println(pdf.contentType());
+		
+		
+		jksFile.delete(); 
+		return Collections.emptyList();
+
 	}
 
+	
 	public static File setSSLCertificate(InputStream is, String password)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		return setSSLCertificate(is, password, KeyStore.getDefaultType());
@@ -148,6 +282,14 @@ public class IDCSegSocial {
 			System.setProperty("javax.net.ssl.keyStore", jksFile.getAbsolutePath());
 			return jksFile;
 		}
+	}
+	
+	private static Date parse(String text) {
+		try {
+			return FORMATTER.parse(text);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}		
 	}
 
 }
