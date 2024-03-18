@@ -10,9 +10,14 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,6 +29,7 @@ import org.jsoup.select.Evaluator;
 public class IDCSegSocial {
 
 	private static final String IDC_URL = "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR";
+	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd MM yyyy");
 
 	public static void main(String[] args) throws Exception {
 
@@ -46,9 +52,11 @@ public class IDCSegSocial {
 	 * @throws NoSuchAlgorithmException
 	 * @throws CertificateException
 	 * @throws IOException
+	 * @throws ParseException
 	 */
 	public static Collection<Date> getIDCDates(InputStream certificateIs, String password, String naf, String regime,
-			String ccc) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+			String ccc)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
 
 		File jksFile = setSSLCertificate(certificateIs, password);
 
@@ -93,34 +101,35 @@ public class IDCSegSocial {
 		jacadaForm.getElementById("Ayuda").remove();
 		jacadaForm.getElementById("Sub2205901006").remove();
 
-		// Only for trace. Free to remove
-//		jacadaForm.formData().forEach(data -> System.out.println(data.key() + " = " + data.value()));
 
 		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
 
-		// Only for trace. Free to remove
-//		System.out.println(document.toString());
 
 		// Here you need to extract dates form table.
 		// Not all dates, only start dates ( first column of dates ).
 
 		Element Sub0900112078 = document.getElementById("Sub0900112078");
-		
-		
+
 		Collection<Element> cells = Sub0900112078.select(new Evaluator() {
-			
+
 			@Override
 			public boolean matches(Element root, Element element) {
-				
+
 				return element.attr("id").startsWith("Sub0900112078_1_") && element.hasText();
 			}
 		});
-		cells.forEach(System.out::println);
-	
-
 		
-			
-		return Collections.emptyList();
+
+		ArrayList<Date> dates = new ArrayList<>();
+
+		for (Element cell : cells) {
+			Date date = FORMATTER.parse(cell.text());
+			dates.add(date);
+		}
+
+		Collections.sort(dates);
+
+		return dates;
 	}
 
 	public static File setSSLCertificate(InputStream is, String password)
