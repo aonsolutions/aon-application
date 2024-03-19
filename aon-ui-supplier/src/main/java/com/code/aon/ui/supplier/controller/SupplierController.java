@@ -2,19 +2,36 @@ package com.code.aon.ui.supplier.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.SUPPLIER_REPORT;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.supplier.enumeration.SupplierStatus;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.report.AonReportException;
+import net.aonsolutions.aon.supplier.report.SupplierReportPDF;
 
 public class SupplierController extends RegistryController implements IAuditableController {
 	
@@ -91,6 +108,67 @@ public class SupplierController extends RegistryController implements IAuditable
 	@Override
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	
+	public String onNewReport() throws ManagerBeanException {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			OutputStream out = response.getOutputStream();
+			Occam occam = new Occam()
+					.setDomainName(  AonUtil.getDomainName() )
+					.setDomain(  DomainManager.getCurrentDomain() )
+					.setUser(  AonUtil.getRemoteUser() )
+					;
+			new SupplierReportPDF( occam )
+				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+					.map(to -> (Supplier) to)
+					.map(this::toSupplierFull ));
+			response.flushBuffer();
+			context.responseComplete();
+			return null;
+		} catch (IOException | AonReportException e) {
+			throw new ManagerBeanException( e ); 
+		}
+	}
+
+	private SupplierFull toSupplierFull(Supplier supplier) {
+		SupplierFull supplierFull = new SupplierFull();
+		com.esferalia.aon.occam.api.model.registry.Supplier occamSupplier = new com.esferalia.aon.occam.api.model.registry.Supplier();
+		
+		occamSupplier.setDocument(supplier.getRegistry().getDocument());
+		occamSupplier.setAlias(supplier.getRegistry().getAlias());
+		occamSupplier.setDocumentCountry(toOccamCountry(supplier.getRegistry().getDocumentCountry()));
+		occamSupplier.setId(supplier.getRegistry().getId());
+		occamSupplier.setName(supplier.getRegistry().getName());
+		supplierFull.setRegistry(occamSupplier);
+		try {
+			com.code.aon.registry.RegistryMedia phone = supplier.getRegistry().getPhone();
+			if (phone != null) {
+				supplierFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
+		}
+		
+		occamSupplier.setStatus(supplierStatusToRegistryStatus(supplier.getStatus()));
+		
+		return supplierFull;
+
+	}
+
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
+	}
+	
+	
+	
+	private static RegistryStatus supplierStatusToRegistryStatus( SupplierStatus ss ) {
+		if(ss== null) {
+			return null;
+		}
+		return RegistryStatus.valueOf( ss.toString() );
 	}
 
 }
