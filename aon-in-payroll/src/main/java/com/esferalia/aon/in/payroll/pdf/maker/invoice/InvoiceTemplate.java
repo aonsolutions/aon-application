@@ -235,7 +235,7 @@ public class InvoiceTemplate {
 			.filter(detail -> detail.getItem() != null 
 				&& detail.getItem().getProduct() != null 
 				&& ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()) 
-				&& !detail.getPrice().equals(0.0) &&  detail.getQuantity() != 0.0)
+				&& detail.getPrice() != 0.0 &&  detail.getQuantity() != 0.0)
 			.forEach(detail -> this.specialTaxes.add(detail));
 		}
 	}

@@ -198,13 +198,17 @@ public class InvoiceDetail implements Serializable {
 		this.quantity = quantity;
 		return this;
 	}
-	public Double getPrice() {
+	public double getPrice() {
 		return price;
 	}
 	
 	public InvoiceDetail setPrice(double price) {
 		this.price = price;
 		return this;
+	}
+	
+	public double getAmount() {
+		return getPrice() * getQuantity() * (1 - getDiscount()/100);
 	}
 	
 	public DiscountExpression getDiscountExpression() {

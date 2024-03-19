@@ -415,8 +415,7 @@ public class Utils {
 		if(invoiceDetail.getId() != null){
 			if(invoiceDetail.getInvoice().getIssueDate() != null) 
 				date2 = invoiceDetail.getInvoice().getIssueDate();
-			if(invoiceDetail.getPrice() != null) 
-				price2 = invoiceDetail.getPrice();
+			price2 = invoiceDetail.getPrice();
 		}
 			
 		if(incomeDetail.getId() == null && invoiceDetail.getId() == null) return item.getPurchasePrice();
