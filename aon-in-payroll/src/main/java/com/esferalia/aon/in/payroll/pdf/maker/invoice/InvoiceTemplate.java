@@ -1191,7 +1191,7 @@ public class InvoiceTemplate {
 				String discount = "";
 				
 				try {
-					String expression = detail.getDiscountExpression() != null ? detail.getDiscountExpression() : "";
+					String expression = detail.getDiscountExpression() != null ? detail.getDiscountExpression().getDiscountExpr() : "";
 					
 					Matcher matcher = DISCOUNT_PATTERN.matcher(expression);
 					if (matcher.find()) {
@@ -1199,14 +1199,14 @@ public class InvoiceTemplate {
 						numStr = numStr.replaceAll("[,']", ".");
 						double percent = Double.parseDouble(numStr);
 						if (percent != 0) {
-							discount = safeString(detail.getDiscountExpression());
+							discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 						}
 					} else {
-						discount = safeString(detail.getDiscountExpression());
+						discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 					}
 					
 				} catch (NumberFormatException e) {
-					discount = safeString(detail.getDiscountExpression());
+					discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 				}
 				
 				

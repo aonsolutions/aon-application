@@ -435,7 +435,7 @@ public class Utils {
 		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		
-		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
+		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * Math.abs(x.getQuantity())).sum();
 		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
 		Double sum = invoiceSum + incomeSum;
 		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> Math.abs(x.getQuantity())).sum();
@@ -471,7 +471,7 @@ public class Utils {
 					invoiceDetail.getInvoice().getIssueDate().compareTo(incomeDetail.getIncome().getIssueDate())>= 0)){
 				if(invoiceDetail.getQuantity() > 0){
 					q = q + invoiceDetail.getQuantity(); 
-					Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), Double.parseDouble(invoiceDetail.getDiscountExpression()));
+					Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), invoiceDetail.getDiscount());
 					fifoList.add(fifo);
 				}
 				i++;	

@@ -319,10 +319,8 @@ public class Invoice2tbai {
 				detalle.setDescripcionDetalle(description);
 				detalle.setImporteUnitario(doubleToString(AonMathUtils.round(detail.getPrice(), 4)));
 
-				double descuento = 0.0;
-				if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
-					descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
-				}
+				double descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+
 				detalle.setDescuento(doubleToString(descuento));
 			
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {

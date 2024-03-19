@@ -952,7 +952,7 @@ public class InvoiceTest {
 			assertPdfData("Description", detailTwo.getDescription(), detailDescription);
 			assertPdfData("Amount", toLatinNumber(detailTwo.getQuantity()), detailAmount);
 			assertPdfData("Price", toLatinNumber(detailTwo.getPrice()), detailPrice);
-			assertPdfData("Discount", detailTwo.getDiscountExpression(), detailDiscount);
+			assertPdfData("Discount", detailTwo.getDiscountExpression().getDiscountExpr(), detailDiscount);
 			assertPdfData("Total", toLatinNumber(detailTwo.getTaxableBase()), detailTotal);
 			
 			/** Assert finances **/

@@ -177,7 +177,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 				.addCell(descriptionLabel)
 				.addCell(new Label( AON.FMT.format( detail.getQuantity())), AON.CSS.aonTextRight())
 				.addCell(new Label( AON.FMT.format( detail.getPrice()))   , AON.CSS.aonTextRight())
-				.addCell(new Label( detail.getDiscountExpression() ), AON.CSS.aonTextRight())
+				.addCell(new Label( AON.FMT.format( detail.getDiscount())), AON.CSS.aonTextRight())
 				.addCell(new Label( AON.FMT.format( detail.getTaxableBase())), AON.CSS.aonTextRight())
 			;
 		}

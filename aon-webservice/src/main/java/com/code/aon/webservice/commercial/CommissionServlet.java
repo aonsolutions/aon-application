@@ -202,7 +202,7 @@ public class CommissionServlet extends HttpServlet{
 		idcJson.put("date", idc.getInvoiceDetail().getInvoice().getIssueDate());
 		idcJson.put("seller", idc.getInvoiceDetail().getInvoice().getSellerName());	
 		Double p = idc.getInvoiceDetail().getPrice()* idc.getInvoiceDetail().getQuantity();
-		Double discount = Double.parseDouble(idc.getInvoiceDetail().getDiscountExpression());
+		Double discount = idc.getInvoiceDetail().getDiscount();
 		idcJson.put("base", AonMathUtils.round(p - (p*discount/100)));
 		idcJson.put("amount", AonMathUtils.round(idc.getAmount()));
 		idcJson.put("percentage", AonMathUtils.round(idc.getCommission()));
@@ -315,7 +315,7 @@ public class CommissionServlet extends HttpServlet{
 			json.put("date", AonDateUtils.simpleFormat(r.getInvoiceDetail().getInvoice().getIssueDate()));
 			json.put("seller", r.getInvoiceDetail().getInvoice().getSellerName());	
 			Double p = r.getInvoiceDetail().getPrice()* r.getInvoiceDetail().getQuantity();
-			Double discount = Double.parseDouble(r.getInvoiceDetail().getDiscountExpression());
+			Double discount = r.getInvoiceDetail().getDiscount();
 			json.put("base", AonMathUtils.round(p - (p*discount/100)));
 			json.put("amount", AonMathUtils.round(r.getAmount()));
 			json.put("percentage", AonMathUtils.round(r.getCommission()));
