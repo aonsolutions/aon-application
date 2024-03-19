@@ -1029,7 +1029,7 @@ public class InvoiceDAO {
 		.set(INVOICE_DETAIL.QUANTITY, invoiceDetail.getQuantity())
 		.set(INVOICE_DETAIL.DESCRIPTION, invoiceDetail.getDescription())
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression())
+		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression().getDiscountExpr())
 		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
 		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset())
 		.set(INVOICE_DETAIL.ITEM, invoiceDetail.getItem() != null ? invoiceDetail.getItem().getId() : null)

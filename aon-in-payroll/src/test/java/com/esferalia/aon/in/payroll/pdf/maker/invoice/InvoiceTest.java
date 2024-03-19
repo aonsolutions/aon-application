@@ -565,7 +565,7 @@ public class InvoiceTest {
 		    "mi única patria la mar»."
 		);
 		detailFour.setPrice(2);
-		detailFour.setDiscountExpression("0,00");
+		detailFour.setDiscountExpression("0.0");
 		detailFour.setQuantity(288);
 		detailFour.setTaxableBase(288*2);
 		
@@ -622,7 +622,7 @@ public class InvoiceTest {
 		shortDetail5.setAccountCode("0192831010");
 		shortDetail5.setDescription("DETALLE 5");
 		shortDetail5.setPrice(1);
-		shortDetail5.setDiscountExpression("NO");
+//		shortDetail5.setDiscountExpression("NO");
 		shortDetail5.setQuantity(1);
 		shortDetail5.setTaxableBase(0);
 		
@@ -952,7 +952,7 @@ public class InvoiceTest {
 			assertPdfData("Description", detailTwo.getDescription(), detailDescription);
 			assertPdfData("Amount", toLatinNumber(detailTwo.getQuantity()), detailAmount);
 			assertPdfData("Price", toLatinNumber(detailTwo.getPrice()), detailPrice);
-			assertPdfData("Discount", detailTwo.getDiscountExpression(), detailDiscount);
+			assertPdfData("Discount", detailTwo.getDiscountExpression().getDiscountExpr(), detailDiscount);
 			assertPdfData("Total", toLatinNumber(detailTwo.getTaxableBase()), detailTotal);
 			
 			/** Assert finances **/
@@ -1474,7 +1474,7 @@ public class InvoiceTest {
 		    "mi única patria la mar»."
 		);
 		detailFour.setPrice(2);
-		detailFour.setDiscountExpression("0,00");
+		detailFour.setDiscountExpression("0.0");
 		detailFour.setQuantity(288);
 		detailFour.setTaxableBase(288*2);
 		
@@ -1531,7 +1531,7 @@ public class InvoiceTest {
 		shortDetail5.setAccountCode("0192831010");
 		shortDetail5.setDescription("DETALLE 5");
 		shortDetail5.setPrice(1);
-		shortDetail5.setDiscountExpression("NO");
+//		shortDetail5.setDiscountExpression("NO");
 		shortDetail5.setQuantity(1);
 		shortDetail5.setTaxableBase(0);
 		

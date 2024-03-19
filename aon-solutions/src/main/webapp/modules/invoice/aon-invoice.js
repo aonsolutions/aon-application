@@ -2725,37 +2725,22 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		let div = this.getElement("PRUEBA_RAWDOC_RECORD");
-		if(!div) {
-			div = this.createDiv("PRUEBA_RAWDOC_RECORD");
-			div.style.display = 'none';
-			this.appendChild(div);
+		if(this.invoice.category) {
+			let div = this.getElement("PRUEBA_RAWDOC_RECORD");
+			if(!div) {
+				div = this.createDiv("PRUEBA_RAWDOC_RECORD");
+				div.style.display = 'none';
+				this.appendChild(div);
+			}
+			this.clearElement(div);
+	
+			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
+		} else {
+			this.showError({
+				type: CONSTANT.ERROR,
+				message: "Para Contabilizar es necesario la categoría."
+			});
 		}
-		this.clearElement(div);
-
-		GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
-
-
-
-		// if(this.invoice.isSelfconta() || this.isInvofoxInvoice() || this.isBeta()) {
-		// 	recordSelfconta(this.getInvoice())
-		// 		.then(r => {
-		// 			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-		// 			this.invoice = new Invoice(r);
-		// 			this.getApplication().stopLoader(); 
-		// 			this.reload();
-		// 		})
-		// 		.catch(e => this.showError(e));
-		// }	else {
-		// 		let aonInvoice = this.getElement('aonInvoice');
-		// 		let d = document.getElementById(aonInvoice.DIALOG);
-		// 		d.clear();
-		// 		if(!this.isMobile())d.width = '400px';
-		// 		d.setTitle(MSG.RECORD_INVOICE);
-		// 		d.setContentHTML(MSG.IN_DEVELOPMENT);
-		// 		d.addAcceptAction(() => {});
-		// 		d.open();
-		// }
 	}
 
 	rejectInvoice() {
