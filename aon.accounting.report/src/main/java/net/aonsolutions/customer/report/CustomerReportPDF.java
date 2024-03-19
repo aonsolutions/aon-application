@@ -93,50 +93,30 @@ public class CustomerReportPDF  {
 		@Override
 		public void accept(CustomerFull customer) {
 
-			Paragraph code = new Paragraph(8, customer.getId().toString(), BODY_FONT);
-			PdfPCell codeCell = new PdfPCell();
-			codeCell.addElement(code);
-			codeCell.setBorder(0);
-			table.addCell(codeCell);
-
-			Paragraph document = new Paragraph(8, customer.getRegistry().getDocument(), BODY_FONT);
-			PdfPCell documentCell = new PdfPCell();
-			documentCell.addElement(document);
-			documentCell.setBorder(0);
-			table.addCell(documentCell);
-
-			Paragraph name = new Paragraph(8, customer.getRegistry().getName(), BODY_FONT);
-			PdfPCell nameCell = new PdfPCell();
-			nameCell.addElement(name);
-			nameCell.setBorder(0);
-			table.addCell(nameCell);
-
-		
-			Paragraph alias = new Paragraph(8, customer.getRegistry().getAlias(), BODY_FONT);
-			PdfPCell aliasCell = new PdfPCell();
-			aliasCell.addElement(alias);
-			aliasCell.setBorder(0);
-			table.addCell(aliasCell);
+			createParagraph(customer.getId().toString());
+			createParagraph(customer.getRegistry().getDocument());
+			createParagraph(customer.getRegistry().getName());
+			createParagraph(customer.getRegistry().getAlias());
 
 			String value = AonCollectionUtils.stream(  customer.getMedias() )
 				.map( rm -> rm.getValue())
 				.findFirst()
 				.orElse(null);
-			Paragraph phone = new Paragraph(8, value, BODY_FONT);
-			PdfPCell phoneCell = new PdfPCell();
-			phoneCell.addElement(phone);
-			phoneCell.setBorder(0);
-			table.addCell(phoneCell);
+			createParagraph(value);
 			
 			Optional.ofNullable(customer.getRegistry().getStatus())
 				.map(rs -> rs.getDescription())
 				.orElse( " " );
-			Paragraph status = new Paragraph(8, customer.getRegistry().getStatus().getDescription(), BODY_FONT);
-			PdfPCell statusCell = new PdfPCell();
-			statusCell.addElement(status);
-			statusCell.setBorder(0);
-			table.addCell(statusCell);
+			createParagraph(customer.getRegistry().getStatus().getDescription());
 
+		}
+		
+		private void createParagraph(String content) {
+			Paragraph paragraph = new Paragraph(8, content, BODY_FONT);
+			PdfPCell cell = new PdfPCell();
+			cell.addElement(paragraph);
+			cell.setBorder(0);
+			table.addCell(cell);
 		}
 		
 		
