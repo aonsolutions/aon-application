@@ -303,11 +303,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setRedirectEnabled(true);
-			
-			
-			//HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap());
-			
-//			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+
 			XmlPage xmlPage = webClient.getPage(BASE_URI);
 			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
@@ -322,41 +319,43 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			if (jobDescription.isPresent()) {				
 				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setText(jobDescription.get());
-			}
-			
-			// Data Contract
-			HtmlOption contractTypeOption = null;
-			HtmlInput cotBaseInput = null;
-			HtmlInput cotDaysInput = null;
-			
-			switch (contractType) {
-			case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
-				webClient.waitForBackgroundJavaScript(5000);
-				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
-				
-
-				wait4(htmlPage, p -> p.getElementById("#sumaBaseCot"))
-						.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
-
-				cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
-				cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
-				break;
-			case RESTO_Y_AUTONOMOS:
-				webClient.waitForBackgroundJavaScript(5000);
-				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
-
-				wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
-
-				cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
-				cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
-				break;
-				
+				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setDefaultValue(jobDescription.get());
 			}
 			
 			if(fATEP.isPresent()) {
 				DomNode inputATEP = htmlPage.querySelector("#fechaATEP");
 				if(null != inputATEP) ((HtmlInput)inputATEP).setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
+				if(null != inputATEP) ((HtmlInput)inputATEP).setValueAttribute(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
 			}
+			
+			if (occupation.isPresent()) {				
+				((HtmlSelect) htmlPage.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
+			}
+			
+			// Data Contract
+			HtmlInput cotBaseInput = null;
+			HtmlInput cotDaysInput = null;
+			
+			switch (contractType) {
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+					
+					wait4(htmlPage, p -> p.getElementById("#sumaBaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+	
+					cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
+					cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
+					break;
+				case RESTO_Y_AUTONOMOS:
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+					
+					wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+	
+					cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
+					cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
+					break;	
+				}
 			
 			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
 			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
@@ -369,13 +368,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				cotDaysInput.setValueAttribute(cotDays+"");
 			}
 			
-			if (occupation.isPresent()) {				
-				((HtmlSelect) htmlPage.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
-			}
-			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			//XmlPage xmlPage = validate.click();
-			//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			htmlPage = validate.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
