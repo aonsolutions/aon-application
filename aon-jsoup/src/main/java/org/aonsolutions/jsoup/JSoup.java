@@ -1,5 +1,7 @@
 package org.aonsolutions.jsoup;
 
+import static org.aonsolutions.jsoup.tgss.Utils.setSSLCertificate;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,7 +51,6 @@ public class JSoup {
         if (inputStream == null) {
             return null;
         }
-
         final KeyStore keyStore = KeyStore.getInstance(keystoreType);
         final char[] passwordChars = keystorePassword == null ? null : keystorePassword.toCharArray();
         keyStore.load(inputStream, passwordChars);
