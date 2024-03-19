@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Stream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -28,11 +30,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -47,33 +51,39 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.itextpdf.text.DocumentException;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.accounting.report.CustomerReportPDF;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(CustomerController.class);
-	
-    private boolean showAlumnData;
-    private boolean showAlumnUpdateConfirmWindow;
-    private Integer courseAlumnCount;
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
+
+	private boolean showAlumnData;
+	private boolean showAlumnUpdateConfirmWindow;
+	private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
-	
+
 	public boolean isCeconsulting() {
 		return AonUtil.getDomainName().contains("ceconsulting");
 	}
-	
+
 	public boolean isSnapshot() {
-		return AonUtil.getDomainName().contains("aonsolutions.org")
-			|| AonUtil.getDomainName().contains("aibanez.net");
+		return AonUtil.getDomainName().contains("aonsolutions.org") || AonUtil.getDomainName().contains("aibanez.net");
 	}
-	
+
 	public boolean isUpdateCourseAlumn() {
 		return updateCourseAlumn;
 	}
-	
+
 	public void setUpdateCourseAlumn(boolean updateCourseAlumn) {
 		this.updateCourseAlumn = updateCourseAlumn;
 	}
@@ -85,7 +95,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	public void setShowAlumnData(boolean showAlumnData) {
 		this.showAlumnData = showAlumnData;
 	}
-	
+
 	public boolean isShowAlumnUpdateConfirmWindow() {
 		return showAlumnUpdateConfirmWindow;
 	}
@@ -103,28 +113,27 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
 	public boolean isAccountSynchronizable() {
-		return isAccountSynchronizable((Customer)getTo());
+		return isAccountSynchronizable((Customer) getTo());
 	}
 
 	protected boolean isAccountSynchronizable(Customer customer) {
 		Account account = customer.getAccount();
-		return account != null 
-			&& account.getId() != null 
-			&& account.getDomain() == customer.getDomain()
-			&& !customer.getRegistry().getFullName().equals(account.getDescription());
+		return account != null && account.getId() != null && account.getDomain() == customer.getDomain()
+				&& !customer.getRegistry().getFullName().equals(account.getDescription());
 	}
 
 	public boolean isEdiSupportEnabled() {
 		return StringUtils.isNotBlank(AppParamUtil.getValue(AppParam.EDI_SUPPORT));
 	}
-	
-	public String getRowCustomerComments(){
-		RegistryObservationController controller = (RegistryObservationController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME);
+
+	public String getRowCustomerComments() {
+		RegistryObservationController controller = (RegistryObservationController) AonUtil
+				.getRegisteredBean(ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME);
 		try {
-			if(this.getModel().isRowAvailable()){
+			if (this.getModel().isRowAvailable()) {
 				Customer customer = (Customer) this.getModel().getRowData();
 				RegistryNote rObservation = controller.getRegistryObservation(customer.getRegistry());
-				if(rObservation!=null){
+				if (rObservation != null) {
 					return rObservation.getComments();
 				}
 			}
@@ -135,7 +144,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
-		onAccountSynchronize((Customer)getTo());
+		onAccountSynchronize((Customer) getTo());
 	}
 
 	protected void onAccountSynchronize(Customer customer) {
@@ -151,7 +160,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
 	public void onNewAccount(ActionEvent event) {
-		onNewAccount((Customer)getTo());
+		onNewAccount((Customer) getTo());
 	}
 
 	protected void onNewAccount(Customer customer) {
@@ -166,53 +175,54 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
 	public boolean isInvoicingGroupInMyScopes() {
-		Customer customer = (Customer)getTo();
-		return UserUtils.getInstance().getCurrentUserScopes().contains(customer.getInvoicingGroup().getCustomer().getScope());
+		Customer customer = (Customer) getTo();
+		return UserUtils.getInstance().getCurrentUserScopes()
+				.contains(customer.getInvoicingGroup().getCustomer().getScope());
 	}
 
 	@Override
 	public void accept(ActionEvent event) {
 		setUpdateCourseAlumn(false);
-		Customer customer = (Customer)getTo();
+		Customer customer = (Customer) getTo();
 		if (customer.getStatus() == CustomerStatus.INACTIVE && getCourseAlumnCount() > 0) {
 			setShowAlumnUpdateConfirmWindow(true);
 		} else {
 			super.accept(event);
 		}
 	}
-	
+
 	public void acceptOnly(ActionEvent event) {
 		setUpdateCourseAlumn(false);
 		super.accept(event);
 	}
-	
+
 	public void acceptAndUpdate(ActionEvent event) {
 		setUpdateCourseAlumn(true);
 		super.accept(event);
 	}
-	
-    public String getReportTitle(){
-    	return AonUtil.getMessage(CUSTOMER_REPORT);
+
+	public String getReportTitle() {
+		return AonUtil.getMessage(CUSTOMER_REPORT);
 	}
-    
-    public void onAlumnEditSearch(ActionEvent event){
-    	super.onEditSearch(event);
-    	setShowAlumnData(true);
-    }
-    
-	public void onCustomerHistory(ActionEvent e){
-		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
-		controller.setRegistry(((Customer)this.getTo()).getRegistry());
+
+	public void onAlumnEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		setShowAlumnData(true);
+	}
+
+	public void onCustomerHistory(ActionEvent e) {
+		RegistryStatEngineController controller = (RegistryStatEngineController) AonUtil
+				.getRegisteredBean("registryStat");
+		controller.setRegistry(((Customer) this.getTo()).getRegistry());
 		controller.getRegistryData();
 	}
-	
-	public void onSigCustomerDomainLink(ActionEvent e) throws IOException{
+
+	public void onSigCustomerDomainLink(ActionEvent e) throws IOException {
 		Customer customer = (Customer) this.getTo();
-		
+
 		String request = "https://aon.solutions/ms/api/company/domain?document=" + customer.getRegistry().getDocument()
-			 + "&page=1&perPage=30";
-	
-		
+				+ "&page=1&perPage=30";
+
 		URL url = new URL(request);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setDoOutput(true);
@@ -222,58 +232,53 @@ public class CustomerController extends CustomerListController implements ICusto
 		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setRequestProperty("session_id", "AONd95770f269e711eb94390242ac130002");
 		connection.setRequestProperty("charset", "UTF-8");
-	
+
 		connection.setUseCaches(false);
-		JSONObject json = new JSONObject()
-			.put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument())
-			.put(IJsonNames.PAGE, 1)
-			.put(IJsonNames.PER_PAGE, 30);
-		
+		JSONObject json = new JSONObject().put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument())
+				.put(IJsonNames.PAGE, 1).put(IJsonNames.PER_PAGE, 30);
+
 		OutputStream os = connection.getOutputStream();
 		os.write(json.toString().getBytes());
 		os.flush();
-		
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-		String output;	
+		String output;
 		String response = "";
 		while ((output = br.readLine()) != null) {
-			response = output; //.replace("'", "\'");	
-		}	
-		
+			response = output; // .replace("'", "\'");
+		}
+
 		JSONArray array = new JSONArray(response);
-		for(Integer i = 0; i < array.length(); i++) {
+		for (Integer i = 0; i < array.length(); i++) {
 			JSONObject resp = (JSONObject) array.get(i);
 			Company company = CompanyJSON.fromJSON(resp);
 
-			DomainLinked domainLinked = new DomainLinked()
-					.setId(company.getDomain().getId())
-					.setName(company.getDomain().getName())
-					.setSchema(JsonUtils.getString(resp ,IJsonNames.SCHEMA))
-					.setRegistry(customer.getId())
-					.setIndex(i)
-					.setType(company.getDomain().getDomainType().name());
+			DomainLinked domainLinked = new DomainLinked().setId(company.getDomain().getId())
+					.setName(company.getDomain().getName()).setSchema(JsonUtils.getString(resp, IJsonNames.SCHEMA))
+					.setRegistry(customer.getId()).setIndex(i).setType(company.getDomain().getDomainType().name());
 
 			AON.saveDomainLinked(AonUtil.getDomainName(), customer.getDomain(), "", domainLinked);
 		}
 	}
 
 	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
-		Customer customer = (Customer)getTo();
-		BasicController invoicingGroupController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
-		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
+		Customer customer = (Customer) getTo();
+		BasicController invoicingGroupController = (BasicController) AonUtil
+				.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
+		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME,
+				CUSTOMER_CONTROLLER_NAME + ".select");
 	}
-	
+
 	public void eInvoiceChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue()!=null && (boolean) event.getNewValue()){
+		if (event.getNewValue() != null && (boolean) event.getNewValue()) {
 			setSelectedTab(CUSTOMER_EINVOICE_TAB);
 		} else {
 			setSelectedTab(null);
 		}
 	}
-	
+
 	public void ediChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue()!=null && (boolean) event.getNewValue()){
+		if (event.getNewValue() != null && (boolean) event.getNewValue()) {
 			setSelectedTab(CUSTOMER_EDI_TAB);
 		} else {
 			setSelectedTab(null);
@@ -289,34 +294,91 @@ public class CustomerController extends CustomerListController implements ICusto
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
-	
+
 	public boolean isTarget() throws ManagerBeanException {
 		return obtainTargetId() > 0;
 	}
-	
+
 	public void onLoadTarget(ActionEvent event) throws ManagerBeanException {
 		Integer targetId = obtainTargetId();
-		BasicController targetController = (BasicController)AonUtil.getRegisteredBean(TARGET_CONTROLLER_NAME);
-		targetController.onLoad(event, targetId, CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".refresh");	
+		BasicController targetController = (BasicController) AonUtil.getRegisteredBean(TARGET_CONTROLLER_NAME);
+		targetController.onLoad(event, targetId, CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".refresh");
 	}
-	
+
 	private int obtainTargetId() throws ManagerBeanException {
-		Customer customer = (Customer)getTo();
-		if(CustomerStatus.BLOCKED.equals(customer.getStatus()))
+		Customer customer = (Customer) getTo();
+		if (CustomerStatus.BLOCKED.equals(customer.getStatus()))
 			return -1;
 		Integer customerId = customer.getId();
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
 		List<ITransferObject> list = targetBean.getList(criteria);
-		if(list.size()>0)
-			return ((Target)list.get(0)).getId();
+		if (list.size() > 0)
+			return ((Target) list.get(0)).getId();
 		return -1;
 	}
-	
+
 	public List<DomainLinked> getDomainLinkedList() {
-		Customer customer = (Customer)getTo();
+		Customer customer = (Customer) getTo();
 		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
-	
+
+	public String onReport() throws ManagerBeanException, DocumentException, IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+
+		// Se obtiene el output stream
+		// response.getOutputStream();
+
+		List<ITransferObject> list = getManagerBean().getList(getCriteria());
+		if (list != null) {
+			Stream<CustomerFull> customers = list.stream()
+					.map(to -> (Customer) to)
+					.map(this::toCustomerFull);
+			Occam occam = new Occam()
+					.setDomainName(AonUtil.getDomainName())
+					.setDomain(DomainManager.getCurrentDomain())
+					.setUser(AonUtil.getRemoteUser());
+			CustomerReportPDF reportPDF = new CustomerReportPDF();
+			reportPDF.printReportPDF(occam, response.getOutputStream(), customers);
+			response.flushBuffer();
+			context.responseComplete();
+		}
+		return null;
+	}
+
+	private CustomerFull toCustomerFull(Customer customer) {
+		CustomerFull customerFull = new CustomerFull();
+		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
+		// Transforma el status
+		occamCustomer.setStatus(customerStatusToRegistryStatus(customer.getStatus()));
+		// Transforma el phone
+		try {
+			RegistryMedia phoneMedia = customer.getRegistry().getPhone();
+			com.esferalia.aon.occam.api.model.registry.RegistryMedia occamMedia = toRegistryMedia(phoneMedia);
+			customerFull.addMedia(occamMedia);
+		} catch (ManagerBeanException | NullPointerException e) {
+			// Sin telefono
+		}
+		occamCustomer.setId(customer.getId());
+		occamCustomer.setDocument(customer.getRegistry().getDocument());
+		occamCustomer.setName(customer.getRegistry().getName());
+		occamCustomer.setAlias(customer.getRegistry().getAlias());
+		customerFull.setRegistry(occamCustomer);
+		return customerFull;
+	}
+
+	private static com.esferalia.aon.occam.api.model.registry.RegistryMedia toRegistryMedia(RegistryMedia phoneMedia)
+			throws NullPointerException {
+		return new com.esferalia.aon.occam.api.model.registry.RegistryMedia()
+				.setMedia(MediaType.valueOf(phoneMedia.getMediaType().toString())) // ---> hacer lo mismo que
+																					// customerStatusToRegistryStatus
+				.setValue(phoneMedia.getValue());
+	}
+
+	private static RegistryStatus customerStatusToRegistryStatus(CustomerStatus cs) {
+		return RegistryStatus.valueOf(cs.toString());
+	}
+
 }

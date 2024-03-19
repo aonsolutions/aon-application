@@ -5,3 +5,7 @@ aon-suite/.vscode/settings.json
 # JetBrains IDE
 .idea/
 .metadata
+target
+.project
+.classpath
+.settings/
