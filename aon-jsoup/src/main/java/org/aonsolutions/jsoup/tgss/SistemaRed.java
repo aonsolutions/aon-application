@@ -26,11 +26,12 @@ public class SistemaRed {
 	 * @throws CertificateException
 	 * @throws IOException
 	 * @throws ParseException
+	 * @throws TGSSExceptions 
 	 */
 
 	public static Collection<Date> getIDCDates(byte[] certificateData, String password, String naf, String regime,
 			String ccc, Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException, TGSSExceptions {
 		try (InputStream is = new ByteArrayInputStream(certificateData)) {
 			return IDCSegSocial.getIDCDates(is, password, naf, regime, ccc, date);
 		}
@@ -39,7 +40,7 @@ public class SistemaRed {
 
 	public static Collection<Date> getIDCDates(InputStream certificateData, String password, String naf, String regime,
 			String ccc, Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException, TGSSExceptions {
 
 		return IDCSegSocial.getIDCDates(certificateData, password, naf, regime, ccc, date);
 
@@ -47,7 +48,7 @@ public class SistemaRed {
 
 	public static byte[] getIDC(byte[] certificateData, String password, String naf, String regime, String ccc,
 			Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException, TGSSExceptions {
 		try (InputStream is = new ByteArrayInputStream(certificateData)) {
 			return IDCSegSocial.getIDC(is, password, naf, regime, ccc, date);
 		}
@@ -56,7 +57,7 @@ public class SistemaRed {
 
 	public static byte[] getIDC(InputStream certificateData, String password, String naf, String regime, String ccc,
 			Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException, TGSSExceptions {
 
 		return IDCSegSocial.getIDC(certificateData, password, naf, regime, ccc, date);
 

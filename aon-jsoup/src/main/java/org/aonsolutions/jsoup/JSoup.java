@@ -1,6 +1,6 @@
 package org.aonsolutions.jsoup;
 
-import static org.aonsolutions.jsoup.tgss.Utils.setSSLCertificate;
+import static org.aonsolutions.jsoup.Utils.setSSLCertificate;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

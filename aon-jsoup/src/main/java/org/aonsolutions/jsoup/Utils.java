@@ -1,4 +1,4 @@
-package org.aonsolutions.jsoup.tgss;
+package org.aonsolutions.jsoup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +41,6 @@ public class Utils {
 		return setSSLCertificate(is, password, KeyStore.getDefaultType());
 	}
 
-	static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd MM yyyy");
+	public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd MM yyyy");
 
 }

@@ -8,17 +8,18 @@ import java.io.InputStream;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import org.aonsolutions.jsoup.Utils;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.FormElement;
+import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
 
 class IDCSegSocial {
@@ -30,21 +31,22 @@ class IDCSegSocial {
 		String password = "Alma1981";
 		try (FileInputStream certificateIs = new FileInputStream("/home/ndiaz/Descargas/aon.p12")) {
 			byte[] certificateData = certificateIs.readAllBytes();
-			Collection<Date> dates = SistemaRed.getIDCDates(certificateData, password, "011005185924", "0111", "01105360062",
-					null);
+			Collection<Date> dates = SistemaRed.getIDCDates(certificateData, password, "011005185924", "0111",
+					"01105360062", null);
 			FileOutputStream pdfIDC = null;
-			if (dates.size() > 0)
+			if (!dates.isEmpty())
 				pdfIDC = new FileOutputStream(
 						"/home/ndiaz/eclipse-workspace/aon.parent/aon-jsoup/src/main/java/idc.pdf");
 			pdfIDC.write(SistemaRed.getIDC(certificateData, password, "011005185924", "0111", "01105360062",
 					dates.stream().findFirst().get()));
+
 		}
 
 	}
 
 	public static Collection<Date> getIDCDates(InputStream certificateIs, String password, String naf, String regime,
 			String ccc, Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, TGSSExceptions {
 
 		Document document = IDCSegSocial.firstForm(certificateIs, password, naf, regime, ccc, null);
 
@@ -70,7 +72,7 @@ class IDCSegSocial {
 
 	public static byte[] getIDC(InputStream certificateIs, String password, String naf, String regime, String ccc,
 			Date date)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ParseException {
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, TGSSExceptions {
 
 		Document document = IDCSegSocial.firstForm(certificateIs, password, naf, regime, ccc, date);
 
@@ -81,13 +83,6 @@ class IDCSegSocial {
 			option.attr("selected", "Select".equalsIgnoreCase(option.text()));
 		});
 
-//		jacadaForm.getElementById("Ayuda").remove();
-//		jacadaForm.getElementById("Sub2205001006").remove();
-//		jacadaForm.getElementsByAttributeValue("name", "sequenceNumber").remove();
-//		jacadaForm.getElementsByAttributeValueStarting("name", "client").remove();
-//		jacadaForm.getElementById("focusedControl").val("tbl_cbo_Sub0900112078_0_0");
-//		jacadaForm.getElementById("FkeyButton").val("+");
-		
 		jacadaForm.getElementById("Sub2206101001").remove();
 		jacadaForm.getElementById("Sub2206301003").remove();
 		jacadaForm.getElementsByAttributeValueStarting("name", "Scroll").remove();
@@ -97,8 +92,9 @@ class IDCSegSocial {
 		jacadaForm.getElementsByAttributeValue("name", "defaultbtn_null").remove();
 		jacadaForm.getElementById("CommandEdit").val("EN");
 
-
 		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
+
+		userException(document);
 
 		jacadaForm = (FormElement) document.getElementById("jacadaform");
 
@@ -128,17 +124,22 @@ class IDCSegSocial {
 		Response pdf = invocaFormularioImpRED.submit().timeout(0).ignoreHttpErrors(true).followRedirects(true)
 				.execute();
 
+		userException(document);
+
 		return pdf.bodyAsBytes();
 
 	}
 
 	public static Document firstForm(InputStream certificateIs, String password, String naf, String regime, String ccc,
-			Date date) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+			Date date)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, TGSSExceptions {
 
 		File jksFile = Utils.setSSLCertificate(certificateIs, password);
 
 		Document document = Jsoup.connect(IDC_URL).timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute()
 				.parse();
+
+		userException(document);
 
 		FormElement jacadaForm = (FormElement) document.getElementById("jacadaform");
 
@@ -165,13 +166,39 @@ class IDCSegSocial {
 			option.attr("selected", "OnLine".equalsIgnoreCase(option.text()));
 		});
 
-//		jacadaForm.getElementById("Ayuda").remove();
-//		jacadaForm.getElementById("Sub2205901006").remove();
-
 		document = jacadaForm.submit().timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute().parse();
+
+		tgssException(document);
+		userException(document);
 
 		jksFile.delete();
 
 		return document;
 	}
+
+	private static void tgssException(Document document) throws TGSSExceptions {
+		try {
+			Element error = document.getElementById("DIL");
+			if (error.hasText()) {
+				String[] text = error.text().split("\\*");
+				int code = Integer.parseInt(text[0]);
+				String message = text[1];
+				throw new TGSSExceptions(code, message);
+			}
+		} catch (NullPointerException e) {
+
+		}
+	}
+	
+	private static void userException(Document document) throws TGSSExceptions {
+		try {
+			Elements messageError = document.getElementsByClass("cabMensaje");
+			if(messageError.hasText()) {
+				throw new TGSSExceptions(messageError.text());
+			}
+		} catch (NullPointerException e) {
+
+		}
+	}
+
 }
