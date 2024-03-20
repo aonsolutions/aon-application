@@ -58,8 +58,8 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.customer.report.CustomerReportPDF;
 import net.aonsolutions.aon.report.AonReportException;
-import net.aonsolutions.customer.report.CustomerReportPDF;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 

@@ -1,11 +1,11 @@
-package net.aonsolutions.customer.report;
+package net.aonsolutions.aon.creditor.report;
 
 import java.io.OutputStream;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.report.AbsReportTablePDF;
@@ -13,7 +13,7 @@ import net.aonsolutions.aon.report.AbsSimpleReportPDF;
 import net.aonsolutions.aon.report.AonReportException;
 import net.aonsolutions.aon.report.IHeader;
 
-public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
+public class CreditorReportPDF extends AbsSimpleReportPDF<CreditorFull> {
 
 	enum Header implements IHeader {
 		 ID("C\u00F3digo",40)
@@ -41,31 +41,31 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 		}
 	}
 
-	public CustomerReportPDF(Occam occam) {
+	public CreditorReportPDF(Occam occam) {
 		super(occam);
 	}
 	
 	
-	private class PDFReport extends AbsReportTablePDF<CustomerFull> {
+	private class PDFReport extends AbsReportTablePDF<CreditorFull> {
 
 		public PDFReport(IHeader[] headers) {
 			super(headers);
 		}
 		
 		@Override
-		public void accept(CustomerFull customer) {
+		public void accept(CreditorFull creditor) {
 
-			addStringCell(customer.getId().toString());
-			addStringCell(customer.getRegistry().getDocument());
-			addStringCell(customer.getRegistry().getName());
-			addStringCell(customer.getRegistry().getAlias());
+			addStringCell(creditor.getId().toString());
+			addStringCell(creditor.getRegistry().getDocument());
+			addStringCell(creditor.getRegistry().getName());
+			addStringCell(creditor.getRegistry().getAlias());
 			addStringCell(
-				AonCollectionUtils.stream(  customer.getMedias() )
+				AonCollectionUtils.stream(  creditor.getMedias() )
 					.map( rm -> rm.getValue())
 					.findFirst()
 					.orElse(null));
 			addStringCell(
-				Optional.ofNullable(customer.getRegistry().getStatus())
+				Optional.ofNullable(creditor.getRegistry().getStatus())
 					.map(rs -> rs.getDescription())
 					.orElse( "" ));
 		}
@@ -74,14 +74,14 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 
 
 	@Override
-	public void print(OutputStream outputStream, Stream<CustomerFull> stream) throws AonReportException {
+	public void print(OutputStream outputStream, Stream<CreditorFull> stream) throws AonReportException {
 		super.printReportPDF(outputStream, new PDFReport(Header.values()), stream);
 	}
 
 
 	@Override
 	protected String getTitle() {
-		return "Listado de clientes";
+		return "Listado de acreedores";
 	}
 
 }
