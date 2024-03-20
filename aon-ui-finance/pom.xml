@@ -55,6 +55,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.accounting.report</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>${project.version}</version>
