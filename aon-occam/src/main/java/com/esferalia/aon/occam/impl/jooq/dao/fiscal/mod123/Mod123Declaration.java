@@ -32,7 +32,11 @@ public abstract class Mod123Declaration {
 	}
 	
 	private enum Declarations {
-		 AEAT_2021 {
+		 AEAT_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123AEAT2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123AEAT2024Declaration();}
+		}		
+		,AEAT_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123AEAT2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123AEAT2021Declaration();}
 		}

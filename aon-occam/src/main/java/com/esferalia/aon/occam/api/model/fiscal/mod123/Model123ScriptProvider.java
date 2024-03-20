@@ -11,10 +11,21 @@ public class Model123ScriptProvider {
 	}
 
 	private enum Model123Script {
-		AEAT_2022_SCRIPT {
+		AEAT_2024_SCRIPT {
 			@Override
 			boolean accept(Mod123 mod123) {
-				return mod123.isAEAT() && mod123.getYear() > 2021;
+				return mod123.isAEAT() && mod123.getYear() >= 2024;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123AEAT2024Script.values();
+			}
+		}		
+		,AEAT_2022_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAEAT() && (mod123.getYear() == 2022 || mod123.getYear() == 2023);
 			}
 	
 			@Override
