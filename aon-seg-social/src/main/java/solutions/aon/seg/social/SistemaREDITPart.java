@@ -880,7 +880,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 		if ( request.getUrl().getFile().endsWith("prosa.min.js")) {
 			String content = response.getContentAsString();
-			content = content.replaceAll("a\s*=\s*E\\(.*msgErrorFormaFecha.*dd/mm/aaaa\"\\)\\]\\)", "a=!0");
+			//content = content.replaceAll("a\s*=\s*E\\(.*msgErrorFormaFecha.*dd/mm/aaaa\"\\)\\]\\)", "a=!0");
+			content = content.replaceAll("\"chrome\"", "\":-o\"");
 			return new StringWebResponse(content, request.getUrl());
 		}
 		
