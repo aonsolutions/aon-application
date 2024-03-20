@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -25,12 +26,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFeeDialog;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -95,6 +98,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private Grid domainChildsTable;
 	
 	private AonToolbarSmallButton toolbarCustomerFeeDiscBtn;
+	private AonToolbarSmallButton createCustomerFeeButton;
 	private AonToolbarSmallButton toolbarCustomerFeeSaveBtn;
 	private AonToolbarSmallButton toolbarCustomerFeeUndoBtn;
 	private HTMLPanel customerFeePanel;
@@ -1324,6 +1328,45 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		HTMLPanel buttons = new HTMLPanel("");
 		buttons.addStyleName(AON.CSS.aonItemFlex());
+		buttons.getElement().getStyle().setProperty("justify-content", "right");
+		
+		createCustomerFeeButton = new AonToolbarSmallButton("Nueva Cuota", AON.CSS.aonIconAdd());
+		createCustomerFeeButton.addClickHandler(e -> {
+			new CustomerFeeDialog(options, customer) {
+				
+				@Override
+				protected void onCreate(Fee fee) {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+							getCustomerFees();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						}
+					});
+				}
+				
+				@Override
+				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
+						Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				protected void onAccept(Fee fee) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+		});
+		buttons.add(createCustomerFeeButton);
+		
 		toolbarCustomerFeeUndoBtn = new AonToolbarSmallButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
 		toolbarCustomerFeeUndoBtn.setEnabled(false);
 		toolbarCustomerFeeUndoBtn.addClickHandler(e -> {
@@ -1400,16 +1443,16 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		customerFeeTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		customerFeeTable.getCellFormatter().getElement(row, 9).getStyle().setZIndex(1);
 		
-		customerFeeTable.getColumnFormatter().getElement(0).getStyle().setWidth(4, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(1).getStyle().setWidth(38, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(2).getStyle().setWidth(8, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(3).getStyle().setWidth(5, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(4).getStyle().setWidth(8, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(5).getStyle().setWidth(8, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(6).getStyle().setWidth(9, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(7).getStyle().setWidth(9, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(8).getStyle().setWidth(9, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(9).getStyle().setWidth(10, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(0).getStyle().setWidth(70, Unit.PX);
+//		customerFeeTable.getColumnFormatter().getElement(1).getStyle().setWidth(38, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(2).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(4).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(5).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(6).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(7).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(8).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(9).getStyle().setWidth(100, Unit.PX);
 		
 		for(Fee fee : customerFeeList) {
 
@@ -1521,8 +1564,50 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				setModifyColor(customerFeeTable, fee, newRow);
 			});
 			
+			HTMLPanel buttonsPanel = new HTMLPanel("");
+			buttonsPanel.setStyleName(AON.CSS.aonItemFlex());
+			buttonsPanel.getElement().getStyle().setProperty("justify-content", "right");
+			
 			AonToolbarSmallButton infoBtn = new AonToolbarSmallButton("", AON.CSS.aonIconInfo());
 			infoBtn.setTitle(createFeeInfo(fee));
+			buttonsPanel.add(infoBtn);
+			
+			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton("Eliminar", AON.CSS.aonIconDelete());
+			deleteBtn.addClickHandler(e -> {
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cuota",
+						new HTML("Se va a proceder a eliminar la cuota.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f<br>Este proceso ser\u00e5 irreversible"));
+				
+				dialog.confirm(new AonAcceptDialogCallback() {
+
+					@Override
+					public void onCancel() {
+						// Nothing to do here
+					}
+
+					@Override
+					public void onAccept() {
+						LinkedList<Fee> deleteFees = new LinkedList<>();
+						deleteFees.add(fee);
+						
+						AonMessagePanel.showLoading(messagePanel, "Elimando cuota ...");
+						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), deleteFees,
+								new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la cuota correctamente");
+										loadModule();
+									}
+								});
+					}
+				});
+			});
+			buttonsPanel.add(deleteBtn);
 			
 			checkFeeStatus(startDateBox, endDateBox, fee);
 
@@ -1535,7 +1620,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			checkRowAndModify(customerFeeTable, newRow, fee, startDateBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, billingDatePanel);
 			checkRowAndModify(customerFeeTable, newRow, fee, endDateBox);
-			checkRowAndModify(customerFeeTable, newRow, fee, infoBtn);
+			checkRowAndModify(customerFeeTable, newRow, fee, buttonsPanel);
 
 			customerFeeTable.setWidget(newRow, 0, lineTextBox);
 			customerFeeTable.setWidget(newRow, 1, conceptTextArea);
@@ -1546,7 +1631,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			customerFeeTable.setWidget(newRow, 6, startDateBox);
 			customerFeeTable.setWidget(newRow, 7, billingDatePanel);
 			customerFeeTable.setWidget(newRow, 8, endDateBox);
-			customerFeeTable.setWidget(newRow, 9, infoBtn);
+			customerFeeTable.setWidget(newRow, 9, buttonsPanel);
 
 			customerFeeTable.getCellFormatter().getElement(newRow, 0).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);

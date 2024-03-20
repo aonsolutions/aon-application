@@ -181,20 +181,19 @@
 						</aon:commandLink>
 					</aon:div>
 					
-					<aon:if test="#{marketplace.suitePortal}">
-						<aon:div styleClass="aon-direct-access-list-element">
-							<aon:commandLink id="gwt_rawdoc-accounting"
-								rendered="#{actionDenied.renderedOption('gwt_rawdoc-accounting')}"
-								action="gwt_rawdoc-accounting"
-								title="Documentos Pendientes">
-								<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
-								<aon:outputText
-									styleClass="aon-fiscal-link-label aon-icon-beta-text aon-left-menu-bar-text"
-									style="margin-left: 5px; padding-left: 20px;"
-									value="Documentos Pendientes" />
-							</aon:commandLink>
-						</aon:div>
-					</aon:if>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_rawdoc-accounting"
+							rendered="#{actionDenied.renderedOption('gwt_rawdoc-accounting')}"
+							action="gwt_rawdoc-accounting"
+							title="Documentos Pendientes">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText
+								styleClass="aon-fiscal-link-label aon-icon-beta-text aon-left-menu-bar-text"
+								style="margin-left: 5px; padding-left: 20px;"
+								value="Documentos Pendientes" />
+						</aon:commandLink>
+					</aon:div>
+
 				</aon:div>
 
 				<aon:div 

@@ -328,8 +328,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    invoice.setType(InvoiceType.EXPENSES);
 	    OCRInvoiceBuilder.fillTtype(ocrDocument, ocrInvoice, null /*default EXPENSES*/, invoice);
 	    try {
-		OCRInvoiceBuilder.fillRegistryDocument(ocrInvoice, invoice);
+	    	OCRInvoiceBuilder.fillRegistryDocument(ocrInvoice, invoice);
 	    } catch (OCRUndefinedTypeException e) {
+	    
 	    }	    
 	    try {
 		OCRInvoiceBuilder.fillReferenceCode(ocrInvoice, invoice);
@@ -378,71 +379,69 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
 	    	OCRInvoiceBuilder.fillRegistry(ctx, AON.getConfiguration(ctx), invoice);
-	    } catch (OCRTooManyOwnersException e) {
-	    } catch ( OCROwnerNotFoundException e ) {
-		Registry registry = new Registry( )
-		.setDocument(invoice.getRegistryDocument())
-		.setDocumentType(invoice.getRegistryDocumentType())
-		.setDocumentCountry(invoice.getRegistryDocumentCountry());
-		invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+	    } catch ( OCROwnerNotFoundException | OCRTooManyOwnersException e ) {
+	    	Registry registry = new Registry( )
+	    		.setDocument(invoice.getRegistryDocument())
+	    		.setDocumentType(invoice.getRegistryDocumentType())
+	    		.setDocumentCountry(invoice.getRegistryDocumentCountry());
+	    	invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
 		    
-		    @Override
-		    public void visitUndeductible(Invoice invoice) {
-			visitPurchase(invoice);
-		    }
+	    		@Override
+	    		public void visitUndeductible(Invoice invoice) {
+	    			visitPurchase(invoice);
+	    		}
 		    
-		    @Override
-		    public void visitSales(Invoice invoice) {
-			ocrInvoice.getRecipientName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
-			ocrInvoice.getRecipientCountry().ifPresent(country -> country.getValue()
-				.map(Country::safeValueOf).ifPresent(registry::setNationality));
-			ocrInvoice.getRecipientAddressDetails().ifPresentOrElse(details -> {
-			    RegistryAddress registryAddress = toRegistryAddress(details);
-			    invoice.setAddress(registryAddress);
-			}, () -> {
-			});
-			
-		    }
+	    		@Override
+	    		public void visitSales(Invoice invoice) {
+	    			ocrInvoice.getRecipientName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
+	    			ocrInvoice.getRecipientCountry().ifPresent(country -> country.getValue()
+	    					.map(Country::safeValueOf).ifPresent(registry::setNationality));
+	    			ocrInvoice.getRecipientAddressDetails().ifPresentOrElse(details -> {
+	    				RegistryAddress registryAddress = toRegistryAddress(details);
+	    				invoice.setAddress(registryAddress);
+	    			}, () -> {
+	    			
+	    			});
+	    		}
 		    
-		    @Override
-		    public void visitPurchase(Invoice invoice) {
-			ocrInvoice.getIssuerName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
-			ocrInvoice.getIssuerCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf)
-				.ifPresent(registry::setNationality));
-			ocrInvoice.getIssuerAddressDetails().ifPresentOrElse(details -> {
-			    RegistryAddress registryAddress = toRegistryAddress(details);
-			    invoice.setAddress(registryAddress);
-			}, () -> {
+	    		@Override
+	    		public void visitPurchase(Invoice invoice) {
+	    			ocrInvoice.getIssuerName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
+	    			ocrInvoice.getIssuerCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf)
+	    					.ifPresent(registry::setNationality));
+	    			ocrInvoice.getIssuerAddressDetails().ifPresentOrElse(details -> {
+	    				RegistryAddress registryAddress = toRegistryAddress(details);
+	    				invoice.setAddress(registryAddress);
+	    			}, () -> {
 
-			});
+	    			});
 			
-		    }
+	    		}
 
 		    
-		    @Override
-		    public void visitExpenses(Invoice invoice) {
-			visitPurchase(invoice);
-		    }
+	    		@Override
+	    		public void visitExpenses(Invoice invoice) {
+	    			visitPurchase(invoice);
+	    		}
 
-		    private RegistryAddress toRegistryAddress(OCRAddress details) {
-			RegistryAddress registryAddress= new RegistryAddress();
+	    		private RegistryAddress toRegistryAddress(OCRAddress details) {
+	    			RegistryAddress registryAddress= new RegistryAddress();
 			
-			details.getPostalCode().ifPresent(registryAddress::setZip);
-			details.getMunicipality().ifPresent(registryAddress::setCity);
-			details.getCountry().map(Country::safeValueOf).ifPresent(registryAddress::setCountry);
-			details.getStreet().ifPresent(registryAddress::setAddress);
-			details.getAddressNumber().ifPresent(registryAddress::setAddress2);
-			details.getNeighborhood().ifPresent(registryAddress::setAddress3);
-			details.getRegion().ifPresent(registryAddress::setProvince);
+	    			details.getPostalCode().ifPresent(registryAddress::setZip);
+	    			details.getMunicipality().ifPresent(registryAddress::setCity);
+	    			details.getCountry().map(Country::safeValueOf).ifPresent(registryAddress::setCountry);
+	    			details.getStreet().ifPresent(registryAddress::setAddress);
+	    			details.getAddressNumber().ifPresent(registryAddress::setAddress2);
+	    			details.getNeighborhood().ifPresent(registryAddress::setAddress3);
+	    			details.getRegion().ifPresent(registryAddress::setProvince);
 			
-			return registryAddress;
-		    }
-		});
-		invoice
-//		.setRegistry(ar.getId())
-//		.setTransaction(ar.getTransaction())
-		.setRegistryData( registry);
-		
+	    			return registryAddress;
+	    		}
+	    	});
+	    	invoice
+	    	//.setRegistry(ar.getId())
+	    	//.setTransaction(ar.getTransaction())
+	    	.setRegistryData( registry);
 	    }
 	    return invoice;
 	}

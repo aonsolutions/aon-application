@@ -94,7 +94,7 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
-				.put(IJsonNames.DISCOUNT, detail.getDiscountExpression())
+				.put(IJsonNames.DISCOUNT, detail.getDiscount())
 				.put(IJsonNames.CATEGORY, detail.getAccountCode());
 		
 		

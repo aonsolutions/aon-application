@@ -10,13 +10,6 @@ import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -38,8 +31,13 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONString;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "DownloadTemplatesFee", urlPatterns = { "/aon_gwt_template/ms/gwt_download_fee/*"
 															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"
@@ -111,7 +109,7 @@ public class DownloadFeeServlet extends HttpServlet {
         LinkedList<Fee> fees;
         
         if(isCustomerFee) {
-        	fees = AON.getFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
+        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
         } else {
             if(filterJSON.opt("segment") != null) {
     			JSONArray segment = filterJSON.optJSONArray("segment");
@@ -126,7 +124,6 @@ public class DownloadFeeServlet extends HttpServlet {
     		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
         }
         
-       
         for(Integer i = 0; i < fees.size(); i++) {
         	Row row = hoja.createRow(i+1);
         	for(Integer j = 0; j < columnList.size(); j++) {
@@ -525,7 +522,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		}
 		
 		if(filterJSON.opt("seller") != null) {
-			params.setSeller(filterJSON.optString("seller"));
+			params.setSeller(filterJSON.optInt("seller"));
 		}
 		
 		if(filterJSON.opt("workplace") != null) {

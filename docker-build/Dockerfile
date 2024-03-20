@@ -1,11 +1,11 @@
-FROM openjdk:21-jdk-bullseye
+FROM eclipse-temurin:21-jdk-jammy
 
 RUN set -eux; \
 	apt-get update
 
-# Install sudo
+# Install sudo, unzip ...
 RUN set -eux; \
-	apt-get install -y sudo debconf-utils iproute2
+	apt-get install -y sudo debconf-utils iproute2 unzip
 
 # Install Maven
 RUN set -eux; \
@@ -13,34 +13,33 @@ RUN set -eux; \
 
 # Install MySQL
 RUN set -eux; \
-	wget https://dev.mysql.com/get/mysql-apt-config_0.8.25-1_all.deb; \
-	DEBIAN_FRONTEND=noninteractive apt-get install -y ./mysql-apt-config_0.8.25-1_all.deb; \
+	apt-get update; \
+	wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb; \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y ./mysql-apt-config_0.8.29-1_all.deb; \
 	echo "mysql-apt-config     mysql-apt-config/select-server  select  mysql-8.0" | debconf-set-selections; 
 
 RUN set -eux; \
-	apt-get update; \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server; \
-	echo "mysql-community-server        mysql-server/default-auth-override      select Use Legacy Authentication Method (Retain MySQL 5.x Compatibility)" | debconf-set-selections
+	echo "mysql-community-server        mysql-server/default-auth-override      select Use Legacy Authentication Method (Retain MySQL 5.x Compatibility)" | debconf-set-selections; \
+	sed -i -e 's/bind-address.*/bind-address=0.0.0.0/' $(find /etc/mysql -name "mysqld.cnf")
 
 # Add Docker's official GPG key:
 RUN set -eux; \
 	apt-get install -y ca-certificates curl gnupg; \
 	sudo install -m 0755 -d /etc/apt/keyrings; \
-	wget -O - https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
+	wget -O - https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
 	chmod a+r /etc/apt/keyrings/docker.gpg
 
 # Add Docker's repository to Apt sources:
 RUN set -eux; \
 	echo \
-	"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+	"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
 	"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
 	tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-RUN set -eux; \
-	apt-get update;
-
 # Install the Docker's packages.	
 RUN set -eux; \
+	apt-get update; \
 	apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Install AWS CLI
@@ -64,8 +63,8 @@ RUN set -x \
     && unzip repository.zip \
     && rm repository.zip
 
-COPY openjdk:21-slim.tar /root
-COPY tomcat:11.0-jdk21-openjdk.tar /root
+COPY eclipse-temurin:21-jre-jammy.tar /root
+COPY tomcat:10.1.19-jdk21-temurin-jammy.tar /root
 
 ENV AON_CONF=/etc/aon-aio
 

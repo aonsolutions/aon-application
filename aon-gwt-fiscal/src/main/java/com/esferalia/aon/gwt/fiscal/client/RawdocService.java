@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -22,4 +23,5 @@ public interface RawdocService extends RemoteService {
 	void toRejected(String domainName, int domain, String user, Integer rawdocId,String reason) throws AonCoreException;
 	void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
 
+	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);
 }

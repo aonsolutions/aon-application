@@ -78,6 +78,8 @@ public interface IFinance {
 	void deleteInvoice(AONContext ctx, Integer invoiceId);
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
+	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
+
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
@@ -135,6 +137,7 @@ public interface IFinance {
 	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
 	
 	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
+	public LinkedList<Fee> getFullFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
 	public Fee save(AONContext ctx, Fee fee);

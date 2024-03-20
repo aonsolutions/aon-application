@@ -230,6 +230,7 @@ export const EDIT_CATEGORY = MSG.EDIT_CATEGORY;
 export const EDIT_FILE = MSG.EDIT_FILE;
 export const EDIT_FILES = MSG.EDIT_FILES;
 export const EDIT_TAG = MSG.EDIT_TAG;
+export const EDIT_WAREHOUSE = MSG.EDIT_WAREHOUSE;
 export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const ELABORATION = "Elaboración"
 export const ELABORATIONS = "Elaboraciones"
