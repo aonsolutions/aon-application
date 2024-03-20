@@ -116,7 +116,7 @@
 	    <dependency>
      		<groupId>org.apache.tomcat</groupId>
      		<artifactId>tomcat-servlet-api</artifactId>
-      		<version>10.1.7</version>
+      		<version>${tomcat-version}</version>
       		<scope>provided</scope>
     	</dependency>
 
@@ -140,6 +140,13 @@
     		<version>1.7</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.bank</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- TO DELETE -->
 	    <dependency>
     		<groupId>com.itextpdf</groupId>

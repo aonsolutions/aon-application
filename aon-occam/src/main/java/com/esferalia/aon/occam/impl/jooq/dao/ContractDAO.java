@@ -36,6 +36,7 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.sql.Date;
 import java.util.stream.Stream;
 
 import org.jooq.*;
@@ -89,41 +90,74 @@ public class ContractDAO {
 	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
-		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);		
+		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);
+		Field<Integer> totalTime = DSL.field("total_time", Integer.class);
+		Field<Date> salaryMaxDate = DSL.field("max_date", Date.class);
+		Field<Date> cdMaxDate = DSL.field("cd_max_date", Date.class);
+		Field<String> rDocument = DSL.field("rDocument", String.class);
 		Table<?> registryTable = REGISTRY.as("registryTable");
+		Table<?> salary = SALARY.as("s");
+		Table<?> contractData = CONTRACT_DATA.as("cd");
+		Table<?> tm = Timecontrol.TIMECONTROL.as("tm");
+		
+		Select<?> subQ1 = DSL.select(DSL.max(SALARY.END_DATE).as(salaryMaxDate))
+				.select(SALARY.CONTRACT)
+				.from(SALARY)
+				.groupBy(SALARY.CONTRACT);
+		
+		Select<?> subQ2 = DSL.select(DSL.max(CONTRACT_DATA.START_DATE).as(cdMaxDate))
+				.select(CONTRACT_DATA.CONTRACT)
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.like("TC2"))
+				.groupBy(CONTRACT_DATA.CONTRACT);
+		
+		Select<?> subQ3 = DSL.select(
+					DSL.coalesce(
+							DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
+						).cast(Double.class), 0).cast(Double.class).as(totalTime)
+					)
+				.select(registryTable.field(REGISTRY.DOCUMENT).as(rDocument))
+				.from(Timecontrol.TIMECONTROL)
+				.join(REGISTRY.as(registryTable)).on(registryTable.field(REGISTRY.ID).eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+				.where(
+						Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
+						.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
+						.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
+						)
+				.groupBy(registryTable.field(REGISTRY.DOCUMENT));
+		
 		return ctx.getDslContext()
-				.select(CONTRACT.fields())
-				.select(REGISTRY.fields())
-				.select(WORKPLACE.DESCRIPTION)
+				.select(CONTRACT.ID)
 				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
-				.select(DSL.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class))
-						.from(SALARY)
-						.where(SALARY.CONTRACT.eq(CONTRACT.ID))
-						.and(SALARY.TYPE.eq((byte) 0))
-						.groupBy(SALARY.END_DATE)
-						.orderBy(SALARY.END_DATE.desc())
-						.limit(1).asField().as(SALARY_CGC_BASE)
-						)
-				.select(DSL.select(DSL.coalesce(DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 1), dateMiliseconds, dateMiliseconds.neg())).cast(Double.class), 0).cast(Double.class))
-						.from(Timecontrol.TIMECONTROL)
-						.innerJoin(registryTable).on(registryTable.field(REGISTRY.ID).eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
-						.where("date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())")
-						.and(registryTable.field(REGISTRY.DOCUMENT).eq(REGISTRY.DOCUMENT))
-						.asField().as(MARK_TOTAL_TIME)
-						)
-				.select(DSL.select(CONTRACT_DATA.EXPRESSION)
-						.from(CONTRACT_DATA)
-						.where(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
-						.and(CONTRACT_DATA.NAME.like("TC2"))
-						.orderBy(CONTRACT_DATA.START_DATE.desc())
-						.limit(1).asField().as(CONTRACT_TYPE)
-						)
-//				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
+				.select(CONTRACT.START_DATE)
+				.select(CONTRACT.END_DATE)
+				.select(REGISTRY.DOCUMENT)
+				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
+				.select(CONTRACT.DOMAIN)
+				.select(CONTRACT.PERSON)
+				.select(CONTRACT.WORKPLACE)
+				.select(WORKPLACE.DESCRIPTION)
+				.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class).as(SALARY_CGC_BASE))
+				.select(subQ3.asTable().as(tm).field(totalTime).as(MARK_TOTAL_TIME))
 				.from(CONTRACT)
-				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
-				.innerJoin(WORKPLACE).onKey()
+				.join(WORKPLACE).onKey()
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.leftJoin(subQ1.asTable().as(salary))
+						.on(CONTRACT.ID.eq(salary.field(SALARY.CONTRACT)))
+				.leftJoin(SALARY)
+						.on(SALARY.CONTRACT.eq(CONTRACT.ID)
+						.and(DSL.year(salaryMaxDate).eq(DSL.year(SALARY.END_DATE)))
+						.and(DSL.month(salaryMaxDate).eq(DSL.month(SALARY.END_DATE))))
+				.leftJoin(subQ2.asTable().as(contractData))
+						.on(subQ2.asTable().as(contractData).field(CONTRACT_DATA.CONTRACT).eq(CONTRACT.ID))
+				.leftJoin(CONTRACT_DATA)
+						.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID)
+						.and(subQ2.asTable().as(contractData).field(cdMaxDate).eq(CONTRACT_DATA.START_DATE))
+						.and(CONTRACT_DATA.NAME.eq("TC2")))
+				.leftJoin(subQ3.asTable().as(tm)).on(subQ3.asTable().as(tm).field(rDocument).eq(REGISTRY.DOCUMENT))
+				.groupBy(CONTRACT.ID)
 				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
-				.orderBy(PERSON_FULL_NAME.asc())
+				.orderBy(REGISTRY.NAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch().stream().map(new ContractExtendedDataFiller());
 	}

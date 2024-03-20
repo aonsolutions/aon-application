@@ -174,6 +174,10 @@ public class FinanceReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
 			
+			CellUtil.createCell(row, cellCount, "GASTOS", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 10 * 256);
+			
 			CellUtil.createCell(row, cellCount, "ESTADO", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
@@ -200,7 +204,17 @@ public class FinanceReportExcelPrint extends HttpServlet {
 				addCell(finance.getInvoice().getRegistryName());
 			}
 			addCell(finance.getPayMethodName());
-			addCell(finance.getAmount());
+			
+			Cell amountCell = addCell(euroFormat.format(finance.getAmount()));
+			CellStyle amountStyle = workbook.createCellStyle();
+			amountStyle.setAlignment( HorizontalAlignment.RIGHT );
+			amountCell.setCellStyle(amountStyle);
+			
+			Cell expensesCell = addCell(euroFormat.format(finance.getExpenses()));
+			CellStyle expensesStyle = workbook.createCellStyle();
+			expensesStyle.setAlignment( HorizontalAlignment.RIGHT );
+			expensesCell.setCellStyle(expensesStyle);
+			
 			if (finance.getFinanceStatus() == null) {
 				addEmptyCell();
 			} else {
@@ -321,6 +335,10 @@ public class FinanceReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
 			
+			CellUtil.createCell(row, cellCount, "GASTOS", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 10 * 256);
+			
 			CellUtil.createCell(row, cellCount, "ESTADO", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
@@ -359,6 +377,11 @@ public class FinanceReportExcelPrint extends HttpServlet {
 			CellStyle amountStyle = workbook.createCellStyle();
 			amountStyle.setAlignment( HorizontalAlignment.RIGHT );
 			amountCell.setCellStyle(amountStyle);
+			
+			Cell expensesCell = addCell(euroFormat.format(finance.getExpenses()));
+			CellStyle expensesStyle = workbook.createCellStyle();
+			expensesStyle.setAlignment( HorizontalAlignment.RIGHT );
+			expensesCell.setCellStyle(expensesStyle);
 			
 			if (finance.getFinanceStatus() == null) {
 				addEmptyCell();

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
@@ -14,8 +15,6 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -72,8 +71,6 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.RegistryAddressValidation;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -787,8 +784,8 @@ public class JooqEmployee {
 			
 			//ENTERPRISE DATA
 			Record enterpriseRecord = dslContext.select().from(REGISTRY)
-					.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
-					.where(ENTERPRISE.DOMAIN.eq(contractTable.get(CONTRACT.DOMAIN)))
+					.join(COMPANY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+					.where(COMPANY.DOMAIN.eq(contractTable.get(CONTRACT.DOMAIN)))
 					.fetchOne();
 			
 			contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));

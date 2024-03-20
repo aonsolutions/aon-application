@@ -1,4 +1,4 @@
-FROM tomcat:10-jdk17
+FROM tomcat:10.1.19-jdk21-temurin-jammy
 
 ARG AON_VERSION=9.23-SNAPSHOT
 

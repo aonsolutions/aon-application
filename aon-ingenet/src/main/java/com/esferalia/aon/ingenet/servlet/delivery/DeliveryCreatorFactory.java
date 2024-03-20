@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -934,7 +935,7 @@ public class DeliveryCreatorFactory implements Serializable {
 			DATOSAGENCIATRANSPORTETYPE datosagenciatransportetype) {
 		String document = datosagenciatransportetype.getDATOSREGISTRO()
 				.getDATOSDOCUMENTO().getDOCUMENTO();
-		Carrier carrier = RegistryOldDAO.getCarrierStream(
+		Carrier carrier = CarrierDAO.getStream(
 				ctx,
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getDocumentProperty().eq(document))).findFirst().orElse(new Carrier());
