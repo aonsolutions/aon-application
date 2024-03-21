@@ -1,9 +1,10 @@
-package net.aonsolutions.aon.report;
+package net.aonsolutions.aon.report.pdf;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -11,6 +12,8 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+
+import net.aonsolutions.aon.registry.report.IHeader;
 
 public abstract class AbsReportTablePDF<T> extends PdfPTable implements Consumer<T> {
 	
@@ -39,6 +42,13 @@ public abstract class AbsReportTablePDF<T> extends PdfPTable implements Consumer
 		this.addCell(cell);
 	}
 	
+	protected void addIntegerCell(Integer content) {
+		Paragraph paragraph = new Paragraph(8, AonStringUtils.defaultString(AonNumberUtils.toString(content)), BODY_FONT);
+		PdfPCell cell = new PdfPCell();
+		cell.addElement(paragraph);
+		cell.setBorder(0);
+		this.addCell(cell);
+	}
 	
 	private AbsReportTablePDF<T> addHeader(String label) {
 		Paragraph paragraph = new Paragraph (8,label,BODY_FONT_BOLD);

@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.report;
+package net.aonsolutions.aon.report.pdf;
 
 
 public class AonReportException extends Exception {

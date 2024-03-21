@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.report;
+package net.aonsolutions.aon.report.pdf;
 
 import java.io.OutputStream;
 import java.util.Optional;
