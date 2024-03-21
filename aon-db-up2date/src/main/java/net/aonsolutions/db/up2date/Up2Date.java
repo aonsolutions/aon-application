@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
 
@@ -417,7 +418,9 @@ public class Up2Date {
 	    // DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
 	    // PPEInsert.PPE_INSERT
 	    BasesMin2024UpdateII.BASESMIN2024UPDATEII,
-	    BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
+	    BasesMin2024UpdateIII.BASESMIN2024UPDATEIII,
+	    
+	    InvoiceDocCreate.INVOICEDOCCREATE
 	};
 
     // ------------------------------------------------------------------------
