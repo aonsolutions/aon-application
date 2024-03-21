@@ -115,6 +115,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.validate(ctx, invoice, rawdocId));
+	}
+	
+	@Override
 	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));

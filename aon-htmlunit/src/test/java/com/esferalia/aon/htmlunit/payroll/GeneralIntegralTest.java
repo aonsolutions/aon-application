@@ -571,6 +571,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1759.50);
 		assertValue("cgpBaseLabel", 1260.00);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2024);
+		assertValue("cgcBaseLabel", 1759.50);
+		assertValue("cgpBaseLabel", 1260.00);
+		selectOption("editor-bases_provisonales", "true");
+		assertValue("cgcBaseLabel", 1847.40);
+		assertValue("cgpBaseLabel", 1323.00);
 		
 		draft("BASE, MÍNIMA ( GRUPO 02 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -589,6 +595,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1459.20);
 		assertValue("cgpBaseLabel", 1260.00);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2024);
+		assertValue("cgcBaseLabel", 1459.20);
+		assertValue("cgpBaseLabel", 1260.00);
+		selectOption("editor-bases_provisonales", "true");
+		assertValue("cgcBaseLabel", 1532.10);
+		assertValue("cgpBaseLabel", 1323.00);
 
 		draft("BASE, MÍNIMA ( GRUPO 03 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -607,6 +619,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1269.30);
 		assertValue("cgpBaseLabel", 1260.00);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2024);
+		assertValue("cgcBaseLabel", 1269.30);
+		assertValue("cgpBaseLabel", 1260.00);
+		selectOption("editor-bases_provisonales", "true");
+		assertValue("cgcBaseLabel", 1332.90);
+		assertValue("cgpBaseLabel", 1323.00);
 
 		draft("BASE, MÍNIMA ( GRUPO 04 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -806,6 +824,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		salaryHours = getValue("db-amount-label-1");
 		assertTrue((salaryHours * 7.59 ) <  ( 42.00 * 31 * 0.25 )  ) ;
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2024);
+		assertValue("cgcBaseLabel", 42.00 * 31 * 0.25);
+		assertValue("cgpBaseLabel", 42.00 * 31 * 0.25);
+		salaryHours = getValue("db-amount-label-1");
+		assertTrue((salaryHours * 7.59 ) <  ( 42.00 * 31 * 0.25 )  ) ;
+		selectOption("editor-bases_provisonales", "true");
+		assertValue("cgcBaseLabel", 44.10 * 31 * 0.25);
+		assertValue("cgpBaseLabel", 44.10 * 31 * 0.25);
+		salaryHours = getValue("db-amount-label-1");
+		assertTrue((salaryHours * 7.97 ) <  ( 44.10 * 31 * 0.25 )  ) ;
 
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");
 		calculate(Calendar.JUNE,2022);

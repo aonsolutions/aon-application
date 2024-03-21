@@ -67,11 +67,13 @@ export class AonIcon extends AonElement {
     let icon = icons[this.getAttribute('icon')];
     let left = icon.left || 0;
     let top = icon.top || 0;
+    let transform = icon.transform || "";
+    
     if(icon && icon.paths) {
       let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
         width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
         height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
-        <g id="${this.getAttribute('icon')}">`;
+        <g id="${this.getAttribute('icon')}" transform="${transform}">`;
       icon.paths.forEach(p => {
           html = html + `
             <path d="${p.path}" style="fill:${p.fill ? p.fill : (this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368')};"/>
@@ -84,7 +86,7 @@ export class AonIcon extends AonElement {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
           width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
           height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
-        <g id="${this.getAttribute('icon')}">
+        <g id="${this.getAttribute('icon')}" transform="${transform}">
           <path d="${icon.path}" style="fill:${this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368'};"/>
         </g>
       </svg>

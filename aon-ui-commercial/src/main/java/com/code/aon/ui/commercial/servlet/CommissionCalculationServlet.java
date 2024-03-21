@@ -10,12 +10,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +34,12 @@ import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "CommissionCalculationServlet", urlPatterns = {"/commission_calculation/*",
 												   "/aon_gwt_aio/ms/commission_calculation/*",
@@ -409,7 +409,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	
 	public double getBasePrice(InvoiceDetail id) {
 		Double price = (id.getPrice() + id.getTaxes()) * id.getQuantity();
-		DiscountExpression de = new DiscountExpression(id.getDiscountExpression());
+		DiscountExpression de = new DiscountExpression(id.getDiscountExpression().getDiscountExpr());
 		if (de.getDiscounts() != null) {
 			for (int i = 0;i<de.getDiscounts().length;i++) {
 				price = price * ( 1 - de.getDiscounts()[i] /100);

@@ -296,6 +296,7 @@ export const SEARCH_BUTTON = 'searchButton';
 export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
+export const SERES = 'seres';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
 export const SHARE = 'share';

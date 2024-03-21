@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -13,6 +13,7 @@ import { AonCard } from '../../components/aon-card.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
+import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
 import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
@@ -54,6 +55,8 @@ export class AonInvoice extends AonElement {
 	FINANCE_CARD;
 	DATA;
 	FILE;
+	RECORD_INVOICE_DIALOG;
+
 	fileOpened;
 
 	company;
@@ -91,6 +94,7 @@ export class AonInvoice extends AonElement {
 
 	async connectedCallback () {
 		this.initialize();
+		this.initializeFunctions();
 		this.buildDur().then(r => {
 			this.build();
 		});
@@ -215,6 +219,24 @@ export class AonInvoice extends AonElement {
 		this.MESSAGES = this.DATA + 'Messages';
 		this.ERRORS_CARD = this.DATA + 'ErrorsCard';
 
+		this.RECORD_INVOICE_DIALOG = this.id + 'RecordInvoiceDialog';
+	}
+
+	initializeFunctions() {
+		window.getInvoice = () => {
+			return JSON.stringify(this.getInvoice());
+		}
+
+		window.reloadInvoice = (invoiceId) => {
+			if(invoiceId) {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+				getInvoice(invoiceId).then((inv) => {
+					this.invoice = new Invoice(inv);
+					this.reload();
+				});
+			} 
+
+		}
 	}
 
 	getInvoice() {
@@ -1129,7 +1151,8 @@ export class AonInvoice extends AonElement {
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
 			number.title = MSG.NUMBER;
-			number.value = this.invoice.number;
+			if(this.invoice.number > -1)
+				number.value = this.invoice.number;
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
 			numberSpan.appendChild(number);
@@ -1622,6 +1645,16 @@ export class AonInvoice extends AonElement {
 		}
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
+
+		let data = {
+			registry: this.invoice.getRegistry().id,
+			type: this.invoice.type
+		};
+
+		getRegistrySuggestedAccount(data).then(r => {
+			this.invoice.setCategory(r.code);
+			this.getElement(this.CATEGORY).value = r.code;
+		});
 
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
@@ -2703,24 +2736,21 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		if(this.invoice.isSelfconta() || this.isInvofoxInvoice() || this.isBeta()) {
-			recordSelfconta(this.getInvoice())
-				.then(r => {
-					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-					this.invoice = new Invoice(r);
-					this.getApplication().stopLoader(); 
-					this.reload();
-				})
-				.catch(e => this.showError(e));
-		}	else {
-				let aonInvoice = this.getElement('aonInvoice');
-				let d = document.getElementById(aonInvoice.DIALOG);
-				d.clear();
-				if(!this.isMobile())d.width = '400px';
-				d.setTitle(MSG.RECORD_INVOICE);
-				d.setContentHTML(MSG.IN_DEVELOPMENT);
-				d.addAcceptAction(() => {});
-				d.open();
+		if(this.invoice.category) {
+			let div = this.getElement("PRUEBA_RAWDOC_RECORD");
+			if(!div) {
+				div = this.createDiv("PRUEBA_RAWDOC_RECORD");
+				div.style.display = 'none';
+				this.appendChild(div);
+			}
+			this.clearElement(div);
+	
+			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
+		} else {
+			this.showError({
+				type: CONSTANT.ERROR,
+				message: "Para Contabilizar es necesario la categoría."
+			});
 		}
 	}
 

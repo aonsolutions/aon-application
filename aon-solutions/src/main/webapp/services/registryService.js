@@ -10,6 +10,8 @@ const RELATIONSHIP = `${API_URL}/relationship`;
 const EMAILS = `emails`;
 const TRANSACTION = `transaction`;
 
+const SUGGESTED_ACCOUNT = `${API_URL}/registry/suggestedAccount`;
+
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
 export const saveRegistry = (data) => put(`${API_URL}/registry`, data);
 
@@ -48,3 +50,7 @@ export const getRelationShips = (data) => get(RELATIONSHIP, data);
 export const getRelationShip = (data) => get(`${RELATIONSHIP}/${data.registry}`, data);
 export const saveRelationShip = (data) => put(`${RELATIONSHIP}/${data.registry}`, data);
 export const removeRelationShip = (data) => remove(`${RELATIONSHIP}/${data.registry}`, data);
+
+// SUGGESTED ACCOUNT
+
+export const getRegistrySuggestedAccount = (data) => get(SUGGESTED_ACCOUNT, data)

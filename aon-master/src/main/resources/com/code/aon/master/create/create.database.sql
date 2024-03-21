@@ -4667,6 +4667,26 @@ CREATE TABLE `invoice_attach` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
 
 #
+# Table structure for table `invoice_doc`
+#
+
+CREATE TABLE `invoice_doc` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `invoice` int NOT NULL COMMENT 'Identificador de la Factura',
+  `mimeType` tinyint DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `type` tinyint DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
+  `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
+  PRIMARY KEY (`id`),
+  KEY `IDX_INVOICE_DOC_INVOICE` (`invoice`),
+  KEY `IDX_INVOICE_DOC_DOMAIN` (`domain`),
+  CONSTRAINT `FK_INVOICE_DOC_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_DOC_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
+
+#
 # Table structure for table `invoice_batch`
 #
 
@@ -7138,6 +7158,7 @@ CREATE TABLE `rawdoc` (
   `log` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Documento en formato JSON',
   `mime_type` tinyint DEFAULT '0' COMMENT 'MIME Type',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',

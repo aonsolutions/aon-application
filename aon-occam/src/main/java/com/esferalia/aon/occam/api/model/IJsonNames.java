@@ -555,6 +555,7 @@ public final class IJsonNames {
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
 	public static final String SUFIX = "sufix";
+	public static final String SUPPORT = "support";
 	public static final String SURCHARGE_PERCENT = "surchargePercent";
 	public static final String SURCHARGE_QUOTA = "surcharge_quota";
 	public static final String SURCHARGEQUOTA = "surchargeQuota";

@@ -42,11 +42,12 @@ export class AonNewNumber extends AonNewInput {
         }
         else if (CONSTANT.DISABLED === name) {
             let input = this.getElement(this.INPUT);
-            if(this.isDisabled())
-                input.setAttribute(CONSTANT.DISABLED, this.isDisabled());
-            else 
-                input.removeAttribute(CONSTANT.DISABLED);
-           
+            if(input) {
+                if(this.isDisabled())
+                    input.setAttribute(CONSTANT.DISABLED, this.isDisabled());
+                else 
+                    input.removeAttribute(CONSTANT.DISABLED);
+            }
         } else if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
             if (this.isReadonly())
                 this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
