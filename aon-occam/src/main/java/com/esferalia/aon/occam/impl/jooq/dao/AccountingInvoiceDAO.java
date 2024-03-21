@@ -24,8 +24,10 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
@@ -645,6 +647,24 @@ public class AccountingInvoiceDAO {
 			.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	
+	public static List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type) {
+		AggregateFunction<Integer> count = DSL.count(ACCOUNT.ID);
+		return ctx.getDslContext().select(ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION, count)
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+			.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
+			.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(INVOICE.REGISTRY.eq(registry))
+				.and(INVOICE.TYPE.eq(type.value()))
+			.groupBy(ACCOUNT.ID)
+			.orderBy(count.desc())
+			.fetch().stream().map(r -> new Account()
+				.setId(r.getValue(ACCOUNT.ID))
+				.setCode(r.getValue(ACCOUNT.CODE))
+				.setDescription(r.getValue(ACCOUNT.DESCRIPTION)))
+			.toList();	
+	}
 
 	public static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
 		private AONContext ctx;

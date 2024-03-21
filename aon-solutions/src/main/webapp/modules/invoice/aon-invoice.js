@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -1151,7 +1151,8 @@ export class AonInvoice extends AonElement {
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
 			number.title = MSG.NUMBER;
-			number.value = this.invoice.number;
+			if(this.invoice.number > -1)
+				number.value = this.invoice.number;
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
 			numberSpan.appendChild(number);
@@ -1644,6 +1645,16 @@ export class AonInvoice extends AonElement {
 		}
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
+
+		let data = {
+			registry: this.invoice.getRegistry().id,
+			type: this.invoice.type
+		};
+
+		getRegistrySuggestedAccount(data).then(r => {
+			this.invoice.setCategory(r.code);
+			this.getElement(this.CATEGORY).value = r.code;
+		});
 
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();

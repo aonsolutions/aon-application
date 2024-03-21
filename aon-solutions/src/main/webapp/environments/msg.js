@@ -440,7 +440,7 @@ export const NOTE = MSG.NOTE;
 export const NOTICE = "Noticia"; //TODO
 // ----- O
 
-export const OCR = MSG.OCR;
+export const OCR = "OCR";
 export const OBSERVATION = MSG.OBSERVATION;
 export const OFFICE = MSG.OFFICE;
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
