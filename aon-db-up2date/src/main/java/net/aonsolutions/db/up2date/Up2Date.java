@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
@@ -420,7 +421,8 @@ public class Up2Date {
 	    BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    BasesMin2024UpdateIII.BASESMIN2024UPDATEIII,
 	    
-	    InvoiceDocCreate.INVOICEDOCCREATE
+	    InvoiceDocCreate.INVOICEDOCCREATE,
+	    RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY
 	};
 
     // ------------------------------------------------------------------------

@@ -7158,6 +7158,7 @@ CREATE TABLE `rawdoc` (
   `log` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Documento en formato JSON',
   `mime_type` tinyint DEFAULT '0' COMMENT 'MIME Type',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
