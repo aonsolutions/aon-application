@@ -47,7 +47,7 @@
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="customerReport2-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
+							action="#{customer.onNewReportXLS}"
 							disabled="#{customer.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel">
