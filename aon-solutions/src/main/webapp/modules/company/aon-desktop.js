@@ -414,7 +414,7 @@ export class AonDesktop extends AonElement {
 			let newInvoice = new AonDashboardButton();
 			newInvoice.setId('newInvoice');
 			newInvoice.setIcon('note_add');
-			newInvoice.setMessage('NUEVA FACTURA');
+			newInvoice.setMessage(MSG.NEW_INVOICE);
 			newInvoice.addEventListener(EVENT.CLICK, () => {
 				this.addInvoice(newInvoice, dashboard);
 			});
@@ -425,7 +425,7 @@ export class AonDesktop extends AonElement {
 			let newDocument = new AonDashboardUploadButton();
 			newDocument.setId('newDocument');
 			newDocument.setIcon('post_add');
-			newDocument.setMessage('NUEVO DOCUMENTO');
+			newDocument.setMessage(MSG.NEW_DOCUMENT);
 			fastAccessButtons.appendChild(newDocument);
 		}
 
@@ -444,7 +444,7 @@ export class AonDesktop extends AonElement {
 			let newEmployee = new AonDashboardButton();
 			newEmployee.setId('newEmployee');
 			newEmployee.setIcon('person_add');
-			newEmployee.setMessage('NUEVO EMPLEADO');
+			newEmployee.setMessage(MSG.NEW_EMPLOYEE);
 			newEmployee.addEventListener(EVENT.CLICK, () => {
 				let aonMessengerChat = new AonMessenger();	
 				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
@@ -663,8 +663,7 @@ export class AonDesktop extends AonElement {
 			let documentalCard = new AonCard();
 			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			documentalCard.id = "documentalCard";
-			// documentalCard.title = "Documental";
-			documentalCard.message = "Documental";
+			documentalCard.message = MSG.DOCUMENTARY;
 			documentalCard.setApp(Apps.DOCUMENTAL);
 			documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.DOCUMENTAL.app);
@@ -1630,21 +1629,21 @@ export class AonDesktop extends AonElement {
 
 		const NEW_INVOICE = {
 			id: 'invoice',
-			name: 'Nueva Factura',
+			name: MSG.NEW_INVOICE,
 			icon: MATERIAL_ICONS.RECEIPT,
 			fn: () => this.getElement(this.INPUT_INVOICE_FILE).click()
 		};
 
 		const NEW_DOCUMENT = {
 			id: 'document',
-			name: 'Nuevo Documento',
+			name: MSG.NEW_DOCUMENT,
 			icon: 'description',
 			fn: () => this.getElement(this.INPUT_DOCUMENT_FILE).click()
 		};
 
 		const NEW_MESSENGER = {
 			id: 'messenger',
-			name: 'Nueva Solicitud',
+			name: MSG.NEW_REQUEST,
 			icon: 'message',
 			fn: () => {this.development(MSG.NEW_REQUEST);}
 		};
