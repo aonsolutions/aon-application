@@ -23,6 +23,8 @@ import net.aonsolutions.db.up2date.config.InsertIAE848889;
 import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
 import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
 import net.aonsolutions.db.up2date.payroll.PPEInsert;
+import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
+import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 
 public class Up2Date {
@@ -418,7 +420,9 @@ public class Up2Date {
 	    CodinucovaInvoiceTaxFix.INSTANCE,
 	    InsertIAE848889.INSERT_IAE_848889,
 	    DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
-	    PPEInsert.PPE_INSERT
+	    PPEInsert.PPE_INSERT,
+	    RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
+	    RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN
 	};
 
     // ------------------------------------------------------------------------

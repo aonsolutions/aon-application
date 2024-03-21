@@ -7378,6 +7378,8 @@ CREATE TABLE `ritem` (
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de relacion',
   `code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del Producto',
   `edi_sales_code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo EAN de ventas para EDI',
+  `customer_fee` int(11) DEFAULT NULL COMMENT 'Cuota del cliente asociado',
+  `seller` int(11) DEFAULT NULL COMMENT 'Agente asociado al cliente',
   `price` decimal(15,4) DEFAULT '0' COMMENT 'Precio del Producto',
   `discount_expr` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT '0.0' COMMENT 'Descuentos del Producto',
   `priority` tinyint DEFAULT '0' COMMENT 'Prioridad del Producto',
@@ -7395,9 +7397,13 @@ CREATE TABLE `ritem` (
   KEY `IDX_RITEM_ITEM` (`item`),
   KEY `IDX_RITEM_REGISTRY` (`registry`),
   KEY `IDX_RITEM_WORKPLACE` (`workplace`),
+  KEY `IDX_RITEM_CUSTOMER_FEE` (`customer_fee`),
+  KEY `IDX_RITEM_SELLER` (`seller`),
+  CONSTRAINT `FK_RITEM_CUSTOMER_FEE` FOREIGN KEY (`customer_fee`) REFERENCES `customer_fee` (`id`),
   CONSTRAINT `FK_RITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_RITEM_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RITEM_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_RITEM_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Personas o Empresas';
 
