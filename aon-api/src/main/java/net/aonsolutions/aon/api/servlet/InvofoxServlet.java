@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TediErrorJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -194,6 +196,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
 		    .map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> fillCategory(aonContext, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
 		    .map(invoice -> invoice.put("file", getFileJSON(ocrDocument)) )
@@ -364,8 +367,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
                 							jsonObject.put("path",url.toExternalForm());
                 							String contentType = S3.getContentType(bucketName, key);
                 							jsonObject.put("content_type", contentType);
-                					    	}
-                					    )   
+                							jsonObject.put("key", key);
+                					    })   
                 					)
                 			    )
                 	);
@@ -376,6 +379,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRInvoiceBuilder.fillFinances(ctx, ocrInvoice, invoice);
 	    return invoice;
 	}
+
 	private static final Invoice fillRegistry (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    try {
 	    	OCRInvoiceBuilder.fillRegistry(ctx, AON.getConfiguration(ctx), invoice);
@@ -444,6 +448,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    	.setRegistryData( registry);
 	    }
 	    return invoice;
+	}
+	
+	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
+		if(invoice.getRegistry() == null) return invoice;
+		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
+		if(!accounts.isEmpty())
+			invoice.setTediCategory(accounts.get(0).getCode());
+		return invoice;
 	}
 	
         

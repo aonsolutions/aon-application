@@ -46,8 +46,10 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AmortizationTypeValidation;
@@ -109,6 +111,12 @@ public class ACCOUNTING {
 	public static String getAccountNextCode(String domainName, int domain, String login, String prefix) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)) {
 			return getAccounting().getAccountNextCode(ctx, prefix);
+		}
+	}
+	
+	public static List<Account> getSuggestedAccounts(Domain domain, User user, Integer registry, InvoiceType type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+			return getAccounting().getSuggestedAccounts(ctx, registry, type);
 		}
 	}
 
