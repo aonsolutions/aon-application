@@ -366,6 +366,7 @@ public class ItemDAO {
 					.and(f.getRegistryProperty().eq(ritem.getRegistry()))
 					.and(f.getItemProperty().eq(ritem.getItem() != null ? ritem.getItem().getId() : null)
 					.and(f.getTypeProperty().eq(ritem.getType() != null ? ritem.getType().value() : null)))
+					.and(f.getEdiSalesCodeProperty().eq(ritem.getEdiSalesCode()))
 			).findFirst();
 			
 			if(opt.isPresent()) { 		//------------------UPDATE ----------
@@ -388,6 +389,8 @@ public class ItemDAO {
 				.set(RITEM.REGISTRY, ritem.getRegistry())
 				.set(RITEM.ITEM, ritem.getItem().getId())
 				.set(RITEM.TYPE, ritem.getType().value())
+				.set(RITEM.EDI_SALES_CODE, ritem.getEdiSalesCode())
+				.set(RITEM.CUSTOMER_FEE, ritem.getCustomerFee())
 				.set(RITEM.STATUS, ritem.getStatus().value())
 				.set(RITEM.PRIORITY, ritem.getPriority().value())
 				.set(RITEM.QUANTITY, ritem.getQuantity())
@@ -411,6 +414,14 @@ public class ItemDAO {
 					recordSets.set(RITEM.WORKPLACE, ritem.getWorkplace());
 				}
 				
+				if(ritem.getCustomerFee() != null) {
+					recordSets.set(RITEM.CUSTOMER_FEE, ritem.getCustomerFee());
+				}
+				
+				if(ritem.getSeller() != null) {
+					recordSets.set(RITEM.SELLER, ritem.getSeller().getId());
+				}
+				
 				insertRItem = recordSets;
 			}
 		}
@@ -425,6 +436,7 @@ public class ItemDAO {
 					.setPriority(r.getPriority() != null ? Priority.values()[r.getPriority()] : null)
 					.setPrice(r.getPrice())
 					.setCode(r.getCode())
+					.setEdiSalesCode(r.getEdiSalesCode())
 					.setWorkplace(r.getWorkplace())
 					.setRegistry(r.getRegistry())
 					.setDiscountExpr(r.getDiscountExpr())

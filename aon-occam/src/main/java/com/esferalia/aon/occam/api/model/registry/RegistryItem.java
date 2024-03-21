@@ -19,6 +19,9 @@ public class RegistryItem implements Serializable {
 	private Item item;
 	private RegistryMode type;
 	private String code;
+	private String ediSalesCode;
+	private Integer customerFee;
+	private Seller seller;
 	private Double price;
 	private String discountExpr;
 	private Priority priority;
@@ -85,6 +88,33 @@ public class RegistryItem implements Serializable {
 
 	public RegistryItem setCode(String code) {
 		this.code = code;
+		return this;
+	}
+
+	public String getEdiSalesCode() {
+		return ediSalesCode;
+	}
+
+	public RegistryItem setEdiSalesCode(String ediSalesCode) {
+		this.ediSalesCode = ediSalesCode;
+		return this;
+	}
+
+	public Integer getCustomerFee() {
+		return customerFee;
+	}
+
+	public RegistryItem setCustomerFee(Integer customerFee) {
+		this.customerFee = customerFee;
+		return this;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public RegistryItem setSeller(Seller seller) {
+		this.seller = seller;
 		return this;
 	}
 
