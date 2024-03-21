@@ -36,6 +36,7 @@ public class DomainJSON {
 	}
 	
 	public static Domain fromJSON(JSONObject json) {
+		
 		if(json == null) return new Domain();
 		return new Domain()
 			.setId(JsonUtils.getInteger(json,IJsonNames.ID))
@@ -66,15 +67,13 @@ public class DomainJSON {
 		;
 		
 	}
-
+	
 	private static List<DomainApp> getDomainApps(JSONArray jsonArray) {
 		LinkedList<DomainApp> list = new LinkedList<>();
 		for(Integer i = 0; i < jsonArray.length(); i++) {
 			String app = jsonArray.get(i).toString();
-			try {
-				app = AonStringUtils.isNotBlank(app) ? app.split("\"")[1] : "";
-				list.add(new DomainApp().setApp(AonApp.safeValueOf(app)));
-			} catch (Exception e) {}
+			app = AonStringUtils.isNotBlank(app) && AonStringUtils.containsIgnoreCase(app, "\"")  ? app.split("\"")[1] : app;
+			list.add(new DomainApp().setApp(AonApp.safeValueOf(app)));
 		}
  		return list;
 	}

@@ -19,6 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertIAE848889;
+import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
+import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
+import net.aonsolutions.db.up2date.payroll.PPEInsert;
+import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
+import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
 import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
@@ -413,11 +420,14 @@ public class Up2Date {
 	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
 	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
 	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE,
+
 	    // HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
     	// CodinucovaInvoiceTaxFix.INSTANCE,
     	// InsertIAE848889.INSERT_IAE_848889,
 	    // DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
 	    // PPEInsert.PPE_INSERT
+      RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
+	    RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
 	    BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    BasesMin2024UpdateIII.BASESMIN2024UPDATEIII,
 	    
