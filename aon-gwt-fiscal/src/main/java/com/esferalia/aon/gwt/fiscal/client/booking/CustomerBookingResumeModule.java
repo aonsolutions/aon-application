@@ -1066,189 +1066,199 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 	
 	private void createDomainChildsBookingResume() {
-		boolean allEnterprises = enterprisesView.getSelectedIndex() == 1;
-		domainChildsPanel.clear();
-		
-		domainChildsPanel.add(createDomainChildsToolbar());
-		
-		domainChildsTable = new Grid(0, 10);
-		domainChildsTable.clear();
-		domainChildsTable.setWidth("100%");
-
-		int row = domainChildsTable.insertRow(domainChildsTable.getRowCount());
-
-		Label name = new Label("EMPRESA");
-		Label booking = new Label("EXTENSIONES CONTRATADAS");
-		Label extensions = new Label("EXTENSIONES HEREDADAS");
-		Label bookingNum = new Label("N\u00b0 EXTEN.");
-		Label status = new Label("ESTADO");
-		Label expiration = new Label("F. EXPIRACI\u00f3N");
-		Label users = new Label("USR.");
-		Label portalUsers = new Label("USR. PORTAL");
-		Label type = new Label("TIPO");
-		Label action = new Label("");
-		
-		name.addStyleName(AON.CSS.aonHeaderTable());
-		booking.addStyleName(AON.CSS.aonHeaderTable());
-		extensions.addStyleName(AON.CSS.aonHeaderTable());
-		bookingNum.addStyleName(AON.CSS.aonHeaderTable());
-		status.addStyleName(AON.CSS.aonHeaderTable());
-		expiration.addStyleName(AON.CSS.aonHeaderTable());
-		users.addStyleName(AON.CSS.aonHeaderTable());
-		portalUsers.addStyleName(AON.CSS.aonHeaderTable());
-		type.addStyleName(AON.CSS.aonHeaderTable());
-		action.addStyleName(AON.CSS.aonHeaderTable());
-
-		domainChildsTable.setWidget(row, 0, name);
-		domainChildsTable.setWidget(row, 1, booking);
-		domainChildsTable.setWidget(row, 2, extensions);
-		domainChildsTable.setWidget(row, 3, bookingNum);
-		domainChildsTable.setWidget(row, 4, status);
-		domainChildsTable.setWidget(row, 5, expiration);
-		domainChildsTable.setWidget(row, 6, users);
-		domainChildsTable.setWidget(row, 7, portalUsers);
-		domainChildsTable.setWidget(row, 8, type);
-		domainChildsTable.setWidget(row, 9, action);
-		
-		domainChildsTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
-		domainChildsTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
-		
-		domainChildsTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(4).getStyle().setWidth(70, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(5).getStyle().setWidth(100, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
-		domainChildsTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
-		
-		List<String> parentApps = domainBooking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
-		List<Domain> childsDomain = domainBooking.getResume().getChilds().stream().filter(child -> AonStringUtils.isNotBlank(child.getDescription())).collect(Collectors.toList());
-		childsDomain.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
-		
-		for(Domain domainChild : childsDomain) {
+		try {
+			boolean allEnterprises = enterprisesView.getSelectedIndex() == 1;
+			domainChildsPanel.clear();
 			
-			// Get child and parent diff apps
-			List<String> childApps = domainChild.getApps().stream().filter(domainApp -> null != domainApp.getApp() && AonStringUtils.isNotBlank(domainApp.getApp().getDescription())).map(domainApp -> domainApp.getApp().getDescription()).collect(Collectors.toList());
-			List<String> parentAppsDiff = childApps.stream().filter(app -> parentApps.contains(app)).collect(Collectors.toList());
-			parentAppsDiff.sort((o1, o2) -> o1.compareTo(o2));
+			domainChildsPanel.add(createDomainChildsToolbar());
 			
-			List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
-			childAppsDiff.sort((o1, o2) -> o1.compareTo(o2));
+			domainChildsTable = new Grid(0, 10);
+			domainChildsTable.clear();
+			domainChildsTable.setWidth("100%");
+	
+			int row = domainChildsTable.insertRow(domainChildsTable.getRowCount());
+	
+			Label name = new Label("EMPRESA");
+			Label booking = new Label("EXTENSIONES CONTRATADAS");
+			Label extensions = new Label("EXTENSIONES HEREDADAS");
+			Label bookingNum = new Label("N\u00b0 EXTEN.");
+			Label status = new Label("ESTADO");
+			Label expiration = new Label("F. EXPIRACI\u00f3N");
+			Label users = new Label("USR.");
+			Label portalUsers = new Label("USR. PORTAL");
+			Label type = new Label("TIPO");
+			Label action = new Label("");
 			
-			Integer portalUsersCount = null == domainChild.getUsers() ? 0 : (int) domainChild.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
-			List<User> activeUsers = domainChild.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
-			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
-
-			// If empresasfacturables has no child app skip
-			if(!allEnterprises && childAppsDiff.size() == 0 && 0 == domainChild.getMaxDefinedUsers()) continue;
+			name.addStyleName(AON.CSS.aonHeaderTable());
+			booking.addStyleName(AON.CSS.aonHeaderTable());
+			extensions.addStyleName(AON.CSS.aonHeaderTable());
+			bookingNum.addStyleName(AON.CSS.aonHeaderTable());
+			status.addStyleName(AON.CSS.aonHeaderTable());
+			expiration.addStyleName(AON.CSS.aonHeaderTable());
+			users.addStyleName(AON.CSS.aonHeaderTable());
+			portalUsers.addStyleName(AON.CSS.aonHeaderTable());
+			type.addStyleName(AON.CSS.aonHeaderTable());
+			action.addStyleName(AON.CSS.aonHeaderTable());
+	
+			domainChildsTable.setWidget(row, 0, name);
+			domainChildsTable.setWidget(row, 1, booking);
+			domainChildsTable.setWidget(row, 2, extensions);
+			domainChildsTable.setWidget(row, 3, bookingNum);
+			domainChildsTable.setWidget(row, 4, status);
+			domainChildsTable.setWidget(row, 5, expiration);
+			domainChildsTable.setWidget(row, 6, users);
+			domainChildsTable.setWidget(row, 7, portalUsers);
+			domainChildsTable.setWidget(row, 8, type);
+			domainChildsTable.setWidget(row, 9, action);
 			
-			// Grid widgets columns
-			Label domainNameLabel  = new Label(domainChild.getDescription());
+			domainChildsTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
+			domainChildsTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 			
-			Label bookingLabel = new Label((childAppsDiff.size() == 0 ? "Sin contrataciones" : String.join(", ", childAppsDiff)));
+			domainChildsTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(4).getStyle().setWidth(70, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(5).getStyle().setWidth(100, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
+			domainChildsTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
 			
-			Label extensionsLabel = new Label((parentAppsDiff.size() == 0 ? "Sin extensiones heredadas" : String.join(", ", parentAppsDiff)));
+			List<String> parentApps = domainBooking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
+			List<Domain> childsDomain = domainBooking.getResume().getChilds().stream().filter(child -> AonStringUtils.isNotBlank(child.getDescription())).collect(Collectors.toList());
+			childsDomain.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 			
-			Label bookingNumLabel = new Label(childAppsDiff.size() + " / " + parentAppsDiff.size() + " (" +  childApps.size() + ")");
-			bookingNumLabel.setTitle(childAppsDiff.size() + " extensiones facturables / " + parentAppsDiff.size() + " extensiones heredadas del padre");
-			
-			String statusMessage = domainChild.getExpirationDate() != null && domainChild.getExpirationDate().before(new Date()) ? "Expirado" : (domainChild.isActive() ? "Activo" : "Inactivo");
-			Label statusLabel = new Label(statusMessage);
-			statusLabel.setTitle(domainChild.getExpirationDate() != null && domainChild.getExpirationDate().before(new Date()) ? ("F. expiraci\u00f3n : " + formatDate(domainChild.getExpirationDate())) : "");
-			
-			Label expirationLabel = new Label(formatDate(domainChild.getExpirationDate()));
-			
-			Label usersLabel = new Label(activeUsersDiff + " / " + domainChild.getMaxDefinedUsers());
-			
-			Label portalUsersLabel = new Label(portalUsersCount + "");
-			
-			Label typeLabel = new Label(null == domainChild.getDomainType() ? "" : domainChild.getDomainType().getName());
-			
-			// Check user diffs
-			if(activeUsersDiff < domainChild.getMaxDefinedUsers()) {
-				usersLabel.getElement().getStyle().setColor("orange");
-				usersLabel.setTitle("Existe mas usuarios contratados que activos");
-			} else if(activeUsersDiff > domainChild.getMaxDefinedUsers()) {
-				usersLabel.getElement().getStyle().setColor("red");
-				usersLabel.setTitle("Existe mas usuarios activos que contratados");
-			}
-			
-			Label actionLabel = new Label("");
-			
-			// Add row
-			int newRow = domainChildsTable.insertRow(domainChildsTable.getRowCount());
-			
-			domainChildsTable.setWidget(newRow, 0, domainNameLabel);
-			domainChildsTable.setWidget(newRow, 1, bookingLabel);
-			domainChildsTable.setWidget(newRow, 2, extensionsLabel);
-			domainChildsTable.setWidget(newRow, 3, bookingNumLabel);
-			domainChildsTable.setWidget(newRow, 4, statusLabel);
-			domainChildsTable.setWidget(newRow, 5, expirationLabel);
-			domainChildsTable.setWidget(newRow, 6, usersLabel);
-			domainChildsTable.setWidget(newRow, 7, portalUsersLabel);
-			domainChildsTable.setWidget(newRow, 8, typeLabel);
-			domainChildsTable.setWidget(newRow, 9, actionLabel);
-			
-			List<Label> rowLabels = new ArrayList<>();
-			rowLabels.add(domainNameLabel);
-			rowLabels.add(bookingLabel);
-			rowLabels.add(extensionsLabel);
-			rowLabels.add(bookingNumLabel);
-			rowLabels.add(statusLabel);
-			rowLabels.add(expirationLabel);
-			rowLabels.add(usersLabel);
-			rowLabels.add(portalUsersLabel);
-			rowLabels.add(typeLabel);
-			rowLabels.add(actionLabel);
-			
-			for(Label label : rowLabels) {
-				label.addMouseOverHandler(e -> addHighlightRow(domainChildsTable, newRow));
-				label.addMouseOutHandler(e -> removeHighlightRow(domainChildsTable, newRow));
-			}
-			
-			if (newRow % 2 == 0) {
-				domainNameLabel.addStyleName(AON.CSS.aonOddTableRow());
-				bookingLabel.addStyleName(AON.CSS.aonOddTableRow());
-				extensionsLabel.addStyleName(AON.CSS.aonOddTableRow());
-				bookingNumLabel.addStyleName(AON.CSS.aonOddTableRow());
-				statusLabel.addStyleName(AON.CSS.aonOddTableRow());
-				expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
-				usersLabel.addStyleName(AON.CSS.aonOddTableRow());
-				portalUsersLabel.addStyleName(AON.CSS.aonOddTableRow());
-				typeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				actionLabel.addStyleName(AON.CSS.aonOddTableRow());
+			for(Domain domainChild : childsDomain) {
 				
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 3, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
-				domainChildsTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
+				try {
+				
+					// Get child and parent diff apps
+					List<String> childApps = domainChild.getApps().stream().filter(domainApp -> null != domainApp.getApp() && AonStringUtils.isNotBlank(domainApp.getApp().getDescription())).map(domainApp -> domainApp.getApp().getDescription()).collect(Collectors.toList());
+					List<String> parentAppsDiff = childApps.stream().filter(app -> parentApps.contains(app)).collect(Collectors.toList());
+					parentAppsDiff.sort((o1, o2) -> o1.compareTo(o2));
+					
+					List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
+					childAppsDiff.sort((o1, o2) -> o1.compareTo(o2));
+					
+					Integer portalUsersCount = null == domainChild.getUsers() ? 0 : (int) domainChild.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
+					List<User> activeUsers = domainChild.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+					Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
+		
+					// If empresasfacturables has no child app skip
+					if(!allEnterprises && childAppsDiff.size() == 0 && 0 == domainChild.getMaxDefinedUsers()) continue;
+					
+					// Grid widgets columns
+					Label domainNameLabel  = new Label(domainChild.getDescription());
+					
+					Label bookingLabel = new Label((childAppsDiff.size() == 0 ? "Sin contrataciones" : String.join(", ", childAppsDiff)));
+					
+					Label extensionsLabel = new Label((parentAppsDiff.size() == 0 ? "Sin extensiones heredadas" : String.join(", ", parentAppsDiff)));
+					
+					Label bookingNumLabel = new Label(childAppsDiff.size() + " / " + parentAppsDiff.size() + " (" +  childApps.size() + ")");
+					bookingNumLabel.setTitle(childAppsDiff.size() + " extensiones facturables / " + parentAppsDiff.size() + " extensiones heredadas del padre");
+					
+					String statusMessage = domainChild.getExpirationDate() != null && domainChild.getExpirationDate().before(new Date()) ? "Expirado" : (domainChild.isActive() ? "Activo" : "Inactivo");
+					Label statusLabel = new Label(statusMessage);
+					statusLabel.setTitle(domainChild.getExpirationDate() != null && domainChild.getExpirationDate().before(new Date()) ? ("F. expiraci\u00f3n : " + formatDate(domainChild.getExpirationDate())) : "");
+					
+					Label expirationLabel = new Label(formatDate(domainChild.getExpirationDate()));
+					
+					Label usersLabel = new Label(activeUsersDiff + " / " + domainChild.getMaxDefinedUsers());
+					
+					Label portalUsersLabel = new Label(portalUsersCount + "");
+					
+					Label typeLabel = new Label(null == domainChild.getDomainType() ? "" : domainChild.getDomainType().getName());
+					
+					// Check user diffs
+					if(activeUsersDiff < domainChild.getMaxDefinedUsers()) {
+						usersLabel.getElement().getStyle().setColor("orange");
+						usersLabel.setTitle("Existe mas usuarios contratados que activos");
+					} else if(activeUsersDiff > domainChild.getMaxDefinedUsers()) {
+						usersLabel.getElement().getStyle().setColor("red");
+						usersLabel.setTitle("Existe mas usuarios activos que contratados");
+					}
+					
+					Label actionLabel = new Label("");
+					
+					// Add row
+					int newRow = domainChildsTable.insertRow(domainChildsTable.getRowCount());
+					
+					domainChildsTable.setWidget(newRow, 0, domainNameLabel);
+					domainChildsTable.setWidget(newRow, 1, bookingLabel);
+					domainChildsTable.setWidget(newRow, 2, extensionsLabel);
+					domainChildsTable.setWidget(newRow, 3, bookingNumLabel);
+					domainChildsTable.setWidget(newRow, 4, statusLabel);
+					domainChildsTable.setWidget(newRow, 5, expirationLabel);
+					domainChildsTable.setWidget(newRow, 6, usersLabel);
+					domainChildsTable.setWidget(newRow, 7, portalUsersLabel);
+					domainChildsTable.setWidget(newRow, 8, typeLabel);
+					domainChildsTable.setWidget(newRow, 9, actionLabel);
+					
+					List<Label> rowLabels = new ArrayList<>();
+					rowLabels.add(domainNameLabel);
+					rowLabels.add(bookingLabel);
+					rowLabels.add(extensionsLabel);
+					rowLabels.add(bookingNumLabel);
+					rowLabels.add(statusLabel);
+					rowLabels.add(expirationLabel);
+					rowLabels.add(usersLabel);
+					rowLabels.add(portalUsersLabel);
+					rowLabels.add(typeLabel);
+					rowLabels.add(actionLabel);
+					
+					for(Label label : rowLabels) {
+						label.addMouseOverHandler(e -> addHighlightRow(domainChildsTable, newRow));
+						label.addMouseOutHandler(e -> removeHighlightRow(domainChildsTable, newRow));
+					}
+					
+					if (newRow % 2 == 0) {
+						domainNameLabel.addStyleName(AON.CSS.aonOddTableRow());
+						bookingLabel.addStyleName(AON.CSS.aonOddTableRow());
+						extensionsLabel.addStyleName(AON.CSS.aonOddTableRow());
+						bookingNumLabel.addStyleName(AON.CSS.aonOddTableRow());
+						statusLabel.addStyleName(AON.CSS.aonOddTableRow());
+						expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
+						usersLabel.addStyleName(AON.CSS.aonOddTableRow());
+						portalUsersLabel.addStyleName(AON.CSS.aonOddTableRow());
+						typeLabel.addStyleName(AON.CSS.aonOddTableRow());
+						actionLabel.addStyleName(AON.CSS.aonOddTableRow());
+						
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 3, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
+						domainChildsTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
+					}
+					
+					domainChildsTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
+					domainChildsTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
+					domainChildsTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+					domainChildsTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
+					domainChildsTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
+					
+					domainChildsTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+				
+				} catch (Exception e) {
+					Window.alert("Error cargando en pantalla el dominio: " + domainChild.getDescription() + " (" + domainChild.getName() + ")");
+				}
 			}
 			
-			domainChildsTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
-			domainChildsTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			domainChildsTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			domainChildsTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			domainChildsTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			
-			domainChildsTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+			domainChildsPanel.add(domainChildsTable);
+		} catch (Exception e) {
+			Window.alert("Error createDomainChildsBookingResume antes del bucle");
 		}
-		
-		domainChildsPanel.add(domainChildsTable);
 	}
 	
 	private void addHighlightRow(Grid grid, int row) {
