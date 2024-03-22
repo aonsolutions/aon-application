@@ -244,6 +244,7 @@ export class AonNewMenu extends AonElement {
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = "aonMenuSidenav";
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
+		aonMenuSidenav.style.zIndex = '0';
 		this.appendChild(aonMenuSidenav);
 
 		// aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {

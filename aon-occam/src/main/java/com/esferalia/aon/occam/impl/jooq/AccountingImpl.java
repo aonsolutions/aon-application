@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountBalanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
@@ -114,6 +115,11 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public String getAccountNextCode(AONContext ctx, String prefix) {
 		return AccountDAO.getNextAccountCode(ctx, prefix);
+	}
+
+	@Override
+	public List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type) {
+		return AccountingInvoiceDAO.getSuggestedAccounts(ctx, registry, type);
 	}
 
 	// **************************************************
