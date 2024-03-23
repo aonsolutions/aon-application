@@ -45,7 +45,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	
 	// Api
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
-	private boolean isLocalDev = true;
+	private boolean isLocalDev = false;
 	
 	@Override
 	public void onModuleLoad() {
