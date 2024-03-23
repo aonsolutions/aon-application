@@ -1,0 +1,122 @@
+package net.aonsolutions.aon.api.servlet;
+
+import java.sql.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiException;
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "CustomerSupportAgentServlet", urlPatterns = {"/ms/api/customer-support-agent/*"})
+public class CustomerSupportAgentServlet extends AonApiHttpServlet {
+		
+	private static final Logger LOGGER  = Logger.getLogger(CustomerSupportAgentServlet.class.getName());
+	
+	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/";
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		put(req, resp);
+	}
+	
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(SYNC_CUSTOMER_SUPPORT_AGENTS, CustomerSupportAgentServlet::syncCustomerSupportAgent)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private static JSONObject syncCustomerSupportAgent(AonApiData api) {
+		JSONObject logJson = new JSONObject();
+		
+		JSONArray successLog = new JSONArray();
+		logJson.put("success", successLog);	
+		
+		JSONArray errorLog = new JSONArray();
+		logJson.put("error", errorLog);		
+		
+		try {
+			
+			List<RegistrySeller> rsellerList = AON.getRegistrySellerStream(
+					api.getDomain(), 
+					api.getUser().getLogin(), 
+					f -> f.getTypeProperty().eq((byte)1)
+						.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
+						.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
+						.and(f.getStatusProperty().eq((byte)0))
+			).toList();
+			
+			for(RegistrySeller rseller : rsellerList) {
+				
+				// Domain  Customer
+				Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(rseller.getRegistry()));
+				Optional<DomainCompany> domain = domainCustomer.findFirst();
+				
+				Registry customerRegistry = AON.getRegistry( api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(rseller.getRegistry()));
+				
+				// Customer - Domain not linked
+				if(null == domainCustomer || domain.isEmpty()) {
+					JSONObject errorJson = new JSONObject();
+					errorJson.put("error", "El cliente <b>" + customerRegistry.getName() + "</b> (" + customerRegistry.getAlias() + ") no tiene dominio asociado. (Agente de soporte: <b>" + rseller.getSeller().getName() + "</b>)");
+					errorLog.put(errorJson);
+					
+					continue;
+				}
+				
+				// Seller email
+				Stream<RegistryMedia> rmediaStream = AON.getRegistryMediaStream(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(rseller.getSeller().getId()));
+				Optional<RegistryMedia> emailMedia = rmediaStream.filter(rmedia -> rmedia.getMedia().equals(MediaType.EMAIL)).findFirst();
+				
+				if(emailMedia.isEmpty()) {
+					JSONObject errorJson = new JSONObject();
+					errorJson.put("error", "El agente de soporte <b>" + rseller.getSeller().getName() + "</b> no tiene email registrado. (Cliente: <b>" + customerRegistry.getName() + "</b>)");
+					errorLog.put(errorJson);
+					
+					continue;
+				}
+				
+				// Add seller email to domain owner column
+				
+				AON.updateDomainOwner(domain.get().getSchema(), domain.get().getDomain().getName(), domain.get().getDomain().getId(), emailMedia.get().getValue());
+				
+				JSONObject successJson = new JSONObject();
+				successJson.put("success", "Se ha asignado el agente de soporte <b>" + rseller.getSeller().getName() + "</b> al cliente <b>" + domain.get().getDomain().getDescription() + "</b> (" + domain.get().getDomain().getName() + ")");
+				successLog.put(successJson);
+					
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new  AonApiException(e.getMessage());
+		}
+		
+		return logJson;
+
+	}
+	
+}
