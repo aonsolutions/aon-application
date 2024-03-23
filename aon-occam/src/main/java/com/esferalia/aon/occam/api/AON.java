@@ -724,6 +724,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
+		}
+	}
+	
 	public static Domain getCompanyDomain(String domainName, Integer domainId,
 			String user, String document) {
 		CloseableAONContext ctx = null;

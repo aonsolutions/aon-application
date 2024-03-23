@@ -63,7 +63,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.NoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
@@ -442,6 +441,12 @@ public class CommonImpl implements ICommon {
 	public void updateDomainScope(AONContext ctx, Domain domain){
 		 ctx.getDslContext().transaction(configuration -> 
 		 	DomainDAO.updateDomainScope(ctx, domain));
+	}
+	
+	@Override
+	public void updateDomainOwner(AONContext ctx, String domainName, Integer domainId, String owner){
+		 ctx.getDslContext().transaction(configuration -> 
+		 	DomainDAO.updateDomainOwner(ctx, domainName, domainId, owner));
 	}
 
 	@Override
