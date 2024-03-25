@@ -295,6 +295,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Customer Support Agent ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_customer_support_agent</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/customer/customerSupportAgent.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 </faces-config>
 		

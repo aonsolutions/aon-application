@@ -107,7 +107,7 @@ export class AonOfficePanel extends AonElement {
         options.push(taskHolder);
 
 
-        if(this.isSig() && !LS.isNewTheme()){
+        if(this.isSig()){
             let consoleOptions = [];
             let linkDomain = LINK_DOMAINS;
             linkDomain.fn = () => this.showView(LINK_DOMAINS.id);

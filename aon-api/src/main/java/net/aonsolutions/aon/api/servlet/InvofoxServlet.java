@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -348,7 +349,18 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRInvoiceBuilder.fillTaxableBase(ocrInvoice, invoice);
 	    OCRInvoiceBuilder.fillVatQuota(ocrInvoice, invoice);
 	    OCRInvoiceBuilder.fillRetentionQuota(ocrInvoice, invoice);
-	    
+
+	    if(invoice.mustApplyISP()) {
+	    	invoice.setBreakdown(
+	    		invoice.getBreakdown().stream().map(r -> {
+	    			if(r.getPercentage() == 0.0) {
+	    				r.setPercentage(21.0);
+	    				r.setQuota(AonMathUtils.round(r.getBase() * 0.21));
+	    			}
+	    			return r;
+	    		}).toList()
+	    	);
+	    }
 	    return invoice;
 	    
 	}
@@ -367,7 +379,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
                 							jsonObject.put("path",url.toExternalForm());
                 							String contentType = S3.getContentType(bucketName, key);
                 							jsonObject.put("content_type", contentType);
-                							jsonObject.put("key", key);
+                							jsonObject.put("s3Bucket", key);
+                							jsonObject.put("s3Key", key);
                 					    })   
                 					)
                 			    )
