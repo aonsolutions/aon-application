@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -260,6 +262,22 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.deleteBookingList(domainName, domain, user, selectedBookings, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	// **************************************************
+	// ********************************** [SUPPORT AGENT]
+	// **************************************************
+
+	@Override
+	public void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> callback) {
+		AON.start();
+		serviceAsync.getActiveSupportAgents(domainName, domain, user, new AsyncCallbackWrapper<HashMap<Seller, RegistryMedia>>(callback));
+	}
+
+	@Override
+	public void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerWithoutAgent(domainName, domain, user, new AsyncCallbackWrapper<List<Customer>>(callback));
 	}
 
 }
