@@ -142,7 +142,7 @@ public class FeeDAO {
 				.limit(customerFeeParams.getLimit())
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+//		System.out.println("Customer Fee size : " + feeRecords.size());
 		
 		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
@@ -399,7 +399,7 @@ public class FeeDAO {
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+//		System.out.println("Customer Fee size : " + feeRecords.size());
 		
 		return feeRecords.stream().map(new FeeFiller());
 	}
