@@ -158,7 +158,7 @@ public abstract class AbsExcelReport {
 	    	
 			row = sheet.createRow(rowCount);
 			CellUtil.createCell(row, 0, getTitle(), headerStyle);
-			sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 6));
+			sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 5));
 			row.setHeight((short) 500);
 			++rowCount;
 
