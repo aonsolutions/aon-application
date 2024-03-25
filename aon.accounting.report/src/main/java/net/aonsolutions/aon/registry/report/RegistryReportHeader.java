@@ -5,12 +5,12 @@ import java.util.stream.Stream;
 
 enum RegistryReportHeader implements IHeader {
 	
-	 ID("C\u00F3digo",40,20)
-	,DOC("N.I.F.",80,40)
-	,NAME("Nombre",180,90)
-	,ALIAS("Alias",85,42)
-	,PHONE("Tel\u00E9fono",70,35)
-	,STATUS("Estado",50,25)
+	 ID("C\u00F3digo",40,15)
+	,DOC("N.I.F.",80,35)
+	,NAME("Nombre",180,85)
+	,ALIAS("Alias",85,38)
+	,PHONE("Tel\u00E9fono",70,30)
+	,STATUS("Estado",50,20)
 	;
 	
 	private String label;
