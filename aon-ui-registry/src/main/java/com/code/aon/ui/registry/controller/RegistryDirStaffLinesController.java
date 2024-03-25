@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -84,9 +85,9 @@ public class RegistryDirStaffLinesController extends LinesController {
 							.fetch()
 							.stream()
 							.forEach( r -> {
-								setTotalPercentShare( r.getValue( percentShare ).doubleValue() );
-								setTotalShareNumber( r.getValue( shareNumber ).doubleValue() );
-								setTotalNominalValue( r.getValue( nominalValue ).doubleValue() );
+								setTotalPercentShare( Optional.ofNullable(r.getValue( percentShare )).map( bd -> bd.doubleValue()).orElse( Double.valueOf(0.0)));
+								setTotalShareNumber( Optional.ofNullable(r.getValue( shareNumber )).map( bd -> bd.doubleValue()).orElse( Double.valueOf(0.0)));
+								setTotalNominalValue( Optional.ofNullable(r.getValue( nominalValue )).map( bd -> bd.doubleValue()).orElse( Double.valueOf(0.0)));
 							});
 					}
 				}
