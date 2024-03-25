@@ -1,46 +1,19 @@
-package net.aonsolutions.aon.supplier.report;
+package net.aonsolutions.aon.registry.report;
 
 import java.io.OutputStream;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-import net.aonsolutions.aon.registry.report.IHeader;
 import net.aonsolutions.aon.report.pdf.AbsReportTablePDF;
 import net.aonsolutions.aon.report.pdf.AbsSimpleReportPDF;
 import net.aonsolutions.aon.report.pdf.AonReportException;
 
 public class SupplierReportPDF extends AbsSimpleReportPDF<SupplierFull> {
 
-	enum Header implements IHeader {
-		 ID("C\u00F3digo",40)
-		,DOC("N.I.F.",80)
-		,NAME("Nombre",180)
-		,ALIAS("Alias",85)
-		,PHONE("Tel\u00E9fono",70)
-		,STATUS("Estado",50)
-		;
-		
-		private String label;
-		private float width;
-		
-		private Header (String label, float width) {
-			this.label = label;
-			this.width = width;
-		}
-		@Override
-		public String getLabel() {
-			return label;
-		}
-		@Override
-		public float getWidth() {
-			return width;
-		}
-	}
 
 	public SupplierReportPDF(Occam occam) {
 		super(occam);
@@ -55,8 +28,7 @@ public class SupplierReportPDF extends AbsSimpleReportPDF<SupplierFull> {
 		
 		@Override
 		public void accept(SupplierFull supplier) {
-
-			addStringCell(supplier.getId().toString());
+			addIntegerCell(supplier.getId());
 			addStringCell(supplier.getRegistry().getDocument());
 			addStringCell(supplier.getRegistry().getName());
 			addStringCell(supplier.getRegistry().getAlias());
@@ -76,13 +48,13 @@ public class SupplierReportPDF extends AbsSimpleReportPDF<SupplierFull> {
 
 	@Override
 	public void print(OutputStream outputStream, Stream<SupplierFull> stream) throws AonReportException {
-		super.printReportPDF(outputStream, new PDFReport(Header.values()), stream);
+		super.printReportPDF(outputStream, new PDFReport(RegistryReportHeader.values()), stream);
 	}
 
 
 	@Override
 	protected String getTitle() {
-		return "Listado de proveedores";
+		return "Listado de clientes";
 	}
 
 }

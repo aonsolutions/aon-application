@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.CREDITOR_REPORT;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -25,12 +26,14 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.creditor.report.CreditorReportPDF;
-import net.aonsolutions.aon.report.AonReportException;
+import net.aonsolutions.aon.registry.report.CreditorReportPDF;
+import net.aonsolutions.aon.registry.report.CreditorReportXLS;
+import net.aonsolutions.aon.report.pdf.AonReportException;
 
 public class CreditorController extends RegistryController implements IAuditableController {
 	
@@ -117,6 +120,35 @@ public class CreditorController extends RegistryController implements IAuditable
 		} catch (IOException | AonReportException e) {
 			throw new ManagerBeanException( e ); 
 		}
+	}
+	
+	public String onNewReportXLS() throws ManagerBeanException {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			
+			CreditorReportXLS report = new CreditorReportXLS();
+			report.printReport("Diario");
+
+			Stream<CreditorFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+				.map(to -> (Creditor) to)
+				.map(this::toCreditorFull);
+			stream.forEach(report);
+			response.setContentType(MimeType.MS_EXCEL.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			report.finalize(response.getOutputStream());
+			response.flushBuffer();
+
+			stream.close();
+			context.responseComplete();
+			return null;
+
+		} catch (IOException e) {
+			throw new ManagerBeanException( e ); 
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanException( e ); 
+		}
+
 	}
 
 	private CreditorFull toCreditorFull(Creditor creditor) {

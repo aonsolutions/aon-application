@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -54,13 +55,14 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.customer.report.CustomerReportPDF;
-import net.aonsolutions.aon.customer.report.CustomerReportXLS;
-import net.aonsolutions.aon.report.AonReportException;
+import net.aonsolutions.aon.registry.report.CustomerReportPDF;
+import net.aonsolutions.aon.registry.report.CustomerReportXLS;
+import net.aonsolutions.aon.report.pdf.AonReportException;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
@@ -360,25 +362,33 @@ public class CustomerController extends CustomerListController implements ICusto
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			OutputStream out = response.getOutputStream();
-			Occam occam = new Occam()
-					.setDomainName(  AonUtil.getDomainName() )
-					.setDomain(  DomainManager.getCurrentDomain() )
-					.setUser(  AonUtil.getRemoteUser() )
-					;
-			new CustomerReportXLS( occam )
-				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
-					.map(to -> (Customer) to)
-					.map(this::toCustomerFull ));
+			
+			CustomerReportXLS report = new CustomerReportXLS();
+			report.printReport("Diario");
+
+			Stream<CustomerFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+				.map(to -> (Customer) to)
+				.map(this::toCustomerFull);
+			stream.forEach(report);
+			response.setContentType(MimeType.MS_EXCEL.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			report.finalize(response.getOutputStream());
 			response.flushBuffer();
+
+			stream.close();
 			context.responseComplete();
 			return null;
-		} catch (IOException | AonReportException e) {
+
+		} catch (IOException e) {
 			throw new ManagerBeanException( e ); 
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException( e ); 
 		}
+
 	}
+
+
+
 
 	private CustomerFull toCustomerFull(Customer customer) {
 		CustomerFull customerFull = new CustomerFull();
