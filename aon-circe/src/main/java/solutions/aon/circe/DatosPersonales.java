@@ -15,9 +15,9 @@ public class DatosPersonales {
 	private String domino;
 	private String estadoCivil;
 	private Date fechaEstadoCivil;
-	private String domicilioResidencia;
-	private String domicilioFiscal;
-	private String domicilioNotificacion;
+	private Domicilio domicilioResidencia;
+	private Domicilio domicilioFiscal;
+	private Domicilio domicilioNotificacion;
 	private int telefono;
 	private String email;
 	private String prefijoPais;
@@ -90,15 +90,15 @@ public class DatosPersonales {
 		return fechaEstadoCivil;
 	}
 
-	public String getDomicilioResidencia() {
+	public Domicilio getDomicilioResidencia() {
 		return domicilioResidencia;
 	}
 
-	public String getDomicilioFiscal() {
+	public Domicilio getDomicilioFiscal() {
 		return domicilioFiscal;
 	}
 
-	public String getDomicilioNotificacion() {
+	public Domicilio getDomicilioNotificacion() {
 		return domicilioNotificacion;
 	}
 
@@ -127,9 +127,9 @@ public class DatosPersonales {
 		private String domino;
 		private String estadoCivil;
 		private Date fechaEstadoCivil;
-		private String domicilioResidencia;
-		private String domicilioFiscal;
-		private String domicilioNotificacion;
+		private Domicilio domicilioResidencia;
+		private Domicilio domicilioFiscal;
+		private Domicilio domicilioNotificacion;
 		private int telefono;
 		private String email;
 		private String prefijoPais;
@@ -189,17 +189,17 @@ public class DatosPersonales {
 			return this;
 		}
 		
-		public DatosPersonalesBuilder domicilioResidencia(String domicilioResidencia) {
+		public DatosPersonalesBuilder domicilioResidencia(Domicilio domicilioResidencia) {
 			this.domicilioResidencia = domicilioResidencia;
 			return this;
 		}
 		
-		public DatosPersonalesBuilder domicilioFiscal(String domicilioFiscal) {
+		public DatosPersonalesBuilder domicilioFiscal(Domicilio domicilioFiscal) {
 			this.domicilioFiscal = domicilioFiscal;
 			return this;
 		}
 		
-		public DatosPersonalesBuilder domicilioNotificacion(String domicilioNotificacion) {
+		public DatosPersonalesBuilder domicilioNotificacion(Domicilio domicilioNotificacion) {
 			this.domicilioNotificacion = domicilioNotificacion;
 			return this;
 		}

@@ -9,14 +9,20 @@ public class DatosEmpresa {
 	private Date cierreEjercicio;
 	private String pagWebCorporativa;
 	private String duracionPersonaJuridica;
+	private int cantidad;
 	private String denominacionSocial;
 	private int capitalSocial;
 	private String actividades;
 	private String actividadSingular;
+	private int numPaticipaciones;
+	private int importeParticipacion;
+	private String pagWeb;
+	private String tipoRetribucion;
 	private int numPersonasTrabajadoras;
-	private String domicilioSocial;
-	private String domicilioFiscal;
-	private String domicilioNotificacion;
+	private String numExpediente;
+	private Domicilio domicilioSocial;
+	private Domicilio domicilioFiscal;
+	private Domicilio domicilioNotificacion;
 	private int telefono;
 	private String email;
 	private String medioNotificacion;
@@ -32,11 +38,17 @@ public class DatosEmpresa {
 		this.cierreEjercicio = datosEmpresaBuilder.cierreEjercicio;
 		this.pagWebCorporativa = datosEmpresaBuilder.pagWebCorporativa;
 		this.duracionPersonaJuridica = datosEmpresaBuilder.duracionPersonaJuridica;
+		this.cantidad = datosEmpresaBuilder.cantidad;
 		this.denominacionSocial = datosEmpresaBuilder.denominacionSocial;
 		this.capitalSocial = datosEmpresaBuilder.capitalSocial;
 		this.actividades = datosEmpresaBuilder.actividades;
 		this.actividadSingular = datosEmpresaBuilder.actividadSingular;
+		this.numPaticipaciones = datosEmpresaBuilder.numPaticipaciones;
+		this.importeParticipacion = datosEmpresaBuilder.importeParticipacion;
+		this.pagWeb = datosEmpresaBuilder.pagWeb;
+		this.tipoRetribucion = datosEmpresaBuilder.tipoRetribucion;
 		this.numPersonasTrabajadoras = datosEmpresaBuilder.numPersonasTrabajadoras;
+		this.numExpediente = datosEmpresaBuilder.numExpediente;
 		this.domicilioSocial = datosEmpresaBuilder.domicilioSocial;
 		this.domicilioFiscal = datosEmpresaBuilder.domicilioFiscal;
 		this.domicilioNotificacion = datosEmpresaBuilder.domicilioNotificacion;
@@ -66,6 +78,10 @@ public class DatosEmpresa {
 	public String getDuracionPersonaJuridica() {
 		return duracionPersonaJuridica;
 	}
+	
+	public int getCantidad() {
+		return cantidad;
+	}
 
 	public String getDenominacionSocial() {
 		return denominacionSocial;
@@ -83,19 +99,39 @@ public class DatosEmpresa {
 		return actividadSingular;
 	}
 
+	public int getNumPaticipaciones() {
+		return numPaticipaciones;
+	}
+
+	public int getImporteParticipacion() {
+		return importeParticipacion;
+	}
+
+	public String getPagWeb() {
+		return pagWeb;
+	}
+
+	public String getTipoRetribucion() {
+		return tipoRetribucion;
+	}
+	
 	public int getNumPersonasTrabajadoras() {
 		return numPersonasTrabajadoras;
 	}
+	
+	public String getNumExpediente() {
+		return numExpediente;
+	}
 
-	public String getDomicilioSocial() {
+	public Domicilio getDomicilioSocial() {
 		return domicilioSocial;
 	}
 
-	public String getDomicilioFiscal() {
+	public Domicilio getDomicilioFiscal() {
 		return domicilioFiscal;
 	}
 
-	public String getDomicilioNotificacion() {
+	public Domicilio getDomicilioNotificacion() {
 		return domicilioNotificacion;
 	}
 
@@ -122,14 +158,20 @@ public class DatosEmpresa {
 		private Date cierreEjercicio;
 		private String pagWebCorporativa;
 		private String duracionPersonaJuridica;
+		private int cantidad;
 		private String denominacionSocial;
 		private int capitalSocial;
 		private String actividades;
 		private String actividadSingular;
+		private int numPaticipaciones;
+		private int importeParticipacion;
+		private String pagWeb;
+		private String tipoRetribucion;
 		private int numPersonasTrabajadoras;
-		private String domicilioSocial;
-		private String domicilioFiscal;
-		private String domicilioNotificacion;
+		private String numExpediente;
+		private Domicilio domicilioSocial;
+		private Domicilio domicilioFiscal;
+		private Domicilio domicilioNotificacion;
 		private int telefono;
 		private String email;
 		private String medioNotificacion;
@@ -159,6 +201,11 @@ public class DatosEmpresa {
 			this.duracionPersonaJuridica = duracionPersonaJuridica;
 			return this;
 		}
+		
+		public DatosEmpresaBuilder cantidad(int cantidad) {
+			this.cantidad = cantidad;
+			return this;
+		}
 
 		public DatosEmpresaBuilder denominacionSocial(String denominacionSocial) {
 			this.denominacionSocial = denominacionSocial;
@@ -179,23 +226,48 @@ public class DatosEmpresa {
 			this.actividadSingular = actividadSingular;
 			return this;
 		}
+		
+		public DatosEmpresaBuilder numPaticipaciones(int numPaticipaciones) {
+			this.numPaticipaciones = numPaticipaciones;
+			return this;
+		}
+		
+		public DatosEmpresaBuilder importeParticipacion(int importeParticipacion) {
+			this.importeParticipacion = importeParticipacion;
+			return this;
+		}
+		
+		public DatosEmpresaBuilder pagWeb(String pagWeb) {
+			this.pagWeb = pagWeb;
+			return this;
+		}
+		
+		public DatosEmpresaBuilder tipoRetribucion(String tipoRetribucion) {
+			this.tipoRetribucion = tipoRetribucion;
+			return this;
+		}
 
 		public DatosEmpresaBuilder numPersonasTrabajadoras(int numPersonasTrabajadoras) {
 			this.numPersonasTrabajadoras = numPersonasTrabajadoras;
 			return this;
 		}
+		
+		public DatosEmpresaBuilder numExpediente(String numExpediente) {
+			this.numExpediente = numExpediente;
+			return this;
+		}
 
-		public DatosEmpresaBuilder domicilioSocial(String domicilioSocial) {
+		public DatosEmpresaBuilder domicilioSocial(Domicilio domicilioSocial) {
 			this.domicilioSocial = domicilioSocial;
 			return this;
 		}
 
-		public DatosEmpresaBuilder domicilioFiscal(String domicilioFiscal) {
+		public DatosEmpresaBuilder domicilioFiscal(Domicilio domicilioFiscal) {
 			this.domicilioFiscal = domicilioFiscal;
 			return this;
 		}
 
-		public DatosEmpresaBuilder domicilioNotificacion(String domicilioNotificacion) {
+		public DatosEmpresaBuilder domicilioNotificacion(Domicilio domicilioNotificacion) {
 			this.domicilioNotificacion = domicilioNotificacion;
 			return this;
 		}
