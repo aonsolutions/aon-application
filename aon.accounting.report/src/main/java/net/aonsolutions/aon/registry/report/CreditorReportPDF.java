@@ -54,7 +54,7 @@ public class CreditorReportPDF extends AbsSimpleReportPDF<CreditorFull> {
 
 	@Override
 	protected String getTitle() {
-		return "Listado de clientes";
+		return "Listado de Acreedores";
 	}
 
 }

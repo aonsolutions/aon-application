@@ -53,7 +53,7 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 
 	@Override
 	protected String getTitle() {
-		return "Listado de clientes";
+		return "Listado de Clientes";
 	}
 
 }
