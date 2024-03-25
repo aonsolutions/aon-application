@@ -351,6 +351,7 @@ public class CustomerController extends CustomerListController implements ICusto
 					.map(to -> (Customer) to)
 					.map(this::toCustomerFull ));
 			response.flushBuffer();
+			response.setHeader("Content-disposition","attachment; filename=\"ClIENTES."+MimeType.PDF.getExtension()+"\";");
 			context.responseComplete();
 			return null;
 		} catch (IOException | AonReportException e) {

@@ -115,6 +115,7 @@ public class CreditorController extends RegistryController implements IAuditable
 					.map(to -> (Creditor) to)
 					.map(this::toCreditorFull ));
 			response.flushBuffer();
+			response.setHeader("Content-disposition","attachment; filename=\"ACREEDORES."+MimeType.PDF.getExtension()+"\";");
 			context.responseComplete();
 			return null;
 		} catch (IOException | AonReportException e) {
