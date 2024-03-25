@@ -136,7 +136,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 						IT itp = getIt();
 						if(!itp.getCancel())
 							ids.add(addIT(ctx, itp));
-					} catch ( EmployeeNotFoundexception e) {
+					} catch ( EmployeeNotFoundexception | TooManyEmployeesException e) {
 						
 					}
 				}
@@ -640,7 +640,13 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			throw new EmployeeNotFoundexception(e);
 		}
 		catch ( Exception e) {
-			e.printStackTrace();
+			EmployeeFieNotFound employeeFieNotFound = new EmployeeFieNotFound()
+					.setCcc(it.getCcc())
+					.setIpf(it.getIpf())
+					.setNaf(it.getNaf())
+					.setFullName(it.getFullName() + " (CONTRATOS > 1. CONTACTAR SOPORTE)");
+			
+			noImportEmployees.add(employeeFieNotFound);
 			throw new TooManyEmployeesException(e);
 		}
 		
