@@ -1185,6 +1185,74 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	public void testFractionFunctionFebruary() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		
+		ContractRecord contract = newContract(
+				aonContext, 
+				firstDayOfYear, 
+				Collections.emptyMap());
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+		
+		Date februaryStart = new Date(calendar.getTimeInMillis());
+		calendar.set(Calendar.DAY_OF_MONTH, 11);
+		Date february11 =  new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 12);
+		Date february12 =  new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date februaryEnd = new Date(calendar.getTimeInMillis());
+		
+		addData(aonContext, contract, firstDayOfYear, null, Collections.singletonMap(ContextVariable.MONTH_DAYS.getName(), "30.0"));
+		addData(aonContext, contract, firstDayOfYear, february11, Collections.singletonMap(ContextVariable.PARTIAL_FACTOR.getName(), "0.80"));
+		addData(aonContext, contract, february12, null, Collections.singletonMap(ContextVariable.PARTIAL_FACTOR.getName(), "0.70"));
+		
+		
+
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				februaryStart, 
+				februaryEnd, 
+				februaryEnd, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("FRACCIONAR(1000.00)", 
+				februaryStart
+				,februaryEnd, 
+				Double.class);
+	
+		Assert.assertEquals(2, results.size());
+		
+		Assert.assertEquals(februaryStart, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(february11, results.get(0).getPeriod().getEnd());
+
+		Assert.assertEquals(february12, results.get(1).getPeriod().getStart());
+		Assert.assertEquals(februaryEnd, results.get(1).getPeriod().getEnd());
+		
+		System.out.println("1-. " + results.get(0).getValue() );
+		System.out.println("2-. " + results.get(1).getValue() );
+		
+		Assert.assertEquals(1000.00 , results.get(0).getValue() + results.get(1).getValue() );
+		
+		Assert.assertEquals(1000.00/29 * 11, results.get(0).getValue());
+		Assert.assertEquals(1000.00/29 * 18, results.get(1).getValue());
+	}
+
+	@Test
 	public void testSumFunction() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();

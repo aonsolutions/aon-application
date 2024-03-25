@@ -11,7 +11,7 @@
 	<ui:define name="content">
 		
 		<aon:if test="#{dur.invofox}" >
-			<ui:include src="/facelet/new/portlet/s3UploadForm.xhtml" >
+			<ui:include src="/facelet/homepage/portlet/s3UploadForm.xhtml" >
 				<ui:param name="s3Prefix" value="invoices" />
 				<ui:param name="s3Bucket" value="aon-upload-post" />
 				<ui:param name="uploadId" value="#{desktop.getTime('yyyyMMddhhmmss')}" />
