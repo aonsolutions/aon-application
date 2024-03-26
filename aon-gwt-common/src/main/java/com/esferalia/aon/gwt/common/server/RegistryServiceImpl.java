@@ -242,6 +242,24 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		AON.deleteBookingList(domainName, domain, user, selectedBookings);
 	}
 	
+	@Override
+	public Seller getCustomerSeller(String domainName, int domain, String user, Integer customerId) {
+		Stream<RegistrySeller> rsellerStream = AON.getRegistrySellerStream(
+				new Domain().setName(domainName).setId(domain), 
+				user, 
+				f -> f.getRegistryProperty().eq(customerId)
+					.and(f.getTypeProperty().eq((byte)1))
+					.and(f.getStatusProperty().eq((byte)0))
+					.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
+					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
+					.and(f.getDomainProperty().eq(domain))
+		);
+		
+		Optional<RegistrySeller> rsellerOpt = rsellerStream.findFirst();
+		
+		return rsellerOpt.isPresent() ? rsellerOpt.get().getSeller() : new Seller();
+	}
+	
 	// **************************************************
 	// ********************************** [SUPPORT AGENT]
 	// **************************************************
@@ -257,6 +275,7 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 					.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
 					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
 					.and(f.getStatusProperty().eq((byte)0))
+					.and(f.getDomainProperty().eq(domain))
 		);
 		
 		List<Seller> sellerList = rsellerStream.map(rseller -> rseller.getSeller()).filter( distinctByKey(seller -> seller.getId()) ).toList();
@@ -266,7 +285,7 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 			Stream<RegistryMedia> rmediaStream = AON.getRegistryMediaStream(
 					new Domain().setName(domainName).setId(domain), 
 					new User().setLogin(user),  
-					f -> f.getRegistryProperty().eq(seller.getId()));
+					f -> f.getRegistryProperty().eq(seller.getId()).and(f.getDomainProperty().eq(domain)));
 			Optional<RegistryMedia> emailMedia = rmediaStream.filter(rmedia -> rmedia.getMedia().equals(MediaType.EMAIL)).findFirst();
 			
 			supportAgents.put(seller, emailMedia.isPresent() ? emailMedia.get() : new RegistryMedia());
@@ -284,14 +303,14 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<Customer> getCustomerWithoutAgent(String domainName, int domain, String user) {
 		List<Customer> customers = new ArrayList<>();
 		
-		Stream<Customer> customerStream = AON.getCustomerStream(domainName, domain, user, f -> f.getStatusProperty().eq((byte) 0));
+		Stream<Customer> customerStream = AON.getCustomerStream(domainName, domain, user, f -> f.getStatusProperty().eq((byte) 0).and(f.getDomainProperty().eq(domain)));
 		
 		for(Customer customer : customerStream.toList()) {
 			
 			// Si no tiene cuota se obvia
 			
 //			LinkedList<Fee> feeList = AON.getFeeList(domainName, domain, user, new CustomerFeeParams().setCustomer(customer.getId()).setOffset(0).setLimit(1));
-			Stream<Fee> feeStream = AON.getFeeStream(domainName, domain, user, f -> f.getCustomerProperty().eq(customer.getId()));
+			Stream<Fee> feeStream = AON.getFeeStream(domainName, domain, user, f -> f.getCustomerProperty().eq(customer.getId()).and(f.getDomainProperty().eq(domain)));
 			if(feeStream.toList().isEmpty()) continue;
 			
 			// Si tiene agente de soporte asociado
@@ -299,6 +318,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 					new Domain().setName(domainName).setId(domain), 
 					user,
 					f -> f.getRegistryProperty().eq(customer.getId())
+						.and(f.getTypeProperty().eq((byte)1))
+						.and(f.getStatusProperty().eq((byte)0))
+						.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
+						.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
+						.and(f.getDomainProperty().eq(domain))
 			).toList();
 			if(!rseller.isEmpty()) continue;
 			

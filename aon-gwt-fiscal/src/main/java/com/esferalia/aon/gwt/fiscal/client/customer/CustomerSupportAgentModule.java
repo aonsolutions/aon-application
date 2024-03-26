@@ -298,21 +298,25 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	}
 	
 	private void createCustomerWithoutAgentTableHeader() {
-		customerWithoutAgentTable = new Grid(0, 1);
+		customerWithoutAgentTable = new Grid(0, 2);
 		customerWithoutAgentTable.clear();
 		customerWithoutAgentTable.setWidth("100%");
 
 		int row = customerWithoutAgentTable.insertRow(customerWithoutAgentTable.getRowCount());
 
+		Label code = new Label("CODIGO");
 		Label name = new Label("NOMBRE");
 		
+		code.addStyleName(AON.CSS.aonHeaderTable());
 		name.addStyleName(AON.CSS.aonHeaderTable());
 
-		customerWithoutAgentTable.setWidget(row, 0, name);
+		customerWithoutAgentTable.setWidget(row, 0, code);
+		customerWithoutAgentTable.setWidget(row, 1, name);
 		
 		customerWithoutAgentTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		customerWithoutAgentTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
 		
-		customerWithoutAgentTable.getColumnFormatter().getElement(0).getStyle().setWidth(50, Unit.PCT);
+		customerWithoutAgentTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
 	}
 
 	private void createCustomerWithoutAgentTableBody() {
@@ -321,14 +325,17 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 			@Override
 			public void onSuccess(List<Customer> customers) {
 				customers.forEach(customer -> {
+					Label code = new Label(customer.getId().toString());
 					Label name = new Label(customer.getName());
 					
 					// Add row
 					int newRow = customerWithoutAgentTable.insertRow(customerWithoutAgentTable.getRowCount());
 					
-					customerWithoutAgentTable.setWidget(newRow, 0, name);
+					customerWithoutAgentTable.setWidget(newRow, 0, code);
+					customerWithoutAgentTable.setWidget(newRow, 1, name);
 					
 					List<Label> rowLabels = new ArrayList<>();
+					rowLabels.add(code);
 					rowLabels.add(name);
 					
 					for(Label label : rowLabels) {
@@ -337,9 +344,11 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 					}
 					
 					if (newRow % 2 == 0) {
+						code.addStyleName(AON.CSS.aonOddTableRow());
 						name.addStyleName(AON.CSS.aonOddTableRow());
 						
 						customerWithoutAgentTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+						customerWithoutAgentTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
 					}
 					
 					customerWithoutAgentTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
@@ -384,21 +393,25 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	}
 	
 	private void createCustomerWithoutDomainTableHeader() {
-		customerWithoutDomainTable = new Grid(0, 1);
+		customerWithoutDomainTable = new Grid(0, 2);
 		customerWithoutDomainTable.clear();
 		customerWithoutDomainTable.setWidth("100%");
 
 		int row = customerWithoutDomainTable.insertRow(customerWithoutDomainTable.getRowCount());
 
+		Label code = new Label("CODIGO");
 		Label name = new Label("NOMBRE");
 		
+		code.addStyleName(AON.CSS.aonHeaderTable());
 		name.addStyleName(AON.CSS.aonHeaderTable());
 
-		customerWithoutDomainTable.setWidget(row, 0, name);
+		customerWithoutDomainTable.setWidget(row, 0, code);
+		customerWithoutDomainTable.setWidget(row, 1, name);
 		
 		customerWithoutDomainTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		customerWithoutDomainTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
 		
-		customerWithoutDomainTable.getColumnFormatter().getElement(0).getStyle().setWidth(50, Unit.PCT);
+		customerWithoutDomainTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
 	}
 
 	private void createCustomerWithoutDomainTableBody() {
@@ -427,14 +440,17 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		                AonMessagePanel.hideMessage(messagePanel);
 		                
 		                for(int i=0; i < customersArr.size(); i++) {
-		        			Label customer = new Label(customersArr.get(i).isObject().get("customer").isString().stringValue());
+		        			Label code = new Label(customersArr.get(i).isObject().get("id").isString().stringValue());
+		        			Label customer = new Label(customersArr.get(i).isObject().get("name").isString().stringValue());
 		        			
 		        			// Add row
 							int newRow = customerWithoutDomainTable.insertRow(customerWithoutDomainTable.getRowCount());
 							
-							customerWithoutDomainTable.setWidget(newRow, 0, customer);
+							customerWithoutDomainTable.setWidget(newRow, 0, code);
+							customerWithoutDomainTable.setWidget(newRow, 1, customer);
 							
 							List<Label> rowLabels = new ArrayList<>();
+							rowLabels.add(code);
 							rowLabels.add(customer);
 							
 							for(Label label : rowLabels) {
@@ -443,9 +459,11 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 							}
 							
 							if (newRow % 2 == 0) {
+								code.addStyleName(AON.CSS.aonOddTableRow());
 								customer.addStyleName(AON.CSS.aonOddTableRow());
 								
 								customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+								customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
 							}
 							
 							customerWithoutDomainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	

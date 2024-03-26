@@ -264,6 +264,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.deleteBookingList(domainName, domain, user, selectedBookings, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void getCustomerSeller(String domainName, int domain, String user, Integer customerId, AsyncCallback<Seller> callback) {
+		AON.start();
+		serviceAsync.getCustomerSeller(domainName, domain, user, customerId, new AsyncCallbackWrapper<Seller>(callback));
+	}
+
 	// **************************************************
 	// ********************************** [SUPPORT AGENT]
 	// **************************************************
