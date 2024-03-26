@@ -57,7 +57,7 @@ public class TaxServlet extends AonApiHttpServlet {
 	private static JSONArray getTaxes(AonApiData api, byte typeTax) {
 		JSONArray json = new JSONArray();
 		LinkedList<Tax> taxes = AON.getTaxList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> f.getTaxTypeProperty().eq(typeTax).and(f.getDomainProperty().eq(api.getDomain().getId())));
+				f -> f.getTaxTypeProperty().eq(typeTax).and(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId()))));
 		for(int i = 0; i < taxes.size(); i++) {
 			if(typeTax == (byte) 1) json.put(taxToJson(taxes.get(i))); else json.put(withHoldingToJson(taxes.get(i)));
 		}
