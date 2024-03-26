@@ -25,18 +25,23 @@ import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.tedi.TediContext;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -185,12 +190,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static JSONObject getDocument(AonApiData api) {
 	    JSONObject params = api.getData();
 	    String documentId    = params.optString(IJsonNames.ID);
-	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
+	    return getDocument(api.getDomain(), api.getUser(), documentId);
+	}
+	
+	public static JSONObject getDocument(Domain domain, User user, String documentId) {
+	    AONContext aonContext = AONContext.getAONContext(domain.getName(), user.getLogin());
 	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 	    OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),  documentId);
 	    OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
 	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
-	    Company company = AON.getCompany(api.getDomain(), api.getUser(),f -> f.getDomainProperty().eq(api.getDomain().getId()));
+	    Company company = AON.getCompany(domain, user,f -> f.getDomainProperty().eq(domain.getId()));
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
@@ -360,6 +369,20 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    			return r;
 	    		}).toList()
 	    	);
+	    	invoice.setDetails(invoice.getDetails().stream().map(detail -> {
+	    		if(detail.getInvoiceTaxes().isEmpty()) {
+	    			InvoiceTax invoiceTax =new InvoiceTax()
+	    				.setTaxType(TaxType.VAT)
+						.setBase(detail.getAmount())
+						.setPercentage(21.0)
+						.setQuota(AonMathUtils.round(detail.getAmount() * 0.21))
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						.setDeductiblePercent(100)
+						.setDeductibleQuota(AonMathUtils.round(detail.getAmount() * 0.21));
+	    			detail.addInvoiceTax(invoiceTax);
+	    		}
+	    		return detail;
+	    	}).toList());
 	    }
 	    return invoice;
 	    
