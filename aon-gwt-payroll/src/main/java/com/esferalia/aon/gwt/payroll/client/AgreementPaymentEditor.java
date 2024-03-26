@@ -254,7 +254,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		Date compareDate1 = new Date(1970 - 1900, 0, 1);
 		Date compareDate2 = new Date(2010 - 1900, 0, 1);
 		
-		periodPaymentPanel.setVisible((!payment.getStartDate().equals(compareDate1) && !payment.getStartDate().equals(compareDate2)) || payment.getEndDate() != null);
+		periodPaymentPanel.setVisible((null != payment.getStartDate() && !payment.getStartDate().equals(compareDate1) && !payment.getStartDate().equals(compareDate2)) || payment.getEndDate() != null);
 	}
 
 	private void initializeSeniorityPanel() {
