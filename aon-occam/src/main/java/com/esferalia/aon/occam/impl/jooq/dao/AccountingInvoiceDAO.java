@@ -1259,45 +1259,68 @@ public class AccountingInvoiceDAO {
 				.setTaxableBase(vat.getBase())
 				.setAccount(vat.getExpAccountId())
 				.setPrepayment(vat.isPrepayment());
-			if (!vat.isPrepayment()) {
-				detail.addInvoiceTax(new InvoiceTax()
-					.setTaxType(TaxType.VAT)
-					.setBase(vat.getBase())
-					.setPercentage(vat.getPercentage())
-					.setQuota(vat.getQuota())
-					.setSurcharge(vat.getSurcharge())
-					.setSurchargeQuota(vat.getSurchargeQuota())
-					.setVatDeductionType(vat.getVatDeductionType())
-					.setDeductiblePercent(vat.getDeductiblePercent())
-					.setDeductibleQuota(vat.getDeductibleQuota())
-					// Se deben grabar las dos cuentas!!
-					// Issue: #2414
-					// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
-					// https://github.com/aonsolutions/aon-application/issues/2414
-					.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
-					// --------------------------------------
+			if (!vat.isPrepayment()) {				
+				InvoiceTax invoiceTax = detail.getInvoiceTaxes().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).findFirst().orElse(null);
+				
+				if(invoiceTax != null && invoiceTax.getAccount() == null) {
+					detail.setInvoiceTaxes( 
+						detail.getInvoiceTaxes().stream().map(r -> {
+							if(TaxType.VAT.equals(r.getTaxType()))
+								r.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId());
+							return r;
+						}).toList()
 					);
-				if (vat.isWithholding() && accInvoice.isWithholding()) {
-					double base = 0;
-					if (accInvoice.isWithholdingFarmer()) {
-						base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
-					} else {
-						base = vat.getBase();
-					}
-					double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
-					if (accInvoice.getWithholdingData().isQuotaEdited()) {
-						withholdingTotalQuota = AonMathUtils.round(withholdingTotalQuota -  quota);
-						if (line == accInvoice.getVats().size() && AonMathUtils.isNotZero(withholdingTotalQuota)) {
-							quota = AonMathUtils.round(quota + withholdingTotalQuota);
-						}
-					}
+				} else if(invoiceTax == null) { 
 					detail.addInvoiceTax(new InvoiceTax()
-						.setTaxType(TaxType.RETENTION)
-						.setBase(base)
-						.setPercentage(accInvoice.getWithholdingData().getPercentage())
-						.setQuota(quota)
-						.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
-						.setAccount(accInvoice.getWithholdingData().getAccountId()));
+						.setTaxType(TaxType.VAT)
+						.setBase(vat.getBase())
+						.setPercentage(vat.getPercentage())
+						.setQuota(vat.getQuota())
+						.setSurcharge(vat.getSurcharge())
+						.setSurchargeQuota(vat.getSurchargeQuota())
+						.setVatDeductionType(vat.getVatDeductionType())
+						.setDeductiblePercent(vat.getDeductiblePercent())
+						.setDeductibleQuota(vat.getDeductibleQuota())
+						// Se deben grabar las dos cuentas!!
+						// Issue: #2414
+						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
+						// https://github.com/aonsolutions/aon-application/issues/2414
+						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId())
+					);
+				}
+				
+				if (vat.isWithholding() && accInvoice.isWithholding()) {
+					InvoiceTax invoiceRetention = detail.getInvoiceTaxes().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
+					if(invoiceRetention != null && invoiceRetention.getAccount() == null) {
+						detail.setInvoiceTaxes( 
+							detail.getInvoiceTaxes().stream().map(r -> {
+								if(TaxType.RETENTION.equals(r.getTaxType()))
+									r.setAccount(accInvoice.getWithholdingData().getAccountId());
+								return r;
+							}).toList()
+						);
+					} else if(invoiceRetention == null) { 
+						double base = 0;
+						if (accInvoice.isWithholdingFarmer()) {
+							base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
+						} else {
+							base = vat.getBase();
+						}
+						double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
+						if (accInvoice.getWithholdingData().isQuotaEdited()) {
+							withholdingTotalQuota = AonMathUtils.round(withholdingTotalQuota -  quota);
+							if (line == accInvoice.getVats().size() && AonMathUtils.isNotZero(withholdingTotalQuota)) {
+								quota = AonMathUtils.round(quota + withholdingTotalQuota);
+							}
+						}
+						detail.addInvoiceTax(new InvoiceTax()
+							.setTaxType(TaxType.RETENTION)
+							.setBase(base)
+							.setPercentage(accInvoice.getWithholdingData().getPercentage())
+							.setQuota(quota)
+							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
+							.setAccount(accInvoice.getWithholdingData().getAccountId()));
+					}
 				}
 			}
 			details.add( detail );

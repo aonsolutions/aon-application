@@ -34,14 +34,21 @@ public enum Mod123Key implements IFiscalModelKey {
 	,BZ_TIP("123-BZ-DT" ,  0,Administration.BIZKAIA)
 	
 	// ----------------------------------------------------- COMMON TERRITORY
-	,CT_C01("123-01" 	,  1,Administration.COMMON_TERRITORY)
-	,CT_C02("123-02" 	,  2,Administration.COMMON_TERRITORY)
-	,CT_C03("123-03" 	,  3,Administration.COMMON_TERRITORY)
-	,CT_C04("123-07" 	,  4,Administration.COMMON_TERRITORY)
-	,CT_C05("123-08" 	,  5,Administration.COMMON_TERRITORY)
-	,CT_C06("123-09" 	,  6,Administration.COMMON_TERRITORY)
-	,CT_C07("123-10" 	,  7,Administration.COMMON_TERRITORY)
-	,CT_C08("123-13" 	,  8,Administration.COMMON_TERRITORY)
+	
+	,CT_C01("123-01" 	,  1,Administration.COMMON_TERRITORY)   
+	,CT_C02("123-02" 	,  2,Administration.COMMON_TERRITORY)   
+	,CT_C03("123-03" 	,  3,Administration.COMMON_TERRITORY)   
+	,CT_C04("123-07" 	,  4,Administration.COMMON_TERRITORY)   
+	,CT_C05("123-08" 	,  5,Administration.COMMON_TERRITORY)   
+	,CT_C06("123-09" 	,  6,Administration.COMMON_TERRITORY)   
+	,CT_C07("123-10" 	,  7,Administration.COMMON_TERRITORY)   
+	,CT_C08("123-13" 	,  8,Administration.COMMON_TERRITORY)   
+	,CT_C09("123-14" 	,  9,Administration.COMMON_TERRITORY)
+	,CT_C10("123-15" 	, 10,Administration.COMMON_TERRITORY)
+	,CT_C11("123-16" 	, 11,Administration.COMMON_TERRITORY)
+	,CT_C12("123-17" 	, 12,Administration.COMMON_TERRITORY)
+	,CT_C13("123-18" 	, 13,Administration.COMMON_TERRITORY)
+	,CT_C14("123-19" 	, 14,Administration.COMMON_TERRITORY)	
 	,CT_TIP("123-CT-DT" ,  0,Administration.COMMON_TERRITORY)
 	
 	// ------------------------------------------------------------- GIPUZKOA

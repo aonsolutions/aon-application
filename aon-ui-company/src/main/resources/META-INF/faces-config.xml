@@ -764,9 +764,17 @@
 			<value>companyDirStaff</value>
 		</managed-property>
 		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
 			<property-name>lazyInitialization</property-name>
 			<value>true</value>
 		</managed-property>										
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>

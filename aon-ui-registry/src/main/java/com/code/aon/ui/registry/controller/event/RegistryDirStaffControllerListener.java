@@ -5,9 +5,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.RegistryDirStaffLinesController;
 
 public class RegistryDirStaffControllerListener extends ControllerAdapter {
 	
@@ -15,22 +17,40 @@ public class RegistryDirStaffControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
-		initializeData(rdirStaff);
+		initializeData(event);
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
-		initializeData(rdirStaff);
+		initializeData(event);
 	}
 
-	private void initializeData(RegistryDirStaff rdirStaff) throws ControllerListenerException {
+	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		refreshTotals(event);
+	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		refreshTotals(event);
+	}
+	
+	private void refreshTotals(ControllerEvent event) throws ControllerListenerException {
+		IController controller = event.getController();
+		if (controller instanceof RegistryDirStaffLinesController) {
+			RegistryDirStaffLinesController rirStaffcontroller = (RegistryDirStaffLinesController) controller;
+			rirStaffcontroller.refreshTotals();
+		}
+	}
+	
+	private void initializeData(ControllerEvent event) throws ControllerListenerException {
 		try {
+			refreshTotals( event );
+			RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
 			IManagerBean rdirStaffBean = BeanManager.getManagerBean(RegistryDirStaff.class);
 			if (!rdirStaff.isShareHolder()) {
 				rdirStaff.setPercentShare(0.0);
-				rdirStaff.setShareNumber(new Integer(0));
+				rdirStaff.setShareNumber( 0 );
 				rdirStaff.setNominalValue(0.0);
 			}
 			if(!rdirStaff.isDirector() && !rdirStaff.isRepresentative()){

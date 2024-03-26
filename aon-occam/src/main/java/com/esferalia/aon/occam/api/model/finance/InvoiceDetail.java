@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -60,7 +61,7 @@ public class InvoiceDetail implements Serializable {
 	private String accountCode;
 	private String accountDescription;
 	
-	private LinkedList<InvoiceTax> invoiceTaxes;
+	private List<InvoiceTax> invoiceTaxes;
 	
 	// SOURCE INFO
 	
@@ -279,20 +280,17 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
-	public LinkedList<InvoiceTax> getInvoiceTaxes() {
+	public List<InvoiceTax> getInvoiceTaxes() {
 		if(invoiceTaxes == null) {
 			invoiceTaxes = new LinkedList<>();
 		}
 		return invoiceTaxes;
 	}
-	public InvoiceDetail setInvoiceTaxes(LinkedList<InvoiceTax> invoiceTaxes) {
+	public InvoiceDetail setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
 		this.invoiceTaxes = invoiceTaxes;
 		return this;
 	}
 	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
-		if (getInvoiceTaxes() == null) {
-			setInvoiceTaxes(new LinkedList<>());
-		}
 		getInvoiceTaxes().add(invoiceTax);
 		return this;
 	}
