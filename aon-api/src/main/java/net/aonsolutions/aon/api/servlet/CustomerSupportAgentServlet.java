@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -73,6 +74,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 						.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
 						.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
 						.and(f.getStatusProperty().eq((byte)0))
+						.and(f.getDomainProperty().eq(api.getDomain().getId()))
 			).toList();
 			
 			for(RegistrySeller rseller : rsellerList) {
@@ -81,7 +83,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 				Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(rseller.getRegistry()));
 				Optional<DomainCompany> domain = domainCustomer.findFirst();
 				
-				Registry customerRegistry = AON.getRegistry( api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(rseller.getRegistry()));
+				Registry customerRegistry = AON.getRegistry( api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(rseller.getRegistry()).and(f.getDomainProperty().eq(api.getDomain().getId())));
 				
 				// Customer - Domain not linked
 				if(null == domainCustomer || domain.isEmpty()) {
@@ -93,7 +95,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 				}
 				
 				// Seller email
-				Stream<RegistryMedia> rmediaStream = AON.getRegistryMediaStream(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(rseller.getSeller().getId()));
+				Stream<RegistryMedia> rmediaStream = AON.getRegistryMediaStream(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(rseller.getSeller().getId()).and(f.getDomainProperty().eq(api.getDomain().getId())));
 				Optional<RegistryMedia> emailMedia = rmediaStream.filter(rmedia -> rmedia.getMedia().equals(MediaType.EMAIL)).findFirst();
 				
 				if(emailMedia.isEmpty()) {
@@ -129,13 +131,17 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 		JSONArray customersLog = new JSONArray();
 		logJson.put("customers", customersLog);	
 		
+		TreeMap<String, String> customerNames = new TreeMap<String, String>();
+		
 		try {
 			
 			Stream<Customer> customerStream = AON.getCustomerStream(
 					api.getDomain().getName(), 
 					api.getDomain().getId(), 
 					api.getUser().getLogin(), 
-					f -> f.getStatusProperty().eq((byte) 0));
+					f -> f.getStatusProperty().eq((byte) 0)
+						.and(f.getDomainProperty().eq(api.getDomain().getId()))
+			);
 			
 			for(Customer customer : customerStream.toList()) {
 				
@@ -143,7 +149,9 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 				Stream<Fee> feeStream = AON.getFeeStream(api.getDomain().getName(), 
 						api.getDomain().getId(), 
 						api.getUser().getLogin(), 
-						f -> f.getCustomerProperty().eq(customer.getId()));
+						f -> f.getCustomerProperty().eq(customer.getId())
+							.and(f.getDomainProperty().eq(api.getDomain().getId()))
+				);
 				
 				if(feeStream.toList().isEmpty()) continue;
 				
@@ -153,15 +161,24 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 				
 				if(domain.isPresent()) continue;
 				
-				JSONObject customerJson = new JSONObject();
-				customerJson.put("customer", customer.getName());
-				customersLog.put(customerJson);
+				customerNames.put(customer.getName(), customer.getId().toString());
+				
 			}
 					
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new  AonApiException(e.getMessage());
 		}
+		
+		customerNames.entrySet().forEach(entry -> {
+			String customerName = entry.getKey();
+			String customerId = entry.getValue();
+			
+			JSONObject customerJson = new JSONObject();
+			customerJson.put("name", customerName);
+			customerJson.put("id", customerId);
+			customersLog.put(customerJson);
+		});
 		
 		return logJson;
 	}
