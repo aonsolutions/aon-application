@@ -35,7 +35,6 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
@@ -53,12 +52,18 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -259,11 +264,12 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		this.customerPanel.clear();
 		this.domainsPanel.clear();
 		
-		SERVICE.getCustomerSeller(options.getDomainName(), options.getDomain(), options.getUser(), customer.getId(), new AsyncCallback<Seller>() {
+		SERVICE.getCustomerSellerEmail(options.getDomainName(), options.getDomain(), options.getUser(), customer.getId(), new AsyncCallback<String>() {
 			
 			@Override
-			public void onSuccess(Seller seller) {
-				initializeCustomer(seller);
+			public void onSuccess(String sellerEmail) {
+				initializeCustomer(sellerEmail);
+				initializeDomains(sellerEmail);
 			}
 			
 			@Override
@@ -271,14 +277,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
 			}
 		});
-		
-		
-		initializeDomains();
 	}
 	
 	// ---------- Cliente
 
-	private void initializeCustomer(Seller seller) {
+	private void initializeCustomer(String sellerEmail) {
 		Grid customerTable = new Grid(0, 12);
 		customerTable.clear();
 		customerTable.setWidth("100%");
@@ -341,7 +344,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		customerTable.getColumnFormatter().getElement(1).getStyle().setWidth(60, Unit.PX);
 		customerTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
-		customerTable.getColumnFormatter().getElement(4).getStyle().setWidth(120, Unit.PX);
+		customerTable.getColumnFormatter().getElement(4).getStyle().setWidth(200, Unit.PX);
 		customerTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
 		customerTable.getColumnFormatter().getElement(6).getStyle().setWidth(60, Unit.PX);
 		customerTable.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
@@ -361,7 +364,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		Label descriptionLabel = new Label(this.customer.getName());
 		
-		Label supportAgentLabel = new Label(seller.getName());
+		Label supportAgentLabel = new Label(sellerEmail);
 		
 		Label documentLabel = new Label(this.customer.getDocument());
 		Label statusLabel = new Label(this.customer.getStatus().getDescription());
@@ -502,7 +505,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	
 	// ---------- Dominios
 
-	private void initializeDomains() {
+	private void initializeDomains(String sellerEmail) {
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.getElement().getStyle().setProperty("max-height", "130px");
 		
@@ -568,7 +571,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		domainTable.getColumnFormatter().getElement(1).getStyle().setWidth(60, Unit.PX);
 		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
-		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(120, Unit.PX);
+		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(200, Unit.PX);
 		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
 		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(60, Unit.PX);
 		domainTable.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
@@ -618,7 +621,67 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				Label idLabel = new Label(domainCompany.getDomain().getId().toString());
 				Label schemaLabel = new Label(domainCompany.getSchema());
 				Label descriptionLabel = new Label(domainCompany.getDomain().getDescription());
+				
 				Label ownerLabel = new Label(domainCompany.getDomain().getOwner());
+				if(!AonStringUtils.isBlank(sellerEmail) && (AonStringUtils.isBlank(domainCompany.getDomain().getOwner()) || !AonStringUtils.equalsIgnoreCase(sellerEmail, domainCompany.getDomain().getOwner()))) {
+					ownerLabel.getElement().getStyle().setProperty("cursor", "pointer");
+					ownerLabel.getElement().getStyle().setProperty("color", "orange");
+					
+					ownerLabel.setTitle("Sincronizar gestor");
+					
+					if(!AonStringUtils.isBlank(sellerEmail) && AonStringUtils.isBlank(domainCompany.getDomain().getOwner()))
+						ownerLabel.setText("Sincronizar gestor");
+					
+					ownerLabel.addClickHandler(e -> {
+						
+						AonMessagePanel.showLoading(messagePanel, "Sincronizando agente de soporte con dominio del cliente...");
+						
+						String host = Window.Location.getHost();
+						String endPoint = "/ms/api/customers-support-agent/customer/";
+						
+						// Create a URL builder and add query parameters
+						UrlBuilder urlBuilder = new UrlBuilder();
+						urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+						urlBuilder.setHost(host);
+						urlBuilder.setPath(endPoint);
+						
+						JSONObject body = new JSONObject();
+		        		body.put("schema", new JSONString(domainCompany.getSchema()));
+		        		body.put("domainName", new JSONString(domainCompany.getDomain().getName()));
+		        		body.put("domainId", new JSONString(domainCompany.getDomain().getId().toString()));
+		        		body.put("owner", new JSONString(sellerEmail));
+						
+						// Create the request builder with the complete URL
+						RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+						requestBuilder.setHeader("session_id", SESSION_API);
+						
+						try {
+						    // Send the request
+						    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+						        public void onResponseReceived(Request request, Response response) {
+						            if (response.getStatusCode() == 200) {
+						            	AonMessagePanel.showSuccess(messagePanel, "Sincronizaci\u00f3n finalizada correctamente.");
+						            	Timer timer = new Timer() {
+						           		     @Override
+						           		     public void run() {
+									            	loadModule();
+						           		     }
+						           		};
+						           		timer.schedule(1500);
+						            }
+						        }
+
+								public void onError(Request request, Throwable exception) {
+									AonMessagePanel.showError(messagePanel, exception.getMessage());
+						        }
+						    });
+						} catch (RequestException exception) {
+							AonMessagePanel.showError(messagePanel, exception.getMessage());
+						}
+						
+					});
+				}
+				
 				Label documentLabel = new Label(domainCompany.getCompany().getDocument());
 				Label statusLabel = new Label(domainCompany.getDomain().isActive() ? "Activo" : "Inactivo");
 				Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().equals(AonStatus.BILLABLE) ? "SI" : "NO");

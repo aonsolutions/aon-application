@@ -260,6 +260,34 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return rsellerOpt.isPresent() ? rsellerOpt.get().getSeller() : new Seller();
 	}
 	
+	@Override
+	public String getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId) {
+		Stream<RegistrySeller> rsellerStream = AON.getRegistrySellerStream(
+				new Domain().setName(domainName).setId(domain), 
+				user, 
+				f -> f.getRegistryProperty().eq(customerId)
+					.and(f.getTypeProperty().eq((byte)1))
+					.and(f.getStatusProperty().eq((byte)0))
+					.and(f.getStartDateProperty().le(new Date(new java.util.Date().getTime())))
+					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new Date(new java.util.Date().getTime()))))
+					.and(f.getDomainProperty().eq(domain))
+		);
+		
+		Optional<RegistrySeller> rsellerOpt = rsellerStream.findFirst();
+		
+		if(!rsellerOpt.isPresent()) return "";
+		
+		RegistryMedia email = AON.getRegistryMedia(
+				new Domain().setName(domainName).setId(domain), 
+				new User().setLogin(user), 
+				f -> f.getRegistryProperty().eq(rsellerOpt.get().getSeller().getId())
+					.and(f.getMediaProperty().eq((byte)4)) // Email
+		);
+		
+		return (null == email || null == email.getId()) ? "" : email.getValue();
+		
+	}
+	
 	// **************************************************
 	// ********************************** [SUPPORT AGENT]
 	// **************************************************
