@@ -73,6 +73,9 @@ public enum Mod123Key implements IFiscalModelKey {
 	,GP_C07("123-07" 	,  7,Administration.GIPUZKOA)
 	,GP_C08("123-08" 	,  8,Administration.GIPUZKOA)
 	,GP_C09("123-13" 	,  9,Administration.GIPUZKOA)
+	,GP_C10("123-14" 	, 10,Administration.GIPUZKOA)
+	,GP_C11("123-15" 	, 11,Administration.GIPUZKOA)
+	,GP_C12("123-16" 	, 12,Administration.GIPUZKOA)
 	,GP_TIP("123-GP-DT" ,  0,Administration.GIPUZKOA)
 	
 	// -------------------------------------------------------------- NAVARRA

@@ -9,34 +9,50 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod123Gipuzkoa2021Declaration extends Mod123Declaration {
+public class Mod123Gipuzkoa2024Declaration extends Mod123Declaration {
 	
 	public static boolean accept(Mod123 mod) {
-		return mod.isGipuzkoa() && mod.getYear() <= 2023; 
+		return mod.isGipuzkoa() && mod.getYear() >= 2024; 
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
 		 GP_X00 (Mod123Key.GP_X00,null,null
 			 ,Mod123Declaration::addDeponentDocument
 			 ,null,null)
+		 
 		,GP_C01(Mod123Key.GP_C01
-			,(mod,br) -> isMovableCapital(br)
+			,(mod,br) -> isMovableCapitalDividens(br)
 			,(ctx,mod,docs,br) -> addPerceptor(Mod123Key.GP_C01,mod,docs,br)
 			,null,null,null)
 		,GP_C02(Mod123Key.GP_C02
-			,(mod,br) -> isMovableCapital(br)
+			,(mod,br) -> isMovableCapitalDividens(br)
 			,(ctx,mod,docs,br) -> addBase(Mod123Key.GP_C02,mod,br)
 			,null,null,null)
 		,GP_C03(Mod123Key.GP_C03
-			,(mod,br) -> isMovableCapital(br)
+			,(mod,br) -> isMovableCapitalDividens(br)
 			,(ctx,mod,docs,br) -> addQuota(Mod123Key.GP_C03,mod,br)
 			,null,null,null)
-		,GP_C04(Mod123Key.GP_C04, null,null,null,null,null)
-		,GP_C05(Mod123Key.GP_C05, null,null,null,null,null)
-		,GP_C06(Mod123Key.GP_C06, null,null,null,null,null)
-		,GP_C07(Mod123Key.GP_C07, null,null,null,null,null)
-		,GP_C08(Mod123Key.GP_C08, null,null,null,null,null)
-		,GP_C09(Mod123Key.GP_C09, null,null,null,"GP_C03+GP_C06+GP_C08",null)
+		
+		,GP_C04(Mod123Key.GP_C04
+				,(mod,br) -> isMovableCapitalOther(br)
+				,(ctx,mod,docs,br) -> addPerceptor(Mod123Key.GP_C04,mod,docs,br)
+				,null,null,null)
+		,GP_C05(Mod123Key.GP_C05
+			,(mod,br) -> isMovableCapitalOther(br)
+			,(ctx,mod,docs,br) -> addBase(Mod123Key.GP_C05,mod,br)
+			,null,null,null)
+		,GP_C06(Mod123Key.GP_C06
+			,(mod,br) -> isMovableCapitalOther(br)
+			,(ctx,mod,docs,br) -> addQuota(Mod123Key.GP_C06,mod,br)
+			,null,null,null)
+		
+		,GP_C07(Mod123Key.GP_C07, null,null,null,"GP_C01+GP_C04",null)
+		,GP_C08(Mod123Key.GP_C08, null,null,null,"GP_C02+GP_C05",null)
+		,GP_C09(Mod123Key.GP_C09, null,null,null,"GP_C03+GP_C06",null)		
+		
+		,GP_C10(Mod123Key.GP_C10, null,null,null,null,null)
+		,GP_C11(Mod123Key.GP_C11, null,null,null,null,null)
+		,GP_C12(Mod123Key.GP_C12, null,null,null,"GP_C09+GP_C11",null)
 		,GP_TIP (Mod123Key.GP_TIP,null,null,null,null,null)
 		;
 		
@@ -103,7 +119,7 @@ public class Mod123Gipuzkoa2021Declaration extends Mod123Declaration {
 
 	@Override
 	double getResult(Mod123 mod) {
-		return mod.getAmount(Mod123Key.GP_C09);
+		return mod.getAmount(Mod123Key.GP_C12);
 	}
 	
 	@Override
@@ -122,12 +138,15 @@ public class Mod123Gipuzkoa2021Declaration extends Mod123Declaration {
 		return new Mod123Key[] {}; 
 	}
 	
-	private static boolean isMovableCapital(IrpfBreakdown br) {
+	private static boolean isMovableCapitalDividens(IrpfBreakdown br) {
+		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);
+	}
+	
+	private static boolean isMovableCapitalOther(IrpfBreakdown br) {
 		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-			|| br.getWithholdingType() == WithholdingType.M193_C1
+			(br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
 			|| br.getWithholdingType() == WithholdingType.M193_C3);
-	}
+	}	
 	
 }

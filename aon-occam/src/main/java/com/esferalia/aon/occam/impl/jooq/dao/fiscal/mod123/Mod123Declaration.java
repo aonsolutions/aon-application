@@ -52,6 +52,10 @@ public abstract class Mod123Declaration {
 			@Override boolean accept(Mod123 mod) { return Mod123Bizkaia2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123Bizkaia2021Declaration();}
 		}
+		,GIPUZKOA_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123Gipuzkoa2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Gipuzkoa2024Declaration();}
+		}
 		,GIPUZKOA_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123Gipuzkoa2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123Gipuzkoa2021Declaration();}
