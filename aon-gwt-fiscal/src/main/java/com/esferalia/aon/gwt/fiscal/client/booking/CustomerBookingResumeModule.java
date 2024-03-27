@@ -52,12 +52,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
@@ -365,6 +360,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		Label descriptionLabel = new Label(this.customer.getName());
 		
 		Label supportAgentLabel = new Label(sellerEmail);
+		if(AonStringUtils.isBlank(sellerEmail)) {
+			supportAgentLabel.getElement().getStyle().setProperty("color", "orange");
+			supportAgentLabel.getElement().getStyle().setProperty("font-weight", "bold");
+			supportAgentLabel.setText("Revise agente soporte");
+		}
 		
 		Label documentLabel = new Label(this.customer.getDocument());
 		Label statusLabel = new Label(this.customer.getStatus().getDescription());
@@ -636,14 +636,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 						
 						AonMessagePanel.showLoading(messagePanel, "Sincronizando agente de soporte con dominio del cliente...");
 						
-						String host = Window.Location.getHost();
-						String endPoint = "/ms/api/customers-support-agent/customer/";
-						
-						// Create a URL builder and add query parameters
-						UrlBuilder urlBuilder = new UrlBuilder();
-						urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-						urlBuilder.setHost(host);
-						urlBuilder.setPath(endPoint);
+						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+						String endPoint = "/ms/api/customers-support-agent/" + customer.getId();
 						
 						JSONObject body = new JSONObject();
 		        		body.put("schema", new JSONString(domainCompany.getSchema()));
@@ -651,33 +645,25 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		        		body.put("domainId", new JSONString(domainCompany.getDomain().getId().toString()));
 		        		body.put("owner", new JSONString(sellerEmail));
 						
-						// Create the request builder with the complete URL
-						RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-						requestBuilder.setHeader("session_id", SESSION_API);
-						
-						try {
-						    // Send the request
-						    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-						        public void onResponseReceived(Request request, Response response) {
-						            if (response.getStatusCode() == 200) {
-						            	AonMessagePanel.showSuccess(messagePanel, "Sincronizaci\u00f3n finalizada correctamente.");
-						            	Timer timer = new Timer() {
-						           		     @Override
-						           		     public void run() {
-									            	loadModule();
-						           		     }
-						           		};
-						           		timer.schedule(1500);
-						            }
-						        }
-
-								public void onError(Request request, Throwable exception) {
-									AonMessagePanel.showError(messagePanel, exception.getMessage());
-						        }
-						    });
-						} catch (RequestException exception) {
-							AonMessagePanel.showError(messagePanel, exception.getMessage());
-						}
+						bookingApi.syncSupportAgentCustomer(host, endPoint, body, new AsyncCallback<Void>() {
+		        			
+		        			@Override
+		        			public void onSuccess(Void success) {
+		        				AonMessagePanel.showSuccess(messagePanel, "Sincronizaci\u00f3n finalizada correctamente.");
+				            	Timer timer = new Timer() {
+				           		     @Override
+				           		     public void run() {
+							            	loadModule();
+				           		     }
+				           		};
+				           		timer.schedule(1500);
+		        			}
+		        			
+		        			@Override
+		        			public void onFailure(Throwable exception) {
+		        				AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        			}
+		        		});
 						
 					});
 				}
@@ -2321,6 +2307,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		toolbar.add(refreshBtn);
 		
 		excelBtn = new AonToolbarButton("Resumen Contrataci\u00f3n (XLS)", AON.CSS.aonIconExcel());
+		excelBtn.setVisible(false);
 		excelBtn.addClickHandler(e -> Window.alert("Export Excel"));
 		
 		toolbar.add(excelBtn);

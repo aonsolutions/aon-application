@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -15,22 +16,19 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.booking.BookingApi;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -82,8 +80,18 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	private Grid customerWithoutDomainTable;
 	private boolean isCustomerWithoutDomainOpen = true;
 	
+	// Log Sync Support Agent
+	private HTMLPanel logPanel;
+	private AonToolbarSmallButton toolbarLogBtn;
+	private Grid logTable;
+	private boolean isLogOpen = true;
+	
 	// Api
+	private CustomerApi customerApi;
+	private BookingApi bookingApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+	private Integer customerCount = 0;
+	private boolean isLocalDev = false;
 	
 	@Override
 	public void onModuleLoad() {
@@ -101,6 +109,9 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		this.customerApi = new CustomerApi(SESSION_API);
+		this.bookingApi = new BookingApi(SESSION_API);
 		
 		this.options = opt;
 		
@@ -157,11 +168,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		customerWithoutDomainPanel.addStyleName(AON.CSS.aonFlexColumn());
 		scrollContainer.add(customerWithoutDomainPanel);
 		
-		initSupportAgents();
-		initCustomerWithoutAgent();
-		initCustomerWithoutDomain();
+		logPanel = new HTMLPanel("");
+		logPanel.addStyleName(AON.CSS.aonFlexColumn());
+		scrollLogContainer.add(logPanel);
 		
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo informaci\u00f3n de los clientes y de los agentes de soporte...");
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo los agentes de soporte...");
+		
+		initSupportAgents();
 	}
 
 	// -------------------------------- SUPPORT AGENTS / EMAILS
@@ -258,6 +271,9 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 					
 					supportAgentsTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
 				});
+				
+				AonMessagePanel.showLoading(messagePanel, "Obteniendo clientes sin agente de soporte asignado...");
+				initCustomerWithoutAgent();
 			}
 			
 			@Override
@@ -353,6 +369,9 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 					
 					customerWithoutAgentTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
 				});
+				
+				AonMessagePanel.showLoading(messagePanel, "Obteniendo clientes sin dominio asociado...");
+				initCustomerWithoutDomain();
 			}
 			
 			@Override
@@ -415,69 +434,91 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	}
 
 	private void createCustomerWithoutDomainTableBody() {
-		String host =  Window.Location.getHost();
-		String endPoint = "/ms/api/customers-support-agent/check-customer-sync-domains/";
 		
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(host);
-		urlBuilder.setPath(endPoint);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", SESSION_API);
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		                String responseBody = response.getText();
-		                JSONValue json = JSONParser.parseStrict(responseBody);
-		                JSONArray customersArr = json.isObject().get("customers").isArray();
-		                
-		                AonMessagePanel.hideMessage(messagePanel);
-		                
-		                for(int i=0; i < customersArr.size(); i++) {
-		        			Label code = new Label(customersArr.get(i).isObject().get("id").isString().stringValue());
-		        			Label customer = new Label(customersArr.get(i).isObject().get("name").isString().stringValue());
-		        			
-		        			// Add row
-							int newRow = customerWithoutDomainTable.insertRow(customerWithoutDomainTable.getRowCount());
+		SERVICE.getCustomers(
+				options.getDomainName(), 
+				options.getDomain(), 
+				options.getUser(), 
+				new RegistryParams().setDomain(options.getDomain()).setActive(true), 
+				0, 
+				Integer.MAX_VALUE, 
+				new AsyncCallback<LinkedList<Customer>>() {
+					
+					@Override
+					public void onSuccess(LinkedList<Customer> customers) {
+						customers.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+						
+						customerCount = 0;
+						Label messageLabel = AonMessagePanel.showLoading(messagePanel, "Comprobando cliente " + customers.get(customerCount).getName() + " ...");
+						checkCustomerSync(customers, customers.size(), messageLabel);
+						
+					}
+					
+					private void checkCustomerSync(LinkedList<Customer> customers, int totalCustomers, Label messageLabel) {
+						Customer customer = customers.get(customerCount);
+						
+						messageLabel.setText("Comprobando cliente " + customer.getName() + " ...");
+						
+						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+						String endPoint = "/ms/api/customers-support-agent/" + customer.getId().toString();
+						
+						customerApi.checkCustomerDomianSync(host, endPoint, new AsyncCallback<String>() {
 							
-							customerWithoutDomainTable.setWidget(newRow, 0, code);
-							customerWithoutDomainTable.setWidget(newRow, 1, customer);
-							
-							List<Label> rowLabels = new ArrayList<>();
-							rowLabels.add(code);
-							rowLabels.add(customer);
-							
-							for(Label label : rowLabels) {
-								label.addMouseOverHandler(e -> addHighlightRow(customerWithoutDomainTable, newRow));
-								label.addMouseOutHandler(e -> removeHighlightRow(customerWithoutDomainTable, newRow));
-							}
-							
-							if (newRow % 2 == 0) {
-								code.addStyleName(AON.CSS.aonOddTableRow());
-								customer.addStyleName(AON.CSS.aonOddTableRow());
+							@Override
+							public void onSuccess(String message) {
+								if(AonStringUtils.isBlank(message)) {
+									Label code = new Label(customer.getId().toString());
+				        			Label customerLabel = new Label(customer.getName());
+				        			
+				        			// Add row
+									int newRow = customerWithoutDomainTable.insertRow(customerWithoutDomainTable.getRowCount());
+									
+									customerWithoutDomainTable.setWidget(newRow, 0, code);
+									customerWithoutDomainTable.setWidget(newRow, 1, customerLabel);
+									
+									List<Label> rowLabels = new ArrayList<>();
+									rowLabels.add(code);
+									rowLabels.add(customerLabel);
+									
+									for(Label label : rowLabels) {
+										label.addMouseOverHandler(e -> addHighlightRow(customerWithoutDomainTable, newRow));
+										label.addMouseOutHandler(e -> removeHighlightRow(customerWithoutDomainTable, newRow));
+									}
+									
+									if (newRow % 2 == 0) {
+										code.addStyleName(AON.CSS.aonOddTableRow());
+										customerLabel.addStyleName(AON.CSS.aonOddTableRow());
+										
+										customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+										customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+									}
+									
+									customerWithoutDomainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+								}
 								
-								customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
-								customerWithoutDomainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+								if(customerCount == (totalCustomers - 1))
+									AonMessagePanel.hideMessage(messagePanel);
+								else {
+									customerCount++;
+									checkCustomerSync(customers, totalCustomers, messageLabel);
+								}
+								
 							}
 							
-							customerWithoutDomainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
-		        		}
-		            }
-		        }
+							@Override
+							public void onFailure(Throwable caught) {
+								dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+								customerCount++;
+								
+							}
+						});
+					}
 
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException exception) {
-			AonMessagePanel.showError(messagePanel, exception.getMessage());
-		}
+					@Override
+					public void onFailure(Throwable caught) {
+						dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+					}
+				});
 	}
 
 	// -------------------------------- AUXILIAR METHDomain
@@ -492,6 +533,8 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 				button.setTitle("Colapsar Clientes con cuotas sin agente de soporte");
 			if (button.equals(toolbarCustomerWithoutDomainBtn))
 				button.setTitle("Colapsar Clientes sin dominio asociado");
+			if (button.equals(toolbarLogBtn))
+				button.setTitle("Colapsar Log sincronizaci\u00f3n");
 		} else {
 			button.removeStyleName(AON.CSS.aonIconDown());
 			button.addStyleName(AON.CSS.aonIconLeft());
@@ -502,6 +545,8 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 				button.setTitle("Desplegar Clientes con cuotas sin agente de soporte");
 			if (button.equals(toolbarCustomerWithoutDomainBtn))
 				button.setTitle("Desplegar Clientes sin dominio asociado");
+			if (button.equals(toolbarLogBtn))
+				button.setTitle("Desplegar Log sincronizaci\u00f3n");
 		}
 	}
 	
@@ -548,73 +593,261 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	}
 
 	private void syncCustomerSupportAgent() {
-		AonMessagePanel.showLoading(messagePanel, "Sincronizando agentes de soporte con dominio del cliente...");
-		
-		String host = Window.Location.getHost();
-		String endPoint = "/ms/api/customers-support-agent/";
-		
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(host);
-		urlBuilder.setPath(endPoint);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", SESSION_API);
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	showLog();
-		                String responseBody = response.getText();
-		                AonMessagePanel.showSuccess(messagePanel, "Sincronizaci\u00f3n finalizada correctamente. Compruebe el log generado.");
-		                JSONValue json = JSONParser.parseStrict(responseBody);
-		                printSuccessMessages(json.isObject().get("success").isArray());
-		                printErrorsMessages(json.isObject().get("error").isArray());
-		            }
-		        }
+		showLog();
+		initLog();
+	}
+	
+	// -------------------------------- SUPPORT AGENTS / EMAILS
 
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException exception) {
-			AonMessagePanel.showError(messagePanel, exception.getMessage());
-		}
-		
+	private void initLog() {
+		logPanel.clear();
+		logPanel.add(createLogToolbar());
+		createLogTable();
+		logPanel.add(logTable);
 	}
 
-	private void printSuccessMessages(JSONArray successArr) {
-		scrollLogContainer.clear();
+	private AonToolbarSmall createLogToolbar() {
+		AonToolbarSmall toolbar = new AonToolbarSmall("Log sincronizaci\u00f3n");
 		
-		Label message = new Label("Sincronizaciones realizadas");
-		message.getElement().getStyle().setProperty("font-size", ".9rem");
-		message.getElement().getStyle().setProperty("font-weight", "bold");
+		toolbarLogBtn = new AonToolbarSmallButton("Desplegar Log sincronizaci\u00f3n", AON.CSS.aonIconDown());
+		toolbarLogBtn.addClickHandler(e -> {
+			isLogOpen = !isLogOpen;
+			handleIcon(toolbarLogBtn, isLogOpen);
+			if(isLogOpen) logTable.getElement().getStyle().clearDisplay();
+			else logTable.getElement().getStyle().setDisplay(Display.NONE);
+		});
 		
-		scrollLogContainer.add(message);
+		toolbar.add(toolbarLogBtn);
 		
-		for(int i=0; i < successArr.size(); i++) {
-			HTMLPanel success = new HTMLPanel(successArr.get(i).isObject().get("success").isString().stringValue());
-			success.getElement().getStyle().setProperty("padding-left", "1rem");
-			scrollLogContainer.add(success);
-		}
+		return toolbar;
+	}
+	
+	private void createLogTable() {
+		createLogTableHeader();
+		createLogTableBody();
+	}
+	
+	private void createLogTableHeader() {
+		logTable = new Grid(0, 3);
+		logTable.clear();
+		logTable.setWidth("100%");
+
+		int row = logTable.insertRow(logTable.getRowCount());
+
+		Label customer = new Label("CLIENTE");
+		Label type = new Label("TIPO");
+		Label message = new Label("MENSAJE");
+		
+		customer.addStyleName(AON.CSS.aonHeaderTable());
+		type.addStyleName(AON.CSS.aonHeaderTable());
+		message.addStyleName(AON.CSS.aonHeaderTable());
+
+		logTable.setWidget(row, 0, customer);
+		logTable.setWidget(row, 1, type);
+		logTable.setWidget(row, 2, message);
+		
+		logTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		logTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+		logTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
+		
+		logTable.getColumnFormatter().getElement(0).getStyle().setWidth(400, Unit.PX);
+		logTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
 	}
 
-	private void printErrorsMessages(JSONArray errorArr) {
-		Label message = new Label("Errores encontrados");
-		message.getElement().getStyle().setProperty("font-size", ".9rem");
-		message.getElement().getStyle().setProperty("font-weight", "bold");
+	private void createLogTableBody() {
+		SERVICE.getCustomers(
+				options.getDomainName(), 
+				options.getDomain(), 
+				options.getUser(), 
+				new RegistryParams().setDomain(options.getDomain()).setActive(true), 
+				0, 
+				Integer.MAX_VALUE, 
+				new AsyncCallback<LinkedList<Customer>>() {
+					
+					@Override
+					public void onSuccess(LinkedList<Customer> customers) {
+						customers.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+						
+						customerCount = 0;
+						Label messageLabel = AonMessagePanel.showLoading(messagePanel, "Asignando agente soporte al cliente " + customers.get(customerCount).getName() + " ...");
+						checkCustomerSync(customers, customers.size(), messageLabel);
+						
+					}
+					
+					private void checkCustomerSync(LinkedList<Customer> customers, int totalCustomers, Label messageLabel) {
+						Customer customer = customers.get(customerCount);
+						
+						messageLabel.setText("Asignando agente soporte al cliente " + customer.getName() + " ...");
+						
+						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+						String endPoint = "/ms/api/domain/" + customer.getId().toString();
+						
+						bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
+							
+							@Override
+							public void onSuccess(List<DomainCompany> domainCompanies) {
+								if(domainCompanies != null && !domainCompanies.isEmpty()) {
+									
+									// Check if customer has RSeller
+									SERVICE.getCustomerSeller(options.getDomainName(), options.getDomain(), options.getUser(), customer.getId(), new AsyncCallback<Seller>() {
+										
+										@Override
+										public void onSuccess(Seller seller) {
+											if(seller.getId() == null) {
+												addLogRow(customer.getName(), "Cliente / Agente Soporte", "El cliente " + customer.getName() + " no tiene agente de soporte asociado");
+												
+												if(customerCount == (totalCustomers - 1))
+													AonMessagePanel.hideMessage(messagePanel);
+							                	else {
+							                		customerCount++;
+													checkCustomerSync(customers, totalCustomers, messageLabel);
+							                	}
+							                	
+											} else {
+												
+												SERVICE.getCustomerSellerEmail(options.getDomainName(), options.getDomain(), options.getUser(), customer.getId(), new AsyncCallback<String>() {
+													
+													@Override
+													public void onSuccess(String sellerEmail) {
+														if(AonStringUtils.isBlank(sellerEmail)) {
+															addLogRow(customer.getName(), "Agente Soporte", "El agente de soporte " + seller.getName() + " no tiene email registrado en su ficha");
+															
+															if(customerCount == (totalCustomers - 1))
+																AonMessagePanel.hideMessage(messagePanel);
+										                	else {
+										                		customerCount++;
+																checkCustomerSync(customers, totalCustomers, messageLabel);
+										                	}
+										                	
+														} else {
+															
+															DomainCompany domainCompany = domainCompanies.get(0);
+										            		
+										            		String syncHost = isLocalDev ? "localhost:8080" : "aon.solutions";
+															String syncEndPoint = "/ms/api/customers-support-agent/" + customer.getId();
+															
+															JSONObject body = new JSONObject();
+											        		body.put("schema", new JSONString(domainCompany.getSchema()));
+											        		body.put("domainName", new JSONString(domainCompany.getDomain().getName()));
+											        		body.put("domainId", new JSONString(domainCompany.getDomain().getId().toString()));
+											        		body.put("owner", new JSONString(sellerEmail));
+															
+															customerApi.syncSupportAgentCustomer(syncHost, syncEndPoint, body, new AsyncCallback<Void>() {
+																
+																@Override
+																public void onSuccess(Void result) {
+																	addLogRow(customer.getName(), "Sincronizac\u00f3n", "El agente de soporte " + seller.getName() + " ha sido asigando como gestor del dominio " + domainCompany.getDomain().getDescription());
+																	
+																	if(customerCount == (totalCustomers - 1))
+																		AonMessagePanel.hideMessage(messagePanel);
+																	else {
+																		customerCount++;
+																		checkCustomerSync(customers, totalCustomers, messageLabel);
+																	}
+																}
+																
+																@Override
+																public void onFailure(Throwable caught) {
+																	dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+																}
+															});
+															
+														}
+														
+														
+													}
+													
+													@Override
+													public void onFailure(Throwable arg0) {
+														// TODO Auto-generated method stub
+														
+													}
+												});
+												
+											}
+											
+											customerCount++;
+											checkCustomerSync(customers, totalCustomers, messageLabel);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+										}
+									});
+				
+				                } else {
+				                	addLogRow(customer.getName(), "Dominio Asociado", "El cliente " + customer.getName() + " no tiene dominio asociado");
+				                	
+				                	if(customerCount == (totalCustomers - 1))
+										AonMessagePanel.hideMessage(messagePanel);
+				                	else {
+				                		customerCount++;
+										checkCustomerSync(customers, totalCustomers, messageLabel);
+				                	}
+				                	
+				                }
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+							}
+						});
+						
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+					}
+				});
+	}
+	
+	private void addLogRow(String customer, String type, String message) {
+		Label customerLabel = new Label(customer);
+		Label typeLabel = new Label(type);
+		Label messageLabel = new Label(message);
 		
-		scrollLogContainer.add(message);
-		
-		for(int i=0; i < errorArr.size(); i++) {
-			HTMLPanel error = new HTMLPanel(errorArr.get(i).isObject().get("error").isString().stringValue());
-			error.getElement().getStyle().setProperty("padding-left", "1rem");
-			scrollLogContainer.add(error);
+		if(AonStringUtils.equalsIgnoreCase(type, "Sincronizac\u00f3n")) {
+			typeLabel.getElement().getStyle().setProperty("color", "green");
+			typeLabel.getElement().getStyle().setProperty("font-weight", "bold");
+		} else if(AonStringUtils.equalsIgnoreCase(type, "Cliente / Agente Soporte")) {
+			typeLabel.getElement().getStyle().setProperty("color", "orange");
+			typeLabel.getElement().getStyle().setProperty("font-weight", "bold");
+		} else if(AonStringUtils.equalsIgnoreCase(type, "Agente Soporte")) {
+			typeLabel.getElement().getStyle().setProperty("color", "red");
+			typeLabel.getElement().getStyle().setProperty("font-weight", "bold");
 		}
+		
+		// Add row
+		int newRow = logTable.insertRow(logTable.getRowCount());
+		
+		logTable.setWidget(newRow, 0, customerLabel);
+		logTable.setWidget(newRow, 1, typeLabel);
+		logTable.setWidget(newRow, 2, messageLabel);
+		
+		List<Label> rowLabels = new ArrayList<>();
+		rowLabels.add(customerLabel);
+		rowLabels.add(typeLabel);
+		rowLabels.add(messageLabel);
+		
+		for(Label label : rowLabels) {
+			label.addMouseOverHandler(e -> addHighlightRow(logTable, newRow));
+			label.addMouseOutHandler(e -> removeHighlightRow(logTable, newRow));
+		}
+		
+		if (newRow % 2 == 0) {
+			customerLabel.addStyleName(AON.CSS.aonOddTableRow());
+			typeLabel.addStyleName(AON.CSS.aonOddTableRow());
+			messageLabel.addStyleName(AON.CSS.aonOddTableRow());
+			
+			logTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+			logTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+			logTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
+		}
+		
+		logTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
 	}
 	
 }
