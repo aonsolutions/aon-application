@@ -34,10 +34,30 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 	
 	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/";
 	public static final String CUSTOMER_SYNC_DOMAINS = "/check-customer-sync-domains/";
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+		get(req, resp);
+	}
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		put(req, resp);
+	}
+	
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(CUSTOMER_SYNC_DOMAINS, CustomerSupportAgentServlet::checkCustomerSyncDomains)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
 	}
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
@@ -47,7 +67,6 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(SYNC_CUSTOMER_SUPPORT_AGENTS, CustomerSupportAgentServlet::syncCustomerSupportAgent)
-				.addRoute(CUSTOMER_SYNC_DOMAINS, CustomerSupportAgentServlet::checkCustomerSyncDomains)
 				.apply();
 			
 			response(req, resp, object);
@@ -131,6 +150,9 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 		JSONArray customersLog = new JSONArray();
 		logJson.put("customers", customersLog);	
 		
+		JSONArray customersDomainLog = new JSONArray();
+		logJson.put("customersDomain", customersDomainLog);	
+		
 		TreeMap<String, String> customerNames = new TreeMap<String, String>();
 		
 		try {
@@ -159,9 +181,14 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 				Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer.getId()));
 				Optional<DomainCompany> domain = domainCustomer.findFirst();
 				
-				if(domain.isPresent()) continue;
-				
-				customerNames.put(customer.getName(), customer.getId().toString());
+				if(!domain.isPresent()) customerNames.put(customer.getName(), customer.getId().toString());
+				else {
+					JSONObject customerJson = new JSONObject();
+					customerJson.put("name", customer.getName());
+					customerJson.put("id", customer.getId().toString());
+					customerJson.put("domain", domain.get().getDomain());
+					customersDomainLog.put(customerJson);
+				}
 				
 			}
 					

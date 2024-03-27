@@ -425,7 +425,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		urlBuilder.setPath(endPoint);
 		
 		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", SESSION_API);
 		
 		try {
