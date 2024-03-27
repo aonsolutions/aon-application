@@ -223,6 +223,10 @@ public class Domicilio {
 			return this;
 		}
 		
+		public Domicilio build() {
+			return new Domicilio(this);
+		}
+		
 	}
 
 }

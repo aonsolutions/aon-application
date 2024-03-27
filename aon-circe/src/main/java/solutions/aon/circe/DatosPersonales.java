@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class DatosPersonales {
 
-	private String tipoDocIdentidad;
-	private String numDocIdentidad;
+	private String tipoDocumentoIdentidad;
+	private String documentoIdentidad;
 	private Date fechaNacimiento;
 	private String nacionalidad;
 	private String sexo;
@@ -18,17 +18,21 @@ public class DatosPersonales {
 	private Domicilio domicilioResidencia;
 	private Domicilio domicilioFiscal;
 	private Domicilio domicilioNotificacion;
-	private int telefono;
-	private String email;
+	private int telefonoNotificacionTGSS;
+	private String emailNotificacionTGSS;
 	private String prefijoPais;
+	private int telefonoNotificacionAEAT;
+	private String emailNotificacionAEAT;
+	private int telefonoNotificacionPYME;
+	private String emailNotificacionPYME;
 
 	public DatosPersonales() {
 
 	}
 
 	public DatosPersonales(DatosPersonalesBuilder datosPersonalesBuilder) {
-		this.tipoDocIdentidad = datosPersonalesBuilder.tipoDocIdentidad;
-		this.numDocIdentidad = datosPersonalesBuilder.numDocIdentidad;
+		this.tipoDocumentoIdentidad = datosPersonalesBuilder.tipoDocumentoIdentidad;
+		this.documentoIdentidad = datosPersonalesBuilder.documentoIdentidad;
 		this.fechaNacimiento = datosPersonalesBuilder.fechaNacimiento;
 		this.nacionalidad = datosPersonalesBuilder.nacionalidad;
 		this.sexo = datosPersonalesBuilder.sexo;
@@ -41,17 +45,21 @@ public class DatosPersonales {
 		this.domicilioResidencia = datosPersonalesBuilder.domicilioResidencia;
 		this.domicilioFiscal = datosPersonalesBuilder.domicilioFiscal;
 		this.domicilioNotificacion = datosPersonalesBuilder.domicilioNotificacion;
-		this.telefono = datosPersonalesBuilder.telefono;
-		this.email = datosPersonalesBuilder.email;
+		this.telefonoNotificacionTGSS = datosPersonalesBuilder.telefonoNotificacionTGSS;
+		this.emailNotificacionTGSS = datosPersonalesBuilder.emailNotificacionTGSS;
 		this.prefijoPais = datosPersonalesBuilder.prefijoPais;
+		this.telefonoNotificacionAEAT = datosPersonalesBuilder.telefonoNotificacionAEAT;
+		this.emailNotificacionAEAT = datosPersonalesBuilder.emailNotificacionAEAT;
+		this.telefonoNotificacionPYME = datosPersonalesBuilder.telefonoNotificacionPYME;
+		this.emailNotificacionPYME = datosPersonalesBuilder.emailNotificacionPYME;
 	}
 
-	public String getTipoDocIdentidad() {
-		return tipoDocIdentidad;
+	public String getTipoDocumentoIdentidad() {
+		return tipoDocumentoIdentidad;
 	}
 
-	public String getNumDocIdentidad() {
-		return numDocIdentidad;
+	public String getDocumentoIdentidad() {
+		return documentoIdentidad;
 	}
 
 	public Date getFechaNacimiento() {
@@ -102,22 +110,38 @@ public class DatosPersonales {
 		return domicilioNotificacion;
 	}
 
-	public int getTelefono() {
-		return telefono;
+	public int getTelefonoNotificacionTGSS() {
+		return telefonoNotificacionTGSS;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getEmailNotificacionTGSS() {
+		return emailNotificacionTGSS;
 	}
 
 	public String getPrefijoPais() {
 		return prefijoPais;
 	}
-	
-	public static class DatosPersonalesBuilder{
-		
-		private String tipoDocIdentidad;
-		private String numDocIdentidad;
+
+	public int getTelefonoNotificacionAEAT() {
+		return telefonoNotificacionAEAT;
+	}
+
+	public String getEmailNotificacionAEAT() {
+		return emailNotificacionAEAT;
+	}
+
+	public int getTelefonoNotificacionPYME() {
+		return telefonoNotificacionPYME;
+	}
+
+	public String getEmailNotificacionPYME() {
+		return emailNotificacionPYME;
+	}
+
+	public static class DatosPersonalesBuilder {
+
+		private String tipoDocumentoIdentidad;
+		private String documentoIdentidad;
 		private Date fechaNacimiento;
 		private String nacionalidad;
 		private String sexo;
@@ -130,98 +154,122 @@ public class DatosPersonales {
 		private Domicilio domicilioResidencia;
 		private Domicilio domicilioFiscal;
 		private Domicilio domicilioNotificacion;
-		private int telefono;
-		private String email;
+		private int telefonoNotificacionTGSS;
+		private String emailNotificacionTGSS;
 		private String prefijoPais;
-		
+		private int telefonoNotificacionAEAT;
+		private String emailNotificacionAEAT;
+		private int telefonoNotificacionPYME;
+		private String emailNotificacionPYME;
+
 		public DatosPersonalesBuilder tipoDocIdentidad(String tipoDocIdentidad) {
-			this.tipoDocIdentidad = tipoDocIdentidad;
+			this.tipoDocumentoIdentidad = tipoDocIdentidad;
 			return this;
 		}
-		
-		public DatosPersonalesBuilder numDocIdentidad(String numDocIdentidad) {
-			this.numDocIdentidad = numDocIdentidad;
+
+		public DatosPersonalesBuilder documentoIdentidad(String documentoIdentidad) {
+			this.documentoIdentidad = documentoIdentidad;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder fechaNacimiento(Date fechaNacimiento) {
 			this.fechaNacimiento = fechaNacimiento;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder nacionalidad(String nacionalidad) {
 			this.nacionalidad = nacionalidad;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder sexo(String sexo) {
 			this.sexo = sexo;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder nombre(String nombre) {
 			this.nombre = nombre;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder primerApellido(String primerApellido) {
 			this.primerApellido = primerApellido;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder segundoApellido(String segundoApellido) {
 			this.segundoApellido = segundoApellido;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder domino(String domino) {
 			this.domino = domino;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder estadoCivil(String estadoCivil) {
 			this.estadoCivil = estadoCivil;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder fechaEstadoCivil(Date fechaEstadoCivil) {
 			this.fechaEstadoCivil = fechaEstadoCivil;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder domicilioResidencia(Domicilio domicilioResidencia) {
 			this.domicilioResidencia = domicilioResidencia;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder domicilioFiscal(Domicilio domicilioFiscal) {
 			this.domicilioFiscal = domicilioFiscal;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder domicilioNotificacion(Domicilio domicilioNotificacion) {
 			this.domicilioNotificacion = domicilioNotificacion;
 			return this;
 		}
-		
-		public DatosPersonalesBuilder telefono(int telefono) {
-			this.telefono = telefono;
+
+		public DatosPersonalesBuilder telefonoNotificacionTGSS(int telefonoNotificacionTGSS) {
+			this.telefonoNotificacionTGSS = telefonoNotificacionTGSS;
 			return this;
 		}
-		
-		public DatosPersonalesBuilder email(String email) {
-			this.email = email;
+
+		public DatosPersonalesBuilder emailNotificacionTGSS(String emailNotificacionTGSS) {
+			this.emailNotificacionTGSS = emailNotificacionTGSS;
 			return this;
 		}
-		
+
 		public DatosPersonalesBuilder prefijoPais(String prefijoPais) {
 			this.prefijoPais = prefijoPais;
+			return this;
+		}
+
+
+		public DatosPersonalesBuilder telefonoNotificacionAEAT(int telefonoNotificacionAEAT) {
+			this.telefonoNotificacionAEAT = telefonoNotificacionAEAT;
+			return this;
+		}
+
+		public DatosPersonalesBuilder emailNotificacionAEAT(String emailNotificacionAEAT) {
+			this.emailNotificacionAEAT = emailNotificacionAEAT;
+			return this;
+		}
+
+		public DatosPersonalesBuilder telefonoNotificacionPYME(int telefonoNotificacionPYME) {
+			this.telefonoNotificacionPYME = telefonoNotificacionPYME;
+			return this;
+		}
+
+		public DatosPersonalesBuilder emailNotificacionPYME(String emailNotificacionPYME) {
+			this.emailNotificacionPYME = emailNotificacionPYME;
 			return this;
 		}
 		
 		public DatosPersonales build() {
 			return new DatosPersonales(this);
 		}
-		
 	}
 }
