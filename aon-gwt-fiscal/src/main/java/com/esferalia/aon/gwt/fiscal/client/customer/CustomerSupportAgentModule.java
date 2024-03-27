@@ -416,7 +416,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 
 	private void createCustomerWithoutDomainTableBody() {
 		String host =  Window.Location.getHost();
-		String endPoint = "/ms/api/customer-support-agent/check-customer-sync-domains/";
+		String endPoint = "/ms/api/customers-support-agent/check-customer-sync-domains/";
 		
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
@@ -551,7 +551,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		AonMessagePanel.showLoading(messagePanel, "Sincronizando agentes de soporte con dominio del cliente...");
 		
 		String host = Window.Location.getHost();
-		String endPoint = "/ms/api/customer-support-agent/";
+		String endPoint = "/ms/api/customers-support-agent/";
 		
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();

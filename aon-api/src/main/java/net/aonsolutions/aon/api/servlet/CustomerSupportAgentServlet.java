@@ -27,12 +27,13 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "CustomerSupportAgentServlet", urlPatterns = {"/ms/api/customer-support-agent/*"})
+@WebServlet(name = "CustomerSupportAgentServlet", urlPatterns = {"/ms/api/customers-support-agent/*"})
 public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(CustomerSupportAgentServlet.class.getName());
 	
-	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/";
+	public static final String SYNC_CUSTOMERS_SUPPORT_AGENTS = "/";
+	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/customer/";
 	public static final String CUSTOMER_SYNC_DOMAINS = "/check-customer-sync-domains/";
 
 	@Override
@@ -66,6 +67,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
+				.addRoute(SYNC_CUSTOMERS_SUPPORT_AGENTS, CustomerSupportAgentServlet::syncCustomersSupportAgent)
 				.addRoute(SYNC_CUSTOMER_SUPPORT_AGENTS, CustomerSupportAgentServlet::syncCustomerSupportAgent)
 				.apply();
 			
@@ -76,6 +78,28 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject syncCustomerSupportAgent(AonApiData api) {
+		JSONObject respJson = new JSONObject();
+		respJson.put("message", "Sincronizacion finalizada");	
+		
+		try {			
+			
+			String schema = api.getData().get("schema").toString();
+			String domainName = api.getData().get("domainName").toString();
+			Integer domainId = Integer.parseInt(api.getData().get("domainId").toString());
+			String owner = api.getData().get("owner").toString();
+			
+			AON.updateDomainOwner(schema, domainName, domainId, owner);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new  AonApiException(e.getMessage());
+		}
+		
+		return respJson;
+
+	}
+	
+	private static JSONObject syncCustomersSupportAgent(AonApiData api) {
 		JSONObject logJson = new JSONObject();
 		
 		JSONArray successLog = new JSONArray();

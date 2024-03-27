@@ -270,6 +270,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.getCustomerSeller(domainName, domain, user, customerId, new AsyncCallbackWrapper<Seller>(callback));
 	}
 
+	@Override
+	public void getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId, AsyncCallback<String> callback) {
+		AON.start();
+		serviceAsync.getCustomerSellerEmail(domainName, domain, user, customerId, new AsyncCallbackWrapper<String>(callback));
+	}
+
 	// **************************************************
 	// ********************************** [SUPPORT AGENT]
 	// **************************************************

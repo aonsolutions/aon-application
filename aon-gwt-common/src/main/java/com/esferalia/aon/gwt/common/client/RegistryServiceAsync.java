@@ -89,6 +89,7 @@ public interface RegistryServiceAsync {
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> asyncCallback);
 	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> asyncCallback);
 	void getCustomerSeller(String domainName, int domain, String user, Integer customerId, AsyncCallback<Seller> asyncCallback);
+	void getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId, AsyncCallback<String> asyncCallback);
 	
 	// **************************************************
 	// ********************************** [SUPPORT AGENT]
