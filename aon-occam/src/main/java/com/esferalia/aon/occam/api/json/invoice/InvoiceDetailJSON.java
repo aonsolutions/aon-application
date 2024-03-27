@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDetailJSON {
@@ -50,17 +51,20 @@ public class InvoiceDetailJSON {
 			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
+			double quota = JsonUtils.getdouble(json, IJsonNames.QUOTA);	
+			double surchargeQuota = JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA);
+			double deductibleQuota = AonMathUtils.round(quota + surchargeQuota);
 			InvoiceTax tax = new InvoiceTax()
 					.setDomain(detail.getDomain())
 					.setTaxType(TaxType.VAT)
 					.setBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 					.setPercentage(JsonUtils.getdouble(json, IJsonNames.PERCENTAGE))
-					.setQuota(JsonUtils.getdouble(json, IJsonNames.QUOTA))
+					.setQuota(quota)
 					.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
-					.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA))
+					.setSurchargeQuota(surchargeQuota)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setDeductiblePercent(100.0)
-					.setDeductibleQuota(JsonUtils.getdouble(json, IJsonNames.QUOTA));
+					.setDeductibleQuota(deductibleQuota);
 			detail.getInvoiceTaxes().add(tax);
 		}
 		if(json.optBoolean(IJsonNames.WITHHOLDING)) {
