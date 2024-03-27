@@ -592,6 +592,7 @@ export const SIZE = MSG.SIZE;
 export const SPANISH = MSG.SPANISH;
 export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
+export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
