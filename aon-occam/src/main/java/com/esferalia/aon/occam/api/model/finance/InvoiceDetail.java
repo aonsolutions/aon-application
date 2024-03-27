@@ -61,7 +61,7 @@ public class InvoiceDetail implements Serializable {
 	private String accountCode;
 	private String accountDescription;
 	
-	private List<InvoiceTax> invoiceTaxes;
+	private LinkedList<InvoiceTax> invoiceTaxes;
 	
 	// SOURCE INFO
 	
@@ -280,13 +280,13 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
-	public List<InvoiceTax> getInvoiceTaxes() {
+	public LinkedList<InvoiceTax> getInvoiceTaxes() {
 		if(invoiceTaxes == null) {
 			invoiceTaxes = new LinkedList<>();
 		}
 		return invoiceTaxes;
 	}
-	public InvoiceDetail setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
+	public InvoiceDetail setInvoiceTaxes(LinkedList<InvoiceTax> invoiceTaxes) {
 		this.invoiceTaxes = invoiceTaxes;
 		return this;
 	}

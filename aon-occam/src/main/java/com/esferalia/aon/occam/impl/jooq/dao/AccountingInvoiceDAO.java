@@ -1268,7 +1268,7 @@ public class AccountingInvoiceDAO {
 							if(TaxType.VAT.equals(r.getTaxType()))
 								r.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId());
 							return r;
-						}).toList()
+						}).collect(Collectors.toCollection(LinkedList::new))
 					);
 				} else if(invoiceTax == null) { 
 					detail.addInvoiceTax(new InvoiceTax()
@@ -1297,7 +1297,7 @@ public class AccountingInvoiceDAO {
 								if(TaxType.RETENTION.equals(r.getTaxType()))
 									r.setAccount(accInvoice.getWithholdingData().getAccountId());
 								return r;
-							}).toList()
+							}).collect(Collectors.toCollection(LinkedList::new))
 						);
 					} else if(invoiceRetention == null) { 
 						double base = 0;
