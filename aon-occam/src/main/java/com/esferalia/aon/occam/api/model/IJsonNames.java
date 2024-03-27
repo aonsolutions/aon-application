@@ -287,6 +287,7 @@ public final class IJsonNames {
 	public static final String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	public static final String INVOICE_TYPES = "invoiceTypes";
 	public static final String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
+	public static final String INVOICES = "invoices";
 	public static final String IRPF = "irpf";
 	public static final String IRPF_PARAMS = "irpfParams";
 	public static final String IRPF_REGIME = "irpfRegime";
@@ -500,6 +501,9 @@ public final class IJsonNames {
 	public static final String RSELLER = "rseller";
 	public static final String RSS = "rss";
 	// ---------------------------------------------------------------------------------------------	[S] 
+
+	public static final String S3_BUCKET = "s3Bucket";
+	public static final String S3_KEY = "s3Key";
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
 	public static final String SALES_DETAIL = "salesDetail";

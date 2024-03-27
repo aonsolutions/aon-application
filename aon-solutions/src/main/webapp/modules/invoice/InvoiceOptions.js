@@ -1,40 +1,5 @@
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
-
-  export const OCR_INBOX_ISSUED = {
-    id: CONSTANT.OCR_INBOX_ISSUED.initCap(),
-    name: MSG.ISSUEDS,
-    icon: MATERIAL_ICONS.UNARCHIVE
-  }
-
-  export const OCR_INBOX_RECEIVED = {
-    id: CONSTANT.OCR_INBOX_RECEIVED.initCap(),
-    name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE
-  }
-
-  export const OCR_INBOX_TICKET = {
-    id: CONSTANT.OCR_INBOX_TICKET.initCap(),
-    name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT
-  }
-
-  export const RAWDOC_INBOX_ISSUED = {
-    id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
-    name: MSG.ISSUEDS,
-    icon: MATERIAL_ICONS.UNARCHIVE
-  }
-
-  export const RAWDOC_INBOX_RECEIVED = {
-    id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
-    name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE
-  }
-
-  export const RAWDOC_INBOX_TICKET = {
-    id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
-    name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT
-  }
+import * as UA from '../../services/userAgentService.js';
 
   export const CREATE_INVOICE_ISSUED = {
     id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
@@ -54,71 +19,9 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.RECEIPT
   }
 
-  export const RAWDOC_INBOX = {
-    id: CONSTANT.RAWDOC_INBOX.initCap(),
-    name: MSG.PROFORMA,
-    icon: MATERIAL_ICONS.INBOX,
-    clickable: true,
-    options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
-  }
+  // ***** INVOICES *****
 
-  export const OCR_ERROR = {
-    id: CONSTANT.OCR_ERROR.initCap(),
-    name: MSG.ERRORS,
-    icon: MATERIAL_ICONS.ERROR
-  }
-
-  export const OCR_TRASH = {
-    id: CONSTANT.OCR_REJECTED.initCap(),
-    name: MSG.TRASH,
-    icon: MATERIAL_ICONS.DELETE
-  }
-
-  export const OCR_REJECTED = {
-    id: CONSTANT.OCR_REJECTED.initCap(),
-    name: MSG.TRASH,
-    icon: MATERIAL_ICONS.DELETE
-  }
-
-  export const OCR_DISCARDED = {
-    id: CONSTANT.OCR_REJECTED.initCap(),
-    name: MSG.DISCARDED,
-    icon: MATERIAL_ICONS.REPORT
-  }
-
-  export const OCR_EXPORTED = {
-    id: CONSTANT.OCR_EXPORTED.initCap(),
-    name: MSG.EXPORTED,
-    icon: MATERIAL_ICONS.DONE
-  }
-
-  export const OCR_PENDING = {
-    id: CONSTANT.OCR_PENDING.initCap(),
-    name: MSG.PENDING_REVIEW,
-    icon: MATERIAL_ICONS.ERROR
-  }
-
-  export const OCR_INBOX = {
-    id: CONSTANT.OCR_INBOX.initCap(),
-    name: MSG.INVOICES,
-    icon: MATERIAL_ICONS.INBOX,
-    clickable: true,
-    options: [OCR_INBOX_ISSUED, OCR_INBOX_RECEIVED, OCR_INBOX_TICKET]
- }
-
-
-  export const RAWDOC_REJECT = {
-    id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.PENDING_REVIEW,
-    icon: MATERIAL_ICONS.ERROR
-  }
-  
-  export const RAWDOC_DRAFT = {
-    id: CONSTANT.RAWDOC_DRAFT.initCap(),
-    name: MSG.TRASH,
-    icon: MATERIAL_ICONS.DELETE
-  }
-
+  // INVOICE
   export const INVOICE_ISSUED = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUEDS,
@@ -136,7 +39,69 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     name: MSG.TICKET,
     icon: MATERIAL_ICONS.RECEIPT
   }
+
+  // RAWDOC & INVOFOX
+
+  export const RAWDOC_INBOX_ISSUED = {
+    id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
+    name: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE
+  }
+
+  export const RAWDOC_INBOX_RECEIVED = {
+    id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
+    name: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE
+  }
+
+  export const RAWDOC_INBOX_TICKET = {
+    id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
+    name: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT
+  }
+
+  export const RAWDOC_INBOX = {
+    id: CONSTANT.RAWDOC_INBOX.initCap(),
+    name: MSG.PROFORMA,
+    icon: MATERIAL_ICONS.INBOX,
+    clickable: true,
+    options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
+  }
+
+  export const RAWDOC_REJECT = {
+    id: CONSTANT.RAWDOC_REJECT.initCap(),
+    name: MSG.PENDING_REVIEW,
+    icon: MATERIAL_ICONS.ERROR
+  }
   
+  export const RAWDOC_DRAFT = {
+    id: CONSTANT.RAWDOC_DRAFT.initCap(),
+    name: MSG.TRASH,
+    icon: MATERIAL_ICONS.DELETE
+  }
+
+  export const INVOICE_PENDINGS = {
+    id: CONSTANT.PENDINGS.initCap(),
+    name: MSG.PENDINGS,
+    icon: MATERIAL_ICONS.INBOX,
+    clickable: true,
+    options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
+  }
+
+  // MAIN OPTION
+
+  export const INVOICES = {
+    id: CONSTANT.INVOICES.initCap(),
+    title: MSG.INVOICES,
+    name: MSG.INVOICES,
+    options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET,
+      INVOICE_PENDINGS, RAWDOC_REJECT, RAWDOC_DRAFT]
+  }
+
+  // ********************
+  
+  // **** MANAGEMENT ****
+
   export const REGISTRY_CUSTOMER = {
     id: CONSTANT.REGISTRY_CUSTOMER.initCap(),
     name: MSG.CUSTOMERS,
@@ -154,12 +119,6 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     name: MSG.CREDITORS,
     icon: MATERIAL_ICONS.CONTACT_PAGE
   }
-  
-  // export const REGISTRY_TARGET = {
-  //   id: CONSTANT.REGISTRY_TARGET.initCap(),
-  //   name: MSG.TARGETS,
-  //   icon: MATERIAL_ICONS.CONTACT_PAGE
-  // }
 
   export const REGISTRY = {
     id: CONSTANT.HOLDERS.initCap(),
@@ -167,12 +126,6 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.PEOPLE,
     clickable: false,
     options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
-  }
-
-  export const OFFER = {
-    id: CONSTANT.OFFER.initCap(),
-    name: MSG.PENDINGS,
-    icon: MATERIAL_ICONS.PENDING_ACTIONS
   }
 
   export const PRODUCT = {
@@ -219,37 +172,20 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     options: [PRODUCT, EXPENSES, INVEST]
   }
 
-  export const CONFIGURATION_PRINT = {
-    id: CONSTANT.CONFIGURATION_PRINT.initCap(),
-    name: MSG.INVOICE_PRINTING,
-    icon: MATERIAL_ICONS.PRINT
+  // MAIN OPTION
+
+  export const MANAGEMENT = {
+    id: CONSTANT.MANAGEMENT.initCap(),
+    title: MSG.MANAGEMENT,
+    name: MSG.MANAGEMENT,
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, VAT_PANEL, RETENTION_PANEL ]
+    //  UA.isMobile() ? 
+      
+      // : [ REGISTRY, PRODUCT ]
   }
 
-  export const CONFIGURATION_SII_TBAI = {
-    id: CONSTANT.CONFIGURATION_SII_TBAI.initCap(),
-    name: MSG.SII_TICKETBAI,
-    icon: MATERIAL_ICONS.SETTINGS    
-  }   
-
-  export const PENDING_DOCUMENTS = {
-    id: MSG.PENDING_DOCUMENTS,
-    title: MSG.PENDING_DOCUMENTS,
-    name: MSG.PENDING_DOCUMENTS,
-    options: [RAWDOC_INBOX, RAWDOC_REJECT, RAWDOC_DRAFT]
-  }
-
-  export const INVOICES = {
-    id: MSG.INVOICES,
-    title: MSG.INVOICES,
-    name: MSG.INVOICES,
-    options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET]
-  }
+  // ********************    
 
   export const getOptions = (dur) => {
-    let options =  [PENDING_DOCUMENTS];
-    if(dur.isInvoicePortal() || dur.isInvoiceManager()){
-      options.push(INVOICES);
-    }
-
-    return options;
-}
+    return [INVOICES, MANAGEMENT];
+  }
