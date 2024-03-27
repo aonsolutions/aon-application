@@ -40,6 +40,10 @@ public abstract class Mod123Declaration {
 			@Override boolean accept(Mod123 mod) { return Mod123AEAT2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123AEAT2021Declaration();}
 		}
+		,ARABA_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123Araba2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Araba2024Declaration();}
+		}
 		,ARABA_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123Araba2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123Araba2021Declaration();}

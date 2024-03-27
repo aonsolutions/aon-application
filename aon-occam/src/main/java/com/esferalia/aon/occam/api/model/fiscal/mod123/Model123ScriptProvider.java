@@ -44,10 +44,21 @@ public class Model123ScriptProvider {
 				return Model123AEATScript.values();
 			}
 		}
+		,ARABA_2024_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAraba() && mod123.getYear() >= 2024;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123Araba2024Script.values();
+			}
+		}
 		,ARABA_2022_SCRIPT {
 			@Override
 			boolean accept(Mod123 mod123) {
-				return mod123.isAraba() && mod123.getYear() > 2021;
+				return mod123.isAraba() && (mod123.getYear() == 2022 || mod123.getYear() == 2023);
 			}
 	
 			@Override

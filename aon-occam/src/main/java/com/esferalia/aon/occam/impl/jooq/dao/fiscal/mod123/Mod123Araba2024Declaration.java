@@ -9,28 +9,48 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod123Araba2021Declaration extends Mod123Declaration {
+public class Mod123Araba2024Declaration extends Mod123Declaration {
 	
 	public static boolean accept(Mod123 mod) {
-		return mod.isAraba() && mod.getYear() <= 2023; 
+		return mod.isAraba() && mod.getYear() >= 2024; 
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-		 AR_907(Mod123Key.AR_907,null,null,null,null,null)
+		 AR_930(Mod123Key.AR_930,null,null,null,null,null)
+		,AR_907(Mod123Key.AR_907,null,null,null,null,null)
 		,AR_908(Mod123Key.AR_908,null,null,null,null,null)
 		,AR_909(Mod123Key.AR_909,null,null,null,null,null)
-		,AR_C01(Mod123Key.AR_C01
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C01,mod,docs,br)
+		
+		,AR_C21(Mod123Key.AR_C21  
+				, (mod,br) -> isMovableCapitalDividens(br)
+				, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C21,mod,docs,br)
+				,null,null,null)
+		,AR_C23(Mod123Key.AR_C23
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C23,mod,br)
 			,null,null,null)
-		,AR_C02(Mod123Key.AR_C02
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C02,mod,br)
+		,AR_C25(Mod123Key.AR_C25
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C25,mod,br)
 			,null,null,null)
-		,AR_C03(Mod123Key.AR_C03
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C03,mod,br)
+		
+		,AR_C22(Mod123Key.AR_C22  
+				, (mod,br) -> isMovableCapitalOther(br)
+				, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C22,mod,docs,br)
+				,null,null,null)
+		,AR_C24(Mod123Key.AR_C24
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C24,mod,br)
 			,null,null,null)
+		,AR_C26(Mod123Key.AR_C26
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C26,mod,br)
+			,null,null,null)
+
+		,AR_C01(Mod123Key.AR_C01,null,null,null,"AR_C21+AR_C22",null)
+		,AR_C02(Mod123Key.AR_C02,null,null,null,"AR_C23+AR_C24",null)
+		,AR_C03(Mod123Key.AR_C03,null,null,null,"AR_C25+AR_C26",null)
+		
 		,AR_C04(Mod123Key.AR_C04,null,null,null,null,null)
 		,AR_C05(Mod123Key.AR_C05,null,null,null,null,null)
 		,AR_C06(Mod123Key.AR_C06,null,null,null,"AR_C03+AR_C05",null)
@@ -131,12 +151,15 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		return new Mod123Key[] {Mod123Key.AR_C07}; 
 	}
 
-	private static boolean isMovableCapital(IrpfBreakdown br) {
+	private static boolean isMovableCapitalDividens(IrpfBreakdown br) {
+		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);
+	}
+	
+	private static boolean isMovableCapitalOther(IrpfBreakdown br) {
 		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-			|| br.getWithholdingType() == WithholdingType.M193_C1
+			(br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
 			|| br.getWithholdingType() == WithholdingType.M193_C3);
-	}
+	}	
 
 }
