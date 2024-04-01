@@ -87,11 +87,18 @@ export const AON_TEXTAREA ='aon-textarea';
 export const AON_ITEM_UPDATE ='aon-item-update';
 
 export const AON_DELIVERY_TAG = 'aon-delivery-tag';
+
 // MODULES - COMPANY
 
 export const AON_MODULE = 'aon-module';
 export const AON_COMPANY = 'aon-company';
 export const AON_COMPANY_LIST = 'aon-company-list';
+
+// MODULES - INVOICE
+
+export const AON_INVOICE_PANEL = 'aon-invoice-panel';
+export const AON_INVOICE_LIST = 'aon-invoice-list';
+export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 
 // MODULES - USER
 

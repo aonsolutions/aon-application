@@ -16,8 +16,11 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -36,10 +39,24 @@ public class BookingUtils {
 	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking, boolean console) {
 		String subject = "Modificación de Contratación en " + domain.getName();
 		String body = content(domain, user, newBooking);
+		List<String> mails = new LinkedList<>();
+		if(!console) {
+			Integer[] domains = domain.isChild() ? new Integer[] {domain.getId(), domain.getParentId()} : new Integer[] {domain.getId()};
+			Integer[] companies = AON.getCompanyStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().in(domains))
+				.map(Company::getId).toArray(Integer[]::new);
+		
+			mails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)))
+					.map(RegistryMedia::getValue).toList();
+			mails.add(domain.getOwner());
+			if(domain.isChild()) {
+				Domain parent = AON.getDomain(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
+				mails.add(parent.getOwner());
+			}
+		} else mails.add("admin@aonsolutions.es");
 
 		SESMessage msg = new SESMessage()
 				.setAlias("AON Solutions | Contrataciones")
-				.setTo(console ? "admin@aonsolutions.es" : domain.getOwner())
+				.setTo(mails)
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
 				.addBcc("asignacion@aonsolutions.es")

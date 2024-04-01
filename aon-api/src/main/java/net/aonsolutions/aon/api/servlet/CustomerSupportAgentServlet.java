@@ -12,8 +12,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -33,7 +35,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(CustomerSupportAgentServlet.class.getName());
 	
 	public static final String SYNC_CUSTOMERS_SUPPORT_AGENTS = "/";
-	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/customer/";
+	public static final String SYNC_CUSTOMER_SUPPORT_AGENTS = "/:customer";
 	public static final String CUSTOMER_SYNC_DOMAINS = "/check-customer-sync-domains/";
 
 	@Override
@@ -53,6 +55,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(CUSTOMER_SYNC_DOMAINS, CustomerSupportAgentServlet::checkCustomerSyncDomains)
+				.addRoute(SYNC_CUSTOMER_SUPPORT_AGENTS, CustomerSupportAgentServlet::checkCustomerSyncDomain)
 				.apply();
 			
 			response(req, resp, object);
@@ -77,6 +80,99 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 		}
 	}
 	
+	private static JSONObject checkCustomerSyncDomain(AonApiData api) {
+		JSONObject logJson = new JSONObject();
+		
+		try {
+			
+			JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
+	  		Integer customerId = vars.getInt(IJsonNames.CUSTOMER);
+			
+			// Si tiene dominio asociado se obvia
+			Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customerId));
+			Optional<DomainCompany> domain = domainCustomer.findFirst();
+			
+			if(domain.isPresent()) {
+				logJson.put("customer", customerId.toString());
+				logJson.put("schema", domain.get().getSchema());
+				logJson.put("domainName", domain.get().getDomain().getName());
+				logJson.put("domainId", domain.get().getDomain().getId().toString());
+			}
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new  AonApiException(e.getMessage());
+		}
+		
+		return logJson;
+	}
+	
+	private static JSONObject checkCustomerSyncDomains(AonApiData api) {
+		JSONObject logJson = new JSONObject();
+		
+		JSONArray customersLog = new JSONArray();
+		logJson.put("customers", customersLog);	
+		
+		JSONArray customersDomainLog = new JSONArray();
+		logJson.put("customersDomain", customersDomainLog);	
+		
+		TreeMap<String, String> customerNames = new TreeMap<String, String>();
+		
+		try {
+			
+			Stream<Customer> customerStream = AON.getCustomerStream(
+					api.getDomain().getName(), 
+					api.getDomain().getId(), 
+					api.getUser().getLogin(), 
+					f -> f.getStatusProperty().eq((byte) 0)
+						.and(f.getDomainProperty().eq(api.getDomain().getId()))
+			);
+			
+			for(Customer customer : customerStream.toList()) {
+				
+				// Si no tiene cuota se obvia
+				Stream<Fee> feeStream = AON.getFeeStream(api.getDomain().getName(), 
+						api.getDomain().getId(), 
+						api.getUser().getLogin(), 
+						f -> f.getCustomerProperty().eq(customer.getId())
+							.and(f.getDomainProperty().eq(api.getDomain().getId()))
+				);
+				
+				if(feeStream.toList().isEmpty()) continue;
+				
+				// Si tiene dominio asociado se obvia
+				Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer.getId()));
+				Optional<DomainCompany> domain = domainCustomer.findFirst();
+				
+				if(!domain.isPresent()) customerNames.put(customer.getName(), customer.getId().toString());
+				else {
+					JSONObject customerJson = new JSONObject();
+					customerJson.put("name", customer.getName());
+					customerJson.put("id", customer.getId().toString());
+					customerJson.put("domain", domain.get().getDomain());
+					customersDomainLog.put(customerJson);
+				}
+				
+			}
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new  AonApiException(e.getMessage());
+		}
+		
+		customerNames.entrySet().forEach(entry -> {
+			String customerName = entry.getKey();
+			String customerId = entry.getValue();
+			
+			JSONObject customerJson = new JSONObject();
+			customerJson.put("name", customerName);
+			customerJson.put("id", customerId);
+			customersLog.put(customerJson);
+		});
+		
+		return logJson;
+	}
+	
 	private static JSONObject syncCustomerSupportAgent(AonApiData api) {
 		JSONObject respJson = new JSONObject();
 		respJson.put("message", "Sincronizacion finalizada");	
@@ -86,10 +182,10 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 			String schema = api.getData().get("schema").toString();
 			String domainName = api.getData().get("domainName").toString();
 			Integer domainId = Integer.parseInt(api.getData().get("domainId").toString());
-			String owner = api.getData().get("owner").toString();
-			
+			String owner =  api.getData().get("owner").toString();
+	
 			AON.updateDomainOwner(schema, domainName, domainId, owner);
-
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new  AonApiException(e.getMessage());
@@ -166,72 +262,6 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 		
 		return logJson;
 
-	}
-	
-	private static JSONObject checkCustomerSyncDomains(AonApiData api) {
-		JSONObject logJson = new JSONObject();
-		
-		JSONArray customersLog = new JSONArray();
-		logJson.put("customers", customersLog);	
-		
-		JSONArray customersDomainLog = new JSONArray();
-		logJson.put("customersDomain", customersDomainLog);	
-		
-		TreeMap<String, String> customerNames = new TreeMap<String, String>();
-		
-		try {
-			
-			Stream<Customer> customerStream = AON.getCustomerStream(
-					api.getDomain().getName(), 
-					api.getDomain().getId(), 
-					api.getUser().getLogin(), 
-					f -> f.getStatusProperty().eq((byte) 0)
-						.and(f.getDomainProperty().eq(api.getDomain().getId()))
-			);
-			
-			for(Customer customer : customerStream.toList()) {
-				
-				// Si no tiene cuota se obvia
-				Stream<Fee> feeStream = AON.getFeeStream(api.getDomain().getName(), 
-						api.getDomain().getId(), 
-						api.getUser().getLogin(), 
-						f -> f.getCustomerProperty().eq(customer.getId())
-							.and(f.getDomainProperty().eq(api.getDomain().getId()))
-				);
-				
-				if(feeStream.toList().isEmpty()) continue;
-				
-				// Si tiene dominio asociado se obvia
-				Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer.getId()));
-				Optional<DomainCompany> domain = domainCustomer.findFirst();
-				
-				if(!domain.isPresent()) customerNames.put(customer.getName(), customer.getId().toString());
-				else {
-					JSONObject customerJson = new JSONObject();
-					customerJson.put("name", customer.getName());
-					customerJson.put("id", customer.getId().toString());
-					customerJson.put("domain", domain.get().getDomain());
-					customersDomainLog.put(customerJson);
-				}
-				
-			}
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new  AonApiException(e.getMessage());
-		}
-		
-		customerNames.entrySet().forEach(entry -> {
-			String customerName = entry.getKey();
-			String customerId = entry.getValue();
-			
-			JSONObject customerJson = new JSONObject();
-			customerJson.put("name", customerName);
-			customerJson.put("id", customerId);
-			customersLog.put(customerJson);
-		});
-		
-		return logJson;
 	}
 	
 }
