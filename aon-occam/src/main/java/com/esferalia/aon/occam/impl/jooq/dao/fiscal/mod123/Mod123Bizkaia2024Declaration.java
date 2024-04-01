@@ -9,31 +9,47 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
+public class Mod123Bizkaia2024Declaration extends Mod123Declaration {
 	
 	public static boolean accept(Mod123 mod) {
-		return mod.isBizkaia() && mod.getYear() <= 2023; 
+		return mod.isBizkaia() && mod.getYear() >= 2024; 
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
+
 		 BZ_C01(Mod123Key.BZ_C01
-			, (mod,br) -> isMovableCapital(br)
+			, (mod,br) -> isMovableCapitalDividens(br)
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
 			,null,null,null)
+		,BZ_C04(Mod123Key.BZ_C04
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C04,mod,br)
+			,null,null,null)
+		,BZ_C07(Mod123Key.BZ_C07
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C07,mod,br)
+			,null,null,null)
+		
 		,BZ_C02(Mod123Key.BZ_C02
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C02,mod,br)
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C02,mod,docs,br)
 			,null,null,null)
-		,BZ_C03(Mod123Key.BZ_C03
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C03,mod,br)
+		,BZ_C05(Mod123Key.BZ_C05
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C05,mod,br)
 			,null,null,null)
-		,BZ_C04(Mod123Key.BZ_C04,null,null,null,null,null)
-		,BZ_C05(Mod123Key.BZ_C05,null,null,null,null,null)
-		,BZ_C06(Mod123Key.BZ_C06,null,null,null,"BZ_C03+BZ_C05",null)
+		,BZ_C08(Mod123Key.BZ_C08
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C08,mod,br)
+			,null,null,null)
+		
+		,BZ_C03(Mod123Key.BZ_C03,null,null,null,"BZ_C01+BZ_C02",null)
+		,BZ_C06(Mod123Key.BZ_C06,null,null,null,"BZ_C04+BZ_C05",null)
+		,BZ_C09(Mod123Key.BZ_C09,null,null,null,"BZ_C07+BZ_C08",null)
+		,BZ_C10(Mod123Key.BZ_C10,null,null,null,"BZ_C09",null)
+		
 		,BZ_TIP (Mod123Key.BZ_TIP,null,null,null,null,null)
 		;
-		
 		
 		private Mod123Key key;
 		private IValueAccepter acceptValue;
@@ -99,7 +115,7 @@ public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
 
 	@Override
 	double getResult(Mod123 mod) {
-		return mod.getAmount(Mod123Key.BZ_C06);
+		return mod.getAmount(Mod123Key.BZ_C10);
 	}
 
 	@Override
@@ -118,12 +134,15 @@ public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
 		return new Mod123Key[] {}; 
 	}
 	
-	private static boolean isMovableCapital(IrpfBreakdown br) {
+	private static boolean isMovableCapitalDividens(IrpfBreakdown br) {
+		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);
+	}
+	
+	private static boolean isMovableCapitalOther(IrpfBreakdown br) {
 		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-			|| br.getWithholdingType() == WithholdingType.M193_C1
+			(br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
 			|| br.getWithholdingType() == WithholdingType.M193_C3);
-	}
+	}	
 
 }

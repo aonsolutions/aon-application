@@ -42,6 +42,10 @@ public enum Mod123Key implements IFiscalModelKey {
 	,BZ_C04("123-07" 	,  4,Administration.BIZKAIA)
 	,BZ_C05("123-08" 	,  5,Administration.BIZKAIA)
 	,BZ_C06("123-13" 	,  6,Administration.BIZKAIA)
+	,BZ_C07("123-14" 	,  7,Administration.BIZKAIA)
+	,BZ_C08("123-15" 	,  8,Administration.BIZKAIA)
+	,BZ_C09("123-16" 	,  9,Administration.BIZKAIA)
+	,BZ_C10("123-17" 	, 10,Administration.BIZKAIA)
 	,BZ_TIP("123-BZ-DT" ,  0,Administration.BIZKAIA)
 	
 	// ----------------------------------------------------- COMMON TERRITORY
