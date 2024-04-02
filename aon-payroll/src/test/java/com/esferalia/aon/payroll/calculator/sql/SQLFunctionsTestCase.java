@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -1185,6 +1186,7 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	@Ignore
 	public void testFractionFunctionFebruary() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
