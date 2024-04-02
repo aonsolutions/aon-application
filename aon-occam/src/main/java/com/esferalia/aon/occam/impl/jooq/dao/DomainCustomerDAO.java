@@ -47,6 +47,17 @@ public class DomainCustomerDAO {
 						.setDomain(new DomainFiller().apply(rec)));
 	}
 	
+	private static Stream<DomainCompany> areDomainsSync(AONContext ctx, Condition... condition) {
+		return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.where(condition)
+				.fetch()
+				.stream()
+				.map(rec -> new DomainCompany()
+						.setCompany(null)
+						.setDomain(new DomainFiller().apply(rec)));
+	}
+	
 	public static Stream<DomainCompany> getAllDomains(AONContext ctx){
 		return getDomains(ctx, DOMAIN.ID.gt(0).and(DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull())));
 	}
@@ -59,6 +70,16 @@ public class DomainCustomerDAO {
 		cndLst.add(mainCondition);
 		Condition[] allConditions = cndLst.stream().toArray(Condition[]::new);
 		return getDomains(ctx, allConditions);
+	}
+	
+	public static Stream<DomainCompany> areDomainsSync(AONContext ctx, DomainFilter filter){
+		Condition mainCondition = DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull());
+		Condition[] filterConditions = DOMAIN_PROPERTIES.getConditions(filter);
+		List<Condition> cndLst = new ArrayList<>(filterConditions.length + 1);
+		Arrays.asList(filterConditions).forEach(cndLst::add);
+		cndLst.add(mainCondition);
+		Condition[] allConditions = cndLst.stream().toArray(Condition[]::new);
+		return areDomainsSync(ctx, allConditions);
 	}
 	
 	public static Stream<DomainCompany> getAllLinkedDomains(AONContext ctx){

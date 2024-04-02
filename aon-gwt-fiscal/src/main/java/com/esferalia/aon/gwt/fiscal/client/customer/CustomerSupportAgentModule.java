@@ -85,6 +85,10 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 	private AonToolbarSmallButton toolbarLogBtn;
 	private Grid logTable;
 	private boolean isLogOpen = true;
+	private boolean isDescCustomerSort = true;
+	private boolean isDescTypeSort = true;
+	private ArrayList<CustomerLog> customerLogs = new ArrayList<CustomerLog>();
+	
 	
 	// Api
 	private CustomerApi customerApi;
@@ -603,7 +607,6 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		logPanel.clear();
 		logPanel.add(createLogToolbar());
 		createLogTable();
-		logPanel.add(logTable);
 	}
 
 	private AonToolbarSmall createLogToolbar() {
@@ -639,8 +642,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		Label message = new Label("MENSAJE");
 		
 		customer.addStyleName(AON.CSS.aonHeaderTable());
+		customer.getElement().getStyle().setProperty("cursor", "pointer");
 		type.addStyleName(AON.CSS.aonHeaderTable());
+		type.getElement().getStyle().setProperty("cursor", "pointer");
 		message.addStyleName(AON.CSS.aonHeaderTable());
+		
+		customer.addClickHandler(e -> sortLogTableByName());
+		type.addClickHandler(e -> sortLogTableByType());
 
 		logTable.setWidget(row, 0, customer);
 		logTable.setWidget(row, 1, type);
@@ -652,9 +660,39 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		
 		logTable.getColumnFormatter().getElement(0).getStyle().setWidth(400, Unit.PX);
 		logTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
+		
+		logPanel.add(logTable);
+	}
+
+	private void sortLogTableByName() {
+		logPanel.clear();
+		
+		isDescCustomerSort = !isDescCustomerSort;
+		
+		createLogTableHeader();
+		
+		if(isDescCustomerSort) customerLogs.sort((o1, o2) -> o1.getCustomerName().compareTo(o2.getCustomerName()));
+		else customerLogs.sort((o1, o2) -> o2.getCustomerName().compareTo(o1.getCustomerName()));
+		
+		customerLogs.forEach(cusrtomerLog -> addLogRow(cusrtomerLog.getCustomerName(), cusrtomerLog.getType().getDescription(), cusrtomerLog.getMessage()));
+	}
+
+	private void sortLogTableByType() {
+		logPanel.clear();
+		
+		isDescTypeSort = !isDescTypeSort;
+		
+		if(isDescTypeSort) customerLogs.sort((o1, o2) -> o1.getType().getDescription().compareTo(o2.getType().getDescription()));
+		else customerLogs.sort((o1, o2) -> o2.getType().getDescription().compareTo(o1.getType().getDescription()));
+		
+        createLogTableHeader();
+        
+        customerLogs.forEach(cusrtomerLog -> addLogRow(cusrtomerLog.getCustomerName(), cusrtomerLog.getType().getDescription(), cusrtomerLog.getMessage()));
 	}
 
 	private void createLogTableBody() {
+		customerLogs.clear();
+		
 		SERVICE.getCustomers(
 				options.getDomainName(), 
 				options.getDomain(), 
@@ -695,6 +733,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 										public void onSuccess(Seller seller) {
 											if(seller.getId() == null) {
 												addLogRow(customer.getName(), "Cliente / Agente Soporte", "El cliente " + customer.getName() + " no tiene agente de soporte asociado");
+												customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.getLogTypeByDescription("Cliente / Agente Soporte"), "El cliente " + customer.getName() + " no tiene agente de soporte asociado"));
 												
 												if(customerCount == (totalCustomers - 1))
 													AonMessagePanel.hideMessage(messagePanel);
@@ -711,6 +750,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 													public void onSuccess(String sellerEmail) {
 														if(AonStringUtils.isBlank(sellerEmail)) {
 															addLogRow(customer.getName(), "Agente Soporte", "El agente de soporte " + seller.getName() + " no tiene email registrado en su ficha");
+															customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.getLogTypeByDescription("Agente Soporte"), "El agente de soporte " + seller.getName() + " no tiene email registrado en su ficha"));
 															
 															if(customerCount == (totalCustomers - 1))
 																AonMessagePanel.hideMessage(messagePanel);
@@ -737,6 +777,7 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 																@Override
 																public void onSuccess(Void result) {
 																	addLogRow(customer.getName(), "Sincronizac\u00f3n", "El agente de soporte " + seller.getName() + " ha sido asigando como gestor del dominio " + domainCompany.getDomain().getDescription());
+																	customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.getLogTypeByDescription("Sincronizac\u00f3n"), "El agente de soporte " + seller.getName() + " ha sido asigando como gestor del dominio " + domainCompany.getDomain().getDescription()));
 																	
 																	if(customerCount == (totalCustomers - 1))
 																		AonMessagePanel.hideMessage(messagePanel);
@@ -758,9 +799,8 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 													}
 													
 													@Override
-													public void onFailure(Throwable arg0) {
-														// TODO Auto-generated method stub
-														
+													public void onFailure(Throwable caught) {
+														dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
 													}
 												});
 												
@@ -778,7 +818,8 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 				
 				                } else {
 				                	addLogRow(customer.getName(), "Dominio Asociado", "El cliente " + customer.getName() + " no tiene dominio asociado");
-				                	
+				                	customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.getLogTypeByDescription("Dominio Asociado"), "El cliente " + customer.getName() + " no tiene dominio asociado"));
+									
 				                	if(customerCount == (totalCustomers - 1))
 										AonMessagePanel.hideMessage(messagePanel);
 				                	else {
@@ -848,6 +889,61 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 		}
 		
 		logTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);	
+	}
+	
+	// -------------------------------- CUSTOMER LOG
+	
+	private enum LogTypeEnum {
+		CUSTOMER_DOMAIN_SYNC("Dominio Asociado"),
+		CUSTOMER_SUPPORT_AGENT("Cliente / Agente Soporte"),
+		SUPPORT_AGENT_EMAIL("Agente Soporte"),
+		SYNC("Sincronizac\u00f3n")
+		;
+		
+		private String description;
+		
+		LogTypeEnum(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription() {
+			return this.description;
+		}
+		
+		public static LogTypeEnum getLogTypeByDescription(String description) {
+			for(int i=0; i < values().length; i++) {
+				if(AonStringUtils.equalsIgnoreCase(values()[i].getDescription(), description))
+					return values()[i];
+			}
+			return null;
+		}
+	}
+	
+	private class CustomerLog {
+		
+		private String customerName;
+		private LogTypeEnum type;
+		private String message;
+		
+		public CustomerLog(String customerName, LogTypeEnum type, String message) {
+			super();
+			this.customerName = customerName;
+			this.type = type;
+			this.message = message;
+		}
+		
+		public String getCustomerName() {
+			return customerName;
+		}
+		
+		public LogTypeEnum getType() {
+			return type;
+		}
+		
+		public String getMessage() {
+			return message;
+		}
+		
 	}
 	
 }
