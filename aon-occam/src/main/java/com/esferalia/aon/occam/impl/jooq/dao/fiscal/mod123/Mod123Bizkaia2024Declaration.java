@@ -9,41 +9,46 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod123Araba2021Declaration extends Mod123Declaration {
+public class Mod123Bizkaia2024Declaration extends Mod123Declaration {
 	
 	public static boolean accept(Mod123 mod) {
-		return mod.isAraba() && mod.getYear() <= 2023; 
+		return mod.isBizkaia() && mod.getYear() >= 2024; 
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-		 AR_907(Mod123Key.AR_907,null,null,null,null,null)
-		,AR_908(Mod123Key.AR_908,null,null,null,null,null)
-		,AR_909(Mod123Key.AR_909,null,null,null,null,null)
-		,AR_C01(Mod123Key.AR_C01
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C01,mod,docs,br)
+
+		 BZ_C01(Mod123Key.BZ_C01
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
 			,null,null,null)
-		,AR_C02(Mod123Key.AR_C02
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C02,mod,br)
+		,BZ_C04(Mod123Key.BZ_C04
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C04,mod,br)
 			,null,null,null)
-		,AR_C03(Mod123Key.AR_C03
-			, (mod,br) -> isMovableCapital(br)
-			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C03,mod,br)
+		,BZ_C07(Mod123Key.BZ_C07
+			, (mod,br) -> isMovableCapitalDividens(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C07,mod,br)
 			,null,null,null)
-		,AR_C04(Mod123Key.AR_C04,null,null,null,null,null)
-		,AR_C05(Mod123Key.AR_C05,null,null,null,null,null)
-		,AR_C06(Mod123Key.AR_C06,null,null,null,"AR_C03+AR_C05",null)
-		,AR_C07(Mod123Key.AR_C07,null,null
-			, (ctx,mod) -> mod.putAmount(Mod123Key.AR_C07,
-					mod.isReplacement() 
-					?Mod123DAO.getSamePeriodEffectiveModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
-					:0.0)
-				,null,null)
-		,AR_C08(Mod123Key.AR_C08,null,null,null,null,null)
-		,AR_C09(Mod123Key.AR_C09,null,null,null,null,null)
-		,AR_C10(Mod123Key.AR_C10,null,null,null,"AR_C06-AR_C07+AR_C08+AR_C09",null)
-		,AR_TIP(Mod123Key.AR_TIP,null, null,null,null,null)
+		
+		,BZ_C02(Mod123Key.BZ_C02
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C02,mod,docs,br)
+			,null,null,null)
+		,BZ_C05(Mod123Key.BZ_C05
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C05,mod,br)
+			,null,null,null)
+		,BZ_C08(Mod123Key.BZ_C08
+			, (mod,br) -> isMovableCapitalOther(br)
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C08,mod,br)
+			,null,null,null)
+		
+		,BZ_C03(Mod123Key.BZ_C03,null,null,null,"BZ_C01+BZ_C02",null)
+		,BZ_C06(Mod123Key.BZ_C06,null,null,null,"BZ_C04+BZ_C05",null)
+		,BZ_C09(Mod123Key.BZ_C09,null,null,null,"BZ_C07+BZ_C08",null)
+		,BZ_C10(Mod123Key.BZ_C10,null,null,null,"BZ_C09",null)
+		
+		,BZ_TIP (Mod123Key.BZ_TIP,null,null,null,null,null)
 		;
 		
 		private Mod123Key key;
@@ -76,7 +81,7 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 			return  acceptValue != null &&  acceptValue.accept(mod,br);
 		}
 		@Override
-		public void initialize(AONContext ctx,Mod123 mod,Map<Mod123Key,Set<String>> docs,IrpfBreakdown  br) {
+		public void initialize(AONContext ctx,Mod123 mod,Map<Mod123Key,Set<String>> docs, IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, br);
 			}
@@ -95,6 +100,7 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		public String getTemplate() {
 			return template;
 		}
+		
 	}
 
 	@Override
@@ -109,34 +115,34 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 
 	@Override
 	double getResult(Mod123 mod) {
-		return mod.getAmount(Mod123Key.AR_C10);
+		return mod.getAmount(Mod123Key.BZ_C10);
 	}
 
 	@Override
 	ComplementaryBeahaviour getComplementaryBehaviour(Mod123 mod) {
-		return  mod.isComplementary()
-			?ComplementaryBeahaviour.COMPLEMENTARY
-			:ComplementaryBeahaviour.REPLACEMENT;
+		return ComplementaryBeahaviour.COMPLEMENTARY;
 	}
 	
 	@Override
 	Mod123 initialize(AONContext ctx, Mod123 mod123) {
 		mod123.setComplementaryDeclarationAvailable(true);
-		mod123.setReplacementDeclarationAvailable(true);
+		mod123.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod123);
 	}
-	
 	@Override
 	public Mod123Key[] getSamePeriodExplainKeys() {
-		return new Mod123Key[] {Mod123Key.AR_C07}; 
+		return new Mod123Key[] {}; 
 	}
-
-	private static boolean isMovableCapital(IrpfBreakdown br) {
+	
+	private static boolean isMovableCapitalDividens(IrpfBreakdown br) {
+		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);
+	}
+	
+	private static boolean isMovableCapitalOther(IrpfBreakdown br) {
 		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-			|| br.getWithholdingType() == WithholdingType.M193_C1
+			(br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
 			|| br.getWithholdingType() == WithholdingType.M193_C3);
-	}
+	}	
 
 }

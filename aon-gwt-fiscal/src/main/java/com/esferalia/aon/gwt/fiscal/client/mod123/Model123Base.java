@@ -692,7 +692,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderTop() );
 
-		table.setWidget(row, 1, new Label(getModel().isAEAT() && getModel().getYear() >= 2024 ? "N\u00FAmero de rentas" : AON.MSG.receivers()));
+		table.setWidget(row, 1, new Label((getModel().isAEAT() || getModel().isGipuzkoa() || getModel().isBizkaia()) && getModel().getYear() >= 2024 ? "N\u00FAmero de rentas" : AON.MSG.receivers()));
 		table.getFlexCellFormatter().setStyleName(row, 1,AON.CSS.aonBold() );
 		table.getFlexCellFormatter().addStyleName(row, 1,AON.CSS.aonTextCenter() );
 		table.getFlexCellFormatter().addStyleName(row, 1,AON.CSS.aonBorderBottom() );
