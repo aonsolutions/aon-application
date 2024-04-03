@@ -234,6 +234,7 @@ export class AonInvoicePanel extends AonElement {
 			table.invofoxFilter = invofoxFilter;
 			this.getApplication().setContent(table);
 		}
+		this.getApplication().buildDragAndDrop(true);
 	}
 
 	aonCustomerList(filter) {
@@ -542,7 +543,10 @@ export class AonInvoicePanel extends AonElement {
 		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
-		if(invoice.file) component.fileOpened = true;
+		if(invoice.file) {
+			component.fileOpened = true;
+			this.getApplication().buildDragAndDrop(false);
+		}
 
 		aonInvoice.setContent(component);
 	}
