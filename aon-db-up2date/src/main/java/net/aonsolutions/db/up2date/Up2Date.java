@@ -20,6 +20,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
+import net.aonsolutions.db.up2date.config.InsertIAE848889;
+import net.aonsolutions.db.up2date.domain.DomainAddDomainPayerColumn;
+import net.aonsolutions.db.up2date.fix.CodinucovaInvoiceTaxFix;
+import net.aonsolutions.db.up2date.payroll.PPEInsert;
+import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
+import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIV;
+import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
+import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
@@ -414,6 +423,7 @@ public class Up2Date {
 	    // AlterFsMod184Detail2023.ALTER_FS_MODEL_184_DETAIL_2023,
 	    // AlterContractDeductionExpression.ALTER_CONTRACT_DEDUCTION_EXPRESSION,
 	    // InvoiceInfoLroeUpdate.INVOICE_INFO_LROE_UPDATE,
+
 	    // HomeBases2023UpdateIV.HOMEBASES2023UPDATEIV,
     	// CodinucovaInvoiceTaxFix.INSTANCE,
     	// InsertIAE848889.INSERT_IAE_848889,
@@ -421,7 +431,12 @@ public class Up2Date {
 	    // PPEInsert.PPE_INSERT
 	    // BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    // BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
-    		BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
+
+        RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
+	      RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
+	      InvoiceDocCreate.INVOICEDOCCREATE,
+	      RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
+        BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
     		HomeBases2024Update.HOMEBASES2024UPDATEIV,
     		Art1512024Update.ART1512024UPDATE
 	};

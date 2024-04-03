@@ -1583,13 +1583,27 @@ public class ModelAdmonUtils {
 	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
 		StringBuilder buff = new StringBuilder();
 		buff.append(ERROR_TEMPLATE_START);		
-		buff.append(ERROR_TEMPLATE_BEFORE);
+		buff.append("<ul style=\""
+					+"background-attachment: scroll;"
+					+"background-clip: border-box;"
+					+"background-position: 3px 2px;"
+					+"background-repeat: no-repeat;"
+					+"background-size: auto auto;"
+					+"background-color: lavender;"
+					+"font-size: small;"
+					+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+					+"font-weight: bold;"
+					+"border: solid black 1px;"
+					+"padding-top: 20px;"
+					+"padding-bottom: 20px;"
+					+"\">");
+	
 		for (ArrayList<String> al : erroresGlobal) {
-			buff.append("<li>");
+			buff.append("<li>");			
 			buff.append(al.get(0));
 			
-			if (al.size() == 1) {
-				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal'>");
+			if (al.size() == 1) {				
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: green;'>");
 				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
 			} else {			
 				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
@@ -1604,8 +1618,8 @@ public class ModelAdmonUtils {
 			
 			buff.append("</ul>");
 			buff.append("</li>");
-		}
-		buff.append(ERROR_TEMPLATE_AFTER);
+		}		
+		buff.append("</ul>");
 		buff.append(ERROR_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}		

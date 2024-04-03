@@ -51,9 +51,11 @@ export const AON_WAREHOUSE = 'aon_warehouse';
 export const AON_NEW_WAREHOUSE = 'aon_new_warehouse';
 export const AON_PDF = 'aon_pdf';
 export const AON_TREASURY = 'aon_app';
-export const AON_MARKETING = 'aon_app';
+export const AON_MARKETING = 'aon_marketing';
 export const AON_COMMERCIAL = 'aon_app';
 export const AON_HOTEL = 'aon_app';
 export const AON_ACADEMY = 'aon_aula';
 export const AON_SEG_SOCIAL = 'aon_seg_social';
 export const AON_PIN_OFF = 'aon_pin_off';
+
+export const SERES = 'seres';

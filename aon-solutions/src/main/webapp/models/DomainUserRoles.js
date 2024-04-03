@@ -570,6 +570,21 @@ export class DomainUserRoles {
       && (this.isAdmin() || this.hasRole(Role.INVOFOX));
   }
 
+  // SERES
+
+  hasSeres() {
+    return this.hasApp(App.SERES);
+  }
+    
+  hasParentSeres() {
+    return this.hasParentApp(App.SERES);
+  }
+    
+  isSeres() {
+    return (this.hasSeres() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentSeres()))
+      && (this.isAdmin() || this.hasRole(Role.SERES));
+  }
+	
   // BANK
 
   hasBank() {

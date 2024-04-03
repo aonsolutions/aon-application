@@ -1,28 +1,14 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta, downloadInvoiceExcel, getInvoice } from '../../services/service.js';
-
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
-import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
-
-import './aon-invoice-list.js';
-import './aon-mobile-invoice-list.js';
-import './aon-invoice-print.js';
-
-import '../../components/aon-application.js';
-import '../../components/aon-dialog-menu.js';
-
 import { MSG, MATERIAL_ICONS, CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
-import * as ACTION from '../actions.js';
 import { AonProductList } from '../product/aon-product-list.js';
-import * as OPTION from './InvoiceOptions.js';
-import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
-import Apps from '../../services/app.js';
+import { Apps, INVOICE } from '../../services/app.js';
 import { AonProduct } from '../product/aon-product.js';
 import { AonCustomerList } from '../registry/customer/aon-customer-list.js';
 import { AonSupplierList } from '../registry/supplier/aon-supplier-list.js';
@@ -33,16 +19,24 @@ import { AonMobileCustomerList } from '../registry/customer/aon-mobile-customer-
 import { AonCustomer } from '../registry/customer/aon-customer.js';
 import { AonSupplier } from '../registry/supplier/aon-supplier.js';
 import { AonCreditor } from '../registry/creditor/aon-creditor.js';
-import * as GWT from '../../gwt/gwt.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonInvestList } from '../product/aon-invest-list.js';
 import { AonInvest } from '../product/aon-invest.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
+import { AonInvoiceList } from './aon-invoice-list.js';
+import { AonMobileInvoiceList } from './aon-mobile-invoice-list.js';
+
+import * as GWT from '../../gwt/gwt.js';
+import * as ACTION from '../actions.js';
+import * as OPTION from './InvoiceOptions.js';
+
+import './aon-invoice-print.js';
+import '../../components/aon-application.js';
+import '../../components/aon-dialog-menu.js';
 
 export class AonInvoicePanel extends AonElement {
 
-	dur;
 	selectedOption;
 	filter;
 
@@ -83,8 +77,7 @@ export class AonInvoicePanel extends AonElement {
 			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
+		this.buildDur().then(r => {
 			this.build();
 		});
 	}
@@ -107,11 +100,6 @@ export class AonInvoicePanel extends AonElement {
 		}
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
-
-	}
-
-	getDur(){
-		return this.dur;
 	}
 
 	getFilter() {
@@ -201,96 +189,12 @@ export class AonInvoicePanel extends AonElement {
 
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
-		})
-		this.buildOcrOptions();
-		this.buildRawdocOptions();
-		this.buildOfferOptions();
-		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
-			this.buildInvoiceOptions();
-			this.buildSettingOptions();
-		}
-	}
+		});
 
-	buildOcrOptions() {
-		if ( this.getDur().isInvofox() ){
-			let ocrOptions =   
-			[ 
-				OPTION.OCR_INBOX,
-				OPTION.OCR_PENDING,
-				OPTION.OCR_TRASH 
-			];
-			let data = {
-				id: MSG.OCR,
-				title: MSG.OCR,
-				name: MSG.OCR,
-				app: Apps.INVOICE
-			}
-			this.getApplication().addSidenavOptions2(data, ocrOptions);
-		}
-	}
-
-	buildRawdocOptions() {
-		let rawDocOptions  =
-		[ 
-			OPTION.RAWDOC_INBOX,
-			OPTION.RAWDOC_REJECT, 
-			OPTION.RAWDOC_DRAFT
-		] ;
-		let data = {
-			id: MSG.PENDING_DOCUMENTS,
-			title: MSG.PENDING_DOCUMENTS,
-			name: MSG.PENDING_DOCUMENTS,
-			app: Apps.INVOICE
-		}
-		this.getApplication().addSidenavOptions2(data, rawDocOptions);
-	}
-
-	buildInvoiceOptions() {
-		let invoiceOptions = [
-			OPTION.INVOICE_ISSUED,
-			OPTION.INVOICE_RECEIVED, 
-			OPTION.INVOICE_TICKET
-		];
-		let data = {
-			id: MSG.INVOICES,
-			title: MSG.INVOICES,
-			name: MSG.INVOICES,
-			app: Apps.INVOICE
-		}
-		
-		this.getApplication().addSidenavOptions2(data, invoiceOptions);
-	}
-
-	buildOfferOptions() {
-		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
-			let budgetOptions = [ OPTION.OFFER ];
-			let data = {
-				id: MSG.BUDGETS,
-				title: MSG.BUDGETS,
-				name:  MSG.BUDGETS,
-				app: Apps.INVOICE
-			}
-			this.getApplication().addSidenavOptions2(data, budgetOptions);
-		}
-	}
-
-	buildSettingOptions() {
-		let settingOptions = [];
-		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS, OPTION.VAT_PANEL, OPTION.RETENTION_PANEL ];
-		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
-
-		let data = {
-			id: MSG.MANAGEMENT,
-			title: MSG.MANAGEMENT,
-			name:  MSG.MANAGEMENT,
-			app: Apps.INVOICE
-		}
-		this.getApplication().addSidenavOptions2(data, settingOptions);
-	}
-
-	add(){
-
+		OPTION.getOptions(this.getDur()).forEach(option => {
+			option.app = INVOICE;
+			this.getApplication().addSidenavOptions3(option);
+		});
 	}
 
 	search(value) {
@@ -314,29 +218,22 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-	aonInvoiceList(filter) {
+	aonInvoiceList(filter, invofoxFilter) {
 		filter = filter || this.filter;
 		this.filter = filter;
-		let invoiceList = document.getElementById('aonInvoiceList');
+		let invoiceList = this.getElement('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
 			invoiceList.init();
 		} else {
-			let aonInvoice = document.getElementById('aonInvoice');
-			if(this.isMobile()) {
-				aonInvoice.setContentHTML(filter
-					? `<aon-mobile-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-mobile-invoice-list>`
-					: `<aon-mobile-invoice-list id="aonInvoiceList"></aon-mobile-invoice-list>`);
-			}  else {
-				aonInvoice.setContentHTML(filter
-					? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
-					: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
-			}
+			let table = this.isMobile() 
+				? new AonMobileInvoiceList() 
+				: new AonInvoiceList();
+			table.id = 'aonInvoiceList';
+			table.setFilter(filter);
+			table.invofoxFilter = invofoxFilter;
+			this.getApplication().setContent(table);
 		}
-	}
-
-	aonInvoicePrint() {
-		this.getApplication().setContent(new AonInvoicePrint());
 	}
 
 	aonCustomerList(filter) {
@@ -362,7 +259,6 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.setContent(supplierList);
 		}
 	}
-
 
 	aonCreditorList(filter) {
 		let creditorList = this.getElement(this.CREDITOR_LIST);
@@ -537,6 +433,7 @@ export class AonInvoicePanel extends AonElement {
 		yearSelect.id = "aonInvoiceSelfcontaYear";
 		yearSelect.title = MSG.YEAR;
 		yearSelect.options = JSON.stringify([
+			{name:'2024', value:2024},
 			{name:'2023', value:2023},
 			{name:'2022', value:2022},
 			{name:'2021', value:2021},
@@ -601,8 +498,9 @@ export class AonInvoicePanel extends AonElement {
 				uploadToast.setDur(this.getDur());
 				this.appendChild(uploadToast);
 			}
+			let data = {uploaded : 0};
 			for (let file of files) {
-				uploadToast.addFile("invoice", file);
+				uploadToast.addFile("invoice", file, data);
 			}
 		} else{
 			for(let i = 0; i < files.length; i++) {
@@ -668,121 +566,87 @@ export class AonInvoicePanel extends AonElement {
 				case OPTION.CREATE_INVOICE_TICKET.id:
 					this.aonInvoice('ticket');
 					break;
-				
-			case OPTION.RAWDOC_INBOX.id:
-				this.aonInvoiceList({status: CONSTANT.INBOX});
-				break;
-			case OPTION.RAWDOC_INBOX_ISSUED.id:
-				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'emitida'});
-				break;
-			case OPTION.RAWDOC_INBOX_RECEIVED.id:
-				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'recibida'});
-				break;
-			case OPTION.RAWDOC_INBOX_TICKET.id:
-				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
-				break;
-			case OPTION.RAWDOC_REJECT.id:
-				this.aonInvoiceList({status: CONSTANT.REJECTED});
-				break;
-			case OPTION.OCR_INBOX.id:
-				// [ processing, 
-				// 	pendingDecission, 
-				// 	exported, 
-				// 	pendingCorrection, 
-				// 	approved, 
-				// 	rejected, 
-				// 	discarded, 
-				// 	error ]
-
-				// this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingCorrection']}); 
-				break;
-			case OPTION.OCR_INBOX_ISSUED.id:
-				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' }); 
-				break;
-			case OPTION.OCR_INBOX_RECEIVED.id:
-				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'}); 
-				break;
-			case OPTION.OCR_INBOX_TICKET.id:
-				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'}); 
-				break;
-			//case OPTION.OCR_EXPORTED.id:
-			//	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['exported']}); 
-			//	break;
-			case OPTION.OCR_PENDING.id:
-				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'}); 
-				break;
-			// case OPTION.OCR_ERROR.id:
-			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['error']}); 
-			// 	break;
-			case OPTION.OCR_TRASH.id:
-				this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error' ]}); 
-				break;
-			// case OPTION.OCR_DISCARDED.id:
-			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded']}); 
-			// 	break;
-			// case OPTION.OCR_REJECTED.id:
-			// 	this.aonInvoiceList({status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['rejected' ]}); 
-			// 	break;
-			case OPTION.RAWDOC_DRAFT.id:
-				this.aonInvoiceList({status: CONSTANT.DRAFT});
-				break;
-			case OPTION.INVOICE_ISSUED.id:
-				this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50});
-				break;
-			case OPTION.INVOICE_RECEIVED.id:
-				this.aonInvoiceList({status:'accounting', type:'purchase,expenses', page:1, per_page: 50});
-				break;
-			case OPTION.INVOICE_TICKET.id:
-				this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50});
-				break;
-			case OPTION.REGISTRY_CUSTOMER.id:
-				this.aonCustomerList();
-				// GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT);
-				break;
-			case OPTION.REGISTRY_SUPPLIER.id:
-				this.aonSupplierList();
-				//GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT);
-				break;
-			case OPTION.REGISTRY_CREDITOR.id:
-				this.aonCreditorList();
-				//GWT.load(GWT.CREDITOR, this.getApplication().CONTENT);
-				break;
-			case OPTION.OFFER.id:
-				break;
-			case OPTION.CONCEPTS.id:
-				break;
-			case OPTION.PRODUCT.id:
-				this.aonProductList({expense: false});
-				break;
-			case OPTION.EXPENSES.id:
-				this.aonProductList({expense: true});
-				break;
-			case OPTION.INVEST.id:
-				this.aonInvestList({});
-				break;
-			case OPTION.CONFIGURATION_PRINT.id:
-				this.aonInvoicePrint();
-				break;
-			case OPTION.CONFIGURATION_SII_TBAI.id:
-				break;
-			case OPTION.REGISTRY.id:
-				break;
-			case OPTION.CHARGES_PAYMENTS.id:
-				GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
-				break;
-			case OPTION.VAT_PANEL.id:
-				GWT.load(GWT.VAT_REPORT, this.getApplication().CONTENT);
-				break;
-			case OPTION.RETENTION_PANEL.id:
-				GWT.load(GWT.IRPF_REPORT, this.getApplication().CONTENT);
-				break;
-			default:
-				this.aonInvoiceList({status: CONSTANT.INBOX});
-				break;
+				case OPTION.RAWDOC_INBOX.id:
+					this.aonInvoiceList({status: CONSTANT.INBOX});
+					break;
+				case OPTION.RAWDOC_INBOX_ISSUED.id:
+					this.aonInvoiceList(
+						{status: CONSTANT.INBOX, type: 'emitida'},
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' }
+					);
+					break;
+				case OPTION.RAWDOC_INBOX_RECEIVED.id:
+					this.aonInvoiceList(
+						{status: CONSTANT.INBOX, type: 'recibida'},
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'}
+					);
+					break;
+				case OPTION.RAWDOC_INBOX_TICKET.id:
+					this.aonInvoiceList(
+						{status: CONSTANT.INBOX, type: 'ticket'},
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'}
+					);
+					break;
+				case OPTION.RAWDOC_REJECT.id:
+					this.aonInvoiceList(
+						{status: CONSTANT.REJECTED},
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'}
+					);
+					break;
+				case OPTION.RAWDOC_DRAFT.id:
+					this.aonInvoiceList(
+						{status: CONSTANT.DRAFT},
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error' ]}
+					);
+					break;
+				case OPTION.INVOICE_ISSUED.id:
+					this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50});
+					break;
+				case OPTION.INVOICE_RECEIVED.id:
+					this.aonInvoiceList({status:'accounting', type:'purchase,expenses', page:1, per_page: 50});
+					break;
+				case OPTION.INVOICE_TICKET.id:
+					this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50});
+					break;
+				case OPTION.REGISTRY_CUSTOMER.id:
+					this.aonCustomerList();
+					break;
+				case OPTION.REGISTRY_SUPPLIER.id:
+					this.aonSupplierList();
+					break;
+				case OPTION.REGISTRY_CREDITOR.id:
+					this.aonCreditorList();
+					break;
+				case OPTION.CONCEPTS.id:
+					break;
+				case OPTION.PRODUCT.id:
+					this.aonProductList({expense: false});
+					break;
+				case OPTION.EXPENSES.id:
+					this.aonProductList({expense: true});
+					break;
+				case OPTION.INVEST.id:
+					this.aonInvestList({});
+					break;
+				case OPTION.REGISTRY.id:
+					break;
+				case OPTION.CHARGES_PAYMENTS.id:
+					GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
+					break;
+				case OPTION.VAT_PANEL.id:
+					GWT.load(GWT.VAT_REPORT, this.getApplication().CONTENT);
+					break;
+				case OPTION.RETENTION_PANEL.id:
+					GWT.load(GWT.IRPF_REPORT, this.getApplication().CONTENT);
+					break;
+				default:
+					this.aonInvoiceList({status: CONSTANT.INBOX});
+					break;
 			}
 		}
 	}
-
 }
 
-window.customElements.define('aon-invoice-panel', AonInvoicePanel);
+if(!window.customElements.get(TAG.AON_INVOICE_PANEL)){
+	window.customElements.define(TAG.AON_INVOICE_PANEL, AonInvoicePanel);
+}

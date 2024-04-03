@@ -525,6 +525,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(RITEM.ITEM);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RITEM.TYPE);}
 		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(RITEM.CODE);}
+		@Override public Property<String> getEdiSalesCodeProperty() {return new FilterDAO.PropertyDAO<>(RITEM.EDI_SALES_CODE);}
 		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(RITEM.PRICE);}
 		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<>(RITEM.DISCOUNT_EXPR);}
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(RITEM.PRIORITY);}

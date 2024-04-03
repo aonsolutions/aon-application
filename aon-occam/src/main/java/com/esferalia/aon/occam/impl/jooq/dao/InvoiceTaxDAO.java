@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -83,7 +84,7 @@ public class InvoiceTaxDAO {
 	}
 	
 	
-	public static LinkedList<InvoiceTax> save(AONContext ctx, LinkedList<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
+	public static List<InvoiceTax> save(AONContext ctx, List<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
 		LinkedList<InvoiceTax> list = new LinkedList<>();
 		invoiceTaxes.stream().forEach(invoiceTax -> {
 			list.add(save(ctx, invoiceTax, detail));

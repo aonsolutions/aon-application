@@ -160,6 +160,7 @@ export const INVOICE_ISSUED = 'invoiceIssued';
 export const INVOICE_OBJECT = 'invoiceObject';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket'; 
+export const INVOICES = 'invoices';
 export const ITEM = 'item';
 
 // ----- J
@@ -177,6 +178,7 @@ export const LOGO = 'logo';
 
 // ----- M
 
+export const MANAGEMENT = 'management';
 export const MARKETING = 'marketing';
 export const MATERIAL = "material";
 export const MATERIAL_ICONS = 'material-icons';
@@ -211,6 +213,7 @@ export const OCR_PENDING = 'ocrPending';
 export const OCR_TRASH = 'ocrTrash';
 export const OBJECT = 'object';
 export const OFFER = 'offer';
+export const OFFERS = 'offers';
 export const OFF = 'off';
 export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
@@ -226,6 +229,7 @@ export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
 export const PENDING_CORRECTION = 'pendingCorrection';
 export const PENDING_DECISSION = 'pendingDecission';
+export const PENDINGS = 'pendings';
 export const PERCENTAGE = 'percentage';
 export const PERSON = 'person';
 export const PREPAYMENT = 'prepayment';
@@ -296,6 +300,7 @@ export const SEARCH_BUTTON = 'searchButton';
 export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
+export const SERES = 'seres';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
 export const SHARE = 'share';

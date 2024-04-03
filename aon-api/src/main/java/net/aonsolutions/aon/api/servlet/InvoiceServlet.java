@@ -843,7 +843,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.getId() == null || isRawdoc(status)) {
 			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
-			invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
+			invoice = AON_SOLUTIONS.validateInvoice(api.getDomain(), api.getUser(), invoice);
 		} else invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 
 		BidoqRequest.selfcontaRecord(api.getDomain(), api.getUser(), invoice, api.getData());

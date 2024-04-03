@@ -160,6 +160,22 @@ export const MARKETING = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
+export const SERES = {
+  app: CONSTANT.SERES,
+  title: MSG.SERES,
+  description: MSG.SERES,
+  tag: MSG.SERES,
+  icon: AON_ICONS.SERES,
+  color: "#0000ff",
+  backgroundColor: "rgba(0, 0, 255, .2)",
+  hover: 'aonSidenavHover',
+  price: " ", // '90€/mes',
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+};
+
+
+
 export const COMMERCIAL = {
   app: CONSTANT.COMMERCIAL,
   title: MSG.COMMERCIAL,
@@ -816,8 +832,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE };
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,
