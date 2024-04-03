@@ -542,6 +542,7 @@ export class AonInvoicePanel extends AonElement {
 		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
+		if(invoice.file) component.fileOpened = true;
 
 		aonInvoice.setContent(component);
 	}
