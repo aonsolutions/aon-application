@@ -85,6 +85,7 @@ import * as UA from '../../services/userAgentService.js';
     name: MSG.PENDINGS,
     icon: MATERIAL_ICONS.INBOX,
     clickable: true,
+    opened: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
 
