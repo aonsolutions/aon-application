@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
+import net.aonsolutions.db.up2date.tgss.HomeBases2024Update;
 
 public class Up2Date {
 
@@ -419,7 +420,8 @@ public class Up2Date {
 	    // PPEInsert.PPE_INSERT
 	    // BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    // BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
-    		BasesMin2024UpdateIV.BASESMIN2024UPDATEIV
+    		BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
+    		HomeBases2024Update.HOMEBASES2024UPDATEIV
 	};
 
     // ------------------------------------------------------------------------
