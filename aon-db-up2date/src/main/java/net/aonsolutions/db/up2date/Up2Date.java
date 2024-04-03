@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
+import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
 
 public class Up2Date {
 
@@ -416,8 +417,9 @@ public class Up2Date {
     	// InsertIAE848889.INSERT_IAE_848889,
 	    // DomainAddDomainPayerColumn.DOMAIN_ADD_DOMAIN_PAYER_COLUMN,
 	    // PPEInsert.PPE_INSERT
-	    BasesMin2024UpdateII.BASESMIN2024UPDATEII,
-	    BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
+	    // BasesMin2024UpdateII.BASESMIN2024UPDATEII,
+	    // BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
+    		BasesMin2024UpdateIV.BASESMIN2024UPDATEIV
 	};
 
     // ------------------------------------------------------------------------
