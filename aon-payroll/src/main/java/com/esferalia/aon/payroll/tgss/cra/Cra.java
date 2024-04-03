@@ -217,7 +217,7 @@ public class Cra {
 					// Get salaryPayment type of salary
 					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
+							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE")))
 							.limit(1)
 							.fetchOne();
 					
@@ -373,7 +373,7 @@ public class Cra {
 					
 						Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
 								.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
+								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE")))
 								.and(SALARY_PAYMENT.TYPE.ne((byte)6))
 								.fetch();
 						
@@ -444,7 +444,7 @@ public class Cra {
 		// GET Salaries_Payment from Salary to get CRA type 
 		Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryRecord.get(SALARY.ID)))
-				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE"))
+				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE")))
 				.orderBy(SALARY_PAYMENT.TYPE)
 				.fetch();
 		

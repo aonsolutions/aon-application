@@ -178,9 +178,6 @@
 		<module>aon-in-payroll</module>
 		<module>aon-in-pdf</module>
 
-		
-		<module>aon-jasper-report</module>
-
 		<!-- JS MODULES -->
 		<module>aon-js-payroll</module>
 
@@ -235,7 +232,6 @@
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
-		<!--module>aon-micro-services</module-->
 		<module>aon-solutions</module>
 
 

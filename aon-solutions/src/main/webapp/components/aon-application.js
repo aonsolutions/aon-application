@@ -371,7 +371,7 @@ export class AonApplication extends AonElement {
 
     if (newButton && !this.isMobile()) {
       let addButton = this.createElement(TAG.DIV);
-      addButton.style.marginTop = "-15px";
+      addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
       addButton.style.right = "0px";
       addButton.style.position = "absolute";
       let aonIconButton = new AonIconButton();

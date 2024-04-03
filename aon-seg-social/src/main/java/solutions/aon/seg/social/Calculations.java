@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlTableBody;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.util.WebConnectionWrapper;
 
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -271,8 +274,25 @@ class Calculations {
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String authorized,LiquidationPageFill liquidationPageFill,  String... nafs) throws SegSocialException{
 		
-		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+		byte [] certificateData = null;
+		try {
+			certificateData = certificateInputStream.readAllBytes();
+		} catch ( IOException e ) {
+			
+		}
+		
+		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
+		
+		Map<String,String> variables = new HashMap<>();
+		variables.put("coVgRutaLocalJS", "/ControlRecaudacion/js");
+		variables.put("skVgSubtituloAplicacion", "ServicioConsultadeCalculos");
+
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
+			WebConnectionWrapper wrapper =HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables) ){
+			
+
+    		HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables);
+			
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
 			try {
@@ -498,6 +518,9 @@ class Calculations {
 				}
 			}
 			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			throw e;
 		}
 		return Collections.emptyMap();
 	}

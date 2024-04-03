@@ -3,18 +3,21 @@ package com.esferalia.aon.gwt.finance.server;
 import java.util.Base64;
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -95,5 +98,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
 		AON.rawdocToInbox(domainName, domain,user,rawdocId);
+	}
+
+	@Override
+	public AccountingInvoice getAccountingInvoice(String domainName, int domainId, String login, String invoiceStr) {
+		JSONObject json = new JSONObject(invoiceStr);
+		return Rawdoc2AccountingInvoice.getAccountingInvoice(domainName, domainId, login, json);
 	}
 }

@@ -724,6 +724,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
+		}
+	}
+	
 	public static Domain getCompanyDomain(String domainName, Integer domainId,
 			String user, String document) {
 		CloseableAONContext ctx = null;
@@ -2765,6 +2771,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Fee> getFullFeeList(String domainName, Integer domainId, String login, CustomerFeeParams customerFeeParams){
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFullFeeList(ctx, customerFeeParams);
+		}
+	}
+	
 	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
 		return getFeeStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -3362,40 +3374,29 @@ public class AON {
 	// ********************************************
 
 	public static Stream<Warehouse> getWarehouseStream(String domainName, Integer domainId, String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouseStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Warehouse getWarehouse(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Warehouse getWarehouse(String domainName, Integer domainId, String login, WarehouseFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouse(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
-
-	public static LinkedList<Warehouse> getWarehouseList(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getWarehouseStream(ctx, filter)
-					.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	
+	public static Warehouse saveWarehouse(String domainName, Integer domainId, String login, Warehouse warehouse) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getWarehouse().saveWarehouse(ctx, warehouse);
 		}
 	}
+	
+	public static void deleteWarehouse(String domainName, Integer domainId, String login, Integer warehouseId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deleteWarehouse(ctx, warehouseId);
+		}
+	}
+	
 	
 	public static Stream<IncomeDetail> getIncomeDetails(String domainName,
 			Integer domainId, String login, IncomeFilter filter) {

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,12 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -90,4 +91,13 @@ public interface RegistryService extends RemoteService {
 	LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck);
 	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings);
+	Seller getCustomerSeller(String domainName, int domain, String user, Integer customerId);
+	String getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId);
+	
+	// **************************************************
+	// ********************************** [SUPPORT AGENT]
+	// **************************************************
+	HashMap<Seller, RegistryMedia> getActiveSupportAgents(String domainName, int domain, String user);
+	List<Customer> getCustomerWithoutAgent(String domainName, int domain, String user);
+
 }

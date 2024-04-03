@@ -417,8 +417,9 @@ public class AccountingOperationDAO {
 	private static Condition getCondition(OperationParams params) {
 		Condition condition = OP_TYPE.notEqual(AccountEntryType.OPERATING.getValue());
 		if (params.isIrpf()) {
-			if (params.getAeatBook()) {
-				condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()));
+			if (params.getAeatBook()) {				
+				//condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()));
+				condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()).or(INVOICE.TYPE.isNotNull().and(INVOICE.TYPE.eq(InvoiceType.UNDEDUCTIBLE.value()))));			
 			}
 		}
 		else {			

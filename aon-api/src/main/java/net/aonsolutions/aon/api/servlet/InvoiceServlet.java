@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -838,8 +839,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject selfcontaRecord(AonApiData api) throws Exception {
-		BidoqRequest.selfcontaRecord(api.getDomain(), api.getUser(), api.getData());
-		return new JSONObject();
+		String status = JsonUtils.getString(api.getData(), IJsonNames.STATUS);
+		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		if(invoice.getId() == null || isRawdoc(status)) {
+			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
+			invoice = AON_SOLUTIONS.validateInvoice(api.getDomain(), api.getUser(), invoice);
+		} else invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+
+		BidoqRequest.selfcontaRecord(api.getDomain(), api.getUser(), invoice, api.getData());
+		
+		return InvoiceJSON.toJSON(invoice);
 	}
 	
 	public static File getFile(Drive drive, String id){

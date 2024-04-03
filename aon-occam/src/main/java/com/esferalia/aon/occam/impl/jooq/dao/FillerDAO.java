@@ -105,6 +105,7 @@ import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -225,6 +226,9 @@ public class FillerDAO {
 					.setItem(ItemFiller.build(r))
 					.setType(RegistryMode.safeValueOf(r.getValue(RITEM.TYPE)))
 					.setCode(r.getValue(RITEM.CODE))
+					.setEdiSalesCode(r.get(RITEM.EDI_SALES_CODE))
+					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
+//					.setSeller(SellerFiller.build(r))
 					.setPrice(r.getValue(RITEM.PRICE))
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
 					.setWorkplace(r.getValue(RITEM.WORKPLACE))

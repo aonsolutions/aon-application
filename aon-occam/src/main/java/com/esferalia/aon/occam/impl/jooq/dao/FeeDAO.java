@@ -114,17 +114,16 @@ public class FeeDAO {
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
-				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-//				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-//				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
-				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
-				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.TYPE.eq((byte)1)))
-				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
-				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT));
+		
+		if(null != customerFeeParams.getSeller())
+			fromCustomerRecords = fromCustomerRecords 	
+					.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+					.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+					.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
+					.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+					.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+					;
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
@@ -143,7 +142,60 @@ public class FeeDAO {
 				.limit(customerFeeParams.getLimit())
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+//		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		
+		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		
+		return fees;
+	}
+	
+	public static LinkedList<Fee> getFullFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		
+		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
+			if(customerFeeParams.getSegment() == -1)
+				fromCustomerRecords = fromCustomerRecords 	
+				.leftJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+			else fromCustomerRecords = fromCustomerRecords 	
+				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+		}
+		
+		if(null == customerFeeParams.getSeller())
+			condition = condition.and(
+					RSELLER.ID.isNull().or(
+							RSELLER.TYPE.eq((byte)1)
+							.and(RSELLER.STATUS.eq((byte)0)
+							.and(RSELLER.START_DATE.le(new Date(new java.util.Date().getTime())))
+							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime())))))
+					)
+			);
+			
+		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
+		
+		Result<Record> feeRecords = fromCustomerRecords 
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Full Fees size : " + feeRecords.size());
 		
 		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
@@ -299,8 +351,15 @@ public class FeeDAO {
 		if(AonStringUtils.isNotBlank(customerFeeParams.getDiscount()))
 			condition = condition.and(CUSTOMER_FEE.DISCOUNT_EXPR.eq(customerFeeParams.getDiscount()));
 		
-		if(AonStringUtils.isNotBlank(customerFeeParams.getSeller())) 
-			condition = condition.and(SELLER_COMERCIAL_ALIAS.NAME.eq(customerFeeParams.getSeller()));
+		if(null != customerFeeParams.getSeller())
+			condition = condition.and(
+					RSELLER.SELLER.eq(customerFeeParams.getSeller())
+					.and(RSELLER.TYPE.eq((byte)1))
+					.and(RSELLER.STATUS.eq((byte)0).and(
+							RSELLER.START_DATE.le(new Date(new java.util.Date().getTime()))
+							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime()))))
+						))
+			);
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getWorkplace())) 
 			condition = condition.and(WORKPLACE.DESCRIPTION.eq(customerFeeParams.getWorkplace()));
@@ -340,7 +399,7 @@ public class FeeDAO {
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+//		System.out.println("Customer Fee size : " + feeRecords.size());
 		
 		return feeRecords.stream().map(new FeeFiller());
 	}

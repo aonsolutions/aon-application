@@ -30,13 +30,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
@@ -78,6 +71,13 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -376,7 +376,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 			invoiceDetail.setDescription(id.getDescription());
 
 			DiscountExpression de = new DiscountExpression();
-			de.setDiscountExpr(id.getDiscountExpression());
+			de.setDiscountExpr(id.getDiscountExpression().getDiscountExpr());
 			invoiceDetail.setDiscountExpression(de);
 			
 			invoiceDetail.setDomain(id.getDomain());

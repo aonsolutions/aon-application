@@ -8,38 +8,19 @@
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	</ui:insert>
 	
-	<aon:if test="#{!userUtils.newAONTheme}">
-		<ui:insert name="menu" >
-			<ui:include src="/facelet/homepage/menu.xhtml" />
-		</ui:insert>
-	</aon:if>
+	<ui:insert name="menu" >
+		<ui:include src="/facelet/homepage/menu.xhtml" />
+	</ui:insert>
 	
 	<aon:componentGroup
 		family="javax.faces.Command"
 		rendered="#{aonRole.guest}"
 		method="#{aonRole.renderedCommand}">
  	 	
- 	 	<aon:if test="#{!userUtils.newAONTheme}">				
-			<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
-				<ui:insert name="content" />
-			</aon:div>
-		</aon:if>
+		<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
+			<ui:insert name="content" />
+		</aon:div>
 	  	
-	  	<aon:if test="#{userUtils.newAONTheme}">
-	  		<aon:panelGrid columns="2" 
-	  			styleClass="aon-width-all aon-height-all"
-				columnClasses="aon-none aon-width-min,aon-none aon-width-all">
-				<aon:div style="overflow: auto; height: calc(100vh - 66px); width: min-content;" id="sidebarScrollDiv" >
-					<ui:insert name="sidebar" >
-						<ui:include src="/facelet/new/sidebar.xhtml" />
-					</ui:insert>
-				</aon:div>
-				<aon:div style="overflow: auto; height: calc(100vh - 66px)" id="contentScrollDiv" >
-					<ui:insert name="content" />
-				</aon:div>
-			</aon:panelGrid>				
-		</aon:if>
-	
 	</aon:componentGroup>
 
 </ui:composition>

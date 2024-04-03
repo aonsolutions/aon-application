@@ -654,8 +654,10 @@ public class InvoiceAutoComplete {
 		if(inv.getTaxableBase() == 0) {
 			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 					.mapToDouble(r -> r.getBase()).sum();
+			double prepayment = inv.getDetails().stream().filter(f -> f.isPrepayment())
+			.mapToDouble(r -> r.getAmount()).sum();
 			
-			inv.setTaxableBase(AonMathUtils.round(taxableBase));
+			inv.setTaxableBase(AonMathUtils.round(taxableBase + prepayment));
 		}
 	};
 	

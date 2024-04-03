@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_PPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -2068,6 +2069,29 @@ public class Bases {
 			put("06", new DistributeHCretaData(SLD_H06.getName()));
 			put("03", new DistributeHCretaData(SLD_H03.getName()));
 			put("04", new DistributeHCretaData(SLD_H04.getName()));
+			
+			put("301", new AbstractCCretaData() {
+				
+				DistributeCCretaData ppeData = new DistributeCCretaData(BASE_PPE.getName());
+				NonNegativeCCretaData cgcData = new NonNegativeCCretaData(CGC_BASE.getName());
+				
+				@Override
+				public String getComment() {
+					return BASE_PPE.getName();
+				}
+				
+				@Override
+				protected Double get(Salary salary, Fecha desde, Fecha hasta)
+						throws NoSuchVariableException, UnMatchedVariableException {
+					return cgcData.get(salary, desde, hasta) - ppeData.get(salary, desde, hasta); 
+				}
+
+				@Override
+				protected void zeroValue(Salary salary, Tramo<?> tramo, Dato datoSolicitado, TramoBuilder tramoBuilder,
+						BasesCallback... cbs) {
+				}
+				
+			});			
 		}
 	};
 

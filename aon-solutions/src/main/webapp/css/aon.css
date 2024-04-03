@@ -978,6 +978,13 @@
   height: 100%;
 }
 
+.aonFormCenterAndroidApp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+}
+
 .aonConnected {
   position: absolute;
   right: 4px;

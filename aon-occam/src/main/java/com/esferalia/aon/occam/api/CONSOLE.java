@@ -83,6 +83,24 @@ public class CONSOLE {
 		
 	}
 	
+	public static Stream<DomainCompany> areDomainsSync(DomainFilter filter) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().areDomainsSync(ctx, filter).collect(Collectors.toList());
+				domains.forEach(domain -> {
+					domain.setSchema(schema);
+					list.add(domain);						
+				});
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return list.stream();
+		
+	}
+	
 	public static Stream<DomainCompany> getCustomerDomains(Integer customer) {
 		List<DomainCompany> list = new LinkedList<>();
 		List<String> schemas = AONContext.getSchemas();

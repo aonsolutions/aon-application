@@ -339,4 +339,33 @@ public class BookingApi {
 		}
 	}
 	
+	public void syncSupportAgentCustomer(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", sessionId);
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	callback.onSuccess(null);
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					callback.onFailure(exception);
+		        }
+		    });
+		} catch (RequestException exception) {
+			callback.onFailure(exception);
+		}
+	}
+	
 }

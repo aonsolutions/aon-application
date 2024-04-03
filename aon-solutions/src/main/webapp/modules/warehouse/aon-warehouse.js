@@ -6,17 +6,26 @@ import Apps from '../../services/app.js';
 import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
-import { getDelivery, getWarehouses } from '../../services/warehouseService.js';
+import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../../services/warehouseService.js';
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
 import { AonMobileDeliveryList } from '../delivery/aon-mobile-delivery-list.js';
 import { AonMobileDelivery } from '../delivery/aon-mobile-delivery.js';
 import { AonDeliveryList } from '../delivery/aon-delivery-list.js';
 import { AonCarrierList } from '../registry/carrier/aon-carrier-list.js';
 import { AonMobileCarrierList } from '../registry/carrier/aon-mobile-carrier-list.js';
+import { AonNewInput } from '../../components/aon-new-input.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
+import { AonSwitch } from '../../components/aon-switch.js';
+import { getWorkplaces } from '../../services/workplaceService.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonWarehouse extends AonElement {
 
 	WAREHOUSE;
+	WAREHOUSE_EDIT_DIV;
+	WAREHOUSE_EDIT_NAME;
+	WAREHOUSE_EDIT_WORKPLACE;
+	WAREHOUSE_EDIT_ACTIVE;
 	option;
 
 	constructor () {
@@ -30,6 +39,10 @@ export class AonWarehouse extends AonElement {
 
 	initialize() {
 		this.WAREHOUSE = 'aonWarehouse';
+		this.WAREHOUSE_EDIT_DIV = this.WAREHOUSE + 'EditDiv';
+		this.WAREHOUSE_EDIT_NAME = this.WAREHOUSE_EDIT_DIV + CONSTANT.NAME.initCap();
+		this.WAREHOUSE_EDIT_WORKPLACE = this.WAREHOUSE_EDIT_DIV + CONSTANT.WORKPLACE.initCap();
+		this.WAREHOUSE_EDIT_ACTIVE = this.WAREHOUSE_EDIT_DIV + CONSTANT.ACTIVE.initCap();
 		this.option = this.option || ELABORATION;
 	}
 
@@ -51,7 +64,11 @@ export class AonWarehouse extends AonElement {
 	}
 
 	buildWarehouseOptions() {
-		this.getApplication().addSidenavOptions3(WarehouseSidenav.WAREHOUSES, () => this.getApplication().development(MSG.NEW_WAREHOUSE));
+		this.getApplication().addSidenavOptions3(WarehouseSidenav.WAREHOUSES, () => this.buildWarehouse());
+		this.loadWarehouses();
+	}
+
+	loadWarehouses() {
 		getWarehouses().then(warehouses => {
 			this.clearElementById(this.getApplication().SIDENAV + WarehouseSidenav.WAREHOUSES.id + 'List');
 			warehouses.forEach((warehouse, i) => {
@@ -62,17 +79,82 @@ export class AonWarehouse extends AonElement {
 					  	{	
 							id: 'Delete',
 							icon: 'delete',
-							action: () => this.getApplication().development(MSG.DELETE_WAREHOUSE)
+							action: () => this.removeWarehouse(warehouse)
 						},{
 							id: 'Edit',
 							icon: 'edit',
-							action: () => this.getApplication().development(MSG.NEW_WAREHOUSE)
+							action: () => this.buildWarehouse(warehouse)
 				  		}
 					]
 				};
 				this.getApplication().addSidenavOptionsListValue(WarehouseSidenav.WAREHOUSES, option);
 			});
 		});
+	}
+
+	buildWarehouse(warehouse) {
+		let d = document.getElementById(this.getApplication().DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(warehouse ? MSG.NEW_WAREHOUSE : MSG.EDIT_WAREHOUSE);
+		if(!warehouse) warehouse = {domain: LS.getDomainId(), active: true};
+		let div = this.createDiv(this.WAREHOUSE_EDIT_DIV);
+
+		let warehouseName = new AonNewInput();
+		warehouseName.id = this.WAREHOUSE_NAME;
+		warehouseName.title = MSG.WAREHOUSE;
+		warehouseName.value = warehouse && warehouse.name 
+			? warehouse.name : CONSTANT.EMPTY;
+		warehouseName.addEventListener(EVENT.CHANGE, () => {
+			warehouse.name = warehouseName.value;
+		});
+		
+		div.appendChild(warehouseName);
+
+		let warehouseWorkplace = new AonNewSelect();
+		warehouseWorkplace.id = this.WAREHOUSE_EDIT_WORKPLACE;
+		warehouseWorkplace.title = MSG.WORKPLACE;
+		warehouseWorkplace.autocomplete = true;
+		warehouseWorkplace.default = true;
+		warehouseWorkplace.addEventListener(EVENT.SELECT, () => {
+			warehouse.workplace = warehouseWorkplace.value;
+		});
+
+		getWorkplaces().then(r => {
+			let workplaces = r.map(w => {return {name: w.description, value: w.id};});
+			warehouseWorkplace.options = JSON.stringify(workplaces);
+			if(warehouse.workplace) warehouseWorkplace.value = warehouse.workplace;
+		});
+
+		div.appendChild(warehouseWorkplace);
+
+		d.setContent(div);
+		d.addAcceptAction(() => {
+			saveWarehouse(warehouse).then(r => {
+				this.loadWarehouses();
+			}).catch(e => {
+				this.showError(e)
+			});
+		});
+		d.open();
+	}
+
+	removeWarehouse(warehouse) {
+		let aonDocumental = this.getApplication();
+		let d = document.getElementById(aonDocumental.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE);
+		d.setContentHTML(`Estás seguro de eliminar el Almacén ${warehouse.name}`);
+		d.addAcceptAction(() => {
+			deleteWarehouse(warehouse.id).then(() => {
+				this.loadWarehouses();
+			}).catch(e => {
+				this.showError(e)
+			});
+		});
+		d.open();
+
 	}
 
 	buildElaborationOptions() {

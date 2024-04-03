@@ -197,7 +197,7 @@ public class InvoiceViewer extends SimpleLayoutPanel {
 			
 			detTab.getCellFormatter().setStyleName(row, 5, AON.AON_CSS.aonPanelGridEven());
 			detTab.getCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextRight());
-			detTab.setWidget(row, 5, new Label(detail.getDiscountExpression()));
+			detTab.setWidget(row, 5, new Label(FORMATTER.format(detail.getDiscount())));
 			
 			detTab.getCellFormatter().setStyleName(row, 6, AON.AON_CSS.aonPanelGridEven());
 			detTab.getCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonTextRight());
