@@ -95,6 +95,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private HTMLPanel domainPanel;
 	
 	private AonToolbarSmallButton toolbarDomainChildsDiscBtn;
+	private ListBox enterprisesView;
+	private int enrpriseViewIdx = 0;
 	private HTMLPanel domainChildsPanel;
 	private Grid domainChildsTable;
 	
@@ -110,7 +112,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 	private AonToolbar toolbar;
 	private AonToolbarButton backBtn;
-	private ListBox enterprisesView;
 	private AonToolbarButton refreshBtn;
 	private AonToolbarButton excelBtn;
 	
@@ -622,9 +623,14 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				Label schemaLabel = new Label(domainCompany.getSchema());
 				Label descriptionLabel = new Label(domainCompany.getDomain().getDescription());
 				
+				HTMLPanel ownerPanel = new HTMLPanel("");
+				ownerPanel.addStyleName(AON.CSS.aonItemFlex());
+				ownerPanel.addStyleName(AON.CSS.aonFlexBetween());
+				
 				Label ownerLabel = new Label(domainCompany.getDomain().getOwner());
+				ownerPanel.add(ownerLabel);
+				
 				if(!AonStringUtils.isBlank(sellerEmail) && (AonStringUtils.isBlank(domainCompany.getDomain().getOwner()) || !AonStringUtils.equalsIgnoreCase(sellerEmail, domainCompany.getDomain().getOwner()))) {
-					ownerLabel.getElement().getStyle().setProperty("cursor", "pointer");
 					ownerLabel.getElement().getStyle().setProperty("color", "orange");
 					
 					ownerLabel.setTitle("Sincronizar gestor");
@@ -632,7 +638,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					if(!AonStringUtils.isBlank(sellerEmail) && AonStringUtils.isBlank(domainCompany.getDomain().getOwner()))
 						ownerLabel.setText("Sincronizar gestor");
 					
-					ownerLabel.addClickHandler(e -> {
+					AonTableButton syncOwner = new AonTableButton("Sincronizar gestor", AON.CSS.aonIconSync());
+					ownerPanel.add(syncOwner);
+					syncOwner.addClickHandler(e -> {
 						
 						AonMessagePanel.showLoading(messagePanel, "Sincronizando agente de soporte con dominio del cliente...");
 						
@@ -705,7 +713,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				domainTable.setWidget(newRow, 1, idLabel);
 				domainTable.setWidget(newRow, 2, schemaLabel);
 				domainTable.setWidget(newRow, 3, descriptionLabel);
-				domainTable.setWidget(newRow, 4, ownerLabel);
+				domainTable.setWidget(newRow, 4, ownerPanel);
 				domainTable.setWidget(newRow, 5, documentLabel);
 				domainTable.setWidget(newRow, 6, statusLabel);
 				domainTable.setWidget(newRow, 7, billableLabel);
@@ -1058,8 +1066,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		List<Domain> childs = domainBooking.getResume().getChilds();
 		List<Domain> activeChilds = domainBooking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
-		Label enterprisesLabel = new Label(activeChilds.size() + " / " + childs.size());
-		enterprisesLabel.setTitle(activeChilds.size() + " empresas activas / " + childs.size() + " empresas");
+		Label enterprisesLabel = new Label(activeChilds.size() + " / " + domainBooking.getResume().getTotalChilds());
+		enterprisesLabel.setTitle(activeChilds.size() + " empresas activas / " + domainBooking.getResume().getTotalChilds() + " empresas");
 		
 		String statusMessage = domainBooking.getDomain().getExpirationDate() != null && domainBooking.getDomain().getExpirationDate().before(new Date()) ? "Expirado" : (domainBooking.getDomain().isActive() ? "Activo" : "Inactivo");
 		Label statusLabel = new Label(statusMessage);
@@ -1136,6 +1144,14 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	private AonToolbarSmall createDomainChildsToolbar() {
 		AonToolbarSmall toolbar = new AonToolbarSmall("Empresas Hijas");
 		
+		enterprisesView = new ListBox();
+		enterprisesView.addItem("Empresas con contrataciones");
+		enterprisesView.addItem("Empresas con usuarios");
+		enterprisesView.addChangeHandler(e -> onEnterprisesView());
+		enterprisesView.setSelectedIndex(enrpriseViewIdx);
+		
+		toolbar.add(enterprisesView);
+		
 		toolbarDomainChildsDiscBtn = new AonToolbarSmallButton("Desplegar Empresas Hijas", AON.CSS.aonIconDown());
 		toolbarDomainChildsDiscBtn.addClickHandler(e -> {
 			isChildsOpen = !isChildsOpen;
@@ -1151,10 +1167,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	
 	private void createDomainChildsBookingResume() {
 		try {
-			boolean allEnterprises = enterprisesView.getSelectedIndex() == 1;
 			domainChildsPanel.clear();
 			
 			domainChildsPanel.add(createDomainChildsToolbar());
+			
+			boolean hasBookingExtension = enrpriseViewIdx == 0;
 			
 			domainChildsTable = new Grid(0, 10);
 			domainChildsTable.clear();
@@ -1216,8 +1233,19 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			domainChildsTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
 			
 			List<String> parentApps = domainBooking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
+			
 			List<Domain> childsDomain = domainBooking.getResume().getChilds().stream().filter(child -> AonStringUtils.isNotBlank(child.getDescription())).collect(Collectors.toList());
-			childsDomain.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+//			childsDomain.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+			childsDomain.sort((o1, o2) -> {
+				  // Sort by type, prioritizing type 4
+				  if (o1.getDomainType().ordinal() == 6 && o2.getDomainType().ordinal() != 6) return -1;
+				  if (o1.getDomainType().ordinal() != 6 && o2.getDomainType().ordinal() == 6) return 1;
+				  if (o1.getDomainType().ordinal() < o2.getDomainType().ordinal()) return -1;
+				  if (o1.getDomainType().ordinal() > o2.getDomainType().ordinal()) return 1;
+
+				  // If types are equal, sort by name
+				  return o1.getDescription().compareTo(o2.getDescription());
+			});
 			
 			for(Domain domainChild : childsDomain) {
 				
@@ -1235,8 +1263,11 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					List<User> activeUsers = domainChild.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
 					Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
 		
-					// If empresasfacturables has no child app skip
-					if(!allEnterprises && childAppsDiff.size() == 0 && 0 == domainChild.getMaxDefinedUsers()) continue;
+					// Filtar hijos sin extensiones si esta activo el filtro de extensiones
+					if(hasBookingExtension && childAppsDiff.size() == 0) continue;
+					
+					// Filtar hijos sin usuario si esta activo el filtro de usuarios
+					if(!hasBookingExtension && 0 == portalUsersCount && 0 == activeUsersDiff) continue;
 					
 					// Grid widgets columns
 					Label domainNameLabel  = new Label(domainChild.getDescription());
@@ -2290,17 +2321,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		toolbar.add(backBtn);
 		
-		Label showLabel = new Label("Ver:");
-		showLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		toolbar.add(showLabel);
-		
-		enterprisesView = new ListBox();
-		enterprisesView.addItem("Empresas con contrataciones");
-		enterprisesView.addItem("Todas las empresas");
-		enterprisesView.addChangeHandler(e -> onEnterprisesView());
-		
-		toolbar.add(enterprisesView);
-		
 		refreshBtn = new AonToolbarButton("Recargar", AON.CSS.aonIconRefresh());
 		refreshBtn.addClickHandler(e -> loadModule());
 		
@@ -2319,6 +2339,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}-*/;
 	
 	private void onEnterprisesView() {
+		enrpriseViewIdx = enrpriseViewIdx == 0 ? 1 : 0;
 		createDomainChildsBookingResume();
 	}
 	

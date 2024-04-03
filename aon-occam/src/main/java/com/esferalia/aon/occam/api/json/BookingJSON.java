@@ -163,6 +163,9 @@ public class BookingJSON {
 			// ChildBillingUsers
 			resumeObj.put("childBillingUsers", resume.getChildBillingUsers());
 			
+			// ChildBillingUsers
+			resumeObj.put("totalChilds", resume.getTotalChilds());
+			
 			// DomainTypes
 			JSONObject domainTypesObj = new JSONObject();
 			if(null != resume.getDomainTypes())
@@ -209,6 +212,9 @@ public class BookingJSON {
 			
 			// ChildBillingUsers
 			bookingResume.setChildBillingUsers((JsonUtils.getInteger(json, "childBillingUsers")));
+			
+			// TotalChilds
+			bookingResume.setTotalChilds((JsonUtils.getInteger(json, "totalChilds")));
 			
 			// DomainTypes
 			HashMap<DomainType, DomainTypeInfo> domainTypes = new  HashMap<DomainType, DomainTypeInfo>();
