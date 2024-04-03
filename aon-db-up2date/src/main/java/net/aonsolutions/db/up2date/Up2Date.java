@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.tgss.Art1512024Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIII;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
@@ -421,7 +422,8 @@ public class Up2Date {
 	    // BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    // BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
     		BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
-    		HomeBases2024Update.HOMEBASES2024UPDATEIV
+    		HomeBases2024Update.HOMEBASES2024UPDATEIV,
+    		Art1512024Update.ART1512024UPDATE
 	};
 
     // ------------------------------------------------------------------------
