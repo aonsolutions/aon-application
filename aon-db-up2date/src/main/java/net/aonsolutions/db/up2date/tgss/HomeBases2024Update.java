@@ -30,7 +30,7 @@ public class HomeBases2024Update implements Update {
 			+"[986.00,901.00], "
 			+"[1153.00,1069.00], "
 			+"[1323.00,1323.00], "
-			+"[Double.MAX_VALUE,BASE_CGC_BRUTA] ] if $[0] >= BASE_CGC_BRUTA )[0][1]";
+			+"[Double.MAX_VALUE,BASE_CGC_BRUTA / DIAS_COTIZADOS * DIAS_MES ] ] if $[0] >= ( BASE_CGC_BRUTA / DIAS_COTIZADOS * DIAS_MES ) )[0][1] / DIAS_MES * DIAS_COTIZADOS";
 
 	private static final int DOMAIN = -106;
 	private static final String BASE_CGC_MIN = "BASE_CGC_MIN";
