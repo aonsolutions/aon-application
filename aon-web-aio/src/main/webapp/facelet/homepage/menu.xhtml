@@ -399,35 +399,35 @@
 		style="position:fixed;  z-index:68; left: 34px; margin-top: -3.5px; min-width:50%; max-width: 90%; "
 		>
 			<aon:if test="#{aonRole.fiscal}">
-				<ui:include src="/facelet/new/menu/fiscal.xhtml" />
+				<ui:include src="/facelet/popup/fiscal.xhtml" />
 			</aon:if>
 			<aon:if test="#{aonRole.payroll}">
-				<ui:include src="/facelet/new/menu/payroll.xhtml" />
+				<ui:include src="/facelet/popup/payroll.xhtml" />
 			</aon:if>
 			<aon:if test="#{aonRole.admin}">			
-				<ui:include src="/facelet/new/menu/enterprise.xhtml" />
+				<ui:include src="/facelet/popup/enterprise.xhtml" />
 			</aon:if>
 			<aon:if test="#{aonRole.accountingOperator}">
-				<ui:include src="/facelet/new/menu/accounting.xhtml" />
+				<ui:include src="/facelet/popup/accounting.xhtml" />
 			</aon:if>
 			<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
-				<ui:include src="/facelet/new/menu/configuration.xhtml" />
+				<ui:include src="/facelet/popup/configuration.xhtml" />
 			</aon:if>
 
 			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 				<aon:if test="#{aonRole.commercialOperator}">
-					<ui:include src="/facelet/new/menu/crm.xhtml" />
-					<ui:include src="/facelet/new/menu/marketing.xhtml" />
+					<ui:include src="/facelet/popup/crm.xhtml" />
+					<ui:include src="/facelet/popup/marketing.xhtml" />
 				</aon:if>
 				<aon:if test="#{aonRole.warehouseOperator}">
-					<ui:include src="/facelet/new/menu/warehouse.xhtml" />
+					<ui:include src="/facelet/popup/warehouse.xhtml" />
 				</aon:if>
 				<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
-					<ui:include src="/facelet/new/menu/management.xhtml" />
-					<ui:include src="/facelet/new/menu/treasury.xhtml" />
+					<ui:include src="/facelet/popup/management.xhtml" />
+					<ui:include src="/facelet/popup/treasury.xhtml" />
 				</aon:if>
-				<ui:include src="/facelet/new/menu/pos.xhtml" />
-				<ui:include src="/facelet/new/menu/groupware.xhtml" />
+				<ui:include src="/facelet/popup/pos.xhtml" />
+				<ui:include src="/facelet/popup/groupware.xhtml" />
 			</aon:if>
 
 
