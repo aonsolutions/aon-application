@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -95,22 +96,22 @@ public class Mod131ServiceAsyncDecorator implements Mod131ServiceAsync {
 		AON.start();
 		fsa.create(occam, mod131,new AsyncCallbackWrapper<>(callback));
 	}
-	
-	@Override
-	public void reset(Occam occam, Mod131 mod131, AsyncCallback<Mod131> callback) {
-		AON.start();
-		fsa.reset(occam, mod131,new AsyncCallbackWrapper<>(callback));
-	}
 
 	@Override
 	public void delete(Occam occam, Mod131 mod131, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.delete(occam, mod131, new AsyncCallbackWrapper<>(callback));
 	}
+	
 	@Override
 	public void getInfo(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInfo(occam, mod131, script, infoKey,new AsyncCallbackWrapper<>(callback));
-		
+	}
+	
+	@Override
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
+		AON.start();
+		fsa.getInvoice(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
 	}
 }

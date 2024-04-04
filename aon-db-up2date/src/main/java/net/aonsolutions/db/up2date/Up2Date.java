@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
 import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
@@ -439,7 +440,8 @@ public class Up2Date {
         FellowsBases2024Update.FELLOWSBASES2024UPDATE,
         TrainningBases2024Update.TRAINNINGBASES2024UPDATE,
         TrainingPercentages2024Update.TRAINNINGPERCENTAGES2023UPDATE,
-        FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE
+        FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
+        RefreshMod131Result.REFRESH_MOD131_RESULT
 	};
 
     // ------------------------------------------------------------------------

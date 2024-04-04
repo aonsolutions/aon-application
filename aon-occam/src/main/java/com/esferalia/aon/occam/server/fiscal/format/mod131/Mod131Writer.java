@@ -1,9 +1,10 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod131;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class Mod131Writer {
@@ -16,8 +17,12 @@ public class Mod131Writer {
 	protected interface IPropertyFiller {
 		public void propertyFill(Writer writer, Mod131 mod131) throws IOException;
 	}
+	@FunctionalInterface
+	protected interface IActivityPropertyFiller {
+		public void propertyFill(Writer writer, Mod131 mod131, Mod131Activity act, int comp) throws IOException;
+	}
 	protected interface IMod131Writer {
-		public void fillWriter(Mod131 mod131, Writer wr) throws IOException;	
+		public void fillWriter(Mod131 mod131, Writer wr);	
 	}
 	@FunctionalInterface
 	protected interface IWriterInstance {
@@ -26,9 +31,9 @@ public class Mod131Writer {
 
 	
 	private enum Writers {
-		 AEAT_2019		(mod131 -> (mod131.isAEAT() && mod131.getYear() >= 2019) 	, Mod131WriterAEAT2019::new)
-		,AEAT_2016		(mod131 -> (mod131.isAEAT() && mod131.getYear() >= 2016 && mod131.getYear() < 2019)
-				 																	, Mod131WriterAEAT2016::new)
+		 AEAT_2024	(m -> (m.isAEAT() && m.getYear() >= 2024), Mod131WriterAEAT2024::new)
+		,AEAT_2019	(m -> (m.isAEAT() && m.getYear() >= 2019 && m.getYear() < 2024), Mod131WriterAEAT2019::new)
+		,AEAT_2016	(m -> (m.isAEAT() && m.getYear() >= 2016 && m.getYear() < 2019), Mod131WriterAEAT2016::new)
 		;
 		private IModelAccepter accepter;
 		private IWriterInstance instancer;
