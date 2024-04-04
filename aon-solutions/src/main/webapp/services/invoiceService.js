@@ -15,6 +15,7 @@ export const getSalesSeries = (data) => get(`${API_URL}/invoice/series`, data)
 export const invoiceSelection = (inv) => invoice = inv;
 
 export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
+export const getRawdocCount = (data) => get(`${API_URL}/invoices/count`, data);
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
 
@@ -39,6 +40,7 @@ export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, d
 
 export const selfconta = (year) => post(`${API_URL}/invoice/selfconta_import`, {year});
 export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_record`, data);
+export const recordInvoices = (data) => post(`${API_URL}/invoices/record`, data);
 
 export const getPaymethods = (data) => get(`${API_URL}/paymethods`, data);
 export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});

@@ -127,7 +127,7 @@ export class AonInvoice extends AonElement {
 	initialize(){
 		this.accept = true;
 		this.rbanks = [];
-		this.fileOpened = false;
+		this.fileOpened = this.fileOpened || false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.DIV = this.id + CONSTANT.DIV.initCap();
