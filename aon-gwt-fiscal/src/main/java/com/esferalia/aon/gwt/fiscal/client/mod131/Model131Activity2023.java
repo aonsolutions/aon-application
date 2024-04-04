@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model131Activity extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
+public class Model131Activity2023 extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
 	
 	private static final String WIDTH_150PX = "150px";
 	private final Label epigraph = new Label();
@@ -126,7 +126,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		void onRemove();
 	}
 	
-	public Model131Activity(final IMod131ActivityCallback callback) {
+	public Model131Activity2023(final IMod131ActivityCallback callback) {
 		super(Unit.PX);
 		setStyleName(AON.CSS.aonSelector());
 		setWidth("700px");
@@ -489,7 +489,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 	
 
 	private void accept(IMod131ActivityCallback callback, final IEpigraph selected) {
-		Model131Activity.this.tabLayoutPanel.setVisible(true);
+		Model131Activity2023.this.tabLayoutPanel.setVisible(true);
 		callback.getActivity().initialize();
 		callback.getActivity().setEpi(selected);
 		callback.getActivity().setEpigraph(selected.getEpigraph());
@@ -516,7 +516,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
 		epigraphLabel.setTitle(act.getDescription());
 		
-		Model131Activity.this.tabLayoutPanel.setVisible(AonStringUtils.isNotBlank( act.getEpigraph()) );
+		Model131Activity2023.this.tabLayoutPanel.setVisible(AonStringUtils.isNotBlank( act.getEpigraph()) );
 		
 		dis.setValue(act.isDis());
 		com.setValue(act.getCom());
@@ -662,7 +662,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		callback.getActivity().setIin(iin.getValue());
 		callback.getActivity().setDia(dia.getValue());
 		calculate( callback );
-		ValueChangeEvent.<Mod131Activity>fire(Model131Activity.this, callback.getActivity());
+		ValueChangeEvent.<Mod131Activity>fire(Model131Activity2023.this, callback.getActivity());
 	}
 
 	private void enableFields(IMod131ActivityCallback callback) {

@@ -1340,7 +1340,9 @@ public class Modules2018 {
 		public boolean hasIRPFModules() {
 			return irpfModules != null;
 		}
-		
+		public static boolean hasEpigraph(String code) {
+			return getEpigraph(code) != null; 
+		}
 		public static Epigraph getEpigraph(String code) {
 			for (Epigraph epi: Epigraph.values()) {
 				if (AonStringUtils.equals(epi.getEpigraph(), code)) {

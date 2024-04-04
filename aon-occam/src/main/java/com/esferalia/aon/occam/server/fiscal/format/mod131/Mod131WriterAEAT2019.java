@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod131;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,9 +6,10 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer.IMod131Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IMod131Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -33,7 +34,7 @@ public class Mod131WriterAEAT2019 implements IMod131Writer{
 		   
 		   ,(wr, mod) -> wr.append("<T13101000>")
 		   ,(wr, mod) -> wr.append(" ")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?mod.getName():mod.getSurname(),60))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?" ":mod.getName(),20))
@@ -114,11 +115,15 @@ public class Mod131WriterAEAT2019 implements IMod131Writer{
 		}
 	}
 
-	public void fillWriter(Mod131 mod131, Writer wr) throws IOException {
+	public void fillWriter(Mod131 mod131, Writer wr) {
 		boolean filled = false;
 		for (Mod131File format : Mod131File.values()) {
 			if (format.accept(mod131)) {
-				format.fillPage(mod131, wr);
+				try {
+					format.fillPage(mod131, wr);
+				} catch (IOException e) {
+					throw new AonCoreException("Error desconocido durante la generaci\u00F3n de el modelo.");
+				}
 				filled = true;
 			}
 		}
