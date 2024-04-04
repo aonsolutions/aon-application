@@ -24,6 +24,7 @@ public class DeclarationInfoUtil {
 	public static final String fullStyledTag = "<{0} style = \"{1}\">{2}</{0}>";
 	public static final String styledTag = "<{0} style = \"{1}\">"; 
 	public static final String marginTop = "margin-top: 20px;";
+	public static final String marginLeft1em = "margin-left: 1em;";
 	public static final String border = "border: solid gray 1px; padding: 2px 5px;";
 	public static final String borderCollapse = "border-collapse: collapse;";
 	public static final String paddingLeft = "padding-left: 15px;";

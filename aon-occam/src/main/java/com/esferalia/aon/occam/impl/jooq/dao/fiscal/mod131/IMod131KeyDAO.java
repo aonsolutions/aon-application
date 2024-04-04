@@ -8,11 +8,12 @@ import com.esferalia.aon.occam.api.model.type.Mod131Key;
 public interface IMod131KeyDAO {
 	
 	Mod131Key getKey();
-	boolean acceptValue(Mod131 mod,IrpfBreakdown  br);
+	boolean acceptIrpfBreakdown(Mod131 mod,IrpfBreakdown  br);
 	void initialize(AONContext ctx,Mod131 mod);
 	String getExpression();
 	String info(AONContext ctx,Mod131 mod);
 	
-	
+	void fillActivityFromMap(Mod131 mod,Mod131Key key);
+	void fillMapFromActivity(Mod131 mod,Mod131Key key);
 }
 

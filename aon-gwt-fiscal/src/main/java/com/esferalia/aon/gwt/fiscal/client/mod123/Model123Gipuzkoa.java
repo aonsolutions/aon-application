@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123Gipuzkoa2022Script;
+import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123Gipuzkoa2024Script;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,7 +24,7 @@ public class Model123Gipuzkoa extends Model123Base {
 	
 	@Override
 	protected void paintParticularyRow(FlexTable table, Model123Callback callback, IModelScript<Mod123Key> script) {
-		if (script == Model123Gipuzkoa2022Script.X00) {
+		if (script == Model123Gipuzkoa2022Script.X00 || script == Model123Gipuzkoa2024Script.X00 ) {
 			int row = table.getRowCount();
 			table.getFlexCellFormatter().setColSpan(row, 0, 8);
 			table.getFlexCellFormatter().setStyleName(row, 0,AON.CSS.aonBold() );

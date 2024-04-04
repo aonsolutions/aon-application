@@ -15,7 +15,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class EpigraphPanel extends AonCustomDialog implements HasSelectionHandlers<IEpigraph> {
+class EpigraphPanel extends AonCustomDialog implements HasSelectionHandlers<IEpigraph> {
 
 	protected EpigraphPanel(Integer year) {
 		setVisible(false);

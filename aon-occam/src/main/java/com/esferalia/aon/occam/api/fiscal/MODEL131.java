@@ -117,9 +117,4 @@ public class MODEL131 {
 		}
 	}
 
-	public static Mod131 reset(Occam occam, Mod131 mod131) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().reset(ctx, mod131);
-		}
-	}
 }

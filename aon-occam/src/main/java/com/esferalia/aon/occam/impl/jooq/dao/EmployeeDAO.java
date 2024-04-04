@@ -413,22 +413,22 @@ public class EmployeeDAO {
 
 	private static Optional<GeozoneRecord> getGeozone(DSLContext dslContext, Integer domainId, String ccc) {
 		String code = AonStringUtils.substring(ccc, 0, 2);
-		return 
-		dslContext
-		.select()
-		.from(GEOZONE)
-		.where(GEOZONE.DOMAIN.eq(domainId))
-		.and(GEOZONE.CODE.eq(code))
-		.fetchOptionalInto(GEOZONE)
-		.or(() ->
-			dslContext
-			.select()
-			.from(GEOZONE)
-			.where(GEOZONE.DOMAIN.eq(DSL.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId))))
-			.and(GEOZONE.CODE.eq(code))
-			.fetchOptionalInto(GEOZONE)
-		)
-		;
+		
+		Result<GeozoneRecord> geozoneRecords = dslContext
+			.selectFrom(GEOZONE)
+			.where(GEOZONE.DOMAIN.eq(domainId))
+			.and(GEOZONE.CODE.eq(code)).fetch();
+		
+		if(geozoneRecords.isEmpty()) {
+			return dslContext
+					.select()
+					.from(GEOZONE)
+					.where(GEOZONE.DOMAIN.eq(DSL.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId))))
+					.and(GEOZONE.CODE.eq(code))
+					.fetchOptionalInto(GEOZONE);
+		}
+		
+		return Optional.of(geozoneRecords.get(0));
 	}
 	
 

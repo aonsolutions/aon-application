@@ -119,9 +119,11 @@ public class OperationReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "Titular: "+ titular, topHeaderCellStyle);
 		    
 		    // Actividad
-		    row = sheet.createRow(rowCount++);
-			cellCount = 0;
-			CellUtil.createCell(row, cellCount, "Actividad: "+params.getActivityDescription(), topHeaderCellStyle);
+			if (params.getActivity() != null) {
+			    row = sheet.createRow(rowCount++);
+				cellCount = 0;
+				CellUtil.createCell(row, cellCount, "Actividad: "+params.getActivityDescription(), topHeaderCellStyle);
+			}
 			
 		    // Periodo
 		    row = sheet.createRow(rowCount++);
@@ -184,6 +186,11 @@ public class OperationReportExcelPrint extends HttpServlet {
 				CellUtil.createCell(row, cellCount, "TOTAL FRA.", headerCellStyle);
 				sheet.setColumnWidth(cellCount++, 15 * 256);				
 			}
+
+			if (params.getActivity() == null) {
+				CellUtil.createCell(row, cellCount, "ACTIVIDAD", headerCellStyle);
+				sheet.setColumnWidth(cellCount++, 14 * 256);			
+			}
 			
 			// Almacenar cuantas filas tiene la cabecera, para rellenar la columna ID
 			rowsHeader = rowCount;
@@ -224,6 +231,10 @@ public class OperationReportExcelPrint extends HttpServlet {
 			}			
 			
 			addCell(op.getTotal());			    // TOTAL FRA
+			
+			if (params.getActivity() == null) {
+				addCell(op.getActivityIAE(), centerCellStyle ); // ACTIVIDAD IAE
+			}			
 			
 			// Acumular totales y resumen por tipos de IVA, REQ (IVA) y Cuenta (IRPF)
 			

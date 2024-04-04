@@ -167,6 +167,9 @@ public class BookingJSON {
 			// ChildBillingUsers
 			bookingResume.setChildBillingUsers((JsonGWTUtils.getInteger(json, "childBillingUsers")));
 			
+			// TotalChilds
+			bookingResume.setTotalChilds((JsonGWTUtils.getInteger(json, "totalChilds")));
+						
 			// DomainTypes
 			HashMap<DomainType, DomainTypeInfo> domainTypes = new  HashMap<DomainType, DomainTypeInfo>();
 			JSONObject domainTypesObj = JsonGWTUtils.getJSONObject(json, "domainTypes");
