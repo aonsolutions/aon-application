@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
 import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
@@ -431,7 +432,8 @@ public class Up2Date {
 	    RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
         BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
         HomeBases2024Update.HOMEBASES2024UPDATEIV,
-        Art1512024Update.ART1512024UPDATE
+        Art1512024Update.ART1512024UPDATE,
+        RefreshMod131Result.REFRESH_MOD131_RESULT
 	};
 
     // ------------------------------------------------------------------------
