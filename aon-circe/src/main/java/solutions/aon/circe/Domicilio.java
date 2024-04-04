@@ -1,7 +1,5 @@
 package solutions.aon.circe;
 
-import solutions.aon.circe.DatosEmpresa.DatosEmpresaBuilder;
-
 public class Domicilio {
 	private String tipoVia;
 	private String nombreVia;
@@ -21,11 +19,11 @@ public class Domicilio {
 	private int codigoPostal;
 	private String indicadorReferenciaCatastral;
 	private String referenciaCataastral;
-	
+
 	public Domicilio() {
-		
+
 	}
-	
+
 	public Domicilio(DomicilioBuilder domicilioBuilder) {
 		this.tipoVia = domicilioBuilder.tipoVia;
 		this.nombreVia = domicilioBuilder.nombreVia;
@@ -119,17 +117,15 @@ public class Domicilio {
 	public String getReferenciaCataastral() {
 		return referenciaCataastral;
 	}
-	
+
 	public String toString() {
-		return this.nombreVia+" "+this.num+" "+this.codigoPostal+" "+this.provincia+" ("+") "+this.municipio;
-		
+		return this.nombreVia + " " + this.num + " " + this.codigoPostal + " " + this.provincia + " (" + ") "
+				+ this.municipio;
+
 	}
-	
-	
-	
-	
+
 	public static class DomicilioBuilder {
-		
+
 		private String tipoVia;
 		private String nombreVia;
 		private int km;
@@ -148,85 +144,101 @@ public class Domicilio {
 		private int codigoPostal;
 		private String indicadorReferenciaCatastral;
 		private String referenciaCataastral;
-		
 
 		public DomicilioBuilder tipoVia(String tipoVia) {
 			this.tipoVia = tipoVia;
 			return this;
 		}
+
 		public DomicilioBuilder nombreVia(String nombreVia) {
 			this.nombreVia = nombreVia;
 			return this;
 		}
+
 		public DomicilioBuilder km(int km) {
 			this.km = km;
 			return this;
 		}
+
 		public DomicilioBuilder num(int num) {
 			this.num = num;
 			return this;
 		}
+
 		public DomicilioBuilder calificadorNum(String calificadorNum) {
 			this.calificadorNum = calificadorNum;
 			return this;
 		}
+
 		public DomicilioBuilder bloque(String bloque) {
 			this.bloque = bloque;
 			return this;
 		}
+
 		public DomicilioBuilder portal(String portal) {
 			this.portal = portal;
 			return this;
 		}
+
 		public DomicilioBuilder piso(int piso) {
 			this.piso = piso;
 			return this;
 		}
+
 		public DomicilioBuilder escalera(String escalera) {
 			this.escalera = escalera;
 			return this;
 		}
+
 		public DomicilioBuilder puerta(String puerta) {
 			this.puerta = puerta;
 			return this;
 		}
+
 		public DomicilioBuilder coplemnetoDomicilio(String coplemnetoDomicilio) {
 			this.coplemnetoDomicilio = coplemnetoDomicilio;
 			return this;
 		}
+
 		public DomicilioBuilder pais(String pais) {
 			this.pais = pais;
 			return this;
 		}
+
 		public DomicilioBuilder provincia(String provincia) {
 			this.provincia = provincia;
 			return this;
 		}
+
 		public DomicilioBuilder municipio(String municipio) {
 			this.municipio = municipio;
 			return this;
 		}
+
 		public DomicilioBuilder localidad(String localidad) {
 			this.localidad = localidad;
 			return this;
 		}
+
 		public DomicilioBuilder codigoPostal(int codigoPostal) {
 			this.codigoPostal = codigoPostal;
 			return this;
 		}
+
 		public DomicilioBuilder indicadorReferenciaCatastral(String indicadorReferenciaCatastral) {
 			this.indicadorReferenciaCatastral = indicadorReferenciaCatastral;
 			return this;
 		}
+
 		public DomicilioBuilder referenciaCataastral(String referenciaCataastral) {
 			this.referenciaCataastral = referenciaCataastral;
 			return this;
 		}
-		
+
 		public Domicilio build() {
 			return new Domicilio(this);
 		}
-		
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package solutions.aon.circe;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -10,22 +11,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
-import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableBody;
+import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.html.HtmlTextArea;
 import org.htmlunit.html.HtmlTextInput;
 
 import solutions.aon.circe.Actividades.ActividadesBuilder;
 import solutions.aon.circe.DatosPersonales.DatosPersonalesBuilder;
 import solutions.aon.circe.Domicilio.DomicilioBuilder;
+import solutions.aon.circe.SeguridadSocial.SeguridadSocialBuilder;
 import solutions.aon.circe.exception.SegSocialException;
 import solutions.aon.circe.toolkit.HtmlUnitToolkit;
 
@@ -35,12 +42,19 @@ public class Circe {
 		String password = "Alma1981";
 		FileInputStream certificateIs = new FileInputStream("/home/ndiaz/Descargas/aon.p12");
 		String certificateType = KeyStore.getDefaultType();
+//		String codCirce = "073701711M";
 		String codCirce = "073472648Z";
-
 //		getCirce(certificateIs, password, certificateType, null, null, null);
 
-		getDatos(certificateIs, password, certificateType, codCirce);
+//		getDatos(certificateIs, password, certificateType, codCirce);
 
+//		imprimirDUEAutonomo(certificateIs, password, certificateType, codCirce);
+		
+		try (FileOutputStream pdfDUE = new FileOutputStream(
+				"/home/ndiaz/eclipse-workspace/aon.parent/aon-circe/src/main/java/DueAutonomo.pdf")) {
+			pdfDUE.write(imprimirDUEAutonomo(certificateIs, password, certificateType, codCirce));
+		}
+	
 	}
 
 	public static void getCirce(InputStream certificateInputStream, String certificatePassword, String certificateType,
@@ -114,9 +128,90 @@ public class Circe {
 		}
 	}
 
+	public static byte[] imprimirDUEAutonomo(InputStream certificateInputStream, String certificatePassword, String certificateType,
+			String codigoCirce) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		
+		byte[] pdf = null;
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			HtmlPage htmlPage = Circe.accesoAreaPAE(webClient);
+
+			HtmlForm filterId = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("filterId"))
+					.orElseThrow();
+			filterId.getInputByName("CodCIRCE").setValue(codigoCirce);
+			htmlPage.getWebClient().waitForBackgroundJavaScript(5000);
+			((HtmlElement) filterId.querySelector("button[type='submit']")).click();
+			htmlPage.getWebClient().waitForBackgroundJavaScript(5000);
+			List<HtmlAnchor> anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/autonomo/personaldata/Index?")) {
+					htmlPage = anchor.click();
+				}
+			}
+
+			webClient.waitForBackgroundJavaScript(10000);
+			
+			anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/autonomo/documentos/Index?")) {
+					htmlPage = anchor.click();
+				}
+			}
+
+			webClient.waitForBackgroundJavaScript(10000);
+			
+			System.out.println(htmlPage.asXml());
+			
+			DomElement documentos = htmlPage.getElementById("maingrid");
+			HtmlTable tablaDocumentos = (HtmlTable) documentos.querySelector("table[class='table']");
+			List<HtmlTableBody> bodiesDocumentos = tablaDocumentos.getBodies();
+			for (HtmlTableBody htmlTableBody : bodiesDocumentos) {
+				List<HtmlTableRow> rows = htmlTableBody.getRows();
+				Page page = ((HtmlElement) rows.getLast().getLastChild().getFirstChild()).click();
+				pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+			}
+			
+		}
+		return pdf;
+	}
+	
+	public static byte[] imprimirDUESociedades(InputStream certificateInputStream, String certificatePassword, String certificateType,
+			String codigoCirce) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		
+		byte[] pdf = null;
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			HtmlPage htmlPage = Circe.accesoAreaPAE(webClient);
+
+			HtmlForm filterId = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("filterId"))
+					.orElseThrow();
+			filterId.getInputByName("CodCIRCE").setValue(codigoCirce);
+			htmlPage.getWebClient().waitForBackgroundJavaScript(30000);
+			((HtmlElement) filterId.querySelector("button[type='submit']")).click();
+			htmlPage.getWebClient().waitForBackgroundJavaScript(30000);
+			List<HtmlAnchor> anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/sociedades/DatosEmpresa/SRL?")) {
+					htmlPage = anchor.click();
+				}
+			}
+
+			webClient.waitForBackgroundJavaScript(5000);
+			anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/Imprimir/Due?area=&")) {
+					Page page = anchor.click();
+					pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+
+				}
+			}
+		}
+		return pdf;
+	}
+	
 	public static void getDatos(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String codigoCirce) throws FailingHttpStatusCodeException, IOException, SegSocialException,
-			InterruptedException, ParseException {
+			InterruptedException {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -135,6 +230,8 @@ public class Circe {
 				}
 			}
 
+			webClient.waitForBackgroundJavaScript(5000);
+
 //			DatosPersonales personales = getDatosPersonales(htmlPage);
 
 			anchors = htmlPage.getAnchors();
@@ -143,32 +240,32 @@ public class Circe {
 					htmlPage = anchor.click();
 				}
 			}
-			
-			DomElement cnae = htmlPage.getElementById("gridCNAETargetId");
-			DomNode table = cnae.querySelector("table[class='table']").querySelector("tbody");
-			System.out.println(table);
 
-////			Actividades actividades = getActividades(htmlPage);
-//
-//		
-//			
-//			anchors = htmlPage.getAnchors();
-//			for (HtmlAnchor anchor : anchors) {
-//				if (anchor.getHrefAttribute().startsWith("/autonomo/seguridadsocial/Index?")) {
-//					htmlPage = anchor.click();
-//				}
-//			}
-//			
-////			SeguridadSocial seguridadSocial = getSeguridadSocial(htmlPage);
-//			
-//			anchors = htmlPage.getAnchors();
-//			for (HtmlAnchor anchor : anchors) {
-//				if (anchor.getHrefAttribute().startsWith("/autonomo/trabajador/Index?")) {
-//					htmlPage = anchor.click();
-//				}
-//			}
-//			
-////			PersonasTrabajadoras personasTrabajadoras = getPersonasTrabajadoras(htmlPage);
+			webClient.waitForBackgroundJavaScript(5000);
+
+//			Actividades actividades = getActividades(htmlPage);
+
+			anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/autonomo/seguridadsocial/Index?")) {
+					htmlPage = anchor.click();
+				}
+			}
+
+			webClient.waitForBackgroundJavaScript(5000);
+
+//			SeguridadSocial seguridadSocial = getSeguridadSocial(htmlPage);
+
+			anchors = htmlPage.getAnchors();
+			for (HtmlAnchor anchor : anchors) {
+				if (anchor.getHrefAttribute().startsWith("/autonomo/trabajador/Index?")) {
+					htmlPage = anchor.click();
+				}
+			}
+
+			webClient.waitForBackgroundJavaScript(5000);
+
+//			PersonasTrabajadoras personasTrabajadoras = getPersonasTrabajadoras(htmlPage);
 		}
 	}
 
@@ -348,10 +445,145 @@ public class Circe {
 		builder.numTrabajadores(Integer.parseInt(numTrabajadores));
 
 		DomElement cnae = htmlPage.getElementById("gridCNAETargetId");
-		cnae.querySelector("table[class='table']");
-		
+		HtmlTable tableCNAE = (HtmlTable) cnae.querySelector("table[class='table']");
+		List<HtmlTableBody> bodiesCNAE = tableCNAE.getBodies();
+		for (HtmlTableBody htmlTableBody : bodiesCNAE) {
+			List<HtmlTableRow> rows = htmlTableBody.getRows();
+			for (HtmlTableRow row : rows) {
+				String claveCNAE = row.getLastChild().getPreviousSibling().getTextContent();
+				builder.claveCNAE(Integer.parseInt(claveCNAE));
+			}
+		}
+
+		DomElement iae = htmlPage.getElementById("gridIaeTargetId");
+		HtmlTable tableIAE = (HtmlTable) iae.querySelector("table[class='table']");
+		List<HtmlTableBody> bodiesIAE = tableIAE.getBodies();
+		for (HtmlTableBody htmlTableBody : bodiesIAE) {
+			List<HtmlTableRow> rows = htmlTableBody.getRows();
+			for (HtmlTableRow row : rows) {
+				String claveIAE = row.getLastChild().getPreviousSibling().getPreviousSibling().getTextContent();
+				builder.claveIAE(Integer.parseInt(claveIAE));
+			}
+		}
+
+		String realizarComunicacion = ((HtmlCheckBoxInput) htmlPage
+				.getElementById("CentroTrabajo_AperturaCentro_ComunicacionApertura")).getValue();
+		builder.realizarComunicacion(Boolean.parseBoolean(realizarComunicacion));
+
+		DomElement fueraLocal = htmlPage.getElementById("gridFueraLocalTargetId");
+		HtmlTable tableFueraLocal = (HtmlTable) fueraLocal.querySelector("table[class='table']");
+		List<HtmlTableBody> bodiesFueraLocal = tableFueraLocal.getBodies();
+		for (HtmlTableBody htmlTableBody : bodiesFueraLocal) {
+			List<HtmlTableRow> rows = htmlTableBody.getRows();
+			for (HtmlTableRow row : rows) {
+				String epigrafeFueraLocal = row.getFirstChild().getNextSibling().getNextSibling().getTextContent();
+				builder.epigrafeAELugarFueraDelLocal(Integer.parseInt(epigrafeFueraLocal));
+			}
+		}
+
+		DomElement localAfectado = htmlPage.getElementById("gridFueraLocalTargetId");
+		HtmlTable tableLocalAfectado = (HtmlTable) localAfectado.querySelector("table[class='table']");
+		List<HtmlTableBody> bodiesLocalAfectado = tableLocalAfectado.getBodies();
+		for (HtmlTableBody htmlTableBody : bodiesLocalAfectado) {
+			List<HtmlTableRow> rows = htmlTableBody.getRows();
+			for (HtmlTableRow row : rows) {
+				String epigrafeLocalAfectado = row.getFirstChild().getNextSibling().getNextSibling().getTextContent();
+				builder.epigrafeAELocalAfectado(Integer.parseInt(epigrafeLocalAfectado));
+			}
+		}
+
 		return builder.build();
 
+	}
+
+	private static SeguridadSocial getSeguridadSocial(HtmlPage htmlPage) throws ParseException {
+
+		SeguridadSocialBuilder builder = new SeguridadSocialBuilder();
+
+		String tipoAutonomo = htmlPage.getElementById("select2-TipoAutonomo_SelectedId-container")
+				.getAttribute("value");
+		builder.tipoAutonomo(tipoAutonomo);
+
+		String nombre = ((HtmlTextInput) htmlPage.getElementById("Persona_Nombre")).getValue();
+		builder.nombre(nombre);
+
+		String docIdentidad = ((HtmlTextInput) htmlPage.getElementById("Persona_NumeroDocumento")).getValue();
+		builder.docIdentidad(docIdentidad);
+
+		String nss = ((HtmlTextInput) htmlPage.getElementById("Persona_NSSNAF")).getValue();
+		builder.nss(nss);
+
+		String solicitudNumAfiliacionSS = ((HtmlCheckBoxInput) htmlPage
+				.getElementById("AsignacionNSS_AltaSeguridadSocial")).getValue();
+		builder.solicitudNumAfiliacionSS(Boolean.parseBoolean(solicitudNumAfiliacionSS));
+
+		String cnae = htmlPage.getElementById("ListaCNAE").getAttribute("value");
+		builder.cnae(cnae);
+
+		String nombreApellidosRepresentante = ((HtmlTextInput) htmlPage.getElementById("Representante_NombreRazon"))
+				.getValue();
+		builder.nombreApellidosRepresentante(nombreApellidosRepresentante);
+
+		String tipoDocIdentidadRepresentante = htmlPage
+				.getElementById("select2-Representante_DocIdentidad_Types_SelectedId-container").getAttribute("value");
+		builder.tipoDocIdentidadRepresentante(tipoDocIdentidadRepresentante);
+
+		String docIdentidadRepresentante = ((HtmlTextInput) htmlPage.getElementById("Representante_DocIdentidad_Value"))
+				.getValue();
+		builder.docIdentidadRepresentante(docIdentidadRepresentante);
+
+		String nssRepresentante = ((HtmlTextInput) htmlPage.getElementById("Representante_NSS")).getValue();
+		builder.nssrepresentante(nssRepresentante);
+
+		String regimen = ((HtmlTextInput) htmlPage.getElementById("Regimen_Regimen")).getValue();
+		builder.regimen(regimen);
+
+		String grupo = ((HtmlTextArea) htmlPage.getElementById("Regimen_Grupo")).getText();
+		builder.grupo(grupo);
+
+		String trl = ((HtmlTextInput) htmlPage.getElementById("Regimen_TRL")).getValue();
+		builder.trl(trl);
+
+		String subgrupo = ((HtmlTextInput) htmlPage.getElementById("Regimen_Subgrupo")).getValue();
+		builder.subgrupo(subgrupo);
+
+		String integradoColegioProfesional = ((HtmlCheckBoxInput) htmlPage
+				.getElementById("IntegradoColegioProfesional")).getValue();
+		builder.integradoColegioProfesional(Boolean.parseBoolean(integradoColegioProfesional));
+
+		String colegioProfesional = htmlPage.getElementById("select2-selection select2-selection--single")
+				.getAttribute("value");
+		builder.colegioProfesional(colegioProfesional);
+
+		String discapacidad = ((HtmlCheckBoxInput) htmlPage.getElementById("Incapacidad_Minusvalido")).getValue();
+		builder.discapacidad(Boolean.parseBoolean(discapacidad));
+
+		String tipoDiscapacidad = htmlPage.getElementById("select2-Incapacidad_TipoDiscapacidad_SelectedId-container")
+				.getAttribute("value");
+		builder.tipoDiscapacidad(tipoDiscapacidad);
+
+		String gradoDiscapacidad = ((HtmlTextInput) htmlPage.getElementById("Incapacidad_GradoIncapacidad")).getValue();
+		builder.gradoDiscapacidad(Integer.parseInt(gradoDiscapacidad));
+
+		String fechaEfectoDiscapacidad = ((HtmlTextInput) htmlPage.getElementById("Incapacidad_FechaMinusvalia"))
+				.getValue();
+		builder.fechaEfectoDiscapacidad(Utils.FORMATTER.parse(fechaEfectoDiscapacidad));
+
+		//
+		//
+		//
+
+		String baseCotizacion = ((HtmlTextInput) htmlPage.getElementById("BaseCotizacion_Valor")).getValue();
+		builder.baseCotizacion(Float.parseFloat(baseCotizacion));
+
+		String rendimientoNetoAnual = ((HtmlTextInput) htmlPage
+				.getElementById("BaseCotizacion_RendimientosNetosAnuales")).getValue();
+		builder.rendimientoNetoAnual(Float.parseFloat(rendimientoNetoAnual));
+
+		String mutuaIT = htmlPage.getElementById("select2-TipoMutuaIT_SelectedId-container").getAttribute("value");
+		builder.mutuaIT(mutuaIT);
+
+		return builder.build();
 	}
 
 	public static HtmlPage anadirDomicilio(HtmlForm mainForm, Domicilio domicilio, String alias)

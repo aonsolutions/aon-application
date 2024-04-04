@@ -2,8 +2,6 @@ package solutions.aon.circe;
 
 import java.util.Date;
 
-import solutions.aon.circe.DatosPersonales.DatosPersonalesBuilder;
-
 public class Actividades {
 	private int superficieTotal;
 	private int superficieComputable;
@@ -18,6 +16,7 @@ public class Actividades {
 	private int claveIAE;
 	private String descripcionIAE;
 	private String tipoActividadIAE;
+	private boolean realizarComunicacion;
 	private int epigrafeAELugarFueraDelLocal;
 	private String tipoActividadLugarFueraDelLocal;
 	private String provinciaLugarFueraDelLocal;
@@ -31,11 +30,11 @@ public class Actividades {
 	private int gradoLocalAfectado;
 	private int fechaInicioLocalAfectado;
 	private String usoLocalAfectado;
-	
+
 	public Actividades() {
-		
+
 	}
-	
+
 	public Actividades(ActividadesBuilder actividadesBuilder) {
 		this.superficieTotal = actividadesBuilder.superficieTotal;
 		this.superficieComputable = actividadesBuilder.superficieComputable;
@@ -50,6 +49,7 @@ public class Actividades {
 		this.claveIAE = actividadesBuilder.claveIAE;
 		this.descripcionIAE = actividadesBuilder.descripcionIAE;
 		this.tipoActividadIAE = actividadesBuilder.tipoActividadIAE;
+		this.realizarComunicacion = actividadesBuilder.realizarComunicacion;
 		this.epigrafeAELugarFueraDelLocal = actividadesBuilder.epigrafeAELugarFueraDelLocal;
 		this.tipoActividadLugarFueraDelLocal = actividadesBuilder.tipoActividadLugarFueraDelLocal;
 		this.provinciaLugarFueraDelLocal = actividadesBuilder.provinciaLugarFueraDelLocal;
@@ -63,10 +63,9 @@ public class Actividades {
 		this.gradoLocalAfectado = actividadesBuilder.gradoLocalAfectado;
 		this.fechaInicioLocalAfectado = actividadesBuilder.fechaInicioLocalAfectado;
 		this.usoLocalAfectado = actividadesBuilder.usoLocalAfectado;
-		
-		
+
 	}
-	
+
 	public int getSuperficieTotal() {
 		return superficieTotal;
 	}
@@ -117,6 +116,10 @@ public class Actividades {
 
 	public String getTipoActividadIAE() {
 		return tipoActividadIAE;
+	}
+
+	public boolean isRealizarComunicacion() {
+		return realizarComunicacion;
 	}
 
 	public int getEpigrafeAELugarFueraDelLocal() {
@@ -171,7 +174,7 @@ public class Actividades {
 		return usoLocalAfectado;
 	}
 
-	public static class ActividadesBuilder{
+	public static class ActividadesBuilder {
 		private int superficieTotal;
 		private int superficieComputable;
 		private int superficieRectificada;
@@ -185,6 +188,7 @@ public class Actividades {
 		private int claveIAE;
 		private String descripcionIAE;
 		private String tipoActividadIAE;
+		private boolean realizarComunicacion;
 		private int epigrafeAELugarFueraDelLocal;
 		private String tipoActividadLugarFueraDelLocal;
 		private String provinciaLugarFueraDelLocal;
@@ -198,142 +202,146 @@ public class Actividades {
 		private int gradoLocalAfectado;
 		private int fechaInicioLocalAfectado;
 		private String usoLocalAfectado;
-		
+
 		public ActividadesBuilder superficieTotal(int superficieTotal) {
 			this.superficieTotal = superficieTotal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder superficieComputable(int superficieComputable) {
 			this.superficieComputable = superficieComputable;
 			return this;
 		}
-		
+
 		public ActividadesBuilder superficieRectificada(int superficieRectificada) {
 			this.superficieRectificada = superficieRectificada;
 			return this;
 		}
-		
+
 		public ActividadesBuilder numReferencia(int numReferencia) {
 			this.numReferencia = numReferencia;
 			return this;
 		}
-		
+
 		public ActividadesBuilder domicilio(Domicilio domicilio) {
 			this.domicilio = domicilio;
 			return this;
 		}
-		
+
 		public ActividadesBuilder nombreComercial(String nombreComercial) {
 			this.nombreComercial = nombreComercial;
 			return this;
 		}
-		
+
 		public ActividadesBuilder inicioActividad(Date inicioActividad) {
 			this.inicioActividad = inicioActividad;
 			return this;
 		}
 
-		
 		public ActividadesBuilder numTrabajadores(int numTrabajadores) {
 			this.numTrabajadores = numTrabajadores;
 			return this;
 		}
-		
+
 		public ActividadesBuilder claveCNAE(int claveCNAE) {
 			this.claveCNAE = claveCNAE;
 			return this;
 		}
-		
+
 		public ActividadesBuilder descripcionCNAE(String descripcionCNAE) {
 			this.descripcionCNAE = descripcionCNAE;
 			return this;
 		}
-		
+
 		public ActividadesBuilder claveIAE(int claveIAE) {
 			this.claveIAE = claveIAE;
 			return this;
 		}
-		
+
 		public ActividadesBuilder descripcionIAE(String descripcionIAE) {
 			this.descripcionIAE = descripcionIAE;
 			return this;
 		}
-		
+
 		public ActividadesBuilder tipoActividadIAE(String tipoActividadIAE) {
 			this.tipoActividadIAE = tipoActividadIAE;
 			return this;
 		}
-		
+
+		public ActividadesBuilder realizarComunicacion(boolean realizarComunicacion) {
+			this.realizarComunicacion = realizarComunicacion;
+			return this;
+		}
+
 		public ActividadesBuilder epigrafeAELugarFueraDelLocal(int epigrafeAELugarFueraDelLocal) {
 			this.epigrafeAELugarFueraDelLocal = epigrafeAELugarFueraDelLocal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder tipoActividadLugarFueraDelLocal(String tipoActividadLugarFueraDelLocal) {
 			this.tipoActividadLugarFueraDelLocal = tipoActividadLugarFueraDelLocal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder provinciaLugarFueraDelLocal(String provinciaLugarFueraDelLocal) {
 			this.provinciaLugarFueraDelLocal = provinciaLugarFueraDelLocal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder municipioLugarFueraDelLocal(String municipioLugarFueraDelLocal) {
 			this.municipioLugarFueraDelLocal = municipioLugarFueraDelLocal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder fechaInicioLugarFueraDelLocal(int fechaInicioLugarFueraDelLocal) {
 			this.fechaInicioLugarFueraDelLocal = fechaInicioLugarFueraDelLocal;
 			return this;
 		}
-		
+
 		public ActividadesBuilder epigrafeAELocalAfectado(int epigrafeAELocalAfectado) {
 			this.epigrafeAELocalAfectado = epigrafeAELocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder tipoActividadLocalAfectado(String tipoActividadLocalAfectado) {
 			this.tipoActividadLocalAfectado = tipoActividadLocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder afectacionLocalAfectado(String afectacionLocalAfectado) {
 			this.afectacionLocalAfectado = afectacionLocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder localAfectado(String localAfectado) {
 			this.localAfectado = localAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder superficieLocalAfectado(int superficieLocalAfectado) {
 			this.superficieLocalAfectado = superficieLocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder gradoLocalAfectado(int gradoLocalAfectado) {
 			this.gradoLocalAfectado = gradoLocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder fechaInicioLocalAfectado(int fechaInicioLocalAfectado) {
 			this.fechaInicioLocalAfectado = fechaInicioLocalAfectado;
 			return this;
 		}
-		
+
 		public ActividadesBuilder usoLocalAfectado(String usoLocalAfectado) {
 			this.usoLocalAfectado = usoLocalAfectado;
 			return this;
 		}
-		
+
 		public Actividades build() {
 			return new Actividades(this);
 		}
-		
+
 	}
 
 }
