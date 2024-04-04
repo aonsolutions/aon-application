@@ -25,7 +25,11 @@ import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
+import net.aonsolutions.db.up2date.tgss.FellowsBases2024Update;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2024Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2024Update;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2024Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2024Update;
 
 public class Up2Date {
 
@@ -431,7 +435,11 @@ public class Up2Date {
 	    RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
         BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
         HomeBases2024Update.HOMEBASES2024UPDATEIV,
-        Art1512024Update.ART1512024UPDATE
+        Art1512024Update.ART1512024UPDATE,
+        FellowsBases2024Update.FELLOWSBASES2024UPDATE,
+        TrainningBases2024Update.TRAINNINGBASES2024UPDATE,
+        TrainingPercentages2024Update.TRAINNINGPERCENTAGES2023UPDATE,
+        FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE
 	};
 
     // ------------------------------------------------------------------------
