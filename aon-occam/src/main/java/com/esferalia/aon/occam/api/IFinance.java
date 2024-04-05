@@ -132,6 +132,8 @@ public interface IFinance {
 	public Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
+	
+	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery);
 
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
@@ -146,7 +148,8 @@ public interface IFinance {
 	public Fee save(AONContext ctx, Fee fee);
 	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList);
 	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
-	public void createCustomerFeeList(AONContext ctx, Fee fee);
+	public Fee createCustomerFeeList(AONContext ctx, Fee fee);
+	public void updateRitemCustomerFee(CloseableAONContext ctx, Integer customerFee, Integer ritem);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	public void deleteFee(AONContext ctx,CustomerFeeParams customerFeeParams);
@@ -264,6 +267,7 @@ public interface IFinance {
 	LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getCustomerChildBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 	void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings);
 	

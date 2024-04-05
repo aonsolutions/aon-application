@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.booking;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -299,6 +300,11 @@ public class BookingPanel extends MainEntryPoint {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	// Api
+	private BookingApi bookingApi;
+	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+	private boolean isLocalDev = true;
+	
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -328,6 +334,8 @@ public class BookingPanel extends MainEntryPoint {
 		dockLayoutPanel.clear();
 		
 		mainDeckPanel = new DeckPanel();
+		
+		bookingApi = new BookingApi(SESSION_API);
 		
 		bookingCustomer = new BookingCustomer(SERVICE, opt);
 
@@ -1651,43 +1659,36 @@ public class BookingPanel extends MainEntryPoint {
 					
 					Integer customerId = domainCompany.getDomain().getAonCustomer();
 					
-					// Create the base URL
-					String baseUrl = "/ms/api/domain/booking-customer/";
-
-					// Create a URL builder and add query parameters
-					UrlBuilder urlBuilder = new UrlBuilder();
-					urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-					urlBuilder.setHost(Window.Location.getHost()); 
-					urlBuilder.setPath(baseUrl);
-					
-					// Create the request builder with the complete URL
-					RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-					requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+					String host = Window.Location.getHost();
+					String endPoint = "/ms/api/domain/booking-customer/";
 					
 					JSONObject body = new JSONObject();
 					body.put("customer", new JSONNumber(customerId));
 					
-					try {
-					    // Send the request
-					    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-					        public void onResponseReceived(Request request, Response response) {
-					            if (response.getStatusCode() == 200) {
-					            	
-					            	if((iteration + 1) == companies.size())
-										AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
-			  		           		
-					            } else {
-					            	AonMessagePanel.showError(messagePanel, response.getText());
-					            }
-					        }
-
-							public void onError(Request request, Throwable exception) {
-								AonMessagePanel.showError(messagePanel, exception.getMessage());
-					        }
-					    });
-					} catch (RequestException e) {
-						AonMessagePanel.showError(messagePanel, e.getMessage());
-					}
+					HashMap<String, String> headers = new HashMap<>();
+					headers.put("domain_name", options.getDomainName());
+					headers.put("domain_login", options.getUser());
+					headers.put("domain_id", String.valueOf(options.getDomain()));
+					
+					bookingApi.syncCustomerBooking(host, endPoint, headers, body, new AsyncCallback<Response>() {
+						
+						@Override
+						public void onSuccess(Response response) {
+							if (response.getStatusCode() == 200) {
+				            	
+				            	if((iteration + 1) == companies.size())
+									AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
+		  		           		
+				            } else {
+				            	AonMessagePanel.showError(messagePanel, response.getText());
+				            }
+						}
+						
+						@Override
+						public void onFailure(Throwable exception) {
+							AonMessagePanel.showError(messagePanel, exception.getMessage());
+						}
+					});
 					
 					syncDomain++;
 				}
@@ -1695,54 +1696,41 @@ public class BookingPanel extends MainEntryPoint {
 			}
 
 			private void syncDomain(DomainCompany domainCompany) {
-				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
+				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + domainCompany.getDomain().getDescription() + " ...");
 				
 				Integer customerId = domainCompany.getDomain().getAonCustomer();
 				
-				// Create the base URL
-				String baseUrl = "/ms/api/domain/booking-customer/";
-
-				// Create a URL builder and add query parameters
-				UrlBuilder urlBuilder = new UrlBuilder();
-				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-				urlBuilder.setHost(Window.Location.getHost()); 
-				urlBuilder.setPath(baseUrl);
-				
-				// Create the request builder with the complete URL
-				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				String host = Window.Location.getHost();
+				String endPoint = "/ms/api/domain/booking-customer/";
 				
 				JSONObject body = new JSONObject();
 				body.put("customer", new JSONNumber(customerId));
 				
-				try {
-				    // Send the request
-				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-				        public void onResponseReceived(Request request, Response response) {
-				            if (response.getStatusCode() == 200) {
-				            	
-				            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
-			            		
-				            	Timer timer = new Timer() {
-				           		     @Override
-				           		     public void run() {
-				           		    	showSyncLogs(response.getText());
-				           		     }
-				           		};
-				           		timer.schedule(3500);
-		  		           		
-				            } else {
-				            	AonMessagePanel.showError(messagePanel, response.getText());
-				            }
-				        }
-
-						public void onError(Request request, Throwable exception) {
-							AonMessagePanel.showError(messagePanel, exception.getMessage());
-				        }
-				    });
-				} catch (RequestException e) {
-					AonMessagePanel.showError(messagePanel, e.getMessage());
-				}
+				HashMap<String, String> headers = new HashMap<>();
+				headers.put("domain_name", options.getDomainName());
+				headers.put("domain_login", options.getUser());
+				headers.put("domain_id", String.valueOf(options.getDomain()));
+				
+				bookingApi.syncCustomerBooking(host, endPoint, headers, body, new AsyncCallback<Response>() {
+					
+					@Override
+					public void onSuccess(Response response) {
+						AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+	            		
+		            	Timer timer = new Timer() {
+		           		     @Override
+		           		     public void run() {
+		           		    	showSyncLogs(response.getText());
+		           		     }
+		           		};
+		           		timer.schedule(3500);
+					}
+					
+					@Override
+					public void onFailure(Throwable exception) {
+						AonMessagePanel.showError(messagePanel, exception.getMessage());
+					}
+				});
 			}
 		};
 	}
@@ -1964,10 +1952,10 @@ public class BookingPanel extends MainEntryPoint {
 			
 			@Override
 			protected void onCreate(Fee fee) {
-				SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+				SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
 					
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(Fee customerFee) {
 						AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 						resetFeeTable();
 						enableMoreData();
@@ -1985,6 +1973,9 @@ public class BookingPanel extends MainEntryPoint {
 
 			@Override
 			protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+			@Override
+			protected void onCreate(Fee fee, Integer ritem) {}
 			
 		};
 	}

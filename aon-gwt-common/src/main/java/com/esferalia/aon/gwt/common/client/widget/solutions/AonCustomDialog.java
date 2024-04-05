@@ -127,6 +127,10 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 	public void showCloseButton(boolean visible) {
 		closeDialog.setVisible(visible);
 	}
+	
+	public  AonToolbarButton getCloseButton() {
+		return closeDialog;
+	}
 
 	public void handleMove(int absX, int absY) {
 		RootPanel.get().setWidgetPosition(this, getAbsoluteLeft() + absX, getAbsoluteTop() + absY);
