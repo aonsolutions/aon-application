@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFeeDialog;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.registry.SyncCustomerFeeDialog;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -48,7 +49,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class CustomerBookingDialog extends AonCustomDialog {
+public abstract class CustomerBookingDialog extends AonCustomDialog {
 	
 	// ------- BookingWithOutFee
 	
@@ -195,21 +196,21 @@ public class CustomerBookingDialog extends AonCustomDialog {
 
 		@Override
 		public void execute() {
-			createCustomerFee(bookingWithOutFeeMenu.getItem(), bookingWithOutFeeMenu.getCustomer());
+			createCustomerFee(bookingWithOutFeeMenu.getItem(), bookingWithOutFeeMenu.getCustomer(), bookingWithOutFeeMenu.getId());
 		}
 		
-		private void createCustomerFee(OldItem oldItem, Customer customer) {
-			new CustomerFeeDialog(options, oldItem, customer) {
+		private void createCustomerFee(OldItem oldItem, Customer customer, Integer ritem) {
+			new CustomerFeeDialog(options, oldItem, customer, ritem) {
 				
 				@Override
 				protected void onAccept(Fee fee) {}
 				
 				@Override
 				protected void onCreate(Fee fee) {
-					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
 						
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess(Fee result) {
 							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 							initializeBooking();
 						}
@@ -223,7 +224,69 @@ public class CustomerBookingDialog extends AonCustomDialog {
 
 				@Override
 				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+				@Override
+				protected void onCreate(Fee fee, Integer ritem) {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+						
+						@Override
+						public void onSuccess(Fee customerFee) {
+							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+							
+							SERVICE.updateRitemCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), customerFee.getId(), ritem, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									AonMessagePanel.showSuccess(messagePanel, "Vinculada la cuota con la contrataci\u00f3n");
+									initializeBooking();
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								}
+							});
+
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						}
+					});
+				}
 				
+			};
+		}
+
+	}
+	
+	class SyncCustomerFeeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			syncCustomerFee(bookingWithOutFeeMenu.getItem(), bookingWithOutFeeMenu.getCustomer(), bookingWithOutFeeMenu.getId());
+		}
+		
+		private void syncCustomerFee(OldItem oldItem, Customer customer, Integer ritem) {
+			new SyncCustomerFeeDialog(options, oldItem, customer, ritem) {
+				
+				@Override
+				protected void onSyncCustomerFee(Fee fee, Integer ritem) {
+					SERVICE.updateRitemCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee.getId(), ritem, new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							AonMessagePanel.showSuccess(messagePanel, "Vinculada la cuota con la contrataci\u00f3n");
+							initializeBooking();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						}
+					});
+				}
 			};
 		}
 
@@ -312,8 +375,10 @@ public class CustomerBookingDialog extends AonCustomDialog {
 		private OldItem item;
 		private Customer customer;
 		private BookingCheck bookingCheck;
+		private Integer childDomian;
 		
 		private MenuItem createCustomerFee;
+		private MenuItem syncCustomerFee;
 		private MenuItem updateBooking;
 		private MenuItem deleteBooking;
 		private MenuItem conectaUsers;
@@ -322,6 +387,7 @@ public class CustomerBookingDialog extends AonCustomDialog {
 
 		public BookingWithOutFeeMenu() {
 			createCustomerFee = addMenuItem("Crear Cuota", new CreateCustomerFeeCommand(), AON.CSS.aonIconAdd(), "createCustomerFee");
+			syncCustomerFee = addMenuItem("Vincular Cuota Existente", new SyncCustomerFeeCommand(), AON.CSS.aonIconSync(), "syncCustomerFee");
 			updateBooking = addMenuItem("Act. Contrataci\u00f3n", new UpdateBookingCommand(), AON.CSS.aonIconEdit(), "updateBooking");
 			deleteBooking = addMenuItem("Eliminar Contrataci\u00f3n", new RemoveBookingCommand(), AON.CSS.aonIconDelete(), "deleteBooking");
 			conectaUsers = addMenuItem("Info. Usuarios", new ConectaUsersCommand(), AON.CSS.aonIconInfo(), "conectaUsers");
@@ -382,6 +448,7 @@ public class CustomerBookingDialog extends AonCustomDialog {
 		
 		public void setHasFee(boolean hasFee) {
 			this.createCustomerFee.setVisible(!hasFee);
+			this.syncCustomerFee.setVisible(!hasFee);
 		}
 
 	}
@@ -403,6 +470,10 @@ public class CustomerBookingDialog extends AonCustomDialog {
 	
 	private BookingApi bookingApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+	
+	private boolean isChildBookig = false;
+	private Integer childDomain;
+	
 	private boolean isLocalDev = false;
 	
 	public CustomerBookingDialog(RegistryModuleOptions options, int customerId) {
@@ -410,6 +481,8 @@ public class CustomerBookingDialog extends AonCustomDialog {
 		
 		this.options = options;
 		this.customerId = customerId;
+		
+		this.isChildBookig = false;
 		
 		bookingWithOutFeeMenu = new BookingWithOutFeeMenu();
 		
@@ -429,6 +502,43 @@ public class CustomerBookingDialog extends AonCustomDialog {
 		initializeBooking();
 		
 		this.showCloseButton(true);
+		this.getCloseButton().addClickHandler(e -> {
+			hide();
+			onCloseRefresh();
+		});
+	}
+
+	public CustomerBookingDialog(RegistryModuleOptions options, int customerId, Integer childDomainId) {
+		super();
+		
+		this.options = options;
+		this.customerId = customerId;
+		this.childDomain = childDomainId;
+		
+		this.isChildBookig = true;
+		
+		bookingWithOutFeeMenu = new BookingWithOutFeeMenu();
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		this.bookingApi = new BookingApi(SESSION_API);
+		
+		bookingPanel = new HTMLPanel("");
+		bookingPanel.addStyleName(AON.CSS.aonFlexColumn());
+		bookingPanel.getElement().getStyle().setProperty("padding", "1rem");
+		
+		this.setCaption("Contrataciones");
+		
+		this.add(bookingPanel);
+		
+		initializeBooking();
+		
+		this.showCloseButton(true);
+		this.getCloseButton().addClickHandler(e -> {
+			hide();
+			onCloseRefresh();
+		});
 	}
 	
 	// -------- Booking
@@ -516,25 +626,54 @@ public class CustomerBookingDialog extends AonCustomDialog {
 				.setOffset(0)
 				.setLimit(100);
 		
-		SERVICE.getCustomerBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-				new AsyncCallback<LinkedList<BookingCheck>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
-						if(bookingCheckListDB.isEmpty()) showBookingMessage();
-						else {
-							bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
-							fillBookingGrid(bookingCheckListDB);
+		if(!isChildBookig)
+		
+			SERVICE.getCustomerBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+					new AsyncCallback<LinkedList<BookingCheck>>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
 						}
-						
-						showDialog();
-					}
-				});
+	
+						@Override
+						public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
+							if(bookingCheckListDB.isEmpty()) showBookingMessage();
+							else {
+								bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								fillBookingGrid(bookingCheckListDB);
+							}
+							
+							showDialog();
+						}
+					});
+		
+		else {
+			
+			params.setChildDomain(childDomain);
+			
+			SERVICE.getCustomerChildBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+					new AsyncCallback<LinkedList<BookingCheck>>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
+						}
+	
+						@Override
+						public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
+							if(bookingCheckListDB.isEmpty()) showBookingMessage();
+							else {
+								bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								fillBookingGrid(bookingCheckListDB);
+							}
+							
+							showDialog();
+						}
+					});
+			
+		}
+		
 	}
 
 	private void fillBookingGrid(LinkedList<BookingCheck> bookingCheckListDB) {
@@ -698,5 +837,7 @@ public class CustomerBookingDialog extends AonCustomDialog {
 			show();
 		});
 	}
+	
+	protected abstract void onCloseRefresh();
 	
 }

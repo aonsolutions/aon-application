@@ -180,6 +180,7 @@ public class ItemDAO {
 	
 	public static Stream<RitemRecord> getRItemRecordStream(AONContext ctx, RegistryItemFilter filter){
 		ctx.checkRead();
+		System.out.println(ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter)).getSQL().toString());
 		return ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter))
 				.fetchStreamInto(RITEM);
 	}
@@ -366,7 +367,9 @@ public class ItemDAO {
 					.and(f.getRegistryProperty().eq(ritem.getRegistry()))
 					.and(f.getItemProperty().eq(ritem.getItem() != null ? ritem.getItem().getId() : null)
 					.and(f.getTypeProperty().eq(ritem.getType() != null ? ritem.getType().value() : null)))
-					.and(f.getEdiSalesCodeProperty().eq(ritem.getEdiSalesCode()))
+					.and( null == ritem.getEdiSalesCode() ? f.getEdiSalesCodeProperty().isNull() : f.getEdiSalesCodeProperty().eq(ritem.getEdiSalesCode()) )
+					
+//					.and(f.getEdiSalesCodeProperty().isNull().or(f.getEdiSalesCodeProperty().eq(ritem.getEdiSalesCode())))
 			).findFirst();
 			
 			if(opt.isPresent()) { 		//------------------UPDATE ----------
