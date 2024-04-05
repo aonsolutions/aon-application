@@ -3,12 +3,14 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -33,7 +35,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -145,6 +146,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				response(req, resp, getFiscalModelsEstimations(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
 				response(req, resp, getFiscalMatrix(api));
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/excel") ) {
+				responseFile(resp, "filename", getFiscalExcel(api), MimeType.MS_EXCEL_2007);
 			} else {
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -167,6 +170,42 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private byte[] getFiscalExcel(AonApiData api) {
+		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		String type = JsonUtils.getString(api.getData(), IJsonNames.TYPE);
+		String url = JsonUtils.getString(api.getData(), IJsonNames.URL);
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(url
+						+ "/aon_gwt_fiscal/ms/Model"
+						+ type
+						+ "Print?mod"
+						+ type
+						+ "="
+						+ id
+						+ "&domainId="
+						+ api.getDomain().getId()
+						+ "&domainName="
+						+ api.getDomain().getName()
+						+ "&user="
+						+ api.getUser().getLogin()))
+				.headers("Content-Type", "text/plain;charset=UTF-8")
+				.method("POST", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<InputStream> response = null;
+		byte [] bytes = null;
+		HttpClient http = HttpClient.newHttpClient();
+		try {
+			response = http.send(request, BodyHandlers.ofInputStream());
+			InputStream is = response.body();
+			bytes = is.readAllBytes();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return bytes;
 	}
 		
 	private JSONArray getFiscalMatrix(AonApiData api) {
@@ -212,7 +251,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
 				}
 			});
-
+			
 			return jsonModels; 
 		} 
 	}
