@@ -25,11 +25,12 @@ public class Mod303Writer {
 	}
 	
 	private enum Writers {
-		 AEAT_2023		(mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2023), Mod303WriterAEAT2023::new)
+		 AEAT_2024		(mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2024), Mod303WriterAEAT2024::new)
 		,ARABA_2023		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2023)	, Mod303WriterARABA2023::new)
 		,GIPUZKOA_2023	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() >= 2023), Mod303WriterGIPUZKOA2023::new)
 		,BIZKAIA_2023	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2023) 	, Mod303WriterBIZKAIA2023::new)
 		// ejercicios anteriores
+		,AEAT_2023		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2023), Mod303WriterAEAT2023::new)
 		,AEAT_2022		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2022), Mod303WriterAEAT2022::new)
 		,AEAT_2021_2	(mod303 -> (mod303.isAEAT() && (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())), Mod303WriterAEAT20212::new)
 		,AEAT_2021		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester()), Mod303WriterAEAT2021::new)
