@@ -29,7 +29,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class DueParser {
 
 	public static void main(String[] args) throws Exception {
-		FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomo.pdf");
+		try (FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomo.pdf")) {
+			parse(dueAutonomo, null);
+		}
 	}
 
 	public static void parse(File file, DueParserListener listener) throws Exception {
@@ -70,7 +72,19 @@ public class DueParser {
 			if (AonStringUtils.isBlank(text))
 				continue;
 
-//			parse(text, listener);
+			System.out.println(text);
+			parse(text, listener);
+		}
+	}
+
+	public static void parse(String text, DueParserListener listener) throws Exception {
+		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+			Matcher matcher = find(reader, REGISTRO_ENTRADA_PAE);
+			String registroEntrada = matcher.group("registro");
+			String pae = matcher.group("pae");
+			
 		}
 	}
 
@@ -227,36 +241,36 @@ public class DueParser {
 //			e.printStackTrace();
 //		}
 //	}
-
-	private static void onEmployeeQuotePEC(DueParserListener listener, String nss, String enterpriseCCC, String code,
-			String description, String portTipo, String quota, Date start, Date end) {
-		code = remove(code, " ");
-		quota = remove(quota, " ");
-		portTipo = remove(portTipo, " ");
-		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
-	}
-
-	private static void onEnterprise(DueParserListener listener, String socialReason, String enterpriseCCC,
-			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
-			String enterpriseRegime, String enterpriseCompleteCCC) {
-		socialReason = trim(socialReason);
-		enterpriseCCC = remove(enterpriseCCC, " ");
-		enterpriseCIF = remove(enterpriseCIF, " ");
-		enterpriseCIF = removeStart(enterpriseCIF, "0");
-		enterpriseActivityCode = remove(enterpriseActivityCode, " ");
-		enterpriseActivityDescription = trim(enterpriseActivityDescription);
-		enterpriseRegime = remove(enterpriseRegime, " ");
-		enterpriseCompleteCCC = remove(enterpriseCompleteCCC, " ");
-
-		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
-				enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
-	}
-
-	private static void onEmployee(DueParserListener listener, String fullName, String nss) {
-		nss = remove(nss, " ");
-		fullName = trim(fullName);
-		listener.onEmployee(nss, fullName);
-	}
+//
+//	private static void onEmployeeQuotePEC(DueParserListener listener, String nss, String enterpriseCCC, String code,
+//			String description, String portTipo, String quota, Date start, Date end) {
+//		code = remove(code, " ");
+//		quota = remove(quota, " ");
+//		portTipo = remove(portTipo, " ");
+//		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
+//	}
+//
+//	private static void onEnterprise(DueParserListener listener, String socialReason, String enterpriseCCC,
+//			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
+//			String enterpriseRegime, String enterpriseCompleteCCC) {
+//		socialReason = trim(socialReason);
+//		enterpriseCCC = remove(enterpriseCCC, " ");
+//		enterpriseCIF = remove(enterpriseCIF, " ");
+//		enterpriseCIF = removeStart(enterpriseCIF, "0");
+//		enterpriseActivityCode = remove(enterpriseActivityCode, " ");
+//		enterpriseActivityDescription = trim(enterpriseActivityDescription);
+//		enterpriseRegime = remove(enterpriseRegime, " ");
+//		enterpriseCompleteCCC = remove(enterpriseCompleteCCC, " ");
+//
+//		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
+//				enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
+//	}
+//
+//	private static void onEmployee(DueParserListener listener, String fullName, String nss) {
+//		nss = remove(nss, " ");
+//		fullName = trim(fullName);
+//		listener.onEmployee(nss, fullName);
+//	}
 
 	private static boolean hasData(String data) {
 		return !AonStringUtils.isBlank(data);
@@ -290,7 +304,7 @@ public class DueParser {
 
 	}
 
-	protected static Double parseDouble(String string) throws ParseException {
+	protected static Double parseDouble(String string) {
 		return AonNumberUtils.toDouble(AonStringUtils.replace(string, ",", "."));
 	}
 
@@ -299,20 +313,141 @@ public class DueParser {
 	}
 
 	// Registro de Entrada: PAE: AYUDA-T PYMES
-	protected static final Pattern REGISTRO_ENTRADA_PAE = Pattern
-			.compile("^REGISTRO\\s*DE\\s*ENTRADA\\s*:\\s*PAE\\s*:\\s*(?<pae>.+)$", Pattern.CASE_INSENSITIVE);
+	protected static final Pattern REGISTRO_ENTRADA_PAE = Pattern.compile(
+			"^REGISTRO\\s*DE\\s*ENTRADA\\s*:\\s*(?<registro>.*)PAE\\s*:\\s*(?<pae>.*)$", Pattern.CASE_INSENSITIVE);
 
-	// Doc. identidad: 46857352G Nombre: Luis Fernando Apellidos: Exposito De La Fuente
+	// Doc. identidad: 46857352G Nombre: Luis Fernando Apellidos: Exposito De La
+	// Fuente
 	protected static final Pattern DOC_NOMBRE_APELLIDO = Pattern.compile(
-			"^DOC\\.\\s*IDENTIDAD\\s*:\\s*(?<doc>.*)\\s*NOMBRE\\s*:\\s*(<nombre>.*)\\s*APELLIDOS\\s*:\\s*(<apellidos>.*$",
+			"^DOC\\.\\s*IDENTIDAD\\s*:\\s*(?<doc>.*)\\s*NOMBRE\\s*:\\s*(?<nombre>.*)\\s*APELLIDOS\\s*:\\s*(?<apellidos>.*)$",
 			Pattern.CASE_INSENSITIVE);
-	
-	//Nacionalidad: ESPAÑA  Sexo: Varon  Fecha de nacimineto: 20/09/1982
-	protected static final Pattern NAIONALIDAD_SEXO_FECHA_NACIMIENTO = Pattern.compile("^NACIONALIDAD\\s*:\\s*(?<nacionalidad>.*)SEXO\\s*:\\s*(?<sexo>.*)FECHA\\s*DE\\s*NACIMIENTO\\s*:\\s*(?<FechNacimiento>.*)$", Pattern.CASE_INSENSITIVE);
-	
-	
-	//S.S.Nº(NSS/NAF): 281169930272  Estado Civil: SOLTERO
-	protected static final Pattern NSS_ESTADO_CIVIL = Pattern.compile("^S\\.S\\.N\\º\\s*\\(NSS\\/NAF\\)\\s*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVL\\s*:\\s*(?<estadocivil>.*)$", Pattern.CASE_INSENSITIVE);
 
-	
+	// Nacionalidad: ESPAÑA Sexo: Varon Fecha de nacimiento: 20/09/1982
+	protected static final Pattern NAIONALIDAD_SEXO_FECHA_NACIMIENTO = Pattern.compile(
+			"^NACIONALIDAD\\s*:\\s*(?<nacionalidad>.*)SEXO\\s*:\\s*(?<sexo>.*)FECHA\\s*DE\\s*NACIMIENTO\\s*:\\s*(?<fechaNacimiento>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// S.S.Nº(NSS/NAF): 281169930272 Estado Civil: SOLTERO
+	protected static final Pattern NSS_ESTADO_CIVIL = Pattern.compile(
+			"^S\\.S\\.N\\º\\s*\\(NSS\\/NAF\\)\\s*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVIL\\s*:\\s*(?<estadocivil>.*)$",
+			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
+	// Domicilio Residencia: CALLE OCHO DE MARZO, 4, Portal 2, piso 2, Puerta C,
+	protected static final Pattern DOMICILIO = Pattern.compile("^DOMICILIO\\\\s*.*:\\\\s*(?<domicilio>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// 28523, RIVAS-VACIAMADRID, MADRID, MADRID, ESPAÑA,
+	protected static final Pattern DOMICILIO_CP = Pattern.compile(
+			"^(?<cp>.*)\\,\\s*(?<municipio>.*)\\,\\s*(?<provincia>.*)\\,\\s*(?<comunidad>.*)\\,\\s*(?<pais>.*)\\,.*$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Teléfono: 650625500 E-Mail: fexposito.ef@icloud.com
+	protected static final Pattern TELEFONO_EMAIL = Pattern
+			.compile("^TEL.FONO\\s*:\\s*(?<telefono>.*)\\s*E\\-MAIL\\s*:\\s*(?<mail>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Prefijo: 34 Teléfono: 650625500 E-Mail: fexposito.ef@icloud.com
+	protected static final Pattern PREFIJO_TELEFONO_EMAIL = Pattern.compile(
+			"^PREFIJO\\s*:\\s*(?<prefijo>.*)TEL.FONO\\s*:\\s*(?<telefono>.*)E\\-MAIL\\s*:\\s*(?<mail>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Deseo recibir información institucional de la DGIPYME.: No
+	protected static final Pattern RECIBIR_INFORMACION = Pattern.compile(
+			"^DESEO\\s*RECIBIR\\s*INFORMACI.N\\s*INSTITUCIONAL\\s*DE\\s*LA\\s*DGIPYME\\s*\\.:\\s*(?<informacion>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Inicio de Actividad: 01/04/2024
+	protected static final Pattern INICIO_ACTIVIDAD = Pattern
+			.compile("^INICIO\\s*DE\\s*ACTIVIDAD\\s*.\\s*(?<inicioActividad>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Número de Personas
+	protected static final Pattern NUM_PERSONAS = Pattern.compile("^N.MERO\\s*DE\\s*PERSONAS.*$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Trabajadoras
+	protected static final Pattern TRABAJADORAS = Pattern.compile("^TRABAJADORAS.*$", Pattern.CASE_INSENSITIVE);
+
+	// :0
+	protected static final Pattern NUM_PERSONAS_TRABAJADORAS = Pattern.compile("^:\\s*(?<trabajadores>\\d*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Superficie Total: 1,00
+	protected static final Pattern SUPERFICIE_TOTAL = Pattern.compile("^SUPERFICIE\\s*TOTAL\\s*:\\s*(?<superficie>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// CLASIFICACIÓN NACIONAL ACTIVIDADES ECONÓMICAS (CNAE)
+	protected static final Pattern CNAE = Pattern.compile("^CLASIFICACI.N\\s*.*$", Pattern.CASE_INSENSITIVE);
+
+	// IMPUESTO ACTIVIDAD ECONÓMICA (IAE)
+	protected static final Pattern IAE = Pattern.compile("^IMPUESTO\\s*ACTIVIDAD.*$", Pattern.CASE_INSENSITIVE);
+
+	// Actividad Principal: 8559 - Otra educacion n. c. o. p.
+	protected static final Pattern ACTIVIDAD_PRINCIPAL = Pattern
+			.compile("^ACTIVIDAD\\s*PRINCIPAL\\s*:\\s*(?<actividadPrincipal>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Epígrafe AE: 2*826 - PERSONAL DOCENTE ENSEÑANZAS DIVERSAS
+	protected static final Pattern EPIGRAFE_AE = Pattern.compile("^EP.GRAFE\\s*AE\\s*:\\s*(?<epigrafeAE>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Tipo Actividad: A05 - PROFESIONALES
+	protected static final Pattern TIPO_ACTIVIDAD = Pattern.compile("^TIPO\\s*ACTIVIDAD\\s*:\\s*(?<tipoActividad>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Provincia: MADRID Municipio: MADRID Fecha Inicio: 01/04/2024
+	protected static final Pattern PROVINCIA_MUNICIPIO_FECHA_INICO = Pattern.compile(
+			"^PROVINCIA\\s*:\\s*(?<provincia>.*)MUNICIPIO\\s*:\\s*(?<municipio>.*)FECHA\\s*INICIO\\s*:\\s*(?<fechaInicio>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// 502 Comunicación de inicio de actividad. Entregas de bienes o prestaciones de
+	// servicios previa o simultánea a la adquisición Sí 01/04/2024
+	// 504 Comunicación de inicio de actividad. Entregas de bienes o prestaciones de
+	// servicios posterior a adquisición de bienes o No
+	protected static final Pattern DECLARACION_CENSAL = Pattern.compile("^\\d{3}.*(?<respuesta>sí|no)\\s*(?<fecha>.*)$",
+			Pattern.CASE_INSENSITIVE | Pattern.CANON_EQ | Pattern.UNICODE_CASE);
+
+	// Tipo: Trabajador Autónomo
+	protected static final Pattern TIPO_TRABAJADOR = Pattern.compile("^TIPO\\s*:\\s*(?<tipo>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Fecha Real Alta: 01/04/2024
+	protected static final Pattern FECHA_REAL_ALTA = Pattern
+			.compile("^FECHA\\s*REAL\\s*ALTA\\s*:\\s*(?<fechaRealAlta>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Régimen: RETA TRL: NO Subgrupo: N/A
+	protected static final Pattern REGIMEN_TRL_SUBGRUPO = Pattern.compile(
+			"^R.GIMEN\\s*:\\s*(?<regimen>.*)TRL\\s*:\\s*(?<trl>.*)SUBGRUPO\\s*:\\s*(?<subgrupo>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Grupo: 0521- RÉGIMEN ESPECIAL DE TRABAJADORES POR CUENTA PROPIA O AUTÓNOMOS.
+	protected static final Pattern GRUPO = Pattern.compile("^GRUPO\\s*:\\s*(?<grupo>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Base Cotización: 900,00 Rendimientos netos anuales en promedio mensual:
+	// 400,00
+	protected static final Pattern BASE_COTIZACION_RENDIMINETOS = Pattern.compile(
+			"^BASE\\s*COTIZACI.N\\s*:\\s*(?<baseCotizacion>.*)RENDIMIENTOS\\s*NETOS\\s*.*:\\s*(?<rendiminetosNetos>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Mutua de IT: IBERMUTUA
+	protected static final Pattern MUTUA_IT = Pattern.compile("^\\s*MUTUA\\s*.*:\\s*(?<mutuaIT>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Acogerse a Contingencias Profesionales: Sí
+	protected static final Pattern CONTINGENCIAS_PROFESIONALES = Pattern
+			.compile("^.*CONTINGENCIAS\\s*.*:\\s*(?<contingencasProfesionales>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Acogerse a Cese de Actividad: No
+	protected static final Pattern CESE_ACTIVIDAD = Pattern.compile(
+			"^ACOGERSE\\s*A\\s*CESE\\s*DE\\s*ACTIVIDAD\\s*:\\s*(?<ceseActividad>.*)$", Pattern.CASE_INSENSITIVE);
+
+	// Reducciones: Tarifa plana "cuota reducida por inicio de actividad artículo 38
+	// ter"
+	protected static final Pattern REDUCCIONES = Pattern.compile("^REDUCCIONES\\s*:\\s*(?<reducciones>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Opcion CA FP: No
+	protected static final Pattern OPCION_CA_FP = Pattern.compile("^OPCION\\s*CA\\s*FP\\s*:\\s*(?<opcionCAFP>.*)$",
+			Pattern.CASE_INSENSITIVE);
+
+	// Cuenta: 0073 0100 54 0496630843
+	protected static final Pattern CUENTA = Pattern.compile("^CUENTA\\s*:\\s*(?<cuenta>.*)$", Pattern.CASE_INSENSITIVE);
+
 }
