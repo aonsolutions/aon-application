@@ -17,9 +17,9 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
-public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Model131ModuleOptions>{
+public class OLDModel131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Model131ModuleOptions>{
 
-	public Model131NewDeclarationPopup(Mod131 mod131,Model131Callback callback) {
+	public OLDModel131NewDeclarationPopup(Mod131 mod131,Model131Callback callback) {
 		super(mod131,callback);
 	}
 	

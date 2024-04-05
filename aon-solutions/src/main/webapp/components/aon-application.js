@@ -480,13 +480,15 @@ export class AonApplication extends AonElement {
         li.style.paddingLeft = '6px';
         let arrow = this.createElement(TAG.I);
         arrow.className = "material-icons aonVerticalMiddle";
-        arrow.innerHTML = MATERIAL_ICONS.ARROW_RIGHT;
+        arrow.innerHTML = option.opened
+          ? MATERIAL_ICONS.ARROW_DROP_DOWN 
+          : MATERIAL_ICONS.ARROW_RIGHT;
         li.appendChild(arrow);
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
         newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
         newLi.style.transition = "opacity 1s ease-out";
-        this.hiddenElement(newLi, true);
+        this.hiddenElement(newLi, !option.opened);
         ul.appendChild(newLi);
         if(option.clickable) {
           arrow.addEventListener(EVENT.CLICK, (e => {

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -29,7 +30,7 @@ public interface Mod131Service extends RemoteService {
 	void delete(Occam occam, Mod131 mod131) throws AonCoreException;
 	Mod131 initialize(Occam occam, Mod131 mod131);
 	Mod131 create(Occam occam, Mod131 mod131) throws AonCoreException;
-	Mod131 reset(Occam occam, Mod131 model) throws AonCoreException;
 	String getInfo(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 
 }

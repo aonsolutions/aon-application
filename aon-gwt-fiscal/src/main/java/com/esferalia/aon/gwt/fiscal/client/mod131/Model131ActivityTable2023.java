@@ -14,11 +14,11 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-class Model131ActivityTable extends FlowPanel implements HasSelectionHandlers<Mod131Activity> {
+class Model131ActivityTable2023 extends FlowPanel implements HasSelectionHandlers<Mod131Activity> {
 	
 	private AonDisplayGrid grid;
 	
-	protected Model131ActivityTable() {
+	protected Model131ActivityTable2023() {
 		setStyleName(AON.CSS.aonWidthAll());
 		
 		grid = new AonDisplayGrid();
@@ -50,7 +50,7 @@ class Model131ActivityTable extends FlowPanel implements HasSelectionHandlers<Mo
 				.addCell( new Label( AON.FMT.format(act.getPor()) ), AON.CSS.aonTextRight())
 				.addCell( new Label( AON.FMT.format(act.getRes()) ), AON.CSS.aonTextRight())
 			;
-			actRow.addClickHandler(event -> SelectionEvent.<Mod131Activity>fire(Model131ActivityTable.this, act) );
+			actRow.addClickHandler(event -> SelectionEvent.<Mod131Activity>fire(Model131ActivityTable2023.this, act) );
 		}
 		
 	}

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
@@ -190,11 +190,55 @@ export class AonInvoicePanel extends AonElement {
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		});
-
-		OPTION.getOptions(this.getDur()).forEach(option => {
-			option.app = INVOICE;
-			this.getApplication().addSidenavOptions3(option);
+		getRawdocCount().then(r => {
+			OPTION.getOptions(this.getDur()).forEach(option => {
+				option.app = INVOICE;
+				option.count = this.getCounter(option, r);
+				if(option.options)
+					option.options.forEach((o1, i) =>{
+						option.options[i].count = this.getCounter(o1, r);
+						if(option.options[i].options)
+							option.options[i].options.forEach((o2, j) => {
+								option.options[i].options[j].count = this.getCounter(o2, r);
+							});
+					})
+				this.getApplication().addSidenavOptions3(option);
+			});
 		});
+	}
+
+	getCounter(option, r){
+		switch(option.id){
+			case OPTION.INVOICE_PENDINGS.id:
+				return (r && r.rawdoc && r.rawdoc.inbox) 
+					? r.rawdoc.inbox.count : undefined;
+			case OPTION.RAWDOC_INBOX_ISSUED.id:
+				return (r && r.rawdoc && r.rawdoc.inbox) 
+					? r.rawdoc.inbox.OUTPUT : undefined;
+			case OPTION.RAWDOC_INBOX_RECEIVED.id:
+				return (r && r.rawdoc && r.rawdoc.inbox) 
+					? r.rawdoc.inbox.INPUT : undefined;
+			case OPTION.RAWDOC_INBOX_TICKET.id:
+				return (r && r.rawdoc && r.rawdoc.inbox) 
+					? undefined : undefined; // TODO
+			case OPTION.RAWDOC_REJECT.id:
+				return (r && r.rawdoc && r.rawdoc.rejected) 
+					? r.rawdoc.rejected.count : undefined;
+			case OPTION.RAWDOC_DRAFT.id:
+				return (r && r.rawdoc && r.rawdoc.draft) 
+					? r.rawdoc.draft.count : undefined;
+			case OPTION.INVOICE_ISSUED.id:
+				return (r && r.invoice) 
+					? r.invoice.emitida : undefined;
+			case OPTION.INVOICE_RECEIVED.id:
+				return (r && r.invoice) 
+					? r.invoice.recibida : undefined;
+			case OPTION.INVOICE_TICKET.id:
+				return (r && r.invoice) 
+					? r.invoice.ticket : undefined;		
+					
+			default: return undefined;
+		}
 	}
 
 	search(value) {
@@ -234,6 +278,7 @@ export class AonInvoicePanel extends AonElement {
 			table.invofoxFilter = invofoxFilter;
 			this.getApplication().setContent(table);
 		}
+		this.getApplication().buildDragAndDrop(true);
 	}
 
 	aonCustomerList(filter) {
@@ -542,6 +587,10 @@ export class AonInvoicePanel extends AonElement {
 		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
+		if(invoice.file) {
+			component.fileOpened = true;
+			this.getApplication().buildDragAndDrop(false);
+		}
 
 		aonInvoice.setContent(component);
 	}

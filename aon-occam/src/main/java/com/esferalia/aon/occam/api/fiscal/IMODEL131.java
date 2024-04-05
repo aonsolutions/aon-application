@@ -27,6 +27,5 @@ public interface IMODEL131 {
 	public void delete(AONContext ctx, Mod131 mod131);
 	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey);
 	public Mod131 aeatPresentation(AONContext ctx, Mod131 mod131, String aeatResponse);
-	public Mod131 reset(AONContext ctx, Mod131 mod131);
 	
 }
