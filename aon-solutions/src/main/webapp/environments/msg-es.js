@@ -177,6 +177,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
+export const FROM = 'Desde';
 
 // ----- G
 
@@ -418,6 +419,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Control Horario'; //'Control de Horario';
 export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos del Titular';
+export const TO = 'Hasta';
 export const TO_TRASH = 'Enviar a la Papelera';
 export const TODAY = 'Hoy';
 export const TOMORROW = 'Mañana';

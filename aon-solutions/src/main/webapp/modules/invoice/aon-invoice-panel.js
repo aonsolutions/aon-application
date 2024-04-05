@@ -162,7 +162,28 @@ export class AonInvoicePanel extends AonElement {
 		}
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
-		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+		// btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+
+		if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
+				|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
+				|| OPTION.INVOICE_TICKET.id === this.selectedOption.id)){
+			// ADD ADVANCED SEARCH
+
+			let options = [{
+				type: CONSTANT.DATE,
+				name: "startDate",
+				id: "startDate",
+				title: MSG.FROM,
+			  },
+			  {
+				type: CONSTANT.DATE,
+				name: "endDate",
+				id: "endDate",
+				title: MSG.TO,
+			  }];
+			btnSearch.buildOptionsFilter(options);//INPUTS
+		}
 	}
 
 	downloadInvoiceExcel() {
@@ -317,8 +338,9 @@ export class AonInvoicePanel extends AonElement {
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
 	}
-
-	search(value) {
+	
+	search(detail) {
+		let value = detail.search;
 		if(this.selectedOption && OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id) {
 			this.aonCreditorList({page:1, perPage:50, value});
 		} else if(this.selectedOption && OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id){
@@ -334,6 +356,10 @@ export class AonInvoicePanel extends AonElement {
 		} else {
 			if(this.filter.description !== value) {
 				this.filter.description = value;
+				this.filter.from = detail.startDate;
+				this.filter.to = detail.endDate; 
+				this.filter.page = 1;
+				this.filter.perPage = 50;
 				this.aonInvoiceList();
 			}
 		}
