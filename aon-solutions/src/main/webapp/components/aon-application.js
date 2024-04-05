@@ -505,6 +505,7 @@ export class AonApplication extends AonElement {
       }
 
       let span = this.createElement(TAG.SPAN);
+      span.id = "aonMenuItemSpan" + option.id;
       span.className = "aonMenuItemSpan";
       span.title =  option.title || option.name;
       if (option.count) {

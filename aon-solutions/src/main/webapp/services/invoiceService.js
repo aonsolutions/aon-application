@@ -54,6 +54,7 @@ export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invo
 // export const getInvofoxDocuments = (data) => getInvofox("https://prod.kinequo.com/backends/midas/documents", data);
 
 export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data);
+export const getInvofoxCount = (data) => get(`${API_URL}/invofox/count`, data);
 
 export const getInvofoxDocument = (id) => get(`${API_URL}/invofox/document`, {id: id});
 export const saveInvofoxDocument = (data) => put(`${API_URL}/invofox/document`, data);

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
@@ -190,7 +190,11 @@ export class AonInvoicePanel extends AonElement {
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		});
-		getRawdocCount().then(r => {
+		let data = {
+			invofox: this.getDur().isInvofox()
+		};
+		getRawdocCount(data).then(r => {
+			this.counter = r;
 			OPTION.getOptions(this.getDur()).forEach(option => {
 				option.app = INVOICE;
 				option.count = this.getCounter(option, r);
@@ -205,9 +209,63 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addSidenavOptions3(option);
 			});
 		});
+
+		if(this.getDur().isInvofox()) {
+			this.invofoxCounter();
+		}
 	}
 
-	getCounter(option, r){
+	invofoxCounter() {
+		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' };	
+		getInvofoxCount(issuedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED, r.count);
+			}
+		});
+
+
+		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'};	
+		getInvofoxCount(receivedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
+			}
+		});
+
+
+		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'};	
+		getInvofoxCount(ticketFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET, r.count);
+			}
+		});
+
+
+		let rejectedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'};	
+		getInvofoxCount(rejectedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				this.updateCounterSpan(OPTION.RAWDOC_REJECT, r.count);
+			}
+		});
+
+		let trashFilter = {publicStatus:['discarded', 'rejected', 'error' ]};	
+		getInvofoxCount(trashFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				this.updateCounterSpan(OPTION.RAWDOC_DRAFT, r.count);
+			}
+		});
+	}
+
+	updateCounterSpan(option, count) {	
+		let span = document.getElementById("aonMenuItemSpan" + option.id);
+		if(span){
+			span.innerHTML = span.innerHTML.includes(")") 
+				? span.innerHTML.replace(")", "") + "+" + count + ")" 
+				: span.innerHTML + " (" + count + ")";
+			span.style.fontWeight = "bold";
+		} else setTimeout(this.updateCounterSpan, 100, option, count);
+	}
+
+	getCounter(option, r) {
 		switch(option.id){
 			case OPTION.INVOICE_PENDINGS.id:
 				return (r && r.rawdoc && r.rawdoc.inbox) 
