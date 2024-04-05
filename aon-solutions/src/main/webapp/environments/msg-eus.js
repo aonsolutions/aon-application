@@ -173,6 +173,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
 export const FOOTER = 'Oina';
+export const FROM = 'Noiztik';
 
 // ----- G
 
@@ -412,6 +413,7 @@ export const TICKETS = 'Tiketak';
 export const TIMECONTROL = 'Denboraren Kontrola';
 export const TITLE = 'Izenburua';
 export const TITULAR_DATA = 'Titularraren Datuak';
+export const TO = 'Noiz arte';
 export const TO_TRASH = 'Paperontzira Bidali';
 export const TODAY = 'Gaur';
 export const TOMORROW = 'Bihar';

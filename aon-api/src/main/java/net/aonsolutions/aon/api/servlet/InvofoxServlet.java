@@ -90,6 +90,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	
 	public static final String DOCUMENTS = "/";
 	public static final String DOCUMENT = "/document";
+	public static final String COUNT = "/count";
 	public static final String TEXT_CONTENT= "/text_content";
 	public static final String CONFIGURATION= "/configuration";
 	
@@ -163,6 +164,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
 				.addRoute(TEXT_CONTENT, InvofoxServlet::getTextContent)
 				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
+				.addRoute(COUNT, InvofoxServlet::getCount)
 				.apply();
 			
 			response(req, resp, object);
@@ -290,6 +292,47 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		}
 	    }
 	    return array;
+	}
+	
+	public static JSONObject getCount(AonApiData api) {
+		JSONObject json = new JSONObject();
+	    
+	    JSONArray publicStates = JsonUtils.getJSONArray(api.getData(), IJsonNames.PUBLIC_STATE);
+	    if ( publicStates == null ) {
+		publicStates = new JSONArray().put(JsonUtils.getString(api.getData(), IJsonNames.PUBLIC_STATE));
+	    }
+	    
+	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+	    Optional<CompanyActsLike> companyActsLike = CompanyActsLike.get(JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE));
+	    
+	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
+	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    
+	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
+		    f -> f.getDomainProperty().eq(api.getDomain().getId()));
+	    if (!AonStringUtils.isBlank(cp.getDocument())) {
+	    	OCRCompaniesResponse companiesResponse = OCRInvofox
+	    			.getCompanies(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), OCRCompanyParams.get().withTaxId(cp.getDocument()));
+	    	List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
+	    	if (!companies.isEmpty()) {
+	    		OCRCompany ocrCompany = companies.get(0);
+	    		OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
+	    		type.ifPresent( ocrDocumentParams::withType);
+	    		ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
+	    		ocrDocumentParams.withCompany(ocrCompany.getId());
+	    		companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
+	    		publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
+		    
+	    		OCRDocumentsResponse response = OCRInvofox
+		    		.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
+
+	    		long count = response.getDocuments().orElse(new LinkedList<>()).stream().count();
+	    		json.put("count", count);
+	    	}
+	    }
+
+		
+		return json;
 	}
 	
 	public static JSONObject getConfiguration(AonApiData api) {
