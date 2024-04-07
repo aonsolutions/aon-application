@@ -365,7 +365,7 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvestList({value});
 		} else {
 			this.filter.description = value;
-			this.filter.recorded = detail.recorded;
+			if(detail.recorded) this.filter.recorded = detail.recorded;
 			this.filter.from = detail.startDate;
 			this.filter.to = detail.endDate; 
 			this.filter.page = 1;

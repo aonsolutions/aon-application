@@ -84,6 +84,7 @@ import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
+import solutions.aon.aws.s3.S3;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -680,6 +681,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			tbaiValidation(invoice);
 		}
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
+		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
@@ -688,11 +690,36 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
 			}
-		}
-		
+		}		
 		json.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
 
 		return json;
+	}
+	
+	public static void processInvoiceFile(AonApiData api, Invoice invoice) {
+		JSONObject fileJSON = JsonUtils.getJSONObject(api.getData(), IJsonNames.FILE);
+		if(!fileJSON.isEmpty()) {
+			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
+			String contentType = JsonUtils.getString(fileJSON, "content_type");
+			try {
+				byte[] data = S3.download("aon-upload-post", s3Key);
+				if(data != null) {
+					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+					Attach attach = new Attach()
+							.setDate(new Date())
+							.setDomain(new Domain().setId(invoice.getDomain()))
+							.setAttachModule(invoice.getId())
+							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+							.setAttachType(AttachType.INVOICE)
+							.setType(InvoiceAttachmentType.INVOICE.value())
+							.setData(data);
+
+					AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws Exception {
