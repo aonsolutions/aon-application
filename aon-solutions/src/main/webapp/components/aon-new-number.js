@@ -35,7 +35,7 @@ export class AonNewNumber extends AonNewInput {
                 && !isNaN(newValue) && !newValue.includes(','))
                 input.value = this.onBlur2(newValue);
             if (input && newValue === '') input.value = '';
-            let desc = this.getElement(this.DESCRIPTION);
+            let desc = this.getElement(this.TITLE);
             if(desc && input.value.length > 0) {
               desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
             } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
