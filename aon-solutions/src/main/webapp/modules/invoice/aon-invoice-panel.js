@@ -181,6 +181,16 @@ export class AonInvoicePanel extends AonElement {
 				name: "endDate",
 				id: "endDate",
 				title: MSG.TO,
+			  },{
+				type: CONSTANT.SELECT,
+				name: "recorded",
+				id: "recorded",
+				title: MSG.STATUS,
+				options: JSON.stringify([
+					{name: "-", value: undefined},
+					{name: MSG.PENDING, value: "PENDING"},
+					{name: MSG.ACCOUNTED, value: "SCORED"}
+				])
 			  }];
 			btnSearch.buildOptionsFilter(options);//INPUTS
 		}
@@ -354,14 +364,13 @@ export class AonInvoicePanel extends AonElement {
 		} else if(this.selectedOption && OPTION.INVEST.id === this.selectedOption.id){
 			this.aonInvestList({value});
 		} else {
-			if(this.filter.description !== value) {
-				this.filter.description = value;
-				this.filter.from = detail.startDate;
-				this.filter.to = detail.endDate; 
-				this.filter.page = 1;
-				this.filter.perPage = 50;
-				this.aonInvoiceList();
-			}
+			this.filter.description = value;
+			this.filter.recorded = detail.recorded;
+			this.filter.from = detail.startDate;
+			this.filter.to = detail.endDate; 
+			this.filter.page = 1;
+			this.filter.perPage = 50;
+			this.aonInvoiceList();
 		}
 	}
 

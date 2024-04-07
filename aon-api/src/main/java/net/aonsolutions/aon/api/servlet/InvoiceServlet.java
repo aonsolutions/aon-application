@@ -325,6 +325,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			InvoiceFilter filter = new InvoiceFilter()
 				.setDescription(api.getData().optString("description"))
 				.setStatus(api.getData().optString(IConstants.STATUS))
+				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null)
 				.setTypes(api.getData().opt(IConstants.TYPE) != null 
 					? api.getData().optString(IConstants.TYPE).split(","): null)
 				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))

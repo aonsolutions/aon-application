@@ -113,7 +113,19 @@ public class RawdocRecordModule  extends MainEntryPoint  {
 							public void onChange(IAccountEntryWrapper changed) {
 								entryDialog.hide();
 								AccountingInvoice ai = (AccountingInvoice) changed;
-								reloadInvoice(ai.getInvoice().getId());
+								RAWDOC_SERVICE.processInvoiceFile(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), getInvoice(), ai.getInvoice(), new AsyncCallback<Boolean>() {
+									
+									@Override
+									public void onSuccess(Boolean arg0) {
+										reloadInvoice(ai.getInvoice().getId());
+									}
+									
+									@Override
+									public void onFailure(Throwable arg0) {
+										reloadInvoice(ai.getInvoice().getId());
+										
+									}
+								});	
 							}
 						})
 						);
