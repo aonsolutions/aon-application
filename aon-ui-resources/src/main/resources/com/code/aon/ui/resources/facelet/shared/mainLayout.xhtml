@@ -27,16 +27,8 @@
  	<ui:insert name="head" />
 </head>
 <body onbeforeunload="$('logout').onclick();">
-	<table style="width: 100%;" >
-		<thead><tr><th colspan="2" style="padding: 0px;"><ui:insert name="mainHeader" /></th></tr></thead>
-		<tbody>
-			<tr>
-				<td style="padding: 0px;" ><ui:insert name="mainLeftBar"/></td>
-				<td style="padding: 0px;"><ui:insert name="mainContent"/></td>
-			</tr>
-		</tbody>
-		<tfoot><tr><td colspan="2" style="padding: 0px;"><ui:insert name="mainFooter" /></td></tr></tfoot>
-	</table>
+	<ui:insert name="mainHeader" />
+	<ui:insert name="mainContent" />
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/sessionExpired.xhtml" />
 </body>
 </f:view>
