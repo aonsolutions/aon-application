@@ -127,7 +127,7 @@ export class AonInvoice extends AonElement {
 	initialize(){
 		this.accept = true;
 		this.rbanks = [];
-		this.fileOpened = false;
+		this.fileOpened = this.fileOpened || false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.DIV = this.id + CONSTANT.DIV.initCap();
@@ -234,6 +234,8 @@ export class AonInvoice extends AonElement {
 					this.invoice = new Invoice(inv);
 					this.reload();
 				});
+				this.getApplication().getParent().buildCounter();
+				
 			} 
 
 		}
@@ -410,7 +412,7 @@ export class AonInvoice extends AonElement {
 			duplicate.backgroundColor = INVOICE.color;
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
-			if(this.getInvoice().isInbox() ){
+			if(this.getInvoice().isInbox()){
 				let changeType = ACTION.CHANGE_TYPE;
 				changeType.permission = true;
 				changeType.backgroundColor = INVOICE.color;
@@ -2699,6 +2701,7 @@ export class AonInvoice extends AonElement {
 				let data = this.getInvoice();
 				data.cert = certSelect.value;
 				acceptInvoice(data).then(r => {
+					this.getApplication().getParent().buildCounter();
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
 					this.reload();

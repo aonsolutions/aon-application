@@ -6,8 +6,10 @@ import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Mod131Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -86,11 +88,6 @@ public class Mod131ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public Mod131 reset(Occam occam, Mod131 mod131) {
-		return MODEL131.reset(occam, mod131);
-	}
-
-	@Override
 	public void delete(Occam occam, Mod131 mod131) {
 		MODEL131.delete(occam, mod131);
 	}
@@ -99,4 +96,8 @@ public class Mod131ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return MODEL131.getInfo(occam, mod131, script, infoKey);
 	}
 	
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
+	}	
 }

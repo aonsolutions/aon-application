@@ -462,6 +462,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
 	public static final String RATTACH = "rattach";
+	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";

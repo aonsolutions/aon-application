@@ -801,35 +801,6 @@ public abstract class Model130Base extends DockLayoutPanel {
 			buttonContainer.setStyleName(AON.CSS.aonNowrap());
 			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
 
-//				private void showComputeKeyInfo(AonTableButton button) {
-//					button.setEnabled(false);
-//					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							button.setEnabled(true);
-//							callback.showError(AON.MSG.errorMessage());
-//						}
-//	
-//						@Override
-//						public void onSuccess(String result) {
-//							FlowPanel gridContainer = new FlowPanel();
-//							Mod130Key key = script.getKeys()[0];
-//							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
-//							grid.setTitle(AON.MSG.calcDetail());
-//							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
-//							try {
-//								JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
-//								grid.addContent(info);
-//							} catch (Exception e) {
-//								grid.addContent(result);
-//							}
-//							gridContainer.add(grid);
-//							callback.showInfoPanelWidget(gridContainer);
-//							button.setEnabled(true);
-//						}
-//					});
-//				}
-				
 				private void showComputeKeyInfo(AonTableButton button) {
 					button.setEnabled(false);
 					final PopupPanel popup = new PopupPanel(false, true);

@@ -29,13 +29,16 @@ public class Model123Araba2016 extends Model123Base {
 	protected void paintParticularyRow(FlexTable table, final Model123Callback callback, IModelScript<Mod123Key> script) {
 		if (script.getKeys() == null) return;
 		
-		if (script.getKeys()[0] == Mod123Key.AR_907) {
+		if (script.getKeys()[0] == Mod123Key.AR_907) { // Declarado en concurso de acreedores
 			paintRow907(table,script);
-		} else if (script.getKeys()[0] == Mod123Key.AR_908) {
+		} else if (script.getKeys()[0] == Mod123Key.AR_908) { // Tipo declaración en concurso (EN EL MODELO ES LA 909) 
 			paintRow908(table,script);
-		} else if (script.getKeys()[0] == Mod123Key.AR_909) {
+		} else if (script.getKeys()[0] == Mod123Key.AR_909) { // Fecha declaración en concurso (EN EL MODELO ES LA 908)
 			paintRow909(table,script);
+		} else if (script.getKeys()[0] == Mod123Key.AR_930) { // Presentación fuera de plazo por requerimiento (Añadido en 2024)
+			paintRow930(table,script);
 		}
+		
 	}
 
 	private void paintRow907(FlexTable table, IModelScript<Mod123Key> script) {
@@ -96,6 +99,24 @@ public class Model123Araba2016 extends Model123Base {
 		table.setWidget(row, 2, w909 );
 		paintEmptyRow(table);
 	}
+	
+	private void paintRow930(FlexTable table, IModelScript<Mod123Key> script) {
+		int row = table.getRowCount();
+		final FiscalModelDetail ar930 = getModel().ensureDetail(Mod123Key.AR_930);
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonTextRight() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingRight() );
+		
+		table.setWidget(row, 1, new AonBoxLabel(Mod123Key.AR_930.getBox()));
+		final CheckBox w930 = new CheckBox();
+		w930.setEnabled(getModel().isEditable());
+		w930.setValue(ar930.getAmount() == 1);
+		w930.addClickHandler(event -> {
+			ar930.setAmount(w930.getValue().booleanValue()?1.0:0.0);
+			markAsDirty();
+		});
+		table.setWidget(row, 2, w930 );
+	}	
 	
 	@Override
 	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {

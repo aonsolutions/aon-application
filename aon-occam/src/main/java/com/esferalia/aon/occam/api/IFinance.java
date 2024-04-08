@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
@@ -21,8 +20,10 @@ import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -106,6 +107,8 @@ public interface IFinance {
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
 	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
+	
+	InvoiceCounter getInvoiceCounter(AONContext ctx);
 	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
@@ -191,6 +194,7 @@ public interface IFinance {
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
 	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
 	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);
+	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx);
 	public Rawdoc getRawdocFull(AONContext ctx, int id);
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
 	void rawdocDelete(AONContext ctx, RawdocFilter filter);

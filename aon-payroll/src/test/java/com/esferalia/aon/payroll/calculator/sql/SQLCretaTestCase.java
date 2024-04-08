@@ -273,17 +273,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
 	
 		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
-		
-		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
-		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
-	
+
 		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
 		Date endDate = getLastDayOfMonth(startDate);
+		int monthDays = get(endDate, DAY_OF_MONTH);
 	
+		
 		Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
 		Date endItDate = add(startItDate, Calendar.DAY_OF_MONTH, 4);
 		addIT(aonContext, contract, COMMON_DISEASE, startItDate, endItDate, null);
+		int activeDays = monthDays - 5;
 
+
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/10.00 * " + activeDays + "/**/); 0.00", "__PPE");
+	
 
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos 
 		= getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
@@ -295,13 +299,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
 		double baseCgc = getDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
-		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 100.00 * 9 / 25 * 100);
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 10.00 * 9  * 100.00);
 		
 		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "500");
 		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "601");
 		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "301");
 		baseCgc = getDato(bases.get(2).getDatosTramo().getDato(), "C", "500");
-		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "301", baseCgc - 100.00 * 16 / 25 * 100);
+		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "301", baseCgc - 10.00 * ( activeDays - 9 ) * 100.00);
     }
 
 

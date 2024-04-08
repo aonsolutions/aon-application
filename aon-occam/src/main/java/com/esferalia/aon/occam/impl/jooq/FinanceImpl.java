@@ -24,8 +24,10 @@ import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -145,6 +147,12 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice) {
 		ctx.getDslContext().transaction(configuration -> InvoiceDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
+	}
+	
+	@Override
+	public InvoiceCounter getInvoiceCounter(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getCounter(ctx));
 	}
 	
 	
@@ -588,6 +596,12 @@ public class FinanceImpl implements IFinance {
 	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getUserData(ctx, searchDomain));
+	}
+	
+	@Override
+	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getInvoiceCounter(ctx));
 	}
 	
 	@Override
