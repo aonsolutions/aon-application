@@ -64,9 +64,12 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -969,7 +972,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
             				AonMessagePanel.hideMessage(messagePanel);
             				domainBooking = booking;
             				createDomainBookingResume();
-                        	createDomainChildsBookingResume();
+            				
+            				if(null != domainBooking.getResume().getChilds() && !domainBooking.getResume().getChilds().isEmpty())
+            					createDomainChildsBookingResume();
                         	
                         	// Init onLoad CustomerFee
                     		getCustomerFees();
@@ -1064,10 +1069,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		Label bookingLabel = new Label(String.join(", ", apps));
 		Label bookingNumLabel = new Label(domainBooking.getApps().size() + "");
 		
-		List<Domain> childs = domainBooking.getResume().getChilds();
-		List<Domain> activeChilds = domainBooking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
-		Label enterprisesLabel = new Label(activeChilds.size() + " / " + domainBooking.getResume().getTotalChilds());
-		enterprisesLabel.setTitle(activeChilds.size() + " empresas activas / " + domainBooking.getResume().getTotalChilds() + " empresas");
+		List<Domain> activeChilds = null == domainBooking.getResume().getChilds() ? new ArrayList<Domain>() : domainBooking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
+		Label enterprisesLabel = new Label(activeChilds.size() + " / " + (null == domainBooking.getResume().getTotalChilds() ? "0" : domainBooking.getResume().getTotalChilds()));
+		enterprisesLabel.setTitle(activeChilds.size() + " empresas activas / " + (null == domainBooking.getResume().getTotalChilds() ? "0" : domainBooking.getResume().getTotalChilds()) + " empresas");
 		
 		String statusMessage = domainBooking.getDomain().getExpirationDate() != null && domainBooking.getDomain().getExpirationDate().before(new Date()) ? "Expirado" : (domainBooking.getDomain().isActive() ? "Activo" : "Inactivo");
 		Label statusLabel = new Label(statusMessage);
@@ -2397,14 +2401,12 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		toolbar.add(backBtn);
 		
-		refreshBtn = new AonToolbarButton("Recargar", AON.CSS.aonIconRefresh());
-		refreshBtn.setVisible(false);
+		refreshBtn = new AonToolbarButton("Recargar", AON.CSS.aonIconRenew());
 		refreshBtn.addClickHandler(e -> loadModule());
 		
 		toolbar.add(refreshBtn);
 		
 		excelBtn = new AonToolbarButton("Resumen Contrataci\u00f3n (XLS)", AON.CSS.aonIconExcel());
-		excelBtn.setVisible(false);
 		excelBtn.addClickHandler(e -> {
 			AonMessagePanel.showLoading(messagePanel, "Exportando Resumen Contrataci\u00f3n Excel ...");
 			
@@ -2420,26 +2422,43 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					AonMessagePanel.hideMessage(messagePanel);
 	                
 					if(domainCompanies != null && !domainCompanies.isEmpty()) {
-		                
-	                	String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-	            		String endPoint =  "/ms/api/customers-booking-resume-excel/";
-	            		
-	            		HashMap<String, String> header = new HashMap<>();
-	            		header.put("domain_name", domainCompanies.get(0).getDomain().getName());
-	            		header.put("domain_id", domainCompanies.get(0).getDomain().getId().toString());
-	            		
-	            		bookingApi.exportCustomerBookingResume(host, endPoint, header, new AsyncCallback<Void>() {
-	            			
-	            			@Override
-	            			public void onSuccess(Void result) {
-	            				AonMessagePanel.hideMessage(messagePanel);
-	            			}
-	            			
-	            			@Override
-	            			public void onFailure(Throwable exception) {
-	            				AonMessagePanel.showError(messagePanel, exception.getMessage());
-	            			}
-	            		});
+						
+						FormPanel diskForm = new FormPanel("_blank");
+						diskForm.setMethod(FormPanel.METHOD_GET);
+						FlowPanel formFlowPanel = new FlowPanel();
+						diskForm.add(formFlowPanel);
+						
+						Hidden domainIdHidden = new Hidden("domainId");
+						formFlowPanel.add(domainIdHidden);
+						
+						Hidden domainNameHidden = new Hidden("domainName");
+						formFlowPanel.add(domainNameHidden);
+						
+						Hidden userHidden = new Hidden("login");
+						formFlowPanel.add(userHidden);
+					
+						toolbar.add(diskForm);
+						
+						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+						
+						diskForm.setAction(host + "/ms/api/customers-booking-resume-excel/");
+						domainIdHidden.setValue(domainCompanies.get(0).getDomain().getId().toString());
+						domainNameHidden.setValue(domainCompanies.get(0).getDomain().getName());		
+						userHidden.setValue(options.getUser());
+						diskForm.submit();
+						
+						diskForm.addSubmitCompleteHandler(e -> {
+							toolbar.remove(diskForm);
+							AonMessagePanel.hideMessage(messagePanel);
+						});
+						
+//						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+//						
+//						Window.alert(GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/");
+//						
+//						String fileDownloadURL = GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/" + "?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + "&domainName=" + domainCompanies.get(0).getDomain().getName() + "&login=" + options.getUser();
+//						Window.open(fileDownloadURL, "_blank", null);
+		       
 	                }
 				}
 				
