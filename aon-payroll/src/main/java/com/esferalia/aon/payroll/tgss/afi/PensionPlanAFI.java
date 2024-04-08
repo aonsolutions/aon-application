@@ -304,6 +304,9 @@ public class PensionPlanAFI {
 							.fetchOne(CONTRACT.PERSON)
 				))
 				.fetchOne();
+		
+		if(AonStringUtils.isBlank(personRecord.get(PERSON.SOCIAL_SECURITY_NUM)))
+			throw new IllegalArgumentException(personRecord.get(PERSON.NAME) + " no tiene numero de Seguridad Social registrado");
 			
 		json.put("numAfiliacion", personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 		
