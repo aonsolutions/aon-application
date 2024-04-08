@@ -555,8 +555,8 @@ public class HtmlUnitToolkit {
 			    	hrefContent = hrefContent.replace("$"+variable.getKey(), variable.getValue());
 				}
 			    uriCache.put(hrefURI, hrefContent);
-			    //return new StreamSource(new StringReader(hrefContent), hrefPage.getBaseURI() );
-			    return new DOMSource(hrefPage.getXmlDocument(), hrefPage.getBaseURI() );
+			    return new StreamSource(new StringReader(hrefContent), hrefPage.getBaseURI() );
+			    //return new DOMSource(hrefPage.getXmlDocument(), hrefPage.getBaseURI() );
 			} catch (FailingHttpStatusCodeException | IOException | URISyntaxException e) {
 			    throw new TransformerException(e);
 			} 
