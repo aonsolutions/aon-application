@@ -84,6 +84,86 @@ public class DueParser {
 			Matcher matcher = find(reader, REGISTRO_ENTRADA_PAE);
 			String registroEntrada = matcher.group("registro");
 			String pae = matcher.group("pae");
+			listener.onRegistroEntradaYPAE(registroEntrada, pae);
+			
+			matcher = find(reader, DOC_NOMBRE_APELLIDO);
+			String docIdentidad = matcher.group("doc");
+			String nombre = matcher.group("nombre");
+			String apellidos = matcher.group("apellidos");
+			matcher = find(reader, NAIONALIDAD_SEXO_FECHA_NACIMIENTO);
+			String nacionalidad = matcher.group("nacionalidad");
+			String sexo = matcher.group("sexo");
+			String fechaNaciminetoString = matcher.group("fechaNacimiento");
+			Date fechaNacimiento = Utils.FORMATTER.parse(fechaNaciminetoString);
+			matcher = find(reader, NSS_ESTADO_CIVIL);
+			String nssString = matcher.group("nss");
+			int nss = Integer.parseInt(nssString);
+			String estadoCivil = matcher.group("estadoCivil");
+			listener.onDatosPersonales(docIdentidad, nombre, apellidos, nacionalidad, sexo, fechaNacimiento, nss, estadoCivil);
+			
+			matcher = find(reader, DOMICILIO);
+			String domicilio = matcher.group("domicilio");
+			matcher = find(reader, DOMICILIO_CP);
+			String cp = matcher.group("cp");
+			String municipio = matcher.group("municipio");
+			String provincia = matcher.group("provincia");
+			String comunidad = matcher.group("comunidad");
+			String pais = matcher.group("pais");
+			String domicilioResidencia = domicilio + cp + municipio + provincia + comunidad + pais;
+			String domicilioFiscal = domicilio + cp + municipio + provincia + comunidad + pais;
+			String domicilioNotificaciones = domicilio + cp + municipio + provincia + comunidad + pais;
+			String domicilioActividad = domicilio + cp + municipio + provincia + comunidad + pais;
+			listener.onDomicilios(domicilioResidencia, domicilioFiscal, domicilioNotificaciones);
+			
+			matcher = find(reader, TELEFONO_EMAIL);
+			String telefonoTGSSString = matcher.group("telefono");
+			int telefonoTGSS = Integer.parseInt(telefonoTGSSString);
+			String emailTGSS = matcher.group("mail");
+			listener.onNotificacionTGSS(telefonoTGSS, emailTGSS);
+			
+			matcher = find(reader, PREFIJO_TELEFONO_EMAIL);
+			String prefijoString = matcher.group("prefijo");
+			int prefijo = Integer.parseInt(prefijoString);
+			String telefonoAEATString = matcher.group("telefono");
+			int telefonoAEAT = Integer.parseInt(telefonoAEATString);
+			String emailAEAT = matcher.group("mail");
+			listener.onNotificacionAEAT(prefijo, telefonoAEAT, emailAEAT);
+			
+			matcher = find(reader, RECIBIR_INFORMACION);
+			String comunicacion = matcher.group("informacion");
+			listener.onComunicaciones(comunicacion);
+			
+			matcher = find(reader, INICIO_ACTIVIDAD);
+			String inicioActividadString = matcher.group("inicioActividad");
+			Date inicioActividad = Utils.FORMATTER.parse(inicioActividadString);
+			matcher = find(reader, NUM_PERSONAS_TRABAJADORAS);
+			String numTrabajadorasString = matcher.group("tranajadores");
+			int numTrabajadoras = Integer.parseInt(numTrabajadorasString);
+			listener.onActividades(inicioActividad, numTrabajadoras);
+			
+			matcher = find(reader, SUPERFICIE_TOTAL);
+			String superficieString = matcher.group("superficie");
+			int superficie = Integer.parseInt(superficieString);
+			listener.onCentroActividad(superficie, domicilioActividad);
+			
+			matcher = find(reader, CNAE);
+			String cnae = matcher.group(0);
+			listener.onCNAE(cnae);
+			
+			matcher = find(reader, IAE);
+			String iae = matcher.group(0);
+			listener.onIAE(iae);
+			
+			matcher = find(reader, EPIGRAFE_AE);
+			String epigrafeAE = matcher.group("epigrafeAE");
+			matcher = find(reader, TIPO_ACTIVIDAD);
+			String tipoActividad = matcher.group("tipoActividad");
+			matcher = find(reader, PROVINCIA_MUNICIPIO_FECHA_INICO);
+			String provinciaAE = matcher.group("provincia");
+			String municipioAE = matcher.group("municipio");
+			String fechaInicioAEString = matcher.group("fechaInicio");
+			Date fechaInicioAE = Utils.FORMATTER.parse(fechaInicioAEString);
+			listener.onLugarFueraDelLocal(epigrafeAE, tipoActividad, provinciaAE, municipioAE, fechaInicioAE);
 			
 		}
 	}
@@ -329,7 +409,7 @@ public class DueParser {
 
 	// S.S.Nº(NSS/NAF): 281169930272 Estado Civil: SOLTERO
 	protected static final Pattern NSS_ESTADO_CIVIL = Pattern.compile(
-			"^S\\.S\\.N\\º\\s*\\(NSS\\/NAF\\)\\s*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVIL\\s*:\\s*(?<estadocivil>.*)$",
+			"^S\\.S\\.N\\º\\s*\\(NSS\\/NAF\\)\\s*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVIL\\s*:\\s*(?<estadoCivil>.*)$",
 			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
 	// Domicilio Residencia: CALLE OCHO DE MARZO, 4, Portal 2, piso 2, Puerta C,
