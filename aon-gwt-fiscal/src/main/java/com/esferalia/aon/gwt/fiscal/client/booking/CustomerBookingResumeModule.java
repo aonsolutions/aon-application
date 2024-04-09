@@ -2423,6 +2423,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	                
 					if(domainCompanies != null && !domainCompanies.isEmpty()) {
 						
+						// OPTION 1
 						FormPanel diskForm = new FormPanel("_blank");
 						diskForm.setMethod(FormPanel.METHOD_GET);
 						FlowPanel formFlowPanel = new FlowPanel();
@@ -2439,9 +2440,9 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					
 						toolbar.add(diskForm);
 						
-						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+//						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
 						
-						diskForm.setAction(host + "/ms/api/customers-booking-resume-excel/");
+						diskForm.setAction(GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/");
 						domainIdHidden.setValue(domainCompanies.get(0).getDomain().getId().toString());
 						domainNameHidden.setValue(domainCompanies.get(0).getDomain().getName());		
 						userHidden.setValue(options.getUser());
@@ -2452,9 +2453,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 							AonMessagePanel.hideMessage(messagePanel);
 						});
 						
+						// OPTION 2
 //						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-//						
-//						Window.alert(GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/");
 //						
 //						String fileDownloadURL = GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/" + "?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + "&domainName=" + domainCompanies.get(0).getDomain().getName() + "&login=" + options.getUser();
 //						Window.open(fileDownloadURL, "_blank", null);
