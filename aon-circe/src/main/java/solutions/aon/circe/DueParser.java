@@ -1,8 +1,6 @@
 package solutions.aon.circe;
 
 import static com.esferalia.aon.watson.util.AonStringUtils.remove;
-import static com.esferalia.aon.watson.util.AonStringUtils.removeStart;
-import static com.esferalia.aon.watson.util.AonStringUtils.trim;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -11,9 +9,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,9 +29,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class DueParser {
 
 	public static void main(String[] args) throws Exception {
-		try (FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomo.pdf")) {
-			parse(dueAutonomo, null);
+		try (FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomos.pdf")) {
+			parse(dueAutonomo, new DueParserListener() {
+				public void onRegistroEntradaYPAE(String registroEntrada, String pae) {
+					System.out.println(registroEntrada);
+					System.out.println(pae);
+				}
+			});
 		}
+		
+
 	}
 
 	public static void parse(File file, DueParserListener listener) throws Exception {
@@ -62,6 +69,7 @@ public class DueParser {
 
 		stripper.setSortByPosition(true);
 
+		StringBuilder textBuilder = new StringBuilder();
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
 			// Set the page interval to extract.
 			// If we don't, then all pages would be extracted.
@@ -71,15 +79,17 @@ public class DueParser {
 			String text = stripper.getText(doc);
 			if (AonStringUtils.isBlank(text))
 				continue;
-
-			System.out.println(text);
-			parse(text, listener);
+			textBuilder.append(text);
+			
+//			System.out.println(text);
 		}
+		parse(textBuilder.toString(), listener);
 	}
 
 	public static void parse(String text, DueParserListener listener) throws Exception {
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			NumberFormat currency = NumberFormat.getNumberInstance(new Locale.Builder().setLanguageTag("es").setRegion("ES").build());
 
 			Matcher matcher = find(reader, REGISTRO_ENTRADA_PAE);
 			String registroEntrada = matcher.group("registro");
@@ -94,10 +104,9 @@ public class DueParser {
 			String nacionalidad = matcher.group("nacionalidad");
 			String sexo = matcher.group("sexo");
 			String fechaNaciminetoString = matcher.group("fechaNacimiento");
-			Date fechaNacimiento = Utils.FORMATTER.parse(fechaNaciminetoString);
+			Date fechaNacimiento = simpleDateFormat.parse(fechaNaciminetoString);
 			matcher = find(reader, NSS_ESTADO_CIVIL);
-			String nssString = matcher.group("nss");
-			int nss = Integer.parseInt(nssString);
+			String nss = matcher.group("nss");
 			String estadoCivil = matcher.group("estadoCivil");
 			listener.onDatosPersonales(docIdentidad, nombre, apellidos, nacionalidad, sexo, fechaNacimiento, nss, estadoCivil);
 			
@@ -109,25 +118,24 @@ public class DueParser {
 			String provincia = matcher.group("provincia");
 			String comunidad = matcher.group("comunidad");
 			String pais = matcher.group("pais");
-			String domicilioResidencia = domicilio + cp + municipio + provincia + comunidad + pais;
-			String domicilioFiscal = domicilio + cp + municipio + provincia + comunidad + pais;
-			String domicilioNotificaciones = domicilio + cp + municipio + provincia + comunidad + pais;
-			String domicilioActividad = domicilio + cp + municipio + provincia + comunidad + pais;
+			String domicilioResidencia = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
+			String domicilioFiscal = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
+			String domicilioNotificaciones = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
+			String domicilioActividad = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
 			listener.onDomicilios(domicilioResidencia, domicilioFiscal, domicilioNotificaciones);
 			
 			matcher = find(reader, TELEFONO_EMAIL);
-			String telefonoTGSSString = matcher.group("telefono");
-			int telefonoTGSS = Integer.parseInt(telefonoTGSSString);
+			String telefonoTGSS = matcher.group("telefono");
 			String emailTGSS = matcher.group("mail");
 			listener.onNotificacionTGSS(telefonoTGSS, emailTGSS);
 			
 			matcher = find(reader, PREFIJO_TELEFONO_EMAIL);
 			String prefijoString = matcher.group("prefijo");
-			int prefijo = Integer.parseInt(prefijoString);
-			String telefonoAEATString = matcher.group("telefono");
-			int telefonoAEAT = Integer.parseInt(telefonoAEATString);
+			String prefijo = remove(prefijoString, " ");
+			int prefijoAEAT = Integer.parseInt(prefijo);
+			String telefonoAEAT = matcher.group("telefono");
 			String emailAEAT = matcher.group("mail");
-			listener.onNotificacionAEAT(prefijo, telefonoAEAT, emailAEAT);
+			listener.onNotificacionAEAT(prefijoAEAT, telefonoAEAT, emailAEAT);
 			
 			matcher = find(reader, RECIBIR_INFORMACION);
 			String comunicacion = matcher.group("informacion");
@@ -135,15 +143,17 @@ public class DueParser {
 			
 			matcher = find(reader, INICIO_ACTIVIDAD);
 			String inicioActividadString = matcher.group("inicioActividad");
-			Date inicioActividad = Utils.FORMATTER.parse(inicioActividadString);
+			Date inicioActividad = simpleDateFormat.parse(inicioActividadString);
+			matcher = find(reader, NUM_PERSONAS);
+			matcher = find(reader, TRABAJADORAS);
 			matcher = find(reader, NUM_PERSONAS_TRABAJADORAS);
-			String numTrabajadorasString = matcher.group("tranajadores");
+			String numTrabajadorasString = matcher.group("trabajadores");
 			int numTrabajadoras = Integer.parseInt(numTrabajadorasString);
 			listener.onActividades(inicioActividad, numTrabajadoras);
 			
 			matcher = find(reader, SUPERFICIE_TOTAL);
 			String superficieString = matcher.group("superficie");
-			int superficie = Integer.parseInt(superficieString);
+			float superficie = currency.parse(superficieString).floatValue();
 			listener.onCentroActividad(superficie, domicilioActividad);
 			
 			matcher = find(reader, CNAE);
@@ -162,195 +172,72 @@ public class DueParser {
 			String provinciaAE = matcher.group("provincia");
 			String municipioAE = matcher.group("municipio");
 			String fechaInicioAEString = matcher.group("fechaInicio");
-			Date fechaInicioAE = Utils.FORMATTER.parse(fechaInicioAEString);
+			Date fechaInicioAE = simpleDateFormat.parse(fechaInicioAEString);
 			listener.onLugarFueraDelLocal(epigrafeAE, tipoActividad, provinciaAE, municipioAE, fechaInicioAE);
 			
+			while (not(reader, SEGURIDAD_SOCIAL)) {
+				matcher = find(reader, DECLARACION_CENSAL);
+				String codigoString = matcher.group("codigo");
+				int codigo = Integer.parseInt(codigoString);
+				String respuesta = matcher.group("respuesta");
+				String fechaString = matcher.group("fecha");
+				if (hasData(fechaString)) {
+					Date fechaDC = simpleDateFormat.parse(fechaString);
+					listener.onDeclaracionCensal(codigo, respuesta, fechaDC);
+				}
+				else {
+					listener.onDeclaracionCensal(codigo, respuesta, null);
+				}
+				
+			}
+			
+			matcher = find(reader, TIPO_TRABAJADOR);
+			String tipo = matcher.group("tipo");
+			matcher = find(reader, FECHA_REAL_ALTA);
+			String fechaSSString = matcher.group("fechaRealAlta");
+			Date fechaSS = simpleDateFormat.parse(fechaSSString);
+			listener.onSeguridadSocial(tipo, fechaSS);
+			
+			matcher = find(reader, REGIMEN_TRL_SUBGRUPO);
+			String regimen  = matcher.group("regimen");
+			String trl = matcher.group("trl");
+			String subgrupo = matcher.group("subgrupo");
+			matcher = find(reader, GRUPO);
+			String grupo = matcher.group("grupo");
+			listener.onRegimenDeEncuadramiento(regimen, trl, subgrupo, grupo);
+			
+			matcher = find(reader, BASE_COTIZACION_RENDIMINETOS);
+			String baseCotizacionString = matcher.group("baseCotizacion");
+			float baseCotizacion = currency.parse(baseCotizacionString).floatValue();
+			String rendimientoNetoString = matcher.group("rendimientoNeto");
+			float rendimientoNeto = currency.parse(rendimientoNetoString).floatValue();
+			listener.onBaseCotizacion(baseCotizacion, rendimientoNeto);
+			
+			matcher = find(reader, MUTUA_IT);
+			String mutuaIT = matcher.group("mutuaIT");
+			listener.onIncapacidadTemporal(mutuaIT);
+			
+			matcher = find(reader, CONTINGENCIAS_PROFESIONALES);
+			String contingenciaProfesional = matcher.group("contingencaProfesional");
+			matcher = find(reader, CESE_ACTIVIDAD);
+			String ceseActividad = matcher.group("ceseActividad");
+			listener.onCobertura(contingenciaProfesional, ceseActividad);
+			
+			matcher = find(reader, REDUCCIONES);
+			String reduccion = matcher.group("reduccion");
+			listener.onReduccion(reduccion);
+			
+			matcher = find(reader, OPCION_CA_FP);
+			String opcionCAFP = matcher.group("opcionCAFP");
+			listener.onOpcionCAFP(opcionCAFP);
+			
+			matcher = find(reader, CUENTA);
+			String cuenta = matcher.group("cuenta");
+			listener.onCuenta(cuenta);
+	
 		}
 	}
 
-//	public static void parse(String text, DueParserListener listener) throws Exception {
-////			System.out.println(text);
-//		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-//			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-//
-//			Matcher matcher = find(reader, EMPLOYEE_NAME);
-//
-//			String fullName = matcher.group("name");
-//
-//			matcher = find(reader, EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE);
-//
-//			String nss = matcher.group("province") + matcher.group("nss");
-//
-//			onEmployee(listener, fullName, nss);
-//
-//			listener.onEmployeeOtherInfo(matcher.group("docType"), matcher.group("doc"), matcher.group("gender"),
-//					simpleDateFormat.parse(matcher.group("birthDate")));
-//
-//			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF);
-//
-//			String socialReason = matcher.group("name");
-//			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
-//			String enterpriseCIF = matcher.group("cif");
-//
-//			matcher = find(reader, ENTERPRISE_ACTIVITY_REGIME);
-//			String enterpriseActivityCode = matcher.group("code");
-//			String enterpriseActivityDescription = matcher.group("description");
-//			String enterpriseRegime = matcher.group("regime");
-//
-//			matcher = find(reader, EMPLOYEE_PERIOD_START);
-//			Date periodStart = simpleDateFormat.parse(matcher.group("start"));
-//			Date periodEnd = matcher.group("end") != null ? simpleDateFormat.parse(matcher.group("end")) : null;
-//			listener.onEmployeePerido(nss, enterpriseCCC, periodStart, periodEnd);
-//
-//			matcher = find(reader, CONTRACT_TYPE_START_END);
-//
-//			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
-//
-//			if (hasData(matcher.group("end"))) {
-//				try {
-//					listener.onContractEnd(simpleDateFormat.parse(matcher.group("end")));
-//				} catch (ParseException e) {
-//					listener.onContractEnd(null);
-//				}
-//			}
-//
-//			if (hasData(matcher.group("contractType"))) {
-//				listener.onContractType(matcher.group("contractType"));
-//			}
-//
-//			matcher = find(reader, RLCE_COTIZACION_ADIC);
-//
-//			if (hasData(matcher.group("rlce")))
-//				listener.onRlce(matcher.group("rlce"));
-//
-//			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
-//			if (hasData(matcher.group("partialCoef"))) {
-//				listener.onContractPartialCoeficient(matcher.group("partialCoef"));
-//			}
-//
-//			matcher = find(reader, CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC);
-//			if (hasData(matcher.group("quoteGroup"))) {
-//				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
-//			}
-//
-////				String enterpriseCompleteCCC = (matcher.group("completeCCC"));
-//
-//			if (hasData(matcher.group("inactivity"))) {
-//				listener.onContractInactivityType(matcher.group("inactivity"));
-//			}
-//
-//			String enterpriseCompleteCCC = createEnterpriseCompleteCCC(enterpriseRegime, enterpriseCCC);
-//
-//			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
-//					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
-//
-//			matcher = find(reader, CONTRACT_OCUPATION);
-//			if (hasData(matcher.group("ocupation"))) {
-//				listener.onContractOcupation(matcher.group("ocupation"));
-//			}
-//
-//			matcher = find(reader, CONTRACT_TRL);
-//			if (hasData(matcher.group("trl"))) {
-//				listener.onEmployeeQuoteTRL(nss, enterpriseCCC, matcher.group("trl"), periodStart, periodEnd);
-//			}
-//
-//			matcher = find(reader, CONTRACT_QUOTEMODALITY);
-//			if (hasData(matcher.group("quoteModality"))) {
-//				listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
-//			}
-//
-//			matcher = find(reader, CONTRACT_REALJOURNEY);
-//			if (hasData(matcher.group("realJourney"))) {
-//				listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
-//			}
-//			if (hasData(matcher.group("realJourneyProvided"))) {
-//				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
-//			}
-//
-//			matcher = find(reader, BENEFITS_LOSS_BY_EMPLOYEE);
-//			if (hasData(matcher.group("cause"))) {
-//				listener.onEmployeeBenefitsLoss(nss, enterpriseCCC, matcher.group("cause"), periodStart, periodEnd);
-//			}
-//
-//			matcher = find(reader, PECULIARITIES_HEADER);
-//
-//			Date endDate = null;
-//			Date startDate = null;
-//
-//			try {
-//				for (Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); optional
-//						.isPresent(); optional = attempt(reader, EMPLOYEE_QUOTE_PEC)) {
-//
-//					// String end = optional.get().group("end");
-//					if (optional.get().group("end") != null)
-//						endDate = simpleDateFormat.parse(optional.get().group("end"));
-//
-//					String code = optional.get().group("code");
-//					String description = optional.get().group("description");
-//					String portTipo = optional.get().group("tipo");
-//					String quota = optional.get().group("quota");
-//					Date start = simpleDateFormat.parse(optional.get().group("start"));
-//
-//					Date end = null;
-//					if (optional.get().group("end") != null)
-//						end = simpleDateFormat.parse(optional.get().group("end"));
-//
-////						if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
-////							listener.onEmployeePerido(nss, enterpriseCCC, start, end);
-//
-//					onEmployeeQuotePEC(listener, nss, enterpriseCCC, code, description, portTipo, quota, start, end);
-//
-//					startDate = start;
-//					endDate = end;
-//
-//				}
-//			} catch (ParseException e) {
-//				throw new UnknownPDFException(e);
-//			}
-//
-//			matcher = find(reader, TOTAL_CLV);
-//			matcher = find(reader, QUOTATION_TYPES);
-//			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
-//			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", "."))
-//					: null;
-//			Double unemployment = hasData(matcher.group("unemployment"))
-//					? Double.parseDouble(matcher.group("unemployment").replace(",", "."))
-//					: null;
-//			listener.onEmployeeQuoteTypes(it, ims, unemployment);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	private static void onEmployeeQuotePEC(DueParserListener listener, String nss, String enterpriseCCC, String code,
-//			String description, String portTipo, String quota, Date start, Date end) {
-//		code = remove(code, " ");
-//		quota = remove(quota, " ");
-//		portTipo = remove(portTipo, " ");
-//		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
-//	}
-//
-//	private static void onEnterprise(DueParserListener listener, String socialReason, String enterpriseCCC,
-//			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
-//			String enterpriseRegime, String enterpriseCompleteCCC) {
-//		socialReason = trim(socialReason);
-//		enterpriseCCC = remove(enterpriseCCC, " ");
-//		enterpriseCIF = remove(enterpriseCIF, " ");
-//		enterpriseCIF = removeStart(enterpriseCIF, "0");
-//		enterpriseActivityCode = remove(enterpriseActivityCode, " ");
-//		enterpriseActivityDescription = trim(enterpriseActivityDescription);
-//		enterpriseRegime = remove(enterpriseRegime, " ");
-//		enterpriseCompleteCCC = remove(enterpriseCompleteCCC, " ");
-//
-//		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
-//				enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
-//	}
-//
-//	private static void onEmployee(DueParserListener listener, String fullName, String nss) {
-//		nss = remove(nss, " ");
-//		fullName = trim(fullName);
-//		listener.onEmployee(nss, fullName);
-//	}
 
 	private static boolean hasData(String data) {
 		return !AonStringUtils.isBlank(data);
@@ -369,6 +256,10 @@ public class DueParser {
 			return matcher;
 		}
 		throw new UnknownPDFException(String.format("Pattern: '%s' Not found", pattern.pattern()));
+	}
+
+	private static boolean not(BufferedReader reader, Pattern pattern) throws IOException {
+		return attempt(reader, pattern).isEmpty();
 	}
 
 	private static Optional<Matcher> attempt(BufferedReader reader, Pattern pattern) throws IOException {
@@ -409,11 +300,11 @@ public class DueParser {
 
 	// S.S.Nº(NSS/NAF): 281169930272 Estado Civil: SOLTERO
 	protected static final Pattern NSS_ESTADO_CIVIL = Pattern.compile(
-			"^S\\.S\\.N\\º\\s*\\(NSS\\/NAF\\)\\s*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVIL\\s*:\\s*(?<estadoCivil>.*)$",
-			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+			"^\\s*S.*NSS.*NAF.*:\\s*(?<nss>.*)\\s*ESTADO\\s*CIVIL\\s*:\\s*(?<estadoCivil>.*)$",
+			Pattern.CASE_INSENSITIVE);
 
 	// Domicilio Residencia: CALLE OCHO DE MARZO, 4, Portal 2, piso 2, Puerta C,
-	protected static final Pattern DOMICILIO = Pattern.compile("^DOMICILIO\\\\s*.*:\\\\s*(?<domicilio>.*)$",
+	protected static final Pattern DOMICILIO = Pattern.compile("^DOMICILIO\\s*.*:\\s*(?<domicilio>.*)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// 28523, RIVAS-VACIAMADRID, MADRID, MADRID, ESPAÑA,
@@ -440,14 +331,14 @@ public class DueParser {
 			.compile("^INICIO\\s*DE\\s*ACTIVIDAD\\s*.\\s*(?<inicioActividad>.*)$", Pattern.CASE_INSENSITIVE);
 
 	// Número de Personas
-	protected static final Pattern NUM_PERSONAS = Pattern.compile("^N.MERO\\s*DE\\s*PERSONAS.*$",
+	protected static final Pattern NUM_PERSONAS = Pattern.compile("^\\s*N.MERO\\s*DE\\s*PERSONAS.*$",
 			Pattern.CASE_INSENSITIVE);
 
 	// Trabajadoras
-	protected static final Pattern TRABAJADORAS = Pattern.compile("^TRABAJADORAS.*$", Pattern.CASE_INSENSITIVE);
+	protected static final Pattern TRABAJADORAS = Pattern.compile("^\\s*TRABAJADORAS.*$", Pattern.CASE_INSENSITIVE);
 
 	// :0
-	protected static final Pattern NUM_PERSONAS_TRABAJADORAS = Pattern.compile("^:\\s*(?<trabajadores>\\d*)$",
+	protected static final Pattern NUM_PERSONAS_TRABAJADORAS = Pattern.compile("^\\s*:\\s*(?<trabajadores>\\d*)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// Superficie Total: 1,00
@@ -481,9 +372,12 @@ public class DueParser {
 	// servicios previa o simultánea a la adquisición Sí 01/04/2024
 	// 504 Comunicación de inicio de actividad. Entregas de bienes o prestaciones de
 	// servicios posterior a adquisición de bienes o No
-	protected static final Pattern DECLARACION_CENSAL = Pattern.compile("^\\d{3}.*(?<respuesta>sí|no)\\s*(?<fecha>.*)$",
+	protected static final Pattern DECLARACION_CENSAL = Pattern.compile("^(?<codigo>\\d{3})\\s*.*(?<respuesta>sí|no)\\s*(?<fecha>.*)$",
 			Pattern.CASE_INSENSITIVE | Pattern.CANON_EQ | Pattern.UNICODE_CASE);
 
+	// SEGURIDAD SOCIAL
+	protected static final Pattern SEGURIDAD_SOCIAL = Pattern.compile("^SEGURIDAD\\s*SOCIAL\\s*$", Pattern.CASE_INSENSITIVE);
+	
 	// Tipo: Trabajador Autónomo
 	protected static final Pattern TIPO_TRABAJADOR = Pattern.compile("^TIPO\\s*:\\s*(?<tipo>.*)$",
 			Pattern.CASE_INSENSITIVE);
@@ -503,7 +397,7 @@ public class DueParser {
 	// Base Cotización: 900,00 Rendimientos netos anuales en promedio mensual:
 	// 400,00
 	protected static final Pattern BASE_COTIZACION_RENDIMINETOS = Pattern.compile(
-			"^BASE\\s*COTIZACI.N\\s*:\\s*(?<baseCotizacion>.*)RENDIMIENTOS\\s*NETOS\\s*.*:\\s*(?<rendiminetosNetos>.*)$",
+			"^BASE\\s*COTIZACI.N\\s*:\\s*(?<baseCotizacion>.*)RENDIMIENTOS\\s*NETOS\\s*.*:\\s*(?<rendimientoNeto>.*)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// Mutua de IT: IBERMUTUA
@@ -512,7 +406,7 @@ public class DueParser {
 
 	// Acogerse a Contingencias Profesionales: Sí
 	protected static final Pattern CONTINGENCIAS_PROFESIONALES = Pattern
-			.compile("^.*CONTINGENCIAS\\s*.*:\\s*(?<contingencasProfesionales>.*)$", Pattern.CASE_INSENSITIVE);
+			.compile("^.*CONTINGENCIAS\\s*.*:\\s*(?<contingencaProfesional>.*)$", Pattern.CASE_INSENSITIVE);
 
 	// Acogerse a Cese de Actividad: No
 	protected static final Pattern CESE_ACTIVIDAD = Pattern.compile(
@@ -520,7 +414,7 @@ public class DueParser {
 
 	// Reducciones: Tarifa plana "cuota reducida por inicio de actividad artículo 38
 	// ter"
-	protected static final Pattern REDUCCIONES = Pattern.compile("^REDUCCIONES\\s*:\\s*(?<reducciones>.*)$",
+	protected static final Pattern REDUCCIONES = Pattern.compile("^REDUCCIONES\\s*:\\s*(?<reduccion>.*)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// Opcion CA FP: No

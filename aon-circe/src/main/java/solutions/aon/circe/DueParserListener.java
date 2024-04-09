@@ -1,15 +1,17 @@
 package solutions.aon.circe;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public interface DueParserListener {
+public interface DueParserListener{
 
 	default void onRegistroEntradaYPAE(String registroEntrada, String pae) {
 
 	}
 
 	default void onDatosPersonales(String docIdentidad, String nombre, String apellidos, String nacionalidad,
-			String sexo, Date fechaNacimiento, int nss, String estadoCivil) {
+			String sexo, Date fechaNacimiento, String nss, String estadoCivil) {
 
 	}
 	
@@ -17,11 +19,11 @@ public interface DueParserListener {
 		
 	}
 	
-	default void onNotificacionTGSS(int telefono, String email) {
+	default void onNotificacionTGSS(String telefono, String email) {
 		
 	}
 	
-	default void onNotificacionAEAT(int prefijo, int telefono, String email) {
+	default void onNotificacionAEAT(int prefijo, String telefono, String email) {
 		
 	}
 	
@@ -33,7 +35,7 @@ public interface DueParserListener {
 		
 	}
 	
-	default void onCentroActividad(int superficie, String domicilio) {
+	default void onCentroActividad(float superficie, String domicilio) {
 		
 	}
 	
@@ -49,5 +51,42 @@ public interface DueParserListener {
 		
 	}
 	
+	default void onDeclaracionCensal(int codigo, String respuesta, Date fecha) {
+		List<String> declaracionCensalList = new ArrayList<>();
+		String declaracionCensal = codigo + " " + respuesta + " " + fecha;
+		declaracionCensalList.add(declaracionCensal);
+	}
+	
+	default void onSeguridadSocial(String tipo, Date fecha) {
+		
+	}
+	
+	default void onRegimenDeEncuadramiento(String regimen, String trl, String subgrupo, String grupo) {
+		
+	}
+	
+	default void onBaseCotizacion(float baseCotizacion, float rendimiento) {
+		
+	}
+	
+	default void onIncapacidadTemporal(String mutuaIT) {
+		
+	}
+	
+	default void onCobertura(String contingenciaProfesional, String ceseActividad) {
+		
+	}
+	
+	default void onReduccion(String reduccion) {
+		
+	}
+	
+	default void onOpcionCAFP(String opcion) {
+		
+	}
+	
+	default void onCuenta(String cuenta) {
+		
+	}
 	
 }
