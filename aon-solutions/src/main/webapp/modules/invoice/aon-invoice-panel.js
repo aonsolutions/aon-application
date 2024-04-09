@@ -243,7 +243,7 @@ export class AonInvoicePanel extends AonElement {
 		getRawdocCount({}).then(r => {
 			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
 				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
 			}
 
 			if(r.invoice && r.invoice.recibida && r.invoice.recibida > 0){
@@ -344,7 +344,8 @@ export class AonInvoicePanel extends AonElement {
 	updateCounterSpan(option) {	
 		let span = document.getElementById("aonMenuItemSpan" + option.id);
 		if(span){
-			span.innerHTML = option.name + " (" + getCounter()[option.id] + ")";
+			let count = getCounter()[option.id];
+			span.innerHTML = option.name + " (" + (count > 49 ? "+49" : count) + ")";
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
 	}

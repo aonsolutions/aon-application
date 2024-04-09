@@ -39,6 +39,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountEntryInvoiceWriter implements Serializable {
 	
@@ -175,34 +176,47 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				double quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota());
-				if (taxBreakDown.getDeductibleQuota() != quota) {
-					quota = taxBreakDown.getDeductibleQuota();
-				}
-				if (taxBreakDown.getAccount() == null) {
-					throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
-				}
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
-				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
-				if (ignoreTaxFree) {
-					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
-					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
-				} else {
-					if (taxBreakDown.getDeductibleQuota() != CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
-						Account account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC);
-						if (account == null) {
-							throw new ManagerBeanException("Falta definir la Cuenta de ajustes negativos por IVA");
-						}
-						quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota());
-						recordingTo.addTaxQuotaAccount(account, quota);
-						insertInvoiceTaxAccount(invoice, taxBreakDown, account);
+				if ( AonMathUtils.isZero(taxBreakDown.getSurchargeQuota()) ) {
+					double quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota());
+					if (taxBreakDown.getDeductibleQuota() != quota) {
+						quota = taxBreakDown.getDeductibleQuota();
 					}
+					if (taxBreakDown.getAccount() == null) {
+						throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
+					}
+					recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
+					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					if (ignoreTaxFree) {
+						recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
+						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+					} else {
+						if (taxBreakDown.getDeductibleQuota() != CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
+							Account account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC);
+							if (account == null) {
+								throw new ManagerBeanException("Falta definir la Cuenta de ajustes negativos por IVA");
+							}
+							quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota());
+							recordingTo.addTaxQuotaAccount(account, quota);
+							insertInvoiceTaxAccount(invoice, taxBreakDown, account);
+						}
+					}
+				} else {
+					double quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota());
+					if (taxBreakDown.getAccount() == null) {
+						throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
+					}
+					recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
+					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					if (ignoreTaxFree) {
+						recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
+						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+					} 
 				}
 			}
 		}
 		return recordingTo.getTaxQuotaAccountMap();
 	}
-
+	
 	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
 		Map<Account, Double> basesPerAccount = new HashMap<Account, Double>();
 		if (invoice.isInvestment()) {
