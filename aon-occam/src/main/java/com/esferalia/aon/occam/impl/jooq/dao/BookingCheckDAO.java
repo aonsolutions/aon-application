@@ -128,6 +128,7 @@ public class BookingCheckDAO {
 		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
 				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
+				.and(RITEM.EDI_SALES_CODE.isNull())
 				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
