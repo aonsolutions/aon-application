@@ -7496,6 +7496,13 @@ public class AON {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
+	public static Stream<Customer> getCustomers(Occam occam, RegistryParams params,int ofs, int limit) {
+	    
+	    try(CloseableAONContext ctx = AONContext.getAONContext(occam.getDomainName(), occam.getDomain(), occam.getUser())) {
+	        return getRegistry().getCustomers(ctx, p -> RegistryUtils.getFilter(p, params), ofs, limit);
+	    } 
+	}
+	
 	public static LinkedList<Customer> getCustomers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
 		CloseableAONContext ctx = null;
 		try {
@@ -7507,6 +7514,13 @@ public class AON {
 				ctx.close();
 		}
 	}
+	public static CustomerFull getCustomerFull(Occam occam, Integer id) {
+		
+		try(CloseableAONContext ctx = AONContext.getAONContext(occam.getDomainName(), occam.getDomain(), occam.getUser())) {
+			return getRegistry().getCustomerFull(ctx, id);
+		} 
+	}
+	
 	public static CustomerFull getCustomerFull(String domainName, int domain, String user, Integer id) {
 		CloseableAONContext ctx = null;
 		try {

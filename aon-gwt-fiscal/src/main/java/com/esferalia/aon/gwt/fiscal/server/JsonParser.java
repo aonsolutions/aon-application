@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
@@ -29,6 +30,8 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -863,6 +866,30 @@ public class JsonParser {
 
 		return params;
 		
+	}
+	
+	
+	public static RegistryParams parseRegistryParams(String registryParams) {
+		RegistryParams params = new RegistryParams();
+		org.json.JSONObject json = new org.json.JSONObject(registryParams);
+		
+		params.setDomainName(JsonUtils.getString(json, IJsonNames.DOMAIN_NAME));
+		params.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN));
+		params.setUser(JsonUtils.getString(json, IJsonNames.USER));
+		params.setSecurityLevel(SecurityLevel.safeValueOf(JsonUtils.getInteger(json, IJsonNames.SECURITY_LEVEL)));
+		params.setHasConfidentialityRole(JsonUtils.getInt(json, IJsonNames.SECURITY_LEVEL) == 1);	
+		params.setId(JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID));
+		params.setDocumentType(DocumentType.safeValueOf(JsonUtils.getString(json, IJsonNames.DOCUMENT_TYPE)));
+		params.setDocumentCountry(Country.safeValueOf(JsonUtils.getString(json, IJsonNames.DOCUMENT_TYPE)));
+		params.setDocument(JsonUtils.getString(json, IJsonNames.DOCUMENT));
+		params.setName(JsonUtils.getString(json, IJsonNames.NAME));
+		params.setAlias(JsonUtils.getString(json, IJsonNames.ALIAS));
+		params.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE));
+		params.setInactive(JsonUtils.getboolean(json, IJsonNames.INACTIVE));
+		params.setBlocked(JsonUtils.getboolean(json, IJsonNames.BLOCKED));
+		params.setOrder(JsonUtils.getInteger(json, IJsonNames.ORDER_BY));
+
+		return params;
 	}
 	
 }
