@@ -2,8 +2,12 @@ package com.esferalia.aon.in.payroll.pdf.jooq;
 
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
+import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -12,7 +16,6 @@ import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentTyp
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
@@ -44,6 +47,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Record;
+import org.jooq.Result;
+
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
@@ -57,11 +63,11 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams.PartTimeEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.HolidayDetailRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -69,12 +75,8 @@ import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
-import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
-import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -787,6 +789,8 @@ public class JooqPayrollBuilder {
 			List<SalaryData> noWorkDays = contractDataTmp.getOrDefault("NO_LABORABLE", Collections.emptyList());
 			List<Date> holidayList = listHolidays(holidays, salaryEnd);
 			List<Date> noWorkDaysList = listHolidays(noWorkDays, salaryEnd);
+			
+			List<Date> festiveList = listFestives(aonContext, salary.getId(), salaryStart, salaryEnd);
 
 			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));
 			setHolidays(params, noWorkDaysList, salaryPeriod, entry -> entry.setNotWorkingDay(true));
@@ -795,7 +799,7 @@ public class JooqPayrollBuilder {
 			while (date.compareTo(salary.getEndDate()) <= 0) {
 				int day = AonDateUtils.getDay(date);
 				PartTimeEntry entry = new PartTimeEntry();
-				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList, noWorkDaysList)) {
+				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList, noWorkDaysList, festiveList)) {
 					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
 					entry.setOrdinary(dayHours);
 					if (dayHours != null && dayHours > 0) {
@@ -875,6 +879,59 @@ public class JooqPayrollBuilder {
 			}
 			payrollBuilder.setPartTimeParams(Optional.of(params));
 		}
+	}
+
+	private static List<Date> listFestives(AONContext aonContext, Integer salaryId, Date salaryStart, Date salaryEnd) {
+		Record payrollWokplaceRecord = aonContext.getDslContext().select().from(PAYROLL_WORKPLACE)
+			.join(WORKPLACE)
+			.on(WORKPLACE.ID.eq(PAYROLL_WORKPLACE.WORKPLACE))
+			.join(CONTRACT)
+			.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+			.join(SALARY)
+			.on(SALARY.CONTRACT.eq(CONTRACT.ID))
+			.where(SALARY.ID.eq(salaryId))
+			.fetchOne();
+		
+		if(null == payrollWokplaceRecord)
+			return new ArrayList<>();
+		
+		Integer holidayId = aonContext.getDslContext().select(CALENDAR.HOLIDAY).from(CALENDAR)
+				.where(CALENDAR.ID.eq(payrollWokplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR)))
+				.fetchOne(CALENDAR.HOLIDAY);
+		
+		ArrayList<Integer> holidays = new ArrayList<>();
+		
+		// Get all holidays ids
+		while ( holidayId != null ) {
+			holidays.add(holidayId);
+			
+			holidayId = aonContext.getDslContext().select(HOLIDAY.HOLIDAY_)
+					.from(HOLIDAY)
+					.where(HOLIDAY.ID.eq(holidayId))
+					.fetchOne()
+					.get(HOLIDAY.HOLIDAY_);
+		}
+		
+		if(holidays.isEmpty())
+			return new ArrayList<>();
+		
+		Result<HolidayDetailRecord> holidayRecords = aonContext.getDslContext().selectFrom(HOLIDAY_DETAIL)
+				.where(HOLIDAY_DETAIL.HOLIDAY.in(holidays))
+				.and(HOLIDAY_DETAIL.DATE.ge(new java.sql.Date(salaryStart.getTime())))
+				.and(HOLIDAY_DETAIL.DATE.le(new java.sql.Date(salaryEnd.getTime())))
+				.fetch();
+		
+		if(holidayRecords.isEmpty())
+			return new ArrayList<>();
+		
+		List<Date> festiveDates = new ArrayList<>();
+		
+		for(HolidayDetailRecord holidayRecord : holidayRecords) {
+			festiveDates.add(holidayRecord.getDate());
+		}
+		
+		return festiveDates;
+		
 	}
 
 	@FunctionalInterface
@@ -1014,13 +1071,16 @@ public class JooqPayrollBuilder {
 	}
 
 	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,
-			List<Date> holidayList, List<Date> noWorkDaysList) {
+			List<Date> holidayList, List<Date> noWorkDaysList, List<Date> festiveList) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		if (holidayList != null && holidayList.contains(date)) {
 			return false;
 		}
 		if (noWorkDaysList != null && noWorkDaysList.contains(date)) {
+			return false;
+		}
+		if (festiveList != null && festiveList.contains(date)) {
 			return false;
 		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
