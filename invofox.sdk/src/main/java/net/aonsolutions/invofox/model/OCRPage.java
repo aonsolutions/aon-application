@@ -2,6 +2,7 @@ package net.aonsolutions.invofox.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public class OCRPage implements Serializable {
@@ -12,6 +13,9 @@ public class OCRPage implements Serializable {
 	private BigDecimal height;
 	private OCRUnit unit;
 	private BigDecimal angle;
+	
+	private Integer page;
+	private OCRLine[] lines;
 	
 	public Optional<BigDecimal> getWidth() {
 		return Optional.ofNullable(width);
@@ -44,6 +48,24 @@ public class OCRPage implements Serializable {
 		this.angle = angle;
 		return this;
 	}
+	
+	public Optional<OCRLine[]> getLines() {
+	    return Optional.of(lines);
+	}
+	
+	public OCRPage setLines(OCRLine[] lines) {
+	    this.lines = lines;
+	    return this;
+	}
+	
+	public Optional<Integer> getPage() {
+		return Optional.ofNullable(page);
+	}
+	public OCRPage setPage(Integer page) {
+		this.page = page;
+		return this;
+	}
+	
 	
 	
 }

@@ -2766,6 +2766,7 @@ CREATE TABLE `domain` (
   `scope` int DEFAULT NULL COMMENT 'Identificador del Ambito',
   `subDomainSuffix` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Sufijo de los Dominio Hijo',
   `enableHeredity` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene deshabilitado la herencia de registros o no',
+  `domain_payer` int DEFAULT NULL COMMENT 'Dominio Pagador',
   `domainManagement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene capacidad de MultiDominio o no',
   `disableDomainManagement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el Dominio tiene deshabilitado el mantenimiento de Dominios o no',
   `maxDocumentSize` int DEFAULT NULL COMMENT 'Tamao Maximo de los Documentos',
@@ -4663,6 +4664,26 @@ CREATE TABLE `invoice_attach` (
   KEY `IDX_INVOICE_ATTACH_DOMAIN` (`domain`),
   CONSTRAINT `FK_INVOICE_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_ATTACH_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
+
+#
+# Table structure for table `invoice_doc`
+#
+
+CREATE TABLE `invoice_doc` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `invoice` int NOT NULL COMMENT 'Identificador de la Factura',
+  `mimeType` tinyint DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `type` tinyint DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
+  `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
+  PRIMARY KEY (`id`),
+  KEY `IDX_INVOICE_DOC_INVOICE` (`invoice`),
+  KEY `IDX_INVOICE_DOC_DOMAIN` (`domain`),
+  CONSTRAINT `FK_INVOICE_DOC_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_DOC_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
 
 #
@@ -7137,6 +7158,7 @@ CREATE TABLE `rawdoc` (
   `log` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Documento en formato JSON',
   `mime_type` tinyint DEFAULT '0' COMMENT 'MIME Type',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -7377,6 +7399,8 @@ CREATE TABLE `ritem` (
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de relacion',
   `code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del Producto',
   `edi_sales_code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo EAN de ventas para EDI',
+  `customer_fee` int(11) DEFAULT NULL COMMENT 'Cuota del cliente asociado',
+  `seller` int(11) DEFAULT NULL COMMENT 'Agente asociado al cliente',
   `price` decimal(15,4) DEFAULT '0' COMMENT 'Precio del Producto',
   `discount_expr` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT '0.0' COMMENT 'Descuentos del Producto',
   `priority` tinyint DEFAULT '0' COMMENT 'Prioridad del Producto',
@@ -7394,9 +7418,13 @@ CREATE TABLE `ritem` (
   KEY `IDX_RITEM_ITEM` (`item`),
   KEY `IDX_RITEM_REGISTRY` (`registry`),
   KEY `IDX_RITEM_WORKPLACE` (`workplace`),
+  KEY `IDX_RITEM_CUSTOMER_FEE` (`customer_fee`),
+  KEY `IDX_RITEM_SELLER` (`seller`),
+  CONSTRAINT `FK_RITEM_CUSTOMER_FEE` FOREIGN KEY (`customer_fee`) REFERENCES `customer_fee` (`id`),
   CONSTRAINT `FK_RITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_RITEM_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RITEM_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_RITEM_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Personas o Empresas';
 

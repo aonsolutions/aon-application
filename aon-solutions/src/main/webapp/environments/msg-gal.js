@@ -174,6 +174,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pé';
+export const FROM = 'Desde';
 
 // ----- G
 
@@ -264,7 +265,10 @@ export const MY_USER = 'O Meu Usuario';
 export const NAME = 'Nome';
 export const NEW = 'Novo';
 export const NEW_COMPANY = 'Nova Empresa';
+export const NEW_DOCUMENT = 'Novo Documento';
+export const NEW_EMPLOYEE = 'Novo Empregado';
 export const NEW_EXPENSE = 'Novo Gasto';
+export const NEW_INVOICE = 'Nova Factura';
 export const NEW_PRODUCT = 'Novo Produto';
 export const NEW_REQUEST = 'Nova Solicitude';
 export const NEW_WAREHOUSE = 'Nova Almacén';
@@ -305,6 +309,8 @@ export const PAYSHEETS = 'Nóminas';
 export const PENDING = 'Pendente';
 export const PENDING_DOCUMENTS = 'Documentos Pendentes';
 export const PENDING_INVOICES = 'Facturas Pendentes';
+export const PENDING_REVIEW = 'Pendente de Revisión';
+export const PENDING_TASKS = 'Tarefas Pendentes';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
@@ -357,6 +363,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Revisar';
 
 // ----- S
 
@@ -409,6 +416,7 @@ export const TICKETS = 'Tíckets';
 export const TIMECONTROL = 'Control do Tempo';
 export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos do Titular';
+export const TO = 'Ata'
 export const TO_TRASH = 'Enviar ao Papeleira';
 export const TODAY = 'Hoxe';
 export const TOMORROW = 'Mañá';

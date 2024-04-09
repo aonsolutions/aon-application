@@ -9,8 +9,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131InfoDAO;
 
 public class MODEL131Impl implements IMODEL131 {
 
@@ -37,42 +38,43 @@ public class MODEL131Impl implements IMODEL131 {
 	@Override
 	public Mod131 save(AONContext ctx, Mod131 mod131) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.save(ctx, mod131));		
+			configuration -> Mod131DAO.save(ctx, mod131));		
 	}
 	@Override
 	public Mod131 saveComments(AONContext ctx, Mod131 mod131) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.saveCommentsMod131(ctx, mod131));		
+			configuration -> Mod131DAO.saveComments(ctx, mod131));		
 	}
 	@Override
 	public Mod131 initializeForFinish(AONContext ctx, Mod131 mod131){
-		return FiscalModelDAO.initializeForFinish(ctx, mod131);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod131DAO.initializeForFinish(ctx, mod131));
 	}
 	@Override
 	public Mod131 markAsFinished(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.markAsFinished(ctx, mod131));		
+			configuration -> Mod131DAO.markAsFinished(ctx, mod131));		
 	}
 	@Override
 	public Mod131 markAsSent(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.markAsSent(ctx, mod131));		
+			configuration -> Mod131DAO.markAsSent(ctx, mod131));		
 	}
 	@Override
 	public Mod131 markAsCustomerCheck(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.markAsCustomerCheck(ctx, mod131));		
+			configuration -> Mod131DAO.markAsCustomerCheck(ctx, mod131));		
 	}
 	@Override
 	public Mod131 markAsPending(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.markAsPending(ctx, mod131));		
+			configuration -> Mod131DAO.markAsPending(ctx, mod131));		
 	}
 	
 	@Override
 	public void delete(AONContext ctx, Mod131 mod131) {
 		ctx.getDslContext().transaction(
-				configuration -> FiscalModelDAO.delete(ctx, mod131));
+			configuration -> FiscalModelDAO.delete(ctx, mod131));
 	}
 
 	@Override
@@ -86,13 +88,8 @@ public class MODEL131Impl implements IMODEL131 {
 	}
 	
 	@Override
-	public Mod131 reset(AONContext ctx, Mod131 mod131) {
-		return Mod131DAO.reset(ctx,mod131);
-	}
-
-	@Override
 	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
-		return Mod131DAO.getInfo(ctx,mod131,script,infoKey);
+		return Mod131InfoDAO.getInfo(ctx,mod131,script,infoKey);
 	}
 	@Override
 	public Mod131 aeatPresentation(AONContext ctx, Mod131 mod131, String aeatResponse) {

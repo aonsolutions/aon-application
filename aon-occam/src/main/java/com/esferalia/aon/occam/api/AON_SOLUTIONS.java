@@ -878,6 +878,20 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Invoice validateInvoice(Domain domain, User user, Invoice invoice) {
+		return validateInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice);
+	}
+	
+	public static Invoice validateInvoice(Domain domain, String login, Invoice invoice) {
+		return validateInvoice(domain.getName(), domain.getId(), login, invoice);
+	}
+	
+	public static Invoice validateInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().validateInvoice(ctx, invoice, invoice.getId());
+		}
+	}
+	
 	// ----- PRODUCT - GET PRODUCT
 
 	public static JSONArray getProducts(Domain domain, User user, ProductFilter filter) {

@@ -136,7 +136,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 						IT itp = getIt();
 						if(!itp.getCancel())
 							ids.add(addIT(ctx, itp));
-					} catch ( EmployeeNotFoundexception e) {
+					} catch ( EmployeeNotFoundexception | TooManyEmployeesException e) {
 						
 					}
 				}
@@ -431,9 +431,9 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			// N=no se acredita carencia;
 			// P=consulta la Direcci? Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "N":
-				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
-				break;
+				case "N":
+					if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+					break;
 			default:
 				break;
 			}
@@ -531,6 +531,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			ContractRecord contractRecord = getContract(ctx, it);	
 			
 			try {
+				
 				ContractLeaveRecord contractLeaveRecord = 
 				ctx
 				.select()
@@ -639,7 +640,13 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			throw new EmployeeNotFoundexception(e);
 		}
 		catch ( Exception e) {
-			e.printStackTrace();
+			EmployeeFieNotFound employeeFieNotFound = new EmployeeFieNotFound()
+					.setCcc(it.getCcc())
+					.setIpf(it.getIpf())
+					.setNaf(it.getNaf())
+					.setFullName(it.getFullName() + " (CONTRATOS > 1. CONTACTAR SOPORTE)");
+			
+			noImportEmployees.add(employeeFieNotFound);
 			throw new TooManyEmployeesException(e);
 		}
 		
@@ -723,6 +730,8 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		condition = condition.and(CONTRACT.START_DATE.le(itStartDate));
 		condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)));
 		
+		condition = condition.and(DOMAIN.ACTIVE.eq((byte)1));
+		
 		if(AonStringUtils.isNotBlank(it.getCcc()))
 			condition = condition.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()));
 		
@@ -731,6 +740,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 				.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
 				.where(condition)
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)

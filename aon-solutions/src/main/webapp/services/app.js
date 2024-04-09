@@ -160,6 +160,22 @@ export const MARKETING = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
+export const SERES = {
+  app: CONSTANT.SERES,
+  title: MSG.SERES,
+  description: MSG.SERES,
+  tag: MSG.SERES,
+  icon: AON_ICONS.SERES,
+  color: "#0000ff",
+  backgroundColor: "rgba(0, 0, 255, .2)",
+  hover: 'aonSidenavHover',
+  price: " ", // '90€/mes',
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+};
+
+
+
 export const COMMERCIAL = {
   app: CONSTANT.COMMERCIAL,
   title: MSG.COMMERCIAL,
@@ -435,7 +451,7 @@ export const ALMA = {
 
 export const OCR = {
   app: "ocr",
-  title: "OCR",
+  title: "OCR | Asistente Registro Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
@@ -455,7 +471,6 @@ export const INVOFOX = {
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
-  configuration: true
 };
 
 export const CONVENIOS = {
@@ -548,12 +563,12 @@ export const MenuApps = {
   COMUNICA,
   AON_SALTRA,
   INVOICE,
-  // MARKETING,
   // TREASURY,
   DOCUMENTAL,
   TIMECONTROL,
   MESSENGER,
   WAREHOUSE,
+  MARKETING,
   // GROUPWARE,
   NOTES,
   TOOLS
@@ -589,6 +604,7 @@ export const EnterpriseApps = [
   "timecontrol",
   "management",
   "messenger",
+  "invofox",
   "ocr",
   "aio",
   "bidoq",
@@ -618,6 +634,7 @@ export const Apps = {
   NOTES,
   WAREHOUSE,
   // GROUPWARE
+  MARKETING
 };
 
 export const ConsultancyBookingApps = {
@@ -815,8 +832,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE };
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,
@@ -833,6 +850,7 @@ export const AllApps = {
   GROUPWARE,
   WAREHOUSE,
   OCR,
+  INVOFOX,
   CONVENIOS,
   BANK,
   AON_SOLUTIONS,

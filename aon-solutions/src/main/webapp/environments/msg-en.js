@@ -129,6 +129,7 @@ export const DELETED_DATA = "The data has been deleted successfully";
 export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
 export const DEUTSCH = 'German';
+export const DISCARDED = 'Discarded';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
@@ -173,6 +174,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Find linked domains";
 export const FOOTER = 'Footer';
+export const FROM = 'From';
 
 // ----- G
 
@@ -262,7 +264,10 @@ export const MY_USER = 'My User';
 export const NAME = 'Name';
 export const NEW = 'New';
 export const NEW_COMPANY = 'New Company';
+export const NEW_DOCUMENT = 'New Document';
+export const NEW_EMPLOYEE = 'New Employee';
 export const NEW_EXPENSE = 'New Expense';
+export const NEW_INVOICE = 'New Invoice';
 export const NEW_PRODUCT = 'New Product';
 export const NEW_REQUEST = 'New Request';
 export const NEW_WAREHOUSE = 'New Warehouse';
@@ -278,6 +283,7 @@ export const NUMBER = 'Number';
 export const NUMBER_OF_USERS = 'Number of users';
 
 // ----- O
+export const OCR = 'OCR';
 export const OBSERVATION = 'Observation';
 export const OFFICE = 'Office';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Only domains without any linked customer";
@@ -303,6 +309,8 @@ export const PAYSHEETS = 'Paysheets';
 export const PENDING = 'Pending';
 export const PENDING_DOCUMENTS = 'Pending Documents';
 export const PENDING_INVOICES = 'Pending Invoices';
+export const PENDING_REVIEW = 'Pending Review';
+export const PENDING_TASKS = 'Pending Tasks';
 export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
@@ -355,6 +363,7 @@ export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Review';
 
 // ----- S
 
@@ -407,6 +416,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Time Control';
 export const TITLE = 'Títle';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'To';
 export const TO_TRASH = 'Send to Trash';
 export const TODAY = 'Today';
 export const TOMORROW = 'Tomorrow';

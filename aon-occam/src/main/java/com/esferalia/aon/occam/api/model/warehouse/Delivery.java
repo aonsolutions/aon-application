@@ -689,7 +689,7 @@ public class Delivery implements Serializable {
 	}
 	
 	public String getReferenceCode() {
-    	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 7, "0");
 		if (!AonStringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}

@@ -74,7 +74,8 @@ public class FinanceModule extends MainEntryPoint {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
-	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint";
+	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint/print";
+	private static final String FINANCE_REPORT_EXCEL_PAYMENT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint/payments";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -117,6 +118,7 @@ public class FinanceModule extends MainEntryPoint {
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	private AonToolbarButton settleSalariesButton;
+	private AonToolbarButton excelExportlButton;
 	
 	private FlowPanel progressContainer = new FlowPanel();
 	private FlowPanel progress = new FlowPanel();
@@ -611,6 +613,30 @@ public class FinanceModule extends MainEntryPoint {
 			});
 			toolbar.add(settleSalariesButton);
 		}
+		
+		excelExportlButton = new AonToolbarButton("Informe de plazos de pago", AON.CSS.aonIconExcel());
+		excelExportlButton.setEnabled(selectedItems.size()>0);
+		excelExportlButton.addClickHandler(e -> {
+			long notSelectedFinances = finances.values().stream().filter(financesRow -> financesRow.getFinance().isSelected()).count();
+			
+			if(notSelectedFinances == 0) {
+				AonDialog warningDialog = new AonDialog("Informe de plazos de pago",
+						new HTML("No se puede generar el informe sin seleccionar vencimientos. Por favor revise los vencimientos seleccionadas."));
+
+				warningDialog.warning();
+			} else if(selectedItems.size() > 0){
+				diskForm.setAction(GWT.getHostPageBaseURL() + FINANCE_REPORT_EXCEL_PAYMENT);
+				financeParamsHidden.setValue(JsonParams.convert(searchPanel.getParams( opt )));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
+				
+				excelExportlButton.setEnabled(false);
+				checkAll( opt, false );
+			}
+		});
+		toolbar.add(excelExportlButton);
 	
 		return toolbar;
 	}
@@ -859,7 +885,12 @@ public class FinanceModule extends MainEntryPoint {
 		regName.setTitle(rname);
 		
 		Label payMethod = new Label(finance.getPayMethodName());
-		Label amount = new Label(AON.FMT.format(finance.getAmount()));
+		Label amount = new Label(AON.FMT.format(finance.getAmount() + finance.getExpenses()));
+		
+		if(0.00 != finance.getExpenses()) {
+			amount.setStyleName(AON.CSS.aonColorRed());
+			amount.setTitle("Importe: " + AON.FMT.format(finance.getAmount()) + ", Gastos: " + AON.FMT.format(finance.getExpenses()));
+		}
 		
 		FinanceActionsPanel actionsPanel = new FinanceActionsPanel(finance, this.isPayroll, new FinanceModuleCallback() {
 			
@@ -942,6 +973,7 @@ public class FinanceModule extends MainEntryPoint {
 		settleAllButton.setEnabled(selectedItems.size()>0);
 		unSettleAllButton.setVisible(selectedItems.size()>0 && searchPanel.isSettledChecked());
 		unSettleAllButton.setEnabled(selectedItems.size()>0 && searchPanel.isSettledChecked());
+		excelExportlButton.setEnabled(selectedItems.size()>0);
 		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 }		

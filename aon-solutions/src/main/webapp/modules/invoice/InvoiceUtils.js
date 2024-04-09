@@ -81,7 +81,7 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
   	data.uploaded += 1;
   	
     formData.append('key', 
-        'facturas'
+        'invoices'
         + `/${LS.getDomainName()}`
         + `/${LS.getDomainDocument()}`
         + `/${LS.getDomainLogin()}`
@@ -97,6 +97,39 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
           // Done. Inform the user
           success(file);
         } else if (xhr.readyState == 4 && xhr.status != 200) {
+          // Error. Inform the user
+          error(file, xhr);
+        }
+    });
+    xhr.send(formData);
+}
+
+export const s3UploadRawdoc = (file, success, error) => {
+    let key = LS.getDomainId() + crypto.randomUUID();  
+
+    let formData = new FormData();
+    let xhr = new XMLHttpRequest();
+    
+
+  	formData.append('key', key);
+    formData.append('success_action_status', '201');
+    formData.append('Content-Type', file.type);
+    formData.append('file', file);
+
+    xhr.open('POST', "https://aon-rawdoc.s3.amazonaws.com/", true);
+    xhr.addEventListener('readystatechange', (e) => {
+        if (xhr.readyState == 4 && xhr.status == 201) {
+          // Done. Inform the user
+            let invoice = new Invoice().setType('recibida');
+            invoice.file = {
+                contentType: file.type,
+                s3Bucket: 'aon-rawdoc',
+                s3Key: key
+            };
+    
+            insertInvoice(data).then(r => success(file))
+                    .catch((e) => error(file, e));
+         } else if (xhr.readyState == 4 && xhr.status != 200) {
           // Error. Inform the user
           error(file, xhr);
         }

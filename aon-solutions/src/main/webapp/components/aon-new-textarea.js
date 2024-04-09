@@ -14,6 +14,12 @@ export class AonNewTextarea extends AonElement {
     TITLE;
     MSG;
     MSG_SPAN;
+
+    OPTIONS;
+    OPTIONS_UL;
+    OPTIONS_LI;
+    options;
+    selected;
     
     
     get id() {
@@ -96,6 +102,11 @@ export class AonNewTextarea extends AonElement {
         this.ICON = this.id + CONSTANT.ICON.initCap();
         this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
         this.value = this.value || CONSTANT.EMPTY;
+
+
+        this.OPTIONS = this.id + 'Options';
+        this.OPTIONS_UL = this.OPTIONS + 'Ul';
+        this.OPTIONS_LI = this.OPTIONS + 'Li';
     }
 
     build() {
@@ -106,6 +117,16 @@ export class AonNewTextarea extends AonElement {
     
         this.buildBox(rootDiv);
         this.buildMsg(rootDiv);
+
+        let span = this.createSpan();
+        span.id = this.id + "OptionsSpan";
+        rootDiv.appendChild(span);
+    
+        let optionsDiv = this.createDiv();
+        optionsDiv.style.width = rootDiv.getBoundingClientRect().width;
+        optionsDiv.id = this.OPTIONS;
+        optionsDiv.className = 'aonInputListOptions';
+        span.appendChild(optionsDiv);
     }
 
     buildBox(parent) {
@@ -131,6 +152,7 @@ export class AonNewTextarea extends AonElement {
         textarea.addEventListener(EVENT.CHANGE, () => this.setValue(textarea.value));
         textarea.addEventListener(EVENT.BLUR, this.onBlur);
         textarea.addEventListener(EVENT.INPUT, this.onInput);
+        textarea.addEventListener(EVENT.KEYUP, (e) => this.onkeyupTextarea(e));
 
         // textarea.placeholder = this.getTitle();
         label.appendChild(textarea);
@@ -163,6 +185,49 @@ export class AonNewTextarea extends AonElement {
         span.className = CSS.AON_TEXTAREA_MSG_ERROR;
         span.innerHTML = message;
         div.appendChild(span);
+    }
+
+    onkeyupTextarea(e) {
+        let textarea = this.getElement(this.TEXTAREA);
+        this.setValue(textarea.value);
+        if(e.key || e.keyCode) {
+          if (e.keyCode == '38' || e.key == 'ArrowUp') {
+            // up arrow
+            let li = this.getElement(this.OPTIONS_LI + this.selected);
+            if(li) li.style.backgroundColor = 'transparent';
+            if(this.selected > -1){
+              this.selected = this.selected - 1;
+              let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+              if(li2) {
+                  li2.style.backgroundColor = '#f1f1f1';
+                  li2.scrollIntoView({block: "center", behavior: "smooth"});
+                }
+           }
+         }
+         else if (e.keyCode == '40' || e.key == 'ArrowDown') {
+           // down arrow
+           let li = this.getElement(this.OPTIONS_LI + this.selected);
+           if(li) li.style.backgroundColor = 'transparent';
+            if(this.selected < this.options.length) {
+                 this.selected = this.selected + 1;
+                let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+                if(li2) {
+                    li2.style.backgroundColor = '#f1f1f1';
+                    li2.scrollIntoView({block: "center", behavior: "smooth"});
+                }
+            }
+         } else if (e.keyCode == '13' || e.key == 'Enter') {
+           // enter
+            if(this.selected > -1 && this.selected < this.options.length) {
+                this.value = this.options[this.selected].name;
+               textarea.innerHTML = this.options[this.selected].name;
+                this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: this.options[this.selected] }));
+                this.closeOptions();
+            }  
+         } else {
+           this.dispatchEvent(new Event(EVENT.AON_KEYUP));
+         }
+       }
     }
 
     onBlur = () => {
@@ -275,6 +340,85 @@ export class AonNewTextarea extends AonElement {
 
     setDisabled(disabled) {
         this.disabled = disabled;
+    }
+
+
+    closeOptions() {
+        let opt = this.getElement(this.OPTIONS);
+        if (opt.classList.contains('is-visible')) {
+          opt.classList.remove('is-visible');
+        }
+      }
+
+    buildOptions(options) {
+        let opt = this.getElement(this.OPTIONS);
+        let textarea = this.getElement(this.TEXTAREA);
+
+        this.clearElement(opt);
+        this.options = options;
+        this.selected = -1;
+        if(options && options.length > 0) {
+            opt.classList.add('is-visible');
+            let ul = this.createElement(TAG.UL);
+            ul.id = this.OPTIONS_UL;
+            ul.classList.add(CSS.AON_UL);
+            ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
+            ul.setAttribute('for', this.getAttribute('id') + 'Icon');
+            for (let i = 0; i < options.length; i++) {
+                let li = this.createElement('li');
+                li.id = this.OPTIONS_LI + i;
+                li.className = 'aonInputListOptionsItem'
+                li.innerHTML = options[i].name;
+                li.addEventListener('click', (e) => {
+                    opt.classList.remove('is-visible');
+                    this.value = options[i].name;
+                    textarea.innerHTML = this.value;
+                    this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
+                });
+                ul.appendChild(li);
+            }
+            opt.appendChild(ul);
+            document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
+        } else this.closeOptions();
+    }
+ 
+    buildOptions(options) {
+        let opt = this.getElement(this.OPTIONS);
+        let textarea = this.getElement(this.TEXTAREA);
+ 
+        this.clearElement(opt);
+        this.options = options;
+        this.selected = -1;
+        if(options && options.length > 0) {
+            opt.classList.add('is-visible');
+            let ul = this.createElement(TAG.UL);
+            ul.id = this.OPTIONS_UL;
+            ul.classList.add(CSS.AON_UL);
+            ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
+            ul.setAttribute('for', this.getAttribute('id') + 'Icon');
+            for (let i = 0; i < options.length; i++) {
+                let li = this.createElement('li');
+                li.id = this.OPTIONS_LI + i;
+                li.className = 'aonInputListOptionsItem'
+                li.innerHTML = options[i].name;
+                li.addEventListener('click', (e) => {
+                    opt.classList.remove('is-visible');
+                    this.value = options[i].name;
+                    textarea.innerHTML = this.value;
+                    this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
+                });
+                ul.appendChild(li);
+            }
+            opt.appendChild(ul);
+            document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
+        } else this.closeOptions();
+    }
+    clickOutOption(event) {
+        let opt = this.getElement(this.OPTIONS);
+        let isClickInside =  opt.contains(event.target);
+        if (!isClickInside) {
+            this.closeOptions();
+        }
     }
 }
 if(!window.customElements.get(TAG.AON_NEW_TEXTAREA)){

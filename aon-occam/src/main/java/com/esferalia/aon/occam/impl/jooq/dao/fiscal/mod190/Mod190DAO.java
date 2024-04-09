@@ -585,7 +585,7 @@ public class Mod190DAO {
 		return ctx.getDslContext()
 			.selectFrom(FS_MODEL190_DETAIL)
 			.where(FS_MODEL190_DETAIL.FS_MODEL190.equal(mod190))
-			.orderBy(FS_MODEL190_DETAIL.NAME)
+			.orderBy(FS_MODEL190_DETAIL.NAME,FS_MODEL190_DETAIL.ACCRUAL_YEAR)
 			.fetch()
 			.stream()
 			.map( new Mod190DetailFiller() )

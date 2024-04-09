@@ -884,6 +884,12 @@
   overflow-y: auto;
 }
 
+.aonTabSubContent {
+  position: relative;
+  height: calc(100vh - 182px);
+  overflow-y: auto;
+}
+
 .aonContent::-webkit-scrollbar {
   display: none;
 }
@@ -920,14 +926,6 @@
 .aonVerticalMiddle {
   vertical-align: middle;
   font-size: 1.3rem;
-}
-
-.aonVerticalCenter {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
 }
 
 .aonClip {
@@ -976,6 +974,15 @@
 .aonFormCenter {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.aonFormCenterAndroidApp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 }
 
 .aonConnected {

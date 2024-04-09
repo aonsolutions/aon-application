@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class ItemCompositionDAO {
 	}
 	
 	public static final com.esferalia.aon.jooq.tables.Item COMPOSITION_ALIAS = ITEM.as("composition_item");
+	public static final com.esferalia.aon.jooq.tables.Product COMPOSITION_PRODUCT_ALIAS = PRODUCT.as("composition_product");
 	
 	private static final ItemCompositionPropertiesDAO ITEM_COMPOSITION_PROPERTIES = new ItemCompositionPropertiesDAO();
 
@@ -48,7 +50,10 @@ public class ItemCompositionDAO {
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, ItemCompositionFilter filter) {
-		return ctx.getDslContext().select().from(ITEM_COMPOSITION).where(ITEM_COMPOSITION_PROPERTIES.getConditions(filter));
+		return ctx.getDslContext().select().from(ITEM_COMPOSITION)
+				.leftOuterJoin(COMPOSITION_ALIAS).on(ITEM_COMPOSITION.COMPOSITION_ITEM.eq(COMPOSITION_ALIAS.ID))
+				.leftOuterJoin(COMPOSITION_PRODUCT_ALIAS).on(COMPOSITION_PRODUCT_ALIAS.ID.eq(COMPOSITION_ALIAS.PRODUCT))
+				.where(ITEM_COMPOSITION_PROPERTIES.getConditions(filter));
 	}
 	
 	public static Stream<ItemComposition> getStream(AONContext ctx, ItemCompositionFilter filter){
@@ -113,15 +118,15 @@ public class ItemCompositionDAO {
 		public static ItemComposition build(Record r) {
 			return new ItemComposition()
 				.setId(getValue(r, ITEM_COMPOSITION.ID))
-				.setDomain(getValue(r, ITEM_COMPOSITION.DOMAIN))
-				.setItemId(getValue(r, ITEM_COMPOSITION.ITEM))
-				.setCompositionItemId(getValue(r, ITEM_COMPOSITION.COMPOSITION_ITEM))
+				.setDomain(getInteger(r, ITEM_COMPOSITION.DOMAIN))
+				.setItemId(getInteger(r, ITEM_COMPOSITION.ITEM))
+				.setCompositionItemId(getInteger(r, ITEM_COMPOSITION.COMPOSITION_ITEM))
 				.setSequence(getValue(r, ITEM_COMPOSITION.SEQUENCE))
 				.setDescription(getValue(r, ITEM_COMPOSITION.DESCRIPTION))
-				.setQuantity(getValue(r, ITEM_COMPOSITION.QUANTITY))
+				.setQuantity(getDouble(r, ITEM_COMPOSITION.QUANTITY))
 				.setDiscountExpression(getValue(r, ITEM_COMPOSITION.DISCOUNT_EXPR))
 				.setComposition(checkField(r, COMPOSITION_ALIAS.ID)
-						? ItemFiller.build(r, COMPOSITION_ALIAS)
+						? ItemFiller.build(r, COMPOSITION_ALIAS, COMPOSITION_PRODUCT_ALIAS)
 						: new Item().setId(getValue(r, ITEM_COMPOSITION.COMPOSITION_ITEM)));
 		}
 	}

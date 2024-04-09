@@ -17,6 +17,8 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -33,7 +35,9 @@ import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -55,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -116,8 +121,9 @@ public class BidoqRequest {
 		}
 	}
 	
-	public static void selfcontaRecord(Domain domain, User user, JSONObject json) throws Exception {
-		tedi2Aon(domain, user, json);
+	public static Integer selfcontaRecord(Domain domain, User user, Invoice invoice, JSONObject json) throws Exception {
+		AccountingInvoice ai = tedi2Aon(domain, user, invoice, json);
+		return ai.getInvoice().getId();
 	}
 	
 	public static void selfconta(Domain domain, User user, String document, Integer year) throws Exception {
@@ -478,6 +484,40 @@ public class BidoqRequest {
 			}
 		});
 		return accountEntry;
+	}
+	
+	private static AccountingRegistry getCustomer(Domain domain, User user, Integer id) {
+		Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id));
+		return new AccountingRegistry()
+				.setType(AccountingRegistryType.CUSTOMER)
+				.setId(customer.getId())
+				.setName(customer.getName())
+				.setAccountId(customer.getAccount());
+	}
+	
+	private static AccountingRegistry getSupplier(Domain domain, User user, Integer id) {
+		Supplier supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id)).orElse(new Supplier());
+		return new AccountingRegistry()
+				.setType(AccountingRegistryType.SUPPLIER)
+				.setId(supplier.getId())
+				.setName(supplier.getName())
+				.setAccountId(supplier.getAccount());
+	}
+	
+	private static AccountingRegistry getCreditor(Domain domain, User user, Integer id) {
+		Creditor creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id)).orElse(new Creditor());
+		return new AccountingRegistry()
+				.setType(AccountingRegistryType.SUPPLIER)
+				.setId(creditor.getId())
+				.setName(creditor.getName())
+				.setAccountId(creditor.getAccount());
+	}
+
+	private static AccountingRegistry getRegistry(Domain domain, User user, Invoice invoice) {
+		checkRegistryAccounts(domain, user);
+		if(invoice.isSales()) return getCustomer(domain, user, invoice.getRegistry());
+		else  if(invoice.isPurchase()) return getSupplier(domain, user, invoice.getRegistry());
+		else return getCreditor(domain, user, invoice.getRegistry());
 	}
 	
 	private static AccountingRegistry getRegistry(AonConfiguration aonCtx, Domain domain, User user, JSONObject json, InvoiceType type, InvoiceTransactionType transaction) {
@@ -1262,79 +1302,39 @@ public class BidoqRequest {
 		return pm;
 	}
 	
-	public static AccountingInvoice tedi2Aon(Domain domain, User user, JSONObject ti) throws Exception {
-		System.out.println(ti.toString());
+	public static AccountingInvoice tedi2Aon(Domain domain, User user, Invoice invoice, JSONObject ti) throws Exception {
 		AccountingInvoice ai = new AccountingInvoice();
+
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
-		System.out.println(domain.getName());
-		LinkedList<Workplace> a = AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(),
-				f -> f.getDomainProperty().eq(domain.getId()));
-		System.out.println(a.size());
-
-		if (ti.optString("series") != null && ti.optString("series").length() > 5) {
-			throw new Exception("La serie no puede tener más de 5 carácteres");
-		}
-
+	
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 		String category = ti.optString("category");
-
-		Invoice invoice = new Invoice();
-		invoice.setScope(getScope(domain, user));
-		// invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())||
-		// InvoiceOpType.AIS.equals(ivs.get(i).getType()));
-		invoice.setTransaction(InvoiceTransactionType.safeValueOf(ti.optString("transaction")));
-
-		// invoice.setInvestment(ivs.get(i).isInvestment() != null &&
-		// ivs.get(i).isInvestment());
-		invoice.setDomain(domain.getId());
-		invoice.setIssueDate(AonDateUtils.parse(ti.optString("date"), "yyyy-MM-dd"));
-		invoice.setTaxDate(AonDateUtils.parse(ti.optString("date"), "yyyy-MM-dd"));
-		// invoice.setComments(selfInvoice.optString("comments"));
-		invoice.setType(getTediInvoiceType(ti));
-		if(invoice.isSales()) {
-			invoice.setSeries(ti.optString("series"));
-			invoice.setNumber(ti.optInt("number"));
-		}
-		invoice.setReferenceCode(ti.optString("reference"));
-		invoice.setTotal(ti.optDouble("total"));
-		invoice.setWithholding(false);
-		invoice.setSurcharge(false);
-		invoice.setDetails(new LinkedList<InvoiceDetail>());
-		AccountingRegistry ar = getRegistry(aonCtx, domain, user,
-				InvoiceType.SALES.equals(invoice.getType()) ? ti.optJSONObject("receiver") : ti.optJSONObject("sender"),
-				invoice.getType(), invoice.getTransaction());
-		invoice.setRegistry(ar.getId());
-		ai.setRegistry(ar);
 		ai.setInvoice(invoice);
+		ai.setRegistry(getRegistry(domain, user, invoice));
+		
+		if(invoice.isWithholding()) {
+			InvoiceBreakdown tax = invoice.getBreakdown().stream().filter(br -> br.getTaxType().equals(TaxType.RETENTION)).findFirst().orElse(new InvoiceBreakdown());
 
-		JSONArray taxes = ti.optJSONArray("taxes");
-		for (int i = 0; i < taxes.length(); i++) {
-			JSONObject tax = taxes.optJSONObject(i);
-			if (tax.optString("type").equalsIgnoreCase("IRPF")) {
-				ai.getInvoice().setWithholding(true);
-				Account retentionAccount = (invoice.isSales()) ? getDetaultPaidRetAccount(domain, user, aonCtx)
-						: getDefaultChargedRetAccount(domain, user, aonCtx);
+			Account retentionAccount = (invoice.isSales()) ? getDetaultPaidRetAccount(domain, user, aonCtx)
+					: getDefaultChargedRetAccount(domain, user, aonCtx);
 
-				InvoiceWithholding iw = new InvoiceWithholding()
-						.setWithholdingType(tax.optDouble("percentage") == 19.0 ? WithholdingType.RENTING : WithholdingType.PROFESSIONAL)
-						.setBase(tax.optDouble("base")).setPercentage(tax.optDouble("percentage")).setQuota(tax.optDouble("quota"))
-						.setAccountCode(retentionAccount.getCode())
-						.setAccountDescription(retentionAccount.getDescription())
-						.setAccountId(retentionAccount.getId());
-				ai.setWithholdingData(iw);
-			}
+			InvoiceWithholding iw = new InvoiceWithholding()
+					.setWithholdingType(tax.getWithholdingType())
+					.setBase(tax.getBase())
+					.setPercentage(tax.getPercentage())
+					.setQuota(tax.getQuota())
+					.setAccountCode(retentionAccount.getCode())
+					.setAccountDescription(retentionAccount.getDescription())
+					.setAccountId(retentionAccount.getId());
+			ai.setWithholdingData(iw); 
 		}
-
-		JSONArray details = ti.optJSONArray("details");
-	
+			
 		ai.setVats(new LinkedList<>());
-		Double totalService = 0.0;
-		Double totalNoService = 0.0;
-		for (int i = 0; i < details.length(); i++) {
-			JSONObject detail = details.optJSONObject(i);
+		
 
-			String account = detail.opt("account") != null ? detail.optString("account") : category;
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			detail.getAccount();
 
 			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 			if (outputAccount == null || outputAccount.getId() == null) {
@@ -1345,51 +1345,37 @@ public class BidoqRequest {
 				inputAccount = getIVAsoportado(domain, user);
 			}
 			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
-			Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), account);
+
+			
+			Account expAccount = detail.getAccount() != null
+				? ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), detail.getAccount())
+				: ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), category);
 			if (expAccount == null) {
-				expAccount = new Account().setCode(account)
+				expAccount = new Account().setCode(category)
 						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE TEDI INVOICE)").setAlias("SIN DESCRIPCIÓN")
 						.setDomain(domain.getId()).setActive(true);
-				checkNivelInferior(domain, user, account);
+				checkNivelInferior(domain, user, category);
 				expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
 			}
 
-			if ("705".equals(account.substring(0, 3)) || "62".equals(account.substring(0, 2))) {
-				totalService = totalService + detail.optDouble("amount");
-			} else {
-				totalNoService = totalNoService + detail.optDouble("amount");
-			}
-
-			// TODO AÑADIR PRODUCTO!!!
-//				Product product = new Product()
-//					.setCode(detail.optString("product_id"))
-//					.setName(detail.optString("product_name"));
-//				Item item = new Item()
-//					.setProduct(product)
-//					.setDescription(detail.optString("product_description"));
-//				item = AON.save(domain.getName(), domain.getId(), user.getLogin(), item);
-
-			Integer line = i + 1;
-			InvoiceDetail id = new InvoiceDetail()
-//						.setItem(new OldItem().setId(item.getId()))
-					.setDescription(detail.optString("description")).setDiscountExpression(detail.optString("discount"))
-					.setQuantity(detail.optDouble("quantity")).setAccount(expAccount.getId())
-					.setAccountCode(expAccount.getCode()).setAccountDescription(expAccount.getDescription())
-					.setDomain(domain.getId())
-					// .setInvestAsset(investAsset)
-					.setSource(InvoiceSource.ACCOUNT).setTaxableBase(detail.optDouble("amount"))
-					.setInvoice(ai.getInvoice()).setLine(line.shortValue())
-					.setPrepayment(detail.optBoolean("prepayment")).setPrice(detail.optDouble("price"))
-					.setSurcharge(detail.optDouble("surcharge")).setWorkPlace(ai.getWorkplace());
-
-			InvoiceVAT vat = new InvoiceVAT().setInvoiceDetail(id).setPrepayment(id.isPrepayment())
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT).setBase(detail.optDouble("amount"))
-					.setPercentage(detail.optDouble("vat")).setQuota(detail.optDouble("quota"))
-					.setSurcharge(detail.optDouble("surcharge")).setSurchargeQuota(detail.optDouble("surcharge_quota"))
+			InvoiceTax detailTax = detail.getInvoiceTaxes().stream().filter(f -> f.getTaxType().equals(TaxType.VAT)).findFirst().orElse(new InvoiceTax());
+			
+			InvoiceVAT vat = new InvoiceVAT()
+					.setInvoiceDetail(detail)
+					.setPrepayment(detail.isPrepayment())
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+					.setBase(detailTax.getBase())
+					.setPercentage(detailTax.getPercentage())
+					.setQuota(detailTax.getQuota())
+					.setSurcharge(detailTax.getSurcharge())
+					.setSurchargeQuota(detailTax.getSurchargeQuota())
 					// .setInvestAsset(ivs.get(j).getInvestAsset())
-					.setDeductiblePercent(100.0).setDeductibleQuota(detail.optDouble("quota"))
-					.setWithholding(!id.isPrepayment() ? ai.getInvoice().isWithholding() : false)
-					.setExpAccountId(expAccount.getId()).setExpAccountCode(expAccount.getCode())
+					.setDeductiblePercent(detailTax.getDeductiblePercent())
+					.setDeductibleQuota(detailTax.getDeductibleQuota())
+					.setWithholding(detailTax.isWithholding())
+					
+					.setExpAccountId(expAccount.getId())
+					.setExpAccountCode(expAccount.getCode())
 					.setExpAccountDescription(expAccount.getDescription())
 
 					.setOutputAccountCode(outputAccount.getCode())
@@ -1403,54 +1389,11 @@ public class BidoqRequest {
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
 
 			ai.addVat(vat);
-
-			if (vat.getSurcharge() > 0) {
-				invoice.setSurcharge(true);
-			}
 		}
-		ai.getInvoice().setService(totalService > totalNoService);
 
 		ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
 
-		JSONArray finances = ti.optJSONArray("finances");
-		ai.getInvoice().setFinances(new LinkedList<Finance>());
-		for (int i = 0; i < finances.length(); i++) {
-			JSONObject finance = finances.optJSONObject(i);
-			System.out.println(finance.toString());
-			System.out.println(finance.optDouble("amount"));
-			Finance f = new Finance().setAmount(finance.optDouble("amount"))
-					.setDueDate(AonDateUtils.parse(finance.optString("due_date"), "yyyy-MM-dd"))
-					.setPayMethod(getTediPaymethod(aonCtx, finance.optString("paymethod")).getId())
-					.setPayment(!invoice.isSales()).setBankAccount(new BankAccount(finance.optString("iban")));
-
-			if (finance.opt("account") != null) {
-				String code = calculateAccount(finance.optString("account"));
-				Account financeAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), code);
-				if (financeAccount == null || financeAccount.getId() == null) {
-					financeAccount = new Account().setCode(code)
-							.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE SELFCONTA)")
-							.setAlias("SIN DESCRIPCIÓN").setDomain(domain.getId()).setActive(true);
-					financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
-				}
-				ai.setPayAccountId(financeAccount.getId()).setPayAccountCode(financeAccount.getCode())
-						.setPayAccountDescription(financeAccount.getDescription());
-				ai.getInvoice().addFinance(f);
-			} else {
-				f.setInvoice(new Invoice().setId(ai.getInvoice().getId())).setDomain(domain.getId())
-						.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
-						.setRegistryDocument(ai.getInvoice().getRegistryDocument())
-						.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
-						.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
-						.setRegistryName(ai.getInvoice().getRegistryName()).setScope(ai.getInvoice().getScope())
-						.setSecurityLevel(ai.getInvoice().getSecurityLevel())
-						.setConcept(ai.getInvoice().getDocumentNumber()).setFinanceStatus(FinanceStatus.PENDING);
-				ai.getInvoice().addFinance(f);
-			}
-		}
-
 		ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-		Integer tiId = ti.getInt("id");
-		AON.rawdocDelete(domain.getName(), domain.getId(), user.getLogin(), tiId);
 		return ai;
 	}
 	

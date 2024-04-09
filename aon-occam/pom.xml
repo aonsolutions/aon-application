@@ -133,7 +133,7 @@
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.storage</artifactId>
 			<version>${project.version}</version>
-			<scope>copmpile</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -169,7 +169,7 @@
 		<dependency>
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>
-			<version>2.4.10.Final</version>
+			<version>2.5.0.Final</version>
 			<scope>compile</scope>
 		</dependency>
 	

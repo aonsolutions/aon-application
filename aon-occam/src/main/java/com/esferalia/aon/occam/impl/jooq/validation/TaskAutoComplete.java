@@ -224,7 +224,8 @@ public class TaskAutoComplete {
 		.innerJoin(USER)
 		.on(USER.DOMAIN.eq(DOMAIN.ID))
 		.innerJoin(TASK_HOLDER)
-		.on(USER.ID.eq(TASK_HOLDER.USER_ID))
+		.on(USER.ID.eq(TASK_HOLDER.USER_ID)
+		.and(USER.DOMAIN.eq(TASK_HOLDER.DOMAIN)))
 		.where(USER.LOGIN.eq(userLogin))
 		.and(DOMAIN.NAME.eq(domainName))
 		.fetchOptionalInto(TASK_HOLDER)
@@ -239,7 +240,8 @@ public class TaskAutoComplete {
         		.innerJoin(USER)
         		.on(USER.DOMAIN.eq(PARENT_DOMAIN.ID))
         		.innerJoin(TASK_HOLDER)
-        		.on(USER.ID.eq(TASK_HOLDER.USER_ID))
+        		.on(USER.ID.eq(TASK_HOLDER.USER_ID)
+        		.and(USER.DOMAIN.eq(TASK_HOLDER.DOMAIN)))
         		.where(USER.LOGIN.eq(userLogin))
         		.and(DOMAIN.NAME.eq(domainName))
         		.fetchOptionalInto(TASK_HOLDER)
@@ -325,7 +327,29 @@ public class TaskAutoComplete {
         		.and(DOMAIN.NAME.eq(domainName))
         		)
         		.returning()
-        		.fetchOne();
+        		.fetchOptional()
+        		.orElseGet(() -> 
+        		aonContext
+        		.getDslContext()
+        		.insertInto(REGISTRY)
+        		.columns(
+        		REGISTRY.DOMAIN
+        		, REGISTRY.NAME)
+        		.select( 
+        		DSL.select(
+        		USER.DOMAIN
+        		, USER.NAME) 
+        		.from(DOMAIN)
+        		.innerJoin(DOMAIN.as(PARENT_DOMAIN))
+        		.on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
+        		.innerJoin(USER)
+        		.on(USER.DOMAIN.eq(PARENT_DOMAIN.ID))
+        		.where(USER.LOGIN.eq(userLogin))
+        		.and(DOMAIN.NAME.eq(domainName))
+        		)
+        		.returning()
+        		.fetchOne()
+        		);
         		
         		aonContext
         		.getDslContext()

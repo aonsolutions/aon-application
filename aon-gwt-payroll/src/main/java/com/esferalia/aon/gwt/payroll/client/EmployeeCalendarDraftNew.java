@@ -763,7 +763,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.employeeCalendarDraftObject.initCalendarInfo(s -> {
 			// Init save and undo all
 			onSaved();
-			initializeYearLB(this.yearLB);
+			initializeYearLB(this.yearLB, this.employeeCalendarDraftObject.getContractStartDate());
 			hideYearLBOptions();
 			setSelectedValueLB(yearLB, (year+1900)+"");
 			
@@ -1497,6 +1497,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
+			
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart itPart) {}
     		
     	};
     	
@@ -1539,13 +1542,19 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	        @Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
 				dialog.info();
 			}
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
+				dialog.info();
+			}
+
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart itPart) {
+				AonDialog dialog = new AonDialog("Info", new HTML("Descargar fichero FIE desde en el apartado Laboral > Partes IT"));
 				dialog.info();
 			}
 			
@@ -2006,27 +2015,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.yearLB = yearLB;
 	}
 	
-	public void initializeYearLB(ListBox yearLB) {
-		year = DateUtils.getYear();
+	public void initializeYearLB(ListBox yearLB, Date contractStartDate) {
+		Integer iteratorYear = DateUtils.getYear() + 1;
+		Integer contractStartYear = DateUtils.getYear(contractStartDate);
 		
 		yearLB.clear();
 		
-		Integer yearAux = DateUtils.getYear();
-		Integer previusYearIII = year - 3;
-		Integer previusYearII = year - 2;
-		Integer previusYear = year - 1;
-		Integer nextYear = year + 1;
-		
-		yearLB.addItem(nextYear.toString(), nextYear.toString());
-		yearLB.addItem(yearAux.toString(), yearAux.toString());
-		yearLB.addItem(previusYear.toString(), previusYear.toString());
-		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
-		yearLB.addItem(previusYearIII.toString(), previusYearIII.toString());
+		while (iteratorYear >= contractStartYear) {
+			yearLB.addItem(iteratorYear.toString(), iteratorYear.toString());
+			iteratorYear--;
+		}
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(yearLB, DateUtils.getYear()+"");
 		
+		year = DateUtils.getYear();
 		year = year - 1900;
 		
 	}

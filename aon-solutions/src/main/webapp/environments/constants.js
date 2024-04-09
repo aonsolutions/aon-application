@@ -5,6 +5,7 @@ export const UNDEFINED = 'undefined';
 
 export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
+export const ACTIVE = 'active';
 export const ACTIVITY = 'activity';
 export const ACTIVITY_NAME = 'activityName';
 export const ADD = 'add';
@@ -37,6 +38,7 @@ export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
 export const AUDIT = 'audit';
+export const APPROVED = 'approved';
 
 // ----- B
 
@@ -53,7 +55,7 @@ export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
-
+export const CAMPAIGN = 'campaign';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
@@ -94,6 +96,7 @@ export const DELETE_FOREVER = 'deleteForever';
 export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
+export const DISCARDED = 'discarded';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DIV = 'div';
@@ -117,6 +120,7 @@ export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
+export const EXPORTED = "exported";
 
 // ----- F
 
@@ -156,6 +160,7 @@ export const INVOICE_ISSUED = 'invoiceIssued';
 export const INVOICE_OBJECT = 'invoiceObject';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket'; 
+export const INVOICES = 'invoices';
 export const ITEM = 'item';
 
 // ----- J
@@ -173,6 +178,7 @@ export const LOGO = 'logo';
 
 // ----- M
 
+export const MANAGEMENT = 'management';
 export const MARKETING = 'marketing';
 export const MATERIAL = "material";
 export const MATERIAL_ICONS = 'material-icons';
@@ -189,13 +195,26 @@ export const MSG = 'msg';
 
 export const NAME = 'name';
 export const NEXT = 'next';
+export const NEW_DATE = 'newDate';
 export const NOTES = 'notes';
 export const NUMBER = 'number';
 
 // ----- O
 
+export const OCR = 'ocr';
+export const OCR_ERROR = 'ocrError';
+export const OCR_INBOX = 'ocr';
+export const OCR_INBOX_ISSUED = 'ocrInboxIssued';
+export const OCR_INBOX_RECEIVED = 'ocrInboxReceived';
+export const OCR_INBOX_TICKET = 'ocrInboxTicket';
+export const OCR_REJECTED = 'ocrRejected';
+export const OCR_EXPORTED = 'ocrExported';
+export const OCR_DISCARDED = 'ocrDiscarded';
+export const OCR_PENDING = 'ocrPending';
+export const OCR_TRASH = 'ocrTrash';
 export const OBJECT = 'object';
 export const OFFER = 'offer';
+export const OFFERS = 'offers';
 export const OFF = 'off';
 export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
@@ -209,6 +228,9 @@ export const PASSWORD = 'password';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
+export const PENDING_CORRECTION = 'pendingCorrection';
+export const PENDING_DECISSION = 'pendingDecission';
+export const PENDINGS = 'pendings';
 export const PERCENTAGE = 'percentage';
 export const PERSON = 'person';
 export const PREPAYMENT = 'prepayment';
@@ -219,10 +241,12 @@ export const PRINT = 'print';
 export const PRINT_SECURE = 'printSecure';
 export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
+export const PROCESSING = 'processing'
 
 // ----- Q
 
 export const QUANTITY = 'quantity';
+export const QUESTION = 'question';
 export const QUOTA = 'quota';
 
 // ----- R
@@ -231,9 +255,6 @@ export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
-export const RAWDOC_OCR = 'rawdocOcr';
-export const RAWDOC_OCR_REJECTED = 'rawdocOcrRejected';
-export const RAWDOC_OCR_EXPORTED = 'rawdocOcrExported';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const RECEIVER = 'receiver';
@@ -280,6 +301,7 @@ export const SEARCH_BUTTON = 'searchButton';
 export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
+export const SERES = 'seres';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
 export const SHARE = 'share';
@@ -294,6 +316,7 @@ export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
+export const SURVEY = 'survey';
 
 // ----- T
 
@@ -301,6 +324,7 @@ export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
 export const TAGS = 'tags';
+export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';

@@ -27,6 +27,9 @@ import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 
 public class InvofoxToAonTestCase {
 	
+	private static final String API_URL = "https://api.invofox.com";
+	private static final String X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
+
 	@Test
 	@Disabled("Until default product test has been done")
 	void getValidDocument() {
@@ -51,7 +54,7 @@ public class InvofoxToAonTestCase {
 		};
 		OCRDocumentsParams params = OCRDocumentsParams.get()
 				.withCompany( companyId );
-		OCRDocumentsResponse docsResponse = OCRInvofox.getDocuments(params);
+		OCRDocumentsResponse docsResponse = OCRInvofox.getDocuments(X_API_KEY, API_URL, params);
 		assertNotNull(docsResponse);
 		assertTrue(docsResponse.getHttpCode().isPresent());
 		assertEquals( 200, docsResponse.getHttpCode().get());
@@ -67,7 +70,7 @@ public class InvofoxToAonTestCase {
 			})
 			.filter( d -> AonArrayUtils.constains(companyDocuments, d.getData().get().getIssuerDocument())
 					|| AonArrayUtils.constains(companyDocuments, d.getData().get().getRecipientDocument()) )
-			.map( optDocument -> OCRInvofox.getDocument(optDocument.getId().get()) )
+			.map( optDocument -> OCRInvofox.getDocument(X_API_KEY, API_URL, optDocument.getId().get()) )
 			.map( docResponse -> {
 				assertNotNull(docResponse);
 				assertTrue(docResponse.getHttpCode().isPresent());

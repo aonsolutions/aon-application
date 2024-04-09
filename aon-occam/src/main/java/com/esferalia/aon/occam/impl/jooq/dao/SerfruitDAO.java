@@ -370,7 +370,7 @@ public class SerfruitDAO {
 	
 	public static void saveCarrierPacking(AONContext ctx, Delivery delivery, CarrierPacking carrierPacking) {
 		if(carrierPacking.getCarrier() == null) {
-			carrierPacking.setCarrier(RegistryOldDAO.getCarrierStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			carrierPacking.setCarrier(CarrierDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getDocumentProperty().eq(carrierPacking.getCarrierDocument())))
 			.findFirst().orElse(new Carrier()).getId());
 		}

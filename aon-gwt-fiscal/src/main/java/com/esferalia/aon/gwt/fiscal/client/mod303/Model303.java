@@ -366,7 +366,7 @@ public class Model303 extends MainEntryPoint {
 		BIZKAIA_2023 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia() && mod303.getYear() == 2023);
+				return (mod303.isBizkaia() && mod303.getYear() >= 2023);
 			}
 
 			@Override

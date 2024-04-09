@@ -259,7 +259,7 @@ public class Toolkit {
 	// decimal to string
 	public static String parseDecimalToString(double dc) {
 		if(dc>0) {
-			return String.format("%.2f", dc);
+			return String.format(new Locale("es","ES"),"%.2f", dc);
 		}
 		return "";
 	}

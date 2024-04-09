@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
@@ -181,7 +182,6 @@ public class MainCRA extends MainEntryPoint {
 
 		// Init view and listboxes
 		initPreView();
-		initListBoxes();
 		setCRAHeightNotCollapsePanel();
 		setCCCsHeight();
 	}
@@ -205,7 +205,7 @@ public class MainCRA extends MainEntryPoint {
 		enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	}
 
-	private void initListBoxes() {
+	private void initListBoxes(Period period) {
 		// Set list box for filter by dates
 		month.clear();
 		monthTillT.clear();
@@ -219,17 +219,20 @@ public class MainCRA extends MainEntryPoint {
 			monthTillT.addItem(months[i], i + "");
 		}
 
-		Integer yearInt = DateUtils.getYear();
+		Integer minYear = period == null || null == period.getStart() ? DateUtils.getYear() : DateUtils.getYear(period.getStart());
+		Integer currentYear = DateUtils.getYear();
 
-		year.addItem(yearInt + "", yearInt + "");
-		year.addItem((yearInt - 1) + "", (yearInt - 1) + "");
-		year.addItem((yearInt - 2) + "", (yearInt - 2) + "");
-		year.addItem((yearInt - 3) + "", (yearInt - 3) + "");
-
-		yearTillT.addItem(yearInt + "", yearInt + "");
-		yearTillT.addItem((yearInt - 1) + "", (yearInt - 1) + "");
-		yearTillT.addItem((yearInt - 2) + "", (yearInt - 2) + "");
-		yearTillT.addItem((yearInt - 3) + "", (yearInt - 3) + "");
+		Integer iterateYear = currentYear;
+		while (iterateYear >= minYear) {
+			year.addItem(iterateYear + "", iterateYear + "");
+			iterateYear--;
+		}
+		
+		iterateYear = currentYear;
+		while (iterateYear >= minYear) {
+			yearTillT.addItem(iterateYear + "", iterateYear + "");
+			iterateYear--;
+		}
 
 		// Type List
 		typeList.clear();
@@ -639,19 +642,24 @@ public class MainCRA extends MainEntryPoint {
 		this.mainCRAObjectNew = mainCRAObjectNew;
 
 		// Create findPeriod, first day of previus month
-		createInitialDate();
-		setInitialLBAndCBSelected();
-		onListCras();
+		this.mainCRAObjectNew.getMinMaxCraDate(period -> {
+			initListBoxes(period);
+			createInitialDate(period);
+			setInitialLBAndCBSelected();
+			onListCras();
 
-		selectionCCCInfoModel.addSelectionChangeHandler(
-				selectionEvent -> exportButton.setVisible(!selectionCCCInfoModel.getSelectedSet().isEmpty()));
+			selectionCCCInfoModel.addSelectionChangeHandler(
+					selectionEvent -> exportButton.setVisible(!selectionCCCInfoModel.getSelectedSet().isEmpty()));
+		}, failure -> {
+			Window.alert(failure.getMessage());
+		});
 	}
 
-	private void createInitialDate() {
+	private void createInitialDate(Period period) {
 		// Get first day of previus month
 		findingDate = DateUtils.addMonths2Date(findingDate, -1);
 		findingDate = DateUtils.getFirstDayOfMonth(findingDate);
-		findingDateCRA = DateUtils.addMonths2Date(findingDateCRA, -1);
+		findingDateCRA = null == period.getEnd() ? new Date() : period.getEnd();
 		findingDateCRA = DateUtils.getFirstDayOfMonth(findingDateCRA);
 	}
 

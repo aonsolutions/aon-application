@@ -552,11 +552,17 @@
       <artifactId>openid4java</artifactId>
       <version>0.9.7</version>
       <scope>compile</scope>
+      <exclusions>
+		  <exclusion>
+	          <groupId>xml-apis</groupId>
+	          <artifactId>xml-apis</artifactId>
+		  </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>10.1.7</version>
+      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -568,7 +574,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>10.1.7</version>
+      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

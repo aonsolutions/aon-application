@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -33,7 +35,7 @@ public class InvoiceDetail implements Serializable {
 	private String description;
 	private double quantity;
 	private double price;
-	private String discountExpression;
+	private DiscountExpression discountExpression;
 	private double taxableBase;
 	private double taxes;
 	private double surcharge;
@@ -98,8 +100,9 @@ public class InvoiceDetail implements Serializable {
 		return investAssetData;
 	}
 	
-	public void setInvestAssetData(InvestAsset investAssetData) {
+	public InvoiceDetail setInvestAssetData(InvestAsset investAssetData) {
 		this.investAssetData = investAssetData;
+		return this;
 	}
 	
 	public Integer getInvestAsset() {
@@ -196,23 +199,44 @@ public class InvoiceDetail implements Serializable {
 		this.quantity = quantity;
 		return this;
 	}
-	public Double getPrice() {
+	public double getPrice() {
 		return price;
 	}
+	
 	public InvoiceDetail setPrice(double price) {
 		this.price = price;
 		return this;
 	}
-	public String getDiscountExpression() {
-		if(discountExpression == null) {
-			discountExpression = "0.0";
-		}
+	
+	public double getAmount() {
+		return getPrice() * getQuantity() * (1 - getDiscount()/100);
+	}
+	
+	public DiscountExpression getDiscountExpression() {
+		if(discountExpression == null)
+			discountExpression = new DiscountExpression("0.0");
 		return discountExpression;
 	}
-	public InvoiceDetail setDiscountExpression(String discountExpression) {
+	
+	public InvoiceDetail setDiscountExpression(DiscountExpression discountExpression) {
 		this.discountExpression = discountExpression;
 		return this;
 	}
+	
+	public InvoiceDetail setDiscountExpression(String discountExpression) {
+		this.discountExpression = new DiscountExpression(discountExpression);
+		return this;
+	}
+	
+	public double getDiscount() {
+		return getDiscountExpression().getPercentage();
+	}
+	
+	public InvoiceDetail setDiscount(double discount) {
+		setDiscountExpression(new DiscountExpression(discount));
+		return this;
+	}
+	
 	public InvoiceSource getSource() {
 		return source;
 	}
@@ -267,9 +291,6 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
-		if (getInvoiceTaxes() == null) {
-			setInvoiceTaxes(new LinkedList<>());
-		}
 		getInvoiceTaxes().add(invoiceTax);
 		return this;
 	}

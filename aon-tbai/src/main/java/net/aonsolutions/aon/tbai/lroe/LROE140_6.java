@@ -45,7 +45,7 @@ public class LROE140_6 extends LROE140 {
 		DatosOperacionType datosOperacion = new DatosOperacionType();
 		datosOperacion.setSerieFactura(invoice.getSeries());
 		datosOperacion.setNumFactura(Integer.toString(invoice.getNumber()));
-		Double total = invoice.getDetails().stream().filter(f -> f.isPrepayment()).mapToDouble(r -> r.getQuantity() * r.getPrice() -(r.getQuantity() * r.getPrice() * AonNumberUtils.todouble(r.getDiscountExpression()) / 100)).sum();
+		Double total = invoice.getDetails().stream().filter(f -> f.isPrepayment()).mapToDouble(r -> r.getQuantity() * r.getPrice() -(r.getQuantity() * r.getPrice() * r.getDiscount() / 100)).sum();
 		datosOperacion.setImporteTotal(AonNumberUtils.toString(AonMathUtils.round(total)));
 		suplido.setDatosOperacion(datosOperacion);
 		suplidos.getFondoSuplido().add(suplido);
@@ -61,6 +61,8 @@ public class LROE140_6 extends LROE140 {
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		detalleRenta.setEpigrafe(invoice.getEpigraph());
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();

@@ -9,6 +9,7 @@ import {AonDate} from './aon-date.js';
 import {AonSelect} from './aon-select.js';
 
 import '../css/aon-search.css';
+import { AonNewDate } from './aon-new-date.js';
 
 export class AonSearch extends AonElement {
 
@@ -325,6 +326,9 @@ export class AonSearch extends AonElement {
 			break;
 			case CONSTANT.DATE:
 				html = setAttributes(new AonDate(), attributes);
+			break;
+			case CONSTANT.NEW_DATE:
+				html = setAttributes(new AonNewDate(), attributes);
 			break;
 			case CONSTANT.HTML_ELEMENT:
 				html = setAttributes(attributes.element, {...attributes, element: ""});

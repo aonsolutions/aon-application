@@ -49,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -416,9 +417,16 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCRAs(String domain, String user, long liquidDateTime, AsyncCallback<List<CRA>> callback) {
+	public void getCRAs(String domain, String user, long liquidDateTime, AsyncCallback<List<CRA>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getCRAs(domain, user, liquidDateTime, new AsyncCallbackWrapper<List<CRA>>(callback));
+	}
+	
+
+	@Override
+	public void getMinMaxCraDate(String domain, String user, AsyncCallback<Period> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMinMaxCraDate(domain, user, new AsyncCallbackWrapper<Period>(callback));
 	}
 
 	@Override
@@ -1222,6 +1230,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void duplicateContract(String domainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employees, newStartDate, callback);
+	}
+	
+	// ------------------------------------------------ Pension Plan AFI
+
+	@Override
+	public void checkPensionPlanAFI(String domainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.checkPensionPlanAFI(domainName, currentUser, date, cccIdList, callback);
 	}
 
 }

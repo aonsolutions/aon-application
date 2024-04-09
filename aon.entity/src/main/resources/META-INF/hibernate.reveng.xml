@@ -64,7 +64,8 @@
 	<table-filter match-name="invoice_batch_detail" exclude="true" />
 	<table-filter match-name="fs_model_invoice" exclude="true" />
 
-	<table-filter match-name="contract_doc" exclude="true" />
+	<table-filter match-name="contract_doc" exclude="true" />	
+	<table-filter match-name="invoice_doc" exclude="true" />
 	<table-filter match-name="delivery_packaging" exclude="true" />
 	<table-filter match-name="sales_info" exclude="true" />
 	<table-filter match-name="delivery_info" exclude="true" />

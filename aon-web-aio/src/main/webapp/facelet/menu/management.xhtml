@@ -10,9 +10,9 @@
 
 	<ui:define name="content">
 		
-		<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
-			<ui:include src="/facelet/new/portlet/s3UploadForm.xhtml" >
-				<ui:param name="s3Prefix" value="facturas" />
+		<aon:if test="#{dur.invofox}" >
+			<ui:include src="/facelet/homepage/portlet/s3UploadForm.xhtml" >
+				<ui:param name="s3Prefix" value="invoices" />
 				<ui:param name="s3Bucket" value="aon-upload-post" />
 				<ui:param name="uploadId" value="#{desktop.getTime('yyyyMMddhhmmss')}" />
 				<ui:param name="uploadPanel" value="s3InvoiceUploadPanel" />
@@ -25,7 +25,7 @@
 		<aon:form id="managementMenu">
 			<aon:div styleClass="aon-scroll-area">
 				
-				<aon:if test="#{domainSwitcher.aonSolutionsOrg}" >
+				<aon:if test="#{dur.invofox}" >
 					<aon:div id="s3InvoiceUploadPanel" styleClass="aon-file-upload-panel">
 						<aon:outputText styleClass="aon-padding" value="Subir facturas" />
 						<aon:outputText styleClass="material-icons" value="cloud_upload" />

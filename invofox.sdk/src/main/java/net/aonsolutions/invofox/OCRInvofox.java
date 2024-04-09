@@ -1,18 +1,15 @@
 package net.aonsolutions.invofox;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -21,33 +18,35 @@ import org.json.JSONObject;
 import net.aonsolutions.invofox.json.OCRCompaniesResponseJSON;
 import net.aonsolutions.invofox.json.OCRCompanyJSON;
 import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
+import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
+import net.aonsolutions.invofox.json.OCRInfoResponseJSON;
 import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
 import net.aonsolutions.invofox.model.OCRCompanyResponse;
+import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCRInfoResponse;
 import net.aonsolutions.invofox.model.OCRLoginTokenResponse;
 import net.aonsolutions.invofox.model.OCRResponse;
 import net.aonsolutions.invofox.model.OCRSeverity;
 
 public class OCRInvofox {
 
+	private static final String APPLICATION_JSON = "application/json";
+
+
 	private static final int STATUS_OK = 200;
 
 
 	private static final String API_URL = "api-url";
-    	private static final String X_API_KEY = "x-api-key";
-	private static final String DEFAULT_CONFIG_FILE = "/etc/aon-aio/invofox";
-	
-	private static final String DEF_API_URL = "https://prod.kinequo.com/backends/midas";
-	private static final String PROD_X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
-	//private static final String TEST_X_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+    	private static final String API_KEY = "x-api-key";
 	
 	
 
@@ -55,48 +54,35 @@ public class OCRInvofox {
 	}
 	
         
-        private static String getApiURL() {
-            return getProperty(API_URL, DEF_API_URL);
-        }
-
-        private static String getXApiKey() {
-            return getProperty(X_API_KEY, PROD_X_API_KEY);
-        }
-        
-        private static String getCompanyURL() {
-            return getCompaniesURL() + "/{0}";
-        }
-
-        private static String getCompaniesURL() {
-            return getApiURL() + "/companies";
+        private static String getCompaniesURL(String apiURL) {
+            return apiURL + "/companies";
         }
 	
-        private static String getDocumentURL() {
-            return getDocumentsURL() + "/{0}";
+        private static String getCompanyURL(String apiURL) {
+            return getCompaniesURL(apiURL) + "/{0}";
         }
 
-        private static String getDocumentsURL() {
-            return getApiURL() + "/documents";
+        private static String getDocumentURL(String apiURL) {
+            return getDocumentsURL(apiURL) + "/{0}";
         }
 
-        private static String getLoginTokenURL() {
-            return getApiURL() + "/auth/login-token";
+        private static String getOcrInfoURL(String apiURL) {
+            return getDocumentURL(apiURL)+ "/ocr";
+        }
+
+        private static String getDocumentsURL(String apiURL) {
+            return apiURL + "/documents";
+        }
+
+        private static String getLoginTokenURL(String apiURL) {
+            return apiURL + "/auth/login-token";
         }
         
 	
-        private static String getProperty(String property, String def)  {
-            try ( InputStream is = new FileInputStream(DEFAULT_CONFIG_FILE) ){
-        	Properties properties = new Properties();
-                properties.load(is);
-                return properties.getProperty(property, def);
-            } catch (IOException e) {
-        	return System.getProperty(property, def);
-	    }
-        }
 	// ---------------------------------------------------------------------- [POST METHOD]
-	private static <T extends OCRResponse> T post(String url, JSONObject postData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+	private static <T extends OCRResponse> T post(String apiKey, String url, JSONObject postData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
 		try {
-			HttpResponse<String> response = post(url, postData);
+			HttpResponse<String> response = post(apiKey, url, postData);
 			return giveBack(response, supplier, jsonResponseBuilder);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -105,12 +91,12 @@ public class OCRInvofox {
 			return internalErrorResponse(e, supplier);
 		}
 	}
-	private static HttpResponse<String> post(String url, JSONObject postData) throws IOException, InterruptedException {
+	private static HttpResponse<String> post(String apiKey, String url, JSONObject postData) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header(X_API_KEY, getXApiKey())
-			.header("accept", "application/json")
-			.header("Content-Type", "application/json")
+			.header(API_KEY, apiKey)
+			.header("accept", APPLICATION_JSON)
+			.header("Content-Type", APPLICATION_JSON)
 			.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
 			.build();
 		return HttpClient.newBuilder()
@@ -119,9 +105,9 @@ public class OCRInvofox {
 	}
 
 	// ---------------------------------------------------------------------- [DELETE METHOD]
-	private static <T extends OCRResponse> T delete(String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+	private static <T extends OCRResponse> T delete(String apiKey, String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
 		try {
-			HttpResponse<String> response = delete(url);
+			HttpResponse<String> response = delete(apiKey, url);
 			return giveBack(response, supplier, jsonResponseBuilder);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -130,10 +116,10 @@ public class OCRInvofox {
 			return internalErrorResponse(e, supplier);
 		}
 	}
-	private static HttpResponse<String> delete(String url) throws IOException, InterruptedException {
+	private static HttpResponse<String> delete(String apiKey, String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header(X_API_KEY, getXApiKey())
+			.header(API_KEY, apiKey)
 			.DELETE()
 			.build();
 		return HttpClient.newBuilder()
@@ -141,9 +127,9 @@ public class OCRInvofox {
 			.send(request, BodyHandlers.ofString());
 	}
 	// ---------------------------------------------------------------------- [PUT METHOD]
-	private static <T extends OCRResponse> T put(String url, JSONObject putData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+	private static <T extends OCRResponse> T put(String apiKey, String url, JSONObject putData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
 		try {
-			HttpResponse<String> response = put(url, putData);
+			HttpResponse<String> response = put(apiKey, url, putData);
 			return giveBack(response, supplier, jsonResponseBuilder);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -152,12 +138,12 @@ public class OCRInvofox {
 			return internalErrorResponse(e, supplier);
 		}
 	}
-	private static HttpResponse<String> put(String url, JSONObject putData) throws IOException, InterruptedException {
+	private static HttpResponse<String> put(String apiKey, String url, JSONObject putData) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header(X_API_KEY, getXApiKey())
-			.header("accept", "application/json")
-			.header("Content-Type", "application/json")
+			.header(API_KEY, apiKey)
+			.header("accept", APPLICATION_JSON)
+			.header("Content-Type", APPLICATION_JSON)
 			.PUT( HttpRequest.BodyPublishers.ofString(putData.toString()) )
 			.build();
 		return HttpClient.newBuilder()
@@ -166,9 +152,9 @@ public class OCRInvofox {
 	}
 
 	// ---------------------------------------------------------------------- [GET METHOD]
-	private static <T extends OCRResponse> T get(String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+	private static <T extends OCRResponse> T get(String apiKey, String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
 		try {
-			HttpResponse<String> response = get(url);
+			HttpResponse<String> response = get(apiKey, url);
 			return giveBack(response, supplier, jsonResponseBuilder);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -177,10 +163,10 @@ public class OCRInvofox {
 			return internalErrorResponse(e, supplier);
 		}
 	}
-	private static HttpResponse<String> get(String url) throws IOException, InterruptedException {
+	private static HttpResponse<String> get(String apiKey, String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header(X_API_KEY, getXApiKey())
+			.header(API_KEY, apiKey)
 			.GET()
 			.build();
 		return HttpClient.newBuilder()
@@ -212,44 +198,64 @@ public class OCRInvofox {
 
 	// ---------------------------------------------------------------------- [LOGIN TOKEN]
 	
-	public static OCRLoginTokenResponse getLoginToken() {
-		return post(getLoginTokenURL(), new JSONObject(), OCRLoginTokenResponse::new, OCRLoginTokenResponseJSON::from);
+	public static OCRLoginTokenResponse getLoginToken(String apiKey, String apiUrl) {
+		return post(apiKey, getLoginTokenURL(apiUrl), new JSONObject(), OCRLoginTokenResponse::new, OCRLoginTokenResponseJSON::from);
 	}
 	
 	// ---------------------------------------------------------------------- [DOCUMENTS]
-	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
-		return get(getDocumentsURL() + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+	public static OCRDocumentsResponse getDocuments(String apiKey, String apiUrl, OCRDocumentsParams params) {
+		OCRDocumentsResponse documentsResponse = get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		documentsResponse.setDocuments(documents);
+		return documentsResponse;
 	}
 	
-	public static OCRDocumentsResponse getCompanyInvoices(String taxId) {
-		OCRCompaniesResponse resp = getCompanies(OCRCompanyParams.get().withTaxId(taxId));
+
+	public static OCRDocumentsResponse getCompanyInvoices(String apiKey, String apiUrl, String taxId) {
+		OCRCompaniesResponse resp = getCompanies(apiKey, apiUrl, OCRCompanyParams.get().withTaxId(taxId));
 		Optional<List<OCRCompany>> companiesOpt = resp.getCompanies(); 
 		if (resp.getError().isPresent() || !companiesOpt.isPresent()) {
 			return resp.copy(new OCRDocumentsResponse());
 		}
 		return companiesOpt.get().stream()
 			.findFirst()
-			.map( company -> get(getDocumentsURL() + OCRDocumentsParams.get().withCompany(company.getId()).build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from))
+			.map( company -> get(apiKey, getDocumentsURL(apiUrl) + OCRDocumentsParams.get().withCompany(company.getId()).build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from))
 			.orElse( resp.copy(new OCRDocumentsResponse()) );
 	}
 	// ---------------------------------------------------------------------- [DOCUMENT]
-	public static OCRDocumentResponse getDocument(String documentId) {
-		return get(MessageFormat.format(getDocumentURL(), documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	public static OCRDocumentResponse getDocument(String apiKey, String apiUrl, String documentId) {
+		return get(apiKey, MessageFormat.format(getDocumentURL(apiUrl), documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
-	public static OCRDocumentResponse markAsExported(String documentId) {
+	
+	public static OCRDocumentResponse putDocument(String apiKey, String apiUrl, OCRDocument document) {
+		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), document.getId().orElseThrow(IllegalArgumentException::new)), OCRDocumentJSON.to(document), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
+
+	public static OCRDocumentResponse markAsExported(String apiKey, String apiUrl, String documentId) {
 		JSONObject putData = new JSONObject();
 		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
-		return put(MessageFormat.format(getDocumentURL(), documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
+	public static OCRInfoResponse getOcrInfo(String apiKey, String apiUrl, String documentId) {
+		return get(apiKey, MessageFormat.format(getOcrInfoURL(apiUrl), documentId), OCRInfoResponse::new, OCRInfoResponseJSON::from);
 	}
 	// ---------------------------------------------------------------------- [COMPANIES]
-	public static OCRCompanyResponse postCompany(OCRCompany company) {
-		return  post(getCompaniesURL(), OCRCompanyJSON.to(company), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
+	public static OCRCompanyResponse postCompany(String apiKey, String apiUrl, OCRCompany company) {
+		return  post(apiKey, getCompaniesURL(apiUrl), OCRCompanyJSON.to(company), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
 	}
-	public static OCRResponse deleteCompany(String companyId) {
-		return delete(MessageFormat.format(getCompanyURL(), companyId), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
+	public static OCRResponse deleteCompany(String apiKey, String apiUrl, String companyId) {
+		return delete(apiKey, MessageFormat.format(getCompanyURL(apiUrl), companyId), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
 	}
-	public static OCRCompaniesResponse getCompanies(OCRCompanyParams params) {
-		return get(getCompaniesURL() + params.build(), OCRCompaniesResponse::new, OCRCompaniesResponseJSON::from);
+	public static OCRCompaniesResponse getCompanies(String apiKey, String apiUrl, OCRCompanyParams params) {
+		return get(apiKey, getCompaniesURL(apiUrl) + params.build(), OCRCompaniesResponse::new, OCRCompaniesResponseJSON::from);
+	}
+	
+	
+	public static void main(String[] args) {
+//	    System.out.println(OCRCompaniesResponseJSON.to(getCompanies(TEST_X_API_KEY, DEF_API_URL, OCRCompanyParams.get().withTaxId("B01487271"))).toString(1));
+//	    System.out.println(OCRDocumentResponseJSON.to(getDocument(TEST_X_API_KEY, DEF_API_URL, "659b530b802d990008d8ecde")).toString(1));
+//	    System.out.println(OCRInfoResponseJSON.to(getOcrInfo(TEST_X_API_KEY, DEF_API_URL, "659b530b802d990008d8ecde")).toString(1));
+//	    System.out.println(OCRLoginTokenResponseJSON.to(getLoginToken(TEST_API_KEY, DEF_API_URL)).toString(1).toString());
 	}
 	
 }

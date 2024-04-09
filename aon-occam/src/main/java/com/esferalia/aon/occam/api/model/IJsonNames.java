@@ -107,6 +107,7 @@ public final class IJsonNames {
 	public static final String COMMERCIAL = "commercial";
 	public static final String COMMISSION_TYPE = "commission_type";
 	public static final String COMPANY = "company";
+	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";
 	public static final String COMPOSITION = "composition";
 	public static final String COMPOSITION_ITEM = "compositionItem";
@@ -139,6 +140,7 @@ public final class IJsonNames {
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
+	public static final String DATA = "data";
 	public static final String DATE = "date";
 	public static final String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	public static final String DAYS_TO_EXPIRE = "daysToExpire";
@@ -285,6 +287,7 @@ public final class IJsonNames {
 	public static final String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	public static final String INVOICE_TYPES = "invoiceTypes";
 	public static final String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
+	public static final String INVOICES = "invoices";
 	public static final String IRPF = "irpf";
 	public static final String IRPF_PARAMS = "irpfParams";
 	public static final String IRPF_REGIME = "irpfRegime";
@@ -459,6 +462,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
 	public static final String RATTACH = "rattach";
+	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
@@ -498,6 +502,9 @@ public final class IJsonNames {
 	public static final String RSELLER = "rseller";
 	public static final String RSS = "rss";
 	// ---------------------------------------------------------------------------------------------	[S] 
+
+	public static final String S3_BUCKET = "s3Bucket";
+	public static final String S3_KEY = "s3Key";
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
 	public static final String SALES_DETAIL = "salesDetail";
@@ -553,6 +560,7 @@ public final class IJsonNames {
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
 	public static final String SUFIX = "sufix";
+	public static final String SUPPORT = "support";
 	public static final String SURCHARGE_PERCENT = "surchargePercent";
 	public static final String SURCHARGE_QUOTA = "surcharge_quota";
 	public static final String SURCHARGEQUOTA = "surchargeQuota";

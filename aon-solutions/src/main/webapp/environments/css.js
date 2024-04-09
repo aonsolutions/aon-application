@@ -68,11 +68,11 @@ export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
 export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
+export const AON_TAB_SUB_CONTENT = 'aonTabSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
-export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
 export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
@@ -80,6 +80,7 @@ export const AON_DIV_BUTTON = 'aonDivButton';
 export const AON_SEARCH_BOX = 'aonSearchBox';
 export const AON_SEARCH_BOX_BETA = 'aonSearchBoxBeta';
 export const AON_FORM_CENTER = 'aonFormCenter';
+export const AON_FORM_CENTER_ANDROID_APP = 'aonFormCenterAndroidApp';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
@@ -417,6 +418,13 @@ export const DIALOG_CANCEL = 'dialogCancel';
 
 // Color
 export const AON_COLOR_FULL = 'colorFull';
+
+
+// PDF.js
+export const PDFJS_PDF_VIEWER = 'pdfViewer';
+export const PDFJS_TEXT_LAYER = 'textLayer';
+
+
 
 /**
  * Name to CSS variable conversion.

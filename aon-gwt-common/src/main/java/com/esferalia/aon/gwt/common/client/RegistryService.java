@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -65,7 +67,8 @@ public interface RegistryService extends RemoteService {
 	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
 	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
-	void createCustomerFeeList(String domainName, int domain, String user, Fee fee);
+	Fee createCustomerFeeList(String domainName, int domain, String user, Fee fee);
+	void updateRitemCustomerFee(String domainName, int domain, String user, Integer id, Integer ritem);
 	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
@@ -75,6 +78,8 @@ public interface RegistryService extends RemoteService {
 	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);
 	Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery);
 	Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery);
+	
+	Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery);
 	
 	List<Fee> parseFeeFile(Domain domain, User user, String data);
 	ImportError importFee(Domain domain, User user, Fee fee, Integer index);
@@ -88,6 +93,16 @@ public interface RegistryService extends RemoteService {
 	LinkedList<BookingCheck> getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
+	LinkedList<BookingCheck> getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck);
 	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings);
+	Seller getCustomerSeller(String domainName, int domain, String user, Integer customerId);
+	String getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId);
+	
+	// **************************************************
+	// ********************************** [SUPPORT AGENT]
+	// **************************************************
+	HashMap<Seller, RegistryMedia> getActiveSupportAgents(String domainName, int domain, String user);
+	List<Customer> getCustomerWithoutAgent(String domainName, int domain, String user);
+
 }

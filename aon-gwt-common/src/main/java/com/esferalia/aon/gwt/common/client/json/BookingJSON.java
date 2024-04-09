@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
 import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -37,12 +38,15 @@ public class BookingJSON {
 		return list;
 	}
 	
-	private static Booking parseBookingJSON(JSONObject json) {
+	public static Booking parseBookingJSON(JSONObject json) {
 		List<AonApp> apps = new LinkedList<>();
 		List<AonApp> parentApps = new LinkedList<>();
 		
-		for(int i=0; i<JsonGWTUtils.getJSONArray(json, IJsonNames.APPS).size(); i++)
-			apps.add(AonApp.safeValueOf(JsonGWTUtils.getJSONArray(json, IJsonNames.APPS).get(i).toString()));
+		for(int i=0; i<JsonGWTUtils.getJSONArray(json, IJsonNames.APPS).size(); i++) {
+			String aonAppStr = JsonGWTUtils.getJSONArray(json, IJsonNames.APPS).get(i).toString();
+			aonAppStr = AonStringUtils.containsIgnoreCase(aonAppStr, "\"") ? aonAppStr.replace("\"", "") : aonAppStr;
+			apps.add(AonApp.safeValueOf(aonAppStr));
+		}
 		
 		for(int i=0; i<JsonGWTUtils.getJSONArray(json, IJsonNames.PARENT_APPS).size(); i++)
 			parentApps.add(AonApp.safeValueOf(JsonGWTUtils.getJSONArray(json, IJsonNames.PARENT_APPS).get(i).toString()));
@@ -163,6 +167,9 @@ public class BookingJSON {
 			// ChildBillingUsers
 			bookingResume.setChildBillingUsers((JsonGWTUtils.getInteger(json, "childBillingUsers")));
 			
+			// TotalChilds
+			bookingResume.setTotalChilds((JsonGWTUtils.getInteger(json, "totalChilds")));
+						
 			// DomainTypes
 			HashMap<DomainType, DomainTypeInfo> domainTypes = new  HashMap<DomainType, DomainTypeInfo>();
 			JSONObject domainTypesObj = JsonGWTUtils.getJSONObject(json, "domainTypes");
@@ -216,6 +223,7 @@ public class BookingJSON {
 			.setAonCustomer(JsonGWTUtils.getInteger(json, IJsonNames.AON_CUSTOMER))
 			.setAonStatus(AonStatus.safeValueOf(JsonGWTUtils.getString(json,IJsonNames.AON_STATUS)))
 			.setApps(getDomainApps(JsonGWTUtils.getJSONArray(json, IJsonNames.APPS)))
+			.setUsers(getDomainUsers(JsonGWTUtils.getJSONArray(json, IJsonNames.USERS)))
 		;
 	}
 
@@ -228,6 +236,50 @@ public class BookingJSON {
 		}
  		return list;
 	}
+	
+	private static List<User> getDomainUsers(JSONArray jsonArray) {
+		LinkedList<User> list = new LinkedList<>();
+		for(Integer i = 0; i < jsonArray.size(); i++) {
+			JSONObject userJson = jsonArray.get(i).isObject();
+			
+			if(null != userJson) {
+				User user = new User()
+					.setId(JsonGWTUtils.getInteger(userJson, IJsonNames.ID))
+					.setDomain(JsonGWTUtils.getInteger(userJson, IJsonNames.DOMAIN))
+					.setType(UserType.valueOf(JsonGWTUtils.getString(userJson, IJsonNames.TYPE)))
+					.setName(JsonGWTUtils.getString(userJson, IJsonNames.NAME))
+					.setLogin(JsonGWTUtils.getString(userJson, IJsonNames.LOGIN))
+					.setActive(JsonGWTUtils.getBoolean(userJson, IJsonNames.ACTIVE))
+					;
+				
+				if(JsonGWTUtils.getBoolean(userJson, IJsonNames.PORTAL))
+					user.setType(UserType.PORTAL);
+					
+				list.add(user);
+			}
+		}
+ 		return list;
+	}
+	
+	/*
+	 * public static JSONObject toJSON(User user) {
+		JSONObject json = !user.getAuth().isEmpty() 
+				? AuthJSON.toJSON(user.getAuth())
+				: new JSONObject();
+		
+		return json
+			.put(IJsonNames.ID, user.getId())
+			.put(IJsonNames.DOMAIN, user.getDomain())
+			.put(IJsonNames.TYPE, user.getType().name())
+			.put(IJsonNames.NAME, AonStringUtils.isBlank(user.getAuth().getName())
+					? user.getName()
+					: user.getAuth().getName())
+			.put(IJsonNames.PORTAL, user.isPortal())
+			.put(IJsonNames.SHARED, user.isShared())
+			.put(IJsonNames.LOGIN, user.getLogin())
+			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()));
+		}
+	 * **/
 	
 	private static DomainTypeInfo domainTypeInfoJson(JSONObject domainTypeInfoJson) {
 		DomainTypeInfo domainTypeInfo = new DomainTypeInfo();

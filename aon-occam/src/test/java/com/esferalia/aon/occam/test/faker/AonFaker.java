@@ -271,7 +271,6 @@ public class AonFaker {
 			.setAccount( account == null? null : account.getId() );
 	}
 
-
 	public static Seller getSeller( AONContext ctx ) {
 		return getSeller(ctx, getRegistry(ctx));
 	}
@@ -900,11 +899,16 @@ public class AonFaker {
 	}
 	
 	public static Carrier getCarrier(AONContext ctx) {
+		Registry registry = getRegistry();
+		return getCarrier(ctx, registry);
+	}
+	
+	public static Carrier getCarrier(AONContext ctx, Registry registry) {
 		Random random = new Random();
 		CarrierStatus[] status = CarrierStatus.values();
 		
 		return new Carrier()
-				.copy(getRegistry(ctx))
+				.copy(registry)
 				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setScope(getScope())
 				.setStatus(status[random.nextInt(status.length)]);

@@ -60,6 +60,7 @@ public interface IConstants {
 	String RDOCUMENT = "rdocument";
 	String RNAME = "rname";
 	String RECEIVER = "receiver";
+	String RECORDED = "recorded";
 	String REFERENCE = "reference";
 	String RETENTION = "retention";
 	String SENDER = "sender";

@@ -34,22 +34,22 @@ public class OCRLoginTokenResponseJSON {
 		;
 	}
 	
-	public static JSONArray to(List<OCRDocumentResponse> list) {
+	public static JSONArray to(List<OCRLoginTokenResponse> list) {
 		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
 		return to(list.stream());
 	}
 	
-	public static JSONArray to(Stream<OCRDocumentResponse> stream) {
+	public static JSONArray to(Stream<OCRLoginTokenResponse> stream) {
 		return stream
 			.map(OCRLoginTokenResponseJSON::to)
 			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
 	
-	public static JSONObject to(OCRDocumentResponse response) {
+	public static JSONObject to(OCRLoginTokenResponse response) {
 		if (response == null) return null;
 		return new JSONObject()
 			.putOpt(OCRNames.HTTP_CODE, response.getHttpCode().orElse(null))
-			.putOpt(OCRNames.RESULT, response.getDocument().map(OCRDocumentJSON::to).orElse(null))
+			.putOpt(OCRNames.RESULT, response.getLoginToken().map(OCRLoginTokenJSON::to).orElse(null))
 			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to).orElse(null))
 			;
 	}

@@ -131,6 +131,7 @@ export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DESCRIPTION = 'Descripción';
 export const DETAILED = 'Detallado';
 export const DEUTSCH = 'Alemán';
+export const DISCARDED = 'Descartadas';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
@@ -176,6 +177,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
+export const FROM = 'Desde';
 
 // ----- G
 
@@ -265,7 +267,10 @@ export const MY_USER = 'Mi Usuario';
 export const NAME = 'Nombre';
 export const NEW = 'Nuevo';
 export const NEW_COMPANY = 'Nueva Empresa';
+export const NEW_DOCUMENT = 'Nuevo Documento';
+export const NEW_EMPLOYEE = 'Nuevo Empleado';
 export const NEW_EXPENSE = 'Nuevo Gasto';
+export const NEW_INVOICE = 'Nuevo Factura';
 export const NEW_PRODUCT = 'Nuevo Producto';
 export const NEW_REQUEST = 'Nueva Solicitud';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
@@ -282,6 +287,7 @@ export const NUMBER_OF_USERS = 'Número de usuarios';
 
 // ----- O
 
+export const OCR = 'OCR';
 export const OBSERVATION = 'Observación';
 export const OFFICE = 'Despacho';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Solo dominios sin cliente vinculado";
@@ -306,6 +312,8 @@ export const PAYSHEETS = 'Nóminas';
 export const PENDING = 'Pendiente';
 export const PENDING_DOCUMENTS = 'Documentos Pendientes';
 export const PENDING_INVOICES = 'Facturas Pendientes';
+export const PENDING_REVIEW = 'Pendiente de Revisión';
+export const PENDING_TASKS = 'Tareas Pendientes';
 export const PENDINGS = 'Pendiente';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
@@ -358,6 +366,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Facturas';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Revisar';
 
 // ----- S
 
@@ -410,6 +419,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Control Horario'; //'Control de Horario';
 export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos del Titular';
+export const TO = 'Hasta';
 export const TO_TRASH = 'Enviar a la Papelera';
 export const TODAY = 'Hoy';
 export const TOMORROW = 'Mañana';

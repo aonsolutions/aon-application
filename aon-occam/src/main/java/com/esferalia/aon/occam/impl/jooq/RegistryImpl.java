@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -35,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
@@ -85,7 +86,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 
 public class RegistryImpl implements IRegistry{
 	
@@ -390,15 +390,27 @@ public class RegistryImpl implements IRegistry{
 	// -------------------- CARRIER
 	
 	@Override
-	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter) {
+	public Carrier getCarrier(AONContext ctx, CarrierFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getCarrierStream(ctx, filter));
+				configuration -> CarrierDAO.get(ctx, filter, options));
 	}
 	
 	@Override
-	public Carrier insertCarrier(AONContext ctx, Carrier carrier) {
+	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertCarrier(ctx, carrier));
+				configuration -> CarrierDAO.getStream(ctx, filter, options));
+	}
+	
+	@Override
+	public Carrier saveCarrier(AONContext ctx, Carrier carrier) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CarrierDAO.save(ctx, carrier));
+	}
+	
+	@Override
+	public void deleteCarrier(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> CarrierDAO.delete(ctx, id));
 	}
 	
 	// -------------------- RECORD DATA
@@ -774,6 +786,12 @@ public class RegistryImpl implements IRegistry{
 	public RegistryAddress save(AONContext ctx, RegistryAddress registryAddress) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryAddressDAO.save(ctx, registryAddress));
+	}
+	
+	@Override
+	public void deleteRegistryAddress(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryAddressDAO.delete(ctx, id));
 	}
 
 	@Override

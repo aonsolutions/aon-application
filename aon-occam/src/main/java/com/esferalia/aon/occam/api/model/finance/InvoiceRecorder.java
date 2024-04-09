@@ -354,9 +354,66 @@ public class InvoiceRecorder {
 					}
 				}
 			}
-			 
 	 	})
 		
+		,DIRECT_TAX_ADJUST( new IVisitor() {
+
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (!invoice.isSales() 
+					&& !invoice.isSurcharge() 
+					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
+					&& invoice.getVats() != null) {
+					for (InvoiceVAT vat : invoice.getVats()) {
+						if (vat.getInvestAsset() != null
+							&& AonMathUtils.notEquals(100.0, vat.getDirectTaxNoDedExpenses())
+							&& vat.getAdjDirectTaxAccountId() != null) {
+							double amount = vat.getDirectTaxNoDedExpenses();
+							Integer id = vat.getAdjDirectTaxAccountId();
+							String code = vat.getAdjDirectTaxAccountCode();
+							String description = vat.getAdjDirectTaxAccountDescription();
+							AccountEntryDetail detail = map.get(id);
+							if (detail == null) {
+								detail = new AccountEntryDetail()
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+								map.put(id,detail);
+							}
+							if (invoice.isOutputVatEnabled()) {
+								detail.addCredit( amount );
+							} else {
+								detail.addDebit( amount );
+							}
+							
+							id = vat.getExpAccountId();
+							code = vat.getExpAccountCode();
+							description = vat.getExpAccountDescription();
+							detail = map.get(id);
+							if (detail == null) {
+								detail = new AccountEntryDetail()
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+								map.put(id,detail);
+							}
+							if (invoice.isOutputVatEnabled()) {
+								detail.addDebit( amount );
+							} else {
+								detail.addCredit( amount );
+							}
+						}
+					}
+				}
+			}
+	 	})
+
 		,SALES_WITHHOLDING(new IVisitor() {
 
 			@Override
@@ -497,7 +554,7 @@ public class InvoiceRecorder {
 		}
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		InvoiceEntryDetailType.visit(invoice,map);	
-		ae.setDetails(new LinkedList<AccountEntryDetail>());
+		ae.setDetails(new LinkedList<>());
 		ae.getDetails().addAll(map.values());
 		String concept = obtainConcept(invoice.getInvoice(), invoice.getManualConcept());
 		for (AccountEntryDetail detail : ae.getDetails()) {

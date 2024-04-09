@@ -116,6 +116,7 @@ public class OperationReport extends MainEntryPoint {
 		tabLayout.addSelectionHandler( event -> {
 			if (event.getSelectedItem() == IVA_TAB) ivaContent.clear();
 			else if (event.getSelectedItem() == IRPF_TAB) irpfContent.clear();
+			onSearch();
 		});
 		ivaContent = new SimpleLayoutPanel();
 		tabLayout.add(ivaContent, "Listado IVA");
@@ -250,17 +251,18 @@ public class OperationReport extends MainEntryPoint {
 			activity = new ListBox();
 			activity.addStyleName(AON.CSS.aonMarginLeft());
 			activity.setWidth("300px");
-			int i = 0;
-			for (EnterpriseActivity ea : options.getConfiguration().getAllActivities()) {
-				
+			activity.addItem("-- Todas --", "");
+			int i = 1;
+			for (EnterpriseActivity ea : options.getConfiguration().getAllActivities()) {				
 				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
-					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto
+					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto (Ahora no, ahora se queda marcada "Todas"
 				}
 				i++;
 			}
-			activity.setSelectedIndex(indexMainActivity);
+			//activity.setSelectedIndex(indexMainActivity);
+			activity.setSelectedIndex(0);
 		}
 
 		FlexTable tab = new FlexTable();
@@ -356,7 +358,8 @@ public class OperationReport extends MainEntryPoint {
 		period.setSelectedIndex(0);
 		fillDates();
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
-			activity.setSelectedIndex(indexMainActivity);
+			//activity.setSelectedIndex(indexMainActivity);
+			activity.setSelectedIndex(0);
 		}
 //		 onSearch(); Disable initial search
 	}
@@ -380,8 +383,13 @@ public class OperationReport extends MainEntryPoint {
 			.setExpenses(type.getSelectedIndex() == 0)
 			;
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
-			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
-			params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
+			if (activity.getSelectedIndex() > 0) {
+				params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
+				params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
+			} else {
+				params.setActivity(null);
+				params.setActivityDescription("");			
+			}
 		}
 		return params;
 	}

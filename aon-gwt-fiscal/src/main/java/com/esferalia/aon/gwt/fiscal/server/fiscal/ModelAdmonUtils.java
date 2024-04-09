@@ -102,12 +102,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod180.Mod180Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod184.Mod184Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer;
@@ -1583,13 +1583,27 @@ public class ModelAdmonUtils {
 	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
 		StringBuilder buff = new StringBuilder();
 		buff.append(ERROR_TEMPLATE_START);		
-		buff.append(ERROR_TEMPLATE_BEFORE);
+		buff.append("<ul style=\""
+					+"background-attachment: scroll;"
+					+"background-clip: border-box;"
+					+"background-position: 3px 2px;"
+					+"background-repeat: no-repeat;"
+					+"background-size: auto auto;"
+					+"background-color: lavender;"
+					+"font-size: small;"
+					+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+					+"font-weight: bold;"
+					+"border: solid black 1px;"
+					+"padding-top: 20px;"
+					+"padding-bottom: 20px;"
+					+"\">");
+	
 		for (ArrayList<String> al : erroresGlobal) {
-			buff.append("<li>");
+			buff.append("<li>");			
 			buff.append(al.get(0));
 			
-			if (al.size() == 1) {
-				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal'>");
+			if (al.size() == 1) {				
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: green;'>");
 				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
 			} else {			
 				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
@@ -1604,8 +1618,8 @@ public class ModelAdmonUtils {
 			
 			buff.append("</ul>");
 			buff.append("</li>");
-		}
-		buff.append(ERROR_TEMPLATE_AFTER);
+		}		
+		buff.append("</ul>");
 		buff.append(ERROR_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}		

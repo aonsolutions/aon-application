@@ -18,7 +18,11 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.CostCenterModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
+import com.esferalia.aon.gwt.fiscal.client.booking.BookingCustomerPanel;
+import com.esferalia.aon.gwt.fiscal.client.booking.BookingPanel;
+import com.esferalia.aon.gwt.fiscal.client.booking.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSupportAgentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
@@ -33,11 +37,11 @@ import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
-import com.esferalia.aon.gwt.fiscal.client.registry.BookingCustomerPanel;
-import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -242,6 +246,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== RAWDOC
 	//
 	private static final String RAWDOC_ENTRY_POINT = "RawdocModule";
+	private static final String RAWDOC_RECORD_ENTRY_POINT = "RawdocRecordModule";
 	//
 	//    ================================================================== CHECKIT
 	//
@@ -250,6 +255,17 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== NORDIGEN
 	//
 	private static final String NORDIGEN_ENTRY_POINT = "NordigenModule";
+	//
+	//    ================================================================== BOOKING RESUME
+	//
+	private static final String DOMAIN_BOOKING_RESUME_ENTRY_POINT = "DomainBookingResume";
+	private static final String CUSTOMER_BOOKING_RESUME_ENTRY_POINT = "CustomerBookingResume";
+	//
+	//    ================================================================== CUSTOMER
+	//
+	private static final String CUSTOMER_SUPPORT_AGENT_ENTRY_POINT = "CustomerSupportAgent";
+	
+	
 
 	@Override
 	public void onModuleLoad() {
@@ -821,6 +837,21 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if ( entryPoint.equalsIgnoreCase(RAWDOC_RECORD_ENTRY_POINT)) {
+			GWT.runAsync(RawdocRecordModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					RawdocRecordModule rawdoc  = new RawdocRecordModule();
+					rawdoc.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(CHECKIT_ENTRY_POINT)) {
 			GWT.runAsync(CheckItModule.class, new RunAsyncCallback() {
 
@@ -865,7 +896,53 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		}  else if ( entryPoint.equalsIgnoreCase(DOMAIN_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(DomainBookingResumeModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					DomainBookingResumeModule dbrm = new DomainBookingResumeModule();
+					dbrm.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(CUSTOMER_BOOKING_RESUME_ENTRY_POINT)) {
+			GWT.runAsync(CustomerBookingResumeModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerBookingResumeModule dbrm = new CustomerBookingResumeModule();
+					dbrm.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(CUSTOMER_SUPPORT_AGENT_ENTRY_POINT) ) {
+			GWT.runAsync(CustomerSupportAgentModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerSupportAgentModule dbrm = new CustomerSupportAgentModule();
+					dbrm.onModuleLoad();
+				}
+				
+			});
 		}
+		
 	}
 	protected Occam getOccam() {
 		return new Occam()

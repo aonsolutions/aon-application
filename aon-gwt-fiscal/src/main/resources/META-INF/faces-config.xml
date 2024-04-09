@@ -280,5 +280,28 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountCostCenter.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Booking Resume ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_domainBooking_resume</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/domainBookingResume.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_booking_customer_resume</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customerBookingResume.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Customer Support Agent ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_customer_support_agent</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/customer/customerSupportAgent.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

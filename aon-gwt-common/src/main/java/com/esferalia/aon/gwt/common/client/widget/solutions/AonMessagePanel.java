@@ -6,8 +6,10 @@ import java.util.Map.Entry;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AonMessagePanel extends FlowPanel {
 	
-	// ------------------------------------------------ Variables
+    	// ------------------------------------------------ Variables
 	
 	private HTMLPanel closePanel;
 	private HTMLPanel messagePanel;
@@ -57,7 +59,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Error
 	
-	public static void showError(Panel panelIn, String ...messages) {
+	public static <T> void showError(Panel panelIn, T ...messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
@@ -65,7 +67,7 @@ public class AonMessagePanel extends FlowPanel {
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showError(Panel panelIn, Map<String, String> messages) {
+	public static <T> void showError(Panel panelIn, Map<String, T> messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
@@ -99,7 +101,7 @@ public class AonMessagePanel extends FlowPanel {
 	// ------------------------------------------------ Show Info
 	
 	
-	public static void showInfo(Panel panelIn, String ...messages) {
+	public static <T> void showInfo(Panel panelIn, T ...messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
@@ -107,7 +109,7 @@ public class AonMessagePanel extends FlowPanel {
 		showAndAddMainPanelTimerLong(panel, aonMessagePanel);
 	}
 	
-	public static void showInfo(Panel panelIn, Map<String, String> messages) {
+	public static <T> void showInfo(Panel panelIn, Map<String, T> messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
@@ -140,7 +142,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Warning
 	
-	public static void showWarning(Panel panelIn, String ...messages) {
+	public static <T> void showWarning(Panel panelIn, T ...messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
@@ -148,7 +150,7 @@ public class AonMessagePanel extends FlowPanel {
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showWarning(Panel panelIn, Map<String, String> messages) {
+	public static <T> void showWarning(Panel panelIn, Map<String, T> messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
@@ -181,7 +183,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Success
 	
-	public static void showSuccess(Panel panelIn, String ...messages) {
+	public static <T> void showSuccess(Panel panelIn, T ...messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
@@ -189,7 +191,7 @@ public class AonMessagePanel extends FlowPanel {
 		showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 
-	public static void showSuccess(Panel panelIn, Map<String, String> messages) {
+	public static <T> void showSuccess(Panel panelIn, Map<String, T> messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
@@ -222,12 +224,13 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Loading
 	
-	public static void showLoading(Panel panelIn, String message) {
+	public static <T> Label showLoading(Panel panelIn, T message) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
-		fillLoadingMessages(aonMessagePanel, message);
+		Label meesageLabel = fillLoadingMessages(aonMessagePanel, message);
 		showAndAddMainPanel(panel, aonMessagePanel);
+		return meesageLabel;
 	}
 	
 	// ------------------------------------------------ Hide Message
@@ -317,26 +320,26 @@ public class AonMessagePanel extends FlowPanel {
 
 	// ------------------------------------------------ Fill Messages List
 		
-	private static void fillMessages(AonMessagePanel aonMessagePanel, String[] messages) {
+	private static <T> void fillMessages(AonMessagePanel aonMessagePanel, T[] messages) {
 		if(messages.length != 0) {
 			for(int i=0; i<messages.length; i++) {
 				HTMLPanel messageRowPanel = new HTMLPanel("");
 				messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
-				Label messageText = new Label(messages[i]);
+				Label messageText = newLabel(messages[i]);
 				messageRowPanel.add(messageText);
 				aonMessagePanel.messagePanel.add(messageRowPanel);
 			}
 		}
 	}
 	
-	private static void fillMessages(AonMessagePanel aonMessagePanel, Map<String, String> messages) {
+	private static <T> void fillMessages(AonMessagePanel aonMessagePanel, Map<String, T> messages) {
 		int index = 0;
-		for(Entry<String, String> entry : messages.entrySet()) {
+		for(Entry<String, T> entry : messages.entrySet()) {
 			HTMLPanel messageRowPanel = new HTMLPanel("");
 			messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
 			Label titleText = new Label(entry.getKey());
 			titleText.addStyleName(AON.CSS.aonMessageTitle());
-			Label messageText = new Label(entry.getValue());
+			Label messageText = newLabel(entry.getValue());
 			messageText.ensureDebugId("message_" + index);
 			messageRowPanel.add(titleText);
 			messageRowPanel.add(messageText);
@@ -345,18 +348,30 @@ public class AonMessagePanel extends FlowPanel {
 		}
 	}
 	
-	private static void fillLoadingMessages(AonMessagePanel aonMessagePanel, String message) {
+	private static <T> Label fillLoadingMessages(AonMessagePanel aonMessagePanel, T message) {
 		HTMLPanel messageRowPanel = new HTMLPanel("");
 		messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
 		
 		AonTableButton loading = new AonTableButton("", AON.CSS.aonIconRenewWhite());
 		loading.addStyleName(AON.CSS.aonSpin());
 		
-		Label messageText = new Label(message);
+		Label messageText = newLabel(message);
 		
 		messageRowPanel.add(loading);
 		messageRowPanel.add(messageText);
 		aonMessagePanel.messagePanel.add(messageRowPanel);
+		
+		return messageText;
+	}
+	
+	
+	private static <T>  Label newLabel(T t) {
+	    if (t instanceof SafeHtml) {
+		return new HTML((SafeHtml) t);
+	    } else {
+		String text = t == null ? "" : t.toString();
+		return new Label(text);
+	    }
 	}
 	
 	// ------------------------------------------------ Styles Methods

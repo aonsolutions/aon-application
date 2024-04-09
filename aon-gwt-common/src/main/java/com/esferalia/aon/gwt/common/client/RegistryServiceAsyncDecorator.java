@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -151,9 +153,15 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	}
 
 	@Override
-	public void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> callback) {
+	public void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Fee> callback) {
 		AON.start();
-		serviceAsync.createCustomerFeeList(domainName, domain, user, fee, new AsyncCallbackWrapper<Void>(callback));
+		serviceAsync.createCustomerFeeList(domainName, domain, user, fee, new AsyncCallbackWrapper<Fee>(callback));
+	}
+
+	@Override
+	public void updateRitemCustomerFee(String domainName, int domain, String user, Integer customerFee, Integer ritem, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.updateRitemCustomerFee(domainName, domain, user, customerFee, ritem, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -205,6 +213,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	}
 
 	@Override
+	public void getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery, AsyncCallback<Map<String, Fee>> callback) {
+		AON.start();
+		serviceAsync.getCustomerFeeSuggestion(domainName, domain, user, itemId, customerId, customerFeeQuery, new AsyncCallbackWrapper<Map<String, Fee>>(callback));
+	}
+
+	@Override
 	public void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> callback) {
 		AON.start();
 		serviceAsync.parseFeeFile(domain, user, data, new AsyncCallbackWrapper<List<Fee>>(callback));
@@ -249,6 +263,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getCustomerBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
 	}
+	
+	@Override
+	public void getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getCustomerChildBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
 
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> callback) {
@@ -260,6 +280,34 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.deleteBookingList(domainName, domain, user, selectedBookings, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getCustomerSeller(String domainName, int domain, String user, Integer customerId, AsyncCallback<Seller> callback) {
+		AON.start();
+		serviceAsync.getCustomerSeller(domainName, domain, user, customerId, new AsyncCallbackWrapper<Seller>(callback));
+	}
+
+	@Override
+	public void getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId, AsyncCallback<String> callback) {
+		AON.start();
+		serviceAsync.getCustomerSellerEmail(domainName, domain, user, customerId, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	// **************************************************
+	// ********************************** [SUPPORT AGENT]
+	// **************************************************
+
+	@Override
+	public void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> callback) {
+		AON.start();
+		serviceAsync.getActiveSupportAgents(domainName, domain, user, new AsyncCallbackWrapper<HashMap<Seller, RegistryMedia>>(callback));
+	}
+
+	@Override
+	public void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerWithoutAgent(domainName, domain, user, new AsyncCallbackWrapper<List<Customer>>(callback));
 	}
 
 }

@@ -56,7 +56,8 @@ export const Role = {
 	COMMERCIAL: 'COMMERCIAL',
 	TREASURY: 'TREASURY',
 	MARKETING: 'MARKETING',
-	GROUPWARE: 'GROUPWARE'
+	GROUPWARE: 'GROUPWARE',
+	SERES: 'SERES'
 }
 
 export const OldModule = {
@@ -119,7 +120,8 @@ export const App = {
 	COMMERCIAL: 'COMMERCIAL',
 	MARKETING: 'MARKETING',
 	TREASURY: 'TREASURY',
-	GROUPWARE: 'GROUPWARE'
+	GROUPWARE: 'GROUPWARE',
+	SERES: 'SERES'
 }
 
 export const RegistryType = {

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -26,7 +27,7 @@ public interface Mod131ServiceAsync {
 	void markAsCustomerCheck(Occam occam, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void initialize(Occam occam, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void create(Occam occam, Mod131 mod131, AsyncCallback<Mod131> callback);
-	void reset(Occam occam, Mod131 model, AsyncCallback<Mod131> asyncCallback);
 	void getInfo(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
+	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback);
 
 }

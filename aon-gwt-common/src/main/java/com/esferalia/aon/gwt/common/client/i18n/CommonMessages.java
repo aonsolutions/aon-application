@@ -683,6 +683,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
+	@DefaultMessage("Mostrar mas datos")
+	String showMoreData();
+
 	@DefaultMessage("{0} - {1} de {2}")
 	String exactPagerData(int start, int end, int count);
 
@@ -958,8 +961,17 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cuota Deduc.")
 	String dedQuota();
 
-	@DefaultMessage("Cta. Ajustes")
+	@DefaultMessage("Cta.Aj.IVA")
 	String adjAccount();
+	
+	@DefaultMessage("% Imp.Dir.")
+	String directTaxPercent();
+	
+	@DefaultMessage("Cuota Imp.Dir.")
+	String directTaxQuota();
+
+	@DefaultMessage("Cta.Aj.Imp.Dir")
+	String adjDirectTaxAccount();
 
 	@DefaultMessage("Total")
 	String total();

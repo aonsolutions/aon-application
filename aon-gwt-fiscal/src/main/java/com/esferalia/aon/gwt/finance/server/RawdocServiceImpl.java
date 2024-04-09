@@ -1,23 +1,38 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.io.IOException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
+import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "Rawdoc Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Rawdoc" })
 public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implements RawdocService {
@@ -95,5 +110,40 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
 		AON.rawdocToInbox(domainName, domain,user,rawdocId);
+	}
+
+	@Override
+	public AccountingInvoice getAccountingInvoice(String domainName, int domainId, String login, String invoiceStr) {
+		JSONObject json = new JSONObject(invoiceStr);
+		return Rawdoc2AccountingInvoice.getAccountingInvoice(domainName, domainId, login, json);
+	}
+	
+	@Override
+	public Boolean processInvoiceFile(String domainName, int domainId, String login, String invoiceStr, Invoice invoice) {
+		JSONObject json = new JSONObject(invoiceStr);
+		JSONObject fileJSON = JsonUtils.getJSONObject(json, IJsonNames.FILE);
+		if(!fileJSON.isEmpty()) {
+			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
+			String contentType = JsonUtils.getString(fileJSON, "content_type");
+			try {
+				byte[] data = S3.download("aon-upload-post", s3Key);
+				if(data != null) {
+					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+					Attach attach = new Attach()
+							.setDate(new Date())
+							.setDomain(new Domain().setId(invoice.getDomain()))
+							.setAttachModule(invoice.getId())
+							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+							.setAttachType(AttachType.INVOICE)
+							.setType(InvoiceAttachmentType.INVOICE.value())
+							.setData(data);
+
+					AON.insertAttach(domainName, domainId, login, attach);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 }

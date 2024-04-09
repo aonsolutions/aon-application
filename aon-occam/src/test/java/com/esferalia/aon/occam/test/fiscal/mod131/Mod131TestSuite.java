@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	Mod131KeyTest.class,
 	Mod131ExpressionsTest.class,
 	
 	// -----------------------

@@ -610,7 +610,7 @@ public class InvoiceServlet extends HttpServlet{
 			invoiceDetail.setDescription(id.getDescription());
 
 			DiscountExpression de = new DiscountExpression();
-			de.setDiscountExpr(id.getDiscountExpression());
+			de.setDiscountExpr(id.getDiscountExpression().getDiscountExpr());
 			invoiceDetail.setDiscountExpression(de);
 			
 			invoiceDetail.setDomain(id.getDomain());

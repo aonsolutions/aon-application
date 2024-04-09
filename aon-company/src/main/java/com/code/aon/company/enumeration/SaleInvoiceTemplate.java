@@ -9,24 +9,34 @@ public enum SaleInvoiceTemplate implements IResourceable {
 
 	DEFAULT("default"),
 	
+	@Deprecated
 	STANDARD("saleInvoice"),
 	
+	@Deprecated
 	STANDARD_01("saleInvoiceTemplate2"),
 	
+	@Deprecated
 	STANDARD_02("saleInvoiceTemplate3"),
 	
+	@Deprecated
 	PROFESSIONAL_01("saleInvoiceTemplate1"),
 	
+	@Deprecated
 	PROFESSIONAL_02("saleInvoiceTemplate4"),
 	
+	@Deprecated
 	CLASSIC_01("saleInvoiceTemplate5"),
 	
+	@Deprecated
 	CLASSIC_02("saleInvoiceTemplate6"),
 	
+	@Deprecated
 	CLASSIC_PROF_01("saleInvoiceTemplate7"),
 	
+	@Deprecated
 	GTA("saleInvoiceGta"),
 	
+	@Deprecated
 	HOTEL("saleInvoiceHotel")
 	
 	;      

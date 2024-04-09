@@ -238,8 +238,10 @@ public class LROE140_2_1 extends LROE140 {
 //			r.setPorcentajeCompensacionREAGYP("");
 //			r.setImporteCompensacionREAGYP("");
 			if(invoice.getInvestAsset() != null) {
+				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
+					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
-				r.setReferenciaBien(Integer.toString(detail.getInvestAssetData().getId()));
+				r.setReferenciaBien(Integer.toString(ia));
 			}
 			
 			renta.getDetalleRentaIVA().add(r);

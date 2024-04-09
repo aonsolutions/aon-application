@@ -9,11 +9,13 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,6 +24,7 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -430,7 +433,7 @@ public class JooqEmployeeAFI {
 		fab.put("realDate", dateFormat.format(contractRecord.get(CONTRACT.START_DATE)));
 		fab.put("quoteGroup", quoteGruop);
 		fab.put("tc2", tc2);
-		fab.put("partialityCoef", partiality);
+		fab.put("partialityCoef", partiality == null ? "" : parseCoefLengnt(partiality));
 		fab.put("employeeColective", employeeColective);
 		fab.put("birthDate", personRecord.getBirthDate() == null ? "" : dateFormat.format(personRecord.getBirthDate()));
 		fab.put("gender", personRecord.getGender());
@@ -1150,6 +1153,86 @@ public class JooqEmployeeAFI {
 		json.put("ODL", odl);
 		
 		return json;
+	}
+	
+	// ------------------------------------------------ Pension Plan AFI
+
+	public static String checkPensionPlanAFI(Connection connection, long date, List<Integer> cccIdList) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		// Given findingDate set start and end date
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTimeInMillis(date);
+		startDate.set(Calendar.DAY_OF_MONTH, 1);
+		
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTimeInMillis(date);
+		endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Date startDateSQL = new Date(startDate.getTimeInMillis());
+		Date endDateSQL = new Date(endDate.getTimeInMillis());
+		
+		System.out.println(startDateSQL);
+		System.out.println(endDateSQL);
+		System.out.println(cccIdList);
+		
+		Result<Record> pensionPlanPayments = dslContext.select().from(SALARY_PAYMENT)
+			.join(SALARY)
+			.on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+			.join(CONTRACT)
+			.on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			.join(ENTERPRISE_CCC)
+			.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+			.where(SALARY_PAYMENT.PAYMENT_CONCEPT.eq("PPE"))
+			.and(SALARY.START_DATE.ge(startDateSQL))
+			.and(SALARY.END_DATE.le(endDateSQL))
+			.and(ENTERPRISE_CCC.ID.in(cccIdList))
+			.fetch();
+		
+		if(!hasAuthKeyFromDomain(dslContext, cccIdList)) return "No existe c\u00f3digo de autorizaci\u00f3n. Por favor rellenelo desde el apartado de Empresa de Laboral > Integeral de N\u00f3minas";
+		if(!hasSSMutualFromDomain(dslContext, cccIdList)) return "No existe entidad gestora del plan de pensiones. Por favor rellenelo desde el apartado de Empresa de Laboral > Integeral de N\u00f3minas";
+		if(pensionPlanPayments.isEmpty()) return "La(s) cuenta(s) de cotizaci\u00F3n seleccionada(s) no tiene(n) devengos con CRA 0000 - APORTACION EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO";
+		
+		return null;
+	}
+	
+	private static boolean hasAuthKeyFromDomain(DSLContext dslContext, List<Integer> cccIdList) {
+		
+		// Prepare aunthKey
+		Result<Record> domainRecords = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.in(
+						dslContext.select(ENTERPRISE_CCC.DOMAIN).from(ENTERPRISE_CCC)
+							.where(ENTERPRISE_CCC.ID.in(cccIdList))
+				))
+				.fetch();
+		
+		Integer domainId = domainRecords.get(0).get(DOMAIN.ID);
+		
+		Record enterpriseDataRecord = dslContext.select().from(ENTERPRISE_DATA)
+				.where(ENTERPRISE_DATA.NAME.eq("PAY_authorization_key_PAY"))
+				.and(ENTERPRISE_DATA.DOMAIN.eq(domainId))
+				.fetchOne();
+		
+		return null != enterpriseDataRecord && AonStringUtils.isNotBlank(enterpriseDataRecord.get(ENTERPRISE_DATA.EXPRESSION));
+	}
+	
+	private static boolean hasSSMutualFromDomain(DSLContext dslContext, List<Integer> cccIdList) {
+		Result<Record> domainRecords = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.in(
+						dslContext.select(ENTERPRISE_CCC.DOMAIN).from(ENTERPRISE_CCC)
+							.where(ENTERPRISE_CCC.ID.in(cccIdList))
+				))
+				.fetch();
+		
+		Integer domainId = domainRecords.get(0).get(DOMAIN.ID);
+		
+		Record enterpriseDataRecord = dslContext.select().from(ENTERPRISE_DATA)
+				.where(ENTERPRISE_DATA.NAME.eq("PAY_ss_pension_plan_mutual_PAY"))
+				.and(ENTERPRISE_DATA.DOMAIN.eq(domainId))
+				.fetchOne();
+		
+		return null != enterpriseDataRecord && AonStringUtils.isNotBlank(enterpriseDataRecord.get(ENTERPRISE_DATA.EXPRESSION));
+		
 	}
 
 }

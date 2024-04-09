@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -356,6 +355,14 @@ public class DomainDAO {
 		ctx.getDslContext().update(DOMAIN)
 				.set(DOMAIN.AONCUSTOMER, aonCustomer)
 				.set(DOMAIN.AONSTATUS, aonStatus != null ? AonEnumUtils.getByte(aonStatus) : 0)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
+	}
+	
+	public static void updateDomainOwner(AONContext ctx, String domainName, Integer domainId, String sellerEmail) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.OWNER, sellerEmail)
 				.where(DOMAIN.ID.eq(domainId))
 				.and(DOMAIN.NAME.eq(domainName))
 				.execute();

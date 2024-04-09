@@ -173,6 +173,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
 export const FOOTER = 'Oina';
+export const FROM = 'Noiztik';
 
 // ----- G
 
@@ -262,7 +263,10 @@ export const MY_USER = 'Nire Erabiltzailea';
 export const NAME = 'Izena';
 export const NEW = 'Berria';
 export const NEW_COMPANY = 'Enpresa Berria';
+export const NEW_DOCUMENT = 'Dokumentu Berria';
+export const NEW_EMPLOYEE = 'Langile Berria';
 export const NEW_EXPENSE = 'Gastu Berria';
+export const NEW_INVOICE = 'Faktura Berria';
 export const NEW_PRODUCT = 'Produktu Berria';
 export const NEW_REQUEST = 'Eskaera Berria';
 export const NEW_WAREHOUSE = 'Biltegi Berria';
@@ -302,6 +306,8 @@ export const PAYSHEETS = 'Nominak';
 export const PENDING = 'Zain';
 export const PENDING_DOCUMENTS = 'Zain Dauden Fitxategiak'; 
 export const PENDING_INVOICES = 'Zain Dauden Fakturak'
+export const PENDING_REVIEW = 'Berrikuspenaren zain';
+export const PENDING_TASKS = 'Zain Dauden Zereginak';
 export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
@@ -354,6 +360,7 @@ export const RESTORED_DATA = 'Datuak zuzen berreskuratu dira';
 export const RESTORE_INVOICE = 'Faktura Berreskuratu';
 export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Berrikusi';
 
 // ----- S
 
@@ -406,6 +413,7 @@ export const TICKETS = 'Tiketak';
 export const TIMECONTROL = 'Denboraren Kontrola';
 export const TITLE = 'Izenburua';
 export const TITULAR_DATA = 'Titularraren Datuak';
+export const TO = 'Noiz arte';
 export const TO_TRASH = 'Paperontzira Bidali';
 export const TODAY = 'Gaur';
 export const TOMORROW = 'Bihar';

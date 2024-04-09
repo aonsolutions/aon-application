@@ -236,6 +236,35 @@ export class AonNewInput extends AonElement {
         this.getElement(this.INPUT).style.paddingRight = '40px';
     }
 
+    addIconWithRemove(icon, color, removeFn) {
+        let div = this.getElement(this.BOX);
+        let iconLabel = this.getElement(this.ICON);
+        if (!iconLabel) {
+          iconLabel = this.createElement(TAG.LABEL);
+          div.appendChild(iconLabel);
+        }
+        iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+        iconLabel.style.top = '5px';
+        iconLabel.id = this.ICON;
+        iconLabel.setAttribute("for", this.INPUT);
+        let aonIconButton = new AonIconButton();
+        aonIconButton.id = this.ICON_BUTTON;
+        aonIconButton.icon = icon;
+        aonIconButton.noHover = "true";
+        aonIconButton.addEventListener(EVENT.MOUSEOVER, () => 
+          aonIconButton.icon = MATERIAL_ICONS.CLOSE);
+    
+        aonIconButton.addEventListener(EVENT.MOUSELEAVE, () => 
+          aonIconButton.icon = icon);
+    
+        aonIconButton.addEventListener(EVENT.CLICK, removeFn);
+    
+        iconLabel.appendChild(aonIconButton);
+    
+        if (color) iconLabel.color = color; 
+        this.getElement(this.INPUT).style.paddingRight = '40px';
+      }
+
     addError(message) {
         let span = this.getElement(this.TITLE);
         span.classList.add(CSS.AON_INPUT_BOX_LABEL_SPAN_ERROR);

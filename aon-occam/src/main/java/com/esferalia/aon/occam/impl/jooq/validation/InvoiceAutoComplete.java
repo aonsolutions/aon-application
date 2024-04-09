@@ -4,8 +4,10 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -13,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -46,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -534,6 +538,19 @@ public class InvoiceAutoComplete {
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}
+			
+			if(detail.getWorkplace() == null || detail.getWorkplace().getId() == null) {
+				if(detail.getWorkPlace() != null){
+					Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkPlace()));
+					detail.setWorkplace(wp);
+				} else {
+					Workplace wp = ctx.getConfiguration().getWorkplaces().getFirst();
+					if(wp != null && wp.getId() != null) {
+						detail.setWorkPlace(wp.getId());
+						detail.setWorkplace(wp);
+					}
+				}
+			}
 		});
 	};
 	
@@ -603,25 +620,46 @@ public class InvoiceAutoComplete {
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
 			Integer scope;
 			User user = SecurityDAO.getUser(ctx.getContext());	
-			Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
 			
-			if(s == null) {
-				Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
-				if(scopes != null && scopes.length > 0)
-					scope = scopes[0];
-				else {
-					s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-						f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
-					if(s == null) {
-						s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
-							.setDescription("GENERAL")
-							.setDomain(inv.getDomain()));
+			if(inv.getDomain().equals(user.getDomain())) {
+				Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
+				
+				if(s == null) {
+					Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
+					if(scopes != null && scopes.length > 0)
+						scope = scopes[0];
+					else {
+						s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
+							f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
+						if(s == null) {
+							s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+								.setDescription("GENERAL")
+								.setDomain(inv.getDomain()));
+						}
+						scope = s.getId();
 					}
-					scope = s.getId();
+				} else scope = s.getId();
+			} else {
+				Scope s = null;
+				List<Scope> list = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
+					f.getDomainProperty().eq(inv.getDomain())).toList();
+				if(list != null && !list.isEmpty()) {
+					s = list.stream().filter(f -> "GENERAL".equalsIgnoreCase(f.getDescription())).findFirst().orElse(null);
+					if(s == null) {
+						s = list.stream().findFirst().orElse(null);
+					}
 				}
-			} else scope = s.getId();
-			inv.setScope(new Scope().setId(scope));
+
+				if(s == null) {
+					s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+						.setDescription("GENERAL")
+						.setDomain(inv.getDomain()));
+				}
+				scope = s.getId();
+			}	
+			inv.setScope(new Scope().setId(scope));				
 		}
+
 	};
 	
 
@@ -632,8 +670,10 @@ public class InvoiceAutoComplete {
 		if(inv.getTaxableBase() == 0) {
 			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 					.mapToDouble(r -> r.getBase()).sum();
+			double prepayment = inv.getDetails().stream().filter(f -> f.isPrepayment())
+			.mapToDouble(r -> r.getAmount()).sum();
 			
-			inv.setTaxableBase(AonMathUtils.round(taxableBase));
+			inv.setTaxableBase(AonMathUtils.round(taxableBase + prepayment));
 		}
 	};
 	

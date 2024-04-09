@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
@@ -35,8 +37,10 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -341,14 +345,16 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	public static final void fillRegistry (AONContext aonCtx, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException {
+	public static final void fillRegistry (AONContext aonCtx, AonConfiguration config, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException {
 	    try {
         	    OCRInvoiceBuilderRegistry.fillRegistry(
         		    aonCtx, 
+        		    config, 
         		    f -> 
         		    ( invoice.isSales() && f.getType() == AccountingRegistryType.CUSTOMER ) 
         		    || ( invoice.isUndeductible() && f.getType() == AccountingRegistryType.CREDITOR )
-        		    || ( ( invoice.isPurchase() || invoice.isSales() ) &&  ( f.getType() == AccountingRegistryType.CREDITOR  || f.getType() == AccountingRegistryType.SUPPLIER ) )
+        		    || ( ( invoice.isPurchase() || invoice.isExpenses() ) 
+    		    		&&  ( f.getType() == AccountingRegistryType.CREDITOR  || f.getType() == AccountingRegistryType.SUPPLIER ) )
         		    , 
         		    invoice);
 	    } catch ( OCRTooManyOwnersException | OCROwnerNotFoundException e) {
@@ -358,7 +364,7 @@ public class OCRInvoiceBuilder {
 		    if (defaultCreditor != null) {
 			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
 			defaultCreditor.getType().visit(defaultCreditor,
-				new InvoiceRegistryInitializer(aonCtx, invoice, null));
+				new InvoiceRegistryInitializer(aonCtx, invoice, config));
 			return;
 		    }
 		}   
@@ -596,7 +602,7 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContextDetail> ADD_INVOICE_DETAIL = ocr -> 
 		ocr.getInvoice().getDetails().add( ocr.getDetail() );
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItems;		
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItemsOrAccounts;		
 
 	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
 		if ( mustImportFromBreakdown(ocr.getOCRInvoice()) ) {
@@ -1005,6 +1011,12 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static boolean mustImportFromBreakdown(OCRInvoice ocrInvoice) {
+		// Mientras los se devuelvan las línea correctamente, se importa siempre el BreakDown
+		// En otro caso descomentar el método.
+		return Boolean.TRUE;
+		//----------------
+			
+		/*
 		double breakdownTax = Stream.of( ocrInvoice.getBreakdowns() )
 			.filter( Optional::isPresent )
 			.map( Optional::get )
@@ -1023,6 +1035,7 @@ public class OCRInvoiceBuilder {
 			.sum()
 		;
 		return AonMathUtils.notEquals(breakdownTax,linesTax);
+		*/
 	}
 
 	private static String extractDescription(OCRInvoiceBreakdown ocrBreakdown) {
@@ -1045,13 +1058,54 @@ public class OCRInvoiceBuilder {
 	// ****************************************************************************
 	// *************************************************************** TO DO ******
 	// ****************************************************************************
+	private static void guessItemsOrAccounts(OCRContextDetail ocr) {
+		
+		guessItemsOrAccounts(ocr.getCtx(),ocr.getInvoice(),ocr.getDetail());
+		
+		// Si no se ha rellenado ni iten ni account, se busca el parámetro por defecto. 
+		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccount() == null) {
+			if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
+				ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
+			} else {
+				throw new AonCoreException("No existe producto por defecto definido en la configuración");
+			}
+		}
+	}
+	
+	public static Invoice guessItemsOrAccounts(AONContext ctx, Invoice invoice) {
+		if (AonCollectionUtils.isNotEmpty( invoice.getDetails() )) {
+			for (int i = 0; i < AonCollectionUtils.size( invoice.getDetails() ); i++) {
+				if (i == 0) {
+					guessItemsOrAccounts(ctx, invoice, invoice.getDetails().get(i) );			
+				} else {
+					invoice.getDetails().get(i).setItem( invoice.getDetails().get(0).getItem() );
+					invoice.getDetails().get(i).setAccount( invoice.getDetails().get(0).getAccount() );
+					invoice.getDetails().get(i).setAccountCode( invoice.getDetails().get(0).getAccountCode() );
+					invoice.getDetails().get(i).setAccountDescription( invoice.getDetails().get(0).getAccountDescription() );
+				}
+			}
+		}
+		return invoice;
+	}
 
-	// Buscar artículos para resolver el artículo
-	private static void guessItems(OCRContextDetail ocr) {
-		if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
-			ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
-		} else {
-			throw new AonCoreException("No existe producto por defecto definido en la configuración");
+	private static void guessItemsOrAccounts(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
+		if (invoice != null && invoice.getRegistry() != null) {
+			// Se busca el último item del registry que se trata
+			Optional<Item> opItem = InvoiceDAO.getLastItem(ctx, invoice.getRegistry());
+			if (opItem.isPresent()) {
+				invoiceDetail.setItem( opItem.get() );	
+			} else {
+				// Se busca la ´tulima cuanta contable del registry que se trata
+				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry());
+				Account account = AonCollectionUtils.stream(accounts)
+					.findFirst()
+					.orElse(null);
+				if (account != null) {
+					invoiceDetail.setAccount( account.getId() );	
+					invoiceDetail.setAccountCode( account.getCode() );
+					invoiceDetail.setAccountDescription( account.getDescription() );
+				}
+			}
 		}
 	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.

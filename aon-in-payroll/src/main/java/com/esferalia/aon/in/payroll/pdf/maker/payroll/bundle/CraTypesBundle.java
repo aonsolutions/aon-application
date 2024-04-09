@@ -2,11 +2,10 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle;
 
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.INFO;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.NOTE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.PPE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.WARNING;
 
 import java.util.ListResourceBundle;
-
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 
 public class CraTypesBundle   extends ListResourceBundle{
 	  private Object[][] contents = {
@@ -72,12 +71,15 @@ public class CraTypesBundle   extends ListResourceBundle{
 		{"59","Vacaciones no disfrutadas retribuidas tras fallecimiento"},
 		{"60","Vacaciones retribuidas no disfrutadas. Cotización durante contrato"},
 		{"61","Pluses de transporte y de distancia"},
+		{"62","Gastos de teletrabajo"},
 		{"100","Prestaciones"},
 		
 		
 		{Integer.toString(INFO),""},
 		{Integer.toString(NOTE),"Notas"},
-		{Integer.toString(WARNING),"Avisos"}
+		{Integer.toString(WARNING),"Avisos"},
+
+		{Integer.toString(PPE),"Aportación empresarial al plan de pensiones de empleo"}
 	  };
 
 	@Override

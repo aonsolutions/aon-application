@@ -99,14 +99,14 @@
 			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 
 			<aon:if test="#{!domainSwitcher.childDomain}">
-			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
-			<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
+			<ui:include src="/facelet/homepage/portlet/summaryControlPortlet.xhtml" /> 
+			<ui:include src="/facelet/homepage/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
 			<aon:if test="#{dur.aula}">
-				<ui:include src="/facelet/new/portlet/helpControlPortlet.xhtml" />
+				<ui:include src="/facelet/homepage/portlet/helpControlPortlet.xhtml" />
 			</aon:if>
 			<aon:if test="#{timeControl.active}">
-				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
+				<ui:include src="/facelet/homepage/portlet/timeControlPortlet.xhtml" />
 			</aon:if>
 		</aon:div>
 		

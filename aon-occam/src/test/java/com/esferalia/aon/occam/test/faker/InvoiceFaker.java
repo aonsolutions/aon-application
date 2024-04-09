@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class InvoiceFaker {
@@ -661,12 +660,7 @@ public class InvoiceFaker {
 
 	private static InvoiceDetail calculate(InvoiceDetail detail) {
 		double taxableBase = (detail.getPrice() + detail.getTaxes()) * detail.getQuantity();
-		double[] discounts = getDiscounts(detail.getDiscountExpression());
-		if ( discounts != null) {
-			for (double discount : discounts) {
-				taxableBase = taxableBase * ( 1 - discount /100);
-			}
-		}
+		taxableBase = taxableBase * ( 1 - detail.getDiscount() /100);
 		taxableBase = AonMathUtils.round(taxableBase, 4); 
 		detail.setTaxableBase( taxableBase );
 		if (detail.isPrepayment()) {
@@ -678,17 +672,6 @@ public class InvoiceFaker {
 			}
 		}
 		return detail;
-	}
-	
-	private static double[] getDiscounts(String discountExpr) {
-		if (AonStringUtils.isBlank(discountExpr)) return null;
-		String[] arr = AonStringUtils.split(discountExpr,'+');
-		double[] discounts = new double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			String discount = arr[i];
-			discounts[i] = Double.parseDouble(discount.trim());
-		}
-		return discounts;
 	}
 
 	private static InvoiceTax calculate(InvoiceTax tax) {

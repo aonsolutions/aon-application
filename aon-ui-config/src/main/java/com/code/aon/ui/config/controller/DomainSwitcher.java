@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -605,6 +606,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainNameURL().equalsIgnoreCase("sig.aonsolutions.org");
 	}
 	
+	public boolean isCuidadosInclusivos() {
+		return getDomainNameURL().contains("cuidadosinclusivos.aonsolutions.net");
+	}
+	
 	public boolean isPaturpat() {
 	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
 	    return  ud  != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("paturpat");
@@ -781,7 +786,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public String getCurrentDomainDescription() {
 		return getDomainName();
 	}
-
 	
 
 	private static DomainType getSafeDomainType( Byte b ) {

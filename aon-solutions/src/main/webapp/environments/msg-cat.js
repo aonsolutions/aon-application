@@ -172,7 +172,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
 export const FOOTER = 'Peu';
-
+export const FROM = 'Des'
 // ----- G
 
 export const GALICIAN = 'Gallec';
@@ -261,7 +261,10 @@ export const MY_USER = 'Mi Usuari';
 export const NAME = 'Nom';
 export const NEW = 'Nou';
 export const NEW_COMPANY = 'Nova Empresa';
+export const NEW_DOCUMENT = 'Nou Document';
+export const NEW_EMPLOYEE = 'Nou Empleat';
 export const NEW_EXPENSE = 'Nova Despesa';
+export const NEW_INVOICE = 'Nova Factura';
 export const NEW_PRODUCT = 'Nou Producte';
 export const NEW_REQUEST = 'Nova Sol·licitud';
 export const NEW_WAREHOUSE = 'Nou Magatzem';
@@ -302,6 +305,8 @@ export const PAYSHEETS = 'Nòminas';
 export const PENDING = 'Pendent';
 export const PENDING_DOCUMENTS = 'Documents Pendents'
 export const PENDING_INVOICES = 'Factures Pendents';
+export const PENDING_REVIEW = 'Pendent de Revisió';
+export const PENDING_TASKS = 'Tasques Pendents';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
@@ -354,7 +359,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";
-
+export const REVIEW = "Revisar";
 
 // ----- S
 
@@ -407,6 +412,7 @@ export const TICKETS = 'Tiquets';
 export const TIMECONTROL = `Control d'Horari`;
 export const TITLE = 'Títol';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'Fins';
 export const TO_TRASH = 'Enviar a la Paperera';
 export const TODAY = 'Avui';
 export const TOMORROW = 'Matí';
