@@ -407,11 +407,11 @@ export class AonInvoice extends AonElement {
 				moreActions.push(rectify);
 			}
 
-			let duplicate = ACTION.DUPLICATE_INVOICE;
-			duplicate.permission = true;
-			duplicate.backgroundColor = INVOICE.color;
-			duplicate.fn = () => this.duplicateInvoice();
-			moreActions.push(duplicate);
+			// let duplicate = ACTION.DUPLICATE_INVOICE;
+			// duplicate.permission = true;
+			// duplicate.backgroundColor = INVOICE.color;
+			// duplicate.fn = () => this.duplicateInvoice();
+			// moreActions.push(duplicate);
 			if(this.getInvoice().isInbox()){
 				let changeType = ACTION.CHANGE_TYPE;
 				changeType.permission = true;
@@ -2595,9 +2595,9 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getOptionDialog();
 		let rectify = ACTION.RECTIFY;
 		rectify.fn = () => this.rectifyInvoice();
-		let duplicate = ACTION.DUPLICATE;
-		duplicate.fn = () => this.duplicateInvoice();
-		d.setMenuOptions([rectify, duplicate], top, left);
+		// let duplicate = ACTION.DUPLICATE;
+		// duplicate.fn = () => this.duplicateInvoice();
+		d.setMenuOptions([rectify], top, left);
 		d.open();
 	}
 
