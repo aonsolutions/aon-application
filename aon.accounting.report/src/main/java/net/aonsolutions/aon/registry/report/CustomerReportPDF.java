@@ -1,11 +1,13 @@
 package net.aonsolutions.aon.registry.report;
 
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.report.pdf.AbsReportTablePDF;
@@ -32,10 +34,13 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 			addStringCell(customer.getRegistry().getName());
 			addStringCell(customer.getRegistry().getAlias());
 			addStringCell(
-				AonCollectionUtils.stream(  customer.getMedias() )
-					.map( rm -> rm.getValue())
-					.findFirst()
-					.orElse(null));
+						AonCollectionUtils.stream(customer.getMedias())
+						.filter(Objects::nonNull)	
+						.filter(rm -> rm.getValue() != null)
+						.filter(rm -> rm.getMedia() == MediaType.FIXED_PHONE)
+						.map(rm -> rm.getValue())
+						.findFirst()
+						.orElse(""));
 			addStringCell(
 				Optional.ofNullable(customer.getRegistry().getStatus())
 					.map(rs -> rs.getDescription())
@@ -44,6 +49,8 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 		
 	}
 
+	
+		
 
 	@Override
 	public void print(OutputStream outputStream, Stream<CustomerFull> stream) throws AonReportException {

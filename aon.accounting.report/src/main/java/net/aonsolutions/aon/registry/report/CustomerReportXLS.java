@@ -1,12 +1,14 @@
 package net.aonsolutions.aon.registry.report;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -34,10 +36,13 @@ public class CustomerReportXLS extends AbsExcelReport implements Consumer<Custom
 		addCell(customer.getRegistry().getName());
 		addCell(customer.getRegistry().getAlias());
 		addCell(
-			AonCollectionUtils.stream(  customer.getMedias() )
-				.map( rm -> rm.getValue())
+				AonCollectionUtils.stream(customer.getMedias())
+				.filter(Objects::nonNull)	
+				.filter(rm -> rm.getValue() != null)
+				.filter(rm -> rm.getMedia() == MediaType.FIXED_PHONE)
+				.map(rm -> rm.getValue())
 				.findFirst()
-				.orElse(null));
+				.orElse(""));
 		addCell(
 			Optional.ofNullable(customer.getRegistry().getStatus())
 				.map(rs -> rs.getDescription())
