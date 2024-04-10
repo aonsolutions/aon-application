@@ -64,12 +64,9 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -2422,43 +2419,16 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					AonMessagePanel.hideMessage(messagePanel);
 	                
 					if(domainCompanies != null && !domainCompanies.isEmpty()) {
+						String host = isLocalDev ? "http://localhost:8080" : "https://aon.solutions";
 						
-						// OPTION 1
-						FormPanel diskForm = new FormPanel("_blank");
-						diskForm.setMethod(FormPanel.METHOD_GET);
-						FlowPanel formFlowPanel = new FlowPanel();
-						diskForm.add(formFlowPanel);
+						String fileDownloadURL = 
+								host + 
+								"/ms/api/customers-booking-resume-excel/" + 
+								"?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + 
+								"&domainName=" + domainCompanies.get(0).getDomain().getName() + 
+								"&login=" + options.getUser();
 						
-						Hidden domainIdHidden = new Hidden("domainId");
-						formFlowPanel.add(domainIdHidden);
-						
-						Hidden domainNameHidden = new Hidden("domainName");
-						formFlowPanel.add(domainNameHidden);
-						
-						Hidden userHidden = new Hidden("login");
-						formFlowPanel.add(userHidden);
-					
-						toolbar.add(diskForm);
-						
-//						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-						
-						diskForm.setAction(GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/");
-						domainIdHidden.setValue(domainCompanies.get(0).getDomain().getId().toString());
-						domainNameHidden.setValue(domainCompanies.get(0).getDomain().getName());		
-						userHidden.setValue(options.getUser());
-						diskForm.submit();
-						
-						diskForm.addSubmitCompleteHandler(e -> {
-							toolbar.remove(diskForm);
-							AonMessagePanel.hideMessage(messagePanel);
-						});
-						
-						// OPTION 2
-//						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-//						
-//						String fileDownloadURL = GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/" + "?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + "&domainName=" + domainCompanies.get(0).getDomain().getName() + "&login=" + options.getUser();
-//						Window.open(fileDownloadURL, "_blank", null);
-		       
+						Window.open(fileDownloadURL, "_blank", null);
 	                }
 				}
 				
