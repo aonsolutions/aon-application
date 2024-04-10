@@ -8,14 +8,12 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.InvoiceCounterJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RawdocInvoiceCounterJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -30,7 +28,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -204,10 +201,10 @@ public class InvoicesServlet extends AonApiHttpServlet {
     	
     	InvoiceCounter invoiceCounter = AON.getInvoiceCounter(api.getDomain(), api.getUser());
     	json.put(IJsonNames.INVOICE, InvoiceCounterJSON.toJSON(invoiceCounter));
-
+    	
     	return json;
     }
-
+    
     private static JSONObject saveInvoice(AonApiData api) {
         return InvoiceServlet.setInvoice(api);
     }

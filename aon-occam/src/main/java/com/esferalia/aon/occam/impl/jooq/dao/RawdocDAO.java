@@ -150,6 +150,7 @@ public class RawdocDAO {
 				.select( SELECT_FIELDS )
 				.from(RAWDOC)
 				.where(RAWDOC_PROPERTIES.getConditions(filter))
+				.orderBy(RAWDOC.ID.desc())
 				.limit(offset,limit)
 				.fetch()
 				.stream()

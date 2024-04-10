@@ -173,6 +173,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Finden Sie verknüpfte Domains";
 export const FOOTER = 'Footer';
+export const FROM = 'From';
 
 // ----- G
 
@@ -413,6 +414,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Time Control';
 export const TITLE = 'Títle';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'To';
 export const TO_TRASH = 'Send to Trash';
 export const TODAY = 'Today';
 export const TOMORROW = 'Tomorrow';

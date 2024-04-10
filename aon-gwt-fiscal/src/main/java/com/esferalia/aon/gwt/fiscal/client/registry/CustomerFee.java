@@ -2347,10 +2347,10 @@ public class CustomerFee extends MainEntryPoint {
 				
 				@Override
 				protected void onCreate(Fee fee) {
-					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
 						
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess(Fee customerFee) {
 							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 							addValueButton.setEnabled(false);
 							exportButton.setEnabled(false);
@@ -2379,6 +2379,12 @@ public class CustomerFee extends MainEntryPoint {
 				
 				@Override
 				protected void onAccept(Fee fee) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				protected void onCreate(Fee fee, Integer ritem) {
 					// TODO Auto-generated method stub
 					
 				}
@@ -2429,6 +2435,12 @@ public class CustomerFee extends MainEntryPoint {
 
 						@Override
 						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
 						
 					};
 			} else {
@@ -2560,6 +2572,12 @@ public class CustomerFee extends MainEntryPoint {
 								}
 							});
 						} 
+					}
+
+					@Override
+					protected void onCreate(Fee fee, Integer ritem) {
+						// TODO Auto-generated method stub
+						
 					}
 					
 				};

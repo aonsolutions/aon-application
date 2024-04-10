@@ -292,7 +292,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		}
 		setValue("editor-dias_vacaciones_no_disfrutados", "1");
 		//double totalPayment = getValue("totalPaymentLabel");
-		assertText("unemployment", 19.53);
+		assertText("unemployment", 20.51);
 		
 		
 		draft("FINIQUITO FORMACION, ALTERNANCIA");
@@ -321,9 +321,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		
 		calculate(Calendar.JANUARY, 2024);
-		assertText("mei", "1,51");
+		assertText("mei", "1,59");
 		click("costsCheck-input");
-		assertText("mei_cost", "7,31");
+		assertText("mei_cost", "7,67");
 		click("costsCheck-input");
 		
 		

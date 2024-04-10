@@ -251,7 +251,10 @@ public abstract class Mod131Declaration {
 			.orElse(null);
 		if (prev131 != null) {
 			mod131.setActivities(copyActivities(prev131, mod131));
+		} else {
+			mod131.setActivities( new LinkedList<>());
 		}
+		
 		// Ensure 5 activities
 		while ( AonCollectionUtils.size( mod131.getActivities() ) < 5) {
 			mod131.getActivities().add(new Mod131Activity()

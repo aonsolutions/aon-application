@@ -148,10 +148,15 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public void createCustomerFeeList(String domainName, int domainId, String user, Fee fee) {
+	public Fee createCustomerFeeList(String domainName, int domainId, String user, Fee fee) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		fee.setDomain(domain);
-		AON.createCustomerFeeList(domainName, domainId, user, fee);
+		return AON.createCustomerFeeList(domainName, domainId, user, fee);
+	}
+
+	@Override
+	public void updateRitemCustomerFee(String domainName, int domainId, String user, Integer customerFee, Integer ritem) {
+		AON.updateRitemCustomerFee(domainName, domainId, user, customerFee, ritem);
 	}
 	
 	@Override
@@ -193,11 +198,18 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query) {
 		return AON.getProjectsSuggestion(domainName, domain, user, customerId, query);
 	}
+
+	@Override
+	public Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery) {
+		return AON.getCustomerFeeSuggestion(domainName, domain, user, itemId, customerId, customerFeeQuery);
+	}
+	
 	@Override
 	public List<Fee> parseFeeFile(Domain domain, User user, String data) {
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		return FeeImport.getInstance().importation(domain, user.getLogin(), fileData);
 	}
+	
 	@Override
 	public ImportError importFee(Domain domain, User user, Fee fee, Integer index) {
 		return FeeImport.insertFee(domain, user, index, fee);
@@ -231,6 +243,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
 		return AON.getCustomerBookingCheckList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getCustomerChildBookingCheckList(domainName, domain, user, params);
 	}
 	
 	@Override

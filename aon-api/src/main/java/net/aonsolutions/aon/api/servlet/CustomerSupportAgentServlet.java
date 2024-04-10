@@ -89,7 +89,7 @@ public class CustomerSupportAgentServlet extends AonApiHttpServlet {
 	  		Integer customerId = vars.getInt(IJsonNames.CUSTOMER);
 			
 			// Si tiene dominio asociado se obvia
-			Stream<DomainCompany> domainCustomer = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customerId));
+			Stream<DomainCompany> domainCustomer = CONSOLE.areDomainsSync(f -> f.getAonCustomerProperty().eq(customerId));
 			Optional<DomainCompany> domain = domainCustomer.findFirst();
 			
 			if(domain.isPresent()) {

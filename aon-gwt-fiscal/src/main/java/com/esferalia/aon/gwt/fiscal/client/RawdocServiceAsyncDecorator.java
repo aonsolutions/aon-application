@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -67,6 +68,12 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	public void getAccountingInvoice(String domainName, int domain, String user, String invoice, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.getAccountingInvoice(domainName, domain, user, invoice, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+	
+	@Override
+	public void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.processInvoiceFile(domainName, domain, user, jsonStr, invoice, new AsyncCallbackWrapper<Boolean>(callback));
 	}
 	
 }
