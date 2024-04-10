@@ -61,6 +61,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private ListBox mun = new ListBox();
 	private AonIntegerBox emp = new AonIntegerBox(6);
 	private ListBox lor = new ListBox();
+	private ListBox pal = new ListBox();
 	private ListBox bat = new ListBox();
 	private AonDoubleBox prc = new AonDoubleBox(6);
 
@@ -120,6 +121,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonDoubleBox ic5 = new AonDoubleBox(6);
 	private AonDoubleBox rpf = new AonDoubleBox(6);
 	private AonDoubleBox rlo = new AonDoubleBox(6);
+	private AonDoubleBox rpa = new AonDoubleBox(6);
 	private AonDoubleBox rdr = new AonDoubleBox(6);
 	private AonIntegerBox dia = new AonIntegerBox(6);
 	private AonDoubleBox net = new AonDoubleBox(6);
@@ -169,6 +171,11 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		lor.addItem("Actividad realizada exclusivamente en Lorca.");
 		lor.addItem("Actividad realizada en Lorca y otros municipios.");
 		lor.setWidth(WIDTH_150PX);
+		
+		pal.addItem("-");
+		pal.addItem("Actividad realizada exclusivamente en la isla de la Palma.");
+		pal.addItem("Actividad realizada en la isla de la Palma y otros municipios.");
+		pal.setWidth(WIDTH_150PX);
 		
 		bat.addItem("-");
 		bat.addItem("Una batea y ning\u00FAn barco");
@@ -322,6 +329,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		mun.setSelectedIndex(act.getMun());
 		emp.setValue(act.getEmp());
 		lor.setSelectedIndex(act.getLor());
+		pal.setSelectedIndex(act.getPal());
 		bat.setSelectedIndex(act.getBat());
 		prc.setValue(act.getPrc());
 		int i = 0;
@@ -393,6 +401,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		ic5.setValue(act.getIc5());
 		rpf.setValue(act.getRpf());
 		rlo.setValue(act.getRlo());
+		rpa.setValue(act.getRpa());
 		rdr.setValue(act.getRdr());
 		dia.setValue(act.getDia());
 		net.setValue(act.getNet());
@@ -447,6 +456,8 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			tns.setEnabled(false);
 		}
 		cap.setEnabled( act.getVeh() > 0 );
+		rlo.setEnabled(( lor.getSelectedIndex() == 2 ));
+		rpa.setEnabled(( pal.getSelectedIndex() == 2 ));
 	}
 	
 	private Widget getAdditionalDataPanel(IModel131ActivityCallback callback) {
@@ -517,10 +528,23 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			.addCell(new Label(AON.MSG.irpfActivityEmp()),AON.CSS.aonBold() )
 			.addCell(emp);
 
-		lor.addChangeHandler(event -> onFieldChange(callback));
+		lor.addChangeHandler(event -> {
+			rlo.setValue(0.0, false);
+			callback.getActivity().setRlo( 0.0 );
+			onFieldChange(callback);
+		});
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityLor()),AON.CSS.aonBold() )
 			.addCell(lor);
+
+		pal.addChangeHandler(event -> {
+			rpa.setValue(0.0, false);
+			callback.getActivity().setRpa( 0.0 );
+			onFieldChange(callback);	
+		});
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityPal()),AON.CSS.aonBold() )
+			.addCell(pal);
 
 		bat.addChangeHandler(event -> onFieldChange(callback));
 		table.addRow()
@@ -817,8 +841,8 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		if (noStaffIndex != -1) {
 			int yh = 1800;
 			double v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / yh);
-			double v4 = AonMathUtils.floor(((double) callback.getActivity().getSpouseHours() / yh));
-			double v5 = AonMathUtils.floor(((double) callback.getActivity().getChildMen18Hours() / yh));
+			double v4 = AonMathUtils.floor((((double) callback.getActivity().getSpouseHours() / yh) * 0.50));
+			double v5 = AonMathUtils.floor((((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50));
 			double value = AonMathUtils.round(AonMathUtils.floor(v3 + v4 + v5 , 2));
 			if (noStaffIndex >= 0 && noStaffIndex <= 5 )  {
 				values[noStaffIndex].setValue(value, false);
@@ -881,6 +905,8 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		value6.setValue(AonNumberUtils.zeroIfNull(value6.getValue()),false);
 		iin.setValue(AonNumberUtils.zeroIfNull(iin.getValue()),false);
 		dia.setValue(AonNumberUtils.zeroIfNull(dia.getValue()),false);
+		rlo.setValue(AonNumberUtils.zeroIfNull(rlo.getValue()),false);
+		rpa.setValue(AonNumberUtils.zeroIfNull(rpa.getValue()),false);
 		callback.getActivity().setCom(com.getValue());
 		callback.getActivity().setTem(tem.getValue());
 		callback.getActivity().setNue(nue.getValue());
@@ -888,6 +914,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		callback.getActivity().setEmp(emp.getValue());
 		callback.getActivity().setMun(mun.getSelectedIndex());
 		callback.getActivity().setLor(lor.getSelectedIndex());
+		callback.getActivity().setPal(pal.getSelectedIndex());
 		callback.getActivity().setBat(bat.getSelectedIndex());
 		callback.getActivity().setPrc(prc.getValue());
 		callback.getActivity().setDis(dis.getValue());
@@ -953,6 +980,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		ic5.setEnabled(false);
 		rpf.setEnabled(false);
 		rlo.setEnabled(false);
+		rpa.setEnabled(false);
 		rdr.setEnabled(false);
 		net.setEnabled(false);
 		por.setEnabled(false);
@@ -960,6 +988,8 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		
 		iin.addValueChangeHandler(event -> onFieldChange(callback));
 		dia.addValueChangeHandler(event -> onFieldChange(callback));
+		rlo.addValueChangeHandler(event -> onFieldChange(callback));
+		rpa.addValueChangeHandler(event -> onFieldChange(callback));
 
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRnp()),AON.CSS.aonBold(),AON.CSS.aonWidth600() )
@@ -994,6 +1024,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRlo()),AON.CSS.aonBold())
 			.addCell(rlo);
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityRpa()),AON.CSS.aonBold())
+			.addCell(rpa);
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRdr()),AON.CSS.aonBold())
 			.addCell(rdr);
@@ -1154,6 +1187,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 					callback.getActivity().setIc5(result.getIc5());
 					callback.getActivity().setRpf(result.getRpf());
 					callback.getActivity().setRlo(result.getRlo());
+					callback.getActivity().setRpa(result.getRpa());
 					callback.getActivity().setRdr(result.getRdr());
 					callback.getActivity().setNet(result.getNet());
 					callback.getActivity().setPor(result.getPor());

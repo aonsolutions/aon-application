@@ -75,7 +75,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C02),17,2))
 
 		   // Actividades sin posibilidad de determinar datos base - Deducción por rentas obtenidas en Ceuta y Melilla
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod131Key.C03_1)))
+		   ,(wr, mod) -> wr.append(mod.getAmount(Mod131Key.C03_1)==1?"1":"2")
 		   // Actividades sin posibilidad de determinar datos base - Volumen de ventas o ingresos del trimestre
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03),10,2))
 //		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03_2),10,2))
