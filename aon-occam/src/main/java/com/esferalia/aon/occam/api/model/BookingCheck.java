@@ -34,6 +34,9 @@ public class BookingCheck implements Serializable{
 	private String quantityFee;
 	private String quantityRItem;
 	
+	private String ediSalesCode;
+	private Integer customerFee;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -175,6 +178,24 @@ public class BookingCheck implements Serializable{
 
 	public BookingCheck setQuantityRItem(String quantityRItem) {
 		this.quantityRItem = quantityRItem;
+		return this;
+	}
+
+	public String getEdiSalesCode() {
+		return ediSalesCode;
+	}
+
+	public BookingCheck setEdiSalesCode(String ediSalesCode) {
+		this.ediSalesCode = ediSalesCode;
+		return this;
+	}
+
+	public Integer getCustomerFee() {
+		return customerFee;
+	}
+
+	public BookingCheck setCustomerFee(Integer customerFee) {
+		this.customerFee = customerFee;
 		return this;
 	}
 
