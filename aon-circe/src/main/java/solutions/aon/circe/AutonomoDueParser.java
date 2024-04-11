@@ -26,40 +26,47 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class DueParser {
+public class AutonomoDueParser {
 
 	public static void main(String[] args) throws Exception {
-		try (FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomos.pdf")) {
-			parse(dueAutonomo, new DueParserListener() {
-				public void onRegistroEntradaYPAE(String registroEntrada, String pae) {
-					System.out.println(registroEntrada);
-					System.out.println(pae);
-				}
-			});
-		}
-		
+//		try (FileInputStream dueAutonomo = new FileInputStream("/home/ndiaz/Descargas/Due-autonomos.pdf")) {
+//			parse(dueAutonomo, new DueParserListener() {
+//				public void onRegistroEntradaYPAE(String registroEntrada, String pae) {
+//					System.out.println(registroEntrada);
+//					System.out.println(pae);
+//				}
+//			});
+//		}
+
+		Pattern p = Pattern.compile("^REGISTRO\\s*DE\\s*ENTRADA\\s*:\\s*(?<registro>.*)PAE\\s*:\\s*(?<pae>.*)$", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = p.matcher("Registro de Entrada: 202400061360293 PAE: AYUDA-T PYMES");
+		matcher.matches();
+		System.out.println(matcher.group(0));
+		System.out.println(matcher.group("registro"));
+		System.out.println(matcher.group("pae"));
+
 
 	}
 
-	public static void parse(File file, DueParserListener listener) throws Exception {
+	public static void parse(File file, AutonomoDueParserListener listener) throws Exception {
 		try (PDDocument doc = Loader.loadPDF(file)) {
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse(byte[] data, DueParserListener dueListener) throws Exception {
+	public static void parse(byte[] data, AutonomoDueParserListener dueListener) throws Exception {
 		try (InputStream is = new ByteArrayInputStream(data)) {
 			parse(is, dueListener);
 		}
 	}
 
-	public static void parse(InputStream is, DueParserListener listener) throws Exception {
+	public static void parse(InputStream is, AutonomoDueParserListener listener) throws Exception {
 		try (PDDocument doc = Loader.loadPDF(is)) {
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse(PDDocument doc, DueParserListener listener) throws Exception {
+	public static void parse(PDDocument doc, AutonomoDueParserListener listener) throws Exception {
 		AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent()) {
 			throw new IOException("You do not have permission to extract text");
@@ -80,22 +87,24 @@ public class DueParser {
 			if (AonStringUtils.isBlank(text))
 				continue;
 			textBuilder.append(text);
-			
+
 //			System.out.println(text);
 		}
 		parse(textBuilder.toString(), listener);
 	}
 
-	public static void parse(String text, DueParserListener listener) throws Exception {
+	public static void parse(String text, AutonomoDueParserListener listener)
+			throws IOException, UnknownPDFException, ParseException {
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			NumberFormat currency = NumberFormat.getNumberInstance(new Locale.Builder().setLanguageTag("es").setRegion("ES").build());
+			NumberFormat currency = NumberFormat
+					.getNumberInstance(new Locale.Builder().setLanguageTag("es").setRegion("ES").build());
 
 			Matcher matcher = find(reader, REGISTRO_ENTRADA_PAE);
 			String registroEntrada = matcher.group("registro");
 			String pae = matcher.group("pae");
 			listener.onRegistroEntradaYPAE(registroEntrada, pae);
-			
+
 			matcher = find(reader, DOC_NOMBRE_APELLIDO);
 			String docIdentidad = matcher.group("doc");
 			String nombre = matcher.group("nombre");
@@ -108,8 +117,9 @@ public class DueParser {
 			matcher = find(reader, NSS_ESTADO_CIVIL);
 			String nss = matcher.group("nss");
 			String estadoCivil = matcher.group("estadoCivil");
-			listener.onDatosPersonales(docIdentidad, nombre, apellidos, nacionalidad, sexo, fechaNacimiento, nss, estadoCivil);
-			
+			listener.onDatosPersonales(docIdentidad, nombre, apellidos, nacionalidad, sexo, fechaNacimiento, nss,
+					estadoCivil);
+
 			matcher = find(reader, DOMICILIO);
 			String domicilio = matcher.group("domicilio");
 			matcher = find(reader, DOMICILIO_CP);
@@ -118,17 +128,20 @@ public class DueParser {
 			String provincia = matcher.group("provincia");
 			String comunidad = matcher.group("comunidad");
 			String pais = matcher.group("pais");
-			String domicilioResidencia = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
+			String domicilioResidencia = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " "
+					+ pais;
 			String domicilioFiscal = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
-			String domicilioNotificaciones = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
-			String domicilioActividad = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " " + pais;
+			String domicilioNotificaciones = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " "
+					+ pais;
+			String domicilioActividad = domicilio + cp + " " + municipio + " " + provincia + " " + comunidad + " "
+					+ pais;
 			listener.onDomicilios(domicilioResidencia, domicilioFiscal, domicilioNotificaciones);
-			
+
 			matcher = find(reader, TELEFONO_EMAIL);
 			String telefonoTGSS = matcher.group("telefono");
 			String emailTGSS = matcher.group("mail");
 			listener.onNotificacionTGSS(telefonoTGSS, emailTGSS);
-			
+
 			matcher = find(reader, PREFIJO_TELEFONO_EMAIL);
 			String prefijoString = matcher.group("prefijo");
 			String prefijo = remove(prefijoString, " ");
@@ -136,11 +149,11 @@ public class DueParser {
 			String telefonoAEAT = matcher.group("telefono");
 			String emailAEAT = matcher.group("mail");
 			listener.onNotificacionAEAT(prefijoAEAT, telefonoAEAT, emailAEAT);
-			
+
 			matcher = find(reader, RECIBIR_INFORMACION);
 			String comunicacion = matcher.group("informacion");
 			listener.onComunicaciones(comunicacion);
-			
+
 			matcher = find(reader, INICIO_ACTIVIDAD);
 			String inicioActividadString = matcher.group("inicioActividad");
 			Date inicioActividad = simpleDateFormat.parse(inicioActividadString);
@@ -150,20 +163,20 @@ public class DueParser {
 			String numTrabajadorasString = matcher.group("trabajadores");
 			int numTrabajadoras = Integer.parseInt(numTrabajadorasString);
 			listener.onActividades(inicioActividad, numTrabajadoras);
-			
+
 			matcher = find(reader, SUPERFICIE_TOTAL);
 			String superficieString = matcher.group("superficie");
 			float superficie = currency.parse(superficieString).floatValue();
 			listener.onCentroActividad(superficie, domicilioActividad);
-			
+
 			matcher = find(reader, CNAE);
 			String cnae = matcher.group(0);
 			listener.onCNAE(cnae);
-			
+
 			matcher = find(reader, IAE);
 			String iae = matcher.group(0);
 			listener.onIAE(iae);
-			
+
 			matcher = find(reader, EPIGRAFE_AE);
 			String epigrafeAE = matcher.group("epigrafeAE");
 			matcher = find(reader, TIPO_ACTIVIDAD);
@@ -174,7 +187,7 @@ public class DueParser {
 			String fechaInicioAEString = matcher.group("fechaInicio");
 			Date fechaInicioAE = simpleDateFormat.parse(fechaInicioAEString);
 			listener.onLugarFueraDelLocal(epigrafeAE, tipoActividad, provinciaAE, municipioAE, fechaInicioAE);
-			
+
 			while (not(reader, SEGURIDAD_SOCIAL)) {
 				matcher = find(reader, DECLARACION_CENSAL);
 				String codigoString = matcher.group("codigo");
@@ -184,60 +197,58 @@ public class DueParser {
 				if (hasData(fechaString)) {
 					Date fechaDC = simpleDateFormat.parse(fechaString);
 					listener.onDeclaracionCensal(codigo, respuesta, fechaDC);
-				}
-				else {
+				} else {
 					listener.onDeclaracionCensal(codigo, respuesta, null);
 				}
-				
+
 			}
-			
+
 			matcher = find(reader, TIPO_TRABAJADOR);
 			String tipo = matcher.group("tipo");
 			matcher = find(reader, FECHA_REAL_ALTA);
 			String fechaSSString = matcher.group("fechaRealAlta");
 			Date fechaSS = simpleDateFormat.parse(fechaSSString);
 			listener.onSeguridadSocial(tipo, fechaSS);
-			
+
 			matcher = find(reader, REGIMEN_TRL_SUBGRUPO);
-			String regimen  = matcher.group("regimen");
+			String regimen = matcher.group("regimen");
 			String trl = matcher.group("trl");
 			String subgrupo = matcher.group("subgrupo");
 			matcher = find(reader, GRUPO);
 			String grupo = matcher.group("grupo");
 			listener.onRegimenDeEncuadramiento(regimen, trl, subgrupo, grupo);
-			
+
 			matcher = find(reader, BASE_COTIZACION_RENDIMINETOS);
 			String baseCotizacionString = matcher.group("baseCotizacion");
 			float baseCotizacion = currency.parse(baseCotizacionString).floatValue();
 			String rendimientoNetoString = matcher.group("rendimientoNeto");
 			float rendimientoNeto = currency.parse(rendimientoNetoString).floatValue();
 			listener.onBaseCotizacion(baseCotizacion, rendimientoNeto);
-			
+
 			matcher = find(reader, MUTUA_IT);
 			String mutuaIT = matcher.group("mutuaIT");
 			listener.onIncapacidadTemporal(mutuaIT);
-			
+
 			matcher = find(reader, CONTINGENCIAS_PROFESIONALES);
 			String contingenciaProfesional = matcher.group("contingencaProfesional");
 			matcher = find(reader, CESE_ACTIVIDAD);
 			String ceseActividad = matcher.group("ceseActividad");
 			listener.onCobertura(contingenciaProfesional, ceseActividad);
-			
+
 			matcher = find(reader, REDUCCIONES);
 			String reduccion = matcher.group("reduccion");
 			listener.onReduccion(reduccion);
-			
+
 			matcher = find(reader, OPCION_CA_FP);
 			String opcionCAFP = matcher.group("opcionCAFP");
 			listener.onOpcionCAFP(opcionCAFP);
-			
+
 			matcher = find(reader, CUENTA);
 			String cuenta = matcher.group("cuenta");
 			listener.onCuenta(cuenta);
-	
+
 		}
 	}
-
 
 	private static boolean hasData(String data) {
 		return !AonStringUtils.isBlank(data);
@@ -372,12 +383,14 @@ public class DueParser {
 	// servicios previa o simultánea a la adquisición Sí 01/04/2024
 	// 504 Comunicación de inicio de actividad. Entregas de bienes o prestaciones de
 	// servicios posterior a adquisición de bienes o No
-	protected static final Pattern DECLARACION_CENSAL = Pattern.compile("^(?<codigo>\\d{3})\\s*.*(?<respuesta>sí|no)\\s*(?<fecha>.*)$",
+	protected static final Pattern DECLARACION_CENSAL = Pattern.compile(
+			"^(?<codigo>\\d{3})\\s*.*(?<respuesta>sí|no)\\s*(?<fecha>.*)$",
 			Pattern.CASE_INSENSITIVE | Pattern.CANON_EQ | Pattern.UNICODE_CASE);
 
 	// SEGURIDAD SOCIAL
-	protected static final Pattern SEGURIDAD_SOCIAL = Pattern.compile("^SEGURIDAD\\s*SOCIAL\\s*$", Pattern.CASE_INSENSITIVE);
-	
+	protected static final Pattern SEGURIDAD_SOCIAL = Pattern.compile("^SEGURIDAD\\s*SOCIAL\\s*$",
+			Pattern.CASE_INSENSITIVE);
+
 	// Tipo: Trabajador Autónomo
 	protected static final Pattern TIPO_TRABAJADOR = Pattern.compile("^TIPO\\s*:\\s*(?<tipo>.*)$",
 			Pattern.CASE_INSENSITIVE);
@@ -392,7 +405,8 @@ public class DueParser {
 			Pattern.CASE_INSENSITIVE);
 
 	// Grupo: 0521- RÉGIMEN ESPECIAL DE TRABAJADORES POR CUENTA PROPIA O AUTÓNOMOS.
-	protected static final Pattern GRUPO = Pattern.compile("^GRUPO\\s*:\\s*(?<grupo>.*)$", Pattern.CASE_INSENSITIVE);
+	protected static final Pattern GRUPO = Pattern.compile("^GRUPO\\s*:\\s*(?<grupo>\\d{4}).*$",
+			Pattern.CASE_INSENSITIVE);
 
 	// Base Cotización: 900,00 Rendimientos netos anuales en promedio mensual:
 	// 400,00
@@ -422,6 +436,7 @@ public class DueParser {
 			Pattern.CASE_INSENSITIVE);
 
 	// Cuenta: 0073 0100 54 0496630843
-	protected static final Pattern CUENTA = Pattern.compile("^CUENTA\\s*:\\s*(?<cuenta>.*)$", Pattern.CASE_INSENSITIVE);
+	protected static final Pattern CUENTA = Pattern.compile("^CNAE\\\\s*:\\\\s*(?<cnae>\\\\d{4}).*$",
+			Pattern.CASE_INSENSITIVE);
 
 }
