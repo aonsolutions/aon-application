@@ -73,6 +73,15 @@ public class InvoiceApiDAO {
 			.fetch().stream().map(new InvoiceNewPortalFiller());
 	}
 	
+	public static long getInvoiceNewPortalCount(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext()
+				.select().from(INVOICE)
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();				
+	}
+	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);

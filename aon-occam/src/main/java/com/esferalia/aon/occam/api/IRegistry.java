@@ -148,12 +148,14 @@ public interface IRegistry {
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit);
 	public Supplier saveSupplier(AONContext ctx, Supplier supplier);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
+	public long getSuppliersCount(AONContext ctx, SupplierFilter filter);
 
 	// ------------------- CREDITOR
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit);
 	public Creditor saveCreditor(AONContext ctx, Creditor creditor);
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
+	public long getCreditorsCount(AONContext ctx, CreditorFilter filter);
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
@@ -217,6 +219,7 @@ public interface IRegistry {
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
 	public Domain getDomainLinked(AONContext ctx, Integer customerId);
 	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
+	public long getCustomersCount(AONContext ctx, CustomerFilter filter);
 	
 	public List<Customer> getCustomerWithoutFee(AONContext ctx);
 	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams);

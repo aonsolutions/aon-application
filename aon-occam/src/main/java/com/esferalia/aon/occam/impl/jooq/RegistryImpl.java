@@ -145,6 +145,11 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> CreditorDAO.getStream(ctx, filter, offset, limit));
 	}
+	@Override
+	public long getCreditorsCount(AONContext ctx , CreditorFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.getCreditorsCount(ctx, filter));
+	}
 
 	@Override
 	public Creditor saveCreditor(AONContext ctx, Creditor creditor) {
@@ -520,6 +525,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> SupplierDAO.save(ctx, supplier));
 	}
 	
+	public long getSuppliersCount(AONContext ctx, SupplierFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.getSuppliersCount(ctx, filter));
+				
+	}
+	
 	// -------------------- TARGET
 
 	@Override
@@ -672,6 +683,12 @@ public class RegistryImpl implements IRegistry{
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getFull(ctx, id));
+	}
+	
+	@Override
+	public long getCustomersCount(AONContext ctx, CustomerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getCustomersCount(ctx, filter));			
 	}
 
 	@Override
