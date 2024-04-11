@@ -103,7 +103,7 @@ public class CustomerBookingResumeExcelServlet extends AonApiHttpServlet {
 		printCustomerHeader();
 		fillCustomerRow(booking);
 		
-		if(null != booking.getResume().getChilds() && !booking.getResume().getChilds().isEmpty()) {
+		if(null != booking.getResume() && null != booking.getResume().getChilds() && !booking.getResume().getChilds().isEmpty()) {
 			printChildHeader();
 			fillChildRow(booking);
 		}
@@ -148,11 +148,11 @@ public class CustomerBookingResumeExcelServlet extends AonApiHttpServlet {
 		List<String> apps = booking.getApps().stream().map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
 		apps.sort((o1, o2) -> o1.compareTo(o2));
 		
-		List<Domain> activeChilds = null == booking.getResume().getChilds() ? new ArrayList<Domain>() : booking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
+		List<Domain> activeChilds = null == booking.getResume() || null == booking.getResume().getChilds() ? new ArrayList<Domain>() : booking.getResume().getChilds().stream().filter(domain -> domain.isActive()).collect(Collectors.toList());
 		
 		CellUtil.createCell(row, cellCount++, booking.getDomain().getDescription(), rowCellStyle);		
 		CellUtil.createCell(row, cellCount++, String.join(", ", apps), rowCellStyle);
-		CellUtil.createCell(row, cellCount++, activeChilds.size() + " / " + (null == booking.getResume().getTotalChilds() ? "0" : booking.getResume().getTotalChilds()), rowCenterCellStyle);
+		CellUtil.createCell(row, cellCount++, activeChilds.size() + " / " + (null == booking.getResume() || null == booking.getResume().getTotalChilds() ? "0" : booking.getResume().getTotalChilds()), rowCenterCellStyle);
 		CellUtil.createCell(row, cellCount++, booking.getApps().size() + "", rowCenterCellStyle);
 		CellUtil.createCell(row, cellCount++, booking.getDomain().getExpirationDate() != null && booking.getDomain().getExpirationDate().before(new Date()) ? "Expirado" : (booking.getDomain().isActive() ? "Activo" : "Inactivo"), rowCenterCellStyle);  
 		CellUtil.createCell(row, cellCount++, formatDate(booking.getDomain().getExpirationDate()), rowCenterCellStyle);
