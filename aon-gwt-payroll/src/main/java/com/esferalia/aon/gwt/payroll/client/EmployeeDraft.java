@@ -850,18 +850,19 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void fillContractTable(ContractInfo contractData) {
-		employee.checkCCCType(contractData.getCccType());
+		if(contractData.getCccType() != null) {
+			employee.checkCCCType(contractData.getCccType());
+			setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
+		
+			if(contractData.getCccType() == (byte)7) {
+				employee.showMdCtzContract();
+				setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
+			} else
+				employee.hideMdCtzContract();
+		}
 		
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
-		
-		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
-		
-		if(contractData.getCccType() == (byte)7) {
-			employee.showMdCtzContract();
-			setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
-		} else
-			employee.hideMdCtzContract();
 		
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
