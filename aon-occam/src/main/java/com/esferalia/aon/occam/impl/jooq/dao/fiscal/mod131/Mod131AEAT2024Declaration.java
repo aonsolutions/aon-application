@@ -249,6 +249,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_RLO ( Mod131Key.AC1_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRlo())
 			,(mod,key) -> ensureActivity(mod,0).setRlo(mod.getAmount(key)))
+		,AC1_RPA ( Mod131Key.AC1_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRpa())
+			,(mod,key) -> ensureActivity(mod,0).setRpa(mod.getAmount(key)))
 		,AC1_RDR ( Mod131Key.AC1_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRdr())
 			,(mod,key) -> ensureActivity(mod,0).setRdr(mod.getAmount(key)))
@@ -515,6 +518,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC2_RLO ( Mod131Key.AC2_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRlo())
 			,(mod,key) -> ensureActivity(mod,1).setRlo(mod.getAmount(key)))
+		,AC2_RPA ( Mod131Key.AC2_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRpa())
+			,(mod,key) -> ensureActivity(mod,1).setRpa(mod.getAmount(key)))
 		,AC2_RDR ( Mod131Key.AC2_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRdr())
 			,(mod,key) -> ensureActivity(mod,1).setRdr(mod.getAmount(key)))
@@ -780,6 +786,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC3_RLO ( Mod131Key.AC3_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRlo())
 			,(mod,key) -> ensureActivity(mod,2).setRlo(mod.getAmount(key)))
+		,AC3_RPA ( Mod131Key.AC3_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRpa())
+			,(mod,key) -> ensureActivity(mod,2).setRpa(mod.getAmount(key)))
 		,AC3_RDR ( Mod131Key.AC3_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRdr())
 			,(mod,key) -> ensureActivity(mod,2).setRdr(mod.getAmount(key)))
@@ -1045,6 +1054,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC4_RLO ( Mod131Key.AC4_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRlo())
 			,(mod,key) -> ensureActivity(mod,3).setRlo(mod.getAmount(key)))
+		,AC4_RPA ( Mod131Key.AC4_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRpa())
+			,(mod,key) -> ensureActivity(mod,3).setRpa(mod.getAmount(key)))
 		,AC4_RDR ( Mod131Key.AC4_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRdr())
 			,(mod,key) -> ensureActivity(mod,3).setRdr(mod.getAmount(key)))
@@ -1310,6 +1322,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC5_RLO ( Mod131Key.AC5_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRlo())
 			,(mod,key) -> ensureActivity(mod,4).setRlo(mod.getAmount(key)))
+		,AC5_RPA ( Mod131Key.AC5_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRpa())
+			,(mod,key) -> ensureActivity(mod,4).setRpa(mod.getAmount(key)))
 		,AC5_RDR ( Mod131Key.AC5_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRdr())
 			,(mod,key) -> ensureActivity(mod,4).setRdr(mod.getAmount(key)))
@@ -2560,15 +2575,22 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// municipal de Lorca y determinen el rendimiento neto por el m?todo de estimaci?n objetiva,
 		// podr?n reducir el rendimiento neto de m?dulos de 2013 correspondiente a tales
 		// actividades en un 20 por ciento.
-		double rlo = 0.0;
-		if (AonMathUtils.isNotZero(act.getLor())) {
-			rlo = AonMathUtils.round(act.getRpf() * 20 / 100); 	
+		if (AonMathUtils.equals(0,act.getLor())) {
+			act.setRlo(0.0);
+		} else if (AonMathUtils.equals(1,act.getLor())) {
+			act.setRlo(AonMathUtils.round(act.getRpf() * 20 / 100));
+			act.setRpa(0.0);
 		}
-		act.setRlo(rlo);		
+		if (AonMathUtils.equals(0,act.getPal())) {
+			act.setRpa(0.0);
+		} else if (AonMathUtils.equals(1,act.getPal())) {
+			act.setRpa(AonMathUtils.round(act.getRpf() * 20 / 100));
+			act.setRlo(0.0);
+		}
 	}
 	
 	private static void calcRendimientoEfectosPagoFraccionadoDespuesReduccion(AONContext ctx, Mod131Activity act) {
-		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo()));
+		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo() - act.getRpa()));
 	}
 	
 	private static void calcResultadoPagoTrimestral(AONContext ctx, Mod131Activity act) {

@@ -38,8 +38,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
@@ -1444,16 +1444,28 @@ public class InvoiceImport extends ImportUtils{
 				.setActivity(ai.getInvoice().getActivity().getId())
 				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
-		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
-			@Override public void visitUndeductible(Invoice invoice) {
+		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor<Void>() {
+			@Override 
+			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
 				accountEntry.setUndeductible(true);
+				return null;
 			}
-			@Override public void visitSales(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);}
-			@Override public void visitPurchase(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);}
-			@Override public void visitExpenses(Invoice invoice) {
+			@Override 
+			public Void visitSales(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);
+				return null;
+			}
+			@Override 
+			public Void visitPurchase(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);
+				return null;
+			}
+			@Override 
+			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
 				accountEntry.setUndeductible(false);
+				return null;
 			}
 		});
 		return accountEntry;
