@@ -479,6 +479,8 @@ public class BookingCheckDAO {
 					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
 					.setQuantityFee(null != r.get(CUSTOMER_FEE.QUANTITY) ? r.get(CUSTOMER_FEE.QUANTITY).intValue() + "" : "0")
 					.setQuantityRItem(r.get(RITEM.QUANTITY))
+					.setEdiSalesCode(r.get(RITEM.EDI_SALES_CODE))
+					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
 					;
 		}
 	}

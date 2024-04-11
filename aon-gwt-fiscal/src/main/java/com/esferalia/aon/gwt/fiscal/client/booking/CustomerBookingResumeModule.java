@@ -1323,7 +1323,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					
 					AonTableButton bookingInfoBtn = new AonTableButton("Ver contrataciones", AON.CSS.aonIconMoreVertical());
 					bookingInfoBtn.addClickHandler(e -> {
-						new CustomerBookingDialog(options, getCustomer(), domainChild.getId()) {
+						new CustomerBookingDialog(options, getCustomer(), domainChild) {
 
 							@Override
 							protected void onCloseRefresh() {
@@ -1774,11 +1774,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 					@Override
 					public void onAccept() {
-						LinkedList<Fee> deleteFees = new LinkedList<>();
-						deleteFees.add(fee);
-						
 						AonMessagePanel.showLoading(messagePanel, "Elimando cuota ...");
-						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), deleteFees,
+						SERVICE.deleteCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee,
 								new AsyncCallback<Void>() {
 
 									@Override

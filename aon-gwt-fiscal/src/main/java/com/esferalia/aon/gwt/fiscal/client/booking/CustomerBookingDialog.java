@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -40,6 +42,7 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -47,7 +50,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 
 public abstract class CustomerBookingDialog extends AonCustomDialog {
 	
@@ -461,6 +466,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 	private HTMLPanel messagePanel;
 	private DeckPanel bookingDeckPanel;
 	private ScrollPanel scrollPanel;
+	private HTMLPanel scrollContentPanel;
 	private Grid bookingGrid;
 	private HTMLPanel bookingMessagePanel;
 	
@@ -471,8 +477,15 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 	private BookingApi bookingApi;
 	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
 	
+	private LinkedList<BookingCheck> bookingList;
+	
 	private boolean isChildBookig = false;
-	private Integer childDomain;
+	private Domain childDomain;
+	
+	private SuggestBox customerFeeSuggestBox;
+	private Map<String, Fee> customerFeeSuggestions = new TreeMap<>();
+	private Fee selectedCustomerFee;
+	private int iterator = 0;
 	
 	private boolean isLocalDev = false;
 	
@@ -508,12 +521,12 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		});
 	}
 
-	public CustomerBookingDialog(RegistryModuleOptions options, int customerId, Integer childDomainId) {
+	public CustomerBookingDialog(RegistryModuleOptions options, int customerId, Domain childDomain) {
 		super();
 		
 		this.options = options;
 		this.customerId = customerId;
-		this.childDomain = childDomainId;
+		this.childDomain = childDomain;
 		
 		this.isChildBookig = true;
 		
@@ -546,6 +559,10 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 	private void initializeBooking() {
 		bookingPanel.clear();
 		
+		if(this.isChildBookig) {
+			bookingPanel.add(createSyncCustomerFeeToolbar());
+		}
+		
 		messagePanel = new HTMLPanel("");
 		
 		bookingDeckPanel = new DeckPanel();
@@ -554,13 +571,179 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		
 		scrollPanel = new ScrollPanel();
 		scrollPanel.setHeight("500px");
-		scrollPanel.add(bookingGrid);
+		
+		scrollContentPanel = new HTMLPanel("");
+		scrollContentPanel.addStyleName(AON.CSS.aonFlexColumn());
+		scrollPanel.add(scrollContentPanel);
+		
+		scrollContentPanel.add(bookingGrid);
 		
 		bookingDeckPanel.add(scrollPanel);
 		bookingDeckPanel.add(bookingMessagePanel);
 		
 		bookingPanel.add(messagePanel);
 		bookingPanel.add(bookingDeckPanel);
+	}
+	
+	private HTMLPanel createSyncCustomerFeeToolbar() {
+		HTMLPanel toolbar = new HTMLPanel("");
+		toolbar.addStyleName(AON.CSS.aonItemFlex());
+		toolbar.getElement().getStyle().setProperty("border-bottom", "solid #c4c4c4 1px");
+		toolbar.getElement().getStyle().setProperty("min-height", "37px");
+		
+		Label syncCustomerFeesLabel = new Label("Sincroniar Cuotas a partir de ");
+		
+		AonToolbarSmallButton syncCustomerFees = new AonToolbarSmallButton("Sincroniar Cuotas a partir de una base", AON.CSS.aonIconSync()); 
+		syncCustomerFees.addClickHandler(e -> {
+			if(null != selectedCustomerFee)
+				createDraftCustomerFees();
+			else
+				AonMessagePanel.showError(messagePanel, "El campo cuota es obligatorio");
+			
+		});
+		syncCustomerFees.setEnabled(false);
+		
+		customerFeeSuggestBox = new SuggestBox();
+		customerFeeSuggestBox.setHeight("2em");
+		customerFeeSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		customerFeeSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		customerFeeSuggestBox.setAutoSelectEnabled(false);
+		customerFeeSuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
+		
+		customerFeeSuggestBox.addSelectionHandler(e -> {
+			customerFeeSuggestBox.hideSuggestionList();
+			
+			Integer feeId = Integer.parseInt(customerFeeSuggestBox.getValue().split("\\[")[1].split("\\]")[0]);
+			List<Fee> fees = customerFeeSuggestions.values().stream().collect(Collectors.toList());
+			for(Fee fee : fees) {
+				if(fee.getId().equals(feeId)) {
+					selectedCustomerFee = fee;
+					break;
+				}
+			}
+			
+			syncCustomerFees.setEnabled(true);
+		});
+		
+		customerFeeSuggestBox.addValueChangeHandler(e -> {
+			if(AonStringUtils.isBlank(customerFeeSuggestBox.getValue())) { 
+				//AonMessagePanel.showError(messagePanel, "El campo cuota es obligatorio");
+				syncCustomerFees.setEnabled(false);
+			}
+		});
+		
+		customerFeeSuggestBox.addKeyUpHandler(e -> {
+			String customerFeeQuery = customerFeeSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerFeeSuggestBox.setValue("");
+				customerFeeQuery = null;
+				getCustomerFeeSuggestion(customerFeeQuery);
+			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
+				getCustomerFeeSuggestion(customerFeeQuery);
+		});
+		
+		toolbar.add(syncCustomerFeesLabel);
+		toolbar.add(customerFeeSuggestBox);
+		toolbar.add(syncCustomerFees);
+		
+		return toolbar;
+	}
+
+	private void createDraftCustomerFees() {
+		if(!bookingList.isEmpty()) {
+			iterator = 0;
+			createAndSaveCustomerFee();
+		}
+	}
+
+	private void createAndSaveCustomerFee() {
+		if(iterator == bookingList.size()) {
+			AonMessagePanel.showSuccess(messagePanel, "Sincronizaci\u00f3n de cuotas finalizada correctamente");
+			initializeBooking();
+		} else {
+			BookingCheck booking = bookingList.get(iterator);
+			if(null == booking.getCustomerFee()) {
+				
+				Fee draftFee = new Fee();
+				draftFee.setDomain(selectedCustomerFee.getDomain());
+				draftFee.setProject(selectedCustomerFee.getProject());
+				draftFee.setCustomer(selectedCustomerFee.getCustomer());
+				draftFee.setItem(booking.getItem());
+				String description = booking.getItem().getProduct().getName().contains("/") ? booking.getItem().getProduct().getName().split("/")[0] : booking.getItem().getProduct().getName();
+				draftFee.setDescription(description + (!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? "" : " " + childDomain.getDescription()) );
+				draftFee.setQuantity(1.00);
+				draftFee.setPrice(0.00);
+				draftFee.setDiscount(0.00);
+				draftFee.setStartDate(selectedCustomerFee.getStartDate());
+				draftFee.setEndDate(selectedCustomerFee.getEndDate());
+				draftFee.setBillingDate(selectedCustomerFee.getBillingDate());
+				draftFee.setPeriod(selectedCustomerFee.getPeriod());
+				draftFee.setSecurityLevel(selectedCustomerFee.getSecurityLevel());
+				draftFee.setInvoicingGroup(selectedCustomerFee.getInvoicingGroup());
+				draftFee.setSeller(selectedCustomerFee.getSeller());
+				draftFee.setWorkplace(selectedCustomerFee.getWorkplace());
+				draftFee.setSellerSupport(selectedCustomerFee.getSellerSupport());
+				draftFee.setSellerComercial(selectedCustomerFee.getSellerComercial());
+				
+				SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), draftFee, new AsyncCallback<Fee>() {
+					
+					@Override
+					public void onSuccess(Fee savedFee) {
+						SERVICE.updateRitemCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), savedFee.getId(), booking.getId(), new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								iterator++;
+								createAndSaveCustomerFee();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								iterator++;
+								createAndSaveCustomerFee();
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable arg0) {
+						iterator++;
+						createAndSaveCustomerFee();
+					}
+				});
+				
+			} else {
+				iterator++;
+				createAndSaveCustomerFee();
+			}
+		}
+		
+	}
+
+	private void getCustomerFeeSuggestion(String customerFeeQuery) {
+		SERVICE.getCustomerFeeSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, customerId, customerFeeQuery, new AsyncCallback<Map<String, Fee>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Fee> customerFeeSuggestionsDB) {
+				customerFeeSuggestions = customerFeeSuggestionsDB;
+				
+				List<String> suggestions = new ArrayList<String>();
+				customerFeeSuggestions.values().forEach(fee -> suggestions.add("[" + fee.getId() + "] " + fee.getDescription()));
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerFeeSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(suggestions);
+				orclSb.setDefaultSuggestionsFromText(suggestions);
+				customerFeeSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 	
 	private void showBookingGrid() {
@@ -640,8 +823,9 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 						public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
 							if(bookingCheckListDB.isEmpty()) showBookingMessage();
 							else {
-								bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
-								fillBookingGrid(bookingCheckListDB);
+								bookingList = bookingCheckListDB;
+								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								fillBookingGrid();
 							}
 							
 							showDialog();
@@ -650,7 +834,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		
 		else {
 			
-			params.setChildDomain(childDomain);
+			params.setChildDomain(childDomain.getId());
 			
 			SERVICE.getCustomerChildBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
 					new AsyncCallback<LinkedList<BookingCheck>>() {
@@ -664,8 +848,9 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 						public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
 							if(bookingCheckListDB.isEmpty()) showBookingMessage();
 							else {
-								bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
-								fillBookingGrid(bookingCheckListDB);
+								bookingList = bookingCheckListDB;
+								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								fillBookingGrid();
 							}
 							
 							showDialog();
@@ -676,10 +861,10 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		
 	}
 
-	private void fillBookingGrid(LinkedList<BookingCheck> bookingCheckListDB) {
+	private void fillBookingGrid() {
 		showBookingGrid();
 		
-		for(BookingCheck bookingCheck : bookingCheckListDB) {
+		for(BookingCheck bookingCheck : bookingList) {
 			List<Label> rowLabels = new ArrayList<>();
 			
 			int row = bookingGrid.insertRow(bookingGrid.getRowCount());
