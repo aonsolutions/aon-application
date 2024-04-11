@@ -445,7 +445,7 @@ public class Up2Date {
 		// FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
 		// RefreshMod131Result.REFRESH_MOD131_RESULT
     		
-    	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE	
+    	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
 		InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
         UdpateDomainApp.UPDATE_DOMAIN_APP
 	};
