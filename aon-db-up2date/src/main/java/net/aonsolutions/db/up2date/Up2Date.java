@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
 import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
+import net.aonsolutions.db.up2date.security.UdpateDomainApp;
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2024Update;
@@ -444,7 +445,8 @@ public class Up2Date {
         FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
         RefreshMod131Result.REFRESH_MOD131_RESULT,
         
-        InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX
+        InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+        UdpateDomainApp.UPDATE_DOMAIN_APP
 	};
 
     // ------------------------------------------------------------------------
