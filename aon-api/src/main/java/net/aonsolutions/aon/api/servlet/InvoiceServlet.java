@@ -656,7 +656,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getTypeProperty().eq(RawdocType.safeValueOf(rawdocFilter.getType()).value()));
 		}
 		
-//		System.out.println("rawdocFilter" + rawdocFilter.getStatus().equals(""));
 		if(rawdocFilter.getStatus().equals("")) {
 			return filter;
 		}
