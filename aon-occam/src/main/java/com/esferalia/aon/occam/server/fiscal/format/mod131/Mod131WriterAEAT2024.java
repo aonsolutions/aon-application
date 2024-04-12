@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IMod131W
 import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod131WriterAEAT2024 implements IMod131Writer{ 
@@ -120,7 +121,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		   // *******
 		   // *******
 			// Liquidación (3) - IV. Total liquidación - Deducción del art. 110.3.c) del Reglamento del Impuesto - Cuantía de los rendimientos netos de actividades económicas del ejercicio anterior al de devengo, en el caso de que no excedieran de 12.000 euros
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(0,1))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(getCuantiaDeduccion(mod),1))
 			// Liquidación (3) - IV. Total liquidación - Deducción del art. 110.3.c) del Reglamento del Impuesto - En el caso excepcional de que en el trimestre deba presentar tambien el modelo 130 de pago fraccionado, indique la cantidad reflejada en él por la presente deducción
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(0,5,2))
 		   // *******
@@ -177,6 +178,15 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 			this.propertyFillers = pf;
 		}
 		
+		private static int getCuantiaDeduccion(Mod131 mod) {
+			double c09 = mod.getAmount(Mod131Key.C091);
+			if ( AonNumberUtils.equals(100,c09)) return 1;
+			else if ( AonNumberUtils.equals(75,c09)) return 2;
+			else if ( AonNumberUtils.equals(50,c09)) return 3;
+			else if ( AonNumberUtils.equals(25,c09)) return 4;
+			return 0;
+		}
+
 		private void fillPage(Mod131 mod131, Writer wr) throws IOException {
 			for (IPropertyFiller propertyFiller : this.propertyFillers) {
 				propertyFiller.propertyFill(wr, mod131);
