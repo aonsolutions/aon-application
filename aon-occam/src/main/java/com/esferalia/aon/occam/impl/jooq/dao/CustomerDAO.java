@@ -154,6 +154,16 @@ public class CustomerDAO {
 				.map(new CustomerFiller());
 	}
 	
+	public static long getCustomersCount(AONContext ctx, CustomerFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(CUSTOMER)
+				.where(CUSTOMER_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();
+	}
+	
 	public static List<Customer> getList(AONContext ctx, CustomerFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toList());
 	}

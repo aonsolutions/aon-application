@@ -38,6 +38,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 	public static final String SUPPLIERS = "/";
 	public static final String SUPPLIER = "/:id";
 	public static final String SUPPLIER_TRANSACTION = "/:id/transaction";
+	public static final String SUPPLIERS_COUNT = "/count";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -61,6 +62,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(SUPPLIERS, SuppliersServlet::getSuppliers)
+				.addRoute(SUPPLIERS_COUNT, SuppliersServlet::getSuppliersCount)
 				.addRoute(SUPPLIER, SuppliersServlet::getSupplier)
 				.addRoute(SUPPLIER_TRANSACTION, SuppliersServlet::getSupplierTransaction)
 				.apply();
@@ -150,6 +152,11 @@ public class SuppliersServlet extends AonApiHttpServlet {
 		        }
 		    }
 		return result;
+	}
+	
+	private static long getSuppliersCount(AonApiData api) {
+		return AON.getSuppliersCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				 f -> supplierFilter(api,api.getData(), f));
 	}
 	
 	private static Filter supplierFilter(AonApiData api, JSONObject json, SupplierProperties f) {

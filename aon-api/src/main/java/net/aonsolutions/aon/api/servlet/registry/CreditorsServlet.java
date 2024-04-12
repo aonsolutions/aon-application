@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -39,6 +40,7 @@ public class CreditorsServlet extends AonApiHttpServlet {
 	public static final String CREDITORS = "/";
 	public static final String CREDITOR = "/:id";
 	public static final String CREDITOR_TRANSACTION = "/:id/transaction";
+	public static final String CREDITORS_COUNT = "/count";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -62,6 +64,7 @@ public class CreditorsServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(CREDITORS, CreditorsServlet::getCreditors)
+				.addRoute(CREDITORS_COUNT, CreditorsServlet::getCreditorsCount)
 				.addRoute(CREDITOR, CreditorsServlet::getCreditor)
 				.addRoute(CREDITOR_TRANSACTION, CreditorsServlet::getCreditorTransaction)
 				.apply();
@@ -147,6 +150,11 @@ public class CreditorsServlet extends AonApiHttpServlet {
 		        }
 		    }
 		return result;
+	}
+	
+	private static long getCreditorsCount(AonApiData api) {
+		 return AON.getCreditorsCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				 f -> creditorFilter(api, api.getData(), f));
 	}
 	
 	private static Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {

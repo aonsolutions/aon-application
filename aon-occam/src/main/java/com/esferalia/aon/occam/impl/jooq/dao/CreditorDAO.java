@@ -130,7 +130,15 @@ public class CreditorDAO {
 				.stream()
 				.map(new CreditorFiller());
 	}
-	
+	public static long getCreditorsCount(AONContext ctx , CreditorFilter filter){
+		return ctx.getDslContext()
+				.select()
+				.from(CREDITOR)
+				.where(CREDITOR_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();
+	}
 	
 	public static Creditor get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))

@@ -44,6 +44,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 	public static final String CUSTOMERS = "/";
 	public static final String CUSTOMER = "/:id";
 	public static final String CUSTOMER_EMAILS = "/:id/emails";
+	public static final String CUSTOMERS_COUNT = "/count";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -67,6 +68,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(CUSTOMERS, CustomersServlet::getCustomers)
+				.addRoute(CUSTOMERS_COUNT, CustomersServlet::getCustomersCount)
 				.addRoute(CUSTOMER, CustomersServlet::getCustomer)
 				.addRoute(CUSTOMER_EMAILS, CustomersServlet::getCustomerEmails)
 				.apply();
@@ -148,6 +150,11 @@ public class CustomersServlet extends AonApiHttpServlet {
 	        }
 	    }
 	    return result;
+	}
+	
+	private static long getCustomersCount(AonApiData api) {
+		return AON.getCustomersCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				 f -> customerFilter(api, f));
 	}
 	
 	private static Filter customerFilter(AonApiData api, CustomerProperties f) {

@@ -579,7 +579,14 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getFull(ctx, filter, offset, limit));
 	}
-	
+	@Override
+	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter , Integer page, Integer perPage , boolean ticket){
+		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocNewPortal(ctx, filter , page, perPage ,ticket));
+	}
+	@Override
+	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
+		return RawdocDAO.getRawdocCount(ctx, filter, ticket);
+	}
 	@Override
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
 		return ctx.getDslContext().transactionResult(configuration

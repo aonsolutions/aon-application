@@ -715,7 +715,7 @@ public class UserServlet extends AonApiHttpServlet {
 	private JSONObject setUser(AonApiData api) throws Exception {
 		JSONObject js = new JSONObject();
 		String email = api.getData().optString("email");
-
+		
 		if(Utils.isEmail(email)) {
 			
 			User usr = api.getData().opt("id") != null 
@@ -761,6 +761,7 @@ public class UserServlet extends AonApiHttpServlet {
 				throw new Exception("El mail introducido ya está asociado a otro usuario.");
 			}
 			
+			
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
 					user = createUser(api, api.getDomain(), api.getData(), login, auth);
@@ -777,6 +778,15 @@ public class UserServlet extends AonApiHttpServlet {
 				if(api.getDomain().isChild() || api.getDomain().isStandalone()) {
 					saveTaskHolder(api, user);
 				}
+//				if(password != null && !password.equals("") && user != null && api.getDomain() != null) {
+//					System.out.println("entra en el update");
+//					System.out.println("authPass" + auth.getPassword());
+//					
+//					password = Utils.createPasswordHash(auth.getEmail(), password);
+//					auth.setPassword(password);
+//					AON_SOLUTIONS.updateAuthPassword(auth);
+//					AON.updateUserPassword(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user.getId(), auth.getPassword());
+//				}
 				
 				js.put("id", user.getId());
 				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
