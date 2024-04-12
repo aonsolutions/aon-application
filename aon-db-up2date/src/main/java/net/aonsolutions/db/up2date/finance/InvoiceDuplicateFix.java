@@ -37,10 +37,12 @@ public class InvoiceDuplicateFix implements Update {
 		
 		getInvoiceDetails(dslContext).stream().forEach(invoiceDetailId -> {
 			InvoiceDetail invoiceDetail = getInvoiceDetail(dslContext, invoiceDetailId);
-			Integer invoice = getInvoice(dslContext, invoiceDetail);
-			List<InvoiceTax> taxes = getInvoiceTaxes(dslContext, invoiceDetail);
-			if(taxes.size() == 2 && invoice != null && invoice != invoiceDetail.getInvoice()) {
-				save(dslContext, invoiceDetail, taxes.get(0), invoice);
+			if(invoiceDetail.getDate() != null) {
+				Integer invoice = getInvoice(dslContext, invoiceDetail);
+				List<InvoiceTax> taxes = getInvoiceTaxes(dslContext, invoiceDetail);
+				if(taxes.size() == 2 && invoice != null && invoice != invoiceDetail.getInvoice()) {
+					save(dslContext, invoiceDetail, taxes.get(0), invoice);
+				}
 			}
 		});
 	}
@@ -118,6 +120,7 @@ public class InvoiceDuplicateFix implements Update {
 		.set(INVOICE_DETAIL.TAXES, 0.0)
 		.set(INVOICE_DETAIL.PREPAYMENT, (byte) 0)
 		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkplace())
+		.set(INVOICE_DETAIL.CREATION_DATE, invoiceDetail.getDate())
 		.execute();
 		
 		Integer id = dslContext.select(INVOICE_DETAIL.ID)
