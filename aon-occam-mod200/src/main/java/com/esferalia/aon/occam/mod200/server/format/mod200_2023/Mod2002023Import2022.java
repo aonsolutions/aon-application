@@ -141,7 +141,6 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0010, mod200old.getDoubleValue(Mod2002022Key.C0010))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0081, mod200old.getDoubleValue(Mod2002022Key.C0081))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0082, mod200old.getDoubleValue(Mod2002022Key.C0082))			
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0016, mod200old.getDoubleValue(Mod2002022Key.C0016))  
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0026, mod200old.getDoubleValue(Mod2002022Key.C0026))  
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0027, mod200old.getDoubleValue(Mod2002022Key.C0027))  
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0030, mod200old.getDoubleValue(Mod2002022Key.C0030))  
@@ -219,7 +218,7 @@ public class Mod2002023Import2022 {
             
             ,(mod200old,mod200new) -> mod200new.getSecretary().setName(mod200old.getSecretary().getName())              // Nombre o Razón social - Secretario del Consejo de Administración 
 			,(mod200old,mod200new) -> mod200new.getSecretary().setDocument(mod200old.getSecretary().getDocument())      // N.I.F. - Secretario del Consejo de Administración
-			,(mod200old,mod200new) -> mod200new.getSecretary().setIrnr(addOneYear(mod200old.getSecretary().getIrnr()))  // Fecha - Contribuyentes por el I.R.N.R.
+			,(mod200old,mod200new) -> mod200new.getSecretary().setIrnr(addOneYear(mod200old.getSecretary().getIrnr()))  // FALTA - NO ESTA EN EL MODELO -Fecha - Contribuyentes por el I.R.N.R.
 			
 			// REPRESENTANTES LEGALES
 						
@@ -260,8 +259,9 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ1592, mod200old.getDoubleValue(Mod2002022Key.LQ1594)) // 2017
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ1825, mod200old.getDoubleValue(Mod2002022Key.LQ1827)) // 2018			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ2193, mod200old.getDoubleValue(Mod2002022Key.LQ2195)) // 2019
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ194 , mod200old.getDoubleValue(Mod2002022Key.LQ196 )) // 2020			
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ151,  mod200old.getDoubleValue(Mod2002022Key.LQ2318)+ // 2022
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ194 , mod200old.getDoubleValue(Mod2002022Key.LQ196 )) // 2020
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ151 , mod200old.getDoubleValue(Mod2002022Key.LQ164 )) // 2021
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ896,  mod200old.getDoubleValue(Mod2002022Key.LQ2318)+ // 2022
 					                                                                   mod200old.getDoubleValue(Mod2002022Key.LQ1049)+
 					                                                                  (mod200old.getDoubleValue(Mod2002022Key.C0017)==0 
                                                                                       && mod200old.getDoubleValue(Mod2002022Key.C0018)==0 
@@ -320,8 +320,10 @@ public class Mod2002023Import2022 {
 						mod200old.getDoubleValue(Mod2002022Key.BN2200), mod200old.getDoubleValue(Mod2002022Key.BN2197), mod200old.getDoubleValue(Mod2002022Key.BN103B) ) )
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2319, adjustDoubleTax( // 2020
 						mod200old.getDoubleValue(Mod2002022Key.BN2323), mod200old.getDoubleValue(Mod2002022Key.BN2320), mod200old.getDoubleValue(Mod2002022Key.BN103B) ) )
-				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN199 , adjustDoubleTax( // 2022
-						mod200old.getDoubleValue(Mod2002022Key.BN206)+mod200old.getDoubleValue(Mod2002022Key.BN129), mod200old.getDoubleValue(Mod2002022Key.BN203), mod200old.getDoubleValue(Mod2002022Key.BN103B) ) )
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN199 , adjustDoubleTax( // 2021
+						mod200old.getDoubleValue(Mod2002022Key.BN206), mod200old.getDoubleValue(Mod2002022Key.BN203), mod200old.getDoubleValue(Mod2002022Key.BN103B) ) )
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN394 , adjustDoubleTax( // 2022
+						mod200old.getDoubleValue(Mod2002022Key.BN2076)+mod200old.getDoubleValue(Mod2002022Key.BN129), mod200old.getDoubleValue(Mod2002022Key.BN436), mod200old.getDoubleValue(Mod2002022Key.BN103B) ) )
 
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN102 , mod200old.getDoubleValue(Mod2002022Key.BN102) ) // 2015
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN123 , mod200old.getDoubleValue(Mod2002022Key.BN123) ) // 2016
@@ -329,7 +331,8 @@ public class Mod2002023Import2022 {
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1829, mod200old.getDoubleValue(Mod2002022Key.BN1829)) // 2018
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2197, mod200old.getDoubleValue(Mod2002022Key.BN2197)) // 2019
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2320, mod200old.getDoubleValue(Mod2002022Key.BN2320)) // 2020
-				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN203 , mod200old.getDoubleValue(Mod2002022Key.BN203) ) // 2022
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN203 , mod200old.getDoubleValue(Mod2002022Key.BN203) ) // 2021
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN436 , mod200old.getDoubleValue(Mod2002022Key.BN436) ) // 2022
 
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN119 , mod200old.getDoubleValue(Mod2002022Key.BN121) ) // 2015
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN124 , mod200old.getDoubleValue(Mod2002022Key.BN126) ) // 2016
@@ -337,7 +340,8 @@ public class Mod2002023Import2022 {
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1830, mod200old.getDoubleValue(Mod2002022Key.BN1832)) // 2018
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2198, mod200old.getDoubleValue(Mod2002022Key.BN2200)) // 2019
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2321, mod200old.getDoubleValue(Mod2002022Key.BN2323)) // 2020
-				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN204 , mod200old.getDoubleValue(Mod2002022Key.BN206)+mod200old.getDoubleValue(Mod2002022Key.BN129)) // 2022
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN204 , mod200old.getDoubleValue(Mod2002022Key.BN206) ) // 2021
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN437 , mod200old.getDoubleValue(Mod2002022Key.BN2076)+mod200old.getDoubleValue(Mod2002022Key.BN129)) // 2022
 				
 				// Deducciones por doble imposición internacional RDL 4/2004
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN153, adjustDoubleTax(  // 2005
@@ -394,7 +398,8 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1833, adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN1837), mod200old.getDoubleValue(Mod2002022Key.BN1834), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2018
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2201, adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN2205), mod200old.getDoubleValue(Mod2002022Key.BN2202), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2019
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2324, adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN2328), mod200old.getDoubleValue(Mod2002022Key.BN2325), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2020
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN207 , adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN213)+mod200old.getDoubleValue(Mod2002022Key.BN174), mod200old.getDoubleValue(Mod2002022Key.BN208), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2022
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN207 , adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN213 ), mod200old.getDoubleValue(Mod2002022Key.BN208 ), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2021
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN207 , adjustDoubleTax(mod200old.getDoubleValue(Mod2002022Key.BN620)+mod200old.getDoubleValue(Mod2002022Key.BN174), mod200old.getDoubleValue(Mod2002022Key.BN491), mod200old.getDoubleValue(Mod2002022Key.BN103D) )) // 2022
 			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1050, mod200old.getDoubleValue(Mod2002022Key.BN1050)) // 2015 - Tipo de gravamen
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1349, mod200old.getDoubleValue(Mod2002022Key.BN1349)) // 2016 - Tipo de gravamen
@@ -402,7 +407,8 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1834, mod200old.getDoubleValue(Mod2002022Key.BN1834)) // 2018 - Tipo de gravamen
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2202, mod200old.getDoubleValue(Mod2002022Key.BN2202)) // 2019 - Tipo de gravamen
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2325, mod200old.getDoubleValue(Mod2002022Key.BN2325)) // 2020 - Tipo de gravamen
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN208 , mod200old.getDoubleValue(Mod2002022Key.BN208) ) // 2022 - Tipo de gravamen
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN208 , mod200old.getDoubleValue(Mod2002022Key.BN208) ) // 2021 - Tipo de gravamen
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN491 , mod200old.getDoubleValue(Mod2002022Key.BN491) ) // 2022 - Tipo de gravamen
 			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1051, mod200old.getDoubleValue(Mod2002022Key.BN1053)) // 2015 - Deducción pendiente
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1350, mod200old.getDoubleValue(Mod2002022Key.BN1352)) // 2016 - Deducción pendiente
@@ -410,10 +416,10 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1835, mod200old.getDoubleValue(Mod2002022Key.BN1837)) // 2018 - Deducción pendiente
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2203, mod200old.getDoubleValue(Mod2002022Key.BN2205)) // 2098 - Deducción pendiente
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2326, mod200old.getDoubleValue(Mod2002022Key.BN2328)) // 2020 - Deducción pendiente
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN209 , mod200old.getDoubleValue(Mod2002022Key.BN213)+mod200old.getDoubleValue(Mod2002022Key.BN174)) // 2022 - Deducción pendiente
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN209 , mod200old.getDoubleValue(Mod2002022Key.BN213) ) // 2021 - Deducción pendiente
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN492 , mod200old.getDoubleValue(Mod2002022Key.BN620)+mod200old.getDoubleValue(Mod2002022Key.BN174)) // 2022 - Deducción pendiente
 										
 			// Deducciones disposición transitoria 24ª.7 LIS, art. 42 RDL 4/2004			
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN004 , mod200old.getDoubleValue(Mod2002022Key.BN006 )) // 2007
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN031 , mod200old.getDoubleValue(Mod2002022Key.BN033 )) // 2008
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN022 , mod200old.getDoubleValue(Mod2002022Key.BN024 )) // 2009
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN040 , mod200old.getDoubleValue(Mod2002022Key.BN042 )) // 2010
@@ -427,13 +433,14 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1775, mod200old.getDoubleValue(Mod2002022Key.BN1777)) // 2018
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1838, mod200old.getDoubleValue(Mod2002022Key.BN1840)) // 2019			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2206, mod200old.getDoubleValue(Mod2002022Key.BN2208)) // 2020
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2329, mod200old.getDoubleValue(Mod2002022Key.BN2331)+mod200old.getDoubleValue(Mod2002022Key.BN253)) // 2022
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2329, mod200old.getDoubleValue(Mod2002022Key.BN2331)) // 2021
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN249 , mod200old.getDoubleValue(Mod2002022Key.BN253)+mod200old.getDoubleValue(Mod2002022Key.BN710)) // 2022
 			
 			// Deducciones disposición transitoria 24ª.1 LIS		
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN749 , mod200old.getDoubleValue(Mod2002022Key.BN754)) // 2017
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN752 , mod200old.getDoubleValue(Mod2002022Key.BN757)) // 2018
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN755 , mod200old.getDoubleValue(Mod2002022Key.BN760)) // 2019
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN758 , mod200old.getDoubleValue(Mod2002022Key.BN763)) // 2020			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN749 , mod200old.getDoubleValue(Mod2002022Key.BN754)) // 2018
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN752 , mod200old.getDoubleValue(Mod2002022Key.BN757)) // 2019
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN755 , mod200old.getDoubleValue(Mod2002022Key.BN760)) // 2020
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN758 , mod200old.getDoubleValue(Mod2002022Key.BN763)) // 2021			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN761 , mod200old.getDoubleValue(Mod2002022Key.BN746)+mod200old.getDoubleValue(Mod2002022Key.BN784)) // 2022
 			
 		})
@@ -452,16 +459,17 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN852 , mod200old.getDoubleValue(Mod2002022Key.BN856 )) // 2018
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2116, mod200old.getDoubleValue(Mod2002022Key.BN2118)) // 2019
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2209, mod200old.getDoubleValue(Mod2002022Key.BN2211)) // 2020
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2332, mod200old.getDoubleValue(Mod2002022Key.BN2334)+mod200old.getDoubleValue(Mod2002022Key.BN239)) // 2022
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2332, mod200old.getDoubleValue(Mod2002022Key.BN2334)) // 2021
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN237 , mod200old.getDoubleValue(Mod2002022Key.BN239)+mod200old.getDoubleValue(Mod2002022Key.BN2077)) // 2022
 			
 			// Deducciones inversión en Canarias - Activos fijos en La Palma, La Gomera y El Hierro
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2335, mod200old.getDoubleValue(Mod2002022Key.BN2337)) // 2018 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2338, mod200old.getDoubleValue(Mod2002022Key.BN2340)) // 2019
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2341, mod200old.getDoubleValue(Mod2002022Key.BN2343)) // 2020
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2344, mod200old.getDoubleValue(Mod2002022Key.BN2346)+mod200old.getDoubleValue(Mod2002022Key.BN2497)) // 2022
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2344, mod200old.getDoubleValue(Mod2002022Key.BN2346)) // 2021
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN244 , mod200old.getDoubleValue(Mod2002022Key.BN2497)+mod200old.getDoubleValue(Mod2002022Key.BN766)) // 2022
 			
 			// Deducciones inversión en Canarias - Inversiones en Canarias (Ley 20/1991)			 
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN880 , mod200old.getDoubleValue(Mod2002022Key.BN882 )) // 2004
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN866 , mod200old.getDoubleValue(Mod2002022Key.BN870 )) // 2005
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN939 , mod200old.getDoubleValue(Mod2002022Key.BN941 )) // 2006
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN191 , mod200old.getDoubleValue(Mod2002022Key.BN193 )) // 2007
@@ -478,21 +486,22 @@ public class Mod2002023Import2022 {
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1781, mod200old.getDoubleValue(Mod2002022Key.BN1783)) // 2018            
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2122, mod200old.getDoubleValue(Mod2002022Key.BN2124)) // 2019
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2212, mod200old.getDoubleValue(Mod2002022Key.BN2214)) // 2020
-            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2347, mod200old.getDoubleValue(Mod2002022Key.BN2349)+mod200old.getDoubleValue(Mod2002022Key.BN219)) // 2022
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2347, mod200old.getDoubleValue(Mod2002022Key.BN2349)) // 2021
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN217 , mod200old.getDoubleValue(Mod2002022Key.BN219)+mod200old.getDoubleValue(Mod2002022Key.BN769)) // 2022
             
             // Deducciones inversión en Canarias - Inversiones en La Palma, La Gomera y El Hierro
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2119, mod200old.getDoubleValue(Mod2002022Key.BN2121)) // 2018 
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2125, mod200old.getDoubleValue(Mod2002022Key.BN2127)) // 2019
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2215, mod200old.getDoubleValue(Mod2002022Key.BN2217)) // 2020
-            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2350, mod200old.getDoubleValue(Mod2002022Key.BN2352)+mod200old.getDoubleValue(Mod2002022Key.BN222)) // 2022
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2350, mod200old.getDoubleValue(Mod2002022Key.BN2352)) // 2021
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN220 , mod200old.getDoubleValue(Mod2002022Key.BN222)+mod200old.getDoubleValue(Mod2002022Key.BN774)) // 2022
             
 		})
 			
 		,PAG17_18 ( new IPropertyFiller[] {
 				
-		    // Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI y DT 24ª.3 LIS)			
-			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN288 , mod200old.getDoubleValue(Mod2002022Key.BN290 )) // 2004
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN466 , mod200old.getDoubleValue(Mod2002022Key.BN468 )) // 2005
+		    // Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI y DT 24ª.3 LIS)		
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN466 , mod200old.getDoubleValue(Mod2002022Key.BN468 )) // 2005
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN061 , mod200old.getDoubleValue(Mod2002022Key.BN586 )) // 2006
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN472 , mod200old.getDoubleValue(Mod2002022Key.BN478 )) // 2007
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN180 , mod200old.getDoubleValue(Mod2002022Key.BN182 )) // 2008
@@ -506,24 +515,36 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1063, mod200old.getDoubleValue(Mod2002022Key.BN1065)) // 2014 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1066, mod200old.getDoubleValue(Mod2002022Key.BN1068)) // 2014 CT 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1069, mod200old.getDoubleValue(Mod2002022Key.BN1071)) // 2014 IT
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2294, mod200old.getDoubleValue(Mod2002022Key.BN815 )) // 2015 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2294, mod200old.getDoubleValue(Mod2002022Key.BN2296)) // 2015 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN986 , mod200old.getDoubleValue(Mod2002022Key.BN507 )) // 2015 CT 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN557 , mod200old.getDoubleValue(Mod2002022Key.BN594 )) // 2015 IT
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2297, mod200old.getDoubleValue(Mod2002022Key.BN1616)) // 2016 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2081, mod200old.getDoubleValue(Mod2002022Key.BN2083)) // 2015 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2297, mod200old.getDoubleValue(Mod2002022Key.BN2299)) // 2016 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1617, mod200old.getDoubleValue(Mod2002022Key.BN1619)) // 2016 CT 
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1620, mod200old.getDoubleValue(Mod2002022Key.BN1622)) // 2016 IT			
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2300, mod200old.getDoubleValue(Mod2002022Key.BN1849)) // 2017 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1620, mod200old.getDoubleValue(Mod2002022Key.BN1622)) // 2016 IT
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2084, mod200old.getDoubleValue(Mod2002022Key.BN2086)) // 2016 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2300, mod200old.getDoubleValue(Mod2002022Key.BN2087)) // 2017 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1850, mod200old.getDoubleValue(Mod2002022Key.BN1852)) // 2017 CT 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1853, mod200old.getDoubleValue(Mod2002022Key.BN1855)) // 2017 IT
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2091, mod200old.getDoubleValue(Mod2002022Key.BN2220)) // 2018 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2088, mod200old.getDoubleValue(Mod2002022Key.BN2090)) // 2017 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2091, mod200old.getDoubleValue(Mod2002022Key.BN2093)) // 2018 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2221, mod200old.getDoubleValue(Mod2002022Key.BN2223)) // 2018 CT 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2224, mod200old.getDoubleValue(Mod2002022Key.BN2226)) // 2018 IT
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2094, mod200old.getDoubleValue(Mod2002022Key.BN2355)) // 2019 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1916, mod200old.getDoubleValue(Mod2002022Key.BN1918)) // 2018 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2094, mod200old.getDoubleValue(Mod2002022Key.BN2096)) // 2019 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2356, mod200old.getDoubleValue(Mod2002022Key.BN2358)) // 2019 CT 
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2359, mod200old.getDoubleValue(Mod2002022Key.BN2361)) // 2019 IT			
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2097, mod200old.getDoubleValue(Mod2002022Key.BN227) ) // 2020 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2359, mod200old.getDoubleValue(Mod2002022Key.BN2361)) // 2019 IT
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1919, mod200old.getDoubleValue(Mod2002022Key.BN1921)) // 2019 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2097, mod200old.getDoubleValue(Mod2002022Key.BN2099)) // 2020 excepto I+D+i y TAP
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN228 , mod200old.getDoubleValue(Mod2002022Key.BN230) ) // 2020 CT 
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN234 , mod200old.getDoubleValue(Mod2002022Key.BN236) ) // 2020 IT
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1922, mod200old.getDoubleValue(Mod2002022Key.BN1924)) // 2020 TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2145, mod200old.getDoubleValue(Mod2002022Key.BN2448)) // 2021 excepto I+D+i y TAP
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN780 , mod200old.getDoubleValue(Mod2002022Key.BN782 )) // 2021 CT                 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN786 , mod200old.getDoubleValue(Mod2002022Key.BN788 )) // 2021 IT                 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1925, mod200old.getDoubleValue(Mod2002022Key.BN1927)) // 2021 TAP                			
+
+			// FALTA - AQUI NOS QUEDAMOS
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN2145, mod200old.getDoubleValue(Mod2002022Key.BN1362)+ // 2022 excepto I+D+i y TAP
 					                                                                   mod200old.getDoubleValue(Mod2002022Key.BN830)+
 																					   mod200old.getDoubleValue(Mod2002022Key.BN809)+																					   
