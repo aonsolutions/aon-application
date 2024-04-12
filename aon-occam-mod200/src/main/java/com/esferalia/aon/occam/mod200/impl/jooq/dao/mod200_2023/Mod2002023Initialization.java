@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
 
 public class Mod2002023Initialization {
+	
 	public static EnumMap<Mod2002023Key,String> INITIALIZE_EXPRESSION_MAP = new EnumMap<Mod2002023Key,String>(Mod2002023Key.class);
 	
 	// BALANCE: ACTIVO

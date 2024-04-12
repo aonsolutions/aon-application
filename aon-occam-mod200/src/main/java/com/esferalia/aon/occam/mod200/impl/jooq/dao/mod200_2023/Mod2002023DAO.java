@@ -1167,11 +1167,6 @@ public class Mod2002023DAO  {
 		ctx.put(Mod2002023Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-//	public static Mod2002023 importMod2002022(AONContext ctx, Mod2002023 mod200) {
-//		Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022);
-//		return Mod2002023Import2022.import2022(old);
-//	}
-
 	// FALTA - POSIBILIDAD DE LLEVAR ESTO A OTRO SITIO PARA QUE SIRVA DE FORMA COMUN A TODOS LOS AÑOS
 	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
 	public static Mod2002023 aeatPresentation(AONContext ctx, Mod2002023 mod, String aeatResponse) {
@@ -1196,4 +1191,3 @@ public class Mod2002023DAO  {
 	}	
 	
 }
-
