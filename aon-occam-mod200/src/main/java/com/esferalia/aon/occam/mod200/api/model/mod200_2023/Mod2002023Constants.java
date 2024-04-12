@@ -308,7 +308,8 @@ public class Mod2002023Constants {
 		Mod2002023Key.LQ579,
 		
 		// Entidades que forman parte de grupos de consolidación fiscal
-		Mod2002023Key.LQ1029, 
+		Mod2002023Key.LQ1029,
+		Mod2002023Key.LQ814,
 		Mod2002023Key.LQ1030,
 		Mod2002023Key.LQ1031,
 		
@@ -380,6 +381,7 @@ public class Mod2002023Constants {
 		 Mod2002023Key.BN567
 		,Mod2002023Key.BN568
 		,Mod2002023Key.BN563
+		,Mod2002023Key.BN815
 		,Mod2002023Key.BN566
 		,Mod2002023Key.BN576
 		,Mod2002023Key.BN569
@@ -548,7 +550,8 @@ public class Mod2002023Constants {
 		 ,Mod2002023Key.ID655
 		 ,Mod2002023Key.ID656
 		 ,Mod2002023Key.ID658
-		 ,Mod2002023Key.ID659
+		 ,Mod2002023Key.ID091
+		 ,Mod2002023Key.ID092
 		 ,Mod2002023Key.ID660
 		 ,Mod2002023Key.ID662
 		 ,Mod2002023Key.ID664

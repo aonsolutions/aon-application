@@ -15,10 +15,10 @@ public enum Mod2002023LQ1032Key implements Serializable, IMod200KeysProvider  {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002023Key[]{Mod2002023Key.LQ1985,Mod2002023Key.LQ1986,null                },"2020")
-	,C02(new Mod2002023Key[]{Mod2002023Key.LQ2407,Mod2002023Key.LQ2408,Mod2002023Key.LQ2409},"2021")
-	,C03(new Mod2002023Key[]{Mod2002023Key.LQ1106,Mod2002023Key.LQ1107,Mod2002023Key.LQ1108},"2023(*)")
-	,C04(new Mod2002023Key[]{Mod2002023Key.LQ1401,Mod2002023Key.LQ1402,Mod2002023Key.LQ1403},"2023")
+	 C01(new Mod2002023Key[]{Mod2002023Key.LQ2407,Mod2002023Key.LQ2408,null                },"2021")
+	,C02(new Mod2002023Key[]{Mod2002023Key.LQ1106,Mod2002023Key.LQ1107,Mod2002023Key.LQ1108},"2022")
+	,C03(new Mod2002023Key[]{Mod2002023Key.LQ1401,Mod2002023Key.LQ1402,Mod2002023Key.LQ1403},"2023(*)")
+	,C04(new Mod2002023Key[]{Mod2002023Key.LQ2773,Mod2002023Key.LQ2774,Mod2002023Key.LQ2775},"2023")
 	,C05(new Mod2002023Key[]{Mod2002023Key.LQ1137,Mod2002023Key.LQ1032,Mod2002023Key.LQ1139},"Total")
 	,C06(new Mod2002023Key[]{Mod2002023Key.LQ1140,null                ,null                },"Reserva de capitalizaci\u00F3n dotada en el ejercicio")
 	;

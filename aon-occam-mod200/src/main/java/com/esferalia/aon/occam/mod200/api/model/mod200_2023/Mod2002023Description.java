@@ -6,13 +6,13 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 
 public class Mod2002023Description {
 	
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// ª --> \u00AA º --> \u00BA
+	// Á --> \u00C1  á --> \u00E1
+	// É --> \u00C9  é --> \u00E9
+	// Í --> \u00CD  í --> \u00ED
+	// Ó --> \u00D3  ó --> \u00F3
+	// Ú --> \u00DA  ú --> \u00FA  ü --> \u00FC
+	// Ñ --> \u00D1  ñ --> \u00F1
+	// ª --> \u00AA  º --> \u00BA
 	// ¿ --> \u00BF
 		
 	public static HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<IMod200Key,String>();
@@ -29,7 +29,8 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0004,"Sociedad de inversi\u00F3n inmobiliaria o fondo de inversi\u00F3n inmobiliaria");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0005,"Comunidades titulares de montes vecinales en mano com\u00FAn");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0011,"Entidad de tenencia de valores extranjeros");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0013,"Agrupaci\u00F3n de inter\u00E9s econ\u00F3mico espa\u00F1ola o Uni\u00F3n temporal de empresas");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0085,"Uni\u00F3n temporal de empresas");		
+		DESCRIPTION_MAP.put(Mod2002023Key.C0013,"Agrupaci\u00F3n de inter\u00E9s econ\u00F3mico espa\u00F1ola");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0014,"Agrupaci\u00F3n europea de inter\u00E9s econ\u00F3mico");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0017,"Cooperativa protegida");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0018,"Cooperativa especialmente protegida");
@@ -59,6 +60,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0029,"R\u00E9gimen especial Canarias");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0069,"R\u00E9gimen especial de buques y empresas navieras en Canarias");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0086,"R\u00E9gimen especial Illes Balears");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0033,"R\u00E9gimen especial miner\u00EDa");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0034,"R\u00E9gimen especial hidrocarburos");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0038,"Entidad dedicada al arrend. de viviendas");
@@ -74,16 +76,17 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0009,"Entidad dominante de grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0010,"Entidad dependiente de grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0081,"Filial grupo multinacional");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0082,"Sociedad matriz \u00FAltima grupo multinacional");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0016,"Opci\u00F3n art. 46.2 LIS");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0082,"Sociedad matriz \u00FAltima grupo multinacional");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0026,"Entidad inactiva");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0027,"Base imponible negativa o cero");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0039,"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0043,"Obligaci\u00F3n informaci\u00F3n DT 5\u00AA RIS");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
+		DESCRIPTION_MAP.put(Mod2002023Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0087,"Inversiones anticipadas-reserva inversiones en Illes Balears (DA 70\u00AA.Cuatro.10 Ley 31/2022)");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0088,"Tipo gravamen reducido para entidades con INCN periodo anterior inferior a 1 mill\u00F3n euros (art. 29.1 LIS)");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0070,"Compensaci\u00F3n bases imponibles negativas para entidades de nueva creaci\u00F3n (art. 26.3 LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0059,"Opciones arts. 39.2 y 39.3 LIS");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
@@ -93,6 +96,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0037,"Opci\u00F3n de fraccionamiento art. 19.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0044,"Contribuyente que aplica deducciones del art. 36.1 y 36.3 LIS con financiaci\u00F3n realizada por otros contribuyentes");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0074,"Contribuyente que financia producciones con derecho a la deducci\u00F3n del art. 36.1 y 36.3 LIS");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0089,"Socio de agrupaci\u00F3n de inter\u00E9s econ\u00F3mico o de uni\u00F3n temporal de empresas");
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0050,"Balance. Normal");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0051,"Balance. Abreviado");
@@ -425,6 +429,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ632, "Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores (a compensar \u00FAnicamente con la casilla 631)");
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1029,"Base imponible individual a integrar por las entidades que forman parte del grupo");
+		DESCRIPTION_MAP.put(Mod2002023Key.LQ814 ,"Base imponible negativa pendiente de integraci\u00F3n en periodos siguientes (DA 19\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1030,"Eliminaciones e incorporaciones correspondientes a la entidad");
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1031,"Integraci\u00F3n individual de las dotaciones del art. 11.12 LIS");
 		
@@ -484,6 +489,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.BN567, "Bonificaci\u00F3n por rentas obtenidas en Ceuta y Melilla (art. 33 LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.BN568, "Bonificaciones por prestaci\u00F3n de servicios (art. 34 LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.BN563, "Bonificaci\u00F3n rendimientos por ventas bienes corporales producidos en Canarias (art. 26 Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002023Key.BN815, "Bonificaci\u00F3n rendimientos por ventas bienes corporales producidos en Illes Balears (DA 70.Cinco Ley 31/2022)");
 		DESCRIPTION_MAP.put(Mod2002023Key.BN566, "Bonificaciones Sociedades Cooperativas (Ley 20/1990)");
 		DESCRIPTION_MAP.put(Mod2002023Key.BN576, "Bonificaciones entidades dedicadas al arrendamiento de viviendas (Cap\u00EDtulo III T\u00EDtulo VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.BN569, "Otras bonificaciones");
@@ -567,7 +573,7 @@ public class Mod2002023Description {
 	}
 	
 	static {
-		// Base de la deducción por donaciones a entidades sin fines de lucro del período impositivo
+		// Base de la deducción por donaciones a entidades sin fines de lucro del periodo impositivo
 		DESCRIPTION_MAP.put(Mod2002023Key.BN974,"Donaciones del per\u00EDodo impositivo efectuadas a entidades sin fines de lucro (Ley 49/2002)");
 		
 		// Aplicacion de resultados - Base de reparto 
@@ -584,7 +590,8 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.ID655,"Intereses aportaciones al capital (Cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002023Key.ID656,"A dividendos");
 		DESCRIPTION_MAP.put(Mod2002023Key.ID658,"A dotaci\u00F3n O.S. (Cajas de ahorro)");
-		DESCRIPTION_MAP.put(Mod2002023Key.ID659,"A F.R.O. y dotaciones voluntarias al F.E.P. (Cooperativas)");
+		DESCRIPTION_MAP.put(Mod2002023Key.ID091,"A Fondo de Reserva Obligatoria (Cooperativas)");
+		DESCRIPTION_MAP.put(Mod2002023Key.ID092,"A dotaciones voluntarias Fondo de Educaci\u00F3n y Promoci\u00F3n (Cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002023Key.ID660,"A retornos cooperativos (Cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002023Key.ID662,"Part\u00EDcipes (IIC)");
 		DESCRIPTION_MAP.put(Mod2002023Key.ID664,"A remanente y otros");
@@ -618,6 +625,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.LM393,"Importe del cr\u00E9dito exigible");
 		
 	}
+	
 	static {
 		DESCRIPTION_MAP.put(Mod2002023Key.CN987,"Importe neto de la cifra de negocios del conjunto de las entidades del grupo");		
 		DESCRIPTION_MAP.put(Mod2002023Key.CN1897,"Importe neto de la cifra de negocios del conjunto de las actividades agr\u00EDcolas y/o ganaderas");
@@ -627,6 +635,8 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.CN989,"Las entidades que hayan marcado la clave de caracteres de la declaraci\u00F3n [00003], [00004], [00024] \u00F3 [00025] deber\u00E1n consignar a continuaci\u00F3n el importe neto de la cifra de negocios en el ejercicio 2023");
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.RC927,"Importe de la dotaci\u00F3n RIC con cargo a beneficios de 2023");
+		
+		DESCRIPTION_MAP.put(Mod2002023Key.RB2818,"Importe de la dotaci\u00F3n RIIB con cargo a beneficios de 2023");
 	}
 	
 	static {
@@ -640,12 +650,36 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.UT1228,"3.- Reserva de capitalizaci\u00F3n no aplicada por la entidad");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT552 ,"4.- Base imponible");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT1330,"5.- Base imponible minorada o incrementada, en su caso, en las cantidades derivadas de la aplicaci\u00F3n de la reserva de nivelaci\u00F3n (entidades de reducida dimensi\u00F3n)");
-		DESCRIPTION_MAP.put(Mod2002023Key.UTC01	,"7.- Base de las bonificaciones");
-		DESCRIPTION_MAP.put(Mod2002023Key.UTC02 ,"a) Base total (excepto base de deducci\u00F3n por inversiones en elementos del inmovilizado material nuevos)");
-		DESCRIPTION_MAP.put(Mod2002023Key.UTC03 ,"b) Base de deducci\u00F3n por inversiones en elementos del inmovilizado material nuevos");
-		DESCRIPTION_MAP.put(Mod2002023Key.UT062 ,"9.- Retenciones e ingresos a cuenta");
-		DESCRIPTION_MAP.put(Mod2002023Key.UTC04 ,"a) De ejercicios en los que la sociedad no haya tributado en el r\u00E9gimen especial");
-		DESCRIPTION_MAP.put(Mod2002023Key.UTC05 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");
+				
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2942,"Bonificaci\u00F3n rendimientos por ventas bienes corporales producidos en Canarias (art. 26 Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2944,"Bonificaci\u00F3n rendimientos por ventas bienes corporales producidos en Illes Balears (DA 70.Cinco Ley 31/2022)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2946,"Bonificaci\u00F3n sociedades cooperativas (Ley 20/1990)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2948,"Bonificaciones entidades dedicadas al arrendamiento de viviendas (Cap\u00EDtulo III T\u00EDtulo VII LIS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2950,"Bonificaciones empresas navieras en Canarias (art. 76 Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2962,"Resto de bonificaciones");		
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2964,"Investigaci\u00F3n y desarrollo (CT)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2967,"Innovaci\u00F3n tecnol\u00F3gica (IT)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2969,"Productor: producciones cinematogr\u00E1ficas espa\u00F1olas (PC)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2973,"Productor: espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (EV)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2978,"Deducci\u00F3n creaci\u00F3n empleo trabajadores con discapacidad (CE)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT2980,"Contribuciones empresariales a sistemas de previsi\u00F3n social empresarial imputadas a favor de los trabajadores (CPS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3063,"Deducci\u00F3n por inversi\u00F3n de beneficios (IB)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3065,"Gastos e inversiones de sociedades forestales (SF)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3067,"Inversiones en territorios Africa Occidental y gastos de propaganda y publicidad (art. 27 bis Ley 19/1994) (TAP)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3069,"Deducciones relativas a programas de apoyo a acontecimientos de excepcional inter\u00E9s p\u00FAblico");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT0058,"Activos fijos (Ley 20/1991)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT0064,"Activos fijos en La Palma, La Gomera y El Hierro");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT0066,"Inversiones en Canarias (Ley 20/1991)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT0068,"Inversiones en La Palma, La Gomera y El Hierro");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3247,"Deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3249,"Deducciones por producciones cinematogr\u00E1ficas extranjeras en Canarias (art. 36.2 LIS y DA 14\u00AA Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3281,"Deducci\u00F3n por inversiones y gastos realizados por las autoridades portuarias (art. 38 bis LIS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3283,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3355,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3359,"Otras deducciones");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT062 ,"9(*).- Retenciones e ingresos a cuenta");		
+		DESCRIPTION_MAP.put(Mod2002023Key.UT070 ,"a) De ejercicios en los que la sociedad no haya tributado en el r\u00E9gimen especial");
+        DESCRIPTION_MAP.put(Mod2002023Key.UT072 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");		
 	}
 	
 	static {		

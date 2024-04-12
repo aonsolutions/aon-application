@@ -25,7 +25,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod2002023 extends Mod200 {
 	
-	private static final long serialVersionUID = -5669862778411873677L;
+	private static final long serialVersionUID = 3919318555240470290L;
 
 	private boolean initializedFromLastYear;
 	
@@ -53,6 +53,8 @@ public class Mod2002023 extends Mod200 {
 	private BalanceType pygType;
 	
 	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
+	                                                  // FALTA - LA FECHA IRNR NO ESTA EN EL MODELO
+	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();                 // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
 	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
@@ -81,7 +83,7 @@ public class Mod2002023 extends Mod200 {
 	private String nrsAnexoVric;
 	private String justActivos;
 	// FALTA - NUEVAS CASILLAS PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPOS EN fs_model200
-	// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas
+	// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 	// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();

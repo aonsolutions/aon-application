@@ -279,6 +279,9 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ578, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ579, new Boolean[]{FALSE,TRUE});
 		
+		// FALTA - Entidades que forman parte de grupos de consolidación fiscal
+		// NUEVA CASILLA 00814 NO SE SI SERA AUTOMATICA DE ALGUNA FORMA
+		
         // Base Imponible	
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ550, new Boolean[]{TRUE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ1032,new Boolean[]{FALSE,TRUE});
@@ -306,6 +309,7 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ562, new Boolean[]{TRUE,TRUE});
 		
 		// Bonificaciones y deducciones. Cuota intega ajustada positiva
+		// FALTA - NUEVA CASILLA 00815 NO SE SI SERA DESGLOSE DE ALGUNA OTRA, PARECE QUE NO
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN570,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN1344,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN1280,new Boolean[]{FALSE,TRUE});
@@ -314,7 +318,7 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN573,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN582,new Boolean[]{TRUE,TRUE});
 		
-		// Otras deducciones. Cuota líquida positiva
+		// Otras deducciones. Cuota líquida
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN585,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN584,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN588,new Boolean[]{FALSE,TRUE});
@@ -451,21 +455,7 @@ public class Mod2002023Behaviour {
 
 		// Desglose Casilla 082
 		addBreakdown(Mod2002023BN082Key.values(), Mod2002023Key.BN082, new byte[] {1,3});  // Dos columnas calculadas, ademas 1 de ellas no es la última
-
-		// Totales de los detalles de correcciones al resultado contable
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2305, new Boolean[]{FALSE,TRUE});  
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2306, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2301, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2302, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2303, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2304, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2307, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2308, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.I0417B, new Boolean[]{TRUE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.D0418B, new Boolean[]{TRUE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2309, new Boolean[]{FALSE,TRUE});  
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2310, new Boolean[]{FALSE,TRUE});
-		
+	
 	}
 	
 	static {
@@ -489,6 +479,20 @@ public class Mod2002023Behaviour {
 		
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		addBreakdown(Mod2002023LM538Key.values(), Mod2002023Key.LM538);
+		
+		// Totales de los detalles de correcciones al resultado contable
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2305, new Boolean[]{FALSE,TRUE});  
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2306, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2301, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2302, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2303, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2304, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2307, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2308, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.I0417B, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.D0418B, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2309, new Boolean[]{FALSE,TRUE});  
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.DC2310, new Boolean[]{FALSE,TRUE});
 		
 	}
 	
@@ -532,7 +536,7 @@ public class Mod2002023Behaviour {
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LM1500, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LM2806, new Boolean[]{FALSE,TRUE}); 
 		addBreakdown(Mod2002023LM1494Key.values(), Mod2002023Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
 	}
@@ -543,10 +547,13 @@ public class Mod2002023Behaviour {
 		addBreakdown(Mod2002023RIC_1Key.values()); // No lleva fila de totales
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
-		addBreakdown(Mod2002023LQ554Key.values(), new Mod2002023Key[] {Mod2002023Key.CP0C6, Mod2002023Key.CPC12}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
+		addBreakdown(Mod2002023LQ554Key.values(), new Mod2002023Key[] {Mod2002023Key.CP2837, Mod2002023Key.CP2838}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
 		
 		// REGIMEN DE COOPERATIVAS - Desglose Casilla 561 - Detalle de compensación de cuotas
 		addBreakdown(Mod2002023LQ561Key.values(), Mod2002023Key.LQ561);
+		
+		// FALTA - Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)		
+//		addBreakdown(Mod2002023RIB_1Key.values()); // No lleva fila de totales
 		
 	}
 	
@@ -557,6 +564,7 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.UT552, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.UT1330,new Boolean[]{FALSE,TRUE});
 		
+		// FALTA - EL RESTO DE LAS CASILLAS NUEVAS DE ESTA PAGINA, VER SI ALGUNA ES CALCULADA PARA DESHABILITARLA
 	}
 	
 	static { 

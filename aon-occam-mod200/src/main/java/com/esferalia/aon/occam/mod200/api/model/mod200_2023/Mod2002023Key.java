@@ -532,7 +532,7 @@ public enum Mod2002023Key implements IMod200Key {
 	
 	// Entidades que forman parte de grupos de consolidación fiscal	
 	,LQ1029
-	,LQ0814
+	,LQ814
 	,LQ1030
 	,LQ1031
 	
@@ -1395,7 +1395,7 @@ public enum Mod2002023Key implements IMod200Key {
 			,RC2824 ,RC2825 ,RC2826
 			
 	// Desglose LQ553, LQ554 - Cooperativas - Determinacion de la base imponible
-    // FALTA - CAMBIA LA NUMERACION DE TODAS LAS CASILLASE INTRODUCEN UNA CASILLA NUEVA (DESPUES DEL APARTADO 10)			
+    // FALTA - CAMBIA LA NUMERACION DE TODAS LAS CASILLAS E INTRODUCEN UNA CASILLA NUEVA (DESPUES DEL APARTADO 10)			
 //	,CP0C1	,CP0E1
 //	,CP0C2	,CP0E2
 //	,CP0C3	,CP0E3
@@ -1420,7 +1420,9 @@ public enum Mod2002023Key implements IMod200Key {
 	,CP2843 ,CP2845 // 9. 50% Dotación obligatoria F.R.O. (art. 16.5 Ley 20/1990) 
 	,CP2846 ,CP2847 // 10. Reserva para inversiones en Canarias (Ley 19/1994) 
 	,CP0012 ,CP0016 // 11. Reserva para inversiones en Illes Balears  
-	,CP2848 ,CP2849 // 12. Factor de agotamiento 
+	,CP2848 ,CP2849 // 12. Factor de agotamiento
+	
+	// FALTA - LOS TOTALES ANTES ESTABAN EN CPC12 Y CPE12, VER SI ES NECESARIO DESPUES PONER CASILLAS PARA ELLO O PUEDE SERVIR CON LAS 553 Y 554
 			
 	// Desglose - LQ561 - Cooperativas - Compensación de cuotas por pérdidas de cooperativas 
 	,LQ673	,LQ674	,LQ1224

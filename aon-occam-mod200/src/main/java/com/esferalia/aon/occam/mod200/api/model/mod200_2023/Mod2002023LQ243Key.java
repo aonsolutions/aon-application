@@ -18,13 +18,15 @@ public enum Mod2002023LQ243Key implements Serializable, IMod200KeysProvider  {
 
 	 C01(new Mod2002023Key[]{Mod2002023Key.LQ168 , Mod2002023Key.LQ172 , Mod2002023Key.LQ173 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2021")
 	,C02(new Mod2002023Key[]{Mod2002023Key.LQ175 , Mod2002023Key.LQ176 , Mod2002023Key.LQ177 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2021")
-	,C03(new Mod2002023Key[]{Mod2002023Key.LQ178 , Mod2002023Key.LQ179 , Mod2002023Key.LQ198 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2023(*)")
-	,C04(new Mod2002023Key[]{Mod2002023Key.LQ202 , Mod2002023Key.LQ214 , Mod2002023Key.LQ215 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2023(*)")
-	,C05(new Mod2002023Key[]{Mod2002023Key.LQ1886, Mod2002023Key.LQ1887, Mod2002023Key.LQ1888}, "Subtotal de compensaci\u00F3n de base imponible especial") 
-	,C06(new Mod2002023Key[]{Mod2002023Key.LQ1889, Mod2002023Key.LQ1890, Mod2002023Key.LQ1891}, "Subtotal de compensaci\u00F3n de base imponible resto actividades")
-	,C07(new Mod2002023Key[]{Mod2002023Key.LQ216 , Mod2002023Key.LQ243 , Mod2002023Key.LQ265 }, "Total")
-	,C08(new Mod2002023Key[]{Mod2002023Key.LQ266 , null		           , Mod2002023Key.LQ267 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2023")
-	,C09(new Mod2002023Key[]{Mod2002023Key.LQ290 , Mod2002023Key.LQ2465, Mod2002023Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2023")
+	,C03(new Mod2002023Key[]{Mod2002023Key.LQ178 , Mod2002023Key.LQ179 , Mod2002023Key.LQ198 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2022")
+	,C04(new Mod2002023Key[]{Mod2002023Key.LQ202 , Mod2002023Key.LQ214 , Mod2002023Key.LQ215 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2022")
+	,C05(new Mod2002023Key[]{Mod2002023Key.LQ987 , Mod2002023Key.LQ988 , Mod2002023Key.LQ989 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2023(*)")
+	,C06(new Mod2002023Key[]{Mod2002023Key.LQ1010, Mod2002023Key.LQ1177, Mod2002023Key.LQ1200}, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2023(*)")
+	,C07(new Mod2002023Key[]{Mod2002023Key.LQ1886, Mod2002023Key.LQ1887, Mod2002023Key.LQ1888}, "Subtotal de compensaci\u00F3n de base imponible especial") 
+	,C08(new Mod2002023Key[]{Mod2002023Key.LQ1889, Mod2002023Key.LQ1890, Mod2002023Key.LQ1891}, "Subtotal de compensaci\u00F3n de base imponible resto actividades")
+	,C09(new Mod2002023Key[]{Mod2002023Key.LQ216 , Mod2002023Key.LQ243 , Mod2002023Key.LQ265 }, "Total")
+	,C10(new Mod2002023Key[]{Mod2002023Key.LQ266 , null		           , Mod2002023Key.LQ267 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2023")
+	,C11(new Mod2002023Key[]{Mod2002023Key.LQ290 , Mod2002023Key.LQ2465, Mod2002023Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2023")
 	;
 	 
     private String description;

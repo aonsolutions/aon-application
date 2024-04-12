@@ -15,7 +15,7 @@ public enum Mod2002023BN573Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002023Key[]{Mod2002023Key.BN163,Mod2002023Key.BN165,Mod2002023Key.BN166},"DI jur\u00EDdica: Imp. soportado por el contribuyente (art. 31 LIS)")
+	 C01(new Mod2002023Key[]{Mod2002023Key.BN163,Mod2002023Key.BN165,Mod2002023Key.BN166},"DI jur\u00EDdica: Impuesto soportado por el contribuyente (art. 31 LIS)")
 	,C02(new Mod2002023Key[]{Mod2002023Key.BN167,Mod2002023Key.BN169,Mod2002023Key.BN170},"DI econ\u00F3mica: Dividendos y part. en beneficios (art. 32 LIS)")
 	,C03(new Mod2002023Key[]{Mod2002023Key.BN171,Mod2002023Key.BN573,Mod2002023Key.BN174},"Total")
 	;
@@ -37,4 +37,3 @@ public enum Mod2002023BN573Key implements Serializable, IMod200KeysProvider {
 	}
 
 }
-

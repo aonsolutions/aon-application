@@ -40,10 +40,11 @@ public enum Mod2002023LQ547Key implements Serializable, IMod200KeysProvider  {
 	,C22(new Mod2002023Key[]{Mod2002023Key.LQ1825,Mod2002023Key.LQ1826,Mod2002023Key.LQ1827},"Compensaci\u00F3n de base a\u00F1o 2018")
 	,C23(new Mod2002023Key[]{Mod2002023Key.LQ2193,Mod2002023Key.LQ2194,Mod2002023Key.LQ2195},"Compensaci\u00F3n de base a\u00F1o 2019")
 	,C24(new Mod2002023Key[]{Mod2002023Key.LQ194 ,Mod2002023Key.LQ195 ,Mod2002023Key.LQ196 },"Compensaci\u00F3n de base a\u00F1o 2020")
-	,C25(new Mod2002023Key[]{Mod2002023Key.LQ151 ,Mod2002023Key.LQ152 ,Mod2002023Key.LQ164 },"Compensaci\u00F3n de base a\u00F1o 2021")	
-	,C26(new Mod2002023Key[]{Mod2002023Key.LQ2316,Mod2002023Key.LQ2317,Mod2002023Key.LQ2318},"Compensaci\u00F3n de base a\u00F1o 2023(*)")	
-	,C27(new Mod2002023Key[]{Mod2002023Key.LQ670 ,Mod2002023Key.LQ547 ,Mod2002023Key.LQ671 },"Total")
-	,C28(new Mod2002023Key[]{Mod2002023Key.LQ1048,null                ,Mod2002023Key.LQ1049},"Compensaci\u00F3n de base a\u00F1o 2023")
+	,C25(new Mod2002023Key[]{Mod2002023Key.LQ151 ,Mod2002023Key.LQ152 ,Mod2002023Key.LQ164 },"Compensaci\u00F3n de base a\u00F1o 2021")
+	,C26(new Mod2002023Key[]{Mod2002023Key.LQ896 ,Mod2002023Key.LQ897 ,Mod2002023Key.LQ898 },"Compensaci\u00F3n de base a\u00F1o 2022")	
+	,C27(new Mod2002023Key[]{Mod2002023Key.LQ2316,Mod2002023Key.LQ2317,Mod2002023Key.LQ2318},"Compensaci\u00F3n de base a\u00F1o 2023(*)")	
+	,C28(new Mod2002023Key[]{Mod2002023Key.LQ670 ,Mod2002023Key.LQ547 ,Mod2002023Key.LQ671 },"Total")
+	,C29(new Mod2002023Key[]{Mod2002023Key.LQ1048,null                ,Mod2002023Key.LQ1049},"Compensaci\u00F3n de base a\u00F1o 2023")
 	
 	;
 	 

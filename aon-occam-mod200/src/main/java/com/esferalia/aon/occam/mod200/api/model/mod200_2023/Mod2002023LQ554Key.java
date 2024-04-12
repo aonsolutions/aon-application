@@ -14,19 +14,35 @@ public enum Mod2002023LQ554Key implements Serializable, IMod200KeysProvider {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
-
-	 C01(new Mod2002023Key[]{Mod2002023Key.CP0C1,Mod2002023Key.CP0E1},"1. Ingresos computables")
-	,C02(new Mod2002023Key[]{Mod2002023Key.CP0C2,Mod2002023Key.CP0E2},"2. Gastos espec\u00EDficos")
-	,C03(new Mod2002023Key[]{Mod2002023Key.CP0C3,Mod2002023Key.CP0E3},"3. Gastos generales imputados")
-	,C04(new Mod2002023Key[]{Mod2002023Key.CP0C4,Mod2002023Key.CP0E4},"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n") 
-	,C05(new Mod2002023Key[]{null               ,Mod2002023Key.CP0E5},"5. Incrementos y disminuciones patrimoniales")
-	,C06(new Mod2002023Key[]{Mod2002023Key.CP0C6,Mod2002023Key.CP0E6},"6. Resultado (1 - 2 - 3 - 4 + 5)")
-	,C07(new Mod2002023Key[]{Mod2002023Key.CP0C7,Mod2002023Key.CP0E7},"7. Aumentos (ajustes positivos)")
-	,C08(new Mod2002023Key[]{Mod2002023Key.CP0C8,Mod2002023Key.CP0E8},"8. Disminuciones (ajustes negativos)")
-	,C09(new Mod2002023Key[]{Mod2002023Key.CP0C9,Mod2002023Key.CP0E9},"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)")
-	,C10(new Mod2002023Key[]{Mod2002023Key.CPC10,Mod2002023Key.CPE10},"10. Reserva para inversiones en Canarias (Ley 19/1994)")
-	,C11(new Mod2002023Key[]{Mod2002023Key.CPC11,Mod2002023Key.CPE11},"11. Factor de agotamiento")
-	,C12(new Mod2002023Key[]{Mod2002023Key.CPC12,Mod2002023Key.CPE12},"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)")
+ 	
+//	 C01(new Mod2002023Key[]{Mod2002023Key.CP0C1,Mod2002023Key.CP0E1},"1. Ingresos computables")
+//	,C02(new Mod2002023Key[]{Mod2002023Key.CP0C2,Mod2002023Key.CP0E2},"2. Gastos espec\u00EDficos")
+//	,C03(new Mod2002023Key[]{Mod2002023Key.CP0C3,Mod2002023Key.CP0E3},"3. Gastos generales imputados")
+//	,C04(new Mod2002023Key[]{Mod2002023Key.CP0C4,Mod2002023Key.CP0E4},"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n") 
+//	,C05(new Mod2002023Key[]{null               ,Mod2002023Key.CP0E5},"5. Incrementos y disminuciones patrimoniales")
+//	,C06(new Mod2002023Key[]{Mod2002023Key.CP0C6,Mod2002023Key.CP0E6},"6. Resultado (1 - 2 - 3 - 4 + 5)")
+//	,C07(new Mod2002023Key[]{Mod2002023Key.CP0C7,Mod2002023Key.CP0E7},"7. Aumentos (ajustes positivos)")
+//	,C08(new Mod2002023Key[]{Mod2002023Key.CP0C8,Mod2002023Key.CP0E8},"8. Disminuciones (ajustes negativos)")
+//	,C09(new Mod2002023Key[]{Mod2002023Key.CP0C9,Mod2002023Key.CP0E9},"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)")
+//	,C10(new Mod2002023Key[]{Mod2002023Key.CPC10,Mod2002023Key.CPE10},"10. Reserva para inversiones en Canarias (Ley 19/1994)")
+//	,C11(new Mod2002023Key[]{Mod2002023Key.CPC11,Mod2002023Key.CPE11},"11. Factor de agotamiento")
+//	,C12(new Mod2002023Key[]{Mod2002023Key.CPC12,Mod2002023Key.CPE12},"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)")
+	
+	// FALTA - MODIFICAN TODAS LAS CASILLAS, FALTARIA PONER EL TOTAL, NO SE SI SE PODRA PONER CON LAS CASILLAS DE LA 553 Y 554 O HABRA QUE PONER OTRA NUMERACION	
+	
+	 C01(new Mod2002023Key[]{Mod2002023Key.CP2827,Mod2002023Key.CP2828},"1. Ingresos computables")
+	,C02(new Mod2002023Key[]{Mod2002023Key.CP2829,Mod2002023Key.CP2830},"2. Gastos espec\u00EDficos")
+	,C03(new Mod2002023Key[]{Mod2002023Key.CP2832,Mod2002023Key.CP2833},"3. Gastos generales imputados")
+	,C04(new Mod2002023Key[]{Mod2002023Key.CP2834,Mod2002023Key.CP2835},"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n")
+	,C05(new Mod2002023Key[]{null                ,Mod2002023Key.CP2836},"5. Incrementos y disminuciones patrimoniales")
+	,C06(new Mod2002023Key[]{Mod2002023Key.CP2837,Mod2002023Key.CP2838},"6. Resultado (1 - 2 - 3 - 4 + 5)")
+	,C07(new Mod2002023Key[]{Mod2002023Key.CP2839,Mod2002023Key.CP2840},"7. Aumentos (ajustes positivos)")
+	,C08(new Mod2002023Key[]{Mod2002023Key.CP2841,Mod2002023Key.CP2842},"8. Disminuciones (ajustes negativos)")
+	,C09(new Mod2002023Key[]{Mod2002023Key.CP2843,Mod2002023Key.CP2845},"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)")
+	,C10(new Mod2002023Key[]{Mod2002023Key.CP2846,Mod2002023Key.CP2847},"10. Reserva para inversiones en Canarias (Ley 19/1994)")
+	,C11(new Mod2002023Key[]{Mod2002023Key.CP0012,Mod2002023Key.CP0016},"11. Reserva para inversiones en Illes Balears")
+	,C12(new Mod2002023Key[]{Mod2002023Key.CP2848,Mod2002023Key.CP2849},"12. Factor de agotamiento")
+	,C13(new Mod2002023Key[]{Mod2002023Key.LQ553 ,Mod2002023Key.LQ554 },"13. Base imponible (6 + 7 - 8 - 9 + 10 + 11 + 12)")	
 	;
 	 
     private String description;
