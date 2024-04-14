@@ -64,3 +64,6 @@ export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configu
 export const saveInvofoxConfiguration = (data) => put(`${API_URL}/invofox/configuration`, data);
 
 export const getChargePayments = (data) => get(`${API_URL}/charge_payments`, data);
+
+
+export const invoiceDuplicateFix = (data) => post(`${API_URL}/invoices/invoiceduplicatefix`, data);
