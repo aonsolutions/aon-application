@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -83,41 +84,17 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
-		JSONArray result = CustomerJSON.toJSON(AON.getCustomerList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, api.getData(), f),
+		JSONArray result = CustomerJSON.toJSON(AON.getCustomerList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> genericFilter(api, api.getData(), f),
 				page, perPage, globalFilter));
 		if (api.getData().opt("additional_info") != null) {
-	        LinkedList<RegistryAdditionalInfo> rais = new LinkedList<>();			
-	        JSONArray additionalInfo = (JSONArray) api.getData().opt("additional_info");
-	        for (int i = 0; i < additionalInfo.length(); i++) {
-	            rais.add(RegistryAdditionalInfo.safeValueOf(additionalInfo.get(i).toString()));
-	        }
-	        for (int i = 0; i < result.length(); i++) {
-	            JSONObject obj = result.getJSONObject(i);
-	            int id = obj.getInt("id");
-	            List<RegistryAddress> registryAddresses = new ArrayList<>();
-	            List<RegistryMedia> registryMedia = new ArrayList<>();
-	            rais.stream().forEach(rai -> {
-	                if (RegistryAdditionalInfo.ADDRESSES.equals(rai)) {
-	                    RegistryAddressFilter filtro = fil -> fil.getRegistryProperty().eq(id);
-	                    Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filtro);
-	                    addresses.forEach(registryAddresses::add); 
-	                }
-	                if (RegistryAdditionalInfo.MEDIA.equals(rai)) {
-						RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(id);
-						Stream<RegistryMedia> media = AON.getStream(api.getDomain(), api.getUser(), filter);
-						media.forEach(registryMedia::add);
-					}
-	            });
-	            obj.put("registryAddresses", RegistryAddressJSON.toJSON(registryAddresses));
-	            obj.put("media", RegistryMediaJSON.toJSON(registryMedia));
-	        }
+			result = getAdditionalInfo(api, result);
 	    }
 		return result;
 	}
 	
 	private static JSONObject customerCount(AonApiData api) {
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
-		long count = AON.getCustomerCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, api.getData(), f), globalFilter);
+		long count = AON.getCustomerCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> genericFilter(api, api.getData(), f), globalFilter);
 		return new JSONObject().put(IJsonNames.COUNT, count);
 	}
 	
@@ -128,33 +105,9 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		JSONArray result = CreditorSupplierJSON.toJSON(AON.getSupplierCreditorStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> creditorFilter(api, api.getData(), f), f -> supplierFilter(api, api.getData(), f), perPage * (page -1), perPage, globalFilter));
+			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), perPage * (page -1), perPage, globalFilter));
 		if (api.getData().opt("additional_info") != null) {
-	        LinkedList<RegistryAdditionalInfo> rais = new LinkedList<>();			
-	        JSONArray additionalInfo = (JSONArray) api.getData().opt("additional_info");
-	        for (int i = 0; i < additionalInfo.length(); i++) {
-	            rais.add(RegistryAdditionalInfo.safeValueOf(additionalInfo.get(i).toString()));
-	        }
-	        for (int i = 0; i < result.length(); i++) {
-	            JSONObject obj = result.getJSONObject(i);
-	            int id = obj.getInt("id");
-	            List<RegistryAddress> registryAddresses = new ArrayList<>();
-	            List<RegistryMedia> registryMedia = new ArrayList<>();
-	            rais.stream().forEach(rai -> {
-	                if (RegistryAdditionalInfo.ADDRESSES.equals(rai)) {
-	                    RegistryAddressFilter filtro = fil -> fil.getRegistryProperty().eq(id);
-	                    Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filtro);
-	                    addresses.forEach(registryAddresses::add); 
-	                }
-	                if (RegistryAdditionalInfo.MEDIA.equals(rai)) {
-						RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(id);
-						Stream<RegistryMedia> media = AON.getStream(api.getDomain(), api.getUser(), filter);
-						media.forEach(registryMedia::add);
-					}
-	            });
-	            obj.put("registryAddresses", RegistryAddressJSON.toJSON(registryAddresses));
-	            obj.put("media", RegistryMediaJSON.toJSON(registryMedia));
-	        }
+			result = getAdditionalInfo(api, result);
 	    }
 		return result;
 	}
@@ -162,11 +115,11 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 	private static JSONObject creditorSupplierCount(AonApiData api) {
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		long count = AON.getSupplierCreditorCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> creditorFilter(api, api.getData(), f), f -> supplierFilter(api, api.getData(), f), globalFilter);
+				f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), globalFilter);
 		return new JSONObject().put(IJsonNames.COUNT, count);
 	}
 	
-	private static Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {
+	private static <T extends RegistryProperties> Filter genericFilter(AonApiData api, JSONObject json, T f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		String jsonValue = json.optString(IJsonNames.VALUE);
 		String global = json.optString(IJsonNames.GLOBAL);
@@ -181,33 +134,32 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
-	private static Filter supplierFilter(AonApiData api, JSONObject json, SupplierProperties f) {
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-		String jsonValue = json.optString(IJsonNames.VALUE);
-		String global = json.optString(IJsonNames.GLOBAL);
-		jsonValue = global.isEmpty() ? jsonValue : global;
-		if(!jsonValue.isEmpty()) {
-			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
-					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
-			if(!global.isEmpty())
-				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"));
-			filter = filter.and(valueFilter);
-		}
-		return filter;
-	}
-	
-	private static Filter customerFilter(AonApiData api, JSONObject json, CustomerProperties f) {
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-		String jsonValue = json.optString(IJsonNames.VALUE);
-		String global = json.optString(IJsonNames.GLOBAL);
-		jsonValue = global.isEmpty() ? jsonValue : global;
-		if(!jsonValue.isEmpty()) {
-			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
-					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
-			if(!global.isEmpty())
-				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"));
-			filter = filter.and(valueFilter);
-		}
-		return filter;
+	private static JSONArray getAdditionalInfo(AonApiData api, JSONArray result) {
+		LinkedList<RegistryAdditionalInfo> rais = new LinkedList<>();			
+        JSONArray additionalInfo = (JSONArray) api.getData().opt("additional_info");
+        for (int i = 0; i < additionalInfo.length(); i++) {
+            rais.add(RegistryAdditionalInfo.safeValueOf(additionalInfo.get(i).toString()));
+        }
+        for (int i = 0; i < result.length(); i++) {
+            JSONObject obj = result.getJSONObject(i);
+            int id = obj.getInt("id");
+            List<RegistryAddress> registryAddresses = new ArrayList<>();
+            List<RegistryMedia> registryMedia = new ArrayList<>();
+            rais.stream().forEach(rai -> {
+                if (RegistryAdditionalInfo.ADDRESSES.equals(rai)) {
+                    RegistryAddressFilter filtro = fil -> fil.getRegistryProperty().eq(id);
+                    Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filtro);
+                    addresses.forEach(registryAddresses::add); 
+                }
+                if (RegistryAdditionalInfo.MEDIA.equals(rai)) {
+					RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(id);
+					Stream<RegistryMedia> media = AON.getStream(api.getDomain(), api.getUser(), filter);
+					media.forEach(registryMedia::add);
+				}
+            });
+            obj.put("registryAddresses", RegistryAddressJSON.toJSON(registryAddresses));
+            obj.put("media", RegistryMediaJSON.toJSON(registryMedia));
+        }
+        return result;
 	}
 }
