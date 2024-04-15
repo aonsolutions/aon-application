@@ -45,7 +45,7 @@ public class CreditorSupplierDAO {
 	private static final CreditorPropertiesDAO CREDITOR_PROPERTIES = new CreditorPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
-	private static final Field<String> type = DSL.field(DSL.name("type"), String.class);
+	private static final Field<String> type = DSL.field(DSL.name("typeRegistry"), String.class);
 	
 	public static long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {
 		return prepareQueryCustomer(ctx, filter, globalFilter)
@@ -82,22 +82,27 @@ public class CreditorSupplierDAO {
 			.leftJoin(RADDRESS).on(REGISTRY.ID.eq(RADDRESS.REGISTRY))
 			.where(CUSTOMER_PROPERTIES.getConditions(filter))
 			.or(CUSTOMER.DOMAIN.eq(ctx.getDomainId()).and(RMEDIA.MEDIA.eq((byte) 2).or(RMEDIA.MEDIA.isNull()).or(RMEDIA.MEDIA.eq((byte) 1))).and(RMEDIA.VALUE.like("%" + value + "%"))
-			.or(CUSTOMER.DOMAIN.eq(ctx.getDomainId()).and(RADDRESS.ADDRESS.like("%" + value + "%")))) 
-			.groupBy(REGISTRY.ID)
+			.or(CUSTOMER.DOMAIN.eq(ctx.getDomainId()).and(RADDRESS.ADDRESS.like("%" + value + "%"))))
 			;
 		}
-		return customers;
+		return customers.groupBy(REGISTRY.ID);
 	}
 	
 	public static long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter) {
-		return prepareQuery(ctx, filter, filter2, globalFilter)
+		return ctx.getDslContext()
+			.select(DSL.asterisk())
+			.from(prepareQuery(ctx, filter, filter2, globalFilter).asTable(REGISTRY))
+			.groupBy(REGISTRY.ID)
 			.fetch()
 			.stream()
 			.count();
 	}
 	
 	public static Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
-		return prepareQuery(ctx, filter, filter2, globalFilter)
+		return ctx.getDslContext()
+			.select(DSL.asterisk())
+			.from(prepareQuery(ctx, filter, filter2, globalFilter).asTable(REGISTRY))
+			.groupBy(REGISTRY.ID)
 			.orderBy(REGISTRY.NAME)
 			.offset(offset)
 			.limit(limit)
@@ -129,7 +134,7 @@ public class CreditorSupplierDAO {
 			.leftJoin(RADDRESS).on(REGISTRY.ID.eq(RADDRESS.REGISTRY))
 			.where(CREDITOR_PROPERTIES.getConditions(filter))
 			.or(CREDITOR.DOMAIN.eq(ctx.getDomainId()).and(RMEDIA.MEDIA.eq((byte) 2).or(RMEDIA.MEDIA.eq((byte) 1))).and(RMEDIA.VALUE.like("%" + value + "%"))
-			.or(CREDITOR.DOMAIN.eq(ctx.getDomainId()).and(RADDRESS.ADDRESS.like("%" + value + "%")))) 
+			.or(CREDITOR.DOMAIN.eq(ctx.getDomainId()).and(RADDRESS.ADDRESS.like("%" + value + "%"))))
 			.groupBy(REGISTRY.ID)
 			;
 			suppliers.leftJoin(RMEDIA).on(REGISTRY.ID.eq(RMEDIA.REGISTRY))
