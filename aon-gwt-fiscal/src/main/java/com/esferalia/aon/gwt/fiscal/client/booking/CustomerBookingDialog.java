@@ -664,16 +664,32 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			BookingCheck booking = bookingList.get(iterator);
 			if(null == booking.getCustomerFee()) {
 				
+				// Check if its Licencia Adicional
+				Double usrPrice = 0.00;
+				Double usrDiscount = 0.00;
+				if(AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR") || AonStringUtils.containsIgnoreCase(booking.getEdiSalesCode(), "USR")) {
+					Optional<Fee> usrFee = customerFeeSuggestions.values().stream().filter(fee -> AonStringUtils.containsIgnoreCase(fee.getItem().getBarcode(), "USR") ).findFirst();
+					usrPrice = usrFee.isPresent() ? usrFee.get().getPrice() : 0.00;
+					usrDiscount = usrFee.isPresent() ? usrFee.get().getDiscount() : 0.00;
+				}
+				
 				Fee draftFee = new Fee();
 				draftFee.setDomain(selectedCustomerFee.getDomain());
 				draftFee.setProject(selectedCustomerFee.getProject());
 				draftFee.setCustomer(selectedCustomerFee.getCustomer());
 				draftFee.setItem(booking.getItem());
-				String description = booking.getItem().getProduct().getName().contains("/") ? booking.getItem().getProduct().getName().split("/")[0] : booking.getItem().getProduct().getName();
+				String description = booking.getItem().getProduct().getName().contains("/") ? (booking.getItem().getProduct().getName().split("/")[0] + " / ") : booking.getItem().getProduct().getName();
 				draftFee.setDescription(description + (!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? "" : " " + childDomain.getDescription()) );
 				draftFee.setQuantity(1.00);
-				draftFee.setPrice(0.00);
-				draftFee.setDiscount(0.00);
+				
+				if(AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR")) {
+					draftFee.setPrice(usrPrice);
+					draftFee.setDiscount(usrDiscount);
+				} else {
+					draftFee.setPrice(!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? 0.00 : selectedCustomerFee.getPrice());
+					draftFee.setDiscount(!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? 0.00 : selectedCustomerFee.getDiscount());
+				}
+				
 				draftFee.setStartDate(selectedCustomerFee.getStartDate());
 				draftFee.setEndDate(selectedCustomerFee.getEndDate());
 				draftFee.setBillingDate(selectedCustomerFee.getBillingDate());
