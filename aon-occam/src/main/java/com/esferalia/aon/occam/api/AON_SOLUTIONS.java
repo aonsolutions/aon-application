@@ -1190,6 +1190,7 @@ public class AON_SOLUTIONS {
 	public static void invoiceDuplicateFix(Domain domain, User user) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			InvoiceDuplicateFixDAO.invoiceDuplicateFix(ctx);
+			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
 		}
 	}
 }
