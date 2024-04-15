@@ -231,11 +231,20 @@ public class InvoiceAutoComplete {
 					} else {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+			
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "430"))
+								.setAlias(registry.getAlias())
+								.setDescription(registry.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
 						
 						c = CustomerDAO.save(ctx.getContext(), new Customer()
-							.copy(inv.getRegistryData()
+							.copy(registry.getId() != null ? registry : inv.getRegistryData()
 								.setId(registry.getId()))
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope())
+								.setAccount(account.getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);
@@ -260,10 +269,19 @@ public class InvoiceAutoComplete {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
 						
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "400"))
+								.setAlias(registry.getAlias())
+								.setDescription(registry.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
+						
 						s = SupplierDAO.save(ctx.getContext(), new Supplier()
-							.copy(inv.getRegistryData())
+							.copy(registry.getId() != null ? registry :inv.getRegistryData())
 								.setId(registry.getId())
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope())
+								.setAccount(account.getId()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
 							inv.setRegistryData(s);
@@ -289,10 +307,19 @@ public class InvoiceAutoComplete {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
 						
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "410"))
+								.setAlias(registry.getAlias())
+								.setDescription(registry.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
+						
 						c = CreditorDAO.save(ctx.getContext(), new Creditor()
-							.copy(inv.getRegistryData())
+							.copy(registry.getId() != null ? registry : inv.getRegistryData())
 								.setId(registry.getId())
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope())
+								.setAccount(account.getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);

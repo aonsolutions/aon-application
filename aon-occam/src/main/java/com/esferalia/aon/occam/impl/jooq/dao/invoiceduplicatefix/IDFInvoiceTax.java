@@ -2,11 +2,14 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.TaxType;
+
 public class IDFInvoiceTax implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private double base;
+	private TaxType type;
 	
 	public IDFInvoiceTax () {
 		
@@ -30,4 +33,12 @@ public class IDFInvoiceTax implements Serializable{
 		return this;
 	}
 	
+	public TaxType getType() {
+		return type;
+	}
+	
+	public IDFInvoiceTax setType(TaxType type) {
+		this.type = type;
+		return this;
+	}
 }

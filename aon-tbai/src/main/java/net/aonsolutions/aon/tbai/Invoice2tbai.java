@@ -313,6 +313,9 @@ public class Invoice2tbai {
 				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 				detalle.setCantidad(doubleToString(AonMathUtils.round(detail.getQuantity(), 4)));
 				String description = detail.getDescription().replace("\n", " ");
+				if(AonStringUtils.isBlank(description)) {
+					description = "Detalle";
+				}
 				if(description.length() > 249) {
 					description = description.substring(0, 249);
 				}			
@@ -339,6 +342,9 @@ public class Invoice2tbai {
 				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 				detalle.setCantidad(doubleToString(AonMathUtils.round(detail.getQuantity(), 4)));
 				String description = detail.getDescription().replace("\n", " ");
+				if(AonStringUtils.isBlank(description)) {
+					description = "Detalle";
+				}
 				if(description.length() > 249) {
 					description = description.substring(0, 249);
 				}			
