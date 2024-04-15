@@ -144,6 +144,4 @@ public class LoginServlet extends AonApiHttpServlet{
 		}
 		return auth;
 	}
-		
-
 }

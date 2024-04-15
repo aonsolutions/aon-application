@@ -105,6 +105,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private boolean isNewFee = false;
 	private OldItem item;
 	private Customer customer;
+	
+	private Integer ritem;
 
 	// ------------------------------------------------- Constructor
 
@@ -169,6 +171,22 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		this.item = item;
 		this.customer = customer;
 		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
+	public CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer, Integer ritem) {
+		setCaption("Creador Cuota");
+		
+		this.isNewFee = true;
+		this.item = item;
+		this.customer = customer;
+		this.options = options;
+		this.ritem = ritem;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -996,7 +1014,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		}
 		
 		hide();
-		onCreate(newFee);
+		
+		if(null == ritem)
+			onCreate(newFee);
+		else
+			onCreate(newFee, ritem);
+		
 	}
 
 	private void acceptDialog() {
@@ -1015,5 +1038,6 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	protected abstract void onAccept(Fee fee);
 	protected abstract void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate);
 	protected abstract void onCreate(Fee fee);
+	protected abstract void onCreate(Fee fee, Integer ritem);
 
 }

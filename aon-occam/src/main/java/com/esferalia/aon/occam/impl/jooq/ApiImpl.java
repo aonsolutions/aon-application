@@ -37,5 +37,12 @@ public class ApiImpl implements IApi {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceServalFixDAO.getTbaiDeletedInvoices(ctx));
 	}
+	
+	@Override
+	public long getInvoiceNewPortalCount(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+					configuration -> InvoiceApiDAO.getInvoiceNewPortalCount(ctx, filter));
+				
+	}
 
 }

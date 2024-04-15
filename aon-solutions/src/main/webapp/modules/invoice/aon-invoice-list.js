@@ -106,7 +106,7 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
-		} else if(aonInvoiceTable && this.invofoxFilter){
+		} else if(aonInvoiceTable && this.invofoxFilter && this.getDur().isInvofox()) {
 			this.invofoxFilter.page = this.invofoxFilter.page + 1;
 			this.buildInvofox();
 		}
@@ -178,7 +178,7 @@ export class AonInvoiceList extends AonElement {
 				});
 			});
 
-			if(this.invofoxFilter) {
+			if(this.invofoxFilter && this.getDur().isInvofox()) {
 				this.buildInvofox();	
 			} 
 		}

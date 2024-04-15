@@ -172,7 +172,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
 export const FOOTER = 'Peu';
-
+export const FROM = 'Des'
 // ----- G
 
 export const GALICIAN = 'Gallec';
@@ -412,6 +412,7 @@ export const TICKETS = 'Tiquets';
 export const TIMECONTROL = `Control d'Horari`;
 export const TITLE = 'Títol';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'Fins';
 export const TO_TRASH = 'Enviar a la Paperera';
 export const TODAY = 'Avui';
 export const TOMORROW = 'Matí';

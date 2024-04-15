@@ -266,6 +266,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery));
+	}
+	
+	@Override
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
@@ -332,9 +338,16 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public void createCustomerFeeList(AONContext ctx, Fee fee) {
-		ctx.getDslContext().transaction(configuration
+	public Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.createCustomerFeeList(ctx, fee));
+	}
+	
+	@Override
+	public void updateRitemCustomerFee(CloseableAONContext ctx, Integer customerFee, Integer ritem) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.updateRitemCustomerFee(ctx, customerFee, ritem);
+		} );
 	}
 	
 	@Override
@@ -566,7 +579,14 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getFull(ctx, filter, offset, limit));
 	}
-	
+	@Override
+	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter , Integer page, Integer perPage , boolean ticket){
+		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocNewPortal(ctx, filter , page, perPage ,ticket));
+	}
+	@Override
+	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
+		return RawdocDAO.getRawdocCount(ctx, filter, ticket);
+	}
 	@Override
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
 		return ctx.getDslContext().transactionResult(configuration
@@ -813,6 +833,12 @@ public class FinanceImpl implements IFinance {
 	public LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> BookingCheckDAO.getCustomerBookingCheckList(ctx, params));	
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerChildBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getCustomerChildBookingCheckList(ctx, params));	
 	}
 
 	@Override

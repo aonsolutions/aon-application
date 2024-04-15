@@ -454,11 +454,11 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 						
 						customerCount = 0;
 						Label messageLabel = AonMessagePanel.showLoading(messagePanel, "Comprobando cliente " + customers.get(customerCount).getName() + " ...");
-						checkCustomerSync(customers, customers.size(), messageLabel);
+						checkCustomerSync(customers, messageLabel);
 						
 					}
 					
-					private void checkCustomerSync(LinkedList<Customer> customers, int totalCustomers, Label messageLabel) {
+					private void checkCustomerSync(LinkedList<Customer> customers, Label messageLabel) {
 						Customer customer = customers.get(customerCount);
 						
 						messageLabel.setText("Comprobando cliente " + customer.getName() + " ...");
@@ -500,11 +500,12 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 									customerWithoutDomainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
 								}
 								
-								if(customerCount == (totalCustomers - 1))
+								if(customerCount == (customers.size() - 1)) {
 									AonMessagePanel.hideMessage(messagePanel);
-								else {
+									customerCount = 0;
+								} else {
 									customerCount++;
-									checkCustomerSync(customers, totalCustomers, messageLabel);
+									checkCustomerSync(customers, messageLabel);
 								}
 								
 							}
@@ -710,14 +711,14 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 						Label messageLabel = AonMessagePanel.showLoading(messagePanel, "Asignando agente soporte al cliente " + customers.get(customerCount).getName() + " ...");
 						
 						try {
-							checkCustomerSync(customers, customers.size(), messageLabel);
+							checkCustomerSync(customers, messageLabel);
 						} catch (Exception e) {
 							Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
 						}
 						
 					}
 					
-					private void checkCustomerSync(LinkedList<Customer> customers, int totalCustomers, Label messageLabel) {
+					private void checkCustomerSync(LinkedList<Customer> customers, Label messageLabel) {
 						Customer customer = customers.get(customerCount);
 						
 						messageLabel.setText("Asignando agente soporte al cliente " + customer.getName() + " ...");
@@ -740,12 +741,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 												addLogRow(customer.getName(), "Cliente / Agente Soporte", "El cliente " + customer.getName() + " no tiene agente de soporte asociado");
 												customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.CUSTOMER_SUPPORT_AGENT, "El cliente " + customer.getName() + " no tiene agente de soporte asociado"));
 												
-												if(customerCount == (totalCustomers - 1))
+												if(customerCount >= (customers.size() - 1)) {
 													AonMessagePanel.hideMessage(messagePanel);
-							                	else {
+													customerCount = 0;
+												} else {
 							                		customerCount++;
 							                		try {
-														checkCustomerSync(customers, totalCustomers, messageLabel);
+														checkCustomerSync(customers, messageLabel);
 													} catch (Exception e) {
 														Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
 													}
@@ -761,12 +763,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 															addLogRow(customer.getName(), "Agente Soporte", "El agente de soporte " + seller.getName() + " no tiene email registrado en su ficha");
 															customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.SUPPORT_AGENT_EMAIL, "El agente de soporte " + seller.getName() + " no tiene email registrado en su ficha"));
 															
-															if(customerCount == (totalCustomers - 1))
+															if(customerCount >= (customers.size() - 1)) {
 																AonMessagePanel.hideMessage(messagePanel);
-										                	else {
+																customerCount = 0;
+															} else {
 										                		customerCount++;
 										                		try {
-																	checkCustomerSync(customers, totalCustomers, messageLabel);
+																	checkCustomerSync(customers, messageLabel);
 																} catch (Exception e) {
 																	Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
 																}
@@ -792,12 +795,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 																	addLogRow(customer.getName(), "Sincronizac\u00f3n", "El agente de soporte " + seller.getName() + " ha sido asigando como gestor del dominio " + domainCompany.getDomain().getDescription());
 																	customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.SYNC, "El agente de soporte " + seller.getName() + " ha sido asigando como gestor del dominio " + domainCompany.getDomain().getDescription()));
 																	
-																	if(customerCount == (totalCustomers - 1))
+																	if(customerCount >= (customers.size() - 1)) {
 																		AonMessagePanel.hideMessage(messagePanel);
-																	else {
+																		customerCount = 0;
+																	} else {
 																		customerCount++;
 																		try {
-																			checkCustomerSync(customers, totalCustomers, messageLabel);
+																			checkCustomerSync(customers, messageLabel);
 																		} catch (Exception e) {
 																			Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
 																		}
@@ -823,12 +827,12 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 												
 											}
 											
-											customerCount++;
-											try {
-												checkCustomerSync(customers, totalCustomers, messageLabel);
-											} catch (Exception e) {
-												Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
-											}
+//											customerCount++;
+//											try {
+//												checkCustomerSync(customers, messageLabel);
+//											} catch (Exception e) {
+//												Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
+//											}
 										}
 										
 										@Override
@@ -841,12 +845,13 @@ public class CustomerSupportAgentModule extends MainEntryPoint {
 				                	addLogRow(customer.getName(), "Dominio Asociado", "El cliente " + customer.getName() + " no tiene dominio asociado");
 				                	customerLogs.add(new CustomerLog(customer.getName(), LogTypeEnum.CUSTOMER_DOMAIN_SYNC, "El cliente " + customer.getName() + " no tiene dominio asociado"));
 									
-				                	if(customerCount == (totalCustomers - 1))
+				                	if(customerCount >= (customers.size() - 1)) {
 										AonMessagePanel.hideMessage(messagePanel);
-				                	else {
+										customerCount = 0;
+									} else {
 				                		customerCount++;
 				                		try {
-											checkCustomerSync(customers, totalCustomers, messageLabel);
+											checkCustomerSync(customers, messageLabel);
 										} catch (Exception e) {
 											Window.alert("Fail checkCustomerSync --> customerCount: " + customerCount + " / customersSize: " + customers.size());
 										}

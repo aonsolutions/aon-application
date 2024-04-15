@@ -263,12 +263,13 @@ export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";//TODO
 export const FILTERS = "Filtros";//TODO
+export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FISCAL = 'Fiscal';//TODO
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
-export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
+export const FROM = MSG.FROM;
 
 // ----- G
 
@@ -626,6 +627,7 @@ export const TICKETBAI = MSG.TICKETBAI;
 export const TICKETS = MSG.TICKETS;
 export const TIMECONTROL = MSG.TIMECONTROL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
+export const TO = MSG.TO;
 export const TO_TRASH = MSG.TO_TRASH;
 export const TODAY = MSG.TODAY;
 export const TOMORROW = MSG.TOMORROW;

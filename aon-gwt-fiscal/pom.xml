@@ -124,6 +124,12 @@
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>
+		<dependency>
+		<groupId>solutions.aon</groupId>
+		<artifactId>aon.aws</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
     <dependency>
 		<groupId>net.aonsolutions</groupId>	
 		<artifactId>aon.accounting.report</artifactId>

@@ -101,15 +101,6 @@ export class AonMobileInvoiceList extends AonMobileList {
 			});
 		}
 	}
-
-  getFilter() {
-    return this.filter || {status: 'inbox'};
-  }
-
-  setFilter(filter) {
-    return this.filter = filter;
-  }
-
 }
 
 if(!window.customElements.get(TAG.AON_MOBILE_INVOICE_LIST)){

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
@@ -34,6 +34,8 @@ import * as OPTION from './InvoiceOptions.js';
 import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
+
+import { getCounter, addCounter, clearCounter } from './InvoiceCounter.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -160,7 +162,38 @@ export class AonInvoicePanel extends AonElement {
 		}
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
-		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+		// btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+
+		if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
+				|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
+				|| OPTION.INVOICE_TICKET.id === this.selectedOption.id)){
+			// ADD ADVANCED SEARCH
+
+			let options = [{
+				type: CONSTANT.DATE,
+				name: "startDate",
+				id: "startDate",
+				title: MSG.FROM,
+			  },
+			  {
+				type: CONSTANT.DATE,
+				name: "endDate",
+				id: "endDate",
+				title: MSG.TO,
+			  },{
+				type: CONSTANT.SELECT,
+				name: "recorded",
+				id: "recorded",
+				title: MSG.STATUS,
+				options: JSON.stringify([
+					{name: "-", value: undefined},
+					{name: MSG.PENDING, value: "PENDING"},
+					{name: MSG.ACCOUNTED, value: "SCORED"}
+				])
+			  }];
+			btnSearch.buildOptionsFilter(options);//INPUTS
+		}
 	}
 
 	downloadInvoiceExcel() {
@@ -190,58 +223,135 @@ export class AonInvoicePanel extends AonElement {
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		});
-		getRawdocCount().then(r => {
-			OPTION.getOptions(this.getDur()).forEach(option => {
-				option.app = INVOICE;
-				option.count = this.getCounter(option, r);
-				if(option.options)
-					option.options.forEach((o1, i) =>{
-						option.options[i].count = this.getCounter(o1, r);
-						if(option.options[i].options)
-							option.options[i].options.forEach((o2, j) => {
-								option.options[i].options[j].count = this.getCounter(o2, r);
-							});
-					})
-				this.getApplication().addSidenavOptions3(option);
-			});
+
+		OPTION.getOptions(this.getDur()).forEach(option => {
+			option.app = INVOICE;
+			this.getApplication().addSidenavOptions3(option);
 		});
+		this.buildCounter();
 	}
 
-	getCounter(option, r){
-		switch(option.id){
-			case OPTION.INVOICE_PENDINGS.id:
-				return (r && r.rawdoc && r.rawdoc.inbox) 
-					? r.rawdoc.inbox.count : undefined;
-			case OPTION.RAWDOC_INBOX_ISSUED.id:
-				return (r && r.rawdoc && r.rawdoc.inbox) 
-					? r.rawdoc.inbox.OUTPUT : undefined;
-			case OPTION.RAWDOC_INBOX_RECEIVED.id:
-				return (r && r.rawdoc && r.rawdoc.inbox) 
-					? r.rawdoc.inbox.INPUT : undefined;
-			case OPTION.RAWDOC_INBOX_TICKET.id:
-				return (r && r.rawdoc && r.rawdoc.inbox) 
-					? undefined : undefined; // TODO
-			case OPTION.RAWDOC_REJECT.id:
-				return (r && r.rawdoc && r.rawdoc.rejected) 
-					? r.rawdoc.rejected.count : undefined;
-			case OPTION.RAWDOC_DRAFT.id:
-				return (r && r.rawdoc && r.rawdoc.draft) 
-					? r.rawdoc.draft.count : undefined;
-			case OPTION.INVOICE_ISSUED.id:
-				return (r && r.invoice) 
-					? r.invoice.emitida : undefined;
-			case OPTION.INVOICE_RECEIVED.id:
-				return (r && r.invoice) 
-					? r.invoice.recibida : undefined;
-			case OPTION.INVOICE_TICKET.id:
-				return (r && r.invoice) 
-					? r.invoice.ticket : undefined;		
-					
-			default: return undefined;
+	buildCounter() {
+		clearCounter();
+		this.invoiceCounter();
+		if(this.getDur().isInvofox()) {
+			this.invofoxCounter();
 		}
 	}
 
-	search(value) {
+	invoiceCounter() {
+		getRawdocCount({}).then(r => {
+			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
+				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
+				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
+			}
+
+			if(r.invoice && r.invoice.recibida && r.invoice.recibida > 0){
+				addCounter(OPTION.INVOICE_RECEIVED, r.invoice.recibida);
+				this.updateCounterSpan(OPTION.INVOICE_RECEIVED);
+			}
+
+			if(r.invoice && r.invoice.ticket && r.invoice.ticket > 0){
+				addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
+				this.updateCounterSpan(OPTION.INVOICE_TICKET);
+			}
+
+			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0){
+				addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
+				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
+			}
+
+			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0){
+				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.rawdoc.inbox.OUTPUT);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+			}
+
+			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0){
+				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.rawdoc.inbox.INPUT);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+			}
+
+			// if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0){
+			// 	addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
+			// }
+
+			if(r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0){
+				addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
+				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
+			}
+
+			if(r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0){
+				addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
+				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+			}
+		});
+	}
+
+	invofoxCounter() {
+		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' };	
+		getInvofoxCount(issuedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				addCounter(OPTION.INVOICE_PENDINGS, r.count);
+				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
+
+				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+			}
+		});
+
+
+		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'};	
+		getInvofoxCount(receivedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				addCounter(OPTION.INVOICE_PENDINGS, r.count);
+				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
+
+				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+			}
+		});
+
+
+		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'};	
+		getInvofoxCount(ticketFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				addCounter(OPTION.RAWDOC_INBOX, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
+
+				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
+			}
+		});
+
+
+		let rejectedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'};	
+		getInvofoxCount(rejectedFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				addCounter(OPTION.RAWDOC_REJECT, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
+			}
+		});
+
+		let trashFilter = {publicStatus:['discarded', 'rejected', 'error' ]};	
+		getInvofoxCount(trashFilter).then(r => {
+			if(r && r.count && r.count > 0) {
+				addCounter(OPTION.RAWDOC_DRAFT, r.count);
+				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+			}
+		});
+	}
+
+	updateCounterSpan(option) {	
+		let span = document.getElementById("aonMenuItemSpan" + option.id);
+		if(span){
+			let count = getCounter()[option.id];
+			span.innerHTML = option.name + " (" + (count > 49 ? "+49" : count) + ")";
+			span.style.fontWeight = "bold";
+		} else setTimeout(this.updateCounterSpan, 100, option);
+	}
+	
+	search(detail) {
+		let value = detail.search;
 		if(this.selectedOption && OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id) {
 			this.aonCreditorList({page:1, perPage:50, value});
 		} else if(this.selectedOption && OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id){
@@ -255,10 +365,13 @@ export class AonInvoicePanel extends AonElement {
 		} else if(this.selectedOption && OPTION.INVEST.id === this.selectedOption.id){
 			this.aonInvestList({value});
 		} else {
-			if(this.filter.description !== value) {
-				this.filter.description = value;
-				this.aonInvoiceList();
-			}
+			this.filter.description = value;
+			if(detail.recorded) this.filter.recorded = detail.recorded;
+			this.filter.from = detail.startDate;
+			this.filter.to = detail.endDate; 
+			this.filter.page = 1;
+			this.filter.perPage = 50;
+			this.aonInvoiceList();
 		}
 	}
 
@@ -587,7 +700,7 @@ export class AonInvoicePanel extends AonElement {
 		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		component.setType(type);
 		component.setInvoice(invoice);
-		if(invoice.file) {
+		if(invoice && invoice.file) {
 			component.fileOpened = true;
 			this.getApplication().buildDragAndDrop(false);
 		}

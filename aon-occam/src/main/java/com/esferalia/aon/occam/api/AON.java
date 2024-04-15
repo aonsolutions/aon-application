@@ -2728,6 +2728,12 @@ public class AON {
 		}
 	}
 	
+	public static Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domainId, String login, Integer itemId, Integer customerId, String customerFeeQuery) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery);
+		}
+	}
+	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
@@ -2809,11 +2815,17 @@ public class AON {
 		}
 	}
 	
-	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
+	public static Fee createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			getFinance().createCustomerFeeList(ctx, fee);
+			return getFinance().createCustomerFeeList(ctx, fee);
 		}
 	}
+	
+	public static void updateRitemCustomerFee(String domainName, int domainId, String login, Integer customerFee, Integer ritem) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().updateRitemCustomerFee(ctx, customerFee, ritem);
+		}
+	}	
 
 	public static void deleteFee(AONContext ctx, Fee f) {
 		getFinance().deleteFee(ctx, f);
@@ -5048,6 +5060,12 @@ public class AON {
 		} 
 	}
 	
+	public static long getCustomersCount(String domainName, Integer domainId, String login, CustomerFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getCustomersCount(ctx, filter);
+		}
+	}
+	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -5878,6 +5896,12 @@ public class AON {
 	public static Creditor saveCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().saveCreditor(ctx, creditor);
+		}
+	}
+	
+	public static long getCreditorsCount(String domainName, Integer domainId, String login, CreditorFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCreditorsCount(ctx ,filter);
 		}
 	}
 	
@@ -7409,6 +7433,19 @@ public class AON {
 			return getFinance().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
+	
+	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket ){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket);
+		}
+	}
+	
+	public static long getRawdocCount(String domainName, int domain, String user, RawdocFilter filter, boolean ticket) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocCount(ctx, filter, ticket);
+		}
+
+	}
 
 	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
 		CloseableAONContext ctx = null;
@@ -7531,6 +7568,7 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
 	
 	// **************************************************
 	// *************************************** [CUSTOMER]
@@ -7687,6 +7725,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static long getSuppliersCount(String domainName, Integer domainId, String login, SupplierFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSuppliersCount(ctx ,filter);
 		}
 	}
 	
@@ -8199,6 +8243,12 @@ public class AON {
 			return getFinance().getCustomerBookingCheckList(ctx, params);
 		}
 	}
+	
+	public static LinkedList<BookingCheck> getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getCustomerChildBookingCheckList(ctx, params);
+		}
+	}
 
 	public static void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
@@ -8268,6 +8318,6 @@ public class AON {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
 			return getFinance().createUpdateFBatch(ctx, fBatch);
 		}
-	}	
+	}
 	
 }

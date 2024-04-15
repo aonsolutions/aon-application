@@ -2251,27 +2251,22 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 //			as = AonMathUtils.round(as - act.getEmp());
 //			coef = AonMathUtils.round( as * 0.40 );
 //		}
-		System.out.println( as );
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + ( (as>1?1:as) * 0.10 );	
 			as = AonMathUtils.round(as - 1);	
 		} 
-		System.out.println( as + " -- " + coef );
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + ( (as>2?2:as) * 0.15 );
 			as = AonMathUtils.round(as - 2);
 		} 
-		System.out.println( as + " -- " + coef );
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + ( (as>2?2:as) * 0.20 );
 			as = AonMathUtils.round(as - 2);
 		} 
-		System.out.println( as + " -- " + coef );
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + ( (as>3?3:as) * 0.25 );
 			as = AonMathUtils.round(as - 3);
 		} 
-		System.out.println( as + " -- " + coef );
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + ( as * 0.30 );
 		}
@@ -2290,9 +2285,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 					|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
 					double m01 = mod.getValue();
 					double ratioPersonalAsalariado = (salariedStaff != 0 )?m01 / salariedStaff:1;
-					System.out.println( "ratioPersonalAsalariado " + ratioPersonalAsalariado );
 					iem = iem + (coef * ratioPersonalAsalariado * mod.getFactor());
-					System.out.println( "iem " + iem );
 				}
 			}
 			iem = AonMathUtils.round( iem );
