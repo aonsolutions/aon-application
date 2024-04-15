@@ -32,8 +32,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -2322,101 +2322,104 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// Los índices correctores especiales sólo se aplicarán en aquellas 
 		// actividades concretas que se citan a continuación:
 		double ic1 = 0.0;
-		act.setIndiceEmpresasPequenaDimensionAplicable(true); 
-		if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
-
-			// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
-			if (act.getModules() != null && act.getModules().size() == 4) {
-				
-				// Actividad de comercio al por menor de prensa, revistas y libros 
-				// en quioscos situados en la v?a p?blica:
-				//	Ubicaci?n de los quioscos					?ndice
-				//  --------------------------------------------------
-				//	Madrid y Barcelona							  1,00
-				//	Municipios de m?s de 100.000 habitantes		  0,95
-				//	Resto de municipios							  0,80
-				if (AonMathUtils.round(mun) == 6.0) {
-					ic1 = 1.0;
-				} else if (AonMathUtils.round(mun) == 5.0) {
+		act.setIndiceEmpresasPequenaDimensionAplicable(true);
+		
+		if (!AonMathUtils.isLessThanZero( act.getRnm() )) {
+			if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
+	
+				// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
+				if (act.getModules() != null && act.getModules().size() == 4) {
+					
+					// Actividad de comercio al por menor de prensa, revistas y libros 
+					// en quioscos situados en la v?a p?blica:
+					//	Ubicaci?n de los quioscos					?ndice
+					//  --------------------------------------------------
+					//	Madrid y Barcelona							  1,00
+					//	Municipios de m?s de 100.000 habitantes		  0,95
+					//	Resto de municipios							  0,80
+					if (AonMathUtils.round(mun) == 6.0) {
+						ic1 = 1.0;
+					} else if (AonMathUtils.round(mun) == 5.0) {
+						ic1 = 0.95;
+					} else {
+						ic1 = 0.80;
+					}
+				}
+			} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
+					|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {
+				// Actividad de transporte urbano colectivo y de viajeros por carretera:
+				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
+				if (AonMathUtils.round(veh) == 1.0) {
+					ic1 = 0.80;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
+				}
+			} else if (Epigraph.E_721_2.getEpigraph().equals(act.getEpigraph())) {
+				//	Actividad de transporte por autotaxis.
+				//		Poblaci?n del municipio				  ?ndice
+				//		--------------------------------------------
+				//		Hasta 2.000 habitantes					0,75
+				//		De 2.001 hasta 10.000 habitantes		0,80
+				//		De 10.001 hasta 50.000 habitantes		0,85
+				//		De 50.001 hasta 100.000 habitantes		0,90
+				//		M?s de 100.000 habitantes				1,00
+				act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				if (AonMathUtils.round(mun) == 0.0) {
+					ic1 = 0.75;
+				} else if (AonMathUtils.round(mun) == 1.0 || AonMathUtils.round(mun) == 2.0) {
+					ic1 = 0.80;
+				} else if (AonMathUtils.round(mun) == 3.0) {
+					ic1 = 0.85;
+				} else if (AonMathUtils.round(mun) == 4.0) {
+					ic1 = 0.90;
+				} else {
+					ic1 = 1.00;
+				}
+			} else if (Epigraph.E_722A.getEpigraph().equals(act.getEpigraph())) {
+				//Actividades de transporte de mercanc?as por carretera y servicios de mudanzas:
+				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
+				// Se aplicar? el ?ndice 0,90 cuando la actividad se realice con tractocamiones
+				// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
+				// un ?nico tractocami?n y sin semirremolques, se aplicar?, exclusivamente, el ?ndice 0,75.
+	
+				if (AonMathUtils.round(veh) == 1.0) {
+					ic1 = 0.80;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+				// Indique si la actividad se realiza con un ?nico tractocami?n y sin semirremolques.
+				if (act.isTss()) {
+					ic1 = 0.75;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+				// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
+				if (act.isTns()) {
+					ic1 = 0.90;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+			} else if (Epigraph.E____.getEpigraph().equals(act.getEpigraph())) {
+				// Actividad de producci?n de mejill?n en batea:
+				//	- Empresa con una sola batea y sin barco auxiliar: 0,75.
+				//	- Empresa con una sola batea y con un barco auxiliar de 
+				//	  menos de 15 toneladas de registro bruto (T.R.B.): 0,85.
+				//	- Empresa con una sola batea y con un barco auxiliar de 15 
+				//	  a 30 T.R.B.; y empresa con dos bateas y sin barco auxiliar: 0,90.
+				//	- Empresa con una sola batea y con un barco auxiliar de m?s 
+				//	  de 30 T.R.B.; y empresa con dos bateas y un barco auxiliar 
+				//    de menos de 15 T.R.B.: 0,95.
+				act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				// N?mero de bateas y de barcos auxiliares de la empresa.
+				double bat = act.getBat();
+				if (AonMathUtils.round(bat) == 1.0) {
+					ic1 = 0.75;
+				} else if (AonMathUtils.round(bat) == 2.0) {
+					ic1 = 0.85;
+				} else if (AonMathUtils.round(bat) == 3.0 || AonMathUtils.round(bat) == 5.0) {
+					ic1 = 0.90;
+				} else if (AonMathUtils.round(bat) == 4.0 || AonMathUtils.round(bat) == 6.0) {
 					ic1 = 0.95;
 				} else {
-					ic1 = 0.80;
+					// Otros: numero de bateas, barcos o TRB distintos de los anteriores.
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
 				}
-			}
-		} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
-				|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {
-			// Actividad de transporte urbano colectivo y de viajeros por carretera:
-			// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
-			if (AonMathUtils.round(veh) == 1.0) {
-				ic1 = 0.80;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);	
-			}
-		} else if (Epigraph.E_721_2.getEpigraph().equals(act.getEpigraph())) {
-			//	Actividad de transporte por autotaxis.
-			//		Poblaci?n del municipio				  ?ndice
-			//		--------------------------------------------
-			//		Hasta 2.000 habitantes					0,75
-			//		De 2.001 hasta 10.000 habitantes		0,80
-			//		De 10.001 hasta 50.000 habitantes		0,85
-			//		De 50.001 hasta 100.000 habitantes		0,90
-			//		M?s de 100.000 habitantes				1,00
-			act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			if (AonMathUtils.round(mun) == 0.0) {
-				ic1 = 0.75;
-			} else if (AonMathUtils.round(mun) == 1.0 || AonMathUtils.round(mun) == 2.0) {
-				ic1 = 0.80;
-			} else if (AonMathUtils.round(mun) == 3.0) {
-				ic1 = 0.85;
-			} else if (AonMathUtils.round(mun) == 4.0) {
-				ic1 = 0.90;
-			} else {
-				ic1 = 1.00;
-			}
-		} else if (Epigraph.E_722A.getEpigraph().equals(act.getEpigraph())) {
-			//Actividades de transporte de mercanc?as por carretera y servicios de mudanzas:
-			// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
-			// Se aplicar? el ?ndice 0,90 cuando la actividad se realice con tractocamiones
-			// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
-			// un ?nico tractocami?n y sin semirremolques, se aplicar?, exclusivamente, el ?ndice 0,75.
-
-			if (AonMathUtils.round(veh) == 1.0) {
-				ic1 = 0.80;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-			// Indique si la actividad se realiza con un ?nico tractocami?n y sin semirremolques.
-			if (act.isTss()) {
-				ic1 = 0.75;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-			// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
-			if (act.isTns()) {
-				ic1 = 0.90;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-		} else if (Epigraph.E____.getEpigraph().equals(act.getEpigraph())) {
-			// Actividad de producci?n de mejill?n en batea:
-			//	- Empresa con una sola batea y sin barco auxiliar: 0,75.
-			//	- Empresa con una sola batea y con un barco auxiliar de 
-			//	  menos de 15 toneladas de registro bruto (T.R.B.): 0,85.
-			//	- Empresa con una sola batea y con un barco auxiliar de 15 
-			//	  a 30 T.R.B.; y empresa con dos bateas y sin barco auxiliar: 0,90.
-			//	- Empresa con una sola batea y con un barco auxiliar de m?s 
-			//	  de 30 T.R.B.; y empresa con dos bateas y un barco auxiliar 
-			//    de menos de 15 T.R.B.: 0,95.
-			act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			// N?mero de bateas y de barcos auxiliares de la empresa.
-			double bat = act.getBat();
-			if (AonMathUtils.round(bat) == 1.0) {
-				ic1 = 0.75;
-			} else if (AonMathUtils.round(bat) == 2.0) {
-				ic1 = 0.85;
-			} else if (AonMathUtils.round(bat) == 3.0 || AonMathUtils.round(bat) == 5.0) {
-				ic1 = 0.90;
-			} else if (AonMathUtils.round(bat) == 4.0 || AonMathUtils.round(bat) == 6.0) {
-				ic1 = 0.95;
-			} else {
-				// Otros: numero de bateas, barcos o TRB distintos de los anteriores.
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);	
 			}
 		}
 		act.setIc1(ic1);
@@ -2470,7 +2473,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		if (AonMathUtils.isZero(act.getIc2())) {
 			double tope = AonMathUtils.round(act.getMaxImport());
 			if (AonMathUtils.isZero(tope)) {
-				Epigraph epi = Modules2016.Epigraph.getEpigraph(act.getEpigraph());
+				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
 				if (epi != null) {
 					tope = epi.getLimExceso();
 				}
@@ -2529,8 +2532,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// *****************************************************************
 		// 		RENDIMIENTO A EFECTOS DE PAGOS FRACCIONADOS (i.R.P.F.)
 		// *****************************************************************
-		double rpf = 0.0;
-		rpf = act.getRnm();
+		double rpf = act.getRnm();
 		if (AonMathUtils.isNotZero(act.getIc1())) {
 			rpf = rpf * act.getIc1();	
 		}
@@ -2552,8 +2554,10 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// Disposición adicional primera. Reducción en 2024 del rendimiento neto calculado por el método de estimación objetiva. 
 		//		1. Los contribuyentes que determinen el rendimiento neto de sus actividades
 		//		económicas por el método de estimación objetiva, podrán reducir el rendimiento neto de
-		//		módulos obtenido en 2024 en un 5 por ciento.
-		rpf = rpf - (rpf * 5 / 100);
+		//		módulos obtenido en 2024 en un 5 por ciento.Rpf
+		if (AonMathUtils.isGreatherThanZero( rpf )) {
+			rpf = rpf - (rpf * 5 / 100);
+		}
 		
 		
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.
