@@ -551,6 +551,11 @@ public class FeeDAO {
 		customerFeeParams.setLimit(Integer.MAX_VALUE);
 		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
 		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
+			ctx.getDslContext().update(RITEM)
+			.set(RITEM.CUSTOMER_FEE, DSL.castNull(RITEM.CUSTOMER_FEE))
+			.where(RITEM.CUSTOMER_FEE.eq(fee.getId()))
+			.execute();
+			
 			ctx.getDslContext()
 			.delete(CUSTOMER_FEE)
 			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
@@ -575,9 +580,13 @@ public class FeeDAO {
 	}
 
 	public static void delete(AONContext ctx, Stream<Fee> fs) {
+//		ctx.getDslContext().transaction(configuration -> {
+//			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
+//			delete(ctx, f -> f.getIdProperty().in(ids));
+//		});
+		
 		ctx.getDslContext().transaction(configuration -> {
-			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
-			delete(ctx, f -> f.getIdProperty().in(ids));
+			fs.forEach(fee -> delete(ctx, fee));
 		});
 	}
 	
