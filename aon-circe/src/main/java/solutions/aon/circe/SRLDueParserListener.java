@@ -1,8 +1,7 @@
 package solutions.aon.circe;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface SRLDueParserListener {
 
@@ -10,12 +9,12 @@ public interface SRLDueParserListener {
 
 	}
 
-	default void onEmpresaActividad(Date inicioActividad, Date cierreEjercicio) {
+	default void onEmpresaActividad(LocalDate inicioActividad, LocalDate cierreEjercicio) {
 
 	}
 
 	default void onEmpresaDatosJuridicos(String duracionPersonaJuridica, String denominacionSocial, float capitalSocial,
-			boolean acreditaCapitalSocial, boolean estatutosTipo) {
+			String acreditaCapitalSocial, String estatutosTipo) {
 
 	}
 	
@@ -39,11 +38,11 @@ public interface SRLDueParserListener {
 		
 	}
 	
-	default void onComunicaciones(boolean recibirInformacion) {
+	default void onComunicaciones(String recibirInformacion) {
 		
 	}
 	
-	default void onSocio(String docIdentidad, String nombre, String apellido, String nacionalidad, String sexo, Date fechaNacimineto, String nss, String estadoCivil, String domicilioResidencia, String domicilioPersonaAdministradora, boolean socioTrabajador, boolean presentadorITP, boolean socioAdministrador, boolean funcionesDireccionGerencia) {
+	default void onSocio(String docIdentidad, String nombre, String apellido, String nacionalidad, String sexo, LocalDate fechaNacimineto, String nss, String estadoCivil, String domicilioResidencia, String domicilioPersonaAdministradora, String socioTrabajador, String presentadorITP, String socioAdministrador, String funcionesDireccionGerencia) {
 		
 	}
 	
@@ -51,7 +50,11 @@ public interface SRLDueParserListener {
 		
 	}
 	
-	default void onCentroActividad(String nombreCentroActividad, float superficieTotal, String Domicilio, boolean localPrincipal, boolean domicilioActividadTGSS) {
+	default void onConyuge(String docIdenidad, String nombre, String apellidos, String sexo, String tipoRegimen) {
+		
+	}
+	
+	default void onCentroActividad(String nombreCentroActividad, float superficieTotal, String domicilio, String localPrincipal, String domicilioActividadTGSS) {
 		
 	}
 	
@@ -63,25 +66,23 @@ public interface SRLDueParserListener {
 		
 	}
 	
-	default void onLugaresFueraLocal(String epigrafeAE, String tipoActividad, String provincia, String municipio, Date fechaInicio) {
+	default void onLugaresFueraLocal(String epigrafeAE, String tipoActividad, String provincia, String municipio, LocalDate fechaInicio) {
 		
 	}
 	
-	default void onDeclaracionCensal(int codigo, String respuesta, Date fecha) {
-		List<String> declaracionCensalList = new ArrayList<>();
-		String declaracionCensal = codigo + " " + respuesta + " " + fecha;
-		declaracionCensalList.add(declaracionCensal);
+	default void onDeclaracionCensal(int codigo, String respuesta, LocalDate fecha) {
+
 	}
 	
 	default void onRepresentante(String docIdentidad, String nombre, String apellidos, String domicilioResidencia, String causaRepresentacion, String clave, String tipoRepresentacion, String tituloRepresentacion) {
 		
 	}
 	
-	default void onTrabajadorCuentaPropia(String docIdentidad, String nombre, String apellido, String nacionalidad, String sexo, Date fechaNacimineto, String nss, String estadoCivil, String domicilioResidencia) {
+	default void onTrabajadorCuentaPropia(String docIdentidad, String nombre, String apellido, String nacionalidad, String sexo, LocalDate fechaNacimineto, String nss, String estadoCivil, String domicilioResidencia) {
 		
 	}
 	
-	default void onAltaPersonatrabajadora(Date fechaAlta, boolean funcionesDireccionGerencia) {
+	default void onAltaPersonaTrabajadora(LocalDate fechaAlta, String funcionesDireccionGerencia) {
 		
 	}
 	
@@ -89,15 +90,15 @@ public interface SRLDueParserListener {
 		
 	}
 	
-	default void onRegimenEncuadramiento(String regimen, boolean trl, String subgrupo, String grupo) {
+	default void onRegimenEncuadramiento(String regimen, String trl, String subgrupo, String grupo) {
 		
 	}
 	
-	default void onCuentaPropia(String cnae, String mutuaIt, String domicilioNotificacion, boolean altaReta, boolean contingencias, boolean ceseActividad, Date fechaRealAlta, boolean opcionCAFP, String observacionTGSS) {
+	default void onCuentaPropia(String cnae, String mutuaIt, String domicilioNotificacion, String altaReta, String contingencias, String ceseActividad, LocalDate fechaRealAlta, String opcionCAFP, String observacionTGSS) {
 		
 	}
 	
-	default void onBaseCotizacion(float baseCotizacion, float rendiientosNetos) {
+	default void onBaseCotizacion(float baseCotizacion, float rendimientosNetos) {
 		
 	}
 	
@@ -105,11 +106,11 @@ public interface SRLDueParserListener {
 		
 	}
 	
-	default void onCitaNotarial(String personaCita, String telefono, Date fecha, Date hora) {
+	default void onCitaNotarial(String personaCita, String telefono, LocalDateTime fechaHora) {
 		
 	}
 	
-	default void onDatosNotaria(String nombre, String apellidos, String direccion) {
+	default void onDatosNotaria(String nombre, String apellidos, String direccion, String telefono, String fax) {
 		
 	}
 }

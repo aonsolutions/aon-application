@@ -38,13 +38,15 @@ public class AutonomoDueParser {
 //			});
 //		}
 
-		Pattern p = Pattern.compile("^REGISTRO\\s*DE\\s*ENTRADA\\s*:\\s*(?<registro>.*)PAE\\s*:\\s*(?<pae>.*)$", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = p.matcher("Registro de Entrada: 202400061360293 PAE: AYUDA-T PYMES");
+		Pattern p = Pattern.compile(
+				"^\\s*SEXO\\s*:\\s*(?<sexo>.*)\\s*TIPO\\s*R.GIMEN\\s*MATRIMONIAL\\s*:\\s*(?<tipoRegimen>.*)$",
+				Pattern.CASE_INSENSITIVE);
+		Matcher matcher = p.matcher("Sexo: Mujer Tipo Régimen Matrimonial: Gananciales");
 		matcher.matches();
 		System.out.println(matcher.group(0));
-		System.out.println(matcher.group("registro"));
-		System.out.println(matcher.group("pae"));
-
+		System.out.println(matcher.group("sexo"));
+		System.out.println(matcher.group("tipoRegimen"));
+//		System.out.println(matcher.group("socioAdministrador"));
 
 	}
 
@@ -145,10 +147,9 @@ public class AutonomoDueParser {
 			matcher = find(reader, PREFIJO_TELEFONO_EMAIL);
 			String prefijoString = matcher.group("prefijo");
 			String prefijo = remove(prefijoString, " ");
-			int prefijoAEAT = Integer.parseInt(prefijo);
 			String telefonoAEAT = matcher.group("telefono");
 			String emailAEAT = matcher.group("mail");
-			listener.onNotificacionAEAT(prefijoAEAT, telefonoAEAT, emailAEAT);
+			listener.onNotificacionAEAT(prefijo, telefonoAEAT, emailAEAT);
 
 			matcher = find(reader, RECIBIR_INFORMACION);
 			String comunicacion = matcher.group("informacion");

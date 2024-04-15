@@ -23,7 +23,7 @@ public interface AutonomoDueParserListener{
 		
 	}
 	
-	default void onNotificacionAEAT(int prefijo, String telefono, String email) {
+	default void onNotificacionAEAT(String prefijo, String telefono, String email) {
 		
 	}
 	
@@ -52,9 +52,7 @@ public interface AutonomoDueParserListener{
 	}
 	
 	default void onDeclaracionCensal(int codigo, String respuesta, Date fecha) {
-		List<String> declaracionCensalList = new ArrayList<>();
-		String declaracionCensal = codigo + " " + respuesta + " " + fecha;
-		declaracionCensalList.add(declaracionCensal);
+		
 	}
 	
 	default void onSeguridadSocial(String tipo, Date fecha) {
