@@ -587,7 +587,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			
 			// Check if has apps, if it has subtract 1 user, if not, stay user quantity			
 			Integer portalUsersCount = null == childDomain.getUsers() ? 0 : (int) childDomain.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
-			List<User> activeUsers = null == childDomain.getUsers() ? new ArrayList<User>() : childDomain.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+			List<User> activeUsers = childDomain.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
 			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
 			
 			System.out.println(childDomain.getDescription() + " -- users : " + activeUsersDiff);
