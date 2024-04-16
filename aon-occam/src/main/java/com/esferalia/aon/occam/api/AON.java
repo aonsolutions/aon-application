@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.CreditorSupplier;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -5869,6 +5870,18 @@ public class AON {
 		}
 	}
 	
+	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter);
+		}
+	}
+	
+	public static long getSupplierCreditorCount(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, String globalFilter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierCreditorCount(ctx, filter, filter2, globalFilter);
+		}
+	}
+	
 	public static LinkedList<Creditor> getCreditorList(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		return getCreditorStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -7560,6 +7573,28 @@ public class AON {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
+	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static long getCustomerCount(String domainName, int domain, String user, CustomerFilter filter, String globalFilter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomerCount(ctx, filter, globalFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<Customer> getCustomers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
 		CloseableAONContext ctx = null;
 		try {

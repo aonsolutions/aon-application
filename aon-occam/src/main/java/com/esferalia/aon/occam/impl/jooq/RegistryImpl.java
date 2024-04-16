@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.CreditorSupplier;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorSupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
@@ -145,6 +147,19 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> CreditorDAO.getStream(ctx, filter, offset, limit));
 	}
+	
+	@Override
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> CreditorSupplierDAO.getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter));
+	}
+	
+	@Override
+	public long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> CreditorSupplierDAO.getSupplierCreditorCount(ctx, filter, filter2, globalFilter));
+	}
+
 	@Override
 	public long getCreditorsCount(AONContext ctx , CreditorFilter filter) {
 		return ctx.getDslContext().transactionResult(
@@ -674,6 +689,16 @@ public class RegistryImpl implements IRegistry{
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
+	@Override
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorSupplierDAO.getCustomerStream(ctx, filter, ofs, limit, globalFilter));
+	}
+	@Override
+	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorSupplierDAO.getCustomerCount(ctx, filter, globalFilter));
+	}
 	@Override
 	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
 		return 	ctx.getDslContext().transactionResult(
