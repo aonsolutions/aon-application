@@ -195,6 +195,7 @@ export const HIRING = 'Hiring';
 export const HIRING_DATA = "Hiring data";
 export const HOLDER = 'Holder';
 export const HOLDERS = 'Holders';
+export const HOME = "Home";
 export const HOURS = "Hours";
 export const HISTORIC = "Historic";
 
