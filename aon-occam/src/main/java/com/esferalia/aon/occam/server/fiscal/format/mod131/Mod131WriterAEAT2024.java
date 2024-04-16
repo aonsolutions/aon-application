@@ -209,7 +209,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 			//6	13	4	An	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Epigrafe IAE
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(act), 4))
 			//7	17	1	An	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Epigrafe IAE  - Indicador auxiliar de actividad en el caso de epígrafes 659.4 y 691.9		blanco, "1" o "2"  (Nota 2)
-			,(wr, mod, act, comp) -> wr.append(" ")  // TODO
+			,(wr, mod, act, comp) -> wr.append(getSpecialEpigraph(act))  // TODO
 			//8	18	4	Num	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Comunidad, sociedad civil o similar: porcentaje de participación		2 enteros y 2 decimales
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.unsigned(act.getCom(), 4,2))
 			//9	22	3	Num	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Actividad de temporada: nº de días de ejercicio en el año anterior		3 enteros
@@ -342,7 +342,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		}
 		
 		private static int extractMun(Mod131Activity act) {
-			if ( "6594".equals(extractEpigraph( act) )) { // quioscos
+			if ( "6594".equals(extractEpigraph( act) ) && (AonStringUtils.contains(act.getDescription(),"revista"))) { // quioscos
 				if (act.getMun() == 0) return 5;		// Hasta 2.000 habitantes. 
 				else if (act.getMun() == 1) return 4;	// Desde 2.001 hasta 5.000 habitantes.
 				else if (act.getMun() == 2) return 3;	// Desde 5.001 hasta 10.000 habitantes.
@@ -406,6 +406,21 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 	public static String extractEpigraph(Mod131Activity activity) {
 		return AonStringUtils.remove(activity.getEpigraph(), AonStringUtils.DOT);
 	}
-	
+	public static String getSpecialEpigraph(Mod131Activity act) {
+		if ( "6594".equals(extractEpigraph( act) )) { // quioscos
+			if (AonStringUtils.contains(act.getDescription(),"revista")) {
+				return "2";
+			} else {
+				return "1";
+			}
+		} else if ( "6919".equals(extractEpigraph( act) )) { // Reparación de calzado
+			if (AonStringUtils.contains(act.getDescription(),"consumo")) {
+				return "2";
+			} else {
+				return "1";
+			}
+		} 
+		return " ";
+	}
 }
 
