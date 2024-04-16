@@ -921,6 +921,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static long getProductCount(String domainName, Integer domainId, String login, ProductFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProduct().getProductCount(ctx, filter);
+		}
+	}
+	
 	// ----- PRODUCT - GET PRODUCT
 
 	public static JSONArray getItems(Domain domain, User user, ItemFilter filter) {

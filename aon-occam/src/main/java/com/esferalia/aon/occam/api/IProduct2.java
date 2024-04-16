@@ -28,6 +28,7 @@ public interface IProduct2 {
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public Product saveProduct(AONContext ctx, Product product);
 	public void deleteProduct(AONContext ctx, Integer id);
+	public long getProductCount(AONContext ctx, ProductFilter filter);
 
 	// ITEM
 	

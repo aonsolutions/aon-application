@@ -64,6 +64,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
@@ -230,6 +231,10 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
+		@Override public Property<String> getTotalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getDateNewPortalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR));}
+
+
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 

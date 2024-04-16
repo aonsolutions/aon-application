@@ -1708,6 +1708,11 @@ public interface Properties {
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
 		Property<String> getModificationUserProperty();
+		Property<String> getReferenceCodeProperty();
+		Property<String> getJsonNameProperty();
+		Property<String> getJsonTotalProperty();
+		Property<String> getJsonDateProperty();
+
 	}
 	
 	

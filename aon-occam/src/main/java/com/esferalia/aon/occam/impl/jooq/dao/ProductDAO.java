@@ -81,7 +81,7 @@ public class ProductDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.MODIFICATION_DATE);}
 	}
 
-	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {		
+	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {	
 		return ctx.getDslContext()
 				.select()
 				.from(PRODUCT)
@@ -91,6 +91,16 @@ public class ProductDAO {
 				.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
 				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
+	}
+	
+	public static long getProductCount(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(PRODUCT)
+				.where(PRODUCT_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();
 	}
 	
 	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage){	

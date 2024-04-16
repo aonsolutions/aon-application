@@ -67,6 +67,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			case "/product_new_portal":
 				response(req, resp, getProductsNewPortal(api));
 				break;
+			case "/product_count_new_portal":
+				response(req,resp, getProductsCount(api));
+				break;
 			case "/item":
 				response(req, resp, getItem(api));
 				break;
@@ -350,13 +353,16 @@ public class ProductServlet extends AonApiHttpServlet {
 			
 		}
 		
-		return new JSONObject();
-		
+		return new JSONObject();	
 	}
-	
 	private JSONArray getProductsNewPortal(AonApiData api) {
 		return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f));
 	}
+	
+	private long getProductsCount(AonApiData api) {
+		return AON_SOLUTIONS.getProductCount(api.getDomain().getName(), api.getDomain().getId(),api.getUser().getLogin(), f -> newProductFilter(api, f));
+	}
+	
 	
 	private Filter newProductFilter(AonApiData api, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
