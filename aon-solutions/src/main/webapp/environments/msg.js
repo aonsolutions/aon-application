@@ -293,6 +293,7 @@ export const HIRING_DATA = MSG.HIRING_DATA;
 export const HISTORIC = MSG.HISTORIC;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
+export const HOME = MSG.HOME;
 export const HOURS = MSG.HOURS;
 export const HOUR = "Hora"; //TODO
 export const HTTP_REQUEST = 'HTTP Request';

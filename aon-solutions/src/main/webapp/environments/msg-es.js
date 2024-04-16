@@ -197,6 +197,7 @@ export const HIRING = 'Contratación';
 export const HIRING_DATA = "Datos de contratación";
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
+export const HOME = "Inicio";
 export const HOURS = "Horas";
 export const HISTORIC = "Historial";
 
