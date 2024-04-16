@@ -714,11 +714,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 				.innerJoin(ENTERPRISE_CCC).onKey()
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
 				.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
 				.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
 				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
 				.and(CONTRACT.START_DATE.le(itStartDate))
 				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.and(DOMAIN.ACTIVE.eq((byte)1))
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );

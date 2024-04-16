@@ -137,7 +137,7 @@ public class PensionPlanAFIModule extends MainEntryPoint {
 		monthList.clear();
 		yearList.clear();
 		
-		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		String[] months = new String[]{"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
 		for(int i=0; i<months.length; i++) {
 			monthList.addItem(months[i], i+"");
 		}

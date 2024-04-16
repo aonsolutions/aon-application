@@ -6,24 +6,50 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.Model131Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model131AEAT extends Model131Base {
+abstract class Model131AEAT extends Model131Base {
 	
 	private AonTextBox receiptBox;
-
-	public Model131AEAT(Mod131 mod131, Model131Callback callback) {
+	private FiscalModelAdmonPanel<Mod131, Model131ModuleOptions> admonPanel;
+	
+	Model131AEAT(Mod131 mod131, Model131Callback callback) {
 		super(mod131, callback);
 	}
 	
 	@Override
-	void paintDeclarationTab(TabLayoutPanel tabPanel) {
+	protected void paintParticularyRow(FlexTable table, final Model131Callback callback, IModelScript<Mod131Key> script) {
+		if (script.getKeys() == null) return;
+		if (script.getKeys()[0] == Mod131Key.P2) {
+			paintRowP02(table,script);
+		} 
+	}
+	
+	private void paintRowP02(FlexTable table, IModelScript<Mod131Key> script) {
+		int row = table.getRowCount();
+		final FiscalModelDetail p2 = getModel().ensureDetail(Mod131Key.P2);
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonTextRight() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingRight() );
+		table.getFlexCellFormatter().setColSpan(row, 0, 6);
+		
+		final Label wP2 = new Label(p2.getAmount()==1?AON.MSG.yes():AON.MSG.no());
+		table.setWidget(row, 1, wP2 );
+		table.getFlexCellFormatter().setColSpan(row, 1, 2);
+	}
+	
+	@Override
+	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		AonDisplayTable table = new AonDisplayTable();
@@ -132,10 +158,16 @@ public class Model131AEAT extends Model131Base {
 	}
 	
 	@Override
-	void decorateDeclarationTab() {
+	protected void decorateDeclarationTab() {
 		if (receiptBox != null) {
 			receiptBox.setValue( getModel().getNumber() );
 		}
 	}
 	
+	@Override
+	protected void decorateAdministrationTab() {
+		if (admonPanel != null) {
+			admonPanel.manageLinks();
+		}
+	}
 }

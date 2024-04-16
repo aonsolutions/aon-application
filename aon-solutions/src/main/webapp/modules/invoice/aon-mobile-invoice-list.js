@@ -5,33 +5,15 @@ import {Invoice} from './Invoice.js';
 
 import {setInvoices, addInvoices, setIndex} from './InvoiceCache.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js'; 
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { formatNumber } from '../../services/utils.js';
 import { AonMobileList } from '../../components/aon-mobile-list.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileInvoiceList extends AonMobileList {
+
   more;
-  dur;
-  static get observedAttributes() {
-    return [CONSTANT.FILTER];
-  }
-
-  get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if(CONSTANT.FILTER === name) {
-      if(this.getElement('invoiceMobileListUL'))
-        this.init();
-    }
-  }
 
   constructor () {
     super();
@@ -39,19 +21,14 @@ export class AonMobileInvoiceList extends AonMobileList {
 
   connectedCallback () {
     this.initialize();
-    getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
+    this.buildDur().then(() => {
       this.init();
       this.addEventListener('more', () => {
         if(this.more)
           this.loadMore()
       });
-		});
+    });
   }
-
-  getDur() {
-		return this.dur;
-	}
 
   initialize() {
     super.initialize();
@@ -124,16 +101,8 @@ export class AonMobileInvoiceList extends AonMobileList {
 			});
 		}
 	}
-
-  getFilter() {
-    return this.hasAttribute('filter')
-      ? JSON.parse(this.getAttribute('filter'))
-      : {status: 'inbox'};
-  }
-
-  setFilter(filter) {
-    return this.setAttribute('filter', JSON.stringify(filter));
-  }
-
 }
-window.customElements.define('aon-mobile-invoice-list', AonMobileInvoiceList);
+
+if(!window.customElements.get(TAG.AON_MOBILE_INVOICE_LIST)){
+	window.customElements.define(TAG.AON_MOBILE_INVOICE_LIST, AonMobileInvoiceList);
+}

@@ -127,6 +127,7 @@ public interface ICommon {
 	public Domain insertDomain(AONContext ctx, Domain domain, Registry registry) throws Exception;
 	
 	public void updateDomainScope(AONContext ctx, Domain domain);
+	public void updateDomainOwner(AONContext ctx, String domainName, Integer domainId, String owner);
 
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx);
 	public DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx);

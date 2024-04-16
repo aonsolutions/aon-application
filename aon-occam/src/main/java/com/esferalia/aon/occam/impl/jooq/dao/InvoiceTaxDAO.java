@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceTaxProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -82,35 +84,63 @@ public class InvoiceTaxDAO {
 	}
 	
 	
-	public static LinkedList<InvoiceTax> save(AONContext ctx, LinkedList<InvoiceTax> invoiceTaxes) {
+	public static List<InvoiceTax> save(AONContext ctx, List<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
 		LinkedList<InvoiceTax> list = new LinkedList<>();
 		invoiceTaxes.stream().forEach(invoiceTax -> {
-			list.add(save(ctx, invoiceTax));
+			list.add(save(ctx, invoiceTax, detail));
 		});
 		return list;
 	}
 	
-	public static InvoiceTax save(AONContext ctx, InvoiceTax invoiceTax) {
+	public static InvoiceTax save(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		// TODO AUTOCOMPLETE && VALIDATE.
 		invoiceTax = invoiceTax.getId() != null 
-			? update(ctx, invoiceTax)
-			: insert(ctx, invoiceTax);
+			? update(ctx, invoiceTax, detail)
+			: insert(ctx, invoiceTax, detail);
 		return invoiceTax;
 	}
 	
-	public static InvoiceTax update(AONContext ctx, InvoiceTax invoiceTax) {
+	public static InvoiceTax update(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		ctx.getDslContext().update(INVOICE_TAX)
-		.set(INVOICE_TAX.DOMAIN, invoiceTax.getDomain())
-		//TODO
+		.set(INVOICE_TAX.DOMAIN, detail.getDomain())
+		.set(INVOICE_TAX.INVOICE_DETAIL, detail.getId())
+		.set(INVOICE_TAX.TAX_TYPE, invoiceTax.getTaxType().value())
+		.set(INVOICE_TAX.BASE,invoiceTax.getBase())
+		.set(INVOICE_TAX.PERCENTAGE,invoiceTax.getPercentage())
+		.set(INVOICE_TAX.QUOTA,invoiceTax.getQuota())
+		.set(INVOICE_TAX.SURCHARGE,invoiceTax.getSurcharge())
+		.set(INVOICE_TAX.SURCHARGE_QUOTA,invoiceTax.getSurchargeQuota())
+		.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,invoiceTax.getVatDeductionType() == null
+				? VatDeductionType.WITH_RIGHT.value() 
+				: invoiceTax.getVatDeductionType().value())
+		.set(INVOICE_TAX.WITHHOLDING_TYPE,invoiceTax.getWithholdingType() == null 
+				? WithholdingType.PROFESSIONAL.value() 
+				: invoiceTax.getWithholdingType().value())
+		.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
+		.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
 		.where(INVOICE_TAX.ID.eq(invoiceTax.getId()))
 		.execute();
 		return invoiceTax;
 	}
 	
-	public static InvoiceTax insert(AONContext ctx, InvoiceTax invoiceTax) {
+	public static InvoiceTax insert(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_TAX)
-			.set(INVOICE_TAX.DOMAIN, invoiceTax.getDomain())
-			//TODO
+			.set(INVOICE_TAX.DOMAIN, detail.getDomain())
+			.set(INVOICE_TAX.INVOICE_DETAIL, detail.getId())
+			.set(INVOICE_TAX.TAX_TYPE, invoiceTax.getTaxType().value())
+			.set(INVOICE_TAX.BASE,invoiceTax.getBase())
+			.set(INVOICE_TAX.PERCENTAGE,invoiceTax.getPercentage())
+			.set(INVOICE_TAX.QUOTA,invoiceTax.getQuota())
+			.set(INVOICE_TAX.SURCHARGE,invoiceTax.getSurcharge())
+			.set(INVOICE_TAX.SURCHARGE_QUOTA,invoiceTax.getSurchargeQuota())
+			.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,invoiceTax.getVatDeductionType() == null
+					? VatDeductionType.WITH_RIGHT.value() 
+					: invoiceTax.getVatDeductionType().value())
+			.set(INVOICE_TAX.WITHHOLDING_TYPE,invoiceTax.getWithholdingType() == null 
+					? WithholdingType.PROFESSIONAL.value() 
+					: invoiceTax.getWithholdingType().value())
+			.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
+			.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
 			.returning(INVOICE_TAX.ID).fetchOne().getId();
 		return invoiceTax.setId(id);
 	}	

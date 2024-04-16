@@ -149,6 +149,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -161,6 +162,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -730,8 +732,15 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static Domain getCompanyDomain(String domainName, Integer domainId, String user, String document) {
+	
+	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
+		}
+	}
+	
+	public static Domain getCompanyDomain(String domainName, Integer domainId,
+			String user, String document) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1823,8 +1832,15 @@ public class AON {
 		}
 	}
 
-	public static Invoice acceptInvoice(Occam occam, Invoice invoice) {
-		return acceptInvoice(occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
+	
+	public static InvoiceCounter getInvoiceCounter(Domain domain, User user) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceCounter(ctx);
+		}
+	}
+	
+	public static Invoice acceptInvoice(Occam occam, Invoice invoice){
+		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
 	}
 
 	public static Invoice acceptInvoice(Occam occam, Invoice invoice, Integer rawdocId) {
@@ -2752,10 +2768,14 @@ public class AON {
 			return getFinance().getProjectsSuggestion(ctx, domainId, customerId, query);
 		}
 	}
-
-	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login,
-			String query) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+	public static Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domainId, String login, Integer itemId, Integer customerId, String customerFeeQuery) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery);
+		}
+	}
+	
+	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
 		}
 	}
@@ -2839,12 +2859,17 @@ public class AON {
 			return getFinance().saveMassiveFees(ctx, fee, params);
 		}
 	}
-
-	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getFinance().createCustomerFeeList(ctx, fee);
+	public static Fee createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().createCustomerFeeList(ctx, fee);
 		}
 	}
+	
+	public static void updateRitemCustomerFee(String domainName, int domainId, String login, Integer customerFee, Integer ritem) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().updateRitemCustomerFee(ctx, customerFee, ritem);
+		}
+	}	
 
 	public static void deleteFee(AONContext ctx, Fee f) {
 		getFinance().deleteFee(ctx, f);
@@ -7642,7 +7667,13 @@ public class AON {
 		}
 	}
 
-	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {
+	public static RawdocInvoiceCounter getRawdocInvoiceCounter(Domain domain, User user) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getRawdocInvoiceCounter(ctx);
+		}
+	}
+	
+	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getRawdocUserData(ctx, domainId);
 		}
@@ -8459,6 +8490,12 @@ public class AON {
 			return getFinance().getCustomerBookingCheckList(ctx, params);
 		}
 	}
+	
+	public static LinkedList<BookingCheck> getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getCustomerChildBookingCheckList(ctx, params);
+		}
+	}
 
 	public static void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
@@ -8531,5 +8568,4 @@ public class AON {
 			return getFinance().createUpdateFBatch(ctx, fBatch);
 		}
 	}
-
 }

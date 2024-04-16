@@ -184,7 +184,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( AonStringUtils.abbreviate(detail.getDescription(), 60) ) ;
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );
-		addCell( detail.getDiscountExpression() );
+		addCell( detail.getDiscount());
 		addCell( detail.getTaxableBase() );
 		addCell( detail.getQuantity()==0.0
 				?0.0

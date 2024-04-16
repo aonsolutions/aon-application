@@ -268,7 +268,7 @@ public class Model130 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+				aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 			}
 		});
 	}
@@ -340,17 +340,16 @@ public class Model130 extends MainEntryPoint {
 		Model130NewDeclarationPanel newDeclarationPanel = new Model130NewDeclarationPanel(mod130,new Model130Callback() {
 			@Override
 			public void onAccept(Mod130 mod130) {
-				SERVICE.create(getOptions().getOccam(),mod130,
-					new AsyncCallback<Mod130>() {
-						@Override
-						public void onSuccess(Mod130 m130) {
-							select(m130);
-						}
+				SERVICE.create(getOptions().getOccam(),mod130,new AsyncCallback<Mod130>() {
+					@Override
+					public void onSuccess(Mod130 m130) {
+						select(m130);
+					}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						}
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+					}
 				});
 			}
 		}); 

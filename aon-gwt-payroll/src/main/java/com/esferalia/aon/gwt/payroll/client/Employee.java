@@ -1586,7 +1586,7 @@ public abstract class Employee extends ResizeComposite {
 		if (AonStringUtils.isNotBlank(ssNum))
 			securitySocialNum.setEnabled(!checkSSNumValidation(ssNum));
 		else
-			securitySocialNum.setEnabled(false);
+			securitySocialNum.setEnabled(true);
 	}
 
 	public void unblockVariablesExistingContract() {

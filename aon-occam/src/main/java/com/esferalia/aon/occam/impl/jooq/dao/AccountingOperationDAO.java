@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -23,7 +22,6 @@ import org.jooq.GroupField;
 import org.jooq.Record;
 import org.jooq.Record14;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
@@ -200,7 +198,7 @@ public class AccountingOperationDAO {
 				, INVOICE.TRANSACTION
 				, conceptType
 				, INVOICE_DUA.ID
-				, INVOICE_TAX_ACCOUNT.ACCOUNT
+//				, INVOICE_TAX_ACCOUNT.ACCOUNT
                 )				
                 .from(accountingSelect)
                 .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(OP_ID))		                
@@ -211,10 +209,11 @@ public class AccountingOperationDAO {
                 	.on(	 vatInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
                 		.and(vatInvoiceTax.TAX_TYPE.equal((byte)1)))  
                 	
-                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(
-                		INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(vatInvoiceTax.ID)
-                		.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(OP_DETAIL_ACC_ID))
-                		)
+//                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(
+//                		INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(vatInvoiceTax.ID)
+//                		.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(OP_DETAIL_ACC_ID)) // NO SE POR QUE SE HACE ESTE ENLACE ASI, ENLAZAR CON TODOS LOS CAMPOS, SI LO QUE QUIERO ES OBTENER PRECISAMENTE ES LA CUENTA
+//                		)
+                
                 .leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte)2)))  // Retención IRPF
                 
                 //.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
@@ -295,13 +294,17 @@ public class AccountingOperationDAO {
 						// por ejemplo con IVA no deducible, incluso en las facturas de gestión, no está grabada ni siquiera la cuota 
 						// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
 						// se asume que el IVA no es deducible
-						if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() 
-							|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
-							Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
-							if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
-								deductibleQuota = 0;
-							}									
-						}								
+						// NO LE VEO SENTIDO A ESTO, PUES LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, NO LLEVAN REGISTRO EN INVOICE_TAX Y AUNQUE 
+						// AL CREAR UNA FACTURA EN CONTABILIDAD, LE PONGA EN LA CUENTA DE IVA LA MISMA QUE LA CUENTA DE GASTO, ME LO SIGUE LLEVANDO AL 
+						// MODELO 303 COMO DEDUCIBLE, POR LO TANTO, NO LE VEO SENTIDO A ESTA COMPROBACION, QUE LO UNICO QUE ESTA PROVOCANDO ES QUE SIEMPRE 
+						// SALGA LA CUOTA DEDUCIBLE A CERO EN EL LISTADO
+//						if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() 
+//							|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
+//							Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
+//							if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
+//								deductibleQuota = 0;
+//							}									
+//						}								
 					}
 					
 					Integer act = rec.getValue(OP_ACTIVITY);
@@ -417,8 +420,9 @@ public class AccountingOperationDAO {
 	private static Condition getCondition(OperationParams params) {
 		Condition condition = OP_TYPE.notEqual(AccountEntryType.OPERATING.getValue());
 		if (params.isIrpf()) {
-			if (params.getAeatBook()) {
-				condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()));
+			if (params.getAeatBook()) {				
+				//condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()));
+				condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()).or(INVOICE.TYPE.isNotNull().and(INVOICE.TYPE.eq(InvoiceType.UNDEDUCTIBLE.value()))));			
 			}
 		}
 		else {			

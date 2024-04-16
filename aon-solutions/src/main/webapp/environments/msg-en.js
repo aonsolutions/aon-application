@@ -174,6 +174,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Find linked domains";
 export const FOOTER = 'Footer';
+export const FROM = 'From';
 
 // ----- G
 
@@ -264,7 +265,10 @@ export const MY_USER = 'My User';
 export const NAME = 'Name';
 export const NEW = 'New';
 export const NEW_COMPANY = 'New Company';
+export const NEW_DOCUMENT = 'New Document';
+export const NEW_EMPLOYEE = 'New Employee';
 export const NEW_EXPENSE = 'New Expense';
+export const NEW_INVOICE = 'New Invoice';
 export const NEW_PRODUCT = 'New Product';
 export const NEW_REQUEST = 'New Request';
 export const NEW_WAREHOUSE = 'New Warehouse';
@@ -413,6 +417,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Time Control';
 export const TITLE = 'Títle';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'To';
 export const TO_TRASH = 'Send to Trash';
 export const TODAY = 'Today';
 export const TOMORROW = 'Tomorrow';

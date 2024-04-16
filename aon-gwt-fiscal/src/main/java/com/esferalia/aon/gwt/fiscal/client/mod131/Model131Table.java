@@ -198,8 +198,8 @@ class Model131Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod131.getDocument()))
 				.addCell( new InlineLabel(mod131.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod131.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod131.getDeclarationType() == null ? "" : mod131.getDeclarationType().getDescription()))
+				.addCell( new InlineLabel(mod131.getDeclarationResult()==null?"":AON.FMT.format(mod131.getDeclarationResult())), AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod131.getDeclarationResultType() == null ? "" : mod131.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod131.getFinance() != null && mod131.getFinance().getFinanceStatus() != null)
 							?mod131.getFinance().getFinanceStatus().getDescription()

@@ -261,7 +261,7 @@ export class AonNewInput extends AonElement {
     
         iconLabel.appendChild(aonIconButton);
     
-        if (color) this.getElement(this.ICON_LABEL).color = color; 
+        if (color) iconLabel.color = color; 
         this.getElement(this.INPUT).style.paddingRight = '40px';
       }
 

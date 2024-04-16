@@ -3,85 +3,36 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceType implements Serializable  {
 
-	PURCHASE("Compras"
-		,new IInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(Invoice invoice,IInvoiceTypeVisitor visitor) {
-				visitor.visitPurchase(invoice);
-			}
-		}
-		,new IAccountingInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
-				visitor.visitPurchase(invoice);
-			}
-		}, "recibida"),
-	SALES("Ventas"
-		,new IInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(Invoice invoice,IInvoiceTypeVisitor visitor) {
-				visitor.visitSales(invoice);
-			}
-		}
-		,new IAccountingInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
-				visitor.visitSales(invoice);
-			}
-		}, "emitida"),
-	EXPENSES("Gastos"
-		,new IInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(Invoice invoice,IInvoiceTypeVisitor visitor) {
-				visitor.visitExpenses(invoice);
-			}
-		}
-		,new IAccountingInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
-				visitor.visitExpenses(invoice);
-			}
-		}, "recibida"),
-	UNDEDUCTIBLE("Gt.NO Ded"
-		,new IInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(Invoice invoice,IInvoiceTypeVisitor visitor) {
-				visitor.visitUndeductible(invoice);
-			}
-		}
-		,new IAccountingInvoiceTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
-				visitor.visitUndeductible(invoice);
-			}
-		}, "ticket")
+	PURCHASE("Compras", "recibida") {
+		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitPurchase(invoice);}
+		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) { visitor.visitPurchase(invoice);}
+	}
+	,SALES("Ventas", "emitida") {
+		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitSales(invoice);}
+		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitSales(invoice);}
+	}
+	,EXPENSES("Gastos", "recibida") {
+		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitExpenses(invoice);}
+		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitExpenses(invoice);}
+	}
+	,UNDEDUCTIBLE("Gt.NO Ded", "ticket") {
+		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitUndeductible(invoice);}
+		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitUndeductible(invoice);}
+	}
 	;
-
-	public interface IInvoiceTypeVisitorWalker {
-		void visit( Invoice invoice, IInvoiceTypeVisitor visitor);
-	}
-	
-	public interface IAccountingInvoiceTypeVisitorWalker {
-		void visit( AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor);
-	}
 	
 	private String description;
-	private IInvoiceTypeVisitorWalker invoiceWalker;
-	private IAccountingInvoiceTypeVisitorWalker accountingInvoiceWalker;
 	private String tediName;
 	
-	private InvoiceType(String description,IInvoiceTypeVisitorWalker walker
-			,IAccountingInvoiceTypeVisitorWalker accountingInvoiceWalker, String tediName) {
+	private InvoiceType(String description, String tediName) {
 		this.description = description;
-		this.invoiceWalker = walker;
-		this.accountingInvoiceWalker = accountingInvoiceWalker;
 		this.tediName = tediName;
 	}
 
@@ -100,13 +51,8 @@ public enum InvoiceType implements Serializable  {
 		return tediName;
 	}
 	
-	public void visit(Invoice invoice, IInvoiceTypeVisitor visitor) {
-		invoiceWalker.visit(invoice,visitor);
-	}
-	
-	public void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor) {
-		accountingInvoiceWalker.visit(invoice,visitor);
-	}
+	public abstract <T> T visit(Invoice invoice, IInvoiceTypeVisitor<T> visitor);
+	public abstract void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor);
 	
 	public static InvoiceType safeValueOf( Byte i ) {
 		if (i == null) return null;

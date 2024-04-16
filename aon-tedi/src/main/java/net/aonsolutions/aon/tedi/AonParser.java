@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
@@ -155,25 +154,15 @@ public class AonParser {
 	public LinkedList<TediInvoiceDetail> getDetails(List<InvoiceDetail> details) {
 		return details.stream().map(r -> {
 			Double amount = AonMathUtils.round( r.getQuantity() * r.getPrice());
-			amount = amount - amount * (calculateDiscountExpression(r.getDiscountExpression()) / 100);
+			amount = amount - amount * (r.getDiscount() / 100);
 			return new TediInvoiceDetail()
 					.setDescription(r.getDescription())
 					.setBase(r.getTaxableBase())
 					.setPrice(r.getPrice())
-					.setDiscount(calculateDiscountExpression(r.getDiscountExpression()))
+					.setDiscount(r.getDiscount())
 					.setQuantity(r.getQuantity())
 					.setAmount(amount);
 			}).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Double calculateDiscountExpression(String discountExpression) {
-		Pattern PATTERN = Pattern.compile("\\+");
-		String[] arr = PATTERN.split(discountExpression);
-    	Double discount = 0.0;
-		for (int i = 0; i < arr.length; i++) {
-        	discount =  discount + Double.parseDouble(arr[i].trim());
-    	}
-		return AonMathUtils.round(discount);
 	}
 	
 	public TediInvoiceType getInvoiceType(InvoiceType type){

@@ -140,7 +140,6 @@ public class OperationReport extends MainEntryPoint {
 
 		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export(),AON.CSS.aonIconExcel());
 		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_PRINT, getWidgetParams()));
-		export.setVisible(false); // Ya no se utiliza esta opción, solo los libros requerimientos AEAT
 		toolbarPanel.add(export);
 		
 		diskForm = new FormPanel("_blank");

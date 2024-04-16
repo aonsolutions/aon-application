@@ -29,10 +29,6 @@
 			body {
 				margin: 0;
 			}
-			
-			#rootPanel > div {
-				left: 68px !important;
-			} 
 		</style>
 	</aon:if>
 
@@ -47,9 +43,6 @@
 	</div>
 
   	<aon:if test="#{userUtils.newAONTheme}">
-		<aon:div style="overflow: auto; height: calc(100vh - 66px); width: min-content; position:fixed; z-index: 6; background-color: #fff" id="sidebarScrollDiv" >
-			<ui:include src="/facelet/new/sidebar.xhtml" />
-		</aon:div>
 	</aon:if>
 
 	<script type="text/javascript">

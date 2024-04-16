@@ -839,7 +839,7 @@ public class FacturaeWriter {
 	
 	private DiscountsAndRebatesType getDiscountsAndRebates( InvoiceDetail line, double totalCost ) {
 		DiscountsAndRebatesType dar = new DiscountsAndRebatesType();
-		DiscountExpression dis = new DiscountExpression(line.getDiscountExpression());
+		DiscountExpression dis = new DiscountExpression(line.getDiscountExpression().getDiscountExpr());
 		double[] discounts = dis.getDiscounts();
 		for( int i = 0;i<discounts.length;i++ ) {
 			DiscountType discount = new DiscountType();

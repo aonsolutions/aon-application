@@ -49,7 +49,7 @@ public class BookingCheckDAO {
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)));
+				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)).and(CUSTOMER_FEE.ID.eq(RITEM.CUSTOMER_FEE)));
 		
 		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
 				.where(condition)
@@ -74,7 +74,7 @@ public class BookingCheckDAO {
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
+				.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
 		
 		Result<Record> feeWithoutBookingRecords = feeWithoutBookingSelect
 				.where(condition)
@@ -99,7 +99,7 @@ public class BookingCheckDAO {
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.join(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
+				.join(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
 		
 		Result<Record> bookingCheckRecords = bookingCheckSelect
 				.where(condition)
@@ -123,16 +123,41 @@ public class BookingCheckDAO {
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)));
+				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)).and(CUSTOMER_FEE.ID.eq(RITEM.CUSTOMER_FEE)));
 		
 		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
 				.where(condition)
-//				.and(CUSTOMER_FEE.ID.isNull())
+				.and(RITEM.TYPE.eq((byte)4))
+				.and(RITEM.EDI_SALES_CODE.isNull())
+				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Booking size : " + bookingWithoutFeeRecords.size());
+		
+		return bookingWithoutFeeRecords.stream().map(new CustomerBookingFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<BookingCheck> getCustomerChildBookingCheckList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createRitemCondition(ctx, customerFeeParams);
+		
+		SelectOnConditionStep<Record> bookingWithoutFeeSelect = ctx.getDslContext().select().from(RITEM)
+				.join(DOMAIN).on(DOMAIN.ID.eq(RITEM.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(RITEM.REGISTRY))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)).and(CUSTOMER_FEE.ID.eq(RITEM.CUSTOMER_FEE)));
+		
+		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
+				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
 				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
 			.fetch();
+		
 		
 		System.out.println("Customer Booking size : " + bookingWithoutFeeRecords.size());
 		
@@ -349,6 +374,10 @@ public class BookingCheckDAO {
 			condition = condition.and(DOMAIN.ACTIVE.eq(customerFeeParams.getDomainStatus()));
 		}
 		
+		if(null != customerFeeParams.getChildDomain()) {
+			condition = condition.and(RITEM.EDI_SALES_CODE.like("%@" + customerFeeParams.getChildDomain() + "%"));
+		}
+		
 		return condition;
 	}
 	
@@ -450,6 +479,8 @@ public class BookingCheckDAO {
 					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
 					.setQuantityFee(null != r.get(CUSTOMER_FEE.QUANTITY) ? r.get(CUSTOMER_FEE.QUANTITY).intValue() + "" : "0")
 					.setQuantityRItem(r.get(RITEM.QUANTITY))
+					.setEdiSalesCode(r.get(RITEM.EDI_SALES_CODE))
+					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
 					;
 		}
 	}

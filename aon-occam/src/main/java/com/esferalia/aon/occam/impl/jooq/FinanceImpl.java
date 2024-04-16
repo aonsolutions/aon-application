@@ -24,8 +24,10 @@ import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -115,6 +117,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.validate(ctx, invoice, rawdocId));
+	}
+	
+	@Override
 	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));
@@ -139,6 +147,12 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice) {
 		ctx.getDslContext().transaction(configuration -> InvoiceDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
+	}
+	
+	@Override
+	public InvoiceCounter getInvoiceCounter(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getCounter(ctx));
 	}
 	
 	
@@ -252,6 +266,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery));
+	}
+	
+	@Override
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
@@ -318,9 +338,16 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public void createCustomerFeeList(AONContext ctx, Fee fee) {
-		ctx.getDslContext().transaction(configuration
+	public Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.createCustomerFeeList(ctx, fee));
+	}
+	
+	@Override
+	public void updateRitemCustomerFee(CloseableAONContext ctx, Integer customerFee, Integer ritem) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.updateRitemCustomerFee(ctx, customerFee, ritem);
+		} );
 	}
 	
 	@Override
@@ -572,6 +599,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getInvoiceCounter(ctx));
+	}
+	
+	@Override
 	public Rawdoc getRawdocFull(AONContext ctx, int id) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getFull(ctx, id));
@@ -793,6 +826,12 @@ public class FinanceImpl implements IFinance {
 	public LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> BookingCheckDAO.getCustomerBookingCheckList(ctx, params));	
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerChildBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getCustomerChildBookingCheckList(ctx, params));	
 	}
 
 	@Override

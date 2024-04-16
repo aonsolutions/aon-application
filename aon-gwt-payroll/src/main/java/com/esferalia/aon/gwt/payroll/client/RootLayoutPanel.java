@@ -51,8 +51,8 @@ public class RootLayoutPanel extends LayoutPanel {
 		Element elem = getElement();
 		Element parent = elem.getParentElement();
 		
-		int top = !isNewAon() ? parent.getOffsetTop() : 0;
-		int left = !isNewAon() ? parent.getOffsetLeft() : 0;
+		int top = !isNewAon() ? parent.getAbsoluteTop() : 0;
+		int left = !isNewAon() ? parent.getAbsoluteLeft() : 0;
 		
 		Style style = elem.getStyle();
 		style.setPosition(Position.ABSOLUTE);

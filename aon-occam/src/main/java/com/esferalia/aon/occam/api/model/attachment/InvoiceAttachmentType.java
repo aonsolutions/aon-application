@@ -18,4 +18,14 @@ public enum InvoiceAttachmentType {
 			INVOICE.value(), RECEIPT.value()
 		};
 	}
+	
+	public static InvoiceAttachmentType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static InvoiceAttachmentType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= InvoiceAttachmentType.values().length) return null;
+		return InvoiceAttachmentType.values()[i];
+	}
 }
