@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +21,6 @@ import com.esferalia.aon.occam.api.json.RegistryItemJSON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
@@ -356,7 +354,12 @@ public class ProductServlet extends AonApiHttpServlet {
 		return new JSONObject();	
 	}
 	private JSONArray getProductsNewPortal(AonApiData api) {
-		return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f));
+		Integer page = api.getData().optInt("page");
+	    Integer perPage = api.getData().optInt("per_page");
+	    if(page != 0 && perPage != 0)
+	    	return ProductJSON.toJSON(AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f), page, perPage));
+	    else
+	    	return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f));
 	}
 	
 	private long getProductsCount(AonApiData api) {
@@ -367,9 +370,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	private Filter newProductFilter(AonApiData api, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		Filter trueFilter;
-		String inputValue = api.getData().optString("inputValue");
-		Integer page = api.getData().optInt("page");
-	    Integer perPage = api.getData().optInt("per_page");
+		String inputValue = api.getData().optString("global");
 		ArrayList<Integer> lista = new ArrayList<>();
 		
 		  if (inputValue != null && !inputValue.isEmpty()) {
@@ -387,14 +388,6 @@ public class ProductServlet extends AonApiHttpServlet {
 		        trueFilter = trueFilter.or(f.getCategoryProperty().in(lista.toArray(Integer[] :: new)));
 	        	filter = filter.and(trueFilter);
 		    }
-		  
-		  if(page != null) {
-		  		filter.page(page);
-		  	}
-		  
-		  if(perPage!= null) {
-		  		filter.perPage(perPage);
-		  	}
 		  
 		return filter;
 	}
