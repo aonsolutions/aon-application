@@ -2438,16 +2438,17 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			if (act.isLoc() && act.getRnm() > 0) {
 				if (AonMathUtils.round(act.getVeh()) <= 1.0) {
 					if (!act.isCap()) {
+						double emp = getSalariedStaff( act );
 						ic2 = 0.7; 
 						if (AonMathUtils.round(act.getMun()) == 1.0) {
 							ic2 = 0.75;
 						} else if (AonMathUtils.round(act.getMun()) >= 2.0) {
 							ic2 = 0.80;
 						}
-						if (act.getEmp() > 0.0 && act.getEmp() <= 2.0) {
+						if (emp > 0.0 && emp <= 2.0) {
 							ic2 = 0.90;
 						}
-						if (act.getEmp() > 2) {
+						if (emp > 2) {
 							ic2 = 0.0;
 						}
 					}
@@ -2597,24 +2598,43 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo() - act.getRpa()));
 	}
 	
-	private static void calcResultadoPagoTrimestral(AONContext ctx, Mod131Activity act) {
-		double salariedStaff = act.getEmp();
-		if (AonMathUtils.isZero(salariedStaff)) {
-			for (Mod131ActivityModule mod : act.getModules()) {
-				String desc = mod.getDescription();
-				if (mod.isSalariedStaff() 
-					|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
-					salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
-				}
+	private static double getSalariedStaff( Mod131Activity act ) {
+		double salariedStaff = 0.0;
+		for (Mod131ActivityModule mod : act.getModules()) {
+			String desc = mod.getDescription();
+			if (mod.isSalariedStaff() 
+				|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
+				salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
 			}
 		}
+		return salariedStaff;
+	}
+	
+	private static void calcResultadoPagoTrimestral(AONContext ctx, Mod131Activity act) {
+		double salariedStaff = getSalariedStaff( act );
+//		if (AonMathUtils.isZero(salariedStaff)) {
+//			for (Mod131ActivityModule mod : act.getModules()) {
+//				String desc = mod.getDescription();
+//				if (mod.isSalariedStaff() 
+//					|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
+//					salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
+//				}
+//			}
+//		}
 		
 		int periodDays = (int) AonDateUtils.getDaysBetweenDates(
 				 FiscalUtils.getPeriodStart(act.getYear(),act.getPeriod())
