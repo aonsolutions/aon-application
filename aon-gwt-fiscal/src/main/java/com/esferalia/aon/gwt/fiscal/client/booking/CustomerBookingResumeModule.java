@@ -473,8 +473,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 	
 	private void syncCustomerDomains() {
-		AonDialog dialog = new AonDialog("Sincronizaci\u00f3n Dominios Cliente",
-				new HTML("Se va a proceder a sincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la sincronizaci\u00f3n\u003f"));
+		AonDialog dialog = new AonDialog("Sincronizaci\u00f3n Contrataci\u00f3n Cliente",
+				new HTML("Se va a proceder a sincronizar la contrataci\u00f3n del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la sincronizaci\u00f3n\u003f"));
 		
 		dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -491,8 +491,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 	
 	private void unSyncCustomerDomains() {
-		AonDialog dialog = new AonDialog("Desincronizaci\u00f3n Dominios Cliente",
-				new HTML("Se va a proceder a desincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la desincronizaci\u00f3n\u003f. Este proceso sera irreversible."));
+		AonDialog dialog = new AonDialog("Desincronizaci\u00f3n Contrataci\u00f3n Cliente",
+				new HTML("Se va a proceder a desincronizar la contrataci\u00f3n del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la desincronizaci\u00f3n\u003f. Este proceso sera irreversible."));
 		
 		dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -1327,7 +1327,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					
 					AonTableButton bookingInfoBtn = new AonTableButton("Ver contrataciones", AON.CSS.aonIconMoreVertical());
 					bookingInfoBtn.addClickHandler(e -> {
-						new CustomerBookingDialog(options, getCustomer(), domainChild) {
+						new CustomerBookingDialog(options, getCustomer(), domainChild, domainBooking) {
 
 							@Override
 							protected void onCloseRefresh() {

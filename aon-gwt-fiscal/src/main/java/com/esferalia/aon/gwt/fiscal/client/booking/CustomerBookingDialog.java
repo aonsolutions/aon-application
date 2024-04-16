@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -42,7 +43,6 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -481,6 +481,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 	
 	private boolean isChildBookig = false;
 	private Domain childDomain;
+	private Booking domainBooking;
 	
 	private SuggestBox customerFeeSuggestBox;
 	private Map<String, Fee> customerFeeSuggestions = new TreeMap<>();
@@ -521,12 +522,13 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		});
 	}
 
-	public CustomerBookingDialog(RegistryModuleOptions options, int customerId, Domain childDomain) {
+	public CustomerBookingDialog(RegistryModuleOptions options, int customerId, Domain childDomain, Booking domainBooking) {
 		super();
 		
 		this.options = options;
 		this.customerId = customerId;
 		this.childDomain = childDomain;
+		this.domainBooking = domainBooking;
 		
 		this.isChildBookig = true;
 		
@@ -610,6 +612,28 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		customerFeeSuggestBox.setAutoSelectEnabled(false);
 		customerFeeSuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
 		
+		SERVICE.getCustomerFeeSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, customerId, null, new AsyncCallback<Map<String, Fee>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Fee> customerFeeSuggestionsDB) {
+				customerFeeSuggestions = customerFeeSuggestionsDB;
+				
+				List<String> suggestions = new ArrayList<String>();
+				customerFeeSuggestions.values().forEach(fee -> suggestions.add("[" + fee.getId() + "] " + fee.getDescription()));
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerFeeSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(suggestions);
+				orclSb.setDefaultSuggestionsFromText(suggestions);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+		
 		customerFeeSuggestBox.addSelectionHandler(e -> {
 			customerFeeSuggestBox.hideSuggestionList();
 			
@@ -632,15 +656,15 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			}
 		});
 		
-		customerFeeSuggestBox.addKeyUpHandler(e -> {
-			String customerFeeQuery = customerFeeSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				customerFeeSuggestBox.setValue("");
-				customerFeeQuery = null;
-				getCustomerFeeSuggestion(customerFeeQuery);
-			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
-				getCustomerFeeSuggestion(customerFeeQuery);
-		});
+//		customerFeeSuggestBox.addKeyUpHandler(e -> {
+//			String customerFeeQuery = customerFeeSuggestBox.getValue();
+//			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+//				customerFeeSuggestBox.setValue("");
+//				customerFeeQuery = null;
+//				getCustomerFeeSuggestion(customerFeeQuery);
+//			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
+//				getCustomerFeeSuggestion(customerFeeQuery);
+//		});
 		
 		toolbar.add(syncCustomerFeesLabel);
 		toolbar.add(customerFeeSuggestBox);
@@ -667,10 +691,34 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 				// Check if its Licencia Adicional
 				Double usrPrice = 0.00;
 				Double usrDiscount = 0.00;
-				if(AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR") || AonStringUtils.containsIgnoreCase(booking.getEdiSalesCode(), "USR")) {
-					Optional<Fee> usrFee = customerFeeSuggestions.values().stream().filter(fee -> AonStringUtils.containsIgnoreCase(fee.getItem().getBarcode(), "USR") ).findFirst();
+				Double usrQuantity = 0.00;
+				
+				String usrDescription = booking.getItem().getProduct().getName().contains("/") ? (booking.getItem().getProduct().getName().split("/")[0].trim() + " /") : booking.getItem().getProduct().getName();
+				
+				
+				if(AonStringUtils.endsWith(booking.getItem().getBarcode(), "USR") || AonStringUtils.endsWith(booking.getEdiSalesCode(), "USR") ||
+						AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR-A") || AonStringUtils.containsIgnoreCase(booking.getEdiSalesCode(), "USR-A")) {
+					Optional<Fee> usrFee = customerFeeSuggestions.values().stream().filter(fee -> booking.getItem().getId().equals(fee.getItem().getId())).findFirst();
+					
+					List<String> parentApps = domainBooking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
+					
+					List<String> childApps = childDomain.getApps().stream().filter(domainApp -> null != domainApp.getApp() && AonStringUtils.isNotBlank(domainApp.getApp().getDescription())).map(domainApp -> domainApp.getApp().getDescription()).collect(Collectors.toList());
+					List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
+					
+					Integer portalUsersCount = null == childDomain.getUsers() ? 0 : (int) childDomain.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
+					List<User> activeUsers = childDomain.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+					Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
+					
+					if(!childAppsDiff.isEmpty()) activeUsersDiff--;
+					
 					usrPrice = usrFee.isPresent() ? usrFee.get().getPrice() : 0.00;
 					usrDiscount = usrFee.isPresent() ? usrFee.get().getDiscount() : 0.00;
+					usrQuantity = activeUsersDiff.doubleValue();
+					
+					if(AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR-A") || AonStringUtils.containsIgnoreCase(booking.getEdiSalesCode(), "USR-A")) {
+						usrDescription = usrDescription + childDomain.getDescription();
+					}
+					
 				}
 				
 				Fee draftFee = new Fee();
@@ -678,16 +726,17 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 				draftFee.setProject(selectedCustomerFee.getProject());
 				draftFee.setCustomer(selectedCustomerFee.getCustomer());
 				draftFee.setItem(booking.getItem());
-				String description = booking.getItem().getProduct().getName().contains("/") ? (booking.getItem().getProduct().getName().split("/")[0] + " / ") : booking.getItem().getProduct().getName();
-				draftFee.setDescription(description + (!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? "" : " " + childDomain.getDescription()) );
-				draftFee.setQuantity(1.00);
+				draftFee.setDescription(usrDescription + (!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? "" : childDomain.getDescription()) );
 				
-				if(AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR")) {
+				if(AonStringUtils.endsWith(booking.getItem().getBarcode(), "USR") || AonStringUtils.endsWith(booking.getEdiSalesCode(), "USR") ||
+						AonStringUtils.containsIgnoreCase(booking.getItem().getBarcode(), "USR-A") || AonStringUtils.containsIgnoreCase(booking.getEdiSalesCode(), "USR-A")) {
 					draftFee.setPrice(usrPrice);
 					draftFee.setDiscount(usrDiscount);
+					draftFee.setQuantity(usrQuantity);
 				} else {
 					draftFee.setPrice(!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? 0.00 : selectedCustomerFee.getPrice());
 					draftFee.setDiscount(!booking.getItem().getId().equals(selectedCustomerFee.getItem().getId()) ? 0.00 : selectedCustomerFee.getDiscount());
+					draftFee.setQuantity(1.00);
 				}
 				
 				draftFee.setStartDate(selectedCustomerFee.getStartDate());
@@ -840,7 +889,8 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 							if(bookingCheckListDB.isEmpty()) showBookingMessage();
 							else {
 								bookingList = bookingCheckListDB;
-								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+//								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								bookingList.sort((o1, o2) -> o2.getItem().getProduct().getName().compareTo(o1.getItem().getProduct().getName()));
 								fillBookingGrid();
 							}
 							
@@ -865,7 +915,8 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 							if(bookingCheckListDB.isEmpty()) showBookingMessage();
 							else {
 								bookingList = bookingCheckListDB;
-								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+//								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+								bookingList.sort((o1, o2) -> o2.getItem().getProduct().getName().compareTo(o1.getItem().getProduct().getName()));
 								fillBookingGrid();
 							}
 							
@@ -965,10 +1016,8 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		Integer quantityFee = AonStringUtils.isNotBlank(bookingCheck.getQuantityFee()) ? Integer.parseInt(bookingCheck.getQuantityFee()) : 0;
 		Integer quantityRItem = AonStringUtils.isNotBlank(bookingCheck.getQuantityRItem()) ? Integer.parseInt(bookingCheck.getQuantityRItem()) : 0;
 		
-		if(isAditionalUser(bookingCheck)) {
-//			Window.alert(bookingCheck.getItem().getProduct().getName());
+		if(isAditionalUser(bookingCheck))
 			quantityRItem--;
-		}
 		
 		if(quantityFee != quantityRItem) {
 			quantityLabel.setText(quantityFee.toString() + "  /  " +  quantityRItem.toString());

@@ -7398,7 +7398,7 @@ CREATE TABLE `ritem` (
   `item` int NOT NULL COMMENT 'Identificador del Articulo',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de relacion',
   `code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del Producto',
-  `edi_sales_code` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo EAN de ventas para EDI',
+  `edi_sales_code` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo EAN de ventas para EDI',
   `customer_fee` int(11) DEFAULT NULL COMMENT 'Cuota del cliente asociado',
   `seller` int(11) DEFAULT NULL COMMENT 'Agente asociado al cliente',
   `price` decimal(15,4) DEFAULT '0' COMMENT 'Precio del Producto',
