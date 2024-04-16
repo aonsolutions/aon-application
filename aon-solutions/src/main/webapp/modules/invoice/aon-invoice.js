@@ -407,11 +407,11 @@ export class AonInvoice extends AonElement {
 				moreActions.push(rectify);
 			}
 
-			// let duplicate = ACTION.DUPLICATE_INVOICE;
-			// duplicate.permission = true;
-			// duplicate.backgroundColor = INVOICE.color;
-			// duplicate.fn = () => this.duplicateInvoice();
-			// moreActions.push(duplicate);
+			let duplicate = ACTION.DUPLICATE_INVOICE;
+			duplicate.permission = true;
+			duplicate.backgroundColor = INVOICE.color;
+			duplicate.fn = () => this.duplicateInvoice();
+			moreActions.push(duplicate);
 			if(this.getInvoice().isInbox()){
 				let changeType = ACTION.CHANGE_TYPE;
 				changeType.permission = true;
@@ -2595,8 +2595,8 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getOptionDialog();
 		let rectify = ACTION.RECTIFY;
 		rectify.fn = () => this.rectifyInvoice();
-		// let duplicate = ACTION.DUPLICATE;
-		// duplicate.fn = () => this.duplicateInvoice();
+		let duplicate = ACTION.DUPLICATE;
+		duplicate.fn = () => this.duplicateInvoice();
 		d.setMenuOptions([rectify], top, left);
 		d.open();
 	}
@@ -2919,9 +2919,12 @@ export class AonInvoice extends AonElement {
 			recInv.number = undefined;
 			recInv.reference = undefined;
 			recInv.status = 'inbox';
+			recInv.tbai = undefined;
+			recInv.tbaiUrl = undefined;
 
 			if(recInv.finances) {
 				recInv.finances.forEach((item, i) => {
+					recInv.finances[i].id = undefined;
 					recInv.finances[i].due_date = new Date();
 					recInv.finances[i].amount = recInv.finances[i].amount * (-1);
 				});
@@ -2929,12 +2932,12 @@ export class AonInvoice extends AonElement {
 
 			if(recInv.details) {
 				recInv.details.forEach((item, i) => {
+					item.id = undefined;
 					item.quantity= item.quantity * (-1);
 					recInv.setDetail(item, i);
 				});
 			}
 
-	
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(recInv.type, recInv);
 		});
@@ -3018,9 +3021,18 @@ export class AonInvoice extends AonElement {
 		dupInv.number = undefined;
 		dupInv.reference = '';
 		dupInv.status = 'inbox';
+		dupInv.tbai = undefined;
+		dupInv.tbaiUrl = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
+				dupInv.finances[i].id = undefined;
 				dupInv.finances[i].due_date = new Date();
+			});
+		}
+		
+		if(dupInv.details) {
+			dupInv.details.forEach((item, i) => {
+				dupInv.details[i].id = undefined;
 			});
 		}
 
