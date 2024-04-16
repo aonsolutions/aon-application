@@ -551,6 +551,11 @@ public class FeeDAO {
 		customerFeeParams.setLimit(Integer.MAX_VALUE);
 		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
 		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
+			ctx.getDslContext().update(RITEM)
+			.set(RITEM.CUSTOMER_FEE, DSL.castNull(RITEM.CUSTOMER_FEE))
+			.where(RITEM.CUSTOMER_FEE.eq(fee.getId()))
+			.execute();
+			
 			ctx.getDslContext()
 			.delete(CUSTOMER_FEE)
 			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
@@ -561,16 +566,27 @@ public class FeeDAO {
 	public static void delete(AONContext ctx, Fee f) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
+			
+			ctx.getDslContext().update(RITEM)
+				.set(RITEM.CUSTOMER_FEE, DSL.castNull(RITEM.CUSTOMER_FEE))
+				.where(RITEM.CUSTOMER_FEE.eq(f.getId()))
+				.execute();
+			
 			ctx.getDslContext()
 				.delete(CUSTOMER_FEE)
 				.where(CUSTOMER_FEE.ID.equal(f.getId())).execute();
+			
 		});
 	}
 
 	public static void delete(AONContext ctx, Stream<Fee> fs) {
+//		ctx.getDslContext().transaction(configuration -> {
+//			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
+//			delete(ctx, f -> f.getIdProperty().in(ids));
+//		});
+		
 		ctx.getDslContext().transaction(configuration -> {
-			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
-			delete(ctx, f -> f.getIdProperty().in(ids));
+			fs.forEach(fee -> delete(ctx, fee));
 		});
 	}
 	
@@ -804,21 +820,38 @@ public class FeeDAO {
 		
 		Result<Record> feeRecords;
 		
-		if(AonStringUtils.isNotBlank(customerFeeQuery)) {
-			feeRecords = fromCustomerRecords 
-					.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
-					.and(CUSTOMER_FEE.ITEM.eq(itemId))
-					.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
-					.and(CUSTOMER_FEE.DESCRIPTION.like("%" + customerFeeQuery + "%"))
-					.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-				.fetch();
+		if(null == itemId) {
+			if(AonStringUtils.isNotBlank(customerFeeQuery)) {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.and(CUSTOMER_FEE.DESCRIPTION.like("%" + customerFeeQuery + "%"))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			} else {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			}
 		} else {
-			feeRecords = fromCustomerRecords 
-					.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
-					.and(CUSTOMER_FEE.ITEM.eq(itemId))
-					.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
-					.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-				.fetch();
+			if(AonStringUtils.isNotBlank(customerFeeQuery)) {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.ITEM.eq(itemId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.and(CUSTOMER_FEE.DESCRIPTION.like("%" + customerFeeQuery + "%"))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			} else {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.ITEM.eq(itemId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			}
 		}
 		
 		System.out.println("Customer Fee Suggestions size : " + feeRecords.size());
@@ -831,6 +864,13 @@ public class FeeDAO {
 	}
 	
 	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+		if(fee.getLine() == null) {
+			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
+					.from(CUSTOMER_FEE)
+					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
+			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
+		} 
+		
 		return insert(ctx, fee);
 	}
 

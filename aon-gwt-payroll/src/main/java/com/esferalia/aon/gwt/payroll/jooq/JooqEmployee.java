@@ -803,9 +803,12 @@ public class JooqEmployee {
 						.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 						.fetchOne();
 				
-				contractData.setCccId(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
-				contractData.setCccType(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE));
-				contractData.setCompleteCCC(getCCCRegimeCode(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
+				if(null != enterpriseCCCTable) {
+					contractData.setCccId(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+					contractData.setCccType(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE));
+					contractData.setCompleteCCC(getCCCRegimeCode(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
+					
+				}
 			}
 		}
 		

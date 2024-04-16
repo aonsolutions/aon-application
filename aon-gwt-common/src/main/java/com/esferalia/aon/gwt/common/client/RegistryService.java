@@ -73,6 +73,7 @@ public interface RegistryService extends RemoteService {
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params);
+	void deleteCustomerFee(String domainName, int domain, String user, Fee fee);
 	
 	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery);
 	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);

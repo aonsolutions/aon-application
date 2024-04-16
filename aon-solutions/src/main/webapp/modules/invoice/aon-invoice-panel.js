@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
@@ -159,6 +159,10 @@ export class AonInvoicePanel extends AonElement {
 						this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
 					}
 			}
+			if(this.isConsole()) {
+				this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
+			}
+
 		}
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);

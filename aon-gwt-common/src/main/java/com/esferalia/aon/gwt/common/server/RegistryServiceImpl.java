@@ -14,6 +14,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -177,6 +179,13 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
 		AON.deleteFee(domainName, domain, user, params);
+	}
+	
+	@Override
+	public void deleteCustomerFee(String domainName, int domainId, String login, Fee fee) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			AON.deleteFee(ctx, fee);
+		}	
 	}
 	
 	@Override

@@ -21,9 +21,12 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
+import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
 import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
+import net.aonsolutions.db.up2date.security.UdpateDomainApp;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2024Update;
 import net.aonsolutions.db.up2date.tgss.Art1512024Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2024Update;
@@ -429,19 +432,22 @@ public class Up2Date {
 	    // PPEInsert.PPE_INSERT
 	    // BasesMin2024UpdateII.BASESMIN2024UPDATEII,
 	    // BasesMin2024UpdateIII.BASESMIN2024UPDATEIII
-
-    	RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
-	    RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
-	    InvoiceDocCreate.INVOICEDOCCREATE,
-	    RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
-        BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
-        HomeBases2024Update.HOMEBASES2024UPDATEIV,
-        Art1512024Update.ART1512024UPDATE,
-        FellowsBases2024Update.FELLOWSBASES2024UPDATE,
-        TrainningBases2024Update.TRAINNINGBASES2024UPDATE,
-        TrainingPercentages2024Update.TRAINNINGPERCENTAGES2023UPDATE,
-        FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
-        RefreshMod131Result.REFRESH_MOD131_RESULT
+    	// RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
+		// RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
+		// InvoiceDocCreate.INVOICEDOCCREATE,
+		// RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
+		// BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
+		// HomeBases2024Update.HOMEBASES2024UPDATEIV,
+		// Art1512024Update.ART1512024UPDATE,
+		// FellowsBases2024Update.FELLOWSBASES2024UPDATE,
+		// TrainningBases2024Update.TRAINNINGBASES2024UPDATE,
+		// TrainingPercentages2024Update.TRAINNINGPERCENTAGES2023UPDATE,
+		// FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
+		// RefreshMod131Result.REFRESH_MOD131_RESULT
+    		
+    	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
+		InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+        UdpateDomainApp.UPDATE_DOMAIN_APP
 	};
 
     // ------------------------------------------------------------------------

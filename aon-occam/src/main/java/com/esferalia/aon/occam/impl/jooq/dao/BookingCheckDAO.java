@@ -128,6 +128,7 @@ public class BookingCheckDAO {
 		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
 				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
+				.and(RITEM.EDI_SALES_CODE.isNull())
 				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -478,6 +479,8 @@ public class BookingCheckDAO {
 					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
 					.setQuantityFee(null != r.get(CUSTOMER_FEE.QUANTITY) ? r.get(CUSTOMER_FEE.QUANTITY).intValue() + "" : "0")
 					.setQuantityRItem(r.get(RITEM.QUANTITY))
+					.setEdiSalesCode(r.get(RITEM.EDI_SALES_CODE))
+					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
 					;
 		}
 	}

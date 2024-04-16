@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -573,19 +574,37 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	}
 	
 	private static void updateChildsConectaUserBookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
-		String userBarCode = "01.00.USR";
-		
 //		String childBillingUsers = null != booking.getResume().getChildBillingUsers() ? booking.getResume().getChildBillingUsers().toString() : "0";
 //		updateRItem(api, booking, aonCustomer, userBarCode, childBillingUsers, "01.00.USR", ediSalesCode, logs);
 		
+		List<String> parentApps = booking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
+		
 		// Childs
-		booking.getResume().getChilds().stream().filter(childDomain -> childDomain.getMaxDefinedUsers() > 0).forEach(childDomain -> {
+		booking.getResume().getChilds().stream()/*.filter(childDomain -> childDomain.getMaxDefinedUsers() > 0)*/.forEach(childDomain -> {
+			
+			List<String> childApps = childDomain.getApps().stream().filter(domainApp -> null != domainApp.getApp() && AonStringUtils.isNotBlank(domainApp.getApp().getDescription())).map(domainApp -> domainApp.getApp().getDescription()).collect(Collectors.toList());
+			List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
+			
+			// Check if has apps, if it has subtract 1 user, if not, stay user quantity			
+			Integer portalUsersCount = null == childDomain.getUsers() ? 0 : (int) childDomain.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
+			List<User> activeUsers = null == childDomain.getUsers() ? new ArrayList<User>() : childDomain.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
+			
+			System.out.println(childDomain.getDescription() + " -- users : " + activeUsersDiff);
+			
+			if(!childAppsDiff.isEmpty()) activeUsersDiff--;
+			
+			String userBarCode = !childAppsDiff.isEmpty() ? "01.00.USR" : "01.00.USR-A";
 			String ediSalesCode = userBarCode + "@" + childDomain.getId();
-			String childUsers = childDomain.getMaxDefinedUsers().toString();
 			
-			System.out.println("Domain: " + childDomain.getDescription() + ", childUsers: " + childUsers + ", userBarCode: " + userBarCode + ", ediSalesCode: " + ediSalesCode);
-			
-			updateChildRItem(api, booking, aonCustomer, userBarCode, childUsers, "01.00.USR", ediSalesCode, childDomain.getId(), logs);
+			if(activeUsersDiff > 0) { 
+				System.out.println("Domain: " + childDomain.getDescription() + ", childUsers: " + activeUsersDiff + ", userBarCode: " + userBarCode + ", ediSalesCode: " + ediSalesCode);
+				
+				if(!childDomain.getApps().isEmpty())
+					updateChildRItem(api, booking, aonCustomer, userBarCode, activeUsersDiff.toString(), "01.00.USR", ediSalesCode, childDomain.getId(), logs);
+				else
+					updateChildRItem(api, booking, aonCustomer, userBarCode, activeUsersDiff.toString(), "01.00.USR-A", ediSalesCode, childDomain.getId(), logs);
+			}
 		});
 	}
 

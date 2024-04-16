@@ -187,6 +187,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.deleteCustomerFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFee(domainName, domain, user, fee, new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void getWorkplacesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Workplace>> callback) {

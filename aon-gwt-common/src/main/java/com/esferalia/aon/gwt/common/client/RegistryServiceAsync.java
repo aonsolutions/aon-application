@@ -69,6 +69,7 @@ public interface RegistryServiceAsync {
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> asyncCallback);
+	void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
 	
 	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
 	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);

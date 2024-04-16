@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,13 +64,11 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -105,11 +104,13 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	
 	private AonToolbarSmallButton toolbarCustomerFeeDiscBtn;
 	private AonToolbarSmallButton createCustomerFeeButton;
+	private AonToolbarSmallButton deleteCustomerFeeButton;
 	private AonToolbarSmallButton toolbarCustomerFeeSaveBtn;
 	private AonToolbarSmallButton toolbarCustomerFeeUndoBtn;
 	private HTMLPanel customerFeePanel;
 	private Grid customerFeeTable;
 	private LinkedList<Fee> customerFeeList;
+	private Map<CheckBox, Fee> selectionModel = new HashMap<>();
 	
 	private HTMLPanel messagePanel;
 
@@ -1284,7 +1285,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
 		
 					// Filtar hijos sin extensiones si esta activo el filtro de extensiones
-					if(hasBookingExtension && childAppsDiff.size() == 0) continue;
+					if(hasBookingExtension && childAppsDiff.size() == 0 && 0 == activeUsersDiff) continue;
 					
 					// Filtar hijos sin usuario si esta activo el filtro de usuarios
 					if(!hasBookingExtension && 0 == portalUsersCount && 0 == activeUsersDiff) continue;
@@ -1326,7 +1327,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					
 					AonTableButton bookingInfoBtn = new AonTableButton("Ver contrataciones", AON.CSS.aonIconMoreVertical());
 					bookingInfoBtn.addClickHandler(e -> {
-						new CustomerBookingDialog(options, getCustomer(), domainChild.getId()) {
+						new CustomerBookingDialog(options, getCustomer(), domainChild) {
 
 							@Override
 							protected void onCloseRefresh() {
@@ -1475,12 +1476,13 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		customerFeePanel.add(createCustomerFeeToolbar());
 		
-		customerFeeTable = new Grid(0, 12);
+		customerFeeTable = new Grid(0, 13);
 		customerFeeTable.clear();
 		customerFeeTable.setWidth("100%");
 
 		int row = customerFeeTable.insertRow(customerFeeTable.getRowCount());
-
+		
+		Label select = new Label("");
 		Label line = new Label("LINEA");
 		Label concept = new Label("CONCEPTO");
 		Label status = new Label("ESTADO");
@@ -1542,6 +1544,43 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		});
 		buttons.add(createCustomerFeeButton);
 		
+		deleteCustomerFeeButton = new AonToolbarSmallButton("Borrar Cuota(s)", AON.CSS.aonIconDelete());
+		deleteCustomerFeeButton.setEnabled(false);
+		deleteCustomerFeeButton.addClickHandler(ev -> {
+			LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cuotas",
+					new HTML("Se va a proceder a eliminar <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f<br>Este proceso ser\u00e5 irreversible"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+					SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees,
+							new AsyncCallback<Void>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+									selectionModel.clear();
+									loadModule();
+								}
+							});
+				}
+			});
+		});
+		buttons.add(deleteCustomerFeeButton);
+		
 		toolbarCustomerFeeUndoBtn = new AonToolbarSmallButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
 		toolbarCustomerFeeUndoBtn.setEnabled(false);
 		toolbarCustomerFeeUndoBtn.addClickHandler(e -> {
@@ -1584,6 +1623,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		});
 		buttons.add(toolbarCustomerFeeSaveBtn);
 		
+		select.addStyleName(AON.CSS.aonHeaderTable());
 		line.addStyleName(AON.CSS.aonHeaderTable());
 		concept.addStyleName(AON.CSS.aonHeaderTable());
 		status.addStyleName(AON.CSS.aonHeaderTable());
@@ -1597,18 +1637,19 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		buttons.addStyleName(AON.CSS.aonHeaderTable());
 
-		customerFeeTable.setWidget(row, 0, line);
-		customerFeeTable.setWidget(row, 1, concept);
-		customerFeeTable.setWidget(row, 2, status);
-		customerFeeTable.setWidget(row, 3, booking);
-		customerFeeTable.setWidget(row, 4, period);
-		customerFeeTable.setWidget(row, 5, quantity);
-		customerFeeTable.setWidget(row, 6, price);
-		customerFeeTable.setWidget(row, 7, discount);
-		customerFeeTable.setWidget(row, 8, startDate);
-		customerFeeTable.setWidget(row, 9, billingDate);
-		customerFeeTable.setWidget(row, 10, endDate);
-		customerFeeTable.setWidget(row, 11, buttons);
+		customerFeeTable.setWidget(row, 0, select);
+		customerFeeTable.setWidget(row, 1, line);
+		customerFeeTable.setWidget(row, 2, concept);
+		customerFeeTable.setWidget(row, 3, status);
+		customerFeeTable.setWidget(row, 4, booking);
+		customerFeeTable.setWidget(row, 5, period);
+		customerFeeTable.setWidget(row, 6, quantity);
+		customerFeeTable.setWidget(row, 7, price);
+		customerFeeTable.setWidget(row, 8, discount);
+		customerFeeTable.setWidget(row, 9, startDate);
+		customerFeeTable.setWidget(row, 10, billingDate);
+		customerFeeTable.setWidget(row, 11, endDate);
+		customerFeeTable.setWidget(row, 12, buttons);
 		
 		customerFeeTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		customerFeeTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1622,24 +1663,32 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		customerFeeTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		customerFeeTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		customerFeeTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonHeaderSticky());
-		customerFeeTable.getCellFormatter().getElement(row, 11).getStyle().setZIndex(1);
+		customerFeeTable.getCellFormatter().addStyleName(row, 12, AON.CSS.aonHeaderSticky());
+		customerFeeTable.getCellFormatter().getElement(row, 12).getStyle().setZIndex(1);
 		
-		customerFeeTable.getColumnFormatter().getElement(0).getStyle().setWidth(70, Unit.PX);
-//		customerFeeTable.getColumnFormatter().getElement(1).getStyle().setWidth(38, Unit.PCT);
-		customerFeeTable.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
-		customerFeeTable.getColumnFormatter().getElement(3).getStyle().setWidth(70, Unit.PX);
-		customerFeeTable.getColumnFormatter().getElement(4).getStyle().setWidth(120, Unit.PX);
-		customerFeeTable.getColumnFormatter().getElement(5).getStyle().setWidth(70, Unit.PX);
-		customerFeeTable.getColumnFormatter().getElement(6).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(0).getStyle().setWidth(30, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(1).getStyle().setWidth(70, Unit.PX);
+//		customerFeeTable.getColumnFormatter().getElement(2).getStyle().setWidth(38, Unit.PCT);
+		customerFeeTable.getColumnFormatter().getElement(3).getStyle().setWidth(80, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(4).getStyle().setWidth(70, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(5).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(6).getStyle().setWidth(70, Unit.PX);
 		customerFeeTable.getColumnFormatter().getElement(7).getStyle().setWidth(120, Unit.PX);
 		customerFeeTable.getColumnFormatter().getElement(8).getStyle().setWidth(120, Unit.PX);
 		customerFeeTable.getColumnFormatter().getElement(9).getStyle().setWidth(120, Unit.PX);
 		customerFeeTable.getColumnFormatter().getElement(10).getStyle().setWidth(120, Unit.PX);
-		customerFeeTable.getColumnFormatter().getElement(11).getStyle().setWidth(100, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(11).getStyle().setWidth(120, Unit.PX);
+		customerFeeTable.getColumnFormatter().getElement(12).getStyle().setWidth(100, Unit.PX);
 		
 		for(Fee fee : customerFeeList) {
 
 			int newRow = customerFeeTable.insertRow(customerFeeTable.getRowCount());
+			
+			CheckBox selectCB = new CheckBox();
+			selectCB.addValueChangeHandler(e -> {
+				Optional<CheckBox> checked = selectionModel.keySet().stream().filter(cb -> cb.getValue()).findAny();
+				deleteCustomerFeeButton.setEnabled(checked.isPresent());
+			});
 			
 			TextBox lineTextBox = new TextBox();
 			lineTextBox.setValue(fee.getLine().toString());
@@ -1777,11 +1826,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 					@Override
 					public void onAccept() {
-						LinkedList<Fee> deleteFees = new LinkedList<>();
-						deleteFees.add(fee);
-						
 						AonMessagePanel.showLoading(messagePanel, "Elimando cuota ...");
-						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), deleteFees,
+						SERVICE.deleteCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee,
 								new AsyncCallback<Void>() {
 
 									@Override
@@ -1802,6 +1848,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			
 			checkFeeStatus(startDateBox, endDateBox, fee);
 
+			checkRowAndModify(customerFeeTable, newRow, fee, selectCB);
 			checkRowAndModify(customerFeeTable, newRow, fee, lineTextBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, conceptTextArea);
 			checkRowAndModify(customerFeeTable, newRow, fee, productStatusLabel);
@@ -1815,21 +1862,22 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			checkRowAndModify(customerFeeTable, newRow, fee, endDateBox);
 			checkRowAndModify(customerFeeTable, newRow, fee, buttonsPanel);
 
-			customerFeeTable.setWidget(newRow, 0, lineTextBox);
-			customerFeeTable.setWidget(newRow, 1, conceptTextArea);
-			customerFeeTable.setWidget(newRow, 2, productStatusLabel);
-			customerFeeTable.setWidget(newRow, 3, ritemLabel);
-			customerFeeTable.setWidget(newRow, 4, periodListBox);
-			customerFeeTable.setWidget(newRow, 5, quantityTextBox);
-			customerFeeTable.setWidget(newRow, 6, priceTextBox);
-			customerFeeTable.setWidget(newRow, 7, discountTextBox);
-			customerFeeTable.setWidget(newRow, 8, startDateBox);
-			customerFeeTable.setWidget(newRow, 9, billingDatePanel);
-			customerFeeTable.setWidget(newRow, 10, endDateBox);
-			customerFeeTable.setWidget(newRow, 11, buttonsPanel);
+			customerFeeTable.setWidget(newRow, 0, selectCB);
+			customerFeeTable.setWidget(newRow, 1, lineTextBox);
+			customerFeeTable.setWidget(newRow, 2, conceptTextArea);
+			customerFeeTable.setWidget(newRow, 3, productStatusLabel);
+			customerFeeTable.setWidget(newRow, 4, ritemLabel);
+			customerFeeTable.setWidget(newRow, 5, periodListBox);
+			customerFeeTable.setWidget(newRow, 6, quantityTextBox);
+			customerFeeTable.setWidget(newRow, 7, priceTextBox);
+			customerFeeTable.setWidget(newRow, 8, discountTextBox);
+			customerFeeTable.setWidget(newRow, 9, startDateBox);
+			customerFeeTable.setWidget(newRow, 10, billingDatePanel);
+			customerFeeTable.setWidget(newRow, 11, endDateBox);
+			customerFeeTable.setWidget(newRow, 12, buttonsPanel);
 
 			customerFeeTable.getCellFormatter().getElement(newRow, 0).getStyle().setTextAlign(TextAlign.CENTER);
-			customerFeeTable.getCellFormatter().getElement(newRow, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 1).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 3).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
@@ -1839,8 +1887,10 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			customerFeeTable.getCellFormatter().getElement(newRow, 9).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 10).getStyle().setTextAlign(TextAlign.CENTER);
 			customerFeeTable.getCellFormatter().getElement(newRow, 11).getStyle().setTextAlign(TextAlign.CENTER);
+			customerFeeTable.getCellFormatter().getElement(newRow, 12).getStyle().setTextAlign(TextAlign.CENTER);
 			
 			if (newRow % 2 == 0) {
+				selectCB.addStyleName(AON.CSS.aonOddTableRow());
 				lineTextBox.addStyleName(AON.CSS.aonOddTableRow());
 				conceptTextArea.addStyleName(AON.CSS.aonOddTableRow());
 				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1866,9 +1916,12 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 				customerFeeTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
 				customerFeeTable.getCellFormatter().addStyleName(newRow, 10, AON.CSS.aonOddTableRow());
 				customerFeeTable.getCellFormatter().addStyleName(newRow, 11, AON.CSS.aonOddTableRow());
+				customerFeeTable.getCellFormatter().addStyleName(newRow, 12, AON.CSS.aonOddTableRow());
 			}
 			
 			customerFeeTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+		
+			selectionModel.put(selectCB, fee);
 		}
 		
 		customerFeePanel.add(customerFeeTable);
@@ -2269,7 +2322,6 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
            		     @Override
            		     public void run() {
            		    	 showSyncLogs(response.getText());
-           		    	 
            		     }
            		};
            		logTimer.schedule(4500);
@@ -2422,43 +2474,16 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					AonMessagePanel.hideMessage(messagePanel);
 	                
 					if(domainCompanies != null && !domainCompanies.isEmpty()) {
+						String host = isLocalDev ? "http://localhost:8080" : "https://aon.solutions";
 						
-						FormPanel diskForm = new FormPanel("_blank");
-						diskForm.setMethod(FormPanel.METHOD_GET);
-						FlowPanel formFlowPanel = new FlowPanel();
-						diskForm.add(formFlowPanel);
+						String fileDownloadURL = 
+								host + 
+								"/ms/api/customers-booking-resume-excel/" + 
+								"?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + 
+								"&domainName=" + domainCompanies.get(0).getDomain().getName() + 
+								"&login=" + options.getUser();
 						
-						Hidden domainIdHidden = new Hidden("domainId");
-						formFlowPanel.add(domainIdHidden);
-						
-						Hidden domainNameHidden = new Hidden("domainName");
-						formFlowPanel.add(domainNameHidden);
-						
-						Hidden userHidden = new Hidden("login");
-						formFlowPanel.add(userHidden);
-					
-						toolbar.add(diskForm);
-						
-						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-						
-						diskForm.setAction(host + "/ms/api/customers-booking-resume-excel/");
-						domainIdHidden.setValue(domainCompanies.get(0).getDomain().getId().toString());
-						domainNameHidden.setValue(domainCompanies.get(0).getDomain().getName());		
-						userHidden.setValue(options.getUser());
-						diskForm.submit();
-						
-						diskForm.addSubmitCompleteHandler(e -> {
-							toolbar.remove(diskForm);
-							AonMessagePanel.hideMessage(messagePanel);
-						});
-						
-//						String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-//						
-//						Window.alert(GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/");
-//						
-//						String fileDownloadURL = GWT.getHostPageBaseURL() + "/ms/api/customers-booking-resume-excel/" + "?domainId=" + domainCompanies.get(0).getDomain().getId().toString() + "&domainName=" + domainCompanies.get(0).getDomain().getName() + "&login=" + options.getUser();
-//						Window.open(fileDownloadURL, "_blank", null);
-		       
+						Window.open(fileDownloadURL, "_blank", null);
 	                }
 				}
 				
