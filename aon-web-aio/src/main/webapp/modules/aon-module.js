@@ -44,9 +44,10 @@ export class AonModule extends AonElement {
 		let home = new AonHome();
 		home.id = this.AON_HOME;
 		this.appendChild(home);
-		//let loader = new AonLoader();
-		//loader.id = this.AON_MODULE_LOADER;
-		//this.appendChild(loader);
+		
+		let loader = new AonLoader();
+		loader.id = this.AON_MODULE_LOADER;
+		this.appendChild(loader);
 	}
 
 	startLoading() {
@@ -63,8 +64,7 @@ export class AonModule extends AonElement {
 			LS.removeDomain();
 			this.buildHome();
 		} else {
-			this.buildHome();
-			//this.buildLogin();
+			this.buildLogin();
 		}
 	}
 

@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, ClassicApps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, AccountingPortalMenu } from '../services/app.js';
+import { Apps, MenuApps, AuxApps, MENU_APPS, AON_APPS } from '../services/app.js';
 import { getDomainUserRoles } from 'aonsolutions/services/service.js';
 import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -159,7 +159,7 @@ export class AonNewMenu extends AonElement {
 				this.rootPanel(new AonMarketing());
 				break;
 			default/*Apps.HOME*/ :
-				this.rootPanel(new AonNewDesktop(Apps, ClassicApps));
+				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
 		}
 	}
@@ -191,9 +191,9 @@ export class AonNewMenu extends AonElement {
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
 		
-		for (let item in MenuApps) {
-			if (this.isApp(MenuApps[item])) {
-				let app = MenuApps[item];
+		for (let item in MENU_APPS) {
+			if (this.isApp(MENU_APPS[item])) {
+				let app = MENU_APPS[item];
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
 				li.style.backgroundColor = 'transparent';
@@ -220,9 +220,9 @@ export class AonNewMenu extends AonElement {
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
 		
-		for (let item in MenuApps) {
-			if (this.isApp(MenuApps[item])) {
-				let app = MenuApps[item];
+		for (let item in MENU_APPS) {
+			if (this.isApp(MENU_APPS[item])) {
+				let app = MENU_APPS[item];
 				let appDiv = this.createElement(TAG.DIV);
 				appDiv.id = `aonMenuBar-${app.app}`;
 				appDiv.style.width = '68px';
