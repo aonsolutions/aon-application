@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
@@ -25,6 +26,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -33,9 +35,11 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -315,9 +319,19 @@ public class CustomerModule extends MainEntryPoint {
 		uncheckAll.addClickHandler(event -> checkAll(false));
 		
 		toolbar.add(uncheckAll);
+		
+		AonToolbarButton printPDF = new AonToolbarButton(AON.MSG.printPDF(), AON.CSS.aonIconPdf());
+		printPDF.addClickHandler(e -> printPDFReport(opt));
+		toolbar.add(printPDF);
+		
+		
+		AonToolbarButton printXLS = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
+		printXLS.addClickHandler(e -> printXLSReport(opt));
+		toolbar.add(printXLS);
 
 		return toolbar;
 	}
+
 
 	protected void checkAll(boolean check) {
 		for (CustomerRow customerRow : customers.values()) {
@@ -622,5 +636,62 @@ public class CustomerModule extends MainEntryPoint {
 		dialog.show();
 		
 		Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));				
+	}
+	
+	private void printPDFReport(RegistryModuleOptions opt) {
+		FormPanel diskForm = new FormPanel("_blank");
+		String action = URL.encode(GWT.getModuleBaseURL() + "roms/CustomerPDFServlet");
+		diskForm.setAction(action);
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		
+		Hidden registryParamsHidden = new Hidden(IRequestParamsNames.REGISTRY_PARAMS);
+		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+		Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
+		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
+		domainIdHidden.setValue(AonNumberUtils.toString(opt.getDomain()));
+		userHidden.setValue(opt.getUser());
+		domainNameHidden.setValue(opt.getDomainName());
+		RegistryParams params = searchPanel.getParams(opt);
+		registryParamsHidden.setValue(JsonParams.convert(params));
+
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		
+		formFlowPanel.add(registryParamsHidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
+		
+		toolbar.add(diskForm);
+		diskForm.submit();
+	}
+	
+	
+	private void printXLSReport(RegistryModuleOptions opt) {
+		FormPanel diskForm = new FormPanel("_blank");
+		String action = URL.encode(GWT.getModuleBaseURL() + "roms/CustomerXLSServlet");
+		diskForm.setAction(action);
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		
+		Hidden registryParamsHidden = new Hidden(IRequestParamsNames.REGISTRY_PARAMS);
+		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+		Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
+		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
+		domainIdHidden.setValue(AonNumberUtils.toString(opt.getDomain()));
+		userHidden.setValue(opt.getUser());
+		domainNameHidden.setValue(opt.getDomainName());
+		RegistryParams params = searchPanel.getParams(opt);
+		registryParamsHidden.setValue(JsonParams.convert(params));
+
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		
+		formFlowPanel.add(registryParamsHidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
+		
+		toolbar.add(diskForm);
+		diskForm.submit();
 	}
 }		

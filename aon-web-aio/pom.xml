@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -63,6 +62,11 @@
                 <include>**/*.jpg</include>
                 <include>**/*.png</include>
               </includes>
+              <excludes>
+                <exclude>dist/app.min.js</exclude>
+                <exclude>dist/app.min.css</exclude>
+              </excludes>
+
             </resource>
           </webResources>
  
@@ -71,13 +75,59 @@
           <execution>
             <id>execution1</id>
             <phase>package</phase>
-            <configuration />
+						<configuration />
             <!--goals>
               <goal>manifest</goal>
             </goals-->
           </execution>
         </executions>
       </plugin>
+		<plugin>
+			<groupId>com.github.eirslett</groupId>
+			<artifactId>frontend-maven-plugin</artifactId>
+			<version>1.8.0</version>
+			<configuration>
+				<workingDirectory>src/main/webapp</workingDirectory>
+				<installDirectory>temp</installDirectory>
+			</configuration>
+			<executions>
+				<!-- It will install nodejs and npm -->
+				<execution>
+					<id>install node and npm</id>
+					<goals>
+						<goal>install-node-and-npm</goal>
+					</goals>
+					<configuration>
+						<nodeVersion>v20.7.0</nodeVersion>
+					</configuration>
+				</execution>
+		
+				<!-- It will execute command "npm install" inside "webapp"
+				directory -->
+				<execution>
+					<id>npm install</id>
+					<goals>
+						<goal>npm</goal>
+					</goals>
+					<configuration>
+						<arguments>install</arguments>
+					</configuration>
+				</execution>
+		
+				<!-- It will execute command "npm build" inside "webapp"
+				directory to clean and create "/dist" directory-->
+				<execution>
+					<id>npm build</id>
+					<goals>
+						<goal>npm</goal>
+					</goals>
+					<configuration>
+						<arguments>run build</arguments>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+      
     </plugins>
   </build>
   <dependencies>

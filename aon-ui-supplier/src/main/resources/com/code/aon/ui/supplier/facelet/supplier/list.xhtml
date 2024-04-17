@@ -22,6 +22,13 @@
 						<f:param name="reportKey" value="supplierReport" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="supplierReport-2excel-report" value="&#160;"
+						target="_new" rendered="#{!supplier.nevv}"
+						action="#{supplier.onNewReportXLS}"
+						disabled="#{supplier.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="supplierReport-report" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!supplier.nevv}"
 						action="#{report.onExecute}"
@@ -30,6 +37,13 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="supplierReport" />
 						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="supplierReport2-report" value="#{bundle.aon_listing}"
+						target="_new" rendered="#{!supplier.nevv}"
+						action="#{supplier.onNewReport}"
+						disabled="#{supplier.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="supplierDetailExcelReport-excel-report" 
 						value="#{bundle.aon_detailed_listing}" 

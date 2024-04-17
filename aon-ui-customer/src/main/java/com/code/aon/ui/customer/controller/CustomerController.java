@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.itextpdf.text.DocumentException;
@@ -60,15 +61,28 @@ import com.itextpdf.text.DocumentException;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.accounting.report.CustomerReportPDF;
 
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.hibernateToOccam.registry.OccamCustomer;
+import net.aonsolutions.aon.registry.report.CustomerReportPDF;
+import net.aonsolutions.aon.registry.report.CustomerReportXLS;
+import net.aonsolutions.aon.report.pdf.AonReportException;
+
+
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
 
-	private boolean showAlumnData;
-	private boolean showAlumnUpdateConfirmWindow;
-	private Integer courseAlumnCount;
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(CustomerController.class);
+	
+    private boolean showAlumnData;
+    private boolean showAlumnUpdateConfirmWindow;
+    private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
 
@@ -314,8 +328,8 @@ public class CustomerController extends CustomerListController implements ICusto
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
 		List<ITransferObject> list = targetBean.getList(criteria);
-		if (list.size() > 0)
-			return ((Target) list.get(0)).getId();
+		if(!list.isEmpty())
+			return ((Target)list.get(0)).getId();
 		return -1;
 	}
 
@@ -381,4 +395,64 @@ public class CustomerController extends CustomerListController implements ICusto
 		return RegistryStatus.valueOf(cs.toString());
 	}
 
+	
+	public String onNewReport() throws ManagerBeanException {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			OutputStream out = response.getOutputStream();
+			Occam occam = new Occam()
+					.setDomainName(  AonUtil.getDomainName() )
+					.setDomain(  DomainManager.getCurrentDomain() )
+					.setUser(  AonUtil.getRemoteUser() )
+					;
+			new CustomerReportPDF( occam )
+				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+					.map(to -> (Customer) to)
+					.map(OccamCustomer::from ));
+			response.flushBuffer();
+			response.setHeader("Content-disposition","attachment; filename=\"CLIENTES."+MimeType.PDF.getExtension()+"\";");
+			context.responseComplete();
+			return null;
+		} catch (IOException | AonReportException e) {
+			throw new ManagerBeanException( e ); 
+		}
+	}
+	
+	public String onNewReportXLS() throws ManagerBeanException {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			
+			CustomerReportXLS report = new CustomerReportXLS();
+			report.printReport("Diario");
+
+			Stream<CustomerFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+				.map(to -> (Customer) to)
+				.map(OccamCustomer::from);
+			stream.forEach(report);
+			response.setContentType(MimeType.MS_EXCEL.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"CLIENTES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			report.finalize(response.getOutputStream());
+			response.flushBuffer();
+
+			stream.close();
+			context.responseComplete();
+			return null;
+
+		} catch (IOException e) {
+			throw new ManagerBeanException( e ); 
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanException( e ); 
+		}
+
+	}
+
+
+
+
+
+
+
+	
 }

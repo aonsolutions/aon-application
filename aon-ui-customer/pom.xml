@@ -117,6 +117,31 @@
       <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.1.3</version>
+			<scope>compile</scope>
+		</dependency>
+		
+	    <dependency>
+	      <groupId>org.apache.poi</groupId>
+	      <artifactId>poi-ooxml</artifactId>
+	      <version>3.17</version>
+	      <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+			<groupId>net.aonsolutions</groupId>	
+			<artifactId>aon.accounting.report</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+	    	<groupId>net.aonsolutions.aon</groupId>
+	    	<artifactId>hibernateToOccam</artifactId>
+	    	<version>${project.version}</version>
+	    	<scope>compile</scope>
+    	</dependency>
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>

@@ -1,0 +1,64 @@
+package net.aonsolutions.aon.registry.report;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.apache.poi.ss.util.CellRangeAddress;
+
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import net.aonsolutions.aon.report.poi.AbsExcelReport;
+
+public class CustomerReportXLS extends AbsExcelReport implements Consumer<CustomerFull>{
+		
+	@Override
+	protected void headerRow() {
+		row = sheet.createRow(rowCount++);
+		RegistryReportHeader.stream()
+			.forEach(h -> createHeaderCell(h));
+		sheet.setRepeatingRows(new CellRangeAddress(0, 1, 0, RegistryReportHeader.values().length));
+	}
+
+
+	
+	@Override
+	public void accept(CustomerFull customer) {
+		
+		row = sheet.createRow(rowCount++);
+		
+		addCell(customer.getId());
+		addCell(customer.getRegistry().getDocument());
+		addCell(customer.getRegistry().getName());
+		addCell(customer.getRegistry().getAlias());
+		addCell(
+				AonCollectionUtils.stream(customer.getMedias())
+				.filter(Objects::nonNull)	
+				.filter(rm -> rm.getValue() != null)
+				.filter(rm -> rm.getMedia() == MediaType.FIXED_PHONE)
+				.map(rm -> rm.getValue())
+				.findFirst()
+				.orElse(""));
+		addCell(
+			Optional.ofNullable(customer.getRegistry().getStatus())
+				.map(rs -> rs.getDescription())
+				.orElse( "" ));
+		try {
+			if (rowCount % 100 == 0) sheet.flushRows();
+		} catch (IOException e) {
+			throw new AonCoreException( e );
+		}
+	}
+
+
+
+	@Override
+	protected String getTitle() {
+		return "Listado de Clientes";
+	}
+
+}

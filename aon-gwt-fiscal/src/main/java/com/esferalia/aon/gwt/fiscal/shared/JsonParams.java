@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -21,25 +23,43 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
 public class JsonParams extends JSONObject {
+	private static final Logger LOGGER = Logger.getLogger(JsonParams.class.getName());
+	
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	 
 	public static String convert(RegistryParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
+		LOGGER.info(IRequestParamsNames.DOMAIN_NAME);
 		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
+		LOGGER.info(IRequestParamsNames.DOMAIN);
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		LOGGER.info(IRequestParamsNames.USER);
 		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
+		LOGGER.info(IRequestParamsNames.SECURITY_LEVEL );
 		json.put(IRequestParamsNames.SECURITY_LEVEL ,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		LOGGER.info(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE );
 		json.put(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE,new JSONNumber( params.hasConfidentialityRole()?1:0));
+		LOGGER.info(IRequestParamsNames.ID);
 		json.put(IRequestParamsNames.ID 			,params.getId() 				== null? JSON_NULL : new JSONNumber( params.getId()));
+		LOGGER.info(IRequestParamsNames.DOCUMENT_TYPE);
 		json.put(IRequestParamsNames.DOCUMENT_TYPE	,params.getDocumentType()	== null? JSON_NULL : new JSONNumber( params.getDocumentType().ordinal()));
+		LOGGER.info(IRequestParamsNames.DOCUMENT_COUNTRY);
 		json.put(IRequestParamsNames.DOCUMENT_COUNTRY,params.getDocumentCountry()	== null? JSON_NULL : new JSONString( params.getDocumentCountry().getIso2()));
+		LOGGER.info(IRequestParamsNames.DOCUMENT);
 		json.put(IRequestParamsNames.DOCUMENT		,params.getDocument() 			== null? JSON_NULL : new JSONString( params.getDocument()));
+		LOGGER.info(IRequestParamsNames.NAME);
 		json.put(IRequestParamsNames.NAME		,params.getName() 			== null? JSON_NULL : new JSONString( params.getName()));
+		LOGGER.info(IRequestParamsNames.ALIAS);
 		json.put(IRequestParamsNames.ALIAS		,params.getAlias() 			== null? JSON_NULL : new JSONString( params.getAlias()));
+		LOGGER.info(IRequestParamsNames.ACTIVE);
 		json.put(IRequestParamsNames.ACTIVE	,new JSONNumber( params.isActive()?1:0));
+		LOGGER.info(IRequestParamsNames.INACTIVE);
 		json.put(IRequestParamsNames.INACTIVE	,new JSONNumber( params.isInactive()?1:0));
+		LOGGER.info(IRequestParamsNames.BLOCKED);
 		json.put(IRequestParamsNames.BLOCKED	,new JSONNumber( params.isBlocked()?1:0));
+		LOGGER.info(IRequestParamsNames.ORDER_BY);
 		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
 		return json.toString();
 	}
