@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountAutoComplete {
 
@@ -24,10 +25,20 @@ public class AccountAutoComplete {
 		account.setEntryEnabled(account.getLevel()==5);
 	};
 
+	/**
+	 * Se rellena si permite apuntes o no.
+	 */
+	public static BiConsumer<Account,AONContext> ENSURE_COST_CENTER = (account,ctx) -> {
+    	if (AonStringUtils.isBlank( account.getCostCenter())) {
+    		account.setCostCenter(null);
+    	}
+	};
+	
 	public static void complete(AONContext ctx,Account account) throws AonCoreException {
 		
 		COMPLETE_LEVEL
 			.andThen(COMPLETE_ENTRY_ENABLED)
+			.andThen(ENSURE_COST_CENTER)
 			.accept(account, ctx );
 	}
 

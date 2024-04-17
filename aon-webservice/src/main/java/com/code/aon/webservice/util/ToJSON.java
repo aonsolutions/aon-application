@@ -236,7 +236,7 @@ public class ToJSON {
 			json.put(MSG.DESCRIPTION, invoiceDetail.getDescription());
 			json.put(MSG.QUANTITY, invoiceDetail.getQuantity());
 			json.put(MSG.PRICE, invoiceDetail.getPrice());
-			json.put(MSG.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression());
+			json.put(MSG.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression().getDiscountExpr());
 		}
 		return json;
 	}
@@ -265,10 +265,10 @@ public class ToJSON {
 		json.put(MSG.NAME, id.getItem().getProduct().getName());
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
-		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
+		json.put("discount", id.getDiscount());
 		json.put("date", AonDateUtils.simpleFormat(id.getInvoice().getIssueDate()));
 		json.put("code", id.getItem().getProduct().getCode());
-		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
+		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((id.getDiscount()/100) + 1)));
 		json.put("reference_code", id.getInvoice().getReferenceCode());
 		return json;
 	}

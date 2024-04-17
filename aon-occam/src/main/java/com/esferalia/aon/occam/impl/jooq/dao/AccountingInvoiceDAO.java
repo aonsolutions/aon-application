@@ -24,8 +24,10 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
@@ -645,6 +647,24 @@ public class AccountingInvoiceDAO {
 			.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	
+	public static List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type) {
+		AggregateFunction<Integer> count = DSL.count(ACCOUNT.ID);
+		return ctx.getDslContext().select(ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION, count)
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+			.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
+			.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(INVOICE.REGISTRY.eq(registry))
+				.and(INVOICE.TYPE.eq(type.value()))
+			.groupBy(ACCOUNT.ID)
+			.orderBy(count.desc())
+			.fetch().stream().map(r -> new Account()
+				.setId(r.getValue(ACCOUNT.ID))
+				.setCode(r.getValue(ACCOUNT.CODE))
+				.setDescription(r.getValue(ACCOUNT.DESCRIPTION)))
+			.toList();	
+	}
 
 	public static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
 		private AONContext ctx;
@@ -1239,45 +1259,68 @@ public class AccountingInvoiceDAO {
 				.setTaxableBase(vat.getBase())
 				.setAccount(vat.getExpAccountId())
 				.setPrepayment(vat.isPrepayment());
-			if (!vat.isPrepayment()) {
-				detail.addInvoiceTax(new InvoiceTax()
-					.setTaxType(TaxType.VAT)
-					.setBase(vat.getBase())
-					.setPercentage(vat.getPercentage())
-					.setQuota(vat.getQuota())
-					.setSurcharge(vat.getSurcharge())
-					.setSurchargeQuota(vat.getSurchargeQuota())
-					.setVatDeductionType(vat.getVatDeductionType())
-					.setDeductiblePercent(vat.getDeductiblePercent())
-					.setDeductibleQuota(vat.getDeductibleQuota())
-					// Se deben grabar las dos cuentas!!
-					// Issue: #2414
-					// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
-					// https://github.com/aonsolutions/aon-application/issues/2414
-					.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
-					// --------------------------------------
+			if (!vat.isPrepayment()) {				
+				InvoiceTax invoiceTax = detail.getInvoiceTaxes().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).findFirst().orElse(null);
+				
+				if(invoiceTax != null && invoiceTax.getAccount() == null) {
+					detail.setInvoiceTaxes( 
+						detail.getInvoiceTaxes().stream().map(r -> {
+							if(TaxType.VAT.equals(r.getTaxType()))
+								r.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId());
+							return r;
+						}).collect(Collectors.toCollection(LinkedList::new))
 					);
-				if (vat.isWithholding() && accInvoice.isWithholding()) {
-					double base = 0;
-					if (accInvoice.isWithholdingFarmer()) {
-						base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
-					} else {
-						base = vat.getBase();
-					}
-					double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
-					if (accInvoice.getWithholdingData().isQuotaEdited()) {
-						withholdingTotalQuota = AonMathUtils.round(withholdingTotalQuota -  quota);
-						if (line == accInvoice.getVats().size() && AonMathUtils.isNotZero(withholdingTotalQuota)) {
-							quota = AonMathUtils.round(quota + withholdingTotalQuota);
-						}
-					}
+				} else if(invoiceTax == null) { 
 					detail.addInvoiceTax(new InvoiceTax()
-						.setTaxType(TaxType.RETENTION)
-						.setBase(base)
-						.setPercentage(accInvoice.getWithholdingData().getPercentage())
-						.setQuota(quota)
-						.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
-						.setAccount(accInvoice.getWithholdingData().getAccountId()));
+						.setTaxType(TaxType.VAT)
+						.setBase(vat.getBase())
+						.setPercentage(vat.getPercentage())
+						.setQuota(vat.getQuota())
+						.setSurcharge(vat.getSurcharge())
+						.setSurchargeQuota(vat.getSurchargeQuota())
+						.setVatDeductionType(vat.getVatDeductionType())
+						.setDeductiblePercent(vat.getDeductiblePercent())
+						.setDeductibleQuota(vat.getDeductibleQuota())
+						// Se deben grabar las dos cuentas!!
+						// Issue: #2414
+						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
+						// https://github.com/aonsolutions/aon-application/issues/2414
+						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId())
+					);
+				}
+				
+				if (vat.isWithholding() && accInvoice.isWithholding()) {
+					InvoiceTax invoiceRetention = detail.getInvoiceTaxes().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
+					if(invoiceRetention != null && invoiceRetention.getAccount() == null) {
+						detail.setInvoiceTaxes( 
+							detail.getInvoiceTaxes().stream().map(r -> {
+								if(TaxType.RETENTION.equals(r.getTaxType()))
+									r.setAccount(accInvoice.getWithholdingData().getAccountId());
+								return r;
+							}).collect(Collectors.toCollection(LinkedList::new))
+						);
+					} else if(invoiceRetention == null) { 
+						double base = 0;
+						if (accInvoice.isWithholdingFarmer()) {
+							base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
+						} else {
+							base = vat.getBase();
+						}
+						double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
+						if (accInvoice.getWithholdingData().isQuotaEdited()) {
+							withholdingTotalQuota = AonMathUtils.round(withholdingTotalQuota -  quota);
+							if (line == accInvoice.getVats().size() && AonMathUtils.isNotZero(withholdingTotalQuota)) {
+								quota = AonMathUtils.round(quota + withholdingTotalQuota);
+							}
+						}
+						detail.addInvoiceTax(new InvoiceTax()
+							.setTaxType(TaxType.RETENTION)
+							.setBase(base)
+							.setPercentage(accInvoice.getWithholdingData().getPercentage())
+							.setQuota(quota)
+							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
+							.setAccount(accInvoice.getWithholdingData().getAccountId()));
+					}
 				}
 			}
 			details.add( detail );

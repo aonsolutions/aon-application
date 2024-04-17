@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -635,21 +636,48 @@ public class HtmlUnitToolkit {
 	    
 	}
 
+	public static boolean hasXslStylesheet (WebResponse response) throws MalformedURLException {
+	    return Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(response.getContentAsString()).find();
+	}
+
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
 			String certificateType, Map<String,String> variables) {
+		return transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables, (request, response ) -> response );
+	}
+
+	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
+			String certificateType, Map<String,String> variables, BiFunction<WebRequest, WebResponse, WebResponse> hacker ) {
 		return 
 		new WebConnectionWrapper(webClient) {
 			Map<URI,String> cache = new HashMap<>();
 			@Override
 			public WebResponse getResponse(WebRequest request) throws IOException {
 				WebResponse response = super.getResponse(request);
-				if ("text/xml".equals(response.getContentType()) ){
+				
+				response = hacker.apply(request, response);
+				
+				if ("text/xml".equals(response.getContentType()) && hasXslStylesheet(response) ){
 					try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
+						xmlClient.getOptions().setCssEnabled(false);
+						xmlClient.getOptions().setDownloadImages(false);
+						xmlClient.getOptions().setJavaScriptEnabled(false);
+						
 						response = transformXmlPage(xmlClient, response, variables, cache);
 					} catch (Exception e) {
 					}
-				}
+				} 
+				
 				return response;
+			}
+		};
+	}
+	
+	private static void trace(WebClient webClient) {
+		new WebConnectionWrapper(webClient) {
+			@Override
+			public WebResponse getResponse(WebRequest request) throws IOException {
+				System.out.println(request.getUrl());
+				return super.getResponse(request);
 			}
 		};
 	}

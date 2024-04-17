@@ -10,13 +10,6 @@
 		<ui:include src="/facelet/homepage/menu.xhtml" />
 	</ui:define>
 	
-	
-	<ui:define name="sidebar">
-		<ui:include src="/facelet/new/sidebar.xhtml" >
-			<ui:param name="reRender" value="aonDesktopContent"/>
-		</ui:include>
-	</ui:define>
-
 	<ui:define name="content">
 		<ui:include src="#{desktop.template}" />
 	</ui:define>

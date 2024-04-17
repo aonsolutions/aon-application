@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
@@ -21,8 +20,10 @@ import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -107,6 +108,8 @@ public interface IFinance {
 	
 	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
 	
+	InvoiceCounter getInvoiceCounter(AONContext ctx);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************
@@ -129,6 +132,8 @@ public interface IFinance {
 	public Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
+	
+	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery);
 
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
@@ -143,7 +148,8 @@ public interface IFinance {
 	public Fee save(AONContext ctx, Fee fee);
 	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList);
 	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
-	public void createCustomerFeeList(AONContext ctx, Fee fee);
+	public Fee createCustomerFeeList(AONContext ctx, Fee fee);
+	public void updateRitemCustomerFee(CloseableAONContext ctx, Integer customerFee, Integer ritem);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	public void deleteFee(AONContext ctx,CustomerFeeParams customerFeeParams);
@@ -188,6 +194,7 @@ public interface IFinance {
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
 	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
 	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);
+	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx);
 	public Rawdoc getRawdocFull(AONContext ctx, int id);
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
 	void rawdocDelete(AONContext ctx, RawdocFilter filter);
@@ -260,6 +267,7 @@ public interface IFinance {
 	LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getCustomerChildBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 	void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings);
 	

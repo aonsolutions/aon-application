@@ -34,7 +34,7 @@ public class Mod123ExcelAction extends ModelIRPFExcelAction<Mod123,Mod123Key> {
 		double amount = model.ensureDetail(key).getAmount();
 		style.setAlignment(HorizontalAlignment.LEFT);
 		cell.setCellType(CellType.STRING);
-		if (key == Mod123Key.AR_907) {
+		if (key == Mod123Key.AR_907 || key == Mod123Key.AR_930) {
 			cell.setCellValue(amount == 1?"SI":"NO");
 		} else if (key == Mod123Key.AR_908) {
 			style.setFont(smallFont);
@@ -46,4 +46,5 @@ public class Mod123ExcelAction extends ModelIRPFExcelAction<Mod123,Mod123Key> {
 			row = sheet.createRow(rowCount++);
 		}
 	}
+	
 }

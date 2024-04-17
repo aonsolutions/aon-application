@@ -1,6 +1,6 @@
 import { CONSTANT } from "../../environments/environments.js";
 import { RegistryType } from "../../models/enums.js";
-import { round } from "../../services/utils.js";
+import { round, now } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType, WithholdingType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
 
@@ -66,7 +66,7 @@ export class Invoice {
       this.reference = invoice.reference && invoice.reference !== ''
         ? invoice.reference
         : (invoice.series ? invoice.series + '/' + invoice.number : invoice.number);
-      this.date = invoice.date || new Date();
+      this.date = invoice.date || now();
       this.total = invoice.total || 0;
       this.type = invoice.type || 'emitida',
       this.category = invoice.category || '',
@@ -133,7 +133,7 @@ export class Invoice {
       this.serie = new Date().getFullYear();
       this.number = '';
       this.reference = '';
-      this.date = new Date(Date.now());
+      this.date = now();
       this.total = 0;
       this.sender = {
         document: '',

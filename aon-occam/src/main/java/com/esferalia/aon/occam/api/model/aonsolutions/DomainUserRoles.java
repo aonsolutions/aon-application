@@ -518,6 +518,21 @@ public class DomainUserRoles implements Serializable {
 			&& (isAdmin() || hasRole(AonRole.INVOFOX));
 	}
 	
+	// SERES
+	
+	public boolean hasSeres() {
+		return hasApp(AonApp.SERES);
+	}
+	
+	public boolean hasParentSeres() {
+		return hasParentApp(AonApp.SERES);
+	}
+	
+	public boolean isSeres() {
+		return (hasInvofox() || ((isParentUser() || isEnterpriseChild()) && hasParentSeres()))
+			&& (isAdmin() || hasRole(AonRole.SERES));
+	}
+	
 	// BANK
 	
 	public boolean hasBank() {

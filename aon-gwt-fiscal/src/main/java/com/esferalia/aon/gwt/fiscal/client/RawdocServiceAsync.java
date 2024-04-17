@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -21,6 +22,6 @@ public interface RawdocServiceAsync {
 	void toInbox(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback);
 
 	void getAccountingInvoice(String domainName, int domain, String user, String invoice,AsyncCallback<AccountingInvoice> callback);
-	
+	void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice,AsyncCallback<Boolean> callback);
 
 }

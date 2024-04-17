@@ -172,7 +172,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
 export const FOOTER = 'Peu';
-
+export const FROM = 'Des'
 // ----- G
 
 export const GALICIAN = 'Gallec';
@@ -261,7 +261,10 @@ export const MY_USER = 'Mi Usuari';
 export const NAME = 'Nom';
 export const NEW = 'Nou';
 export const NEW_COMPANY = 'Nova Empresa';
+export const NEW_DOCUMENT = 'Nou Document';
+export const NEW_EMPLOYEE = 'Nou Empleat';
 export const NEW_EXPENSE = 'Nova Despesa';
+export const NEW_INVOICE = 'Nova Factura';
 export const NEW_PRODUCT = 'Nou Producte';
 export const NEW_REQUEST = 'Nova Sol·licitud';
 export const NEW_WAREHOUSE = 'Nou Magatzem';
@@ -409,6 +412,7 @@ export const TICKETS = 'Tiquets';
 export const TIMECONTROL = `Control d'Horari`;
 export const TITLE = 'Títol';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'Fins';
 export const TO_TRASH = 'Enviar a la Paperera';
 export const TODAY = 'Avui';
 export const TOMORROW = 'Matí';

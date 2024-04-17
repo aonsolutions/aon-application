@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -78,6 +79,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
@@ -1029,7 +1031,7 @@ public class InvoiceDAO {
 		.set(INVOICE_DETAIL.QUANTITY, invoiceDetail.getQuantity())
 		.set(INVOICE_DETAIL.DESCRIPTION, invoiceDetail.getDescription())
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression())
+		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression().getDiscountExpr())
 		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
 		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset())
 		.set(INVOICE_DETAIL.ITEM, invoiceDetail.getItem() != null ? invoiceDetail.getItem().getId() : null)
@@ -1780,6 +1782,26 @@ public class InvoiceDAO {
 			}
 		}
 		return condition;
+	}
+	
+	
+	public static InvoiceCounter getCounter(AONContext ctx) {
+		InvoiceCounter counter = new InvoiceCounter();
+		
+		AggregateFunction<Integer> COUNT = DSL.count(INVOICE.ID);
+		
+		ctx.getDslContext().select(INVOICE.TYPE, COUNT)
+		.from(INVOICE)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+		.and(INVOICE.STATUS.eq(InvoiceStatus.PENDING.value()))
+		.groupBy(INVOICE.TYPE)
+		.fetch().stream().forEach(r -> {
+			InvoiceType type = InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE));
+			Integer count = r.getValue(COUNT);
+			counter.getMap().put(type, count);
+		});
+		
+		return counter;
 	}
 	
 	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset , int numberOfRows) {

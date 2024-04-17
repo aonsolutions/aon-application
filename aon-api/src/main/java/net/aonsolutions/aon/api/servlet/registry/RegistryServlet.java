@@ -8,10 +8,13 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainLinkedJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
@@ -21,6 +24,7 @@ import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
 import com.esferalia.aon.occam.api.json.RegistryProfileJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
@@ -35,6 +39,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -69,6 +74,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 				break;
 			case "/paymethod":
 				response(req, resp, getRegistryPaymethod(api));
+				break;
+			case "/suggestedAccount":
+				response(req, resp, getRegistrySuggestedAccount(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -306,6 +314,14 @@ public class RegistryServlet extends AonApiHttpServlet {
 	    RegistryPayMethod rpm = AON.getRegistryPayMethod(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(registry), options);
 	    return RegistryPaymethodJSON.toJSON(rpm);
 
+	}
+	
+	private JSONObject getRegistrySuggestedAccount(AonApiData api) {
+		Integer registry = JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY);
+		InvoiceType type = InvoiceType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+		Account account = ACCOUNTING.getSuggestedAccounts(api.getDomain(), api.getUser(), registry, type)
+				.stream().findFirst().orElse(new Account());		
+	    return AccountJSON.toJSON(account);
 	}
 	
 }

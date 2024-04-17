@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
@@ -60,6 +61,7 @@ public interface IAccounting {
 	public String getAccountNextCode(AONContext ctx, String prefix);
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
 	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
+	public List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type);
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]

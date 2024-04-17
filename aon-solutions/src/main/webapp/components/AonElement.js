@@ -173,6 +173,9 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('console.aonsolutions.org')
       || href.includes('console-pro.aonsolutions.net')
+      || href.includes('console-zar.aonsolutions.net')
+      || href.includes('console-udapa.aonsolutions.net')
+      || href.includes('console-etl.aonsolutions.net')
       || href.includes('console-ayudat.aonsolutions.net')
       || href.includes('console-grupoayudat.aonsolutions.net');
 	}

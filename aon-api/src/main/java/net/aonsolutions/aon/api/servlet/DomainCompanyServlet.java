@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
@@ -409,6 +411,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				for(Booking booking : customerBookings) {
 					
 					if (booking.getDomain() != null && booking.getDomain().getId() != null) {
+						
 						for (AonApp app : booking.getApps()) {
 							String barCode = getBarCode(booking.getDomain().getDomainType(), app);
 							Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
@@ -448,10 +451,10 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						updateUserBookingRItem(api, booking, customerId, logs);
 						
 						// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
-						updateConectaBookingRItem(api, booking, customerId, logs);
+						updateChildsConectaBookingRItem(api, booking, customerId, logs);
 						
 						// Create RItem for @Conectas users - 01.00.USER - Quantity = childBillingUsers
-						updateConectaUserookingRItem(api, booking, customerId, logs);
+						updateChildsConectaUserBookingRItem(api, booking, customerId, logs);
 						
 					} else  {
 //						throw new AonApiException("Contratación no encontrada");
@@ -508,34 +511,49 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		return sb.toString();
 	}
 
-	private static void updateConectaBookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
-		List<AonApp> checkAonApps = new ArrayList<>();
-		checkAonApps.add(AonApp.BASIC_MANAGEMENT);
-		checkAonApps.add(AonApp.STANDAR_MANAGEMENT);
-		checkAonApps.add(AonApp.PROFESSIONAL_MANAGEMENT);
+	private static void updateChildsConectaBookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
+//		List<AonApp> checkAonApps = new ArrayList<>();
+//		checkAonApps.add(AonApp.BASIC_MANAGEMENT);
+//		checkAonApps.add(AonApp.STANDAR_MANAGEMENT);
+//		checkAonApps.add(AonApp.PROFESSIONAL_MANAGEMENT);
+//		
+//		if(DomainType.CONSULTANCY.equals(booking.getDomain().getDomainType()) && null != booking.getResume()) {
+//			
+//			booking.getResume().getDomainTypes().entrySet().forEach(entry -> {
+//				
+//				DomainType domainChildType = entry.getKey();
+//				DomainTypeInfo domainChildInfo = entry.getValue();
+//				
+//				if(null != domainChildInfo) {
+//					
+//					checkAonApps.forEach(checkAonApp -> {
+//						
+//						Long checkAonAppCount = domainChildInfo.getChildApps().get(checkAonApp);
+//						
+//						if(null != checkAonAppCount && checkAonAppCount > 0) {
+//							String barCode = getConnectarBarCode(booking.getDomain().getDomainType(), domainChildType, checkAonApp);
+//							updateRItem(api, booking, aonCustomer, barCode, checkAonAppCount.toString(), checkAonApp.name(), logs);
+//						}
+//						
+//					});
+//					
+//				}
+//			});
+//		}
 		
 		if(DomainType.CONSULTANCY.equals(booking.getDomain().getDomainType()) && null != booking.getResume()) {
 			
-			booking.getResume().getDomainTypes().entrySet().forEach(entry -> {
-				
-				DomainType domainChildType = entry.getKey();
-				DomainTypeInfo domainChildInfo = entry.getValue();
-				
-				if(null != domainChildInfo) {
+			for(Domain childDomain : booking.getResume().getChilds()) {
+				for(DomainApp childApp : childDomain.getApps()) {
+					String barCode = getConnectarBarCode(booking.getDomain().getDomainType(), childDomain.getDomainType(), childApp.getApp());
+					String ediSalesCode = barCode + "@" + childDomain.getId();
 					
-					checkAonApps.forEach(checkAonApp -> {
-						
-						Long checkAonAppCount = domainChildInfo.getChildApps().get(checkAonApp);
-						
-						if(null != checkAonAppCount && checkAonAppCount > 0) {
-							String barCode = getConnectarBarCode(booking.getDomain().getDomainType(), domainChildType, checkAonApp);
-							updateRItem(api, booking, aonCustomer, barCode, checkAonAppCount.toString(), checkAonApp.name(), logs);
-						}
-						
-					});
+					System.out.println("Domain: " + childDomain.getDescription() + ", App: " + childApp.getApp().name() + ", barCode: " + barCode + ", ediSalesCode: " + ediSalesCode);
 					
+					updateChildRItem(api, booking, aonCustomer, barCode, "1", childApp.getApp().name(), ediSalesCode, childDomain.getId(), logs);
 				}
-			});
+			}
+
 		}
 		
 	}
@@ -555,10 +573,39 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		return sb.toString();
 	}
 	
-	private static void updateConectaUserookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
-		String userBarCode = "01.00.USR";
-		String childBillingUsers = null != booking.getResume().getChildBillingUsers() ? booking.getResume().getChildBillingUsers().toString() : "0";
-		updateRItem(api, booking, aonCustomer, userBarCode, childBillingUsers, "01.00.USR", logs);
+	private static void updateChildsConectaUserBookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
+//		String childBillingUsers = null != booking.getResume().getChildBillingUsers() ? booking.getResume().getChildBillingUsers().toString() : "0";
+//		updateRItem(api, booking, aonCustomer, userBarCode, childBillingUsers, "01.00.USR", ediSalesCode, logs);
+		
+		List<String> parentApps = booking.getApps().stream().filter(aonApp -> AonStringUtils.isNotBlank(aonApp.getDescription())).map(aonApp -> aonApp.getDescription()).collect(Collectors.toList());
+		
+		// Childs
+		booking.getResume().getChilds().stream()/*.filter(childDomain -> childDomain.getMaxDefinedUsers() > 0)*/.forEach(childDomain -> {
+			
+			List<String> childApps = childDomain.getApps().stream().filter(domainApp -> null != domainApp.getApp() && AonStringUtils.isNotBlank(domainApp.getApp().getDescription())).map(domainApp -> domainApp.getApp().getDescription()).collect(Collectors.toList());
+			List<String> childAppsDiff = childApps.stream().filter(app -> !parentApps.contains(app)).collect(Collectors.toList());
+			
+			// Check if has apps, if it has subtract 1 user, if not, stay user quantity			
+			Integer portalUsersCount = null == childDomain.getUsers() ? 0 : (int) childDomain.getUsers().stream().filter(user -> user.isActive() && user.isPortal()).count();			
+			List<User> activeUsers = childDomain.getUsers().stream().filter(user -> user.isActive()).collect(Collectors.toList());
+			Integer activeUsersDiff = null == activeUsers ? 0 : (activeUsers.size() - portalUsersCount);
+			
+			System.out.println(childDomain.getDescription() + " -- users : " + activeUsersDiff);
+			
+			if(!childAppsDiff.isEmpty()) activeUsersDiff--;
+			
+			String userBarCode = !childAppsDiff.isEmpty() ? "01.00.USR" : "01.00.USR-A";
+			String ediSalesCode = userBarCode + "@" + childDomain.getId();
+			
+			if(activeUsersDiff > 0) { 
+				System.out.println("Domain: " + childDomain.getDescription() + ", childUsers: " + activeUsersDiff + ", userBarCode: " + userBarCode + ", ediSalesCode: " + ediSalesCode);
+				
+				if(!childDomain.getApps().isEmpty())
+					updateChildRItem(api, booking, aonCustomer, userBarCode, activeUsersDiff.toString(), "01.00.USR", ediSalesCode, childDomain.getId(), logs);
+				else
+					updateChildRItem(api, booking, aonCustomer, userBarCode, activeUsersDiff.toString(), "01.00.USR-A", ediSalesCode, childDomain.getId(), logs);
+			}
+		});
 	}
 
 	private static JSONObject deleteBookingRitems(AonApiData api) {
@@ -596,6 +643,48 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				try {
 					AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 				} catch (Exception e) {
+//					throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
+				}
+			} else {
+				if(AonStringUtils.equalsIgnoreCase(quantity, "0") || AonStringUtils.equalsIgnoreCase(quantity, "0.00")) {
+					AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(ritem.getId()));
+				} else {
+					ritem.setQuantity(quantity);
+					AON.saveRItem(api.getDomain(), api.getUser(), ritem);		
+				}
+			}
+		} else {
+			logs.put(createLog(booking.getDomain().getDomainType(), app, barCode, "Item no encontrado"));
+			System.out.println("Item no encontrado: " + barCode);
+		}
+	}
+	
+	private static void updateChildRItem( AonApiData api, Booking booking, Integer aonCustomer, String barCode, String quantity, String app, String ediSalesCode, Integer childDomain, JSONArray logs) {
+		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
+		
+		Integer itemId = item != null ? item.getId() : null;
+		if (item != null && itemId != null) {
+			RegistryItem ritem = AON.getRItem(
+					api.getDomain().getName(),
+					api.getDomain().getId(),
+					api.getUser().getLogin(),
+					f -> f.getRegistryProperty().eq(aonCustomer).and(f.getItemProperty().eq(itemId)).and(f.getEdiSalesCodeProperty().eq( barCode + "@" + childDomain ))
+			);
+			if (ritem == null || ritem.getId() == null) {
+				RegistryItem newRitem = new RegistryItem()
+						.setDomain(api.getDomain().getId())
+						.setRegistry(aonCustomer)
+						.setItem(item)
+						.setType(RegistryMode.BOOKING)
+						.setStatus(RegistryItemStatus.ACTIVE)
+						.setPriority(Priority.NONE)
+						.setCode("CONSOLE")
+						.setEdiSalesCode(ediSalesCode)
+						.setQuantity(quantity);
+				try {
+					AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
+				} catch (Exception e) {
+					System.out.println("No se pudo guardar [" + e.getMessage() + "]");
 //					throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
 				}
 			} else {

@@ -70,13 +70,17 @@ public class Model131 extends MainEntryPoint {
 
 		@Override
 		public void showInfoPanel(String htmlText) {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
-			breakdownPanel.scrollToTop();
+			showInfoPanelWidget(new HTMLPanel(htmlText));
 		}
 		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();
@@ -122,7 +126,7 @@ public class Model131 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m131);
+					showNewDeclarationPanel(m131);
 				}
 
 
@@ -254,28 +258,40 @@ public class Model131 extends MainEntryPoint {
 			public void onSuccess(Mod131 m131) {
 				tabLayout.selectTab(INFORMATION_TAB);
 				closeFootPanel();
-				showNewDeclarationPopup( m131 );
+				showNewDeclarationPanel( m131 );
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+				aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 			}
 		});
 	}
 
 	enum Mod131Declarations {
-		AEAT {
+		AEAT_2024 {
 			@Override
 			public boolean accept(Mod131 mod131) {
-				return mod131.isAEAT();
+				return mod131.isAEAT() && mod131.getYear() >= 2024;
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod131 mod131, Model131Callback cbk) {
-				return new Model131AEAT(mod131, cbk);
+				return new Model131AEAT2024(mod131, cbk);
+			}
+		}
+		,AEAT_2023 {
+			@Override
+			public boolean accept(Mod131 mod131) {
+				return mod131.isAEAT() && mod131.getYear() < 2024;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod131 mod131, Model131Callback cbk) {
+				return new Model131AEAT2023(mod131, cbk);
 			}
 		},
+		
 		;
 		public abstract boolean accept(Mod131 mod131);
 		public abstract Widget getDeclarationWidget(Mod131 mod131, Model131Callback cbk);
@@ -315,36 +331,26 @@ public class Model131 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod131 mod131) {
-		Model131NewDeclarationPopup newDialog = new Model131NewDeclarationPopup(mod131,
-			new Model131Callback() {
+	private void showNewDeclarationPanel( Mod131 mod131) {
+		Model131NewDeclarationPanel newDeclarationPanel = new Model131NewDeclarationPanel(mod131, new Model131Callback() {
+			@Override
+			public void onAccept(Mod131 mod131) {
+				SERVICE.create(getOptions().getOccam(),mod131, new AsyncCallback<Mod131>() {
+					@Override
+					public void onSuccess(Mod131 m131) {
+						select(m131);
+					}
 
-				@Override
-				public void onAccept(Mod131 mod131) {
-					SERVICE.create(getOptions().getOccam(),mod131,
-							new AsyncCallback<Mod131>() {
-								@Override
-								public void onSuccess(Mod131 m131) {
-									select(m131);
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-				}
-				@Override
-				public void onCancel(Mod131 model) {
-					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-						getOptions().getExternalCallback().onExit(model);
-					}						
-				}
-
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+					}
+				});
 			}
-		); 
-		newDialog.center();
-		newDialog.show();
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 

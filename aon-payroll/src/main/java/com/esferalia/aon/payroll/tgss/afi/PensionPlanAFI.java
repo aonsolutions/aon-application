@@ -304,6 +304,9 @@ public class PensionPlanAFI {
 							.fetchOne(CONTRACT.PERSON)
 				))
 				.fetchOne();
+		
+		if(AonStringUtils.isBlank(personRecord.get(PERSON.SOCIAL_SECURITY_NUM)))
+			throw new IllegalArgumentException(personRecord.get(PERSON.NAME) + " no tiene numero de Seguridad Social registrado");
 			
 		json.put("numAfiliacion", personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 		
@@ -359,9 +362,9 @@ public class PensionPlanAFI {
 	        .normalize(name, Normalizer.Form.NFD)
 	        .replaceAll("[^\\p{ASCII}]", "");
 		
-		json.put("firstSurname", fisrtSurname);
-		json.put("secondSurname", secondSurname);
-		json.put("name", name);
+		json.put("firstSurname", AonStringUtils.isBlank(fisrtSurname) ? "" : fisrtSurname);
+		json.put("secondSurname", AonStringUtils.isBlank(secondSurname) ? "" : secondSurname);
+		json.put("name", AonStringUtils.isBlank(name) ? "" : name);
 		
 		return json;
 	}

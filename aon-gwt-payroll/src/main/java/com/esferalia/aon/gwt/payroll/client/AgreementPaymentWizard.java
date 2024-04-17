@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
@@ -1428,7 +1427,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 
 	private void createPaymentExpression() {
-		String paymentExpressionText = "";
+		String paymentExpressionText = paymentExpression.getValue();
 
 		String paymentTypeValue = paymentType.getSelectedValue();
 		String periodicity = periodicityType.getSelectedValue();

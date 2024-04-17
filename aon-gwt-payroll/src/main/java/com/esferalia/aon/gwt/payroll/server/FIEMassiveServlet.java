@@ -136,7 +136,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 						IT itp = getIt();
 						if(!itp.getCancel())
 							ids.add(addIT(ctx, itp));
-					} catch ( EmployeeNotFoundexception e) {
+					} catch ( EmployeeNotFoundexception | TooManyEmployeesException e) {
 						
 					}
 				}
@@ -183,6 +183,8 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		
 		private Date confirmationDate;
 		private String confirmationPartNumber;
+		
+		private boolean isRagged;
 		
 		private boolean cancel;
 		
@@ -335,6 +337,15 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		public void setCancel(boolean cancel) {
 			this.cancel = cancel;
 		}
+
+		public boolean isRagged() {
+			return isRagged;
+		}
+
+		public void setRagged(boolean isRagged) {
+			this.isRagged = isRagged;
+		}
+		
 	}
 	
 	private static class Fie2AON implements FieListener {
@@ -387,7 +398,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 
 		@Override
 		public void onDitRelapse(Boolean relapse) {
-			// TODO Auto-generated method stub
+			it.setRagged(relapse);
 		}
 
 		@Override
@@ -553,6 +564,18 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setType(it.getContingency().value());
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
 				contractLeaveRecord.setDischargeCause(it.getHightCause());
+				
+				// Try to find ragged it
+				if(it.isRagged()) {
+					ContractLeaveRecord itRaggedRecord = ctx.selectFrom(CONTRACT_LEAVE)
+						.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
+						.and(CONTRACT_LEAVE.START_DATE.eq(new java.sql.Date(it.getPrevItDate().get().getTime())))
+						.orderBy(CONTRACT_LEAVE.ID.desc())
+						.limit(1)
+						.fetchOne();
+					
+					contractLeaveRecord.setParent(null == itRaggedRecord ? null : itRaggedRecord.getId());
+				}
 		
 				contractLeaveRecord.store();
 				
@@ -640,7 +663,13 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			throw new EmployeeNotFoundexception(e);
 		}
 		catch ( Exception e) {
-			e.printStackTrace();
+			EmployeeFieNotFound employeeFieNotFound = new EmployeeFieNotFound()
+					.setCcc(it.getCcc())
+					.setIpf(it.getIpf())
+					.setNaf(it.getNaf())
+					.setFullName(it.getFullName() + " (CONTRATOS > 1. CONTACTAR SOPORTE)");
+			
+			noImportEmployees.add(employeeFieNotFound);
 			throw new TooManyEmployeesException(e);
 		}
 		

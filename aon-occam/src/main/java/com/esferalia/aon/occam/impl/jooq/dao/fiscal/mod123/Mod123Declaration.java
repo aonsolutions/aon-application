@@ -32,17 +32,33 @@ public abstract class Mod123Declaration {
 	}
 	
 	private enum Declarations {
-		 AEAT_2021 {
+		 AEAT_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123AEAT2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123AEAT2024Declaration();}
+		}		
+		,AEAT_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123AEAT2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123AEAT2021Declaration();}
+		}
+		,ARABA_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123Araba2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Araba2024Declaration();}
 		}
 		,ARABA_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123Araba2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123Araba2021Declaration();}
 		}
+		,BIZKAIA_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123Bizkaia2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Bizkaia2024Declaration();}
+		}
 		,BIZKAIA_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123Bizkaia2021Declaration.accept(mod);}
 			@Override Mod123Declaration get() {return new Mod123Bizkaia2021Declaration();}
+		}
+		,GIPUZKOA_2024 {
+			@Override boolean accept(Mod123 mod) { return Mod123Gipuzkoa2024Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Gipuzkoa2024Declaration();}
 		}
 		,GIPUZKOA_2021 {
 			@Override boolean accept(Mod123 mod) { return Mod123Gipuzkoa2021Declaration.accept(mod);}

@@ -46,6 +46,8 @@ public class CustomerFeeParams implements Serializable {
 	
 	private Integer[] feeIds;
 	
+	private Integer childDomain;
+	
 	public CustomerFeeParams() {
 		super();
 	}
@@ -237,5 +239,13 @@ public class CustomerFeeParams implements Serializable {
 	
 	public Integer[] getFeeIds() {
 		return this.feeIds;
+	}
+	
+	public Integer getChildDomain() {
+		return childDomain;
+	}
+	public CustomerFeeParams setChildDomain(Integer childDomain) {
+		this.childDomain = childDomain;
+		return this;
 	}
 }

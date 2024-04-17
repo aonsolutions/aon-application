@@ -121,7 +121,8 @@ export class AonAddress extends AonElement {
 
     let streetTypeSelect = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
     streetTypeSelect.id = this.STREET_TYPE;
-    streetTypeSelect.title = 'Tipo vía'; //MSG.STREET_TYPE;
+    streetTypeSelect.title = MSG.STREET_TYPE;
+    streetTypeSelect.autocomplete = true;
     streetTypeSelect.options = JSON.stringify(
       getStreetTypes().map((c) => {
         return { value: c.ineCode, name: c.description.toLowerCase().initCap()};

@@ -168,7 +168,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 		for (Entry<Mod123Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
 			double d1 = mod123.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
-			entry.getValue().setEnabled(mod123.isEditable());
+			entry.getValue().setEnabled(mod123.isEditable() && !entry.getValue().isReadOnly());
 			if (!AonNumberUtils.equals(d1, d2)) {
 				entry.getValue().setValue(d1,false,true);
 			}
@@ -692,21 +692,23 @@ public abstract class Model123Base extends DockLayoutPanel {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderTop() );
 
-		table.setWidget(row, 1, new Label(AON.MSG.receivers()));
+		table.setWidget(row, 1, new Label((getModel().isAEAT() || getModel().isGipuzkoa() || getModel().isBizkaia()) && getModel().getYear() >= 2024 ? "N\u00FAmero de rentas" : AON.MSG.receivers()));
 		table.getFlexCellFormatter().setStyleName(row, 1,AON.CSS.aonBold() );
 		table.getFlexCellFormatter().addStyleName(row, 1,AON.CSS.aonTextCenter() );
 		table.getFlexCellFormatter().addStyleName(row, 1,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 1,AON.CSS.aonBorderTop() );
 		table.getFlexCellFormatter().setColSpan(row, 1, 2);
 
-		table.setWidget(row, 2, new Label(AON.MSG.perceptions()));
+//		table.setWidget(row, 2, new Label(AON.MSG.perceptions()));
+		table.setWidget(row, 2, new Label(AON.MSG.retentionBase()));
 		table.getFlexCellFormatter().setStyleName(row, 2,AON.CSS.aonBold() );
 		table.getFlexCellFormatter().addStyleName(row, 2,AON.CSS.aonTextCenter() );
 		table.getFlexCellFormatter().addStyleName(row, 2,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 2,AON.CSS.aonBorderTop() );
 		table.getFlexCellFormatter().setColSpan(row, 2, 2);
 
-		table.setWidget(row, 3, new Label(AON.MSG.retentionAccountShort()));
+//		table.setWidget(row, 3, new Label(AON.MSG.retentionAccountShort()));
+		table.setWidget(row, 3, new Label(AON.MSG.retentionAccount()));
 		table.getFlexCellFormatter().setStyleName(row, 3,AON.CSS.aonBold() );
 		table.getFlexCellFormatter().addStyleName(row, 3,AON.CSS.aonTextCenter() );
 		table.getFlexCellFormatter().addStyleName(row, 3,AON.CSS.aonBorderBottom() );
@@ -780,9 +782,10 @@ public abstract class Model123Base extends DockLayoutPanel {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox();
 		fieldsMap.put(key, input);
-		input.setEnabled(model.isEditable() && script.isEnabled()); 
+		input.setEnabled(model.isEditable() && script.isEnabled());  
+		input.setReadOnly(!script.isEnabled());
  		input.setValue(det1.getAmount());
-		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+		if (!input.isReadOnly() && AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
 			input.setTitle(AON.MSG.difCalc(
 					AON.FMT.format(det1.getResultAmount()),
@@ -797,7 +800,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 				getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 			}
 			getModel().ensureDetail(key).setAmount(input.getValue());
-			if (AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
+			if (!input.isReadOnly() && AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
 				input.addStyleName(AON.CSS.aonChanged());
 				input.setTitle(AON.MSG.difCalc(
 					AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
@@ -1038,7 +1041,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 		table.addRow()
 			.addCell( new Label(AON.MSG.receipt()), AON.CSS.aonTableLabel())
 			.addCell(receiptBox);
-		
+		 
 		if (getModel().isReplacedNumberAvailable()) {
 			final AonTextBox previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);

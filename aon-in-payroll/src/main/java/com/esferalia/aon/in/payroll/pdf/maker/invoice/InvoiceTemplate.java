@@ -235,7 +235,7 @@ public class InvoiceTemplate {
 			.filter(detail -> detail.getItem() != null 
 				&& detail.getItem().getProduct() != null 
 				&& ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()) 
-				&& !detail.getPrice().equals(0.0) &&  detail.getQuantity() != 0.0)
+				&& detail.getPrice() != 0.0 &&  detail.getQuantity() != 0.0)
 			.forEach(detail -> this.specialTaxes.add(detail));
 		}
 	}
@@ -1191,7 +1191,7 @@ public class InvoiceTemplate {
 				String discount = "";
 				
 				try {
-					String expression = detail.getDiscountExpression() != null ? detail.getDiscountExpression() : "";
+					String expression = detail.getDiscountExpression() != null ? detail.getDiscountExpression().getDiscountExpr() : "";
 					
 					Matcher matcher = DISCOUNT_PATTERN.matcher(expression);
 					if (matcher.find()) {
@@ -1199,14 +1199,14 @@ public class InvoiceTemplate {
 						numStr = numStr.replaceAll("[,']", ".");
 						double percent = Double.parseDouble(numStr);
 						if (percent != 0) {
-							discount = safeString(detail.getDiscountExpression());
+							discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 						}
 					} else {
-						discount = safeString(detail.getDiscountExpression());
+						discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 					}
 					
 				} catch (NumberFormatException e) {
-					discount = safeString(detail.getDiscountExpression());
+					discount = safeString(detail.getDiscountExpression().getDiscountExpr());
 				}
 				
 				

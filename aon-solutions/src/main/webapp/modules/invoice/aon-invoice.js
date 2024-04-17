@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -127,7 +127,7 @@ export class AonInvoice extends AonElement {
 	initialize(){
 		this.accept = true;
 		this.rbanks = [];
-		this.fileOpened = false;
+		this.fileOpened = this.fileOpened || false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.DIV = this.id + CONSTANT.DIV.initCap();
@@ -234,6 +234,8 @@ export class AonInvoice extends AonElement {
 					this.invoice = new Invoice(inv);
 					this.reload();
 				});
+				this.getApplication().getParent().buildCounter();
+				
 			} 
 
 		}
@@ -410,7 +412,7 @@ export class AonInvoice extends AonElement {
 			duplicate.backgroundColor = INVOICE.color;
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
-			if(this.getInvoice().isInbox() ){
+			if(this.getInvoice().isInbox()){
 				let changeType = ACTION.CHANGE_TYPE;
 				changeType.permission = true;
 				changeType.backgroundColor = INVOICE.color;
@@ -1151,7 +1153,8 @@ export class AonInvoice extends AonElement {
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
 			number.title = MSG.NUMBER;
-			number.value = this.invoice.number;
+			if(this.invoice.number > -1)
+				number.value = this.invoice.number;
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
 			numberSpan.appendChild(number);
@@ -1644,6 +1647,16 @@ export class AonInvoice extends AonElement {
 		}
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
+
+		let data = {
+			registry: this.invoice.getRegistry().id,
+			type: this.invoice.type
+		};
+
+		getRegistrySuggestedAccount(data).then(r => {
+			this.invoice.setCategory(r.code);
+			this.getElement(this.CATEGORY).value = r.code;
+		});
 
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
@@ -2584,7 +2597,7 @@ export class AonInvoice extends AonElement {
 		rectify.fn = () => this.rectifyInvoice();
 		let duplicate = ACTION.DUPLICATE;
 		duplicate.fn = () => this.duplicateInvoice();
-		d.setMenuOptions([rectify, duplicate], top, left);
+		d.setMenuOptions([rectify], top, left);
 		d.open();
 	}
 
@@ -2688,6 +2701,7 @@ export class AonInvoice extends AonElement {
 				let data = this.getInvoice();
 				data.cert = certSelect.value;
 				acceptInvoice(data).then(r => {
+					this.getApplication().getParent().buildCounter();
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
 					this.reload();
@@ -2725,37 +2739,22 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		let div = this.getElement("PRUEBA_RAWDOC_RECORD");
-		if(!div) {
-			div = this.createDiv("PRUEBA_RAWDOC_RECORD");
-			div.style.display = 'none';
-			this.appendChild(div);
+		if(this.invoice.category) {
+			let div = this.getElement("PRUEBA_RAWDOC_RECORD");
+			if(!div) {
+				div = this.createDiv("PRUEBA_RAWDOC_RECORD");
+				div.style.display = 'none';
+				this.appendChild(div);
+			}
+			this.clearElement(div);
+	
+			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
+		} else {
+			this.showError({
+				type: CONSTANT.ERROR,
+				message: "Para Contabilizar es necesario la categoría."
+			});
 		}
-		this.clearElement(div);
-
-		GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
-
-
-
-		// if(this.invoice.isSelfconta() || this.isInvofoxInvoice() || this.isBeta()) {
-		// 	recordSelfconta(this.getInvoice())
-		// 		.then(r => {
-		// 			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-		// 			this.invoice = new Invoice(r);
-		// 			this.getApplication().stopLoader(); 
-		// 			this.reload();
-		// 		})
-		// 		.catch(e => this.showError(e));
-		// }	else {
-		// 		let aonInvoice = this.getElement('aonInvoice');
-		// 		let d = document.getElementById(aonInvoice.DIALOG);
-		// 		d.clear();
-		// 		if(!this.isMobile())d.width = '400px';
-		// 		d.setTitle(MSG.RECORD_INVOICE);
-		// 		d.setContentHTML(MSG.IN_DEVELOPMENT);
-		// 		d.addAcceptAction(() => {});
-		// 		d.open();
-		// }
 	}
 
 	rejectInvoice() {
@@ -2920,9 +2919,12 @@ export class AonInvoice extends AonElement {
 			recInv.number = undefined;
 			recInv.reference = undefined;
 			recInv.status = 'inbox';
+			recInv.tbai = undefined;
+			recInv.tbaiUrl = undefined;
 
 			if(recInv.finances) {
 				recInv.finances.forEach((item, i) => {
+					recInv.finances[i].id = undefined;
 					recInv.finances[i].due_date = new Date();
 					recInv.finances[i].amount = recInv.finances[i].amount * (-1);
 				});
@@ -2930,12 +2932,12 @@ export class AonInvoice extends AonElement {
 
 			if(recInv.details) {
 				recInv.details.forEach((item, i) => {
+					item.id = undefined;
 					item.quantity= item.quantity * (-1);
 					recInv.setDetail(item, i);
 				});
 			}
 
-	
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(recInv.type, recInv);
 		});
@@ -3019,9 +3021,18 @@ export class AonInvoice extends AonElement {
 		dupInv.number = undefined;
 		dupInv.reference = '';
 		dupInv.status = 'inbox';
+		dupInv.tbai = undefined;
+		dupInv.tbaiUrl = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
+				dupInv.finances[i].id = undefined;
 				dupInv.finances[i].due_date = new Date();
+			});
+		}
+		
+		if(dupInv.details) {
+			dupInv.details.forEach((item, i) => {
+				dupInv.details[i].id = undefined;
 			});
 		}
 
