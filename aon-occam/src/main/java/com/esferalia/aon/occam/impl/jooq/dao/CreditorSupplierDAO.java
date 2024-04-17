@@ -57,8 +57,8 @@ public class CreditorSupplierDAO {
 	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter, int offset, int limit, String globalFilter){
 		return prepareQueryCustomer(ctx, filter, globalFilter)
 				.orderBy(REGISTRY.NAME)
-				.offset(offset)
 				.limit(limit)
+				.offset(limit * (offset -1))
 				.fetch()
 				.stream()
 				.map(new CustomerFiller());
@@ -104,8 +104,8 @@ public class CreditorSupplierDAO {
 			.from(prepareQuery(ctx, filter, filter2, globalFilter).asTable(REGISTRY))
 			.groupBy(REGISTRY.ID)
 			.orderBy(REGISTRY.NAME)
-			.offset(offset)
 			.limit(limit)
+			.offset(limit * (offset -1))
 			.fetch()
 			.stream()
 			.map(new CreditorSupplierFiller());

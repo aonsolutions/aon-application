@@ -105,7 +105,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		JSONArray result = CreditorSupplierJSON.toJSON(AON.getSupplierCreditorStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), perPage * (page -1), perPage, globalFilter));
+			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), page, perPage, globalFilter));
 		if (api.getData().opt("additional_info") != null) {
 			result = getAdditionalInfo(api, result);
 	    }

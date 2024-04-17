@@ -715,8 +715,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
-    
-    	if(invoiceFilter.getDescription() != null) {
+    	
+    	if(!invoiceFilter.getDescription().isEmpty()) {
     		filter = filter.and(
     			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
     			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
@@ -730,13 +730,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
    					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
     		}
     		filter = filter.and(filter2); 
-    	}
-    	
-    	if(invoiceFilter.getGlobal() != null) {
-    		filter = filter.and(f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%"))
-    				.or(f.getTotalProperty().like("%" + invoiceFilter.getGlobal() + "%"))
-    				.or(f.getReferenceCodeProperty().like("%" + invoiceFilter.getGlobal() + "%"))
-    				.or(f.getDateNewPortalProperty().like("%" + invoiceFilter.getGlobal() +"%"));
     	}
     	
     	if(invoiceFilter.getFrom() != null) {
@@ -753,6 +746,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
     	if(invoiceFilter.getRegistry() != null) {
     		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
+    	}
+    	
+    	if(!invoiceFilter.getGlobal().isEmpty()) {
+    		Filter filter3 = f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%")
+    				.or(f.getTotalProperty().like("%" + invoiceFilter.getGlobal() + "%"))
+    				.or(f.getReferenceCodeProperty().like("%" + invoiceFilter.getGlobal() + "%"))
+    				.or(f.getDateNewPortalProperty().like("%" + invoiceFilter.getGlobal() +"%"));
+    		filter = filter.and(filter3);
     	}
     	
     	if(invoiceFilter.getPage() != null) {
