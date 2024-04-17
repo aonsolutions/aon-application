@@ -308,7 +308,8 @@
   height: calc(100vh - 49px);
   overflow-y: auto;
   margin: 0;
-
+  
+  padding: 5px;	
   /*background-color: #FAF9F8;*/
   box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));
 }
@@ -633,9 +634,9 @@
   display: flex;
   height: 40px;
   padding: 0 16px;
-  border-top: 0px none;
-  border-bottom: 1px solid rgb(221, 221, 221);
   font-size: 16px;
+  border: 0px none;
+  background-color: #fafafa;
 }
 
 .aonToolbar2 { /* NUEVO LOGIN */
@@ -656,7 +657,7 @@
 }
 
 .aonToolbarTitle {
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .aonToolbarSection {
@@ -859,6 +860,7 @@
   border-radius: 20rem;
   border: 0.15rem solid;
   margin-right: 5px;   
+  visibility: hidden; /* not show but fill space */
 }
 
 .aonSidenavTitle {
@@ -878,16 +880,28 @@
   margin-left: 15px;
 }
 
+.aonSidenavTitleBeta span {
+	font-weight: 500;
+	display: inline-block;
+	text-transform: lowercase;
+}
+
+.aonSidenavTitleBeta span:first-letter{
+  text-transform: uppercase;
+}
+
 .aonSidenav {
   position: relative;
   flex-basis: 0px;
   flex-grow: 0;
   flex-shrink: 0;
   left: 0;
-  border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
   height: calc(100vh - 102px);
+  border: 0px none;
+  background-color: #fafafa;
+  
 }
 
 .aonSidenavBeta {
@@ -941,8 +955,8 @@
   transition: 0.5s;
   height: calc(100vh - 102px);
   overflow-y: auto;
-  border-radius: 10px;
-  background-color: white;
+  border-radius: 0px;
+  background-color: #fafafa;
 }
 
 .aonSubContent {
