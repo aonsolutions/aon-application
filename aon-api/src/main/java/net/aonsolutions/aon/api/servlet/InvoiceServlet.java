@@ -103,7 +103,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String total;
 		String referenceCode;
 		String searchedDate;
-		String global;
+		String global = "";
 
 		Date from;
 		Date to;
