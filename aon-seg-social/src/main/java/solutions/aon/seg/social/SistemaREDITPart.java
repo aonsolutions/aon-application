@@ -76,7 +76,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
 	private static final String TRY_AGAIN  = "Intente nuevamente!";
-	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001";
+	//private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001";
+	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0002";
 	private static final String ARQ_SPM_OUT = "ARQ.SPM.OUT";
 
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
@@ -380,14 +381,14 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setText(jobDescription.get());
 			}
 			
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
 			
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
 			formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 			
@@ -395,7 +396,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			return getPdfProcess(htmlPage, "#ENVIO_10");
+			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
 	}
 
@@ -460,7 +461,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			return getPdfProcess(htmlPage, "#ENVIO_10");
+			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
 	}
 
@@ -608,7 +609,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Date date,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
 			throws IOException, InterruptedException, SegSocialException, TransformerException {
-		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 
 		form.getInputByName("regimen").setValue(regime); 
@@ -665,7 +666,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		}
 		if(null!=contingencyOption) contingencyOption.click();
 
-		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_7")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		//XmlPage xmlPage = accept.click();
 		//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 		htmlPage = accept.click();
@@ -725,7 +726,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	
 	private static byte[] getPdfProcess(HtmlPage htmlPage, String continueSelector) throws InterruptedException, IOException, SegSocialException {
 		
-		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		
 		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 
@@ -890,30 +891,30 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	}
 	
 	public static void main(String[] args) throws IOException, SegSocialException, ParseException {
-		try ( InputStream is = new FileInputStream("/home/rtrepiana/Downloads/vericitas.p12");
+		try ( InputStream is = new FileInputStream("/home/rtrepiana/Downloads/pvasesores.p12");
 				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
-			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("11/03/2024");
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("10/04/2024");
 			byte[] pdf = 
 			registerItBaja(
 					is, 
-					"082X0", 
+					"7624", 
 					"PKCS12", 
 					"0111", 
-					"18110413490", 
-					"181040106852", 
-					SistemaRED.Contingencies.ACCIDENT_LABORAL, 
+					"41017063249", 
+					"411073432537", 
+					SistemaRED.Contingencies.ENFERMEDAD_COMUN, 
 					SistemaRED.SituationEmployee.ACTIVO, 
 					startDate, 
 					SistemaRED.ContractType.RESTO_Y_AUTONOMOS, 
-					1347.49f, 
+					1362.69f, 
 					30, 
 					Optional.of(startDate), 
 					Optional.empty(), 
 					Optional.empty(), 
 					Optional.empty(), 
 					Optional.empty(), 
-					Optional.of("Cuidadora"), 
-					Optional.of("Las propias de Cuidadora"));
+					Optional.of("PEON PAISAJISMO"), 
+					Optional.of("Las propias de Peon de Paisajismo"));
 			os.write(pdf);
 			System.out.println(os.getFD().toString());
 		}
