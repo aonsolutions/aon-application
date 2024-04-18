@@ -31,6 +31,10 @@ export class AonElement extends HTMLElement{
     return UA.isAndroidApp();
   }
 
+  isApp() {
+    return UA.isApp();
+  }
+
   getElement(id) {
     return document.getElementById(id);
   }
