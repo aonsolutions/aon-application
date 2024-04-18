@@ -242,6 +242,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.getCustomerWithoutFee(domainName, domain, user, customerParams, new AsyncCallbackWrapper<List<Customer>>(callback));
 	}
 
+	@Override
+	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.reorderCustomerFeeLine(domainName, domain, user, customer, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************

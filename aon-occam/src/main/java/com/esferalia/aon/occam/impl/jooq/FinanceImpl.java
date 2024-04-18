@@ -272,6 +272,13 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public void reorderCustomerFeeLine(CloseableAONContext ctx, int domainId, Integer customer) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.reorderCustomerFeeLine(ctx, domainId, customer);
+		});
+	}
+	
+	@Override
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
