@@ -95,6 +95,8 @@ export class AonHeader extends AonElement {
 
 		let aonLogo = this.createElement(TAG.IMG);
 		aonLogo.id = "aonLogo";
+		aonLogo.style.paddingLeft = '0px';
+		aonLogo.style.width = '123px';
 		aonLogo.className = LS.isNewTheme() ? "aonNewLogo" : "aonLogo";
 		div.appendChild(aonLogo);
 

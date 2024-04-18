@@ -103,7 +103,8 @@ export class AonRightPanel extends AonElement {
 				this.getElement('aonMenuList').style.visibility = "hidden";
 				this.getElement("aonMenuTopnav").style.height = '68px';
 				this.getElement("rootPanel").style.marginTop = '69px';
-				this.getElement
+				this.getElement("aonLogo").style.paddingLeft = '0px';
+				this.getElement("aonLogo").style.width = '123px';
 				rightPanel.style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
             } else {
 				this.getElement('aonMenuSidenav').style.with = '68px';
@@ -113,6 +114,8 @@ export class AonRightPanel extends AonElement {
 				this.getElement("aonMenuTopnav").style.height = '0px';
 				rightPanel.style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
 				this.getElement("rootPanel").style.height = rightPanel.offsetHeight;
+				this.getElement("aonLogo").style.paddingLeft = '';
+				this.getElement("aonLogo").style.width = '';
 				this.getElement("rootPanel").style.marginTop = '0px';
 
 			};
