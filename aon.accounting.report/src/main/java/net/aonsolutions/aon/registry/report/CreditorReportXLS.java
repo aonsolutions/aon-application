@@ -28,9 +28,7 @@ public class CreditorReportXLS extends AbsExcelReport implements Consumer<Credit
 	
 	@Override
 	public void accept(CreditorFull creditor) {
-		
 		row = sheet.createRow(rowCount++);
-		
 		addCell(creditor.getId());
 		addCell(creditor.getRegistry().getDocument());
 		addCell(creditor.getRegistry().getName());

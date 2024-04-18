@@ -2,14 +2,13 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import com.esferalia.aon.occam.api.AON;
+
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.RegistryParams;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import jakarta.servlet.ServletException;
