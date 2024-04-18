@@ -198,3 +198,5 @@ export const AON_QUANTITY = 'aon-quantity';
 export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';
 
 export const AON_MARKETING = 'aon-marketing';
+
+export const AON_RIGHT_PANEL = 'aon-right-panel';

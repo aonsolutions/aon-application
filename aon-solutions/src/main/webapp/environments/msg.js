@@ -671,6 +671,7 @@ export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
 export const UTILITIES = MSG.UTILITIES;
+export const UPPER_MENU = MSG.UPPER_MENU;
 
 // ----- V
 

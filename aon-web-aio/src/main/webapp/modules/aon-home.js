@@ -1,13 +1,12 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+
 import { AonHeader } from 'aonsolutions/modules/aon-header.js';
 
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js'; 
 
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonNewMenu } from './aon-new-menu.js';
-
-
+import { AonRightPanel } from './aon-right-panel.js';
 
 export class AonHome extends AonElement {
 
@@ -50,6 +49,7 @@ export class AonHome extends AonElement {
 
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
+		aonHeader.newTheme = true;
 		this.appendChild(aonHeader);
 		aonHeader.setVisibleHomeButton(false);
 		aonHeader.setVisibleCompanyListButton(false);
@@ -86,13 +86,26 @@ export class AonHome extends AonElement {
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
 		this.appendChild(rootPanel);
-	
-		let rightPanel = this.createElement(TAG.DIV);
-		rightPanel.id = this.RIGHT_PANEL;
-		rightPanel.className = "rightPanel";
-		this.appendChild(rightPanel);
 
 		this.appendChild(aonMenu);
+
+		let panel = new AonRightPanel();
+		this.appendChild(panel);
+		panel.addEventListener(EVENT.CLOSE, () => {
+			rootPanel.style.marginRight = '0px';			
+		});
+	
+		let headerConfig = this.getElement('aonHeaderConfig');
+		if(headerConfig)
+			headerConfig.addEventListener(EVENT.CLICK, () => {
+				rootPanel.style.marginRight = '321px';
+				panel.open();
+		});
+
+		this.getElement('aonMenuSidenav').style.with = '0px';
+		this.getElement('aonMenuList').style.visibility = "hidden";
+		this.getElement('aonMenuSidenav').style.display = "none";
+		rootPanel.style.marginLeft = '0px';
 	}
 	
 	showMenu(bool) {
@@ -108,8 +121,7 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.backgroundColor = '#ffffff';
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
+		
 	}
-
-
 }
 window.customElements.define('aon-home', AonHome);
