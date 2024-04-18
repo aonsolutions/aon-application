@@ -321,7 +321,6 @@
 	z-index: 1000000;
 	height: calc(100vh - 49px);
 	overflow: hidden;
-	pointer-events: none;
 }
 
 .rootMobilePanel {

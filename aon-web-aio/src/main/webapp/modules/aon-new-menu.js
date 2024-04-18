@@ -25,7 +25,7 @@ import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
-import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
+//import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 
