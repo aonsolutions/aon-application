@@ -1,17 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod184;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
-import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184Certificate;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -30,43 +27,75 @@ import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 public class Mod184CertificatePDF {
 
-	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");	
-//	private static final Font TITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
+	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");
+	private static final DecimalFormat FMT_PERCENT = new DecimalFormat("##0.0000");
 	private static final Font TITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD);
 	private static final Font SUBTITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 9, Font.BOLD);
-//	private static final Font SUBTITLE_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 	private static final Font CELL_LABEL_FONT = new Font(Font.FontFamily.HELVETICA, 7);
 	private static final Font CELL_LABEL_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
 	private static final Font CELL_LABEL_SMALL_FONT = new Font(Font.FontFamily.HELVETICA, 6);
-	private static final Font CELL_LABEL_SMALL_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD);
 	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static final Font BODY_FONT_NUMERIC = new Font(Font.FontFamily.HELVETICA, 7);
 	
-	public void printMod184Certificate(OutputStream outputStream, Occam occam, Map<String, RetentionCertificate> certificates) throws DocumentException {
+	// Descripción según clave y subclave
+	public static HashMap<String,String> DESCRIPTION_MAP = new HashMap<String,String>();
+	static {		    	
+	    DESCRIPTION_MAP.put("A01", "Rendimientos del capital mobiliario previstos en los apartados 1, 2 y 3 del artículo 25 de la LIRPF");  // Clave A 01 
+	    DESCRIPTION_MAP.put("A02", "Rendimientos del capital mobiliario previstos en el apartado 4 del artículo 25 de la LIRPF");  // Clave A 02 
+	    DESCRIPTION_MAP.put("C", "Rendimientos del capital inmobiliario");  // Clave C    
+	    DESCRIPTION_MAP.put("D", "Rendimientos de actividades económicas");  // Clave D    
+	    DESCRIPTION_MAP.put("E", "Rentas contabilizadas de participaciones de Instituciones de Inversión Colectiva");  // Clave E    
+	    DESCRIPTION_MAP.put("F01", "Ganancias patrimoniales no derivadas de transmisiones de elementos patrimoniales");  // Clave F 01 
+	    DESCRIPTION_MAP.put("F02", "Pérdidas patrimoniales no derivadas de transmisiones de elementos patrimoniales");  // Clave F 02 
+	    DESCRIPTION_MAP.put("G01", "Ganancias patrimoniales derivadas de transmisiones de elementos patrimoniales");  // Clave G 01 
+	    DESCRIPTION_MAP.put("G02", "Pérdidas patrimoniales derivadas de transmisiones de elementos patrimoniales");  // Clave G 02 
+	    DESCRIPTION_MAP.put("I01", "Por protección Patrimonio Español y Mundial");     // Clave I 01 
+	    DESCRIPTION_MAP.put("I02", "Por donativos, donaciones y aportaciones a determinadas entidades");      // Clave I 02 
+	    DESCRIPTION_MAP.put("I03", "Por rentas obtenidas en Ceuta y Melilla");      // Clave I 03 
+	    DESCRIPTION_MAP.put("I04", "Deducciones en actividades económicas");      // Clave I 04 
+	    DESCRIPTION_MAP.put("I05", "Deducción por doble imposición internacional");      // Clave I 05 
+	    DESCRIPTION_MAP.put("I06", "Por inversión en empresas de nueva o reciente creación");      // Clave I 06 
+	    DESCRIPTION_MAP.put("J01", "Deducciones por doble imposición internacional");    // Clave J 01 
+	    DESCRIPTION_MAP.put("J02", "Deducciones con límite sobre cuota");    // Clave J 02 
+	    DESCRIPTION_MAP.put("J03", "Deducción por donativos a entidades sin fines lucrativos");    // Clave J 03 
+	    DESCRIPTION_MAP.put("J04", "Otras deducciones");     // Clave J 04 
+	    DESCRIPTION_MAP.put("K01", "Por rendimientos del capital mobiliario");  // Clave K 01 
+	    DESCRIPTION_MAP.put("K02", "Por arrendamiento de inmuebles urbanos");  // Clave K 02 
+	    DESCRIPTION_MAP.put("K03", "Por rendimientos de actividades económicas");  // Clave K 03 
+	    DESCRIPTION_MAP.put("K04", "Por ganancias patrimoniales");  // Clave K 04 
+	    DESCRIPTION_MAP.put("K05", "Por otros conceptos");  // Clave K 05		
+	}	
+	
+	public void printMod184Certificate(OutputStream outputStream, Occam occam, Map<String, Mod184Certificate> certificates) throws DocumentException {
+		
 		Document document = new Document();
 		document.setPageSize(PageSize.A4);
 		document.setMargins(30, 30, 20, 20);
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 		document.open();
-		for (RetentionCertificate detail : certificates.values()) {
-			printMod184Certificate1(document, writer, detail);			
+		
+		if (certificates.size()==0) {
+			document.add(new Chunk(""));			
+		} else {
+			for (Mod184Certificate certi : certificates.values()) {
+				printMod184Certificate1(document, writer, certi);			
+			}
 		}
+		
 		document.close();
 	}
 	
 	// Certificado de Atribución de Rentas
-	private void printMod184Certificate1(Document document, PdfWriter writer, RetentionCertificate detail) throws DocumentException {
+	private void printMod184Certificate1(Document document, PdfWriter writer, Mod184Certificate certi) throws DocumentException {
 		
-        // Cabeceras        
-        addHeaderBand1(document, "Notificación de imputaciones a socios de entidades en régimen de atribución de rentas", detail.getYear());
+	    // Cabeceras        
+        addHeaderBand(document, "Notificación de imputaciones a miembros de entidades en régimen de atribución de rentas", certi.getYear());
 		
 		// Datos de la entidad
-		addHeaderBand2(document, "Datos de la Entidad", 100, "Apellidos y nombre, denominación o razón social", detail.getEnterpriseDocument(), detail.getEnterpriseName());
-		
+		addHeaderBandEntity(document, "Datos de la Entidad", 100, "Apellidos y nombre, denominación o razón social", certi.getEntityDocument(), certi.getEntityName());
+				
         // Datos del Perceptor
-		addHeaderBand22(document);
-		
-		// FALTA - RESTO DE DATOS DEL PERCEPTOR
+		addHeaderBandMember(document, certi);
 		
 		addSubTitleLine(document, "Rendimiento, Deducción y Retención Atribuible", 220);
 		
@@ -82,50 +111,35 @@ public class Mod184CertificatePDF {
 		addEmptyCell(table1);		 
 		addLabelCenterCell(table1, "Reducción");
 		addEmptyCell(table1, 1, Rectangle.RIGHT);
-		
-	    addDetailBand(table1, "Rendimientos del capital mobiliario previstos en los apartados 1, 2 y 3 del artículo 25 de la LIRPF", "A01");  // Clave A 01 
-	    addDetailBand(table1, "Rendimientos del capital mobiliario previstos en el apartado 4 del artículo 25 de la LIRPF", "A02");  // Clave A 02 
-	    addDetailBand(table1, "Rendimientos del capital inmobiliario", "C");  // Clave C    
-	    addDetailBand(table1, "Rendimientos de actividades económicas", "D");  // Clave D    
-	    addDetailBand(table1, "Rentas contabilizadas de participaciones de Instituciones de Inversión Colectiva", "E");  // Clave E    
-	    addDetailBand(table1, "Ganancias patrimoniales no derivadas de transmisiones de elementos patrimoniales", "F01");  // Clave F 01 
-	    addDetailBand(table1, "Pérdidas patrimoniales no derivadas de transmisiones de elementos patrimoniales", "F02");  // Clave F 02 
-	    addDetailBand(table1, "Ganancias patrimoniales derivadas de transmisiones de elementos patrimoniales", "G01");  // Clave G 01 
-	    addDetailBand(table1, "Pérdidas patrimoniales derivadas de transmisiones de elementos patrimoniales", "G02");  // Clave G 02 
-	                  
-	    //addDetailBand(table1, "Deducciones Ley IRPF:");
-	    addEmptyLine(table1);
-	    addEmptyCell(table1, 1, Rectangle.LEFT);		
-    	addLabelCell(table1, "Deducciones Ley IRPF:", 8, Rectangle.RIGHT, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);
-    	
-	    addSubDetailBand(table1, "Por protección Patrimonio Español y Mundial", "I01");     // Clave I 01 
-	    addSubDetailBand(table1, "Por donativos, donaciones y aportaciones a determinadas entidades", "I02");      // Clave I 02 
-	    addSubDetailBand(table1, "Por rentas obtenidas en Ceuta y Melilla", "I03");      // Clave I 03 
-	    addSubDetailBand(table1, "Deducciones en actividades económicas", "I04");      // Clave I 04 
-	    addSubDetailBand(table1, "Deducción por doble imposición internacional", "I05");      // Clave I 05 
-	    addSubDetailBand(table1, "Por inversión en empresas de nueva o reciente creación", "I06");      // Clave I 06 
-                      
-//	    addDetailBand(table1, "Deducciones Ley Impuesto Sociedades:");
-	    addEmptyLine(table1);
-	    addEmptyCell(table1, 1, Rectangle.LEFT);		
-    	addLabelCell(table1, "Deducciones Ley Impuesto Sociedades:", 8, Rectangle.RIGHT, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);
-    	
-	    addSubDetailBand(table1, "Deducciones por doble imposición internacional", "J01");    // Clave J 01 
-	    addSubDetailBand(table1, "Deducciones con límite sobre cuota", "J02");    // Clave J 02 
-	    addSubDetailBand(table1, "Deducción por donativos a entidades sin fines lucrativos", "J03");    // Clave J 03 
-	    addSubDetailBand(table1, "Otras deducciones", "J04");     // Clave J 04 
-                      
-//	    addDetailBand(table1, "Retenciones e ingresos a cuenta:");
-	    addEmptyLine(table1);
-	    addEmptyCell(table1, 1, Rectangle.LEFT);		
-    	addLabelCell(table1, "Retenciones e ingresos a cuenta:", 8, Rectangle.RIGHT, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);
-    	
-	    addSubDetailBand(table1, "Por rendimientos del capital mobiliario", "K01");  // Clave K 01 
-	    addSubDetailBand(table1, "Por arrendamiento de inmuebles urbanos", "K02");  // Clave K 02 
-	    addSubDetailBand(table1, "Por rendimientos de actividades económicas", "K03");  // Clave K 03 
-	    addSubDetailBand(table1, "Por ganancias patrimoniales", "K04");  // Clave K 04 
-	    addSubDetailBand(table1, "Por otros conceptos", "K05");  // Clave K 05
-	    
+
+		// Detalles por clave y subclave
+	    addDetailBand(table1, certi, "A01");      // Clave A 01 
+	    addDetailBand(table1, certi, "A02");      // Clave A 02 
+	    addDetailBand(table1, certi, "C"  );      // Clave C    
+	    addDetailBand(table1, certi, "D"  );      // Clave D    
+	    addDetailBand(table1, certi, "E"  );      // Clave E    
+	    addDetailBand(table1, certi, "F01");      // Clave F 01 
+	    addDetailBand(table1, certi, "F02");      // Clave F 02 
+	    addDetailBand(table1, certi, "G01");      // Clave G 01 
+	    addDetailBand(table1, certi, "G02");      // Clave G 02 
+	    addTitleDetailBand(table1, "Deducciones Ley IRPF:"); 
+	    addSubDetailBand(table1, certi, "I01");   // Clave I 01 
+	    addSubDetailBand(table1, certi, "I02");   // Clave I 02 
+	    addSubDetailBand(table1, certi, "I03");   // Clave I 03 
+	    addSubDetailBand(table1, certi, "I04");   // Clave I 04 
+	    addSubDetailBand(table1, certi, "I05");   // Clave I 05 
+	    addSubDetailBand(table1, certi, "I06");   // Clave I 06 
+	    addTitleDetailBand(table1, "Deducciones Ley Impuesto Sociedades:");
+	    addSubDetailBand(table1, certi, "J01");   // Clave J 01 
+	    addSubDetailBand(table1, certi, "J02");   // Clave J 02 
+	    addSubDetailBand(table1, certi, "J03");   // Clave J 03 
+	    addSubDetailBand(table1, certi, "J04");   // Clave J 04 
+	    addTitleDetailBand(table1, "Retenciones e ingresos a cuenta:");
+	    addSubDetailBand(table1, certi, "K01");   // Clave K 01 
+	    addSubDetailBand(table1, certi, "K02");   // Clave K 02 
+	    addSubDetailBand(table1, certi, "K03");   // Clave K 03 
+	    addSubDetailBand(table1, certi, "K04");   // Clave K 04 
+	    addSubDetailBand(table1, certi, "K05");   // Clave K 05
 	    addEmptyBottomLine(table1);
 	    
 	    document.add(table1);    
@@ -136,7 +150,7 @@ public class Mod184CertificatePDF {
 		document.newPage();
 	}
 	
-	private void addHeaderBand1(Document document, String title, int year) throws DocumentException {
+	private void addHeaderBand(Document document, String title, int year) throws DocumentException {
 		PdfPTable table1 = new PdfPTable(3);
 		table1.setSpacingBefore(10);
 		table1.setWidthPercentage(100);
@@ -152,7 +166,7 @@ public class Mod184CertificatePDF {
         document.add(table1);		
 	}
 	
-	private void addHeaderBand2(Document document, String title, int titleWidth, String nameHead, String nif, String name) throws DocumentException {
+	private void addHeaderBandEntity(Document document, String title, int titleWidth, String nameHead, String nif, String name) throws DocumentException {
 		
 		addSubTitleLine(document, title, titleWidth);
 		
@@ -181,11 +195,7 @@ public class Mod184CertificatePDF {
 	}
 	
 	// Datos del Socio, Heredero, Comunero o Participe
-	private void addHeaderBand22(Document document) throws DocumentException {
-		
-		// , Mod184Partner mod184partner
-		
-		//addHeaderBand22(document, "Datos del Socio, Heredero, Comunero o Partícipe", 225, "Apellidos y nombre, denominación o razón social", detail.getEmployeeDocument(), detail.getEmployeeName());
+	private void addHeaderBandMember(Document document, Mod184Certificate certi) throws DocumentException {
 		
 		addSubTitleLine(document, "Datos del Socio, Heredero, Comunero o Partícipe", 225);
 		
@@ -204,13 +214,10 @@ public class Mod184CertificatePDF {
 	    addEmptyCell(table1, 1, Rectangle.RIGHT);
 	    
 	    addEmptyCell(table1, 1, Rectangle.LEFT);
-		//addBodyCell(table1, mod184partner.getDocument());
-	    addBodyCell(table1, "12345678Z");  // PRUEBA
+	    addBodyCell(table1, certi.getMemberDocument());
 		addEmptyCell(table1);
-		addBodyCell(table1, "APELLIDOS Y NOMBRE DEL SOCIO");
+		addBodyCell(table1, certi.getMemberName());
 	    addEmptyCell(table1, 1, Rectangle.RIGHT);
-	    
-	    
 	    
 	    document.add(table1);
 	    
@@ -221,8 +228,6 @@ public class Mod184CertificatePDF {
 		table2.setWidthPercentage(100);
 		table2.setTotalWidth(new float[]{5,257,5,38,5,35,5,180,5}); // 535
 		table2.setLockedWidth(true);
-		
-		//addEmptyLine(table2);
 		
 		addEmptyCell(table2, 1, Rectangle.LEFT);
 		addLabelCell(table2, "Domicilio Fiscal");
@@ -235,13 +240,26 @@ public class Mod184CertificatePDF {
 	    addEmptyCell(table2, 1, Rectangle.RIGHT);
 		
 		addEmptyCell(table2, 1, Rectangle.LEFT);
-		addBodyCell(table2, "domicilio");
+		addBodyCell(table2, certi.getAddress());
 		addEmptyCell(table2);
-		addCenterBodyCell(table2, "50");
+		addCenterBodyCell(table2, certi.getProvince() == 0 ? "" : AonStringUtils.leftPad(AonNumberUtils.emptyIfNull(certi.getProvince()), 2, '0'));
 		addEmptyCell(table2);
-		addCenterBodyCell(table2, "ES");		
+		addCenterBodyCell(table2, certi.getCountry());		
 		addEmptyCell(table2);
-		addBodyCell(table2, "3 - No residente con establecimiento permanente");
+		
+		String value = "";
+		switch (certi.getPartType()) {
+			case 2:			
+				value = "2.- No residente sin establecimiento permanente";
+				break;
+			case 3:
+				value = "3.- No residente con establecimiento permanente";
+				break;
+			default:
+				value = "1.- Residente";
+		}
+				
+		addBodyCell(table2, value);
 	    addEmptyCell(table2, 1, Rectangle.RIGHT);
 		
 		document.add(table2);
@@ -257,14 +275,14 @@ public class Mod184CertificatePDF {
 		addEmptyLine(table3);
 		
 		addEmptyCell(table3, 1, Rectangle.LEFT);
-		addLabelCell(table3, "Miembro a 31 de diciembre").setVerticalAlignment(Element.ALIGN_TOP);
-		addCenterBodyCell(table3, "No");
+		addLabelCell(table3, "Miembro a 31 de diciembre");
+		addCenterBodyCell(table3, certi.isMemberEndOfYear() ? "Si" : "No");
 		addEmptyCell(table3);
-		addLabelCell(table3, "Número de días miembro").setVerticalAlignment(Element.ALIGN_MIDDLE);
-		addCenterBodyCell(table3, "365");
+		addLabelCell(table3, "Número de días miembro");
+		addCenterBodyCell(table3, AonNumberUtils.emptyIfNull(certi.getMemberDays()) );
 		addEmptyCell(table3);
-		addLabelCell(table3, "Porcentaje de Participación").setVerticalAlignment(Element.ALIGN_MIDDLE);
-		addCenterBodyCell(table3, "99,9999%");		
+		addLabelCell(table3, "Porcentaje de Participación");
+		addCenterBodyCell(table3, FMT_PERCENT.format(certi.getPartPercent())+"%");		
 	    addEmptyCell(table3, 1, Rectangle.RIGHT);
 	    
 	    addEmptyBottomLine(table3);
@@ -272,7 +290,6 @@ public class Mod184CertificatePDF {
 		document.add(table3);
 		
 	}
-	
 	
 	private void addFooterBand(Document document) throws DocumentException {
 		
@@ -314,74 +331,36 @@ public class Mod184CertificatePDF {
 		
 		addEmptyCell(table1, 2, Rectangle.LEFT);
 		addSmallLabelCell(table1, "Fdo.: D./D.ª ____________________________________________________________", 1, Rectangle.LEFT + Rectangle.BOTTOM + Rectangle.RIGHT);		
-		//addSmallLabelCell(table1, "    La presente certificación deberá ser firmada por el retenedor, su apoderado o su representante", 8, Rectangle.RIGHT);
 		addSmallLabelCell(table1, "", 8, Rectangle.RIGHT);
-		addEmptyBottomLine(table1);                            // FALTA - RETENEDOR ???
+		addEmptyBottomLine(table1);                            
 				
 		document.add(table1);
 		
 	}
 	
-	private void addDetailBand(Document document, String title, String head1, String head2, RetentionCertificate detail) throws DocumentException {
-		addDetailBand(document, title, head1, head2, detail, false);
+	private void addTitleDetailBand(PdfPTable table, String title) throws DocumentException {
+		addEmptyLine(table);
+	    addEmptyCell(table, 1, Rectangle.LEFT);		
+		addLabelCell(table, title, 8, Rectangle.RIGHT, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);
+	}	
+	
+	private void addSubDetailBand(PdfPTable table, Mod184Certificate certi, String key) throws DocumentException {
+		addDetailBand(table, certi, key, 2);
 	}
 	
-	private void addDetailBand(Document document, String title, String head1, String head2, RetentionCertificate detail, boolean lastLine) throws DocumentException {
-		
-		PdfPTable table1 = new PdfPTable(10);
-		table1.setSpacingBefore(0);
-		table1.setWidthPercentage(100);		
-		table1.setTotalWidth(new float[]{5,5,225,5,90,10,90,10,90,5}); // Total 535
-		table1.setLockedWidth(true);
-		
-	    addEmptyLine(table1);		
-	    
-	    if (detail == null) {
-	    	addEmptyCell(table1, 2, Rectangle.LEFT);		
-	    	addLabelCell(table1, title, 9, Rectangle.RIGHT, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);	    	
-	    } else {
-			// FALTA - DEPENDE DE LA CLAVE LA CABECERA DE LAS CASILLAS ES UNA U OTRA O NINGUNA
-	    	if (head1 != null) {
-				addEmptyCell(table1, 6, Rectangle.LEFT);
-				addSmallLabelCenterCell(table1, head1);
-				addEmptyCell(table1);
-				if (head2 == null)
-					addEmptyCell(table1);
-				else 
-				    addSmallLabelCenterCell(table1, head2);
-				addEmptyCell(table1, 1, Rectangle.RIGHT);
-	    	}
-		    
-		    addEmptyCell(table1, 2, Rectangle.LEFT);
-		    addDotLabelCell(table1, title, 3);
-		    addEmptyCell(table1);
-			addNumericBodyCell(table1, detail.getPerception());
-			addEmptyCell(table1);
-			if (head2 == null)
-				addEmptyCell(table1);
-			else 
-				addNumericBodyCell(table1, detail.getRetention()); 
-		    addEmptyCell(table1, 1, Rectangle.RIGHT);
-	    }
-	    
-	    if (lastLine) {
-	    	addEmptyLine(table1);
-	    	addEmptyBottomLine(table1);	    	
-	    }	
-	    
-	    document.add(table1);
-
+	private void addDetailBand(PdfPTable table, Mod184Certificate certi, String key) throws DocumentException {
+		addDetailBand(table, certi, key, 1);
 	}
 	
-	private void addSubDetailBand(PdfPTable table, String description, String key) throws DocumentException {
-		addDetailBand(table, description, key, 2);
-	}
-	
-	private void addDetailBand(PdfPTable table, String description, String key) throws DocumentException {
-		addDetailBand(table, description, key, 1);
-	}
-	
-    private void addDetailBand(PdfPTable table, String description, String key, int colSpanLeft) throws DocumentException {
+    private void addDetailBand(PdfPTable table, Mod184Certificate certi, String key, int colSpanLeft) throws DocumentException {
+    	
+    	String description = DESCRIPTION_MAP.get(key);
+    	double amount = 0;
+    	double reduction = 0;
+    	if (certi.getDetail().containsKey(key)) {
+    		amount = certi.getDetail().get(key)[0];
+    		reduction = certi.getDetail().get(key)[1];
+    	}
     	
 	    addEmptyLine(table);
 	    
@@ -391,12 +370,12 @@ public class Mod184CertificatePDF {
 	    
 	    // Importe
 	    addEmptyCell(table);
-		addNumericBodyCell(table, 1200.25);
+		addNumericBodyCell(table, amount);
 		
 		// Reducción (solo claves A02, C y D)
 		if (key.equals("A02") || key.equals("C") || key.equals("D")) {
 			addEmptyCell(table);
-	     	addNumericBodyCell(table, 205.65); 
+	     	addNumericBodyCell(table, reduction); 
 		} else {
 			addEmptyCell(table,2);
 		}
@@ -410,48 +389,6 @@ public class Mod184CertificatePDF {
 	
 	private void addEmptyBottomLine(PdfPTable table) {
 		addEmptyCell(table, table.getNumberOfColumns(), Rectangle.LEFT + Rectangle.BOTTOM + Rectangle.RIGHT);  
-	}
-	
-	private void addLine(PdfPTable table, String columnHeadText, String lineText, double amount) {
-		addLine(table, columnHeadText, lineText, amount, false);
-	}
-	
-	private void addLine(PdfPTable table, String columnHeadText, String lineText, double amount, boolean doubleLine) {
-		addLine(table, "", columnHeadText, lineText, amount, doubleLine);
-	}	
-	
-	private void addLine(PdfPTable table, String sectionTitle, String columnHeadText, String lineText, double amount) {
-		addLine(table, sectionTitle, columnHeadText, lineText, amount, false);
-	}
-	
-	private void addLine(PdfPTable table, String sectionTitle, String columnHeadText, String lineText, double amount, boolean doubleLine) {
-		
-		if (AonStringUtils.isNotEmpty(sectionTitle))
-			addEmptyLine(table);
-		
-		if (doubleLine) {
-			addEmptyCell(table, 2, Rectangle.LEFT);		
-			addDotLabelCell(table, lineText, 5, 2);
-		    addEmptyCell(table);
-			addSmallLabelCenterCell(table, columnHeadText);
-			addEmptyCell(table, 1, Rectangle.RIGHT);
-		} else {
-			addEmptyCell(table, 1, Rectangle.LEFT);
-			addLabelCell(table, sectionTitle, 7, Rectangle.NO_BORDER, CELL_LABEL_FONT_BOLD, Element.ALIGN_LEFT);					
-			addSmallLabelCenterCell(table, columnHeadText);
-			addEmptyCell(table, 1, Rectangle.RIGHT);
-		}
-		
-		if (doubleLine) {
-		    addEmptyCell(table, 2, Rectangle.LEFT);		    
-		} else {
-		    addEmptyCell(table, 2, Rectangle.LEFT);
-		    addDotLabelCell(table, lineText, 5);
-		}
-		addEmptyCell(table);
-		addNumericBodyCell(table, amount); 
-	    addEmptyCell(table, 1, Rectangle.RIGHT);
-		
 	}
 	
 	private PdfPCell addTitleCell(PdfPTable table, String title, int colspan, Font font) {
@@ -519,10 +456,6 @@ public class Mod184CertificatePDF {
 	    return c1;		
 	}
 	
-	private PdfPCell addDotLabelCell(PdfPTable table, String text) {		
-		return addDotLabelCell(table, text, 1);
-	}
-	
 	private PdfPCell addDotLabelCell(PdfPTable table, String text, int colspan) {		
 		return addDotLabelCell(table, text, colspan, 1);
 	}
@@ -551,36 +484,8 @@ public class Mod184CertificatePDF {
 		
 	}
 	
-	private PdfPCell addSmallLabelCell(PdfPTable table, String text, int colspan) {				
-		return addLabelCell(table, text, colspan, Rectangle.NO_BORDER, CELL_LABEL_SMALL_FONT, Element.ALIGN_JUSTIFIED, 1);
-	}
-	
 	private PdfPCell addSmallLabelCell(PdfPTable table, String text, int colspan, int border) {				
 		return addLabelCell(table, text, colspan, border, CELL_LABEL_SMALL_FONT, Element.ALIGN_JUSTIFIED, 1);
-	}
-	
-	private PdfPCell addSmallLabelCell(PdfPTable table, String boldText, String text, int colspan) {
-		
-		Chunk ch1 = new Chunk(boldText, CELL_LABEL_SMALL_FONT_BOLD);
-		Chunk ch2 = new Chunk(text, CELL_LABEL_SMALL_FONT);
-		
-		Paragraph p = new Paragraph(6);
-		p.add(ch1);
-		p.add(ch2);
-		p.setAlignment(Element.ALIGN_JUSTIFIED);
-				
-		PdfPCell c1 = new PdfPCell();
-		c1.setColspan(colspan);
-		c1.setBorder(Rectangle.NO_BORDER);
-		c1.setPaddingTop(0);
-	    c1.addElement(p);
-		table.addCell(c1);
-		return c1;
-		
-	}
-	
-	private PdfPCell addSmallLabelCenterCell(PdfPTable table, String text) {
-		return addLabelCell(table, text, 1, Rectangle.NO_BORDER, CELL_LABEL_SMALL_FONT, Element.ALIGN_CENTER, 1);
 	}
 	
 	private PdfPCell addLabelCenterCell(PdfPTable table, String text) {
@@ -610,9 +515,6 @@ public class Mod184CertificatePDF {
 	    if (font == CELL_LABEL_SMALL_FONT) {
 			c1.setPaddingTop(0);
 	    }
-	    // FALTA
-	    //c1.setVerticalAlignment(Element.ALIGN_BOTTOM);
-	    //c1.setVerticalAlignment(Element.ALIGN_MIDDLE);
         table.addCell(c1);
 		return c1;
 	}
@@ -630,7 +532,6 @@ public class Mod184CertificatePDF {
 	}
 	
 	private PdfPCell addBodyCell(PdfPTable table, String text, int colspan, int border, int horizontalAlignment, Font font) {
-		//PdfPCell c1 = new PdfPCell(new Phrase(text, BODY_FONT));
 		PdfPCell c1 = new PdfPCell(new Phrase(text, font));
 		c1.setColspan(colspan);
 		c1.setBorder(border);
@@ -645,77 +546,135 @@ public class Mod184CertificatePDF {
 
 ////// MAIN ///////
 	
-	public static void main(String[] args) {
-				
-		try {
-			Map<String, RetentionCertificate> professionalCertificates = new HashMap<String, RetentionCertificate>();
-			professionalCertificates.put("", getTestProfessionalCertificates());
-			
-			File file = new File("c:\\tmp\\certificado_mod184.pdf");
-			OutputStream stream = new FileOutputStream(file);
-			
-			Mod184CertificatePDF print = new Mod184CertificatePDF();
-			print.printMod184Certificate(stream, null, professionalCertificates);
-			
-			stream.close();
-			
-		} catch (IOException | DocumentException e) {
-			System.out.println(e.getMessage());
-		}
-		
-	}
-
-	private static RetentionCertificate getTestProfessionalCertificates() {
-		RetentionCertificate cert = new RetentionCertificate();
-		cert.setId(null);
-		cert.setName(null);
-		cert.setYear(2022);
-		cert.setEnterpriseName("ENTIDAD DE PRUEBA");
-		cert.setEnterpriseDocument("H50111111");
-		cert.setEmployeeName("PROFESIONAL DE PRUEBA CLAVE G");
-		cert.setEmployeeDocument("12345678Z");
-		
-		cert.setPerception(1000.0);
-		cert.setRetention(100.0);
-		cert.setInKindPerception(2000.0);
-		cert.setInKindDeposit(200.0);
-		cert.setInKindOutputDeposit(150.0);
-		
-		
-		RetentionCertificate cert1 = new RetentionCertificate();
-		cert1.setPerception(3000.0);
-		cert1.setRetention(300.0);
-		cert1.setInKindPerception(4000.0);
-		cert1.setInKindDeposit(400.0);
-		cert1.setInKindOutputDeposit(450.0);
-		cert.setProf1(cert1);
-		
-		cert1 = new RetentionCertificate();
-		cert1.setPerception(5000.0);
-		cert1.setRetention(500.0);
-		cert1.setInKindPerception(6000.0);
-		cert1.setInKindDeposit(600.0);
-		cert1.setInKindOutputDeposit(650.0);
-		cert.setProf2(cert1);
-		
-		cert1 = new RetentionCertificate();
-		cert1.setPerception(7000.0);
-		cert1.setRetention(700.0);
-		cert1.setInKindPerception(8000.0);
-		cert1.setInKindDeposit(800.0);
-		cert1.setInKindOutputDeposit(850.0);
-		cert.setProf3(cert1);
-		
-		cert1 = new RetentionCertificate();
-		cert1.setPerception(9000.0);
-		cert1.setRetention(900.0);
-		cert1.setInKindPerception(9500.0);
-		cert1.setInKindDeposit(950.0);
-		cert1.setInKindOutputDeposit(955.0);
-		cert.setProf4(cert1);
-
-		return cert;
-	}
+//	public static void main(String[] args) {
+//				
+//		try {
+//			Map<String, Mod184Certificate> certificates = new HashMap<>();
+//			certificates.put("1", getTestCertificate1());
+//			certificates.put("2", getTestCertificate2());
+//			certificates.put("3", getTestCertificate3());
+//			
+//			File file = new File("c:\\tmp\\certificado_mod184.pdf");
+//			OutputStream stream = new FileOutputStream(file);
+//			
+//			Mod184CertificatePDF print = new Mod184CertificatePDF();
+//			print.printMod184Certificate(stream, null, certificates);
+//			
+//			stream.close();
+//			
+//		} catch (IOException | DocumentException e) {
+//			System.out.println(e.getMessage());
+//		}
+//		
+//	}
+//	
+//	private static Mod184Certificate getTestCertificate1() {
+//		
+//		Mod184Certificate cert = new Mod184Certificate();
+//		
+//		cert.setYear(2023); 
+//		cert.setEntityDocument("H50111111");  
+//		cert.setEntityName("ENTIDAD DE PRUEBA");
+//		cert.setMemberDocument("1111111H");
+//		cert.setMemberName("PRUEBA PRUEBA, UNO");
+//		cert.setAddress("C/ DOMICILIO FISCAL DE PRUEBA, 15, 7ºA"); 
+//		cert.setProvince(50);
+//		cert.setCountry(null);
+//		cert.setPartType((byte) 1);
+//		cert.setMemberEndOfYear(true);
+//		cert.setMemberDays(366);
+//		cert.setPartPercent(25.5691);		
+//		cert.getDetail().put("A01", new double[]{100.02,0});	     
+//	    cert.getDetail().put("A02", new double[]{200.02,10.01});  
+//	    cert.getDetail().put("C"  , new double[]{300.02,20.01}); 
+//	    cert.getDetail().put("D"  , new double[]{400.02,30.01}); 
+//	    cert.getDetail().put("E"  , new double[]{500.02,0}); 
+//	    cert.getDetail().put("F01", new double[]{600.02,0}); 
+//	    cert.getDetail().put("F02", new double[]{700.02,0}); 
+//	    cert.getDetail().put("G01", new double[]{800.02,0}); 
+//	    cert.getDetail().put("G02", new double[]{900.02,0}); 
+//	    cert.getDetail().put("I01", new double[]{100.02,0}); 
+//	    cert.getDetail().put("I02", new double[]{110.02,0}); 
+//	    cert.getDetail().put("I03", new double[]{120.02,0}); 
+//	    cert.getDetail().put("I04", new double[]{130.02,0}); 
+//	    cert.getDetail().put("I05", new double[]{140.02,0}); 
+//	    cert.getDetail().put("I06", new double[]{150.02,0}); 
+//	    cert.getDetail().put("J01", new double[]{160.02,0}); 
+//	    cert.getDetail().put("J02", new double[]{170.02,0}); 
+//	    cert.getDetail().put("J03", new double[]{180.02,0}); 
+//	    cert.getDetail().put("J04", new double[]{190.02,0}); 
+//	    cert.getDetail().put("K01", new double[]{200.02,0}); 
+//	    cert.getDetail().put("K02", new double[]{210.02,0}); 
+//	    cert.getDetail().put("K03", new double[]{220.02,0}); 
+//	    cert.getDetail().put("K04", new double[]{230.02,0}); 
+//	    cert.getDetail().put("K05", new double[]{240.02,0}); 
+//		
+//		return cert;
+//	}
+//
+//	private static Mod184Certificate getTestCertificate2() {
+//		
+//		Mod184Certificate cert = new Mod184Certificate();
+//		
+//		cert.setYear(2023); 
+//		cert.setEntityDocument("H50111111");  
+//		cert.setEntityName("ENTIDAD DE PRUEBA");
+//		cert.setMemberDocument("12345678Z");
+//		cert.setMemberName("APELLIDOUNO APELLIDODOS, MIEMBRO");
+//		cert.setAddress("C/ SAN SEBASTIAN DE LOS REYES, 1, 1ºA"); 
+//		cert.setProvince(99);
+//		cert.setCountry("GB");
+//		cert.setPartType((byte) 3);
+//		cert.setMemberEndOfYear(true);
+//		cert.setMemberDays(366);
+//		cert.setPartPercent(100);		
+//		cert.getDetail().put("A01", new double[]{1000,0});	     
+//	    cert.getDetail().put("A02", new double[]{2000,100});  
+//	    cert.getDetail().put("C"  , new double[]{3000,200}); 
+//	    cert.getDetail().put("D"  , new double[]{4000,300}); 
+//	    cert.getDetail().put("E"  , new double[]{5000,0}); 
+//	    cert.getDetail().put("F01", new double[]{6000,0}); 
+//	    cert.getDetail().put("F02", new double[]{7000,0}); 
+//	    cert.getDetail().put("G01", new double[]{8000,0}); 
+//	    cert.getDetail().put("G02", new double[]{9000,0}); 
+//	    cert.getDetail().put("I01", new double[]{1000,0}); 
+//	    cert.getDetail().put("I02", new double[]{1100,0}); 
+//	    cert.getDetail().put("I03", new double[]{1200,0}); 
+//	    cert.getDetail().put("I04", new double[]{1300,0}); 
+//	    cert.getDetail().put("I05", new double[]{1400,0}); 
+//	    cert.getDetail().put("I06", new double[]{1500,0}); 
+//	    cert.getDetail().put("J01", new double[]{1600,0}); 
+//	    cert.getDetail().put("J02", new double[]{1700,0}); 
+//	    cert.getDetail().put("J03", new double[]{1800,0}); 
+//	    cert.getDetail().put("J04", new double[]{1900,0}); 
+//	    cert.getDetail().put("K01", new double[]{2000,0}); 
+//	    cert.getDetail().put("K02", new double[]{2100,0}); 
+//	    cert.getDetail().put("K03", new double[]{2200,0}); 
+//	    cert.getDetail().put("K04", new double[]{2300,0}); 
+//	    cert.getDetail().put("K05", new double[]{2400,0}); 
+//		
+//		return cert;
+//	}
+//	
+//	private static Mod184Certificate getTestCertificate3() {
+//		
+//		Mod184Certificate cert = new Mod184Certificate();
+//		
+//		cert.setYear(2023); 
+//		cert.setEntityDocument(null);  
+//		cert.setEntityName(null);
+//		cert.setMemberDocument(null);
+//		cert.setMemberName(null);
+//		cert.setAddress(null); 
+//		cert.setProvince(50);
+//		cert.setCountry(null);
+//		cert.setPartType((byte) 0);
+//		cert.setMemberEndOfYear(false);
+//		cert.setMemberDays(null);
+//		cert.setPartPercent(0.0);		
+//		
+//		return cert;
+//	}
 
 	
 }
