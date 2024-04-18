@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
 import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
+import net.aonsolutions.db.up2date.registry.AlterRitemEdiSalesCode;
 import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
 import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.security.UdpateDomainApp;
@@ -447,7 +448,8 @@ public class Up2Date {
     		
     	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
 		InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
-        UdpateDomainApp.UPDATE_DOMAIN_APP
+        UdpateDomainApp.UPDATE_DOMAIN_APP,
+        AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE
 	};
 
     // ------------------------------------------------------------------------
