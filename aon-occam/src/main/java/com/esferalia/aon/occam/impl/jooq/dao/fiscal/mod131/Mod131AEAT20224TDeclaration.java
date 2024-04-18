@@ -6,13 +6,22 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod131AEAT20224TDeclaration extends Mod131Declaration{
+class Mod131AEAT20224TDeclaration extends Mod131AEATBefore2024Declaration {
+
+	@Override
+	Double getResult(Mod131 mod131) {
+		return mod131.getAmount(Mod131Key.C15);
+	}
+	// *******************************************************
+	// *******************************************************
+	// *******************************************************
 
 	private static final double DEFAULT_YEAR_HOURS = 1800;
 

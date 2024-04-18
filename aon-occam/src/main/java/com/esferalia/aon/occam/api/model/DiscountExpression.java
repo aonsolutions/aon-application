@@ -76,7 +76,7 @@ public class DiscountExpression implements Serializable {
 	 */
 	public DiscountExpression(String discountExpr) {
 		this.discountExpr = discountExpr == null || (discountExpr.length()) == 0
-				? ZERO : discountExpr;
+				? ZERO : discountExpr.replace(",",".");
 
 		String[] arr = getDiscountExpr().split(PATTERN);
 		discounts = new double[arr.length];

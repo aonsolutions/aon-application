@@ -107,9 +107,13 @@ export const BOLD = "Negrita"; //TODO
 
 // ----- C
 
+export const CAMPAIGN = "Campaña";
+export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
 export const CAU = "Cau";// TODO
+export const CARRIER = "Agencia de Transporte"; // TODO
+export const CARRIERS = "Agencias de Transporte"; // TODO
 export const CATALAN = MSG.CATALAN;
 export const CATEGORIES = MSG.CATEGORIES;
 export const CERTIFICATE = MSG.CERTIFICATE;
@@ -226,6 +230,7 @@ export const EDIT_CATEGORY = MSG.EDIT_CATEGORY;
 export const EDIT_FILE = MSG.EDIT_FILE;
 export const EDIT_FILES = MSG.EDIT_FILES;
 export const EDIT_TAG = MSG.EDIT_TAG;
+export const EDIT_WAREHOUSE = MSG.EDIT_WAREHOUSE;
 export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const ELABORATION = "Elaboración"
 export const ELABORATIONS = "Elaboraciones"
@@ -258,12 +263,13 @@ export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";//TODO
 export const FILTERS = "Filtros";//TODO
+export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FISCAL = 'Fiscal';//TODO
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
-export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
+export const FROM = MSG.FROM;
 
 // ----- G
 
@@ -410,9 +416,12 @@ export const NAME = MSG.NAME;
 export const NEW = MSG.NEW;
 export const NEWS = "Noticias";//TODO
 export const NEW_COMPANY = MSG.NEW_COMPANY;
+export const NEW_DOCUMENT = MSG.NEW_DOCUMENT;
 export const NEW_ELABORATION = 'Nueva Elaboración';
+export const NEW_EMPLOYEE = MSG.NEW_EMPLOYEE;
 export const NEW_EXPENSE = MSG.NEW_EXPENSE;
 export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
+export const NEW_INVOICE = MSG.NEW_INVOICE;
 export const NEW_PASSWORD = 'Nueva Contraseña';
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
@@ -432,7 +441,7 @@ export const NOTE = MSG.NOTE;
 export const NOTICE = "Noticia"; //TODO
 // ----- O
 
-export const OCR = MSG.OCR;
+export const OCR = "OCR";
 export const OBSERVATION = MSG.OBSERVATION;
 export const OFFICE = MSG.OFFICE;
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
@@ -496,8 +505,10 @@ export const PARENT = "Padre"; // TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
-export const QUOTA = MSG.QUOTA;
 export const QUERY = "Consulta"; //TODO
+export const QUESTION = "Pregunta"; //TODO
+export const QUESTIONS = "Preguntas"; // TODO
+export const QUOTA = MSG.QUOTA;
 export const QUOTE_GROUP = "Grupo de cotización";//TODO
 // ----- R
 
@@ -562,6 +573,7 @@ export const SEND_INVOICE = MSG.SEND_INVOICE;
 export const SEND_INVOICES = MSG.SEND_INVOICES;
 export const SENDER = "Remitente";//TODO
 export const SEPA_FILES = MSG.SEPA_FILES;
+export const SERES = 'Seres';
 export const SERIE = MSG.SERIE;
 export const SERVICE = MSG.SERVICE;
 export const SERVICE_ACCOUNT = 'Cuenta de Servicio'// TODO MSG.SERVICE_ACCOUNT;
@@ -581,6 +593,7 @@ export const SIZE = MSG.SIZE;
 export const SPANISH = MSG.SPANISH;
 export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
+export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
@@ -589,6 +602,8 @@ export const SUPPORT = MSG.SUPPORT;
 export const SURCHARGE = MSG.SURCHARGE;
 export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
+export const SURVEY = "Cuestionario"; // TODO
+export const SURVEYS = "Cuestionarios"; // TODO
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
@@ -600,6 +615,8 @@ export const TAG = MSG.TAG;
 export const TASK = "Tarea"; //TODO
 export const TASKS = "Tareas"; //TODO
 export const TAGS = MSG.TAGS;
+export const TARGET = "Cliente Potencial"; //TODO
+export const TARGETS = "Clientes Potenciales"; //TODO
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
 export const TAXES_DETAIL = MSG.TAXES_DETAIL;
@@ -610,6 +627,7 @@ export const TICKETBAI = MSG.TICKETBAI;
 export const TICKETS = MSG.TICKETS;
 export const TIMECONTROL = MSG.TIMECONTROL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
+export const TO = MSG.TO;
 export const TO_TRASH = MSG.TO_TRASH;
 export const TODAY = MSG.TODAY;
 export const TOMORROW = MSG.TOMORROW;

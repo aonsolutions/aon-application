@@ -1,6 +1,6 @@
 import { CONSTANT } from "../../environments/environments.js";
 import { RegistryType } from "../../models/enums.js";
-import { round } from "../../services/utils.js";
+import { round, now } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType, WithholdingType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
 
@@ -66,7 +66,7 @@ export class Invoice {
       this.reference = invoice.reference && invoice.reference !== ''
         ? invoice.reference
         : (invoice.series ? invoice.series + '/' + invoice.number : invoice.number);
-      this.date = invoice.date || new Date();
+      this.date = invoice.date || now();
       this.total = invoice.total || 0;
       this.type = invoice.type || 'emitida',
       this.category = invoice.category || '',
@@ -133,7 +133,7 @@ export class Invoice {
       this.serie = new Date().getFullYear();
       this.number = '';
       this.reference = '';
-      this.date = new Date(Date.now());
+      this.date = now();
       this.total = 0;
       this.sender = {
         document: '',
@@ -198,7 +198,8 @@ export class Invoice {
 
   setActivity(activity) {
     this.activity = activity;
-    if(!this.isNacional() || this.isExempt()){
+    
+    if(!this.isVatEnabled()){
       this.surcharge = false;
         
       if(!this.isCcm()) {
@@ -214,6 +215,7 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+      
       this.details.forEach((detail,i) => {
         if(detail.percentage !== 0.0 || detail.vat !== 0.0){
           detail.percentage = 0.0;
@@ -307,13 +309,41 @@ export class Invoice {
     return this.transaction === 'NAC';
   }
 
+  isIntracommunity() {
+    return this.transaction === 'INTR';
+  }
+
+  isExtracommunity() {
+    return this.transaction === 'EXTR';
+  }
+
+  isIsp() {
+    return this.transaction === 'ISP';
+  }
+
+  isCcm() {
+    return this.transaction === 'CCM';
+  }
+
   isExempt() {
     return this.activity && this.activity.vatRegime 
       && "EXEMPT" === this.activity.vatRegime;
   }
-  
-  isCcm() {
-    return this.transaction === 'CCM';
+
+  isVatEnabled() {
+    return (this.isNacional() && !this.isExempt())
+      || (this.isRecibida() && 
+            (this.isIntracommunity()
+              || (this.isExtracommunity && this.isService())
+              || (this.isCcm() && this.isService())
+              || this.isIsp()
+            )
+          );
+      // || TODO REGIMEN DE IMPORTACION    
+  }
+
+  isVatCalculate(){
+    return this.isNacional() && !this.isExempt();
   }
 
   isSelfconta() {
@@ -503,7 +533,7 @@ export class Invoice {
 
   setTransaction(transaction) {
     this.transaction = transaction;
-    if(!this.isNacional() || this.isExempt()){
+    if(!this.isVatEnabled()){
       this.surcharge = false;
       
       if(!this.isCcm()) {
@@ -519,7 +549,6 @@ export class Invoice {
           surcharge_quota: 0.0
         }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-      
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;
         detail.vat = 0.0;
@@ -746,7 +775,10 @@ export class Invoice {
     let total = 0.0;
   
     this.taxes.filter(f => TaxType.IVA === f.tax).forEach(tax => {
-      total = total + round(Number(tax.base) + Number(tax.quota) + Number(tax.surcharge_quota));
+      const value = this.isVatCalculate()
+        ? round(Number(tax.base) + Number(tax.quota) + Number(tax.surcharge_quota))
+        : round(Number(tax.base));
+      total = total + value;
     });
 
     this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
@@ -944,7 +976,10 @@ export class Invoice {
   calculateTotalFromDetail() {
     let total = 0.0;
     this.details.forEach( detail => {
-      total = total + detail.amount + detail.quota + detail.surcharge_quota;
+      const value = this.isVatCalculate()
+        ? round(Number(detail.amount) + Number(detail.quota) + Number(detail.surcharge_quota))
+        : round(Number(detail.amount));
+      total = total + value;
     });  
 
     this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {

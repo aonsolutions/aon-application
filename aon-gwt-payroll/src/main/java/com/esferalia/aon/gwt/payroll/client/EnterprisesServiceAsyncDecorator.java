@@ -1231,5 +1231,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employees, newStartDate, callback);
 	}
+	
+	// ------------------------------------------------ Pension Plan AFI
+
+	@Override
+	public void checkPensionPlanAFI(String domainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.checkPensionPlanAFI(domainName, currentUser, date, cccIdList, callback);
+	}
 
 }

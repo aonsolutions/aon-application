@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class InvoiceFaker {
@@ -364,18 +363,19 @@ public class InvoiceFaker {
 		invoice.setTaxDate( issueDate );
 		invoice.setType( invoiceType );
 		
-		invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+		invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
 			
-			private void fillRegistryData(Invoice invoice, Registry reg) {
+			private Void fillRegistryData(Invoice invoice, Registry reg) {
 				invoice.setRegistry(reg.getId());
 				invoice.setRegistryDocumentType(reg.getDocumentType());
 				invoice.setRegistryDocumentCountry(reg.getDocumentCountry());
 				invoice.setRegistryDocument(reg.getDocument());
 				invoice.setRegistryName(reg.getName());
+				return null;
 			}
 			
 			@Override
-			public void visitSales(Invoice invoice) {
+			public Void visitSales(Invoice invoice) {
 				Customer customer = AonRandom.getCustomer( params.getCtx() );
 				fillRegistryData(invoice, customer);
 				invoice.setSeries(params.getConfig().getDefaultInvoiceSeries());
@@ -389,10 +389,11 @@ public class InvoiceFaker {
 				invoice.setSurcharge(customer.isSurcharge());
 				invoice.setWithholding(customer.isWithholding() && params.getConfig().getCompany().isWithholding());
 				invoice.setWithholdingFarmer(false);
+				return null;
 			}
 			
 			@Override
-			public void visitPurchase(Invoice invoice) {
+			public Void visitPurchase(Invoice invoice) {
 				Supplier supplier = AonRandom.getSupplier( params.getCtx() );
 				if (supplier == null && params.mustForceRegistry()) {
 					supplier = AonFaker.getSupplier( params.getCtx() );
@@ -409,10 +410,11 @@ public class InvoiceFaker {
 				invoice.setSurcharge(params.getConfig().getCompany().isSurcharge());
 				invoice.setWithholding(supplier.isWithholding());
 				invoice.setWithholdingFarmer(supplier.isWithholdingFarmer());
+				return null;
 			}
 			
 			@Override
-			public void visitExpenses(Invoice invoice) {
+			public Void visitExpenses(Invoice invoice) {
 				Creditor creditor = AonRandom.getCreditor( params.getCtx() );
 				if (creditor == null && params.mustForceRegistry()) {
 					creditor = AonFaker.getCreditor( params.getCtx() );
@@ -433,9 +435,10 @@ public class InvoiceFaker {
 				invoice.setSurcharge(false);
 				invoice.setWithholding(creditor.isWithholding());
 				invoice.setWithholdingFarmer(false);
+				return null;
 			}
 			@Override
-			public void visitUndeductible(Invoice invoice) {
+			public Void visitUndeductible(Invoice invoice) {
 				visitExpenses(invoice);
 				
 				invoice.setSurcharge(false);
@@ -443,6 +446,7 @@ public class InvoiceFaker {
 				invoice.setWithholdingFarmer(false);
 				invoice.setVatAccrualPayment(false);
 				invoice.setService( true );
+				return null;
 			}
 		});
 		EnterpriseActivity activity = AonRandom.getRandomActivity(params.getCtx());
@@ -661,12 +665,7 @@ public class InvoiceFaker {
 
 	private static InvoiceDetail calculate(InvoiceDetail detail) {
 		double taxableBase = (detail.getPrice() + detail.getTaxes()) * detail.getQuantity();
-		double[] discounts = getDiscounts(detail.getDiscountExpression());
-		if ( discounts != null) {
-			for (double discount : discounts) {
-				taxableBase = taxableBase * ( 1 - discount /100);
-			}
-		}
+		taxableBase = taxableBase * ( 1 - detail.getDiscount() /100);
 		taxableBase = AonMathUtils.round(taxableBase, 4); 
 		detail.setTaxableBase( taxableBase );
 		if (detail.isPrepayment()) {
@@ -678,17 +677,6 @@ public class InvoiceFaker {
 			}
 		}
 		return detail;
-	}
-	
-	private static double[] getDiscounts(String discountExpr) {
-		if (AonStringUtils.isBlank(discountExpr)) return null;
-		String[] arr = AonStringUtils.split(discountExpr,'+');
-		double[] discounts = new double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			String discount = arr[i];
-			discounts[i] = Double.parseDouble(discount.trim());
-		}
-		return discounts;
 	}
 
 	private static InvoiceTax calculate(InvoiceTax tax) {

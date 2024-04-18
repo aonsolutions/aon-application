@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -60,17 +62,21 @@ public interface RegistryServiceAsync {
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
 	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> asyncCallback);
-	void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
+	void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Fee> asyncCallback);
+	void updateRitemCustomerFee(String domainName, int domain, String user, Integer id, Integer ritem, AsyncCallback<Void> asyncCallback);
 	void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> asyncCallback);
 	void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> asyncCallback);
+	void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
 	
 	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
 	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
 	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
 	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
+	
+	void getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery, AsyncCallback<Map<String, Fee>> asyncCallback);
 	
 	void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> asyncCallback);
 	void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback);
@@ -84,7 +90,18 @@ public interface RegistryServiceAsync {
 	void getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
 	void getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
 	void getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
+	void getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> asyncCallback);
 	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> asyncCallback);
+	void getCustomerSeller(String domainName, int domain, String user, Integer customerId, AsyncCallback<Seller> asyncCallback);
+	void getCustomerSellerEmail(String domainName, int domain, String user, Integer customerId, AsyncCallback<String> asyncCallback);
+	
+	// **************************************************
+	// ********************************** [SUPPORT AGENT]
+	// **************************************************
+	void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> asyncCallback);
+	void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> asyncCallback);
+	
+	
 	
 }

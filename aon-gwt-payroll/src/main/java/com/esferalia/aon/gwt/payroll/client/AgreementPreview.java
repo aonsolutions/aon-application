@@ -2168,17 +2168,37 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getExtraPeriodLongTitle(AgreementExtra extra) {
-		if (AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "03"))
-			return "Anual";
-		if (AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")
-				&& !AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1"))
-			return "Anual";
+//		if (AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "03"))
+//			return "Anual";
+//		if (AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")
+//				&& !AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1"))
+//			return "Anual";
 
 		try {
 			String startDate = extra.getStartDate();
 			startDate = AonStringUtils.containsIgnoreCase(startDate, "-1") ? startDate.split(" ")[0] : startDate;
+			
 			String endDate = extra.getEndDate();
 			endDate = AonStringUtils.containsIgnoreCase(endDate, "-1") ? endDate.split(" ")[0] : endDate;
+			
+			try {
+				Date start = new Date(AonStringUtils.containsIgnoreCase(startDate, "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(startDate.split("/")[1]) - 1, Integer.parseInt(startDate.split("/")[0]));
+				Date end = new Date(AonStringUtils.containsIgnoreCase(endDate, "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(endDate.split("/")[1]) - 1, Integer.parseInt(endDate.split("/")[0]));
+				int monthsBetween = monthsBetween(start, end);
+				
+				switch (monthsBetween) {
+					case 11:
+						return "Anual";
+					case 5:
+						return "Semestral";
+					case 6:
+						return "Semestral";
+					default:
+						return "Manual";
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 
 			int startMonth = Integer.parseInt(startDate.split("/")[1]);
 			int endMonth = Integer.parseInt(endDate.split("/")[1]);
@@ -2195,6 +2215,13 @@ public abstract class AgreementPreview extends Composite {
 			return "Manual";
 		}
 	}
+	
+	public int monthsBetween(Date startDate, Date endDate) {
+        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
+        long diff = diffInMillies / (24 * 60 * 60 * 1000);
+        int numMonths = (int) (diff / 30.416667);
+        return numMonths;
+    }
 
 	private String getExtraInfoTitle(Payment payment) {
 		String title = "";

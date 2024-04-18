@@ -4,9 +4,11 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -60,6 +62,18 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	public void toInbox(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.toInbox(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void getAccountingInvoice(String domainName, int domain, String user, String invoice, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getAccountingInvoice(domainName, domain, user, invoice, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+	
+	@Override
+	public void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.processInvoiceFile(domainName, domain, user, jsonStr, invoice, new AsyncCallbackWrapper<Boolean>(callback));
 	}
 	
 }

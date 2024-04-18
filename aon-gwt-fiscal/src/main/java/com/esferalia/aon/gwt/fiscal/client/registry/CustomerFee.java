@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1452,7 +1453,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setPrice(priceTextBox.getValue());
 		params.setDiscount(discountTextBox.getValue());
 		
-		params.setSeller(null != sellerSuggestions.get(sellerSuggestBox.getValue()) ? sellerSuggestions.get(sellerSuggestBox.getValue()).getName() : null);
+		params.setSeller(null != sellerSuggestions.get(sellerSuggestBox.getValue()) ? sellerSuggestions.get(sellerSuggestBox.getValue()).getId() : null);
 		params.setWorkplace(null != workplaceSuggestions.get(workplaceSuggestBox.getValue()) ? workplaceSuggestions.get(workplaceSuggestBox.getValue()).getDescription() : null);
 		params.setInvoicingGroup(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()) ? invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getDescription() : null);
 		params.setProject(null != projectSuggestions.get(projectSuggestBox.getValue()) ? projectSuggestions.get(projectSuggestBox.getValue()).getId() : null);
@@ -1704,7 +1705,18 @@ public class CustomerFee extends MainEntryPoint {
 		setInputStyle(statusListBox);
 		setSelectedValueLB(statusListBox, fee.getCustomer().getStatus().getDescription());
 		
-		Label lineLabel = new Label(fee.getLine().toString());
+		TextBox lineTextBox = new TextBox();
+		lineTextBox.setEnabled(null != customerSuggestions.get(customerSuggestBox.getValue()));
+		lineTextBox.setValue(fee.getLine().toString());
+		lineTextBox.setWidth("40px");
+		lineTextBox.addValueChangeHandler(e -> {
+			try {
+				Short newLine = Short.parseShort(lineTextBox.getValue());
+				reorderAndSaveLine(fee, newLine);
+			} catch (NumberFormatException ex) {
+				AonMessagePanel.showError(messagePanel, "El valor de la linea debe ser un entero");
+			}
+		});
 
 		AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(fee, row);
 		conceptTextArea.setWidth("95%");
@@ -1808,7 +1820,7 @@ public class CustomerFee extends MainEntryPoint {
 		checkRowAndModify(feeTable, row, fee, select);
 		checkRowAndModify(feeTable, row, fee, customerLabel);
 		checkRowAndModify(feeTable, row, fee, statusListBox);
-		checkRowAndModify(feeTable, row, fee, lineLabel);
+		checkRowAndModify(feeTable, row, fee, lineTextBox);
 		checkRowAndModify(feeTable, row, fee, conceptTextArea);
 		checkRowAndModify(feeTable, row, fee, periodListBox);
 		checkRowAndModify(feeTable, row, fee, quantityTextBox);
@@ -1822,7 +1834,7 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 0, select);
 		feeTable.setWidget(row, 1, customerLabel);
 		feeTable.setWidget(row, 2, statusListBox);
-		feeTable.setWidget(row, 3, lineLabel);
+		feeTable.setWidget(row, 3, lineTextBox);
 		feeTable.setWidget(row, 4, conceptTextArea);
 		feeTable.setWidget(row, 5, periodListBox);
 		feeTable.setWidget(row, 6, quantityTextBox);
@@ -1863,6 +1875,73 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 
 		selectionModel.put(select, fee);
+	}
+	
+	private void reorderAndSaveLine(Fee fee, short newLine) {
+		
+		feeList.sort((o1, o2) -> o1.getLine().compareTo(o2.getLine()));
+		
+		HashSet<Short> existingNumber = new HashSet<>();
+		existingNumber.add(newLine);
+		
+		for(int i=0; i<feeList.size(); i++) {
+			
+			// Si es el que se esta actualizando se salta
+			if(feeList.get(i).equals(fee) || feeList.get(i).getLine() < newLine) { 
+				existingNumber.add(feeList.get(i).getLine());
+				
+				if(feeList.get(i).equals(fee)) existingNumber.add(newLine);
+				
+				continue;
+			}
+			
+			// Si es la linea que se quiere insertar, o mayor se le suma una
+			else if(feeList.get(i).getLine() == newLine) {
+				feeList.get(i).setLine((short) (feeList.get(i).getLine() + 1));
+				feeList.get(i).setModify(true);
+				
+				existingNumber.add(feeList.get(i).getLine());
+			}
+			
+			// Si es mayor se le suma una
+			else if(feeList.get(i).getLine() > newLine) {
+				feeList.get(i).setLine((short) (existingNumber.stream().collect(Collectors.toList()).get(existingNumber.size() - 1) + 1));
+				feeList.get(i).setModify(true);
+				
+				existingNumber.add(feeList.get(i).getLine());
+			}
+			
+		}
+		
+		fee.setLine(newLine);
+		fee.setModify(true);
+		
+		// Guardar Cuotas
+		AonMessagePanel.showLoading(messagePanel, "Guardando panel facturaci\u00f3n ...");
+		setHasChange(false);
+		SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), feeList,
+				new AsyncCallback<Integer>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Integer updates) {
+						AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+						addValueButton.setEnabled(false);
+						deleteFeeButton.setEnabled(false);
+						exportButton.setEnabled(false);
+						selectionModel.clear();
+						setHasChange(false);
+						feeList.clear();
+						resetFeeTable();
+						enableMoreData();
+						offset.setValue(0);
+						searchFees();
+					}
+				});
 	}
 
 	private TextBox createYearTextBox() {
@@ -2268,10 +2347,10 @@ public class CustomerFee extends MainEntryPoint {
 				
 				@Override
 				protected void onCreate(Fee fee) {
-					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
 						
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess(Fee customerFee) {
 							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 							addValueButton.setEnabled(false);
 							exportButton.setEnabled(false);
@@ -2300,6 +2379,12 @@ public class CustomerFee extends MainEntryPoint {
 				
 				@Override
 				protected void onAccept(Fee fee) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				protected void onCreate(Fee fee, Integer ritem) {
 					// TODO Auto-generated method stub
 					
 				}
@@ -2350,6 +2435,12 @@ public class CustomerFee extends MainEntryPoint {
 
 						@Override
 						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
 						
 					};
 			} else {
@@ -2481,6 +2572,12 @@ public class CustomerFee extends MainEntryPoint {
 								}
 							});
 						} 
+					}
+
+					@Override
+					protected void onCreate(Fee fee, Integer ritem) {
+						// TODO Auto-generated method stub
+						
 					}
 					
 				};
@@ -2777,7 +2874,7 @@ public class CustomerFee extends MainEntryPoint {
 			if(AonStringUtils.isNotBlank(priceTextBox.getValue()))  json.put("price", new JSONNumber(Double.parseDouble(priceTextBox.getValue())));
 			if(AonStringUtils.isNotBlank(discountTextBox.getValue()))  json.put("discount", new JSONString(discountTextBox.getValue()));
 			
-			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONString(sellerSuggestBox.getValue()));
+			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONNumber(sellerSuggestions.get(sellerSuggestBox.getValue()).getId()));
 			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONString(workplaceSuggestBox.getValue()));
 			if(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue())) json.put("invoicingGroup", new JSONString(invoicingGroupSuggestBox.getValue()));
 			if(null != projectSuggestions.get(projectSuggestBox.getValue())) json.put("project", new JSONNumber(projectSuggestions.get(projectSuggestBox.getValue()).getId()));

@@ -339,6 +339,8 @@ public enum ContextVariable implements IResourceable {
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
+	BASE_PPE("__PPE",  VariableType.DOUBLE, false),
+
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 
 	MEI_EMPLOYEE_PERCENT("PORCENTAJE_MEI", VariableType.DOUBLE,false), 
@@ -427,6 +429,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String NOTE = "NOTA";
 	public static final String CAUTION = "ADVERTENCIA";
 	
+	public static final String PPE = "PPE";
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";

@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 public class Mod123Araba2021Declaration extends Mod123Declaration {
 	
 	public static boolean accept(Mod123 mod) {
-		return mod.isAraba(); 
+		return mod.isAraba() && mod.getYear() <= 2023; 
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{

@@ -227,6 +227,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private Date confirmationDate;
 		private String confirmationPartNumber;
 		
+		private boolean isRagged;
+		
 		private boolean cancel;
 		
 		public String getCcc() {
@@ -348,6 +350,14 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void setCancel(boolean cancel) {
 			this.cancel = cancel;
 		}
+
+		public boolean isRagged() {
+			return isRagged;
+		}
+
+		public void setRagged(boolean isRagged) {
+			this.isRagged = isRagged;
+		}
 	}
 	
 	private static class Fie2AON implements FieListener {
@@ -385,7 +395,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 		@Override
 		public void onDitRelapse(Boolean relapse) {
-			// TODO Auto-generated method stub
+			it.setRagged(relapse);
 		}
 
 		@Override
@@ -551,6 +561,18 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
 				contractLeaveRecord.setDischargeCause(it.getHightCause());
 		
+				// Try to find ragged it
+				if(it.isRagged()) {
+					ContractLeaveRecord itRaggedRecord = ctx.selectFrom(CONTRACT_LEAVE)
+						.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
+						.and(CONTRACT_LEAVE.START_DATE.eq(new java.sql.Date(it.getPrevItDate().get().getTime())))
+						.orderBy(CONTRACT_LEAVE.ID.desc())
+						.limit(1)
+						.fetchOne();
+					
+					contractLeaveRecord.setParent(null == itRaggedRecord ? null : itRaggedRecord.getId());
+				}
+				
 				contractLeaveRecord.store();
 				
 				// Create Contract Leave Detail (LOW)
@@ -714,11 +736,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 				.innerJoin(ENTERPRISE_CCC).onKey()
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
 				.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
 				.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
 				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
 				.and(CONTRACT.START_DATE.le(itStartDate))
 				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.and(DOMAIN.ACTIVE.eq((byte)1))
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );

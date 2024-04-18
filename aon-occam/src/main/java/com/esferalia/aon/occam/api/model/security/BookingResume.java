@@ -23,10 +23,9 @@ public class BookingResume implements Serializable {
 	private Integer childDefinedUsers;
 	private Integer childBillingUsers;
 	
+	private Integer totalChilds;
 	
-	public BookingResume() {
-
-	}
+	public BookingResume() {}
 
 	public List<Domain> getChilds() {
 		if(childs == null) {
@@ -82,6 +81,15 @@ public class BookingResume implements Serializable {
 	
 	public BookingResume setChildBillingUsers(Integer childBillingUsers) {
 		this.childBillingUsers = childBillingUsers;
+		return this;
+	}
+
+	public Integer getTotalChilds() {
+		return this.totalChilds;
+	}
+	
+	public BookingResume setTotalChilds(Integer totalChilds) {
+		this.totalChilds = totalChilds;
 		return this;
 	}
 }

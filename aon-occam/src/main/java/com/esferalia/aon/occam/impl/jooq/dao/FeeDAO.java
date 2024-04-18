@@ -114,14 +114,56 @@ public class FeeDAO {
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT));
+		
+		if(null != customerFeeParams.getSeller())
+			fromCustomerRecords = fromCustomerRecords 	
+					.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+					.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+					.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
+					.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+					.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+					;
+		
+		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
+			if(customerFeeParams.getSegment() == -1)
+				fromCustomerRecords = fromCustomerRecords 	
+				.leftJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+			else fromCustomerRecords = fromCustomerRecords 	
+				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+		}
+			
+		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
+		
+		Result<Record> feeRecords = fromCustomerRecords 
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		
+		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		
+		return fees;
+	}
+	
+	public static LinkedList<Fee> getFullFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-//				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-//				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
 				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.TYPE.eq((byte)1)))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
 				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
 				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
@@ -133,6 +175,16 @@ public class FeeDAO {
 			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
+		
+		if(null == customerFeeParams.getSeller())
+			condition = condition.and(
+					RSELLER.ID.isNull().or(
+							RSELLER.TYPE.eq((byte)1)
+							.and(RSELLER.STATUS.eq((byte)0)
+							.and(RSELLER.START_DATE.le(new Date(new java.util.Date().getTime())))
+							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime())))))
+					)
+			);
 			
 		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
@@ -143,7 +195,7 @@ public class FeeDAO {
 				.limit(customerFeeParams.getLimit())
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+		System.out.println("Customer Full Fees size : " + feeRecords.size());
 		
 		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
@@ -299,8 +351,15 @@ public class FeeDAO {
 		if(AonStringUtils.isNotBlank(customerFeeParams.getDiscount()))
 			condition = condition.and(CUSTOMER_FEE.DISCOUNT_EXPR.eq(customerFeeParams.getDiscount()));
 		
-		if(AonStringUtils.isNotBlank(customerFeeParams.getSeller())) 
-			condition = condition.and(SELLER_COMERCIAL_ALIAS.NAME.eq(customerFeeParams.getSeller()));
+		if(null != customerFeeParams.getSeller())
+			condition = condition.and(
+					RSELLER.SELLER.eq(customerFeeParams.getSeller())
+					.and(RSELLER.TYPE.eq((byte)1))
+					.and(RSELLER.STATUS.eq((byte)0).and(
+							RSELLER.START_DATE.le(new Date(new java.util.Date().getTime()))
+							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime()))))
+						))
+			);
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getWorkplace())) 
 			condition = condition.and(WORKPLACE.DESCRIPTION.eq(customerFeeParams.getWorkplace()));
@@ -340,7 +399,7 @@ public class FeeDAO {
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
 		
-		System.out.println("Customer Fee size : " + feeRecords.size());
+//		System.out.println("Customer Fee size : " + feeRecords.size());
 		
 		return feeRecords.stream().map(new FeeFiller());
 	}
@@ -492,6 +551,11 @@ public class FeeDAO {
 		customerFeeParams.setLimit(Integer.MAX_VALUE);
 		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
 		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
+			ctx.getDslContext().update(RITEM)
+			.set(RITEM.CUSTOMER_FEE, DSL.castNull(RITEM.CUSTOMER_FEE))
+			.where(RITEM.CUSTOMER_FEE.eq(fee.getId()))
+			.execute();
+			
 			ctx.getDslContext()
 			.delete(CUSTOMER_FEE)
 			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
@@ -502,16 +566,27 @@ public class FeeDAO {
 	public static void delete(AONContext ctx, Fee f) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
+			
+			ctx.getDslContext().update(RITEM)
+				.set(RITEM.CUSTOMER_FEE, DSL.castNull(RITEM.CUSTOMER_FEE))
+				.where(RITEM.CUSTOMER_FEE.eq(f.getId()))
+				.execute();
+			
 			ctx.getDslContext()
 				.delete(CUSTOMER_FEE)
 				.where(CUSTOMER_FEE.ID.equal(f.getId())).execute();
+			
 		});
 	}
 
 	public static void delete(AONContext ctx, Stream<Fee> fs) {
+//		ctx.getDslContext().transaction(configuration -> {
+//			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
+//			delete(ctx, f -> f.getIdProperty().in(ids));
+//		});
+		
 		ctx.getDslContext().transaction(configuration -> {
-			Integer[] ids = fs.map(f -> f.getId()).toArray(Integer[]::new);
-			delete(ctx, f -> f.getIdProperty().in(ids));
+			fs.forEach(fee -> delete(ctx, fee));
 		});
 	}
 	
@@ -731,8 +806,72 @@ public class FeeDAO {
 		return suggestions;
 	}
 	
-	public static void createCustomerFeeList(AONContext ctx, Fee fee) {
-		insert(ctx, fee);
+	public static Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery) {
+		 Map<String, Fee> customerFeeSuggestions = new HashMap<String, Fee>();
+		
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT));
+			
+		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
+		
+		Result<Record> feeRecords;
+		
+		if(null == itemId) {
+			if(AonStringUtils.isNotBlank(customerFeeQuery)) {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.and(CUSTOMER_FEE.DESCRIPTION.like("%" + customerFeeQuery + "%"))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			} else {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			}
+		} else {
+			if(AonStringUtils.isNotBlank(customerFeeQuery)) {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.ITEM.eq(itemId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.and(CUSTOMER_FEE.DESCRIPTION.like("%" + customerFeeQuery + "%"))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			} else {
+				feeRecords = fromCustomerRecords 
+						.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+						.and(CUSTOMER_FEE.ITEM.eq(itemId))
+						.and(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+						.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+					.fetch();
+			}
+		}
+		
+		System.out.println("Customer Fee Suggestions size : " + feeRecords.size());
+		
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		
+		fees.forEach(fee -> customerFeeSuggestions.put(fee.getDescription(), fee));
+		
+		return customerFeeSuggestions;
+	}
+	
+	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+		if(fee.getLine() == null) {
+			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
+					.from(CUSTOMER_FEE)
+					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
+			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
+		} 
+		
+		return insert(ctx, fee);
 	}
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
@@ -855,6 +994,13 @@ public class FeeDAO {
 			.fetch(ITEM.ID);
 		
 		return itemRecords.isEmpty() ? null : itemRecords.get(0);
+	}
+
+	public static void updateRitemCustomerFee(CloseableAONContext ctx, Integer customerFee, Integer ritem) {
+		ctx.getDslContext().update(RITEM)
+			.set(RITEM.CUSTOMER_FEE, customerFee)
+			.where(RITEM.ID.eq(ritem))
+			.execute();
 	}
 	
 }

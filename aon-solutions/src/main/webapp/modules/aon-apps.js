@@ -17,6 +17,7 @@ import './accounting/aon-accounting.js';
 import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonWarehouse } from './warehouse/aon-warehouse.js';
 import { AonConsole } from './console/aon-console.js';
+import { AonMarketing } from './marketing/aon-marketing.js';
 
 
 export class AonApps extends AonElement {
@@ -152,6 +153,9 @@ export class AonApps extends AonElement {
 			case Apps.WAREHOUSE.app:
 				this.rootPanel(new AonWarehouse());
 				break;
+			case Apps.MARKETING.app:
+				this.rootPanel(new AonMarketing());
+				break;
 		}
 	}
 
@@ -178,6 +182,8 @@ export class AonApps extends AonElement {
 			return this.getDur().isMessenger();
 		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
+		else if(Apps.MARKETING.app === app.app)
+			return this.getDur().isMarketing() && this.isBeta();
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());

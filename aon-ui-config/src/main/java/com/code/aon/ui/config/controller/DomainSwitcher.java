@@ -606,6 +606,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainNameURL().equalsIgnoreCase("sig.aonsolutions.org");
 	}
 	
+	public boolean isCuidadosInclusivos() {
+		return getDomainNameURL().contains("cuidadosinclusivos.aonsolutions.net");
+	}
+	
 	public boolean isPaturpat() {
 	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
 	    return  ud  != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("paturpat");

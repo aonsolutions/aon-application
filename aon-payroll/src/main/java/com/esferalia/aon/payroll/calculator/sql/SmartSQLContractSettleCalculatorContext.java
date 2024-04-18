@@ -431,16 +431,16 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				if (compare(extra.getEndDate(), extraStartDate) < 0 )
 					break;
 				
-				
 				// TODO: Extract to method ?
 				SQLContractExtraCalculatorContext extraCtx = 
 						new SQLContractExtraCalculatorContext(connection, extraStartDate, extraIssueDate, extraIssueDate, criteria) {
 					@Override
 					protected Filter<IContractPayment> getExtraPaymentFilter() {
 						return ( p ) -> {
-							return p.getMonth() != null && ((byte) p.getMonth().ordinal()) == extra.getMonth();
+							return  p.getMonth() != null && ((byte) p.getMonth().ordinal()) == extra.getMonth();
 						};
 					}
+					
 				};
 				if ( !extraCtx.next() )
 					break;
@@ -448,6 +448,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				Period contractPaymentPeriod = new Period(extra.getStartDate(), extra.getEndDate());
 				
 				List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
+				
 				
 				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
 					@Override
@@ -474,7 +475,6 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
 						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
 						extraPayment.setExpression(String.format(Locale.US, "/*hideable*/%f", amount));
-						
 						
 						extraPayments.add( extraPayment );
 						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -535,7 +535,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						.fetchAnyInto(SALARY)
 							;
 					if ( record == null ) {
-						extrasPayments.addAll(extraPayments);
+						extraPayments.stream().filter( p -> isNotDuplicated(extrasPayments, p)).forEach(extrasPayments::add);
+//						extrasPayments.addAll(extraPayments);
 //						extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
 					}
 				} else { 
@@ -602,7 +603,14 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				message ));
 		return extraPayment;
 	}
-
+	
+	private static boolean isNotDuplicated(Collection<IContractPayment> payments, IContractPayment payment) {
+		return  payments.stream()
+				.noneMatch(e -> e.getId().equals(payment.getId()) 
+				&&  e.getStartDate().equals(payment.getStartDate()));
+	}
+	
+	
 	private static Date getStartDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 0);

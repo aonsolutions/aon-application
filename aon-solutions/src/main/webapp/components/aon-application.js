@@ -371,7 +371,7 @@ export class AonApplication extends AonElement {
 
     if (newButton && !this.isMobile()) {
       let addButton = this.createElement(TAG.DIV);
-      addButton.style.marginTop = "-15px";
+      addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
       addButton.style.right = "0px";
       addButton.style.position = "absolute";
       let aonIconButton = new AonIconButton();
@@ -480,13 +480,15 @@ export class AonApplication extends AonElement {
         li.style.paddingLeft = '6px';
         let arrow = this.createElement(TAG.I);
         arrow.className = "material-icons aonVerticalMiddle";
-        arrow.innerHTML = MATERIAL_ICONS.ARROW_RIGHT;
+        arrow.innerHTML = option.opened
+          ? MATERIAL_ICONS.ARROW_DROP_DOWN 
+          : MATERIAL_ICONS.ARROW_RIGHT;
         li.appendChild(arrow);
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
         newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
         newLi.style.transition = "opacity 1s ease-out";
-        this.hiddenElement(newLi, true);
+        this.hiddenElement(newLi, !option.opened);
         ul.appendChild(newLi);
         if(option.clickable) {
           arrow.addEventListener(EVENT.CLICK, (e => {
@@ -503,6 +505,7 @@ export class AonApplication extends AonElement {
       }
 
       let span = this.createElement(TAG.SPAN);
+      span.id = "aonMenuItemSpan" + option.id;
       span.className = "aonMenuItemSpan";
       span.title =  option.title || option.name;
       if (option.count) {

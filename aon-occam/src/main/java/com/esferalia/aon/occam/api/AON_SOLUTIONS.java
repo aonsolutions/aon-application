@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.Task2Impl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix.InvoiceDuplicateFixDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
@@ -878,6 +879,20 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Invoice validateInvoice(Domain domain, User user, Invoice invoice) {
+		return validateInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice);
+	}
+	
+	public static Invoice validateInvoice(Domain domain, String login, Invoice invoice) {
+		return validateInvoice(domain.getName(), domain.getId(), login, invoice);
+	}
+	
+	public static Invoice validateInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().validateInvoice(ctx, invoice, invoice.getId());
+		}
+	}
+	
 	// ----- PRODUCT - GET PRODUCT
 
 	public static JSONArray getProducts(Domain domain, User user, ProductFilter filter) {
@@ -1169,6 +1184,13 @@ public class AON_SOLUTIONS {
 	public static Double getFinanceGroupStatus(Domain domain, User user, FinanceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			return getFinance().getFinanceGroupStatus(ctx, filter);
+		}
+	}
+	
+	public static void invoiceDuplicateFix(Domain domain, User user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			InvoiceDuplicateFixDAO.invoiceDuplicateFix(ctx);
+			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
 		}
 	}
 }
