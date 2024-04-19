@@ -473,8 +473,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 	
 	private void syncCustomerDomains() {
-		AonDialog dialog = new AonDialog("Sincronizaci\u00f3n Dominios Cliente",
-				new HTML("Se va a proceder a sincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la sincronizaci\u00f3n\u003f"));
+		AonDialog dialog = new AonDialog("Sincronizaci\u00f3n Contrataci\u00f3n Cliente",
+				new HTML("Se va a proceder a sincronizar la contrataci\u00f3n del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la sincronizaci\u00f3n\u003f"));
 		
 		dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -491,8 +491,8 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 	}
 	
 	private void unSyncCustomerDomains() {
-		AonDialog dialog = new AonDialog("Desincronizaci\u00f3n Dominios Cliente",
-				new HTML("Se va a proceder a desincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la desincronizaci\u00f3n\u003f. Este proceso sera irreversible."));
+		AonDialog dialog = new AonDialog("Desincronizaci\u00f3n Contrataci\u00f3n Cliente",
+				new HTML("Se va a proceder a desincronizar la contrataci\u00f3n del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la desincronizaci\u00f3n\u003f. Este proceso sera irreversible."));
 		
 		dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -1327,7 +1327,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 					
 					AonTableButton bookingInfoBtn = new AonTableButton("Ver contrataciones", AON.CSS.aonIconMoreVertical());
 					bookingInfoBtn.addClickHandler(e -> {
-						new CustomerBookingDialog(options, getCustomer(), domainChild) {
+						new CustomerBookingDialog(options, getCustomer(), domainChild, domainBooking) {
 
 							@Override
 							protected void onCloseRefresh() {
@@ -1571,9 +1571,22 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Void result) {
-									AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
-									selectionModel.clear();
-									loadModule();
+									AonMessagePanel.showLoading(messagePanel, "Actualizando lineas de las cuotas ...");
+									SERVICE.reorderCustomerFeeLine(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees.get(0).getCustomer().getId(),
+											new AsyncCallback<Void>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error actualizando lineas de las cuotas: " + caught.getMessage());
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+													selectionModel.clear();
+													loadModule();
+												}
+											});
 								}
 							});
 				}
@@ -1707,6 +1720,10 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			conceptTextArea.setValue(fee.getDescription());
 			
 			Label productStatusLabel = new Label(getFeeStatus(fee));
+			if(AonStringUtils.isNotBlank(getFeeStatus(fee)) && AonStringUtils.equalsIgnoreCase(getFeeStatus(fee), "Expirado")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("orange");
+			}
 			
 			Label ritemLabel = new Label(fee.hasRItem() ? "SI" : "NO");
 			if(!fee.hasRItem() && !AonStringUtils.containsIgnoreCase(fee.getItem().getBarcode(), "info")) {
@@ -1837,8 +1854,21 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 									@Override
 									public void onSuccess(Void result) {
-										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la cuota correctamente");
-										loadModule();
+										AonMessagePanel.showLoading(messagePanel, "Actualizando lineas de las cuotas ...");
+										SERVICE.reorderCustomerFeeLine(options.getDomainName(), options.getDomain(), options.getUser(), fee.getCustomer().getId(),
+												new AsyncCallback<Void>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessagePanel.showError(messagePanel, "Error actualizando lineas de las cuotas: " + caught.getMessage());
+													}
+
+													@Override
+													public void onSuccess(Void result) {
+														AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la cuota correctamente");
+														loadModule();
+													}
+												});
 									}
 								});
 					}
