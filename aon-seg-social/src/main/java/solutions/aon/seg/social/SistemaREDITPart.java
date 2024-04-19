@@ -52,6 +52,7 @@ import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableBody;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
@@ -76,7 +77,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
 	private static final String TRY_AGAIN  = "Intente nuevamente!";
-	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001";
+	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0002";
 	private static final String ARQ_SPM_OUT = "ARQ.SPM.OUT";
 
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
@@ -577,29 +578,30 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			htmlPage = setUrlParseRemoveXml(htmlPage, (HtmlAnchor)htmlPage.getElementById("PEST_5"));
+			xmlPage = htmlPage.getElementById("PEST_3").click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 		
-			wait4(htmlPage, p -> p.querySelector("[name=\"regimenEmision\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			wait4(htmlPage, p -> p.querySelector("[name=\"regimenConsulta\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 
-			form.getInputByName("regimenEmision").setValue(regime);
-			form.getInputByName("cccEmision").setValue(ccc);
-			form.getInputByName("nafEmision").setValue(nss);
-			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedEmision").setValue(d));
+			form.getInputByName("regimenConsulta").setValue(regime);
+			form.getInputByName("cccConsulta").setValue(ccc);
+			form.getInputByName("nafConsulta").setValue(nss);
+			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedConsulta").setValue(d));
 			
-			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_EMISION\"]")).orElseThrow();
-			htmlPage = continueIn.click();
+			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_CONSULTA\"]")).orElseThrow();
+			xmlPage = continueIn.click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-
-			HtmlAnchor firstColumn = getOneAnchorPaginate2(htmlPage, partType, dateBj);
 			
-			if (firstColumn == null) {				
-				throw new NoQueryData("Sin datos de consulta");
-			}
-			
-			htmlPage = setUrlParseRemoveXml(htmlPage, firstColumn);
+			HtmlTable table = (HtmlTable) htmlPage.getElementById("TABLA_12");
+			List<HtmlTableBody> tableBodies = table.getBodies();
+			HtmlTableBody firstRow = tableBodies.get(0);
+			List<HtmlAnchor> anchor = firstRow.getByXPath(".//a");
+			xmlPage= anchor.get(0).click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			return getPdfProcess2(htmlPage);
 		}
@@ -748,21 +750,21 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		throw new SegSocialException(MESSAGE_ERROR);
 	}
 	
-	private static byte[] getPdfProcess2(HtmlPage htmlPage) throws InterruptedException, IOException, SegSocialException {
+	private static byte[] getPdfProcess2(HtmlPage htmlPage) throws InterruptedException, IOException, SegSocialException, TransformerException {
 		
-		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		
 		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 
 		HtmlButton doc = (HtmlButton) wait4(htmlPage, p ->p.getElementByName("SPM.ACC.GENERAR_INFORME_EMISION")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-		htmlPage = doc.click();
-		
+		XmlPage xmlPage = doc.click();
+		htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+
 		wait4(htmlPage, p -> p.getElementById("prevdocumentoseinformes"));
 		
 		HtmlAnchor docAnchor = htmlPage.querySelector("#CONTENEDOR_prevdocumentoseinformes > ul > li > a");
 		
 		Page page = docAnchor.click();
-		
 		if (page.isHtmlPage()) {
 			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -889,33 +891,23 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 	}
 	
-	public static void main(String[] args) throws IOException, SegSocialException, ParseException {
-		try ( InputStream is = new FileInputStream("/home/rtrepiana/Downloads/vericitas.p12");
+	public static void main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
+		try ( InputStream is = new FileInputStream("/home/ndiaz/Documentos/pvasesores.p12");
 				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
-			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("11/03/2024");
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("29/06/2023");
 			byte[] pdf = 
-			registerItBaja(
-					is, 
-					"082X0", 
-					"PKCS12", 
-					"0111", 
-					"18110413490", 
-					"181040106852", 
-					SistemaRED.Contingencies.ACCIDENT_LABORAL, 
-					SistemaRED.SituationEmployee.ACTIVO, 
-					startDate, 
-					SistemaRED.ContractType.RESTO_Y_AUTONOMOS, 
-					1347.49f, 
-					30, 
-					Optional.of(startDate), 
-					Optional.empty(), 
-					Optional.empty(), 
-					Optional.empty(), 
-					Optional.empty(), 
-					Optional.of("Cuidadora"), 
-					Optional.of("Las propias de Cuidadora"));
+			getITReportImpl(
+			is,
+			"7624",
+			"PKCS12", 
+			"0111", 
+			"41017063249", 
+			"411051350384", 
+			null,
+			startDate,
+			null
+			);
 			os.write(pdf);
-			System.out.println(os.getFD().toString());
 		}
 	}
 }
