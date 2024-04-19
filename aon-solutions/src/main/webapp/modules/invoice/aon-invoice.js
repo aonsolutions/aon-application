@@ -368,79 +368,83 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		invoiceToolbar.addButton('Options', 'more_vert', (e) => {
-			e.preventDefault();
-			let rect = e.target.getBoundingClientRect();
-		    let x = e.clientX - rect.left;
-			let y = e.clientY - rect.top;
-
-			const top  = rect.top + y;
-			const left = rect.left + x;
-
-			let d = document.getElementById(aonInvoice.OPTION_DIALOG);
-			let moreActions = [];
-			if(this.getInvoice().isInbox() ){
-				let remarks = ACTION.REMARKS;
-				remarks.permission = true;
-				remarks.backgroundColor = INVOICE.color;
-				remarks.fn = () => this.addInvoiceRemarks();
-				moreActions.push(remarks);
-			}
-
-			let comment = ACTION.COMMENT;
-			comment.permission = true;
-			comment.backgroundColor = INVOICE.color;
-			comment.fn = () => this.addInvoiceComment();
-			moreActions.push(comment);
-
-			let send = ACTION.SEND_INVOICE;
-			send.permission = true;
-			send.backgroundColor = INVOICE.color;
-			send.fn = () => this.sendInvoice();
-			moreActions.push(send);
-
-			if(!this.getInvoice().isRawdoc()){
-				let rectify = ACTION.RECTIFY_INVOICE;
-				rectify.permission = true;
-				rectify.backgroundColor = INVOICE.color;
-				rectify.fn = () => this.rectifyInvoice();
-				moreActions.push(rectify);
-			}
-
-			let duplicate = ACTION.DUPLICATE_INVOICE;
-			duplicate.permission = true;
-			duplicate.backgroundColor = INVOICE.color;
-			duplicate.fn = () => this.duplicateInvoice();
-			moreActions.push(duplicate);
-			if(this.getInvoice().isInbox()){
-				let changeType = ACTION.CHANGE_TYPE;
-				changeType.permission = true;
-				changeType.backgroundColor = INVOICE.color;
-				changeType.fn = () => this.changeType();
-				moreActions.push(changeType);
-			}
-			if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
-				let sign = ACTION.SIGN_INVOICE;
-				sign.permission = true;
-				sign.backgrounColor = INVOICE.color;
-				sign.fn = () => this.signInvoice();
-				moreActions.push(sign);
-				let face = ACTION.FACTURAE;
-				face.permission = true;
-				face.backgrounColor = INVOICE.color;
-				face.fn = () => this.facturae();
-				moreActions.push(face);
-			}
-			d.setMenuOptions(moreActions, top, left);
-			d.open();
-		});
+		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR, CONSTANT.DISCARDED )
+			&& !this.getInvoice().isDraft()){
+			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
+				e.preventDefault();
+				let rect = e.target.getBoundingClientRect();
+				let x = e.clientX - rect.left;
+				let y = e.clientY - rect.top;
+	
+				const top  = rect.top + y;
+				const left = rect.left + x;
+	
+				let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+				let moreActions = [];
+				if(this.getInvoice().isInbox() ){
+					let remarks = ACTION.REMARKS;
+					remarks.permission = true;
+					remarks.backgroundColor = INVOICE.color;
+					remarks.fn = () => this.addInvoiceRemarks();
+					moreActions.push(remarks);
+				}
+	
+				let comment = ACTION.COMMENT;
+				comment.permission = true;
+				comment.backgroundColor = INVOICE.color;
+				comment.fn = () => this.addInvoiceComment();
+				moreActions.push(comment);
+	
+				let send = ACTION.SEND_INVOICE;
+				send.permission = true;
+				send.backgroundColor = INVOICE.color;
+				send.fn = () => this.sendInvoice();
+				moreActions.push(send);
+	
+				if(!this.getInvoice().isRawdoc()){
+					let rectify = ACTION.RECTIFY_INVOICE;
+					rectify.permission = true;
+					rectify.backgroundColor = INVOICE.color;
+					rectify.fn = () => this.rectifyInvoice();
+					moreActions.push(rectify);
+				}
+	
+				let duplicate = ACTION.DUPLICATE_INVOICE;
+				duplicate.permission = true;
+				duplicate.backgroundColor = INVOICE.color;
+				duplicate.fn = () => this.duplicateInvoice();
+				moreActions.push(duplicate);
+				if(this.getInvoice().isInbox()){
+					let changeType = ACTION.CHANGE_TYPE;
+					changeType.permission = true;
+					changeType.backgroundColor = INVOICE.color;
+					changeType.fn = () => this.changeType();
+					moreActions.push(changeType);
+				}
+				if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
+					let sign = ACTION.SIGN_INVOICE;
+					sign.permission = true;
+					sign.backgrounColor = INVOICE.color;
+					sign.fn = () => this.signInvoice();
+					moreActions.push(sign);
+					let face = ACTION.FACTURAE;
+					face.permission = true;
+					face.backgrounColor = INVOICE.color;
+					face.fn = () => this.facturae();
+					moreActions.push(face);
+				}
+				d.setMenuOptions(moreActions, top, left);
+				d.open();
+			});
+		}
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
-		if((this.isInvofoxInvoice() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
+		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
+		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
@@ -458,10 +462,13 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
-		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION, CONSTANT.ERROR, CONSTANT.DISCARDED ) ) {
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR, CONSTANT.DISCARDED )) {
+			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
+
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
@@ -3115,6 +3122,22 @@ export class AonInvoice extends AonElement {
 			d.open();
 		});
 	}
+
+
+	removeOcrInvoice() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE_FOREVER);
+		d.setContentHTML(MSG.DELETE_CONFIRM);
+		d.addAcceptAction(() => {
+			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);	
+			this.back();
+		});
+		d.open();
+	}
+
+
 }
 if(!window.customElements.get(TAG.AON_INVOICE)){
 	window.customElements.define(TAG.AON_INVOICE, AonInvoice);

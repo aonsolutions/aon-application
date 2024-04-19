@@ -29,6 +29,8 @@ export const ANCHOR = 'anchor';
 export const ANDROID = 'android';
 export const ANNOUNCEMENT = 'announcement';
 export const API = 'api';
+export const APPS = 'widgets';
+export const APPLICATIONS = 'apps';
 export const APP_BLOCKING = 'app_blocking';
 export const ARCHIVE = 'archive';
 export const ARROW_BACK = 'arrow_back';
@@ -128,6 +130,7 @@ export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
 export const FILTER_LIST = 'filter_list';
 export const FOLDER = 'folder';
+export const FOLDER_OPEN = 'folder_open';
 export const FORK_LEFT = "fork_left";
 export const FORMAT_INDENT_INCREASE = "format_indent_increase";
 export const FORMAT_ITALIC = "format_italic";
@@ -149,6 +152,7 @@ export const GROUPS = 'groups';
 // ----- H
 export const HIGHLIGHT_OFF = 'highlight_off';
 export const HDR_AUTO = 'hdr_auto';
+export const HOME = 'home';
 
 // ----- I
 

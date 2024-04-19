@@ -83,6 +83,8 @@ public interface RegistryServiceAsync {
 	
 	void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback);
 	
+	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> asyncCallback);
+	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************
@@ -101,7 +103,5 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> asyncCallback);
 	void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> asyncCallback);
-	
-	
 	
 }

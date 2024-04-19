@@ -381,14 +381,14 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setText(jobDescription.get());
 			}
 			
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
 			
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
 			formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 			
@@ -396,7 +396,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			return getPdfProcess(htmlPage, "#ENVIO_10");
+			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
 	}
 
@@ -461,7 +461,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			return getPdfProcess(htmlPage, "#ENVIO_10");
+			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
 	}
 
@@ -610,7 +610,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Date date,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
 			throws IOException, InterruptedException, SegSocialException, TransformerException {
-		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 
 		form.getInputByName("regimen").setValue(regime); 
@@ -667,7 +667,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		}
 		if(null!=contingencyOption) contingencyOption.click();
 
-		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_7")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		//XmlPage xmlPage = accept.click();
 		//htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 		htmlPage = accept.click();
@@ -727,7 +727,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	
 	private static byte[] getPdfProcess(HtmlPage htmlPage, String continueSelector) throws InterruptedException, IOException, SegSocialException {
 		
-		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		
 		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 
