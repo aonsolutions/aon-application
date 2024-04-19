@@ -349,7 +349,7 @@ export class AonInvoicePanel extends AonElement {
 		let span = document.getElementById("aonMenuItemSpan" + option.id);
 		if(span){
 			let count = getCounter()[option.id];
-			span.innerHTML = option.name + " (" + (count > 49 ? "+49" : count) + ")";
+			span.innerHTML = option.name + " (" + count + ")";
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
 	}
