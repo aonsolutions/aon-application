@@ -1,5 +1,7 @@
 // MATERIAL 
 export const MATERIAL_ICONS = 'material-icons';
+export const MATERIAL_SYMBOLS_OUTLINED = "material-symbols-outlined";
+
 // aon.css
 export const AON_UL = 'aonUl';
 export const AON_APP_LI = 'aonAppLi';
@@ -55,6 +57,7 @@ export const AON_TOOLBAR_SECTION_END = 'aonToolbarSectionEnd';
 export const AON_SECONDARY_TOOLBAR = 'aonSecondaryToolbar';
 export const AON_SECONDARY_TOOLBAR_TITLE = 'aonSecondaryToolbarTitle';
 export const AON_TABLE = 'aonTable';
+export const AON_MENU_TOPNAV = 'aonMenuTopnav';
 export const AON_MENU_SIDENAV = 'aonMenuSidenav';
 export const AON_MENU_SIDENAV_BETA = 'aonMenuSidenavBeta';
 export const AON_MENU_SIDENAV_APP_TOOLBAR = 'aonMenuSidenavAppToolbar';
@@ -105,6 +108,7 @@ export const PROFILE_LETTER = 'profile-letters';
 export const AON_NONE = 'aonNone';
 export const AON_DOT = 'aonDot';
 export const ACTIVE = 'active';
+export const AON_DESKTOP = 'aonDesktop';
 export const AON_DESKTOP_SLIDE_FADE = 'aonDesktopSlideFade';
 export const AON_FLEX = 'aonFlex';
 export const AON_FLEX_COLUMN = 'aonFlexColumn';

@@ -1,0 +1,88 @@
+import { AonElement } from 'aonsolutions/components/AonElement.js';
+import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonHeader } from 'aonsolutions/modules/aon-header.js';
+
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js'; 
+
+import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonNewMenu } from './aon-new-menu.js';
+
+
+
+export class AonHome extends AonElement {
+
+	AON_MENU;
+	AON_HEADER;
+	ROOT_PANEL;
+	RIGHT_PANEL;
+
+	constructor () {
+		super();
+	}
+
+	connectedCallback () {
+		this.clear();
+		this.initialize();
+		this.build();
+		this.customize();
+	}
+
+	initialize() {
+		this.AON_MENU = 'aonMenu';
+		this.AON_HEADER = 'aonHeader';
+		this.ROOT_PANEL = 'rootPanel';
+		this.RIGHT_PANEL = 'rightPanel';
+	}
+
+	build() {
+		let gradiantHeader = this.createElement(TAG.DIV);
+		gradiantHeader.className = 'aonRootGradiantHeader';
+		this.appendChild(gradiantHeader);
+		let gradiantHeaderTop = this.createElement(TAG.DIV);
+		gradiantHeaderTop.className = 'aonRootGradiantHeaderTop';
+		this.appendChild(gradiantHeaderTop);
+		let gradiantHeaderBottom = this.createElement(TAG.DIV);
+		gradiantHeaderBottom.className = 'aonRootGradiantHeaderBottom';
+		this.appendChild(gradiantHeaderBottom);
+		let gradiantHeaderBlur = this.createElement(TAG.DIV);
+		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
+		this.appendChild(gradiantHeaderBlur);
+
+		let aonMenu = new AonNewMenu();
+		aonMenu.id = this.AON_MENU;
+		aonMenu.className = CSS.AON_MENU;
+
+		let aonHeader = new AonHeader();
+		aonHeader.id = this.AON_HEADER;
+		this.appendChild(aonHeader);
+		
+
+		let rootPanel = this.createElement(TAG.DIV);
+		rootPanel.id = this.ROOT_PANEL;
+		rootPanel.className = "rootPanel";
+		this.appendChild(rootPanel);
+	
+		let rightPanel = this.createElement(TAG.DIV);
+		rightPanel.id = this.RIGHT_PANEL;
+		rightPanel.className = "rightPanel";
+		this.appendChild(rightPanel);
+
+		this.appendChild(aonMenu);
+	}
+	
+	customize(){
+		let aonHeader = this.getElement(this.AON_HEADER);
+		let aonSearchDiv = aonHeader.getElement("aon-search-div");
+		aonSearchDiv.style.height = '32px';
+		aonSearchDiv.style.border = 'none';
+		aonSearchDiv.style.borderRadius = '4px';
+		aonSearchDiv.style.backgroundColor = '#ffffff';
+		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
+		aonSearchDiv.style.alignItems = 'center';
+		
+		
+	}
+
+
+px}
+window.customElements.define('aon-home', AonHome);
