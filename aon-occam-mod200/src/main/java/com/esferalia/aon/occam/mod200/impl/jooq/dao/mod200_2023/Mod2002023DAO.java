@@ -1128,11 +1128,12 @@ public class Mod2002023DAO  {
 	}
 
 	private static void addCharacters(Mod2002023MVELContext ctx, Mod2002023 mod200) {
-		// Caracteres de la declaración, solo están en Mod2002023Key
-		for (Mod2002023Key key : Mod2002023Character.CHARACTERS_KEYS) {
+		// FALTA - Caracteres de la declaración, solo están en Mod2002023Key
+		for (Mod2002023Key[] block : Mod2002023Character.CHARACTERS_KEYS)
+		  for (Mod2002023Key key : block) {
 			DoubleVariableEx dv = mod200.getKeysMap().get(key);
 			ctx.put(key.toString(), (dv != null && dv.getBooleanValue() )); 
-		}		
+		  }		
 	}
 	
 	private static void initializeActiveMap(Mod2002023 mod200) {

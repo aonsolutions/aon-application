@@ -11,6 +11,10 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page14 extends PageAbs {
 
+	// FALTA - NUEVOS CAMPOS 
+	// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+	// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+	
 	private AonTextBox nrsAnexoIII;
 	private AonTextBox justCanarias;
 	private AonTextBox nrsAnexoIV;
@@ -83,6 +87,8 @@ public class Page14 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(nrsAnexoVric);
+		
+		// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas) 
 
 		nrsAnexoV = new AonTextBox();
 		nrsAnexoV.setVisibleLength(22);
@@ -103,6 +109,8 @@ public class Page14 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(justCanarias);
+		
+		// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 
 		justActivos = new AonTextBox();
 		justActivos.setVisibleLength(22);
@@ -133,11 +141,15 @@ public class Page14 extends PageAbs {
 		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoVric);
 		
+		// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+		
 		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoV);
 		
 		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
 		table2.setWidget(row, 1, justCanarias);
+		
+		// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 		
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);

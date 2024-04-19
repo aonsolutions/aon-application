@@ -227,5 +227,3 @@ public class Page07 extends PageAbs {
 	}	
 	
 }
-
-

@@ -23,7 +23,7 @@ public class Page01 extends PageAbs {
 
 	private AonDocumentTextBox secretaryDocument;
 	private AonTextBox secretaryName;
-	private AonDateBox irnr;
+//	private AonDateBox irnr; // FALTA - ESTE DATO NO APARECE EN EL PROYECTO DE ORDEN
 	private AonTextBox fiscalGroup;
 	private AonDocumentTextBox dominantDocument;
 	private AonTextBox dominantIdentificationNumber;
@@ -72,18 +72,18 @@ public class Page01 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(secretaryName);
-		
-		irnr = new AonDateBox();
-		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
-		irnr.addValueChangeHandler(event -> {
-			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
-			callback.markAsDirty();
-		});
-		otherInputs.add(irnr);
+// FALTA 		
+//		irnr = new AonDateBox();
+//		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
+//		irnr.addValueChangeHandler(event -> {
+//			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
+//			callback.markAsDirty();
+//		});
+//		otherInputs.add(irnr);
 		
 		tab1.addLabelWidgetRow(AON.MSG.document(), secretaryDocument)
-		    .addLabelWidgetRow(AON.MSG.name(), secretaryName)
-		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
+		    .addLabelWidgetRow(AON.MSG.name(), secretaryName); // FALTA - PONER "Apellidos y Nombre" en AON.MSG que no existe como tal
+// FALTA		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
 		
 		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
 		
@@ -136,7 +136,7 @@ public class Page01 extends PageAbs {
 				otherInputs.add(dominantIdentificationNumber);
 				
 				tab2.addRow()
-					.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400())
+					.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400()) // FALTA - CAMBIA Sociedad POR Entidad
 					.addCell(dominantIdentificationNumber);		    
 			}
 		}
@@ -207,7 +207,7 @@ public class Page01 extends PageAbs {
 		// REPRESENTANTES LEGALES DE LA ENTIDAD
 		
 		basePanel.add(getTitle(AON.MSG.legalRepresentativeData()));
-		
+		// FALTA - CAMBIA EL MENSAJE DE "Nombre y Apellidos", POR "Apellidos y Nombre" HASTA AHORA SOLO PONIA "D."
 		AonDisplayTable tab4 = addRegistryTable(AON.MSG.document(), AON.MSG.nameAndSurname(), AON.MSG.notary()+"/Otros", AON.MSG.registrationDate());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getRepresentatives().size(); i++) {
@@ -363,6 +363,11 @@ public class Page01 extends PageAbs {
 		});
 		otherInputs.add(addButton2);
 		basePanel.add(addButton2);
+		
+		// FALTA - NUEVO APARTADO IDENTIFICACION DEL TITULAR REAL 
+		// SI AL FINAL PONEN ESTE NUEVO APARTADO IGUAL ES MEJOR PONERLO EN ESTA PAGINA, PUES LA SIGUIENTE ESTA MAS LLENA
+		// ES UN APARTADO QUE TIENE TRES LINEAS CON TRES CAMPOS (APELLIDOS Y NOMBRE, PAIS, NIF), NO SE SI SERA COMO LOS 
+		// REPRESENTANTES LEGALES (MAXIMO 3) O COMO LOS ADMINISTRADORES (ADMITIRA PAGINAS COMPLEMENTARIAS)		
 		
 	}
 	

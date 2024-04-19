@@ -373,4 +373,3 @@ public class ParticipationPanel extends AonCustomDialog {
     }
 
 }
-

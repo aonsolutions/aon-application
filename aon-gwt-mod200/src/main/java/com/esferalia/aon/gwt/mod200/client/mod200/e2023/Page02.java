@@ -54,6 +54,7 @@ public class Page02 extends PageAbs {
 	}
 
 	protected void calculate() {
+		// Forzar recalculo del modelo completo
 		callback.getMod200Object().doubleValueChanged(Mod2002023Key.P1501, callback.getMod200Object().getDoubleValue(Mod2002023Key.P1501));
 	}
 
@@ -67,7 +68,7 @@ public class Page02 extends PageAbs {
 		otherInputs.clear();
 		basePanel.clear();
 		
-		// PARTICIPACIONES DE LA DECLARANTE EN OTRAS ENTIDADES		
+		// B.1. PARTICIPACIONES DE LA DECLARANTE EN OTRAS ENTIDADES		
 		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
@@ -149,7 +150,7 @@ public class Page02 extends PageAbs {
 			}
 		}
 		
-		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
+		// B.2. PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 
@@ -279,7 +280,7 @@ public class Page02 extends PageAbs {
 		paintKey(tab3, Mod2002023Key.POR51, 0);
 		paintKey(tab3, Mod2002023Key.PORES, 1);
 		
-		// ENTIDADES MENORES
+		// C. ENTIDADES MENORES
 		
 		basePanel.add(getTitle(AON.MSG.minorEntities()));
 		
@@ -333,7 +334,7 @@ public class Page02 extends PageAbs {
 		otherInputs.add(addButton4);
 		basePanel.add(addButton4);
 		
-		// INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
+		// D. INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
 		
 		basePanel.add(getTitle(AON.MSG.utefor()));
 		

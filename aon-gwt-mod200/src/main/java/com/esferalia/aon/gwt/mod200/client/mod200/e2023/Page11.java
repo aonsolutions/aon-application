@@ -93,6 +93,9 @@ public class Page11 extends PageAbs {
 		for (final Mod2002023Key key : Mod2002023Constants.LIQUIDATION_IV_KEYS) {
 			row = paintKey(table,key,row);
 			if (callback.getMod200Object().isVisible(key)) {
+				
+				// Casillas con desglose
+				
 				if (key == Mod2002023Key.BN585) {
 					row = paintKeyBreakdownLink(table, row, Mod2002023Key.BN585, Mod2002023BN585Key.values(), HEADERS_1, FOOTER_1);
 				} 
@@ -116,8 +119,7 @@ public class Page11 extends PageAbs {
 				}
 				if (key == Mod2002023Key.BN1041) {
 					row = paintKeyBreakdownLink(table,row,Mod2002023Key.BN1041,Mod2002023BN1041Key.values(),HEADERS_3, FOOTER_1);
-				}	
-				
+				}				
 				if (key == Mod2002023Key.BN2315
 						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0009) 
 						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0010)) {
@@ -162,6 +164,8 @@ public class Page11 extends PageAbs {
 		filmPanel.addStyleName(AON.CSS.aonPaddingBottom());
 		basePanel.add(filmPanel);
 		paintFilmPanel();
+		
+		// FALTA - PODRIAMOS PONER TAMBIEN AQUI EL NUEVO APARTADO DE INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS QUE ESTA EN LA PAGINA 21 DEL MODELO
 		
 	}
 	

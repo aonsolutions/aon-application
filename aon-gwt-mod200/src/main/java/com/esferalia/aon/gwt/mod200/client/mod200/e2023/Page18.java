@@ -1,5 +1,10 @@
-// UTES
+// AIE Y UTES
+// FALTA - ESTA PAGINA TIENE MUCHAS CASILLAS NUEVAS Y UN APARTADO NUEVO CON LOS PARTICIPES, SI AL FINAL DEJAN TODOS VER SI SE METE EN UNA PAGINA O ES NECESARIO HACER MAS DE UNA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
+
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants.UTE_KEYS_B7;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants.UTE_KEYS_B81;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants.UTE_KEYS_B82;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
@@ -56,9 +61,10 @@ public class Page18 extends PageAbs {
 			paintKey(addTable(AON.MSG.ute1()), Mod2002023Key.UT060, 0);
 		}
 
-		// B) Modelo de información (artículo 46 RIS)		
+		// B) Datos Económicos
 		
-		FlexTable table1 = addTable(AON.MSG.ute2());
+		//FlexTable table1 = addTable(AON.MSG.ute2());
+		FlexTable table1 = addTable("B) Datos Econ\u00F3micos");
 		int row = 0;
 		paintKey(table1, Mod2002023Key.UT500 , row++);
 		paintKey(table1, Mod2002023Key.UT1227, row++);
@@ -66,35 +72,71 @@ public class Page18 extends PageAbs {
 		paintKey(table1, Mod2002023Key.UT552 , row++);
 		paintKey(table1, Mod2002023Key.UT1330, row++);
 		
-		paintDescription(table1, AON.MSG.ute31(), row++, 0, true);
-		
+		// Deducción para evitar la doble imposición
+		paintDescription(table1, AON.MSG.ute31(), row++, 0, true);		
 		panelB6 = new FlowPanel();
 		paintB6Panel();
 		table1.setWidget(row++, 0, panelB6);
 
-		paintKey(table1, Mod2002023Key.UTC01, row++);
-		paintDescription(table1, AON.MSG.ute4(), row++, 0, false);
-		paintKey(table1, Mod2002023Key.UTC02, row++);
-		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-		paintKey(table1, Mod2002023Key.UTC03, row++);
-		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-		paintKey(table1, Mod2002023Key.UT062, row++);
-		paintDescription(table1, AON.MSG.ute5(), row++, 0, false);
-		paintKey(table1, Mod2002023Key.UTC04, row++);
-		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-		paintKey(table1, Mod2002023Key.UTC05, row++);
-		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+//		paintKey(table1, Mod2002023Key.UTC01, row++);
+//		paintDescription(table1, AON.MSG.ute4(), row++, 0, false);
+//		paintKey(table1, Mod2002023Key.UTC02, row++);
+//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+//		paintKey(table1, Mod2002023Key.UTC03, row++);
+//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+//		paintKey(table1, Mod2002023Key.UT062, row++);
+//		paintDescription(table1, AON.MSG.ute5(), row++, 0, false);
+//		paintKey(table1, Mod2002023Key.UTC04, row++);
+//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+//		paintKey(table1, Mod2002023Key.UTC05, row++);
+//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
+		row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
+		row = paintTable(table1, row, UTE_KEYS_B81, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
+		row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
+		
+		paintKey(table1, Mod2002023Key.UT062, row++);
+		paintDescription(table1, AON.MSG.ute5(), row++, 0, true);
+		paintKey(table1, Mod2002023Key.UT070, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+		paintKey(table1, Mod2002023Key.UT072, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+		
+		// FALTA - LA RELACION DE SOCIOS IRIA AHORA EN UN APARTADO APARTE (NO SERIA EL APARTADO B.11), SERIA EL APARTADO C. VER SI AL FINAL SE QUEDA ASI.
+		// Relación de Socios
 		paintDescription(table1, AON.MSG.ute6(), row++, 0, true);
 		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
 		panelB11 = new FlowPanel();
 		paintB11Panel();
 		table1.setWidget(row, 0, panelB11);
 		
+		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES
+		
 		paintFooterNote(basePanel, FOOTER);
 		
 	}
 	
+	private int paintTable(FlexTable table1, int row, Mod2002023Key[][] keys, String title, String... headers) {
+		
+		paintDescription(table1, title, row, 0, true); // FALTA - ME PONDRA UNA LINEA DEBAJO A VER COMO QUEDA, SI NO PONER SIMPLEMENTE UN LABEL
+		int col = 0;
+		for (String header : headers) {
+			addHeaderCell(table1, row, col++, header, true);	
+		}		
+		row++;
+		
+		for (Mod2002023Key[] key : keys) {
+			paintKeyDescription(table1, key[0], row, 0);			
+			table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left()); // FALTA - LA DESCRIPCION CON EL DOBLE DE SANGRIA
+			paintKeyField(table1, key[0], row, 1);
+			paintKeyField(table1, key[1], row, 2);
+			row++;
+		}
+		
+		return row;
+		
+	}
+	
+	// 6.- Deducción para evitar la doble imposición
+	// FALTA - APARTADO B6 TIENE UNA COLUMNA MAS, CONFIRMAR SI SE MANTIENE EN EL MODELO DEFINITIVO
 	private void paintB6Panel() {
 
 		panelB6.clear();
@@ -158,6 +200,7 @@ public class Page18 extends PageAbs {
 		
 	}
 	
+	// C) Relación de socios
 	private void paintB11Panel() {
 		
 		panelB11.clear();

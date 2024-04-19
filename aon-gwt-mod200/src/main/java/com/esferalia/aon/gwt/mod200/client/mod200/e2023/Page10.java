@@ -1,4 +1,4 @@
-// LIQUIDACION (III): BONIFICACIONES Y DEDUCCIONES POR DOBLE IMPOSICION, CUOTA INTEGRA AJUSTADA
+// LIQUIDACION (III): BONIFICACIONES Y DEDUCCIONES POR DOBLE IMPOSICION, CUOTA INTEGRA AJUSTADA POSITIVA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -67,7 +67,9 @@ public class Page10 extends PageAbs {
 				
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
-				}				
+				}
+				
+				// Casillas con Desgloses
 				
 				if (key == Mod2002023Key.BN570) {					
 					row = paintKeyBreakdownLink(table, row, Mod2002023Key.BN570, Mod2002023BN570Key.values(), HEADERS_1, FOOTER_2);

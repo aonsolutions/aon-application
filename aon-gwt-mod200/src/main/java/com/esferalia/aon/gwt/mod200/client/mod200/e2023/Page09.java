@@ -71,7 +71,10 @@ public class Page09 extends PageAbs {
 		int row = 0;
 		boolean margin = false;
 		for (Mod2002023Key key : Mod2002023Constants.LIQUIDATION_II_KEYS) {
-			if (callback.getMod200Object().isVisible(key)) {			
+			if (callback.getMod200Object().isVisible(key)) {
+				
+				// Casillas que llevan antes un titulo del apartado (las casillas del apartado se ponen un poco mas a la izquierda)
+				
 				if (key == Mod2002023Key.LQ578) {
 					paintDescription(table, "Entidades navieras en r\u00E9gimen de tributaci\u00F3n en funci\u00F3n del tonelaje", row,0, true);
 					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());					
@@ -88,8 +91,8 @@ public class Page09 extends PageAbs {
 					margin = true;
 				}
 				
-				if (key == Mod2002023Key.LQ541 || key == Mod2002023Key.LQ1887) {
-					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row,0, true);
+				if (key == Mod2002023Key.LQ541 || key == Mod2002023Key.LQ1887 || key == Mod2002023Key.LQ1576) {
+					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row,0, true);					                        
 					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
@@ -101,7 +104,7 @@ public class Page09 extends PageAbs {
 					row++;
 					margin = true;
 				}
-				if (key == Mod2002023Key.LQ553) {
+				if (key == Mod2002023Key.LQ553 || key == Mod2002023Key.LQ560) {
 					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
 					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
@@ -134,27 +137,34 @@ public class Page09 extends PageAbs {
 					row++;
 					margin = true;
 				}
-				if (key == Mod2002023Key.LQ1576) {
-					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row, 0, true);
-					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
-					row++;
-					margin = true;
-				}
-				if (key == Mod2002023Key.LQ560) {
-					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
-					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
-					row++;
-					margin = true;
-				}				
+				// FALTA - LO PONGO ARRIBA HAY DOS CASILLAS MAS QUE TIENEN LA MISMA DESCRIPCION DE APARTADO
+//				if (key == Mod2002023Key.LQ1576) {
+//					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row, 0, true);
+//					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+//					row++;
+//					margin = true;
+//				}
+				// FALTA - LO PONGO ARRIBA HAY MAS CASILLAS MAS QUE TIENEN LA MISMA DESCRIPCION DE APARTADO
+//				if (key == Mod2002023Key.LQ560) {
+//					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
+//					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+//					row++;
+//					margin = true;
+//				}	
+				
+				// Casillas que se ponen mas a la derecha
 				if (key == Mod2002023Key.LQ547 || key == Mod2002023Key.LQ550 || key == Mod2002023Key.LQ552 || key == Mod2002023Key.LQ558 || key == Mod2002023Key.LQ562 || key == Mod2002023Key.LQ1032 || key == Mod2002023Key.LQ1330) {
 					margin = false;
 				}
 								
+				// Pintar la casilla
 				row = paintKey(table,key,row);
 				
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
 				}				
+				
+				// Casillas que llevan desglose
 				
 				if (key == Mod2002023Key.LQ1890
 						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0009) 

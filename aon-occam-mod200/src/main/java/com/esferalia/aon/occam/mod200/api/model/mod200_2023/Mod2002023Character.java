@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.mod200.api.model.mod200_2023;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Mod2002023Character {
@@ -8,8 +9,13 @@ public class Mod2002023Character {
 	public static Map<Mod2002023Key,Mod2002023Key[]> CHARACTER_INCOMPATIBILITY_MAP = new HashMap<Mod2002023Key,Mod2002023Key[]>();
 	public static Map<Mod2002023Key,Mod2002023Key[]> CHARACTER_ALSO_CHECK_MAP = new HashMap<Mod2002023Key,Mod2002023Key[]>();
 	
-	public static Mod2002023Key[] CHARACTERS_KEYS = new Mod2002023Key[] {
-		
+	// FALTA - ESTA ME LA TRAIGO DE Page00 PARA QUE ESTEN AQUI TODAS JUNTAS (antes estaba como final)
+	public static HashSet<Mod2002023Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002023Key>();
+	
+	// FALTA - QUE PASARIA SI AQUI PONGO YA LOS BLOQUES QUE LUEGO SALEN EN LA PANTALLA Y ASI NO LOS TENGO QUE VOLVER A PONER EN PAGE00
+	//public static Mod2002023Key[][] CHARACTERS_KEYS = new Mod2002023Key[][] {
+	public static Mod2002023Key[][] CHARACTERS_KEYS = {
+			{
 		 Mod2002023Key.C0001		
 		,Mod2002023Key.C0002	  	
 		,Mod2002023Key.C0080	  	
@@ -38,8 +44,9 @@ public class Mod2002023Character {
 		,Mod2002023Key.C0078
 		,Mod2002023Key.C0056
 		,Mod2002023Key.C0083
-								
-		,Mod2002023Key.C0006		
+			},
+			{
+		 Mod2002023Key.C0006		
 		,Mod2002023Key.C0015  	  	 
 		,Mod2002023Key.C0079  	  	
 		,Mod2002023Key.C0022  	  	
@@ -59,8 +66,9 @@ public class Mod2002023Character {
 		,Mod2002023Key.C0057                                 				
 		,Mod2002023Key.C0062                                 				
 		,Mod2002023Key.C0020                                 				
-		        
-		,Mod2002023Key.C0007		
+			},
+			{
+		 Mod2002023Key.C0007		
 		,Mod2002023Key.C0009  	  	
 		,Mod2002023Key.C0010  	  	
 		,Mod2002023Key.C0081  	  	
@@ -85,6 +93,7 @@ public class Mod2002023Character {
 		,Mod2002023Key.C0044                     
 		,Mod2002023Key.C0074
 		,Mod2002023Key.C0089
+			}
 
 	};
 	
@@ -439,6 +448,20 @@ public class Mod2002023Character {
 		CHARACTER_ALSO_CHECK_MAP.put(Mod2002023Key.C0064, new Mod2002023Key[] {Mod2002023Key.C0012}); 
 		CHARACTER_ALSO_CHECK_MAP.put(Mod2002023Key.C0080, new Mod2002023Key[] {Mod2002023Key.C0002});
 		
+	}
+	
+	static {
+		// FALTA - REVISAR CON EL PADIS SI ALGUNO DE LOS NUEVOS CARACTERES NO ESTAN SOPORTADOS POR AON
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0003);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0008); 
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0004);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0007);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0024);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0025);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0035);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0036);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0058);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0061);
 	}
 	
 }

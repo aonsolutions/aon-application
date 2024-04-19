@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.CHARACTERS_KEYS;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.CHARACTER_ALSO_CHECK_MAP;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.NOT_SUPPORTED_CHARACTERS;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,98 +39,104 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
 	
-	public static final HashSet<Mod2002023Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002023Key>();
-	static {
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0003);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0008); 
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0004);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0007);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0024);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0025);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0035);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0036);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0058);
-		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0061);
-	}
+	// FALTA - MUEVO TAMBIEN ESTO A Mod2002023Character PARA QUE ESTE TODOS JUNTOS
+//	public static final HashSet<Mod2002023Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002023Key>();
+//	static {
+//		// FALTA - REVISAR CON EL PADIS SI ALGUNO DE LOS NUEVOS CARACTERES NO ESTAN SOPORTADOS POR AON
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0003);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0008); 
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0004);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0007);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0024);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0025);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0035);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0036);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0058);
+//		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0061);
+//	}
 
-	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK1 = new Mod2002023Key[] {
-		Mod2002023Key.C0001,
-		Mod2002023Key.C0002,
-		Mod2002023Key.C0080,
-		Mod2002023Key.C0003,
-		Mod2002023Key.C0008,
-		Mod2002023Key.C0004,
-		Mod2002023Key.C0005,		
-		Mod2002023Key.C0011,
-		Mod2002023Key.C0013,
-		Mod2002023Key.C0014,
-		Mod2002023Key.C0017,
-		Mod2002023Key.C0018,		
-		Mod2002023Key.C0019,
-		Mod2002023Key.C0021,
-		Mod2002023Key.C0023,
-		Mod2002023Key.C0024,
-		Mod2002023Key.C0025,
-		Mod2002023Key.C0031,
-		Mod2002023Key.C0032,
-		Mod2002023Key.C0036,
-		Mod2002023Key.C0048,
-		Mod2002023Key.C0058,
-		Mod2002023Key.C0060,
-		Mod2002023Key.C0066,
-		Mod2002023Key.C0078,
-		Mod2002023Key.C0056,
-		Mod2002023Key.C0083  
-	};
-
-	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002023Key[] {
-		Mod2002023Key.C0006,
-		Mod2002023Key.C0015,
-		Mod2002023Key.C0079,
-		Mod2002023Key.C0022,
-		Mod2002023Key.C0028,
-		Mod2002023Key.C0047,
-		Mod2002023Key.C0049,
-		Mod2002023Key.C0035,		
-		Mod2002023Key.C0029,
-		Mod2002023Key.C0069,
-		Mod2002023Key.C0033,
-		Mod2002023Key.C0034,
-		Mod2002023Key.C0038,
-		Mod2002023Key.C0046,
-		Mod2002023Key.C0012,
-		Mod2002023Key.C0064,
-		Mod2002023Key.C0057,
-		Mod2002023Key.C0012R,		
-		Mod2002023Key.C0062,
-		Mod2002023Key.C0020
-	};
-	
-	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK3 = new Mod2002023Key[] {
-		Mod2002023Key.C0007,
-		Mod2002023Key.C0009,
-		Mod2002023Key.C0010,
-		Mod2002023Key.C0081,
-		Mod2002023Key.C0082,
-		Mod2002023Key.C0016,
-		Mod2002023Key.C0026,
-		Mod2002023Key.C0027,
-		Mod2002023Key.C0030,
-		Mod2002023Key.C0039,
-		Mod2002023Key.C0043,
-		Mod2002023Key.C0045,
-		Mod2002023Key.C0063,
-		Mod2002023Key.C0071,
-		Mod2002023Key.C0070,
-		Mod2002023Key.C0059,
-		Mod2002023Key.C0065,
-		Mod2002023Key.C0084, 
-		Mod2002023Key.C0072,
-		Mod2002023Key.C0073,
-		Mod2002023Key.C0037,
-		Mod2002023Key.C0044,
-		Mod2002023Key.C0074
-	};
+//	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK1 = new Mod2002023Key[] {
+//		Mod2002023Key.C0001,
+//		Mod2002023Key.C0002,
+//		Mod2002023Key.C0080,
+//		Mod2002023Key.C0003,
+//		Mod2002023Key.C0008,
+//		Mod2002023Key.C0004,
+//		Mod2002023Key.C0005,		
+//		Mod2002023Key.C0011,
+//		Mod2002023Key.C0085,
+//		Mod2002023Key.C0013,
+//		Mod2002023Key.C0014,
+//		Mod2002023Key.C0017,
+//		Mod2002023Key.C0018,		
+//		Mod2002023Key.C0019,
+//		Mod2002023Key.C0021,
+//		Mod2002023Key.C0023,
+//		Mod2002023Key.C0024,
+//		Mod2002023Key.C0025,
+//		Mod2002023Key.C0031,
+//		Mod2002023Key.C0032,
+//		Mod2002023Key.C0036,
+//		Mod2002023Key.C0048,
+//		Mod2002023Key.C0058,
+//		Mod2002023Key.C0060,
+//		Mod2002023Key.C0066,
+//		Mod2002023Key.C0078,
+//		Mod2002023Key.C0056,
+//		Mod2002023Key.C0083  
+//	};
+//
+//	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002023Key[] {
+//		Mod2002023Key.C0006,
+//		Mod2002023Key.C0015,
+//		Mod2002023Key.C0079,
+//		Mod2002023Key.C0022,
+//		Mod2002023Key.C0028,
+//		Mod2002023Key.C0047,
+//		Mod2002023Key.C0049,
+//		Mod2002023Key.C0035,		
+//		Mod2002023Key.C0029,
+//		Mod2002023Key.C0069,
+//		Mod2002023Key.C0086,
+//		Mod2002023Key.C0033,
+//		Mod2002023Key.C0034,
+//		Mod2002023Key.C0038,
+//		Mod2002023Key.C0046,
+//		Mod2002023Key.C0012,
+//		Mod2002023Key.C0064,
+//		Mod2002023Key.C0057,
+//		Mod2002023Key.C0012R,		
+//		Mod2002023Key.C0062,
+//		Mod2002023Key.C0020
+//	};
+//	
+//	public static final Mod2002023Key[] DECLARATION_CHARACTERS_BLOCK3 = new Mod2002023Key[] {
+//		Mod2002023Key.C0007,
+//		Mod2002023Key.C0009,
+//		Mod2002023Key.C0010,
+//		Mod2002023Key.C0081,
+//		Mod2002023Key.C0082,		
+//		Mod2002023Key.C0026,
+//		Mod2002023Key.C0027,
+//		Mod2002023Key.C0030,
+//		Mod2002023Key.C0039,
+//		Mod2002023Key.C0043,
+//		Mod2002023Key.C0045,
+//		Mod2002023Key.C0087,
+//		Mod2002023Key.C0063,
+//		Mod2002023Key.C0071,
+//		Mod2002023Key.C0088,
+//		Mod2002023Key.C0070,
+//		Mod2002023Key.C0059,
+//		Mod2002023Key.C0065,
+//		Mod2002023Key.C0084, 
+//		Mod2002023Key.C0072,
+//		Mod2002023Key.C0073,
+//		Mod2002023Key.C0037,
+//		Mod2002023Key.C0044,
+//		Mod2002023Key.C0074,
+//		Mod2002023Key.C0089
+//	};
 	
 	private Map<Mod2002023Key, CheckBox> inputsCheckBox;
 	
@@ -247,11 +254,13 @@ public class Page00 extends PageAbs {
 			check.setEnabled(enabled);
 		}	
 		if (enabled)
-			for (Mod2002023Key key : CHARACTERS_KEYS) {
+			// FALTA 
+			for (Mod2002023Key[] block : CHARACTERS_KEYS)
+			  for (Mod2002023Key key : block) {
 				if (inputsCheckBox.containsKey( key ) && inputsCheckBox.get( key ).getValue()) {
 					changeAvailability(key);
 				}
-			}
+			  }
 		
 		// El caracter [00027] siempre está deshabilitado
 		if (inputsCheckBox.containsKey(Mod2002023Key.C0027)) {
@@ -558,10 +567,13 @@ public class Page00 extends PageAbs {
 		FlexTable charactersTable1 = new FlexTable();
 		FlexTable charactersTable2 = new FlexTable();
 		FlexTable charactersTable3 = new FlexTable();
-		
-		initializeCharactersTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
-		initializeCharactersTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
-		initializeCharactersTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
+		// FALTA 
+//		initializeCharactersTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
+//		initializeCharactersTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
+//		initializeCharactersTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
+		initializeCharactersTable(charactersTable1, CHARACTERS_KEYS[0]);
+		initializeCharactersTable(charactersTable2, CHARACTERS_KEYS[1]);
+		initializeCharactersTable(charactersTable3, CHARACTERS_KEYS[2]);
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.addStyleName(AON.CSS.aonWidthAll());

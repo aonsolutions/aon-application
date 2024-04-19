@@ -677,7 +677,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3283,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3355,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3359,"Otras deducciones");
-		DESCRIPTION_MAP.put(Mod2002023Key.UT062 ,"9(*).- Retenciones e ingresos a cuenta");		
+		DESCRIPTION_MAP.put(Mod2002023Key.UT062 ,"9.- Retenciones e ingresos a cuenta");		
 		DESCRIPTION_MAP.put(Mod2002023Key.UT070 ,"a) De ejercicios en los que la sociedad no haya tributado en el r\u00E9gimen especial");
         DESCRIPTION_MAP.put(Mod2002023Key.UT072 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");		
 	}
