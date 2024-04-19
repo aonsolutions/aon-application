@@ -560,24 +560,6 @@ class SistemaREDI {
 		}
 		return null;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc, String authCode)
@@ -590,11 +572,8 @@ class SistemaREDI {
 			
 			webClient.getOptions().setUseInsecureSSL(true);
 			
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA-CI.html");
-			
-			HtmlAnchor certSSRequest = htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
-			XmlPage xXmlPage = certSSRequest.click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xXmlPage);
+			XmlPage xXmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xXmlPage);
 				
 			handleSepeExceptions(htmlPage);
 			
