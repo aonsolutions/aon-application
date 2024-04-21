@@ -97,6 +97,7 @@ export const AON_COMPANY_LIST = 'aon-company-list';
 // MODULES - INVOICE
 
 export const AON_INVOICE_PANEL = 'aon-invoice-panel';
+export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
 export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 
