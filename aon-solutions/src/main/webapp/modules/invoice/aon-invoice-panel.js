@@ -26,6 +26,7 @@ import { AonSelect } from '../../components/aon-select.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonInvoiceList } from './aon-invoice-list.js';
 import { AonMobileInvoiceList } from './aon-mobile-invoice-list.js';
+import { AonInvoiceHome } from './aon-invoice-home.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
@@ -130,8 +131,8 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvoice(this.invoice.type, this.invoice);
 		} else if(this.value){
 			this.aonInvoiceById(this.value);
-		} else 
-			this.selectOption(this.option);
+		} else if(this.isBeta()) this.aonInvoiceHome();
+		else this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -341,6 +342,7 @@ export class AonInvoicePanel extends AonElement {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_DRAFT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+				this.updateCounterHome();
 			}
 		});
 	}
@@ -352,6 +354,15 @@ export class AonInvoicePanel extends AonElement {
 			span.innerHTML = option.name + " (" + count + ")";
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
+	}
+
+	updateCounterHome() {
+		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
+		let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
+		let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
+		let total = issued + received + ticket;
+		let pendingRecordNumber = this.getElement('pendingRecordNumber');
+		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
 	}
 	
 	search(detail) {
@@ -710,6 +721,10 @@ export class AonInvoicePanel extends AonElement {
 		}
 
 		aonInvoice.setContent(component);
+	}
+
+	aonInvoiceHome() {
+		this.getApplication().setContent(new AonInvoiceHome());
 	}
 
 	aonInvoiceById(id) {
