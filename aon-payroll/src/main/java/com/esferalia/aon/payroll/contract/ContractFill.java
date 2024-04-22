@@ -116,6 +116,9 @@ public class ContractFill {
 		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
 		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
 		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
+		
+		FIELDNAMESTOMAP.put("AA0103-DNI", "T_ENTERPRISE_DIR_STAFF_NIF");
+		FIELDNAMESTOMAP.put("AA0502_DNI", "T_LEGAL_REPRESENTATIVE_NIF");
 //		FIELDNAMESTOMAP.put("FX_NAC_TRA", "E_BDAT");
 //		FIELDNAMESTOMAP.put("FX_INICIO", "C_START");
 	}
@@ -835,7 +838,8 @@ public class ContractFill {
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
 					
 					if(null != renderFieldName) {
-						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
+						String newValue = contractFillInfo.getOrDefault(renderFieldName, null);
+						if(null == newValue) newValue = contractOtherInfo.getOrDefault(renderFieldName, "");
 						setField(field, newValue);
 					} else {
 						if(AonStringUtils.equalsIgnoreCase(fieldName, "TEXTOCasilla de verificaci\u00f3n25") && null != contractOtherInfo.get("T_EMPLOYEE_CONTRACT_DIST_ADDR")) {
@@ -1015,21 +1019,21 @@ public class ContractFill {
 			pdfDocument.removePage(7);
 			pdfDocument.removePage(7);
 		} else if(contractType.equals(430) || contractType.equals(530)) {
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
+			pdfDocument.removePage(3); // 4
+			pdfDocument.removePage(3); // 5
+			pdfDocument.removePage(3); // 6
+			pdfDocument.removePage(3); // 7
+			pdfDocument.removePage(3); // 8
+			pdfDocument.removePage(3); // 9
+			pdfDocument.removePage(3); // 10
+			pdfDocument.removePage(3); // 11
+			pdfDocument.removePage(3); // 12
+			pdfDocument.removePage(3); // 13
+			pdfDocument.removePage(4); // 15
+			pdfDocument.removePage(4); // 16
+//			pdfDocument.removePage(4); // 17
+			pdfDocument.removePage(5); // 18
+			pdfDocument.removePage(5); // 19
 		}
 	}
 	

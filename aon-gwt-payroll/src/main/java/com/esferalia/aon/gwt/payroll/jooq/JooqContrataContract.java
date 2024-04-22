@@ -637,10 +637,12 @@ public class JooqContrataContract {
 					.on(PERSON.REGISTRY.eq(REGISTRY.ID))
 					.innerJoin(CONTRACT)
 					.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-					.innerJoin(WORKPLACE)
+					.leftOuterJoin(WORKPLACE)
 					.on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 					.where(CONTRACT.ID.eq(contractId))
 					.fetchOne();
+			
+			if(null == contractPerRegWorkplaceRecord) continue;
 			
 			employeeData.setEmployeeId(contractPerRegWorkplaceRecord.get(PERSON.REGISTRY));
 			employeeData.setDomain(contractPerRegWorkplaceRecord.get(PERSON.DOMAIN));

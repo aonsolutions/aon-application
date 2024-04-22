@@ -1172,10 +1172,6 @@ public class JooqEmployeeAFI {
 		Date startDateSQL = new Date(startDate.getTimeInMillis());
 		Date endDateSQL = new Date(endDate.getTimeInMillis());
 		
-		System.out.println(startDateSQL);
-		System.out.println(endDateSQL);
-		System.out.println(cccIdList);
-		
 		Result<Record> pensionPlanPayments = dslContext.select().from(SALARY_PAYMENT)
 			.join(SALARY)
 			.on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
@@ -1193,9 +1189,52 @@ public class JooqEmployeeAFI {
 		if(!hasSSMutualFromDomain(dslContext, cccIdList)) return "No existe entidad gestora del plan de pensiones. Por favor rellenelo desde el apartado de Empresa de Laboral > Integeral de N\u00f3minas";
 		if(pensionPlanPayments.isEmpty()) return "La(s) cuenta(s) de cotizaci\u00F3n seleccionada(s) no tiene(n) devengos con CRA 0000 - APORTACION EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO";
 		
-		return null;
+		return checkEmployeeNeededInfo(dslContext, startDateSQL, endDateSQL, cccIdList);
 	}
 	
+	private static String checkEmployeeNeededInfo(DSLContext dslContext, Date startDateSQL, Date endDateSQL, List<Integer> cccIdList) {
+		for(Integer cccId : cccIdList) {
+			Result<Record> contracts = dslContext.select().from(CONTRACT)
+					.join(SALARY).on(SALARY.CONTRACT.eq(CONTRACT.ID))
+					.join(SALARY_PAYMENT).on(SALARY_PAYMENT.SALARY.eq(SALARY.ID))
+					.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
+					.and(SALARY_PAYMENT.PAYMENT_CONCEPT.eq("PPE"))
+					.and(SALARY.START_DATE.ge(startDateSQL))
+					.and(SALARY.END_DATE.le(endDateSQL))
+					.fetch();
+			
+			if(contracts.isEmpty())
+				continue;
+			
+			for(Record contract : contracts) {
+				Record personRecord = dslContext.select().from(PERSON)
+						.where(PERSON.REGISTRY.eq(
+								dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+									.where(CONTRACT.ID.eq(contract.get(CONTRACT.ID)))
+									.fetchOne(CONTRACT.PERSON)
+						))
+						.fetchOne();
+				
+				if(AonStringUtils.isBlank(personRecord.get(PERSON.SOCIAL_SECURITY_NUM)))
+					return personRecord.get(PERSON.NAME) + " " + personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME) + " no tiene numero de Seguridad Social registrado";
+					
+				
+				Record registryRecord = dslContext.select().from(REGISTRY)
+						.where(REGISTRY.ID.eq(
+								dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+									.where(CONTRACT.ID.eq(contract.get(CONTRACT.ID)))
+									.fetchOne(CONTRACT.PERSON)
+						))
+						.fetchOne();
+				
+				if(AonStringUtils.isBlank(registryRecord.get(REGISTRY.DOCUMENT)))
+					return registryRecord.get(REGISTRY.NAME) + " no tiene numero de documento de identidad registrado";
+			}
+		}
+		
+		return null;
+	}
+
 	private static boolean hasAuthKeyFromDomain(DSLContext dslContext, List<Integer> cccIdList) {
 		
 		// Prepare aunthKey

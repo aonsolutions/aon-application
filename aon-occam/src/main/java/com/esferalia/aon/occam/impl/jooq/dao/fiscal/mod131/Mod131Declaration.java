@@ -251,7 +251,10 @@ public abstract class Mod131Declaration {
 			.orElse(null);
 		if (prev131 != null) {
 			mod131.setActivities(copyActivities(prev131, mod131));
+		} else {
+			mod131.setActivities( new LinkedList<>());
 		}
+		
 		// Ensure 5 activities
 		while ( AonCollectionUtils.size( mod131.getActivities() ) < 5) {
 			mod131.getActivities().add(new Mod131Activity()
@@ -276,6 +279,11 @@ public abstract class Mod131Declaration {
 					prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
 					prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
 					idx++;
+				}
+				long prevDias = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(prev131),FiscalUtils.getPeriodEnd(prev131)) + 1;
+				if (prevAct.getDia() == prevDias) {
+					long newDias = 	AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod131),FiscalUtils.getPeriodEnd(mod131)) + 1;
+					prevAct.setDia((int) newDias);
 				}
 				return prevAct;
 			})

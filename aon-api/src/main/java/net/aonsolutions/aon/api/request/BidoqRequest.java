@@ -17,8 +17,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -32,8 +30,8 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -471,16 +469,28 @@ public class BidoqRequest {
 				.setActivity(activity)
 				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
-		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
-			@Override public void visitUndeductible(Invoice invoice) {
+		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor<Void>() {
+			@Override 
+			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
 				accountEntry.setUndeductible(true);
+				return null;
 			}
-			@Override public void visitSales(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);}
-			@Override public void visitPurchase(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);}
-			@Override public void visitExpenses(Invoice invoice) {
+			@Override 
+			public Void visitSales(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);
+				return null;
+			}
+			@Override 
+			public Void visitPurchase(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);
+				return null;
+			}
+			@Override 
+			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
 				accountEntry.setUndeductible(false);
+				return null;
 			}
 		});
 		return accountEntry;

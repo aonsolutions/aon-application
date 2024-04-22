@@ -187,6 +187,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.deleteCustomerFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFee(domainName, domain, user, fee, new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void getWorkplacesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Workplace>> callback) {
@@ -234,6 +240,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> callback) {
 		AON.start();
 		serviceAsync.getCustomerWithoutFee(domainName, domain, user, customerParams, new AsyncCallbackWrapper<List<Customer>>(callback));
+	}
+
+	@Override
+	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.reorderCustomerFeeLine(domainName, domain, user, customer, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	// **************************************************

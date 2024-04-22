@@ -2,7 +2,7 @@ import { webkitRequestMobile } from "./request";
 
 export const isMobile = () => {
     const reg = new RegExp(/mobile/i);
-    return getPlatform().match(reg) || getUserAgent().match(reg) || isAndroidApp() || isAppMobile();
+    return getPlatform().match(reg) || getUserAgent().match(reg) || isAndroidApp() || isIosApp() || isAppMobile();
 }
 
 export const iOS = () => {
@@ -29,8 +29,16 @@ export const isAndroidApp = () => {
     return getUserAgent() === 'solutions.aon.android';
 }
 
+export const isIosApp = () => {
+    return getUserAgent() === 'solutions.aon.ios';
+}
+
 export const isAppMobile = () => {
     return webkitRequestMobile();
+}
+
+export const isApp = () => {
+    return isAndroidApp() || isIosApp() || isAppMobile();
 }
 
 export const getPlatform = () => {

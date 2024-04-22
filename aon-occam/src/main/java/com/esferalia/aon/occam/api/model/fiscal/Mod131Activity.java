@@ -746,6 +746,7 @@ public class Mod131Activity implements Serializable {
 			.setIc5(toClone.getIc5())
 			.setRpf(toClone.getRpf())
 			.setRlo(toClone.getRlo())
+			.setRpa(toClone.getRpa())
 			.setRdr(toClone.getRdr())
 			.setDia(toClone.getDia())
 			.setNet(toClone.getNet())

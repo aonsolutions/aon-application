@@ -14,6 +14,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -180,6 +182,13 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
+	public void deleteCustomerFee(String domainName, int domainId, String login, Fee fee) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			AON.deleteFee(ctx, fee);
+		}	
+	}
+	
+	@Override
 	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getWorkplacesSuggestion(domainName, domain, user, query);
 	}
@@ -219,6 +228,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<Customer> getCustomerWithoutFee(String domainName, int domainId, String user, CustomerParams customerParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user, f->f.getNameProperty().eq(domainName));
 		return AON.getCustomerWithoutFee(domain, user, customerParams);
+	}
+	
+	@Override
+	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer) {
+		AON.reorderCustomerFeeLine(domainName, domain, user, customer);
 	}
 	
 	// **************************************************

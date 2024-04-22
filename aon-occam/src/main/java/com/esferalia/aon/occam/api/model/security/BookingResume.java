@@ -84,7 +84,7 @@ public class BookingResume implements Serializable {
 		return this;
 	}
 
-	public int getTotalChilds() {
+	public Integer getTotalChilds() {
 		return this.totalChilds;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -79,7 +80,7 @@ public class Mod347Formatter extends VATFormatter {
 				sumBase = sumBase + vat.getBase();
 				sumQuota = sumQuota + vat.getQuota();
 				sumReQuota = sumReQuota + vat.getSurchargeQuota();
-				if (!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) {
+				if (!vat.isSales() && ((vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService())) ) {
 					sumTotal = sumTotal + vat.getBase();
 				} else {
 					sumTotal = sumTotal + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
@@ -163,7 +164,7 @@ public class Mod347Formatter extends VATFormatter {
 				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargeQuota()),15)
 				+ AonStringUtils.leftPad(DEC.format(
 						vat.isFinancePending()?0.0
-						:(!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP ? vat.getBase() : vat.getBase()+vat.getQuota()+vat.getSurchargeQuota()))
+						:( (!vat.isSales() && ((vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()))) ? vat.getBase() : vat.getBase()+vat.getQuota()+vat.getSurchargeQuota()))
 						,15)
 				+ AonStringUtils.SPACE
 				+ (vat.isVatAccrualRegime() ? AonStringUtils.rightPad( vat.isFinancePending()?"PENDIENTE":"PAG./COB.",10):AonStringUtils.SPACE)

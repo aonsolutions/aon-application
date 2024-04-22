@@ -27,7 +27,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -322,12 +322,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    		ocrDocumentParams.withCompany(ocrCompany.getId());
 	    		companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
 	    		publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
-		    
+	    		ocrDocumentParams.limit(1);
 	    		OCRDocumentsResponse response = OCRInvofox
 		    		.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
-	    		long count = response.getDocuments().orElse(new LinkedList<>()).stream().count();
-	    		json.put("count", count);
+	    		json.put("count", response.getCount().orElse(0));
 	    	}
 	    }
 
@@ -467,15 +466,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    		.setDocument(invoice.getRegistryDocument())
 	    		.setDocumentType(invoice.getRegistryDocumentType())
 	    		.setDocumentCountry(invoice.getRegistryDocumentCountry());
-	    	invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+	    	invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
 		    
 	    		@Override
-	    		public void visitUndeductible(Invoice invoice) {
-	    			visitPurchase(invoice);
+	    		public Void visitUndeductible(Invoice invoice) {
+	    			return visitPurchase(invoice);
 	    		}
 		    
 	    		@Override
-	    		public void visitSales(Invoice invoice) {
+	    		public Void visitSales(Invoice invoice) {
 	    			ocrInvoice.getRecipientName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
 	    			ocrInvoice.getRecipientCountry().ifPresent(country -> country.getValue()
 	    					.map(Country::safeValueOf).ifPresent(registry::setNationality));
@@ -485,10 +484,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    			}, () -> {
 	    			
 	    			});
+	    			return null;
 	    		}
 		    
 	    		@Override
-	    		public void visitPurchase(Invoice invoice) {
+	    		public Void visitPurchase(Invoice invoice) {
 	    			ocrInvoice.getIssuerName().ifPresent(name -> name.getValue().ifPresent(registry::setName));
 	    			ocrInvoice.getIssuerCountry().ifPresent(country -> country.getValue().map(Country::safeValueOf)
 	    					.ifPresent(registry::setNationality));
@@ -498,13 +498,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    			}, () -> {
 
 	    			});
-			
+	    			return null;
 	    		}
 
 		    
 	    		@Override
-	    		public void visitExpenses(Invoice invoice) {
-	    			visitPurchase(invoice);
+	    		public Void visitExpenses(Invoice invoice) {
+	    			return visitPurchase(invoice);
 	    		}
 
 	    		private RegistryAddress toRegistryAddress(OCRAddress details) {

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { AonInvoice } from './aon-invoice.js';
 import { AonMobileInvoice } from './aon-mobile-invoice.js';
@@ -26,6 +26,7 @@ import { AonSelect } from '../../components/aon-select.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonInvoiceList } from './aon-invoice-list.js';
 import { AonMobileInvoiceList } from './aon-mobile-invoice-list.js';
+import { AonInvoiceHome } from './aon-invoice-home.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
@@ -130,8 +131,8 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvoice(this.invoice.type, this.invoice);
 		} else if(this.value){
 			this.aonInvoiceById(this.value);
-		} else 
-			this.selectOption(this.option);
+		} else if(this.isBeta()) this.aonInvoiceHome();
+		else this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -159,6 +160,10 @@ export class AonInvoicePanel extends AonElement {
 						this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
 					}
 			}
+			if(this.isConsole()) {
+				this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
+			}
+
 		}
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
@@ -243,7 +248,7 @@ export class AonInvoicePanel extends AonElement {
 		getRawdocCount({}).then(r => {
 			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
 				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
 			}
 
 			if(r.invoice && r.invoice.recibida && r.invoice.recibida > 0){
@@ -337,6 +342,7 @@ export class AonInvoicePanel extends AonElement {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_DRAFT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+				this.updateCounterHome();
 			}
 		});
 	}
@@ -344,9 +350,19 @@ export class AonInvoicePanel extends AonElement {
 	updateCounterSpan(option) {	
 		let span = document.getElementById("aonMenuItemSpan" + option.id);
 		if(span){
-			span.innerHTML = option.name + " (" + getCounter()[option.id] + ")";
+			let count = getCounter()[option.id];
+			span.innerHTML = option.name + " (" + count + ")";
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
+	}
+
+	updateCounterHome() {
+		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
+		let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
+		let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
+		let total = issued + received + ticket;
+		let pendingRecordNumber = this.getElement('pendingRecordNumber');
+		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
 	}
 	
 	search(detail) {
@@ -705,6 +721,10 @@ export class AonInvoicePanel extends AonElement {
 		}
 
 		aonInvoice.setContent(component);
+	}
+
+	aonInvoiceHome() {
+		this.getApplication().setContent(new AonInvoiceHome());
 	}
 
 	aonInvoiceById(id) {

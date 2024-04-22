@@ -53,7 +53,7 @@ public class InvoiceDetailJSON {
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
 			double quota = JsonUtils.getdouble(json, IJsonNames.QUOTA);	
 			double surchargeQuota = JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA);
-			double deductibleQuota = AonMathUtils.round(quota + surchargeQuota);
+			double deductibleQuota = AonMathUtils.round(quota); // + surchargeQuota);
 			InvoiceTax tax = new InvoiceTax()
 					.setDomain(detail.getDomain())
 					.setTaxType(TaxType.VAT)
