@@ -293,7 +293,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	invofoxCounter() {
-		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' };	
+		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice','ticket'], companyActsLike:'issuer' };	
 		getInvofoxCount(issuedFilter).then(r => {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
@@ -305,7 +305,7 @@ export class AonInvoicePanel extends AonElement {
 		});
 
 
-		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'};	
+		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(receivedFilter).then(r => {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
@@ -317,7 +317,7 @@ export class AonInvoicePanel extends AonElement {
 		});
 
 
-		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'};	
+		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(ticketFilter).then(r => {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_INBOX, r.count);
@@ -329,7 +329,7 @@ export class AonInvoicePanel extends AonElement {
 		});
 
 
-		let rejectedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'};	
+		let rejectedFilter = {publicStatus:['pendingDecission'], type: ['invoice', 'ticket']};	
 		getInvofoxCount(rejectedFilter).then(r => {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.count);
@@ -753,25 +753,25 @@ export class AonInvoicePanel extends AonElement {
 				case OPTION.RAWDOC_INBOX_ISSUED.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'emitida'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' }
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer' }
 					);
 					break;
 				case OPTION.RAWDOC_INBOX_RECEIVED.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'recibida'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'ne+issuer'}
 					);
 					break;
 				case OPTION.RAWDOC_INBOX_TICKET.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'ticket'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'}
 					);
 					break;
 				case OPTION.RAWDOC_REJECT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.REJECTED},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
 					);
 					break;
 				case OPTION.RAWDOC_DRAFT.id:

@@ -142,7 +142,6 @@ export class AonInvoiceHome extends AonElement {
 		cypCard.firstChild.children.item(1).style.height = "315px";
 		cypCard.firstChild.style.margin = '0';
 	}
-
 	buildInvoiceResumeCard() {
 		let div = this.createDiv();
 
@@ -158,6 +157,10 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecords.style.flex = '1';
 		pendingRecords.style.borderRadius = '5px';
 		pendingRecords.overflow = 'hidden';
+		pendingRecords.style.cursor = 'pointer';
+
+		pendingRecords.addEventListener(EVENT.MOUSEOVER, () => pendingRecords.style.backgroundColor = '#f1f1f1');
+		pendingRecords.addEventListener(EVENT.MOUSELEAVE, () => pendingRecords.style.backgroundColor = 'transparent');
 
 		div.appendChild(pendingRecords);
 
