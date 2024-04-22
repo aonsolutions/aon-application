@@ -289,6 +289,7 @@ export class AonInvoicePanel extends AonElement {
 				addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
 			}
+			this.updateCounterHome();
 		});
 	}
 
@@ -301,6 +302,8 @@ export class AonInvoicePanel extends AonElement {
 
 				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+
+				this.updateCounterHome();
 			}
 		});
 
@@ -313,6 +316,8 @@ export class AonInvoicePanel extends AonElement {
 
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+
+				this.updateCounterHome();
 			}
 		});
 
@@ -320,11 +325,13 @@ export class AonInvoicePanel extends AonElement {
 		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(ticketFilter).then(r => {
 			if(r && r.count && r.count > 0) {
-				addCounter(OPTION.RAWDOC_INBOX, r.count);
+				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
 
 				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
+
+				this.updateCounterHome();
 			}
 		});
 
@@ -334,6 +341,8 @@ export class AonInvoicePanel extends AonElement {
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
+
+				this.updateCounterHome();
 			}
 		});
 
@@ -363,6 +372,18 @@ export class AonInvoicePanel extends AonElement {
 		let total = issued + received + ticket;
 		let pendingRecordNumber = this.getElement('pendingRecordNumber');
 		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
+
+		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
+		let pendingNumber = this.getElement('pendingNumber');
+		if(pendingNumber) pendingNumber.innerHTML = pending;
+
+		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
+		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
+		if(pendingRevisionNumber) pendingRevisionNumber.innerHTML = pendingRevision;
+
+		let trash = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+		let trashNumber = this.getElement('trashNumber');
+		if(trashNumber) trashNumber.innerHTML = trash;
 	}
 	
 	search(detail) {
