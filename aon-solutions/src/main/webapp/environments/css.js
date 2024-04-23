@@ -88,6 +88,7 @@ export const AON_FORM_CENTER_ANDROID_APP = 'aonFormCenterAndroidApp';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
+export const AON_CARD_TEXT = 'aonCardText';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
 export const AON_CARD_TOTAL = 'aonCardTotal';

@@ -1117,8 +1117,7 @@
   width: 100%;
 }
 
-.aonCard {
-  
+.aonCardApp {
   display:flex;
   align-items: center;
   flex-direction: column;
@@ -1132,10 +1131,7 @@
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 4px 8px 0px;
   background-color: white;
-}
-
-.aonCardHover:hover {
-  border: 1px solid black;
+  cursor: pointer;
 }
 
 .aonCardFlex{
@@ -1158,10 +1154,15 @@
 .aonCardTitle {
   display: flex;
   margin-bottom: 15px;
-  font-size: 18px;
-  color: #5f6368;
-  font-weight: bold;
+  font-size: 14px;
+  color: rgb(38,38,38);
+  font-weight: 500;
+}
 
+.aonCardText {
+  font-size : 14px;
+  font-weight: 300;
+  color: rgb(72,70,68);
 }
 
 .aonCardTitleSection {

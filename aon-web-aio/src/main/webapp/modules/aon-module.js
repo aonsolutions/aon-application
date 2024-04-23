@@ -65,7 +65,8 @@ export class AonModule extends AonElement {
 			LS.removeDomain();
 			this.buildHome();
 		} else {
-			this.buildLogin();
+			this.buildHome();
+//			this.buildLogin();
 		}
 	}
 

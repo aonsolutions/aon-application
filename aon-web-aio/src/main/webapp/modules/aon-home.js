@@ -6,7 +6,8 @@ import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/env
 
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonNewMenu } from './aon-new-menu.js';
-import { AonRightPanel } from './aon-right-panel.js';
+import { AonConfig } from './aon-config.js';
+import { AonHelp } from './aon-help.js';
 
 export class AonHome extends AonElement {
 
@@ -14,6 +15,7 @@ export class AonHome extends AonElement {
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
+	RIGHT_PANEL_HELP;
 
 	constructor () {
 		super();
@@ -31,6 +33,7 @@ export class AonHome extends AonElement {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
+		this.RIGHT_PANEL_HELP = 'rightPanelHelp'
 	}
 
 	build() {
@@ -89,18 +92,30 @@ export class AonHome extends AonElement {
 
 		this.appendChild(aonMenu);
 
-		let panel = new AonRightPanel();
-		this.appendChild(panel);
-		panel.addEventListener(EVENT.CLOSE, () => {
-			rootPanel.style.marginRight = '0px';			
-		});
-	
 		let headerConfig = this.getElement('aonHeaderConfig');
+		let panelConfig = new AonConfig();
+		this.appendChild(panelConfig);
+		panelConfig.addEventListener(EVENT.CLOSE, () => {
+			rootPanel.style.marginRight = '0px';		
+		});
 		if(headerConfig)
 			headerConfig.addEventListener(EVENT.CLICK, () => {
 				rootPanel.style.marginRight = '321px';
-				panel.open();
+				panelConfig.open();
 		});
+
+		let headerHelp = this.getElement('aonHeaderHelp');
+		if(headerHelp)
+			headerHelp.addEventListener(EVENT.CLICK, () => {
+				let panelHelp = new AonHelp();
+				this.appendChild(panelHelp);	
+				panelHelp.addEventListener(EVENT.CLOSE, () =>{
+					rootPanel.style.marginRight = '0px';	
+					this.removeChild(panelHelp);
+				});
+				rootPanel.style.marginRight = '321px';
+				panelHelp.open();
+		})
 
 		this.getElement('aonMenuSidenav').style.with = '0px';
 		this.getElement('aonMenuList').style.visibility = "hidden";
