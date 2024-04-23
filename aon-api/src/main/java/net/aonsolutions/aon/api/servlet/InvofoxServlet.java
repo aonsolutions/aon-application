@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
@@ -541,8 +540,22 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
 		if(invoice.getRegistry() == null) return invoice;
 		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
-		if(!accounts.isEmpty())
-			invoice.setTediCategory(accounts.get(0).getCode());
+		if(accounts.isEmpty() && InvoiceType.EXPENSES.equals(invoice.getType())) {
+			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.PURCHASE);
+			if(!accounts.isEmpty()) invoice.setType(InvoiceType.PURCHASE);
+		} else if(accounts.isEmpty() && InvoiceType.PURCHASE.equals(invoice.getType())) {
+			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.EXPENSES);
+			if(!accounts.isEmpty()) invoice.setType(InvoiceType.EXPENSES);			
+		}
+		if(!accounts.isEmpty()) {
+			Account account = accounts.get(0);
+			invoice.setTediCategory(account.getCode());
+			invoice.getDetails().stream().forEach(d -> 
+				d.setAccount(account.getId())
+				.setAccountCode(account.getCode())
+				.setAccountDescription(account.getDescription())
+			);
+		}
 		return invoice;
 	}
 	

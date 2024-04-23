@@ -2687,27 +2687,50 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
-			let d = this.getApplication().getDialog();
-			d.clear();
-			if(!this.isMobile()) d.width = '400px';
-			d.setTitle(MSG.ACCEPT);
-			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
-			getAeatCertificates().then(certs => {
-				certSelect.setOptions(certs.map(s => {
-					return {
-					  value: s.id,
-					  name: s.name
-					}
-				  }));
-			}); 
-			d.setContent(certSelect);
-			d.addAcceptAction(() => {
+		if(!this.invoice.category) {
+			this.showError({
+				type: CONSTANT.ERROR,
+				message: "Para Aceptar es necesaria la categoría."
+			});
+		} else {
+			if(this.invoice.isEmitida() && this.configuration.tbai.active) {
+				let d = this.getApplication().getDialog();
+				d.clear();
+				if(!this.isMobile()) d.width = '400px';
+				d.setTitle(MSG.ACCEPT);
+				let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
+				getAeatCertificates().then(certs => {
+					certSelect.setOptions(certs.map(s => {
+						return {
+						  value: s.id,
+						  name: s.name
+						}
+					  }));
+				}); 
+				d.setContent(certSelect);
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					this.accept = false;
+					let data = this.getInvoice();
+					data.cert = certSelect.value;
+					acceptInvoice(data).then(r => {
+						this.getApplication().getParent().buildCounter();
+						this.invoice = new Invoice(r);
+						this.getApplication().stopLoader(); 
+						this.reload();
+					}).catch(e => {
+						this.accept = true;
+						this.getApplication().stopLoader(); 
+						this.showError(e)
+					});
+				});			
+				d.open();
+			} else if(this.accept) {
 				this.getApplication().startLoader();
 				this.accept = false;
-				let data = this.getInvoice();
-				data.cert = certSelect.value;
-				acceptInvoice(data).then(r => {
+				acceptInvoice(this.getInvoice())
+				.then(r => {
+					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 					this.getApplication().getParent().buildCounter();
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
@@ -2717,22 +2740,7 @@ export class AonInvoice extends AonElement {
 					this.getApplication().stopLoader(); 
 					this.showError(e)
 				});
-			});			
-			d.open();
-		} else if(this.accept) {
-			this.getApplication().startLoader();
-			this.accept = false;
-			acceptInvoice(this.getInvoice())
-			.then(r => {
-				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-				this.invoice = new Invoice(r);
-				this.getApplication().stopLoader(); 
-				this.reload();
-			}).catch(e => {
-				this.accept = true;
-				this.getApplication().stopLoader(); 
-				this.showError(e)
-			});
+			}
 		}
 	}
 	
@@ -3131,7 +3139,7 @@ export class AonInvoice extends AonElement {
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
-			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);	
+			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.DISCARDED);	
 			this.back();
 		});
 		d.open();

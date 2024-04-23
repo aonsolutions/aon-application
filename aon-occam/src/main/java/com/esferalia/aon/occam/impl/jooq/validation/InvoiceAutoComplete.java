@@ -239,8 +239,8 @@ public class InvoiceAutoComplete {
 						Account account = new Account()
 								.setDomain(inv.getDomain())
 								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "430"))
-								.setAlias(registry.getAlias())
-								.setDescription(registry.getName())
+								.setAlias(customer.getAlias())
+								.setDescription(customer.getName())
 								.setActive(true);
 						account = AccountDAO.save(ctx.getContext(), account);
 						customer.setAccount(account.getId());
@@ -314,8 +314,8 @@ public class InvoiceAutoComplete {
 						Account account = new Account()
 								.setDomain(inv.getDomain())
 								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "410"))
-								.setAlias(registry.getAlias())
-								.setDescription(registry.getName())
+								.setAlias(creditor.getAlias())
+								.setDescription(creditor.getName())
 								.setActive(true);
 						account = AccountDAO.save(ctx.getContext(), account);
 						creditor.setAccount(account.getId());
