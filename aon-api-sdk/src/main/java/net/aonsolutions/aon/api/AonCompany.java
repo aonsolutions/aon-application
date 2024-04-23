@@ -5,12 +5,11 @@ import static net.aonsolutions.aon.api.Aon.get;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.api.json.AonCompanyJSON;
 
 public class AonCompany {
     
@@ -19,5 +18,12 @@ public class AonCompany {
 //	return new JSONArray(response);
 //    }
     
+	public static List<com.esferalia.aon.occam.api.model.AonCompany> getCompanies(String token, String domain) throws URISyntaxException, IOException, InterruptedException {
+		
+		String response  = get(domain , ":-)", token, "/ms/api/company/", Collections.EMPTY_MAP);
+		JSONArray responseJSON = new JSONArray(response);
+		return AonCompanyJSON.fromJSON(responseJSON);
+		
+	}
 
 }
