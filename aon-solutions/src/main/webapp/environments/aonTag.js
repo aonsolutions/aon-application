@@ -197,4 +197,6 @@ export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';
 
 export const AON_MARKETING = 'aon-marketing';
 
-export const AON_RIGHT_PANEL = 'aon-right-panel';
+export const AON_HELP = 'aon-help';
+
+export const AON_CONFIG = 'aon-config';
