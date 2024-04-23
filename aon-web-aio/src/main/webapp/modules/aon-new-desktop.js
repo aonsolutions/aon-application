@@ -90,7 +90,8 @@ export class AonNewDesktop extends AonElement {
 		
 		let cardDiv  = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
-		cardDiv.classList.add(CSS.AON_CARD);
+		cardDiv.classList.add('aonCardApp');
+		cardDiv.classList.add('aonCard');
 
 		let appA = this.createElement(TAG.A);
 		appA.addEventListener(EVENT.CLICK, () => {
