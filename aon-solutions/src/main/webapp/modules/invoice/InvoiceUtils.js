@@ -67,13 +67,13 @@ export const s3UploadInvoices = (el, files, jobId) => {
     let arr = [];
     let data = { uploaded : 0 };
     for (let file of files) {
-        s3UploadInvoice(file, jobId, data , (f) => alert(f.name + ' ok'), (f) => alert(f.name + ' error'));
+        s3UploadInvoice(file, jobId, data , undefined, (f) => alert(f.name + ' ok'), (f) => alert(f.name + ' error'));
     }
     el.value = null;
     return arr;
 }
 
-export const s3UploadInvoice = (file, jobId, data, success, error) => {
+export const s3UploadInvoice = (file, jobId, data, invofoxConfiguration, success, error) => {
     let formData = new FormData();
     let xhr = new XMLHttpRequest();
   
@@ -81,7 +81,7 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
   	data.uploaded += 1;
   	
     formData.append('key', 
-        'invoices'
+        (invofoxConfiguration && invofoxConfiguration.test ? 'facturas' : 'invoices')
         + `/${LS.getDomainName()}`
         + `/${LS.getDomainDocument()}`
         + `/${LS.getDomainLogin()}`

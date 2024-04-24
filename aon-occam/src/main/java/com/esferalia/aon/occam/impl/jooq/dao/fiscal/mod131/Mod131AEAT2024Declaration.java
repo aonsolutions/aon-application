@@ -2544,9 +2544,16 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			rpf = rpf * act.getIc3();	
 		}
 		if (AonMathUtils.isNotZero(act.getIc4())) {
-			double baseExceso = rpf - act.getMaxImport();
+			double  tope = act.getMaxImport();
+			if (AonMathUtils.isZero(tope)) {
+				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
+				if (epi != null) {
+					tope = epi.getLimExceso();
+				}
+			}
+			double baseExceso = rpf - tope;
 			baseExceso = baseExceso * act.getIc4(); 
-			rpf = baseExceso + act.getMaxImport();	
+			rpf = baseExceso + tope;	
 		}
 		if (AonMathUtils.isNotZero(act.getIc5())) {
 			rpf = rpf * act.getIc5();	

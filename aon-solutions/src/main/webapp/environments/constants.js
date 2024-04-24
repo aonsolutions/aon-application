@@ -33,6 +33,8 @@ export const AON_SALES_LIST = 'aonSalesList';
 export const AON_MOBILE_SALES_LIST = 'aonMobileSalesList';
 export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const APP = 'app';
+export const APPS = 'apps';
+export const APPLICATIONS = 'applications';
 export const ARRAY = 'array';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
@@ -143,6 +145,7 @@ export const GET_INVOICES = 'getInvoices';
 export const HEADER = 'header';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
+export const HOME = 'home';
 export const HTML_ELEMENT = 'htmlElement';
 
 // ----- I

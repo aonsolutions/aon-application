@@ -77,10 +77,15 @@ export class AonNewUpload extends AonElement {
         input.className = CSS.AON_NONE;
         input.addEventListener(EVENT.CHANGE, ({target}) => {
             let desktop = this.getElement('aonDesktop');
-            if(this.type === "Documental"){
-                desktop.uploadDocumentsDesktop(input, target.files);
-            } else if(this.type === "Invoice"){
-                desktop.uploadInvoiceDesktop(input, target.files);
+            let invoiceHome = this.getElement('aonInvoiceHome'); 
+            if(desktop) {
+                if(this.type === "Documental"){
+                    desktop.uploadDocumentsDesktop(input, target.files);
+                } else if(this.type === "Invoice"){
+                    desktop.uploadInvoiceDesktop(input, target.files);
+                }
+            } else if(invoiceHome) {
+                invoiceHome.uploadInvoiceHome(input, target.files);
             }
         });
         div.appendChild(input);
@@ -150,11 +155,17 @@ export class AonNewUpload extends AonElement {
             if(event && event.dataTransfer && event.dataTransfer.files){
                 let files = event.dataTransfer.files;
                 let desktop = this.getElement('aonDesktop');
-                if(this.type === "Documental"){
-                    desktop.uploadDocumentsDesktop(element, files);
-                } else if(this.type === "Invoice"){
-                    desktop.uploadInvoiceDesktop(element, files);
+                let invoiceHome = this.getElement('aonInvoiceHome'); 
+                if(desktop) {
+                    if(this.type === "Documental"){
+                        desktop.uploadDocumentsDesktop(element, files);
+                    } else if(this.type === "Invoice"){
+                        desktop.uploadInvoiceDesktop(element, files);
+                    }
+                } else if(invoiceHome) {
+                    invoiceHome.uploadInvoiceHome(element, files);
                 }
+
             }
         };
 

@@ -1,5 +1,5 @@
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
-import { uploadDocument, uploadDocuments } from '../modules/documental/DocumentalUtils.js';
+import { uploadDocument } from '../modules/documental/DocumentalUtils.js';
 import { generateJobId, s3UploadInvoice, uploadInvoice2 } from '../modules/invoice/InvoiceUtils.js';
 import {AonElement} from './AonElement.js';
 import { AonCard } from './aon-card.js';
@@ -10,6 +10,7 @@ export class AonUploadToast extends AonElement {
 	files;
 	JOB_ID;
 	dur;
+	invofoxConfiguration;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -120,7 +121,7 @@ export class AonUploadToast extends AonElement {
 	upload(type, file, data, success, error) {
 		if("invoice" === type){
 			if(this.isInvofox()) {
-				s3UploadInvoice(file, this.JOB_ID, data, success, error);
+				s3UploadInvoice(file, this.JOB_ID, data, this.invofoxConfiguration, success, error);
 			} else {
 				uploadInvoice2(file, success, error);
 			}
