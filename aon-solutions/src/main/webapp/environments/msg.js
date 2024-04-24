@@ -671,6 +671,7 @@ export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
 export const UTILITIES = MSG.UTILITIES;
+export const UPPER_MENU = MSG.UPPER_MENU;
 
 // ----- V
 
@@ -692,6 +693,7 @@ export const VOLUME = "Tomo";
 
 export const WAREHOUSE = MSG.WAREHOUSE;
 export const WAREHOUSES = MSG.WAREHOUSES;
+export const WELCOME = "Le damos la bienvenida a aon Solutions";//TODO
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
