@@ -59,12 +59,19 @@ export class AonConfig extends AonElement {
 		rightPanelConfText.style.visibility = "hidden";
 		rightPanel.appendChild(rightPanelConfText)
 
+		let span = this.createSpan();
+		span.innerHTML = MSG.UPPER_MENU;
+		span.style.marginLeft = '10px';
+		rightPanel.appendChild(span);
+
 		let rightPanelSwitchMenuButton = new AonSwitch();
 		rightPanelSwitchMenuButton.id = this.MENU_SWITCH;
 		rightPanelSwitchMenuButton.checked = true;
-		rightPanelSwitchMenuButton.title = MSG.UPPER_MENU;
 		rightPanelSwitchMenuButton.style.marginLeft = '10px';
+		rightPanelSwitchMenuButton.style.right = '30px';
+		rightPanelSwitchMenuButton.style.position = 'absolute';
 		rightPanelSwitchMenuButton.style.visibility = "hidden";
+		rightPanelSwitchMenuButton.style.top = "66px";
 		rightPanel.appendChild(rightPanelSwitchMenuButton);
 
 		rightPanelSwitchMenuButton.addEventListener(EVENT.CHANGE, () => {
