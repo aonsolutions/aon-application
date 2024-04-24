@@ -90,6 +90,7 @@ export class AonHeader extends AonElement {
 		if(LS.isNewTheme()){ // Change logo size
 			div.innerHTML = /*html*/`
 				<img id="aonLogo" class="aonNewLogo"/>
+				<div id="aonHeaderApp" class="aonNewLogo" style="display:none;"><span></span></div>
 
 				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
 					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
@@ -547,6 +548,74 @@ export class AonHeader extends AonElement {
 		aboutContent.appendChild(divInfo);
 		return aboutContent;
 	}
+	
+	
+	setColor(color) {
+		let buttons = [
+			this.getElement('aonHeaderHelpButton'),
+			this.getElement('aonHeaderHomeButton'),
+			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderNotificationButton'),
+			this.getElement('aonHeaderCompanyListButton')
+		];
+		let texts = [ 
+			this.getElement('aonHeaderApp'),
+			this.getElement('aonHeaderCompanyName'),
+			this.getElement('aonMenuListAppImg-applications')
+		];
+		let imgs = [ 
+			this.getElement('aonLogo')
+		];
+		
+		//
+		if ( color ) {
+			texts.forEach( (text) => text.style.color = color );
+			buttons.forEach( (button) => button.getButton().style.color = color );
+			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
+		} else {
+			imgs.forEach( (img) => img.style.removeProperty ('filter') );
+			texts.forEach( (text) => text.style.removeProperty('color') );
+			buttons.forEach( (button) => button.getButton().style.removeProperty('color'));
+		}
+	}
+
+	setBackgroundColor(backgroundColor) {
+		if ( backgroundColor ) {
+			this.getElement(this.AON_HEADER_WEB).style.backgroundColor = backgroundColor;
+		} else {
+			this.getElement(this.AON_HEADER_WEB).style.removeProperty('background-color');
+		}
+	}
+	
+	setApp(el) {
+		let headerApp = this.getElement('aonHeaderApp');
+		headerApp.replaceChild(el, headerApp.firstChild);
+	}
+	
+	setVisibleApp(visible) {
+		this.setVisibleElement('aonHeaderApp', visible)
+	}
+
+	setVisibleLogo(visible) {
+		this.setVisibleElement('aonLogo', visible)
+	}
+
+	setVisibleHomeButton(visible) {
+		this.setVisibleElement('aonHeaderHomeButton', visible)
+	}
+
+	setVisibleCompanyListButton(visible) {
+		this.setVisibleElement('aonHeaderCompanyListButton', visible)
+	}
+	
+	setVisibleElement(elementId, visible) {
+		if ( visible )
+			this.getElement(elementId).style.removeProperty('display');
+		else 
+			this.getElement(elementId).style.display = 'none';
+	}
+	
+
 }
 
 window.customElements.define('aon-header', AonHeader);
