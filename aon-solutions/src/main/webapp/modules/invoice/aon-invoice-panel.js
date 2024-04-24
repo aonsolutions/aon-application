@@ -42,6 +42,7 @@ export class AonInvoicePanel extends AonElement {
 
 	selectedOption;
 	filter;
+	invofoxFilter;
 
 	INVOICE;
 	INPUT_FILE;
@@ -407,13 +408,14 @@ export class AonInvoicePanel extends AonElement {
 			this.filter.to = detail.endDate; 
 			this.filter.page = 1;
 			this.filter.perPage = 50;
-			this.aonInvoiceList();
+			this.aonInvoiceList(this.filter, this.invofoxFilter);
 		}
 	}
 
 	aonInvoiceList(filter, invofoxFilter) {
-		filter = filter || this.filter;
 		this.filter = filter;
+		this.invofoxFilter = invofoxFilter;
+
 		let invoiceList = this.getElement('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
@@ -423,8 +425,8 @@ export class AonInvoicePanel extends AonElement {
 				? new AonMobileInvoiceList() 
 				: new AonInvoiceList();
 			table.id = 'aonInvoiceList';
-			table.setFilter(filter);
-			table.invofoxFilter = invofoxFilter;
+			table.setFilter(this.filter);
+			table.invofoxFilter = this.invofoxFilter;
 			this.getApplication().setContent(table);
 		}
 		this.getApplication().buildDragAndDrop(true);
@@ -746,6 +748,7 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoiceHome() {
 		this.getApplication().setContent(new AonInvoiceHome());
+		this.getApplication().buildDragAndDrop(false);
 	}
 
 	aonInvoiceById(id) {

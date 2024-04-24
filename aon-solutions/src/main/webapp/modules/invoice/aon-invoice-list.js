@@ -116,6 +116,7 @@ export class AonInvoiceList extends AonElement {
 		getInvofoxDocuments(this.invofoxFilter).then(r => {
 			if(r.length == 0)
 				this.more = false;
+			addInvoices(r);
 			r.forEach((invoice, i) => {	
 				let date = new Date(invoice.date);
 				let day = date.getDate();
