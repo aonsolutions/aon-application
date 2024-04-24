@@ -66,7 +66,6 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.hibernateToOccam.registry.OccamCustomer;
-import net.aonsolutions.aon.registry.report.CustomerReportPDF;
 import net.aonsolutions.aon.registry.report.CustomerReportXLS;
 import net.aonsolutions.aon.report.pdf.AonReportException;
 
@@ -406,7 +405,7 @@ public class CustomerController extends CustomerListController implements ICusto
 					.setDomain(  DomainManager.getCurrentDomain() )
 					.setUser(  AonUtil.getRemoteUser() )
 					;
-			new CustomerReportPDF( occam )
+			new net.aonsolutions.aon.registry.report.CustomerReportPDF( occam )
 				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
 					.map(to -> (Customer) to)
 					.map(OccamCustomer::from ));

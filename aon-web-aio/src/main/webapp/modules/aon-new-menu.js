@@ -42,6 +42,8 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
 
+	selectedApp;
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -245,12 +247,65 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
+	applySelectionClass() {
+		let element = this.selectedApp;
+		do {
+			element = element.parentElement;
+		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		if (element.id == this.AON_MENU_SIDENAV) {
+			this.selectedApp.classList.add('aonMenuAppSideSelected');
+		} else {
+			this.selectedApp.classList.add('aonMenuAppTopSelected');
+		}
+	}
+
+	isTopNav(a) {
+		let element = a;
+		do {
+			element = element.parentElement;
+		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		return element.id == this.AON_MENU_TOPNAV;
+	}
+
 	buildApp(app) {
 
 		let a = this.createElement(TAG.A);
+		a.classList.add('aonMenuApp');
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
+			if (this.selectedApp) {
+				this.selectedApp.classList.remove('aonMenuAppSideSelected');
+				this.selectedApp.classList.remove('aonMenuAppTopSelected');
+			}
+			this.selectedApp = a;
+			this.applySelectionClass();
 		});
+
+		let hoverDiv = this.createElement(TAG.DIV);
+		hoverDiv.innerHTML = app.title;
+		if (!app.title) {
+			hoverDiv.classList.add('aonMenuAppHoverHidden');
+		}
+		hoverDiv.style.display = 'none';
+		hoverDiv.classList.add('aonMenuAppHover');
+
+		a.addEventListener(EVENT.MOUSEOVER, () => {
+			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
+				hoverDiv.style.position = 'fixed';
+				let position = a.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2);
+				hoverDiv.style.left = position.left + position.width + 15;
+				hoverDiv.style.display = 'block';
+				let hoverDivPosition = hoverDiv.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2) - (hoverDivPosition.height / 2);
+			}
+		});
+
+		a.addEventListener(EVENT.MOUSELEAVE, () => {
+			hoverDiv.style.display = 'none';
+		});
+
+		a.appendChild(hoverDiv);
 
 		let div = this.createElement(TAG.DIV);
 		div.style.height = '56px';
@@ -263,6 +318,7 @@ export class AonNewMenu extends AonElement {
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.classList.add('aonMenuAppHighlight');
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
 			icon.style.padding = "4px";

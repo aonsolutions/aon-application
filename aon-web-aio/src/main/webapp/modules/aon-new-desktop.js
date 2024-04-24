@@ -92,6 +92,76 @@ export class AonNewDesktop extends AonElement {
 		cardDiv.id = `aonDesktop-${app.app}`;
 		cardDiv.classList.add(CSS.AON_CARD);
 
+		let cardButton = this.createElement(TAG.SPAN);
+		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		cardButton.innerHTML = 'more_horiz';
+		cardButton.style.alignSelf = "flex-end";
+		cardButton.classList.add('aonAppMoreBtn');
+		cardButton.style.visibility = 'hidden';
+
+		let optionsDiv = this.createElement(TAG.DIV);
+		optionsDiv.style.display = 'none';
+		optionsDiv.style.backgroundColor = 'white';
+		optionsDiv.style.padding = '15px';
+		optionsDiv.style.borderRadius = '15px';
+		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+
+		let optionsList = this.createElement(TAG.UL);
+		optionsList.style.listStyleType = 'none';
+		optionsList.style.padding = 0;
+		optionsList.style.margin = 0;
+		
+		let optionsItem1 = this.createElement(TAG.LI);
+		optionsItem1.classList.add('aonAppMoreListItem');
+		
+		let item1Icon = this.createElement(TAG.SPAN);
+		item1Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item1Icon.innerHTML = 'launch';
+		item1Icon.classList.add('aonAppMoreIcon');
+
+		optionsItem1.append(item1Icon);
+		optionsItem1.innerHTML = "hello";
+
+		let optionsItem2 = this.createElement(TAG.LI);
+		optionsItem2.classList.add('aonAppMoreListItem');
+
+		let item2Icon = this.createElement(TAG.SPAN);
+		item2Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item2Icon.innerHTML = 'info_outline';
+		item2Icon.classList.add('aonAppMoreIcon');
+
+		optionsItem2.append(item2Icon);
+		optionsItem2.innerHTML = "world";
+
+		optionsList.append(optionsItem1);
+		optionsList.append(optionsItem2);
+
+		optionsDiv.append(optionsList);
+
+		window.addEventListener(EVENT.CLICK, function(e) {
+			if (cardButton.contains(e.target)) {
+				optionsDiv.style.position = 'fixed';
+				let position = cardButton.getBoundingClientRect();
+				optionsDiv.style.top = position.top + 15;
+				optionsDiv.style.left = position.left + 15;
+				optionsDiv.style.display = 'block';
+			} else {
+				optionsDiv.style.display = 'none';
+			}
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSEOVER, () => {
+			cardButton.style.visibility = 'visible';
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSELEAVE, () => {
+			cardButton.style.visibility = 'hidden';
+		});
+
+		cardDiv.append(optionsDiv);
+
+		cardDiv.append(cardButton);
+
 		let appA = this.createElement(TAG.A);
 		appA.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
