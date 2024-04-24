@@ -102,7 +102,7 @@ export class AonHeader extends AonElement {
 
         let aonHeaderApp = this.createElement(TAG.DIV);
 		aonHeaderApp.id = "aonHeaderApp";
-		aonHeaderApp.className = "aonHeaderApp";
+		aonHeaderApp.className = "aonNewLogo";
 		aonHeaderApp.style.display = "none";
 		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		div.appendChild(aonHeaderApp);
@@ -597,6 +597,7 @@ export class AonHeader extends AonElement {
 			this.getElement('aonHeaderHelpButton'),
 			this.getElement('aonHeaderHomeButton'),
 			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderConfigButton'),
 			this.getElement('aonHeaderNotificationButton'),
 			this.getElement('aonHeaderCompanyListButton')
 		];

@@ -66,7 +66,7 @@ export class AonConfig extends AonElement {
 
 		let rightPanelSwitchMenuButton = new AonSwitch();
 		rightPanelSwitchMenuButton.id = this.MENU_SWITCH;
-		rightPanelSwitchMenuButton.checked = true;
+		rightPanelSwitchMenuButton.checked = false;
 		rightPanelSwitchMenuButton.style.marginLeft = '10px';
 		rightPanelSwitchMenuButton.style.right = '30px';
 		rightPanelSwitchMenuButton.style.position = 'absolute';

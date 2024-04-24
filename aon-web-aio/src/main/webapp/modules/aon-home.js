@@ -117,10 +117,19 @@ export class AonHome extends AonElement {
 				panelHelp.open();
 		})
 
-		this.getElement('aonMenuSidenav').style.with = '0px';
+/*		this.getElement('aonMenuSidenav').style.with = '0px';
 		this.getElement('aonMenuList').style.visibility = "hidden";
 		this.getElement('aonMenuSidenav').style.display = "none";
 		rootPanel.style.marginLeft = '0px';
+*/
+		this.getElement('aonMenuSidenav').style.with = '68px';
+		this.getElement('aonMenuSidenav').style.display = "";
+		this.getElement('aonMenuList').style.visibility = "visible";
+		this.getElement("aonMenuTopnav").style.height = '0px';
+		rootPanel.style.marginTop = '0px';
+		rootPanel.style.marginLeft = '69px';
+		this.getElement("aonLogo").style.width = '';
+		this.getElement("aonLogo").style.paddingLeft = '';
 	}
 	
 	showMenu(bool) {

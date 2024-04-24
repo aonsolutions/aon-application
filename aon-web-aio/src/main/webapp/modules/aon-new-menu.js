@@ -193,7 +193,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.id = this.AON_MENU_TOPNAV;
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
-		aonMenuTopnav.style.height = '0px'; //'68px';
+		aonMenuTopnav.style.height = '68px';
 		this.getRootPanel().style.marginTop = '0px'; //'69px';
 		this.buildMenuTopnav();
 	}
