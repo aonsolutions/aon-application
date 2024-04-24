@@ -133,7 +133,9 @@ export class AonDocumental extends AonElement {
           }
         }
       ];
-      aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
+      let data = DocumentalSidenav.DOCUMENTS;
+      data.options = documentOptions;
+      aonDocumental.addSidenavOptions3(data);
     }
 
     addTypeOptions() {
@@ -170,15 +172,19 @@ export class AonDocumental extends AonElement {
           });
         }
         let application = this.getApplication();
-        application.addSidenavOptions2(DocumentalSidenav.TYPES, typeOptions);
+        let data = DocumentalSidenav.TYPES;
+        data.options = typeOptions;
+        application.addSidenavOptions3(data);
       }
     }
 
     addCategoryOptions() {
       let application = this.getApplication();
+      let data = DocumentalSidenav.CATEGORIES;
+      data.options = [];
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
-        application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
-      } else application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, []);
+        application.addSidenavOptions3(data, () => this.createCategory());
+      } else application.addSidenavOptions3(data);
       this.loadCategories();
     }
 
@@ -286,9 +292,11 @@ export class AonDocumental extends AonElement {
 
     addTagOptions() {
       let application = this.getApplication();
+      let data = DocumentalSidenav.TAGS;
+      data.options = [];
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
-        application.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
-      } else application.addSidenavOptions2(DocumentalSidenav.TAGS, []);
+        application.addSidenavOptions3(data, () => this.createTag());
+      } else application.addSidenavOptions3(data);
       this.loadTags();
     }
 

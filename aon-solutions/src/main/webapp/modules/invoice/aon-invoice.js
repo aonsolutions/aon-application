@@ -2,7 +2,8 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount, 
+	getInvofoxDocument} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -2585,9 +2586,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	back() {
+		let parent = this.getApplication().getParent();
 		if(this.isMobile())
-			this.getApplication().getParent().buildToolbarOptions();
-		this.getApplication().getParent().aonInvoiceList();
+			parent.buildToolbarOptions();
+		parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
 	}
 
 	more(e) {
@@ -2675,8 +2677,12 @@ export class AonInvoice extends AonElement {
 
 	changeInvoice(invoice) {
 		let inv = new Invoice(invoice);
-
-		if(invoice && inv && !inv.isRawdoc()){
+		if(invoice.invofox) {
+			getInvofoxDocument(invoice.id).then( doc => {
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoice(invoice.type, doc);
+			}); 
+		} else if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
 				let aip = document.querySelector('aon-invoice-panel');
 				aip.aonInvoice(invoice.type, inv);

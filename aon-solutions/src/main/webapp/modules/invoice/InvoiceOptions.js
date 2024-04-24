@@ -95,7 +95,10 @@ import * as UA from '../../services/userAgentService.js';
     title: MSG.INVOICES,
     name: MSG.INVOICES,
     options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET,
-      INVOICE_PENDINGS, RAWDOC_REJECT, RAWDOC_DRAFT]
+      INVOICE_PENDINGS, RAWDOC_REJECT, RAWDOC_DRAFT],
+    button: {
+      icon: 'refresh'
+    }
   }
 
   // ********************

@@ -642,52 +642,29 @@ public class InvoiceAutoComplete {
 	
 
 	/**
-	 * Aseguramos el nombre del titular de la factura.
+	 * Aseguramos el ambito de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
-			Integer scope;
-			User user = SecurityDAO.getUser(ctx.getContext());	
-			
-			if(inv.getDomain().equals(user.getDomain())) {
-				Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
-				
-				if(s == null) {
-					Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
-					if(scopes != null && scopes.length > 0)
-						scope = scopes[0];
-					else {
-						s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-							f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
-						if(s == null) {
-							s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
-								.setDescription("GENERAL")
-								.setDomain(inv.getDomain()));
-						}
-						scope = s.getId();
-					}
-				} else scope = s.getId();
-			} else {
-				Scope s = null;
-				List<Scope> list = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-					f.getDomainProperty().eq(inv.getDomain())).toList();
-				if(list != null && !list.isEmpty()) {
-					s = list.stream().filter(f -> "GENERAL".equalsIgnoreCase(f.getDescription())).findFirst().orElse(null);
-					if(s == null) {
-						s = list.stream().findFirst().orElse(null);
-					}
-				}
-
-				if(s == null) {
-					s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+			List<Scope> scopes = SecurityDAO.getScopeStream(ctx.getContext(),  f -> f.getDomainProperty().eq(inv.getDomain())).toList();
+			if(scopes.isEmpty()) {
+				Scope scope = SecurityDAO.insertScope(ctx.getContext(), new Scope()
 						.setDescription("GENERAL")
 						.setDomain(inv.getDomain()));
+				inv.setScope(scope);
+			} else if(scopes.size() == 1) {
+				inv.setScope(scopes.getFirst());	
+			} else {
+				Workplace wp = new Workplace();
+				if(!inv.getDetails().isEmpty() && inv.getDetails().getFirst().getWorkplace() != null) {
+					wp = inv.getDetails().getFirst().getWorkplace();
 				}
-				scope = s.getId();
-			}	
-			inv.setScope(new Scope().setId(scope));				
+				if((wp == null ||  wp.getId() == null) && !ctx.getConfiguration().getWorkplaces().isEmpty()) {
+					wp = ctx.getConfiguration().getWorkplaces().getFirst();  
+				}
+				inv.setScope(wp.getScope() != null ? new Scope().setId(wp.getScope()): scopes.getFirst());
+			}
 		}
-
 	};
 	
 

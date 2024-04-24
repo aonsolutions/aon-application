@@ -116,6 +116,7 @@ export class AonInvoiceList extends AonElement {
 		getInvofoxDocuments(this.invofoxFilter).then(r => {
 			if(r.length == 0)
 				this.more = false;
+			addInvoices(r);
 			r.forEach((invoice, i) => {	
 				let date = new Date(invoice.date);
 				let day = date.getDate();
@@ -204,7 +205,7 @@ export class AonInvoiceList extends AonElement {
 			if(inv.isTicket()) return 'Ticket';
 		} else {
 			if(inv.isAccounting()) return 'Contabilizada';
-			if(inv.isPending()) return 'Pendiente';
+			if(inv.isPending()) return 'Pendiente de Contabilizar';
  		}
 	}
 
