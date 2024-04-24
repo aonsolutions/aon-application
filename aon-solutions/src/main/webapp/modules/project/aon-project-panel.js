@@ -72,7 +72,9 @@ export class AonProjectPanel extends AonElement {
     }
 
     addTypeOptions() {
-        this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => ProjectUtils.buildDialogProjectType(this));
+        let data = DocumentalSidenav.TYPES;
+        data.options = [];
+        this.getApplication().addSidenavOptions3(data, () => ProjectUtils.buildDialogProjectType(this));
         this.loadProjectType();
     }
   

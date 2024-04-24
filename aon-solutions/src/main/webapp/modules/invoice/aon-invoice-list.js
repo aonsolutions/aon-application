@@ -205,7 +205,7 @@ export class AonInvoiceList extends AonElement {
 			if(inv.isTicket()) return 'Ticket';
 		} else {
 			if(inv.isAccounting()) return 'Contabilizada';
-			if(inv.isPending()) return 'Pendiente';
+			if(inv.isPending()) return 'Pendiente de Contabilizar';
  		}
 	}
 

@@ -232,6 +232,7 @@ export class AonInvoicePanel extends AonElement {
 
 		OPTION.getOptions(this.getDur()).forEach(option => {
 			option.app = INVOICE;
+			if(option.button) option.button.fn = () => this.buildCounter();
 			this.getApplication().addSidenavOptions3(option);
 		});
 		this.buildCounter();
