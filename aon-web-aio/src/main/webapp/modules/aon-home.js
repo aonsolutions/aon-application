@@ -48,15 +48,40 @@ export class AonHome extends AonElement {
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
 		this.appendChild(gradiantHeaderBlur);
 
-		let aonMenu = new AonNewMenu();
-		aonMenu.id = this.AON_MENU;
-		aonMenu.className = CSS.AON_MENU;
-
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
 		this.appendChild(aonHeader);
+		aonHeader.setVisibleHomeButton(false);
+		aonHeader.setVisibleCompanyListButton(false);
 		
-
+		let aonMenu = new AonNewMenu();
+		aonMenu.id = this.AON_MENU;
+		aonMenu.className = CSS.AON_MENU;
+		aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
+			let app = e.detail; 
+			console.log(JSON.stringify(e.detail));
+			
+			if ( !app.home ){
+				
+				let appEl = aonMenu.buildApp(app, 
+				{
+					height: '32px',
+					color: '#ffffff',
+					flexDirection: 'row'
+				}
+				);
+				aonHeader.setApp(appEl);
+				aonHeader.setVisibleLogo(!appEl);
+				aonHeader.setVisibleApp(appEl);
+			} else {
+				aonHeader.setVisibleApp(false);
+				aonHeader.setVisibleLogo(true);
+			}
+			
+			aonHeader.setColor(app.color && '#fff');
+			aonHeader.setBackgroundColor(app.color);
+		});
+		
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
@@ -70,6 +95,10 @@ export class AonHome extends AonElement {
 		this.appendChild(aonMenu);
 	}
 	
+	showMenu(bool) {
+		// Only for compatibility
+	}
+
 	customize(){
 		let aonHeader = this.getElement(this.AON_HEADER);
 		let aonSearchDiv = aonHeader.getElement("aon-search-div");
@@ -79,10 +108,8 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.backgroundColor = '#ffffff';
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
-		
-		
 	}
 
 
-px}
+}
 window.customElements.define('aon-home', AonHome);

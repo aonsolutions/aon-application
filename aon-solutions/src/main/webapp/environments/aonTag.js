@@ -50,6 +50,7 @@ export const AON_NEW_DATE = 'aon-new-date';
 export const AON_DIALOG_MENU = 'aon-dialog-menu';
 export const AON_DIALOG = 'aon-dialog';
 export const AON_DOMAIN_CUSTOMER = 'aon-domain-customer';
+export const AON_DOMAINS = 'aon-domains';
 export const AON_EMAIL = 'aon-email';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
