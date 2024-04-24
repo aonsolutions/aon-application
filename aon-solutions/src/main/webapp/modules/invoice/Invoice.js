@@ -126,6 +126,7 @@ export class Invoice {
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
+      if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';

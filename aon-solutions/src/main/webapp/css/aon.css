@@ -78,6 +78,7 @@
   font-weight: 400 !important;
   font-size: 14px !important;
   line-height: normal !important;
+  overflow: hidden;
   height: 100%;
 }
 
@@ -1007,10 +1008,6 @@
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: white;
-}
-
-.aonCardHover:hover {
-  border: 1px solid black;
 }
 
 .aonCardFlex{

@@ -797,9 +797,9 @@ public class OCRInvoiceBuilder {
 	private static void fillFinanceBank(OCRInvoice ocrInvoice, Finance finance) {
 	    String iban = ocrInvoice.getIBAN().flatMap(d -> d.getValue()).orElse(null);
 	    if (AonStringUtils.isNotBlank(iban)) {
-		iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
-		BankAccount bankAccount = new BankAccount(iban);
-		finance.setBankAccount(bankAccount);
+	    	iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
+	    	BankAccount bankAccount = new BankAccount(iban);
+	    	finance.setBankAccount(bankAccount);
 	    }
 	}
 
@@ -868,6 +868,23 @@ public class OCRInvoiceBuilder {
 		    return finance;
 		}).toList();
 
+	    if(finances.isEmpty()) {
+	    	finances = new LinkedList<>();
+	    	Finance finance = new Finance();
+	    	finance.setDomain(invoice.getDomain());
+		    finance.setInvoice(invoice);
+		    finance.setDueDate(invoice.getIssueDate());
+		    finance.setAmount(invoice.getTotal());
+		    
+		    // INVOICE_FINANCE_PAYMETHOD
+		    fillFinancePayMethod(aonContext, ocrInvoice, finance);
+		    
+		    // INVOICE_FINANCE_BANK
+		    fillFinanceBank(ocrInvoice, finance);
+		    // INVOICE_FINANCE_SWIFT
+		    fillFinanceSwift(ocrInvoice, finance);
+		    finances.add(finance);
+	    }
 	    	// ADD_INVOICE_FINANCE
 		invoice.setFinances(finances);
 		

@@ -43,11 +43,11 @@
 
 	<!-- -Login Servlet -->
 	<servlet>
-		<servlet-name>LoginServlet</servlet-name>
+		<servlet-name>AnotherLoginServlet</servlet-name>
 		<servlet-class>com.code.aon.aio.servlet.LoginServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>LoginServlet</servlet-name>
+		<servlet-name>AnotherLoginServlet</servlet-name>
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
 

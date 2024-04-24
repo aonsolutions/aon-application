@@ -26,12 +26,19 @@ import { AonNewInput } from "../../components/aon-new-input.js";
 
 export class AonNewLogin extends AonElement {
   tag;
-  constructor() {
+  userInput;
+  companyLogo;
+  
+  constructor(userInput, companyLogo) {
     super();
     this.tag = 0;
+    this.userInput = userInput || new AonEmail();
+    this.companyLogo = companyLogo || this.createElement(TAG.SPAN);
   }
 
-  initialize() {}
+  initialize() {
+	
+  }
 
   build() {
     this.className = CSS.AON_LOGIN;
@@ -70,6 +77,13 @@ export class AonNewLogin extends AonElement {
     divForm.className = CSS.AON_LOGIN_FORM;
     this.appendChild(divForm);
 
+    let divCompanyLogoForm = this.createElement(TAG.DIV);
+    divCompanyLogoForm.id = "divCompanyLogoForm";
+    divCompanyLogoForm.className = CSS.AON_LOGIN_FORM;
+    divCompanyLogoForm.style.marginBottom = "2rem";
+	divCompanyLogoForm.appendChild(this.companyLogo);
+    divForm.appendChild(divCompanyLogoForm);
+
     let divTitleForm = this.createElement(TAG.DIV);
     divTitleForm.id = "divTitleForm";
     divTitleForm.className = CSS.AON_LOGIN_FORM;
@@ -96,7 +110,7 @@ export class AonNewLogin extends AonElement {
     aonLoader.style.display = 'none';
     divFormContent.appendChild(aonLoader);
 
-    let userInput = this.createAonElement(new AonEmail(), 'aonLoginUser', MSG.USER);
+    let userInput = this.createAonElement(this.userInput, 'aonLoginUser', MSG.USER);
     userInput.setRequired(true);
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').disabled = !userInput.value.includes('@'); 
@@ -356,14 +370,20 @@ export class AonNewLogin extends AonElement {
         this.getModule().startLoading();
         getCompanies().then(companies => {
           this.getModule().stopLoading();
+          
+          //if(companies.length > 0){
+          //  this.companySelection(companies[0], true);
+          //} 
+          
           if(companies.length === 1){
             this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
-            this.rootPanelHtml(this.isMobile()
+           	this.rootPanelHtml(this.isMobile()
               ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
               : '<aon-parent id="aonParent"></aon-parent>');
           }
+          
           // this.getElement("aonLogin").style.display = 'none';
           // let homeDiv = this.getElement("aonHomeDiv");
           // homeDiv.style.display = 'block';
@@ -411,6 +431,7 @@ export class AonNewLogin extends AonElement {
       this.getElement("aonLoginSignin").click();
     }
   }
+  
 }
 if(!window.customElements.get(TAG.AON_NEW_LOGIN)){
 	window.customElements.define(TAG.AON_NEW_LOGIN, AonNewLogin);

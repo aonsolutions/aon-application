@@ -294,6 +294,7 @@ export const HIRING_DATA = MSG.HIRING_DATA;
 export const HISTORIC = MSG.HISTORIC;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
+export const HOME = MSG.HOME;
 export const HOURS = MSG.HOURS;
 export const HOUR = "Hora"; //TODO
 export const HTTP_REQUEST = 'HTTP Request';
@@ -422,10 +423,13 @@ export const NEW_EMPLOYEE = MSG.NEW_EMPLOYEE;
 export const NEW_EXPENSE = MSG.NEW_EXPENSE;
 export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
 export const NEW_INVOICE = MSG.NEW_INVOICE;
+export const NEW_ISSUED_INVOICE = MSG.NEW_ISSUED_INVOICE;
 export const NEW_PASSWORD = 'Nueva Contraseña';
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
+export const NEW_RECEIVED_INVOICE = MSG.NEW_RECEIVED_INVOICE;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
 export const NEW_SALE = 'Nuevo Pedido de Venta';
+export const NEW_TICKET = MSG.NEW_TICKET;
 export const NEW_WAREHOUSE= MSG.NEW_WAREHOUSE;
 export const NEXT = MSG.NEXT;
 export const NIF = MSG.NIF;
@@ -658,14 +662,16 @@ export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;
 export const UNLINKED = MSG.UNLINKED;
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
 export const UPLOAD = MSG.UPLOAD;
+export const UPLOAD_FILE = MSG.UPLOAD_FILE;
+export const UPLOAD_INVOICE = MSG.UPLOAD_INVOICE;
 export const UPDATE = "Actualizar"; //TODO
 export const UPDATE_INVOICE = 'Actualizar Factura';
-export const UPLOAD_FILE = MSG.UPLOAD_FILE;
 export const USER = MSG.USER;
 export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
 export const UTILITIES = MSG.UTILITIES;
+export const UPPER_MENU = MSG.UPPER_MENU;
 
 // ----- V
 
@@ -687,6 +693,7 @@ export const VOLUME = "Tomo";
 
 export const WAREHOUSE = MSG.WAREHOUSE;
 export const WAREHOUSES = MSG.WAREHOUSES;
+export const WELCOME = "Le damos la bienvenida a aon Solutions";//TODO
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;

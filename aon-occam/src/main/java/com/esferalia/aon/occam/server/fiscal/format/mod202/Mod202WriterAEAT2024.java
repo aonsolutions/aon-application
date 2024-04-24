@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IModelAc
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod202WriterAEAT2024 implements IMod202Writer{ 
@@ -75,7 +76,7 @@ public class Mod202WriterAEAT2024 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C48),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C49),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C18),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(1))
+			,(wr,mod) -> wr.append(AonMathUtils.isZero(mod.getAmount(Mod202Key.X00))?"A":"B")
 			,(wr,mod) -> {
 				if (mod.getAmount(Mod202Key.X15) == 1) {
 					wr.append('1');		

@@ -50,6 +50,7 @@ export const AON_NEW_DATE = 'aon-new-date';
 export const AON_DIALOG_MENU = 'aon-dialog-menu';
 export const AON_DIALOG = 'aon-dialog';
 export const AON_DOMAIN_CUSTOMER = 'aon-domain-customer';
+export const AON_DOMAINS = 'aon-domains';
 export const AON_EMAIL = 'aon-email';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
@@ -97,6 +98,7 @@ export const AON_COMPANY_LIST = 'aon-company-list';
 // MODULES - INVOICE
 
 export const AON_INVOICE_PANEL = 'aon-invoice-panel';
+export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
 export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 
@@ -196,3 +198,7 @@ export const AON_QUANTITY = 'aon-quantity';
 export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';
 
 export const AON_MARKETING = 'aon-marketing';
+
+export const AON_HELP = 'aon-help';
+
+export const AON_CONFIG = 'aon-config';
