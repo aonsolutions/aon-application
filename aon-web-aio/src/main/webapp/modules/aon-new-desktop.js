@@ -74,10 +74,10 @@ export class AonNewDesktop extends AonElement {
 		desktopAonAppsDiv.style.display = 'grid';
 		desktopAonAppsDiv.style.rowGap = '20px';
 		desktopAonAppsDiv.style.columnGap = '20px';
-		desktopAonAppsDiv.style.gridTemplateColumns = 'repeat(7, minmax(0px, 1fr))';
+		desktopAonAppsDiv.style.gridTemplateColumns = 'repeat(3, minmax(0px, 1fr))';
 
 		for ( const app in this.aonApps ) {
-			desktopAonAppsDiv.appendChild(this.buildApp(this.aonApps[app]));
+			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
 
@@ -85,13 +85,87 @@ export class AonNewDesktop extends AonElement {
 		this.appendChild(desktopDiv);		
 	}
 	
-	
 	buildApp(app) {
 		
 		let cardDiv  = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
-		cardDiv.classList.add('aonCardApp');
-		cardDiv.classList.add('aonCard');
+		cardDiv.classList.add(CSS.AON_CARD);
+
+		let cardButton = this.createElement(TAG.SPAN);
+		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		cardButton.innerHTML = 'more_horiz';
+		cardButton.style.alignSelf = "flex-end";
+		cardButton.classList.add('aonAppMoreBtn');
+		cardButton.style.visibility = 'hidden';
+
+		let optionsDiv = this.createElement(TAG.DIV);
+		optionsDiv.style.display = 'none';
+		optionsDiv.style.backgroundColor = 'white';
+		optionsDiv.style.padding = '15px';
+		optionsDiv.style.borderRadius = '15px';
+		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+
+		let optionsList = this.createElement(TAG.UL);
+		optionsList.style.listStyleType = 'none';
+		optionsList.style.padding = 0;
+		optionsList.style.margin = 0;
+		
+		let optionsItem1 = this.createElement(TAG.LI);
+		optionsItem1.classList.add('aonAppMoreListItem');
+		
+		let item1Icon = this.createElement(TAG.SPAN);
+		item1Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item1Icon.innerHTML = 'launch';
+		item1Icon.classList.add('aonAppMoreIcon');
+
+		let item1Label = this.createElement(TAG.SPAN)
+		item1Label.innerHTML = "Open in new tab";
+
+		optionsItem1.appendChild(item1Icon);
+		optionsItem1.appendChild(item1Label);
+
+		let optionsItem2 = this.createElement(TAG.LI);
+		optionsItem2.classList.add('aonAppMoreListItem');
+
+		let item2Icon = this.createElement(TAG.SPAN);
+		item2Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item2Icon.innerHTML = 'info';
+		item2Icon.classList.add('aonAppMoreIcon');
+
+		let item2Label = this.createElement(TAG.SPAN);
+		item2Label.innerHTML = "About";
+
+		optionsItem2.appendChild(item2Icon);
+		optionsItem2.appendChild(item2Label);
+
+		optionsList.append(optionsItem1);
+		optionsList.append(optionsItem2);
+
+		optionsDiv.append(optionsList);
+
+		window.addEventListener(EVENT.CLICK, function(e) {
+			if (cardButton.contains(e.target)) {
+				optionsDiv.style.position = 'fixed';
+				let position = cardButton.getBoundingClientRect();
+				optionsDiv.style.top = position.top + 15;
+				optionsDiv.style.left = position.left + 15;
+				optionsDiv.style.display = 'block';
+			} else {
+				optionsDiv.style.display = 'none';
+			}
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSEOVER, () => {
+			cardButton.style.visibility = 'visible';
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSELEAVE, () => {
+			cardButton.style.visibility = 'hidden';
+		});
+
+		cardDiv.append(optionsDiv);
+
+		cardDiv.append(cardButton);
 
 		let appA = this.createElement(TAG.A);
 		appA.addEventListener(EVENT.CLICK, () => {
@@ -141,8 +215,158 @@ export class AonNewDesktop extends AonElement {
 
 		return cardDiv;		
 	}
+
+	buildMasApp(app) {
+		
+		let cardDiv  = this.createElement(TAG.DIV);
+		cardDiv.id = `aonDesktop-${app.app}`;
+		cardDiv.classList.add(CSS.AON_CARD);
+
+		let cardButton = this.createElement(TAG.SPAN);
+		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		cardButton.innerHTML = 'more_horiz';
+		cardButton.style.alignSelf = "flex-end";
+		cardButton.classList.add('aonAppMoreBtn');
+		cardButton.style.visibility = 'hidden';
+
+		let optionsDiv = this.createElement(TAG.DIV);
+		optionsDiv.style.display = 'none';
+		optionsDiv.style.backgroundColor = 'white';
+		optionsDiv.style.padding = '15px';
+		optionsDiv.style.borderRadius = '15px';
+		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+
+		let optionsList = this.createElement(TAG.UL);
+		optionsList.style.listStyleType = 'none';
+		optionsList.style.padding = 0;
+		optionsList.style.margin = 0;
+		
+		let optionsItem1 = this.createElement(TAG.LI);
+		optionsItem1.classList.add('aonAppMoreListItem');
+		
+		let item1Icon = this.createElement(TAG.SPAN);
+		item1Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item1Icon.innerHTML = 'launch';
+		item1Icon.classList.add('aonAppMoreIcon');
+
+		let item1Label = this.createElement(TAG.SPAN)
+		item1Label.innerHTML = "Open in new tab";
+
+		optionsItem1.appendChild(item1Icon);
+		optionsItem1.appendChild(item1Label);
+
+		let optionsItem2 = this.createElement(TAG.LI);
+		optionsItem2.classList.add('aonAppMoreListItem');
+
+		let item2Icon = this.createElement(TAG.SPAN);
+		item2Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		item2Icon.innerHTML = 'info';
+		item2Icon.classList.add('aonAppMoreIcon');
+
+		let item2Label = this.createElement(TAG.SPAN);
+		item2Label.innerHTML = "About";
+
+		optionsItem2.appendChild(item2Icon);
+		optionsItem2.appendChild(item2Label);
+
+		optionsList.append(optionsItem1);
+		optionsList.append(optionsItem2);
+
+		optionsDiv.append(optionsList);
+
+		window.addEventListener(EVENT.CLICK, function(e) {
+			if (cardButton.contains(e.target)) {
+				optionsDiv.style.position = 'fixed';
+				let position = cardButton.getBoundingClientRect();
+				optionsDiv.style.top = position.top + 15;
+				optionsDiv.style.left = position.left + 15;
+				optionsDiv.style.display = 'block';
+			} else {
+				optionsDiv.style.display = 'none';
+			}
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSEOVER, () => {
+			cardButton.style.visibility = 'visible';
+		});
+
+		cardDiv.addEventListener(EVENT.MOUSELEAVE, () => {
+			cardButton.style.visibility = 'hidden';
+		});
+
+		cardDiv.append(optionsDiv);
+
+		cardDiv.append(cardButton);
+
+		let appA = this.createElement(TAG.A);
+		appA.addEventListener(EVENT.CLICK, () => {
+			this.appSelection(app);
+		});
+
+		let appDiv = this.createElement(TAG.DIV);
+		appDiv.style.height = '56px';
+		appDiv.style.padding = '1px';
+		appDiv.style.display = 'flex';
+		appDiv.style.alignItems = 'flex-start';
+		appDiv.style.flexDirection = 'column';
+		appDiv.style.justifyContent = 'center';
+
+		let mainDiv = this.createElement(TAG.DIV);
+		mainDiv.style.display = 'flex';
+		mainDiv.style.alignItems = 'flex-start !important';
+		mainDiv.style.flexDirection = 'row';
+		mainDiv.style.justifyContent = 'center';
+
+		appDiv.append(mainDiv);
+
+		if (app.symbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.id = `aonDesktopAppImg-${app.app}`;
+			icon.innerHTML = app.symbol;
+			icon.style.fontSize = "24px";
+			mainDiv.appendChild(icon);
+		} else if (app.icon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonDesktopAppImg-${app.app}`;
+			aonIcon.icon = app.icon;
+			aonIcon.color = app.color;
+			aonIcon.size = "32px";
+			mainDiv.appendChild(aonIcon);
+		} else if (app.logo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonDesktopAppImg-${app.app}`;
+			img.style.width = '24px';
+			img.src = app.logo;
+			img.title = app.title;
+			mainDiv.appendChild(img);
+		}
+
+		let titleSpan = this.createElement(TAG.SPAN);
+		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
+		titleSpan.style.textAlign = 'center';
+		titleSpan.innerHTML = app.title;
+		mainDiv.appendChild(titleSpan);
+
+		let descriptionDiv = this.createElement(TAG.DIV);
+		descriptionDiv.style.textAlign = 'left';
+
+		let descriptionSpan = this.createElement(TAG.SPAN);
+		descriptionSpan.innerHTML = app.description;
+
+		descriptionDiv.appendChild(descriptionSpan);
+
+		appDiv.appendChild(descriptionDiv);
+
+		appA.appendChild(appDiv);
+
+		cardDiv.appendChild(appA);
+
+		return cardDiv;		
+	}
 	
 }
+
 
 if(!window.customElements.get('aon-new-desktop')){
 	window.customElements.define('aon-new-desktop', AonNewDesktop);
