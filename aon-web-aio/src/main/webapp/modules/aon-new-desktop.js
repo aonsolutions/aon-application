@@ -299,6 +299,9 @@ export class AonNewDesktop extends AonElement {
 		cardDiv.append(cardButton);
 
 		let appA = this.createElement(TAG.A);
+		appA.style.width = '100%';
+		appA.style.height = '100%';
+
 		appA.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
 		});
@@ -313,9 +316,10 @@ export class AonNewDesktop extends AonElement {
 
 		let mainDiv = this.createElement(TAG.DIV);
 		mainDiv.style.display = 'flex';
-		mainDiv.style.alignItems = 'flex-start !important';
+		mainDiv.style.alignItems = 'center';
 		mainDiv.style.flexDirection = 'row';
-		mainDiv.style.justifyContent = 'center';
+		mainDiv.style.justifyContent = 'space-between';
+		mainDiv.style.width = '75%';
 
 		appDiv.append(mainDiv);
 
@@ -353,6 +357,8 @@ export class AonNewDesktop extends AonElement {
 
 		let descriptionSpan = this.createElement(TAG.SPAN);
 		descriptionSpan.innerHTML = app.description;
+		descriptionSpan.style.overflow = 'hidden';
+		descriptionSpan.style.fontSize = '11px';
 
 		descriptionDiv.appendChild(descriptionSpan);
 

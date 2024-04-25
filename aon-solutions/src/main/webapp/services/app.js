@@ -397,7 +397,7 @@ export const NOTES = {
 export const AON_SOLUTIONS = {
   app: "aio",
   title: "aonSolutions",
-  description: "aonSolutions.",
+  description: "El único software fiscal, laboral y contable 100% en la nube. Gestión de todas las áreas de tu asesoría desde un mismo sitio.",
 
   icon: AON_ICONS.AON_APP,
   color: "var(--aonBlue)", 
