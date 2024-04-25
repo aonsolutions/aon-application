@@ -288,6 +288,32 @@ export class AonNewMenu extends AonElement {
 			this.appSelection(app);
 		});
 
+		let hoverDiv = this.createElement(TAG.DIV);
+		hoverDiv.innerHTML = app.title;
+		if (!app.title) {
+			hoverDiv.classList.add('aonMenuAppHoverHidden');
+		}
+		hoverDiv.style.display = 'none';
+		hoverDiv.classList.add('aonMenuAppHover');
+
+		a.addEventListener(EVENT.MOUSEOVER, () => {
+			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
+				hoverDiv.style.position = 'fixed';
+				let position = a.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2);
+				hoverDiv.style.left = position.left + position.width + 10;
+				hoverDiv.style.display = 'block';
+				let hoverDivPosition = hoverDiv.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2) - (hoverDivPosition.height / 2);
+			}
+		});
+
+		a.addEventListener(EVENT.MOUSELEAVE, () => {
+			hoverDiv.style.display = 'none';
+		});
+
+		a.appendChild(hoverDiv);
+
 		let div = this.createElement(TAG.DIV);
 		div.style.padding = '1px';
 		div.style.display = 'flex';

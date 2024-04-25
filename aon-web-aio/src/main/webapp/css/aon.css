@@ -2322,3 +2322,29 @@ aon-access-card{
 	border-bottom: 2px solid #0078d4;
 	
 }
+
+.aonAppMoreBtn:hover {
+  cursor: pointer;
+}
+
+.aonAppMoreListItem {
+  padding: 5px;
+  display: flex;
+  justify-items: center !important;
+  align-items: flex-start;
+}
+
+.aonAppMoreIcon {
+  margin-right: 2px;
+}
+
+.aonAppMoreListItem:hover {
+  cursor: pointer;
+  background-color: lightgrey;
+}
+
+.aonAppMoreListItem:hover .aonAppMoreIcon {
+  color: #464feb !important;
+}
+
+
