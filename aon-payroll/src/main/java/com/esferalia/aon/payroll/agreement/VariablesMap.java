@@ -1478,9 +1478,10 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_HERRAMIENTAS_DIARIO", "PLUS_HERRAMIENTAS_D");
 		variablesMap.put("PLUS_HERRAMIENTAS_MENSUAL", "PLUS_HERRAMIENTAS_M");
 		variablesMap.put("PLUS_HIGIENE_MENSUAL", "PLUS_HIGIENE");
-		variablesMap.put("PLUS_HOSPITAL_DIARIO", "PLUS_HOSPITAL");
-		variablesMap.put("PLUS_HOSPITAL_HORAS", "PLUS_HOSPITAL");
-		variablesMap.put("PLUS_HOSPITAL_MENSUAL", "PLUS_HOSPITAL");
+		variablesMap.put("PLUS_HOSPITAL_DIARIO", "PLUS_HOSPITAL_D");
+		variablesMap.put("PLUS_HOSPITAL_HORAS", "PLUS_HOSPITAL_H");
+		variablesMap.put("PLUS_HOSPITAL_MENSUAL", "PLUS_HOSPITAL_M");
+		variablesMap.put("PLUS_HOSPITAL_ANUAL", "PLUS_HOSPITAL_A");
 		variablesMap.put("PLUS_HOSPITALIZACION_DIARIO", "PLUS_HOSPITALIZACION");
 		variablesMap.put("PLUS_HOSPITALIZACION_MENSUAL", "PLUS_HOSPITALIZACION");
 		variablesMap.put("PLUS_IDIOMAS_ANUAL", "PLUS_IDIOMAS");
