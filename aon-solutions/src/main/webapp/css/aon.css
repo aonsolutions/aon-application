@@ -1009,10 +1009,6 @@
   background-color: white;
 }
 
-.aonCardHover:hover {
-  border: 1px solid black;
-}
-
 .aonCardFlex{
   position: relative;
   display: -ms-flexbox;
