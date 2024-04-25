@@ -730,7 +730,9 @@ public class JooqContrata {
 	}
 	
 	private static void completeDatosCopiaBasica(DATOSCOPIABASICATYPE datos, ContractSpecificData contractSpecificData) {
-		// TODO
+		if(datos != null){
+			contractSpecificData.setWritenContract(datos.getINDCONTRATOESCRITO() != null && datos.getINDCONTRATOESCRITO().equals("S"));
+		}
 	}
 	
 	private static void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos, ContractSpecificData contractSpecificData) {
@@ -1518,7 +1520,7 @@ public class JooqContrata {
 		try {
 			CONTRATO402TYPE c = (CONTRATO402TYPE) contratoType;
 //			c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
-//			c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
+			c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
 //			c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
 //			c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
 			return c;

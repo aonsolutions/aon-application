@@ -166,6 +166,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	CheckBox planRecoveryCB;
 	
 	@UiField
+	CheckBox writenContractCB;
+	
+	@UiField
 	HTMLPanel workProgramDataCBPanel;
 	
 	@UiField
@@ -668,6 +671,11 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiHandler("planRecoveryCB")
 	void onPlanRecoveryCBCBChange(ValueChangeEvent<Boolean> event) {
 		this.contractSpecificData.setPlanRecovery(event.getValue());
+	}
+	
+	@UiHandler("writenContractCB")
+	void onWritenContractCBChange(ValueChangeEvent<Boolean> event) {
+		this.contractSpecificData.setWritenContract(event.getValue());
 	}
 	
 	@UiHandler("workProgramDataCB")
@@ -1607,6 +1615,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		discCB.setValue(false);
 		trueDateCB.setValue(false);
 		planRecoveryCB.setValue(false);
+		writenContractCB.setValue(false);
 		profesionalityCB.setValue(false);
 		repeatFDCB.setValue(false);
 		workProgramDataCB.setValue(false);
@@ -1873,6 +1882,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(17).getStyle().clearDisplay();
 		otherDataTableElement.getRows().getItem(18).getStyle().clearDisplay();
 		otherDataTableElement.getRows().getItem(19).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(20).getStyle().clearDisplay();
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1894,6 +1904,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1915,6 +1926,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1938,6 +1950,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1956,6 +1969,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1972,6 +1986,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -1990,6 +2005,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2011,6 +2027,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2032,6 +2049,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2087,6 +2105,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2106,6 +2125,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2129,6 +2149,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2150,6 +2171,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2218,6 +2240,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2238,6 +2261,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2266,6 +2290,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2285,6 +2310,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2307,6 +2333,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2327,6 +2354,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2351,6 +2379,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2447,6 +2476,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(20).getStyle().setDisplay(Display.NONE);
 		
 		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2532,6 +2562,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		setSelectedValueLB(discReasonLB, this.contractSpecificData.getDiscReason());
 		trueDateCB.setValue(this.contractSpecificData.getTrueDate());
 		planRecoveryCB.setValue(this.contractSpecificData.getPlanRecovery());
+		writenContractCB.setValue(this.contractSpecificData.getWritenContract());
 		
 		//WorkProgramDataTable
 		if(Boolean.TRUE.equals(this.contractSpecificData.getWorkProgramData())) {
