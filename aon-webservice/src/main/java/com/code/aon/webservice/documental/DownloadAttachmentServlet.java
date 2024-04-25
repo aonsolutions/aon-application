@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -20,6 +21,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
@@ -60,10 +62,8 @@ public class DownloadAttachmentServlet extends HttpServlet {
 	}
 
 	@Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-		System.out.println("GET METHOD");
-		
-		
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{		
+		Utils.addCorsHeader(resp);
 		String[] pathInfo = req.getPathInfo().split("/");
 			
 		Boolean bool = pathInfo.length <= 2;
