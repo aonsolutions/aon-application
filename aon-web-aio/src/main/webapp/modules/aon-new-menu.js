@@ -294,7 +294,7 @@ export class AonNewMenu extends AonElement {
 				hoverDiv.style.position = 'fixed';
 				let position = a.getBoundingClientRect();
 				hoverDiv.style.top = position.top + (position.height / 2);
-				hoverDiv.style.left = position.left + position.width + 15;
+				hoverDiv.style.left = position.left + position.width + 10;
 				hoverDiv.style.display = 'block';
 				let hoverDivPosition = hoverDiv.getBoundingClientRect();
 				hoverDiv.style.top = position.top + (position.height / 2) - (hoverDivPosition.height / 2);

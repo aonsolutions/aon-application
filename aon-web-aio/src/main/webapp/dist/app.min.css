@@ -6523,6 +6523,13 @@ aon-access-card{
 
 .aonAppMoreListItem {
   padding: 5px;
+  display: flex;
+  justify-items: center !important;
+  align-items: flex-start;
+}
+
+.aonAppMoreIcon {
+  margin-right: 2px;
 }
 
 .aonAppMoreListItem:hover {
@@ -6531,7 +6538,7 @@ aon-access-card{
 }
 
 .aonAppMoreListItem:hover .aonAppMoreIcon {
-  color: #464feb;
+  color: #464feb !important;
 }
 
 
