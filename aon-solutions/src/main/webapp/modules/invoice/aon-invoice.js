@@ -441,7 +441,7 @@ export class AonInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
@@ -466,7 +466,12 @@ export class AonInvoice extends AonElement {
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR, CONSTANT.DISCARDED )) {
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION )) {
+			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR )) {
+			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
 
@@ -2779,9 +2784,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		
 		if ( this.isInvofoxInvoice() ) {
-			this.setInvofoxState(CONSTANT.REJECTED);
+			this.setInvofoxState(CONSTANT.PENDING_DECISSION);
 			this.back();
 			return;
 		}
@@ -2789,7 +2793,7 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REVIEW);
+		d.setTitle(MSG.REJECT);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -3078,8 +3082,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashInvoice() {
-		this.getInvoice().status = CONSTANT.DRAFT;
-		this.save(MSG.MOVED_TO_TRASH);
+		if(this.isInvofoxInvoice()) {
+			this.setInvofoxState(CONSTANT.REJECTED);
+		} else {
+			this.getInvoice().status = CONSTANT.DRAFT;
+			this.save(MSG.MOVED_TO_TRASH);
+		}
 		this.reload();
 	}
 
@@ -3120,8 +3128,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	restoreInvoice() {
-		this.getInvoice().status = CONSTANT.INBOX;
-		this.save(MSG.RESTORED_DATA);
+		if (this.isInvofoxInvoice()) {
+			this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
+		} else {
+			this.getInvoice().status = CONSTANT.INBOX;
+			this.save(MSG.RESTORED_DATA);
+		}		
 		this.reload();
 	}
 
@@ -3137,7 +3149,6 @@ export class AonInvoice extends AonElement {
 		});
 	}
 
-
 	removeOcrInvoice() {
 		let d = this.getApplication().getDialog();
 		d.clear();
@@ -3150,7 +3161,6 @@ export class AonInvoice extends AonElement {
 		});
 		d.open();
 	}
-
 
 }
 if(!window.customElements.get(TAG.AON_INVOICE)){
