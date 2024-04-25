@@ -189,9 +189,10 @@ export class AonRegistrySuggestion extends AonElement {
     let country = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
     country.id = this.DOCUMENT_COUNTRY;
     country.title = MSG.COUNTRY;
+    country.autocomplete = true;
     country.options = JSON.stringify(
       Countries.map((c) => {
-        return { value: c.iso2, name: c.iso2 };
+        return { value: c.iso2, name: c.nombre };
       })
     );
     country.readonly = this.isReadonly();

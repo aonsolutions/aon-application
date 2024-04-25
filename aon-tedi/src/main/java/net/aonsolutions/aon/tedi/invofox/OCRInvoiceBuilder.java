@@ -367,16 +367,16 @@ public class OCRInvoiceBuilder {
         		    invoice);
 	    } catch ( OCRTooManyOwnersException | OCROwnerNotFoundException e) {
 		
-		if ( invoice.isUndeductible() ) {
-		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
-		    if (defaultCreditor != null) {
-			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
-			defaultCreditor.getType().visit(defaultCreditor,
-				new InvoiceRegistryInitializer(aonCtx, invoice, config));
-			return;
-		    }
-		}   
-		throw e;
+//		if ( invoice.isUndeductible() ) {
+//		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
+//		    if (defaultCreditor != null) {
+//			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
+//			defaultCreditor.getType().visit(defaultCreditor,
+//				new InvoiceRegistryInitializer(aonCtx, invoice, config));
+//			return;
+//		    }
+//		}   
+	    	throw e;
 	    }
 
 	}

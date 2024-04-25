@@ -70,8 +70,8 @@ import * as UA from '../../services/userAgentService.js';
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.PENDING_REVIEW,
-    icon: MATERIAL_ICONS.ERROR
+    name: MSG.REJECTEDS,
+    icon: MATERIAL_ICONS.REPORT
   }
   
   export const RAWDOC_DRAFT = {
