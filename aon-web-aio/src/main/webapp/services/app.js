@@ -3,18 +3,21 @@ import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS, COLORS } from "aonsolutions/e
 
 
 export const HOME = {
+	home : true,
 	title: MSG.HOME,
 	app: CONSTANT.HOME,
 	symbol: MATERIAL_ICONS.HOME,
 };
 
 export const APPS = {
+	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
+	home : true,
 	app: CONSTANT.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
@@ -28,7 +31,6 @@ export const AON_APPS = [
 ];
 
 export const MENU_APPS = [
-  APPLICATIONS,
   HOME,
   APPS,
   APP.DOCUMENTAL,
@@ -43,5 +45,11 @@ export const MENU_APPS = [
 export const Apps = APP.Apps;
 export const AuxApps = APP.AuxApps;
 export const MenuApps = APP.MenuApps;
+
+export const HomeApps = {
+	HOME,
+	APPS,
+	APPLICATIONS
+};
 
 export default Apps;

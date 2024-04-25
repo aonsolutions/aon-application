@@ -2774,6 +2774,12 @@ public class AON {
 		}
 	}
 	
+	public static void reorderCustomerFeeLine(String domainName, int domainId, String login, Integer customer) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().reorderCustomerFeeLine(ctx, domainId, customer);
+		}
+	}
+	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);

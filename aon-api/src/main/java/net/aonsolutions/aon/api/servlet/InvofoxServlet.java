@@ -322,12 +322,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    		ocrDocumentParams.withCompany(ocrCompany.getId());
 	    		companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
 	    		publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
-		    
+	    		ocrDocumentParams.limit(1);
 	    		OCRDocumentsResponse response = OCRInvofox
 		    		.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
-	    		long count = response.getDocuments().orElse(new LinkedList<>()).stream().count();
-	    		json.put("count", count);
+	    		json.put("count", response.getCount().orElse(0));
 	    	}
 	    }
 

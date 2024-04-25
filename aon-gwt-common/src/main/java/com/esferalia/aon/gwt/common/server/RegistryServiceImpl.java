@@ -230,6 +230,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return AON.getCustomerWithoutFee(domain, user, customerParams);
 	}
 	
+	@Override
+	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer) {
+		AON.reorderCustomerFeeLine(domainName, domain, user, customer);
+	}
+	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************

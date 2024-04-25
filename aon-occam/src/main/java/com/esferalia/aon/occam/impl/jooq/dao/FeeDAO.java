@@ -37,6 +37,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.CustomerRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -1001,6 +1002,29 @@ public class FeeDAO {
 			.set(RITEM.CUSTOMER_FEE, customerFee)
 			.where(RITEM.ID.eq(ritem))
 			.execute();
+	}
+
+	public static void reorderCustomerFeeLine(CloseableAONContext ctx, int domain, Integer customer) {
+		Result<CustomerFeeRecord> customerFees = ctx.getDslContext().selectFrom(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.DOMAIN.eq(domain))
+			.and(CUSTOMER_FEE.CUSTOMER.eq(customer))
+			.orderBy(CUSTOMER_FEE.LINE)
+			.fetch();
+		
+		if(!customerFees.isEmpty()) {
+			
+			for(int i = 0; i < customerFees.size(); i++) {
+				Integer newLine = i + 1;
+				
+				CustomerFeeRecord customerFee = customerFees.get(i);
+				if(customerFee.getLine() != newLine.shortValue()) {
+					customerFee.setLine(newLine.shortValue());
+					customerFee.store();
+				}
+			}
+			
+		}
+		
 	}
 	
 }

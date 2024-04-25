@@ -134,6 +134,8 @@ public interface IFinance {
 	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
 	
 	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery);
+	
+	public void reorderCustomerFeeLine(CloseableAONContext ctx, int domainId, Integer customer);
 
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);

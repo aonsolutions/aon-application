@@ -51,7 +51,7 @@ public class Mod131MVELContext extends ModelMVELContext implements Map<String, O
 	public double computeC01() {
 		return round(
 			AonCollectionUtils.stream( mod131.getActivities() )
-				.mapToDouble( act -> act.getNet())
+				.mapToDouble( act -> act.getRdr())
 				.sum());
 	}
 	

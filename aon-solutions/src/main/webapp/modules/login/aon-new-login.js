@@ -370,14 +370,20 @@ export class AonNewLogin extends AonElement {
         this.getModule().startLoading();
         getCompanies().then(companies => {
           this.getModule().stopLoading();
+          
+          //if(companies.length > 0){
+          //  this.companySelection(companies[0], true);
+          //} 
+          
           if(companies.length === 1){
             this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
-            this.rootPanelHtml(this.isMobile()
+           	this.rootPanelHtml(this.isMobile()
               ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
               : '<aon-parent id="aonParent"></aon-parent>');
           }
+          
           // this.getElement("aonLogin").style.display = 'none';
           // let homeDiv = this.getElement("aonHomeDiv");
           // homeDiv.style.display = 'block';

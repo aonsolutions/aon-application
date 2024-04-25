@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, MenuApps, AuxApps, MENU_APPS, AON_APPS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, AON_APPS } from '../services/app.js';
 import { getDomainUserRoles } from 'aonsolutions/services/service.js';
 import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -27,6 +27,7 @@ import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
+import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
 
 const ID = 'id';
@@ -38,6 +39,7 @@ export class AonNewMenu extends AonElement {
 
 	dur;
 	AON_MENU_TOPNAV;
+	AON_MENU_LEFTOP;
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
@@ -94,6 +96,7 @@ export class AonNewMenu extends AonElement {
 	initialize() {
 		this.dur = [];
 		this.AON_MENU_TOPNAV = 'aonMenuTopnav';
+		this.AON_MENU_LEFTOP = 'aonMenuLeftop';
 		this.AON_MENU_SIDENAV = 'aonMenuSidenav';
 		this.AON_MENU_APP_OPTIONS = 'aonMenuAppOptions';
 		this.CLOSE = true;
@@ -158,13 +161,25 @@ export class AonNewMenu extends AonElement {
 			case Apps.MARKETING.app:
 				this.rootPanel(new AonMarketing());
 				break;
+			case HomeApps.HOME.app:
+				this.rootPanel(new AonParent());
+				break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
 		}
+		
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: app } ));
 	}
 
 	build() {
+		let aonMenuLefttop = this.createElement(TAG.DIV);
+		aonMenuLefttop.id = this.AON_MENU_LEFTOP;
+		aonMenuLefttop.className = CSS.AON_MENU_LEFTOP;
+		this.appendChild(aonMenuLefttop);
+		aonMenuLefttop.style.width = '68px';
+		this.buildMenuLeftop();
+
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
@@ -178,8 +193,28 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
 		aonMenuTopnav.style.height = '68px';
-		this.getRootPanel().style.marginTop = '69px';
+		this.getRootPanel().style.marginTop = '0px'; //'69px';
 		this.buildMenuTopnav();
+	}
+
+	buildMenuLeftop() {
+		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
+
+		let div = this.createElement(TAG.DIV);
+		div.style.display = 'flex';
+		div.style.flexDirection = 'row';
+		div.style.alignItems = 'center';
+		div.style.justifyContent = 'center';
+		
+		let app = HomeApps.APPLICATIONS;
+		let appDiv = this.createElement(TAG.DIV);
+		appDiv.id = `aonMenuLeftop-${app.app}`;
+		appDiv.style.width = '68px';
+		appDiv.style.backgroundColor = 'transparent';
+		appDiv.appendChild(this.buildApp(app, {height:'48px'}));
+		div.appendChild(appDiv);
+
+		aonMenuLeftop.appendChild(div);
 	}
 
 	buildMenuSidenav() {
@@ -232,7 +267,6 @@ export class AonNewMenu extends AonElement {
 			}
 		}
 
-
 		aonMenuTopnav.appendChild(div);
 
 	}
@@ -245,7 +279,7 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app) {
+	buildApp(app, style) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
@@ -253,12 +287,12 @@ export class AonNewMenu extends AonElement {
 		});
 
 		let div = this.createElement(TAG.DIV);
-		div.style.height = '56px';
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
-		div.style.flexDirection = 'column';
 		div.style.justifyContent = 'center';
+		div.style.height = style?.height || '56px';
+		div.style.flexDirection = style?.flexDirection || 'column';
 
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
@@ -272,7 +306,7 @@ export class AonNewMenu extends AonElement {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.icon;
-			aonIcon.color = app.color;
+			aonIcon.color = style?.color || app.color;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
