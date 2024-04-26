@@ -90,7 +90,8 @@ export const CONCEPTS = 'Conceptos';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
-export const CONTACT_DATA = 'Datos Contacto';
+export const CONTACT_DATA = 'Datos contacto';
+export const CONTACT_DATA2 = "Datos de contacto";
 export const CONTACTS = 'Contactos';
 export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
@@ -262,7 +263,7 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
-export const UPPER_MENU = 'Menú de arriba';
+export const UPPER_MENU = 'Menú de cabecera';
 
 // ----- N
 
@@ -378,6 +379,7 @@ export const REVIEW = 'Revisar';
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE =  'Ámbito';
+export const SCHEDULE = "Horario";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Ver Todas';
 export const SEND = 'Enviar';
@@ -409,6 +411,7 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
+export const SELECT_LANGUAGE = "Seleccionar idioma";
 
 // ----- T
 
@@ -470,6 +473,8 @@ export const WRITE_YOUR_TITLE = "Escribe tu título aquí";
 export const WRITE_A_COMMENT =  "Escribe un comentario";
 export const WRITE_A_DESCRIPTION = "Escribe una descripción";
 export const WRITE_A_NOTE =  "Escribe una nota";
+export const WEEK_SCHEDULE = "Lunes a jueves de 8:00 a 15:00";
+export const WEEK_FRIDAY_SCHEDULE = "Viernes de 8:00 a 14:00";
 
 // ----- X
 

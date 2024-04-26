@@ -6,11 +6,11 @@ import * as LS from 'aonsolutions/services/localStorageService.js';
 import { Language } from 'aonsolutions/models/Language.js';
 import {  getManifest} from "aonsolutions/services/service.js";
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
+import { AonNewSelect } from "aonsolutions/components/aon-new-select.js";
 import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
 export class AonHelp extends AonElement {
 
 	SUPPORT_SWITCH;
-	LANG_CARD;
 	ABOUT_CONTACT_CARD;
 	SCHEDULE_CONTACT_CARD;
 
@@ -29,10 +29,9 @@ export class AonHelp extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'AonHelp';
-		this.SUPPORT_SWITCH = this.id + 'HelpSwitchSupport';
-		this.LANG_CARD = this.id + 'HelpLangCard';
-		this.ABOUT_CONTACT_CARD = this.id + 'HelpAboutContactCard';
-		this.SCHEDULE_CONTACT_CARD = this.id + 'HelpScheduleContactCard';
+		this.SUPPORT_SWITCH = this.id + 'SwitchSupport';
+		this.ABOUT_CONTACT_CARD = this.id + 'AboutContactCard';
+		this.SCHEDULE_CONTACT_CARD = this.id + 'ScheduleContactCard';
 	}
 
 	build() {
@@ -48,7 +47,8 @@ export class AonHelp extends AonElement {
 		rightPanelSwitchSupportButton.style.marginLeft = '10px';
 		rightPanelSwitchSupportButton.style.right = '30px';
 		rightPanelSwitchSupportButton.style.position = 'absolute';
-		rightPanelSwitchSupportButton.style.top = "52px";
+		rightPanelSwitchSupportButton.style.top = "70px";
+		
 		this.appendChild(rightPanelSwitchSupportButton);
 
 		getSupport().then(r => {
@@ -60,31 +60,10 @@ export class AonHelp extends AonElement {
 			setSupport(data).then(r => {})
 		});
 
-		let rightPanelLangCard = new AonCard();
-		rightPanelLangCard.id = this.LANG_CARD;
-		rightPanelLangCard.title = "Cambiar idioma";
-		rightPanelLangCard.style.width = "90%";
-		rightPanelLangCard.style.height = "fit-content";
-		rightPanelLangCard.style.marginLeft = "10px";
-		this.appendChild(rightPanelLangCard);
-
-		let cardDivv = this.getElement(rightPanelLangCard.CARD);
-		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDivv.style.borderRadius = '2px';
-
-		let divGenerall = this.createDiv();
-		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.ENGLISH , Language.ENGLISH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.DEUTSCH , Language.DEUTSCH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
-		divGenerall.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
-		divGenerall.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
-		console.log(JSON.stringify(divGenerall));
-		rightPanelLangCard.setContent(divGenerall);
 
 		let rightPanelAboutContactCard = new AonCard();
 		rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
-		rightPanelAboutContactCard.title = "Datos de contacto";
+		rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
 		rightPanelAboutContactCard.style.width = "90%";
 		rightPanelAboutContactCard.style.height = "fit-content";
 		rightPanelAboutContactCard.style.marginLeft = "10px";
@@ -103,7 +82,7 @@ export class AonHelp extends AonElement {
 
 		let rightPanelAboutScheduleCard = new AonCard();
 		rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
-		rightPanelAboutScheduleCard.title = "Horario";
+		rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
 
 		rightPanelAboutScheduleCard.style.width = "90%";
 		rightPanelAboutScheduleCard.style.height = "fit-content";
@@ -115,8 +94,8 @@ export class AonHelp extends AonElement {
 		cardDiv2.style.borderRadius = '2px';
 
 		let divGeneral2 = this.createDiv();
-		divGeneral2.appendChild(this.buildSupportData("Lunes a jueves de 8:00 a 15:00", "Lunes a jueves de 8:00 a 15:00", MATERIAL_ICONS.SCHEDULE));
-		divGeneral2.appendChild(this.buildSupportData("Viernes de 8:00 a 14:00", "Viernes de 8:00 a 14:00", MATERIAL_ICONS.SCHEDULE));
+		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE));
+		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE));
 		rightPanelAboutScheduleCard.setContent(divGeneral2);
 		
 		getManifest().then(
@@ -144,6 +123,7 @@ export class AonHelp extends AonElement {
 		let div = this.createDiv();
 		div.style.marginTop = '10px';
 		div.style.title = title;
+		div.style.display = "flex";
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
@@ -152,47 +132,12 @@ export class AonHelp extends AonElement {
 		i.innerHTML= icon;
 		div.appendChild(i);
 
-		let span = this.createSpan();
+		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
 		span.innerHTML = value;
 		div.appendChild(span);
 
 		return div;
-	}
-
-	buildLanguageData(value,language) {
-		let div = this.createDiv();
-		div.style.marginTop = '5px';
-		div.style.title = "Idioma";
-		div.style.cursor = "pointer";
-
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
-		div.appendChild(i);
-		
-		let span = this.createElement(TAG.SPAN);
-		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value;
-		div.appendChild(span);
-
-		if(language == LS.getLanguage()) {
-			i.innerHTML = "done";
-			span.style.fontWeight = "bold";
-		}else{
-			i.innerHTML= "language";
-		}
-
-		div.addEventListener(EVENT.CLICK, () => {
-			LS.setLanguage(language);
-		})
-	
-		return div;		
-	}
-	
-	getHelpLangCard() {
-		return this.getElement(this.LANG_CARD);
 	}
 
 	getSupportSwitch() {

@@ -56,7 +56,6 @@ export class AonHome extends AonElement {
 		aonHeader.newTheme = true;
 		this.appendChild(aonHeader);
 
-
 		aonHeader.setVisibleHomeButton(false);
 		aonHeader.setVisibleCompanyListButton(false);
 		
@@ -101,6 +100,15 @@ export class AonHome extends AonElement {
 		});
 
 		this.appendChild(rightPanel);
+
+		if(LS.isRightPanel()) {
+			LS.removeRightPanel();
+			rootPanel.style.marginRight = '321px';
+			rightPanel.setContent(new AonConfig());
+			rightPanel.setTitle(MSG.CONFIGURATION);
+			rightPanel.open();
+
+		}
 	
 		aonMenu.showSideNav();
 		let headerConfig = this.getElement('aonHeaderConfig');
@@ -134,7 +142,6 @@ export class AonHome extends AonElement {
 		}
 	}
 	
-
 	customize(){
 		let aonHeader = this.getElement(this.AON_HEADER);
 		let aonSearchDiv = aonHeader.getElement("aon-search-div");

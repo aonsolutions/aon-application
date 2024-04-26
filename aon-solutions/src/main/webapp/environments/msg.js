@@ -152,6 +152,7 @@ export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONSOLE = 'Console'; 
 export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
+export const CONTACT_DATA2 = MSG.CONTACT_DATA2;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTAINER = MSG.CONTAINER;
 export const CONTRACT = MSG.CONTRACT;
@@ -566,6 +567,7 @@ export const SALES_PREPARATION = 'Preparación de Pedidos';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
+export const SCHEDULE = MSG.SCHEDULE;
 export const SEARCH = MSG.SEARCH;
 export const SECTION = 'Sección'; // TODO
 export const SEE_ALL = MSG.SEE_ALL;
@@ -612,6 +614,7 @@ export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
+export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
 
 // ----- T
 
@@ -705,6 +708,8 @@ export const WRITE_A_DESCRIPTION = MSG.WRITE_A_DESCRIPTION;
 export const WRITE_A_NOTE = MSG.WRITE_A_NOTE;
 export const WRONG_CODE = 'Código Erróneo';
 export const WORKPLACE = "Centro de trabajo";//TODO
+export const WEEK_SCHEDULE = MSG.WEEK_SCHEDULE;
+export const WEEK_FRIDAY_SCHEDULE = MSG.WEEK_FRIDAY_SCHEDULE;
 // ----- X
 
 // ----- Y
