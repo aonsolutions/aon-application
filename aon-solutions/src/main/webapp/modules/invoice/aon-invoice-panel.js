@@ -360,7 +360,7 @@ export class AonInvoicePanel extends AonElement {
 			}
 		});
 
-		let trashFilter = {publicStatus:['discarded', 'rejected', 'error' ]};	
+		let trashFilter = {publicStatus:['discarded', 'error' ]};	
 		getInvofoxCount(trashFilter).then(r => {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
@@ -820,7 +820,7 @@ export class AonInvoicePanel extends AonElement {
 				case OPTION.RAWDOC_DRAFT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.DRAFT},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error' ]}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'error' ]}
 					);
 					break;
 				case OPTION.INVOICE_ISSUED.id:
