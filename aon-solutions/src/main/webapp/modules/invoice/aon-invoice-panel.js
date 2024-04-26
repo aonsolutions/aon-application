@@ -43,6 +43,7 @@ export class AonInvoicePanel extends AonElement {
 	selectedOption;
 	filter;
 	invofoxFilter;
+	counterActive;
 
 	INVOICE;
 	INPUT_FILE;
@@ -101,7 +102,9 @@ export class AonInvoicePanel extends AonElement {
 			status: this.status || CONSTANT.INBOX,
 			page: 0,
 			per_page: 50
-		}
+		};
+		this.counterActive = true;
+
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 	}
@@ -154,6 +157,7 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvest());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
+				this.getApplication().addToolbarOption('Refresh', 'refresh', () => this.refreshInvoicePanel());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 				if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
 					|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
@@ -232,22 +236,26 @@ export class AonInvoicePanel extends AonElement {
 
 		OPTION.getOptions(this.getDur()).forEach(option => {
 			option.app = INVOICE;
-			if(option.button) option.button.fn = () => this.buildCounter();
 			this.getApplication().addSidenavOptions3(option);
 		});
 		this.buildCounter();
 	}
 
+
 	buildCounter() {
-		clearCounter();
-		this.invoiceCounter();
-		if(this.getDur().isInvofox()) {
-			this.invofoxCounter();
+		if(this.counterActive) {
+			this.counterActive = false;
+			clearCounter();
+			this.invoiceCounter();
+			if(this.getDur().isInvofox()) {
+				this.invofoxCounter();
+			}
 		}
 	}
 
 	invoiceCounter() {
 		getRawdocCount({}).then(r => {
+			this.counterActive = !this.getDur().isInvofox();
 			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
 				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
 				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
@@ -298,6 +306,7 @@ export class AonInvoicePanel extends AonElement {
 	invofoxCounter() {
 		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice','ticket'], companyActsLike:'issuer' };	
 		getInvofoxCount(issuedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
@@ -312,6 +321,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(receivedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
@@ -326,6 +336,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(ticketFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
@@ -340,6 +351,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let rejectedFilter = {publicStatus:['pendingDecission'], type: ['invoice', 'ticket']};	
 		getInvofoxCount(rejectedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
@@ -350,6 +362,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let trashFilter = {publicStatus:['discarded', 'rejected', 'error' ]};	
 		getInvofoxCount(trashFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_DRAFT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
@@ -681,6 +694,11 @@ export class AonInvoicePanel extends AonElement {
 		   this.aonInvoiceList({status:'inbox'})
 		   aonInvoice.stopLoader();
 		}
+	}
+
+	refreshInvoicePanel() {
+		this.buildCounter();
+		this.aonInvoiceHome();
 	}
 
 	addInvoiceFile() {
