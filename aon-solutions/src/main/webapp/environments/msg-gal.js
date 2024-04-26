@@ -90,6 +90,7 @@ export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos do Contacto';
+export const CONTACT_DATA2 = 'Información de contacto';
 export const CONTACTS = 'Contactos';
 export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
@@ -373,6 +374,7 @@ export const REVIEW = 'Revisar';
 export const SAVE = 'Gardar';
 export const SAVED_DATA = 'Los datos se han guardado correctamente';
 export const SCOPE = 'Ámbito';
+export const SCHEDULE = "Horario";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Ver Todas';
 export const SEND = 'Enviar';
@@ -404,6 +406,7 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apelidos';
 export const SYSTEM_MESSAGES = 'Mesaxes do Sistema';
+export const SELECT_LANGUAGE = "Seleccione o idioma";
 
 // ----- T
 
@@ -446,6 +449,7 @@ export const USER_DATA = 'Datos do Usuario';
 export const USER_MANAGEMENT = 'Xestión de Usuarios';
 export const USERS = 'Usuarios';
 export const UTILITIES = 'Utilidades';
+export const UPPER_MENU = "Menú de capçalera";
 
 // ----- V
 
@@ -465,7 +469,8 @@ export const WRITE_YOUR_TITLE = "Escribe aquí o teu título";
 export const WRITE_A_COMMENT =  "Escribe un comentario";
 export const WRITE_A_DESCRIPTION = "Escribe unha descrición";
 export const WRITE_A_NOTE =  "Escribe unha nota";
-
+export const WEEK_SCHEDULE = "De luns a xoves de 8:00 a 15:00 h"
+export const WEEK_FRIDAY_SCHEDULE = "Venres de 8:00 a 14:00 h"
 
 // ----- X
 

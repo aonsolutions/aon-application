@@ -184,13 +184,13 @@
 }
 
 .aonLink {
-  color: var(--aonSecondary) !important;
+  color: var(--aonBlue) !important;
   background: transparent !important;
   cursor: pointer;
 }
 
 .aonLink:hover {
-  color: var(--aonSecondary) !important;
+  color: var(--aonBlue) !important;
   text-decoration: underline;
 }
 

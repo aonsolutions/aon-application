@@ -88,6 +88,7 @@ export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
+export const CONTACT_DATA2 = "Dades de contacte"
 export const CONTACTS = 'Contactes';
 export const CONTAINER = 'Envàs';
 export const CONTRACT = 'Contractar';
@@ -369,6 +370,7 @@ export const REVIEW = "Revisar";
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE = 'Àmbit';
+export const SCHEDULE = "Horari";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Veure Totes';
 export const SEND = 'Enviar';
@@ -400,6 +402,7 @@ export const SUPPORT = 'Suport';
 export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
+export const SELECT_LANGUAGE = "Seleccionar idioma";
 
 // ----- T
 
@@ -443,6 +446,7 @@ export const USER_DATA = `Dades de l'Usuari`;
 export const USER_MANAGEMENT = `Gestió d'Usuaris`;
 export const USERS = 'Usuaris';
 export const UTILITIES = 'Utilitats';
+export const UPPER_MENU = "Menú de capçalera";
 
 // ----- V
 
@@ -462,6 +466,8 @@ export const WRITE_YOUR_TITLE = "Escriu el teu títol aquí";
 export const WRITE_A_COMMENT =  "Escriu un comentari";
 export const WRITE_A_DESCRIPTION = "Escriu una descripció";
 export const WRITE_A_NOTE =  "Escriu una nota";
+export const WEEK_SCHEDULE = "Dilluns a dijous de 8:00 a 15:00";
+export const WEEK_FRIDAY_SCHEDULE = "Divendres de 8:00 a 14:00";
 
 // ----- X
 

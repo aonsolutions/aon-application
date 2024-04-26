@@ -89,6 +89,7 @@ export const CONFIDENTIAL = 'Confidential';
 export const CONFIGURATION = 'Configuration';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
+export const CONTACT_DATA2 = "Contact information";
 export const CONTACTS = 'Contacts';
 export const CONTAINER = 'Container';
 export const CONTRACT = 'Contract';
@@ -374,6 +375,7 @@ export const REVIEW = 'Review';
 export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
+export const SCHEDULE = "Schedule";
 export const SEARCH = 'Search';
 export const SEE_ALL = 'See All';
 export const SEND = 'Send';
@@ -405,6 +407,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
+export const SELECT_LANGUAGE = "Select Language";
 
 // ----- T
 
@@ -447,6 +450,7 @@ export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
 export const UTILITIES = 'Utilities';
+export const UPPER_MENU = "Header menu";
 
 // ----- V
 
@@ -466,6 +470,8 @@ export const WRITE_YOUR_TITLE = "Write your title here";
 export const WRITE_A_COMMENT =  "Write a comment";
 export const WRITE_A_DESCRIPTION = "Write a description";
 export const WRITE_A_NOTE =  "Write a note";
+export const WEEK_SCHEDULE = "Monday to Thursday from 8:00 a.m. to 3:00 p.m.";
+export const WEEK_FRIDAY_SCHEDULE = "Friday from 8:00 a.m. to 2:00 p.m.";
 
 // ----- X
 

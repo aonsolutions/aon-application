@@ -99,6 +99,15 @@ export class AonHome extends AonElement {
 		});
 
 		this.appendChild(rightPanel);
+
+		if(LS.isRightPanel()) {
+			LS.removeRightPanel();
+			rootPanel.style.marginRight = '321px';
+			rightPanel.setContent(new AonConfig());
+			rightPanel.setTitle(MSG.CONFIGURATION);
+			rightPanel.open();
+
+		}
 	
 		aonMenu.showSideNav();
 		let headerConfig = this.getElement('aonHeaderConfig');
