@@ -9,6 +9,9 @@ import { AonSwitch } from "aonsolutions/components/aon-switch.js";
 import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
 export class AonHelp extends AonElement {
 
+	RIGHT_PANEL;
+	CLOSE_BUTTON;
+	HELP_TEXT;
 	SUPPORT_SWITCH;
 	LANG_CARD;
 	ABOUT_CONTACT_CARD;
@@ -29,6 +32,9 @@ export class AonHelp extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'AonHelp';
+		this.RIGHT_PANEL = this.id + 'HelpRightPanel';
+		this.CLOSE_BUTTON = this.id + 'HelpCloseButton';
+		this.HELP_TEXT = this.id + 'HelpText';
 		this.SUPPORT_SWITCH = this.id + 'HelpSwitchSupport';
 		this.LANG_CARD = this.id + 'HelpLangCard';
 		this.ABOUT_CONTACT_CARD = this.id + 'HelpAboutContactCard';
@@ -37,19 +43,48 @@ export class AonHelp extends AonElement {
 
 	build() {
 		LS.setToken('AONd95770f269e711eb94390242ac130002')
+		this.clear();
+		let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
+		rightPanel.style.width = '320px';
+		rightPanel.style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
+		rightPanel.style.backgroundColor = '#faf9f8';
+		rightPanel.style.visibility = "hidden";
+		this.appendChild(rightPanel);
+ 
+		let rightPanelCloseButton = new AonIconButton(); 
+		rightPanelCloseButton.id = this.CLOSE_BUTTON;
+		rightPanelCloseButton.icon ='close';
+		rightPanelCloseButton.style.cursor = "pointer";
+		rightPanelCloseButton.style.position = "fixed";
+		rightPanelCloseButton.style.right = '10px';
+		rightPanelCloseButton.style.visibility = "hidden";
+		rightPanel.appendChild(rightPanelCloseButton);
+		
+		let rightPanelHelpText = this.createElement(TAG.H1);
+		rightPanelHelpText.id = this.HELP_TEXT;
+		rightPanelHelpText.innerHTML = MSG.HELP;
+		rightPanelHelpText.style.marginTop = '18px';
+		rightPanelHelpText.style.marginLeft = '10px'
+		rightPanelHelpText.style.marginBottom = '20px'
+		rightPanelHelpText.style.fontSize = '16px';
+		rightPanelHelpText.style.fontWeight = '500';
+		rightPanelHelpText.style.visibility = "hidden";
+		rightPanel.appendChild(rightPanelHelpText);
+
 
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
 		span.style.marginLeft = '10px';
-		this.appendChild(span);
+		rightPanel.appendChild(span);
 
 		let rightPanelSwitchSupportButton = new AonSwitch();
 		rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
 		rightPanelSwitchSupportButton.style.marginLeft = '10px';
 		rightPanelSwitchSupportButton.style.right = '30px';
 		rightPanelSwitchSupportButton.style.position = 'absolute';
+		rightPanelSwitchSupportButton.style.visibility = "hidden";
 		rightPanelSwitchSupportButton.style.top = "52px";
-		this.appendChild(rightPanelSwitchSupportButton);
+		rightPanel.appendChild(rightPanelSwitchSupportButton);
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;
@@ -63,10 +98,11 @@ export class AonHelp extends AonElement {
 		let rightPanelLangCard = new AonCard();
 		rightPanelLangCard.id = this.LANG_CARD;
 		rightPanelLangCard.title = "Cambiar idioma";
+		rightPanelLangCard.style.visibility = "hidden";
 		rightPanelLangCard.style.width = "90%";
 		rightPanelLangCard.style.height = "fit-content";
 		rightPanelLangCard.style.marginLeft = "10px";
-		this.appendChild(rightPanelLangCard);
+		rightPanel.appendChild(rightPanelLangCard);
 
 		let cardDivv = this.getElement(rightPanelLangCard.CARD);
 		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
@@ -85,10 +121,11 @@ export class AonHelp extends AonElement {
 		let rightPanelAboutContactCard = new AonCard();
 		rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
 		rightPanelAboutContactCard.title = "Datos de contacto";
+		rightPanelAboutContactCard.style.visibility = "hidden";
 		rightPanelAboutContactCard.style.width = "90%";
 		rightPanelAboutContactCard.style.height = "fit-content";
 		rightPanelAboutContactCard.style.marginLeft = "10px";
-		this.appendChild(rightPanelAboutContactCard);
+		rightPanel.appendChild(rightPanelAboutContactCard);
 
 		let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
 		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
@@ -104,11 +141,11 @@ export class AonHelp extends AonElement {
 		let rightPanelAboutScheduleCard = new AonCard();
 		rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
 		rightPanelAboutScheduleCard.title = "Horario";
-
+		rightPanelAboutScheduleCard.style.visibility = "hidden";
 		rightPanelAboutScheduleCard.style.width = "90%";
 		rightPanelAboutScheduleCard.style.height = "fit-content";
 		rightPanelAboutScheduleCard.style.marginLeft = "10px";
-		this.appendChild(rightPanelAboutScheduleCard);
+		rightPanel.appendChild(rightPanelAboutScheduleCard);
 
 		let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
 		cardDiv2.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
@@ -125,6 +162,7 @@ export class AonHelp extends AonElement {
 				let divInfo = this.createElement(TAG.DIV);
 				divInfo.style.color = '#666';
 				divInfo.style.fontSize = '9px';
+				divInfo.style.borderTop = '1px solid #ddd';
 				divInfo.style.marginTop = '10px';
 				divInfo.style.padding = '15px';
 				divInfo.innerHTML = `
@@ -134,10 +172,14 @@ export class AonHelp extends AonElement {
 					</a> ${MSG.REGISTERED_TRADEMARK_AON}
 				  </span>
 				  <div id="aonManifest">${version}</div>`;
-				  this.appendChild(divInfo);
+				rightPanel.appendChild(divInfo);
 			}
 		);
-	
+
+		rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
+			this.close();
+		});
+
 	}
 
 	buildSupportData(value, title, icon) {
@@ -166,12 +208,15 @@ export class AonHelp extends AonElement {
 		div.style.title = "Idioma";
 		div.style.cursor = "pointer";
 
+		
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
 		i.style.marginRight = '5px';
 		i.style.verticalAlign = "middle";
 		div.appendChild(i);
 		
+		
+
 		let span = this.createElement(TAG.SPAN);
 		span.className = CSS.AON_CARD_TEXT;
 		span.innerHTML = value;
@@ -191,6 +236,46 @@ export class AonHelp extends AonElement {
 		return div;		
 	}
 	
+
+	toogle() {
+		if(this.style.visibility === "visible") {
+			this.close();
+		} else this.open();
+	}
+
+	open(){
+		this.getRightPanel().style.visibility = "visible";
+		this.getCloseButton().style.visibility = "visible";
+		this.getHelpText().style.visibility = "visible";
+		this.getHelpLangCard().style.visibility = "visible";
+		this.getSupportSwitch().style.visibility = "visible";
+		this.getAboutContact().style.visibility = "visible";
+		this.getScheduleContact().style.visibility = "visible";
+	}
+
+	close(){
+		this.getRightPanel().style.visibility = "hidden";
+		this.getCloseButton().style.visibility = "hidden";
+		this.getHelpText().style.visibility = "hidden";
+		this.getHelpLangCard().style.visibility = "hidden";
+		this.getSupportSwitch().style.visibility = "hidden";
+		this.getAboutContact().style.visibility = "hidden";
+		this.getScheduleContact().style.visibility = "hidden";
+		this.dispatchEvent(new Event(EVENT.CLOSE));
+	}
+
+	getRightPanel() {
+		return this.getElement(this.RIGHT_PANEL);
+	}
+
+	getCloseButton() {
+		return this.getElement(this.CLOSE_BUTTON);
+	}
+
+	getHelpText() {
+		return this.getElement(this.HELP_TEXT);
+	}
+
 	getHelpLangCard() {
 		return this.getElement(this.LANG_CARD);
 	}
