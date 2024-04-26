@@ -7664,6 +7664,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setDurationFormationHour(employeeContractInfo.getContractSpecificData().getFormationHours());
 		builder.setDurationFormationMin(employeeContractInfo.getContractSpecificData().getFormationMinutes());
 
+		builder.setWrittenContract(employeeContractInfo.getContractSpecificData().getWritenContract());
+
 		return builder.build();
 	}
 
