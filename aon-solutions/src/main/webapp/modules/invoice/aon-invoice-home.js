@@ -10,6 +10,11 @@ import { AonMobileInvoice } from "./aon-mobile-invoice.js";
 
 import { getCounter } from './InvoiceCounter.js';
 import * as OPTION from './InvoiceOptions.js';
+import * as LS from '../../services/localStorageService.js';
+import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
+import { AonInvoiceList } from "./aon-invoice-list.js";
+import { AonUploadToast } from "../../components/aon-upload-toast.js";
+import { getInvofoxConfiguration } from "../../services/invoiceService.js";
 
 export class AonInvoiceHome extends AonElement {
 
@@ -37,7 +42,9 @@ export class AonInvoiceHome extends AonElement {
 
     connectedCallback () {
 		this.initialize();
-        this.build()
+		this.buildDur().then(r => {
+			this.build();
+		});
 	}
 
     initialize() {
@@ -74,6 +81,40 @@ export class AonInvoiceHome extends AonElement {
         uploadInv.setType("Invoice");
         upload.appendChild(uploadInv);
     }
+
+	uploadInvoiceHome(input, files){
+		if(this.getDur().isInvofox()) {
+			getInvofoxConfiguration().then(r => {
+				let uploadToast = this.getElement('aonUploadToast');
+				if(!uploadToast){ 
+					uploadToast = new AonUploadToast();
+					uploadToast.invofoxConfiguration = r;
+					uploadToast.setDur(this.getDur());
+					this.appendChild(uploadToast);
+				}
+				let data = {
+					uploaded : 0
+				}
+				for (let file of files) {
+					uploadToast.addFile("invoice", file, data);
+				}
+			});
+		}else {
+			let uploadToast = this.getElement('aonUploadToast');
+			if(!uploadToast){ 
+				uploadToast = new AonUploadToast();
+				uploadToast.invofoxConfiguration = r;
+				uploadToast.setDur(this.getDur());
+				this.appendChild(uploadToast);
+			}
+			let data = {
+				uploaded : 0
+			}
+			for (let file of files) {
+				uploadToast.addFile("invoice", file, data);
+			}
+		}
+	}
 
     buildFastPanel(dashboard) {
 		let fastPanel = this.createDiv(this.FAST_PANEL, CSS.AON_FAST_ACCESS);
@@ -127,24 +168,34 @@ export class AonInvoiceHome extends AonElement {
 		invoiceResumeCard.firstChild.children.item(1).style.height = "315px";
 		invoiceResumeCard.firstChild.style.margin = '0';
 
-		let cypCard = new AonCard();
-		cypCard.classList.add(CSS.AON_DASHBOARD_CARD);
-		cypCard.id = this.CHARGE_AND_PAYMENTS;
-		cypCard.message = "Cobros y Pagos";
-		cypCard.setApp(Apps.INVOICE);
-		cardPanel.appendChild(cypCard);
-		cypCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>" );
 
-		cypCard.setContent(new AonDashboardChargePayments("current_month"));
-		cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
-		cypCard.firstChild.style.marginLeft = '0';
-		cypCard.firstChild.style.minHeight = "420px";
-		cypCard.firstChild.children.item(1).style.height = "315px";
-		cypCard.firstChild.style.margin = '0';
+		if(LS.isAonSolutions()) {
+			let cypCard = new AonCard();
+			cypCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			cypCard.id = this.CHARGE_AND_PAYMENTS;
+			cypCard.message = "Cobros y Pagos";
+			cypCard.setApp(Apps.INVOICE);
+			cardPanel.appendChild(cypCard);
+			cypCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>" );
+	
+			cypCard.setContent(new AonDashboardChargePayments("current_month"));
+			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
+			cypCard.firstChild.style.marginLeft = '0';
+			cypCard.firstChild.style.minHeight = "420px";
+			cypCard.firstChild.children.item(1).style.height = "315px";
+			cypCard.firstChild.style.margin = '0';
+		}
+
+		this.updateCounterHome();
 	}
 
 	buildInvoiceResumeCard() {
 		let div = this.createDiv();
+		div.style.display = 'grid';
+		div.style.gridTemplateColumns = '150px 150px';
+    	div.style.gap = '5px';
+		div.style.flex = '1';
+		div.style.padding = '0px';
 
 		let pendingRecords = this.createDiv();
 		pendingRecords.id = 'pendingRecords';
@@ -158,6 +209,16 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecords.style.flex = '1';
 		pendingRecords.style.borderRadius = '5px';
 		pendingRecords.overflow = 'hidden';
+		pendingRecords.style.cursor = 'pointer';
+		pendingRecords.style.marginBottom ='5px';
+		pendingRecords.style.gridColumn = '1 / -1';
+
+		pendingRecords.addEventListener(EVENT.MOUSEOVER, () => pendingRecords.style.backgroundColor = '#f1f1f1');
+		pendingRecords.addEventListener(EVENT.MOUSELEAVE, () => pendingRecords.style.backgroundColor = 'transparent');
+		pendingRecords.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status:'accounting', recorded: 'PENDING', page:1, per_page: 50}
+		));
+
 
 		div.appendChild(pendingRecords);
 
@@ -178,7 +239,153 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecordName.style.lineHeight = '21px';
 		pendingRecords.appendChild(pendingRecordName);
 
+		// PENDING
+		let pending = this.createDiv();
+		pending.id = 'pending';
+		pending.style.border = '1px solid #ebebeb';
+		pending.style.display = 'flex';
+		pending.style.flexDirection = 'column';
+		pending.style.justifyContent = 'center';
+		pending.style.gap = '8px';
+		pending.style.textAlign = 'center';
+		pending.style.padding = '8px';
+		pending.style.flex = '1';
+		pending.style.borderRadius = '5px';
+		pending.overflow = 'hidden';
+		pending.style.cursor = 'pointer';
+		pending.style.marginBottom ='5px';
+
+		pending.addEventListener(EVENT.MOUSEOVER, () => pending.style.backgroundColor = '#f1f1f1');
+		pending.addEventListener(EVENT.MOUSELEAVE, () => pending.style.backgroundColor = 'transparent');
+		pending.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+		));
+		div.appendChild(pending);
+
+		let pendingNumber = this.createDiv();
+		pendingNumber.id = 'pendingNumber';
+		pendingNumber.innerHTML = '0';
+		pendingNumber.style.fontWeight = 'bold';
+		pendingNumber.style.fontSize = '36px';
+		pendingNumber.style.lineHeight = '47px';
+
+		pending.appendChild(pendingNumber);
+
+		let pendingName = this.createDiv();
+		pendingName.id = 'pendingName';
+		pendingName.innerHTML = 'Documentos Pendientes';
+		pendingName.style.fontWeight = 'normal';
+		pendingName.style.color = 'gray';
+		pendingName.style.lineHeight = '21px';
+		pending.appendChild(pendingName);
+
+		// PENDING REVISION
+		let pendingRevision = this.createDiv();
+		pendingRevision.id = 'pendingRevision';
+		pendingRevision.style.border = '1px solid #ebebeb';
+		pendingRevision.style.display = 'flex';
+		pendingRevision.style.flexDirection = 'column';
+		pendingRevision.style.justifyContent = 'center';
+		pendingRevision.style.gap = '8px';
+		pendingRevision.style.textAlign = 'center';
+		pendingRevision.style.padding = '8px';
+		pendingRevision.style.flex = '1';
+		pendingRevision.style.borderRadius = '5px';
+		pendingRevision.overflow = 'hidden';
+		pendingRevision.style.cursor = 'pointer';
+		pendingRevision.style.marginBottom ='5px';
+
+		pendingRevision.addEventListener(EVENT.MOUSEOVER, () => pendingRevision.style.backgroundColor = '#f1f1f1');
+		pendingRevision.addEventListener(EVENT.MOUSELEAVE, () => pendingRevision.style.backgroundColor = 'transparent');
+		pendingRevision.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.REJECTED},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
+		));
+		div.appendChild(pendingRevision);
+
+		let pendingRevisionNumber = this.createDiv();
+		pendingRevisionNumber.id = 'pendingRevisionNumber';
+		pendingRevisionNumber.innerHTML = '0';
+		pendingRevisionNumber.style.fontWeight = 'bold';
+		pendingRevisionNumber.style.fontSize = '36px';
+		pendingRevisionNumber.style.lineHeight = '47px';
+
+		pendingRevision.appendChild(pendingRevisionNumber);
+
+		let pendingRevisionName = this.createDiv();
+		pendingRevisionName.id = 'pendingRevisionName';
+		pendingRevisionName.innerHTML = 'Pendientes de Revisión';
+		pendingRevisionName.style.fontWeight = 'normal';
+		pendingRevisionName.style.color = 'gray';
+		pendingRevisionName.style.lineHeight = '21px';
+		pendingRevision.appendChild(pendingRevisionName);
+
+		// TRASH
+		let trash = this.createDiv();
+		trash.id = 'trash';
+		trash.style.border = '1px solid #ebebeb';
+		trash.style.display = 'flex';
+		trash.style.flexDirection = 'column';
+		trash.style.justifyContent = 'center';
+		trash.style.gap = '8px';
+		trash.style.textAlign = 'center';
+		trash.style.padding = '8px';
+		trash.style.flex = '1';
+		trash.style.borderRadius = '5px';
+		trash.overflow = 'hidden';
+		trash.style.cursor = 'pointer';
+		trash.style.marginBottom ='5px';
+		trash.style.gridColumn = '1 / -1';
+
+		trash.addEventListener(EVENT.MOUSEOVER, () => trash.style.backgroundColor = '#f1f1f1');
+		trash.addEventListener(EVENT.MOUSELEAVE, () => trash.style.backgroundColor = 'transparent');
+		trash.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.DRAFT},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error']}
+		));
+
+		div.appendChild(trash);
+
+		let trashNumber = this.createDiv();
+		trashNumber.id = 'trashNumber';
+		trashNumber.innerHTML = '0';
+		trashNumber.style.fontWeight = 'bold';
+		trashNumber.style.fontSize = '36px';
+		trashNumber.style.lineHeight = '47px';
+
+		trash.appendChild(trashNumber);
+
+		let trashName = this.createDiv();
+		trashName.id = 'trashName';
+		trashName.innerHTML = 'En Papelera';
+		trashName.style.fontWeight = 'normal';
+		trashName.style.color = 'gray';
+		trashName.style.lineHeight = '21px';
+		trash.appendChild(trashName);
+
 		return div;
+	}
+
+	updateCounterHome() {
+		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
+		let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
+		let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
+		let total = issued + received + ticket;
+		let pendingRecordNumber = this.getElement('pendingRecordNumber');
+		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
+
+		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
+		let pendingNumber = this.getElement('pendingNumber');
+		if(pendingNumber) pendingNumber.innerHTML = pending;
+
+		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
+		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
+		if(pendingRevisionNumber) pendingRevisionNumber.innerHTML = pendingRevision;
+
+		let trash = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+		let trashNumber = this.getElement('trashNumber');
+		if(trashNumber) trashNumber.innerHTML = trash;
 	}
 
     aonInvoice(type, invoice) {
@@ -197,6 +404,10 @@ export class AonInvoiceHome extends AonElement {
 		}
 
 		aonInvoice.setContent(component);
+	}
+
+	aonInvoiceList(filter, invofoxFilter) {
+		this.getApplication().getParent().aonInvoiceList(filter, invofoxFilter);
 	}
 
 	// PROVISIONAL - AÑADIRLO EN UNICO SITIO.

@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.json.TediErrorJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -75,6 +76,7 @@ import net.aonsolutions.invofox.model.OCRField;
 import net.aonsolutions.invofox.model.OCRInfoResponse;
 import net.aonsolutions.invofox.model.OCRInvoice;
 import net.aonsolutions.invofox.model.OCRLine;
+import net.aonsolutions.invofox.model.OCRLogin;
 import net.aonsolutions.invofox.model.OCRLoginToken;
 import net.aonsolutions.invofox.model.OCRPage;
 import net.aonsolutions.invofox.model.OCRSeverity;
@@ -203,12 +205,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
 	    Company company = AON.getCompany(domain, user,f -> f.getDomainProperty().eq(domain.getId()));
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
+	   
 	    return  response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
 		    .map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 		    .map(invoice -> fillCategory(aonContext, invoice))
+		    .map(invoice -> fillActivity(aonContext, invoice))
 		    .map(InvoiceJSON::toJSON)
 		    .map(invoice -> invoice.put("token", token))
 		    .map(invoice -> invoice.put("file", getFileJSON(ocrDocument)) )
@@ -250,12 +254,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    }
 	    
 	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
-	    Optional<CompanyActsLike> companyActsLike = CompanyActsLike.get(JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE));
-	    
+	    String companyActsLike = JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE);
 	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
 	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken()
 		    .orElse(null);
+		String token2 = OCRInvofox.getLogin("app@aonsolutions.es", "U%4LjF~ai$5ZW[Z", invofoxConfiguration.getApiUrl()).getLogin().orElse(new OCRLogin()).getToken()
+			    .orElse(null);
 	    
 	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
 		    f -> f.getDomainProperty().eq(api.getDomain().getId()));
@@ -267,14 +272,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    OCRCompany ocrCompany = companies.get(0);
 		    OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
 		    type.ifPresent( ocrDocumentParams::withType);
+		    ocrDocumentParams.withEnvironment("65491eee49f881000dd14c72"); //64804a43d883e2000ac0423a
 		    ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
 		    ocrDocumentParams.withCompany(ocrCompany.getId()).skiping(page * perPage);
-		    companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
+		    ocrDocumentParams.withCompanyActsLike(companyActsLike);
 		    publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
 		    ocrDocumentParams.limit(perPage); 
 		    
 		    OCRDocumentsResponse response = OCRInvofox
-			    .getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
+				    .getDocumentsWithToken(token2, invofoxConfiguration.getApiUrl(), ocrDocumentParams);
 
 		    response.getDocuments().orElse(new LinkedList<>()).stream()
 		    .forEach(r -> {
@@ -287,6 +293,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				r.getData().get().getTotalAmount().get().getValue().orElse(new BigDecimal(0)));
 			json.put("token", token);
 			json.put("status", toString(r.getPublicState().orElse(OCRSeverity.error)));
+			json.put("invofox", true);
 			array.put(json);
 		    });
 		}
@@ -303,11 +310,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    }
 	    
 	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
-	    Optional<CompanyActsLike> companyActsLike = CompanyActsLike.get(JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE));
-	    
+	    String companyActsLike = JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE);
 	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
 	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
-	    
+		String token = OCRInvofox.getLogin("app@aonsolutions.es", "U%4LjF~ai$5ZW[Z", invofoxConfiguration.getApiUrl()).getLogin().orElse(new OCRLogin()).getToken()
+			    .orElse(null);
 	    Company cp = AON.getCompany(api.getDomain(), api.getUser(),
 		    f -> f.getDomainProperty().eq(api.getDomain().getId()));
 	    if (!AonStringUtils.isBlank(cp.getDocument())) {
@@ -320,12 +327,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    		type.ifPresent( ocrDocumentParams::withType);
 	    		ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
 	    		ocrDocumentParams.withCompany(ocrCompany.getId());
-	    		companyActsLike.ifPresent( c -> c.withCompanyActsLike(ocrCompany, ocrDocumentParams) );
+	    		ocrDocumentParams.withEnvironment("65491eee49f881000dd14c72");//64804a43d883e2000ac0423a
+			    ocrDocumentParams.withCompanyActsLike(companyActsLike);
 	    		publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String)publicState).ifPresent(ocrDocumentParams::withPublicState));
-	    		ocrDocumentParams.limit(1);
+			    ocrDocumentParams.limit(1); 
+			    
 	    		OCRDocumentsResponse response = OCRInvofox
-		    		.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), ocrDocumentParams);
-
+					    .getDocumentsWithToken(token, invofoxConfiguration.getApiUrl(), ocrDocumentParams);
+	    		
 	    		json.put("count", response.getCount().orElse(0));
 	    	}
 	    }
@@ -400,7 +409,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRInvoiceBuilder.fillTaxableBase(ocrInvoice, invoice);
 	    OCRInvoiceBuilder.fillVatQuota(ocrInvoice, invoice);
 	    OCRInvoiceBuilder.fillRetentionQuota(ocrInvoice, invoice);
-
+	    
 	    if(invoice.mustApplyISP()) {
 	    	invoice.setBreakdown(
 	    		invoice.getBreakdown().stream().map(r -> {
@@ -532,8 +541,30 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
 		if(invoice.getRegistry() == null) return invoice;
 		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
-		if(!accounts.isEmpty())
-			invoice.setTediCategory(accounts.get(0).getCode());
+		if(accounts.isEmpty() && InvoiceType.EXPENSES.equals(invoice.getType())) {
+			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.PURCHASE);
+			if(!accounts.isEmpty()) invoice.setType(InvoiceType.PURCHASE);
+		} else if(accounts.isEmpty() && InvoiceType.PURCHASE.equals(invoice.getType())) {
+			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.EXPENSES);
+			if(!accounts.isEmpty()) invoice.setType(InvoiceType.EXPENSES);			
+		}
+		if(!accounts.isEmpty()) {
+			Account account = accounts.get(0);
+			invoice.setTediCategory(account.getCode());
+			invoice.getDetails().stream().forEach(d -> 
+				d.setAccount(account.getId())
+				.setAccountCode(account.getCode())
+				.setAccountDescription(account.getDescription())
+			);
+		}
+		return invoice;
+	}
+	
+	private static Invoice fillActivity(AONContext ctx, Invoice invoice) {
+		if(invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
+			AonConfiguration config = AON.getConfiguration(ctx);
+			invoice.setActivity(config.getMainActivity());
+		}
 		return invoice;
 	}
 	

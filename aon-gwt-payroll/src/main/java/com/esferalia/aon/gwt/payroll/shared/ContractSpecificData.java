@@ -89,6 +89,8 @@ public class ContractSpecificData implements Serializable {
 	private Boolean trueDate;
 	private Boolean planRecovery;
 	
+	private Boolean writenContract;
+	
 	public ContractSpecificData() {
 		super();
 	}
@@ -688,6 +690,14 @@ public class ContractSpecificData implements Serializable {
 
 	public void setPlanRecovery(Boolean planRecovery) {
 		this.planRecovery = planRecovery;
+	}
+	
+	public Boolean getWritenContract() {
+		return null == writenContract ? Boolean.FALSE : writenContract;
+	}
+
+	public void setWritenContract(Boolean writenContract) {
+		this.writenContract = writenContract;
 	}
 	
 }

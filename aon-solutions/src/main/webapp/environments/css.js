@@ -59,7 +59,6 @@ export const AON_SECONDARY_TOOLBAR_TITLE = 'aonSecondaryToolbarTitle';
 export const AON_TABLE = 'aonTable';
 export const AON_MENU_TOPNAV = 'aonMenuTopnav';
 export const AON_MENU_SIDENAV = 'aonMenuSidenav';
-export const AON_MENU_LEFTOP = 'aonMenuLeftop';
 export const AON_MENU_SIDENAV_BETA = 'aonMenuSidenavBeta';
 export const AON_MENU_SIDENAV_APP_TOOLBAR = 'aonMenuSidenavAppToolbar';
 export const AON_MENU_SIDENAV_SUBAPP_LIST = 'aonMenuSidenavSubAppList';
@@ -88,7 +87,6 @@ export const AON_FORM_CENTER_ANDROID_APP = 'aonFormCenterAndroidApp';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
-export const AON_CARD_TEXT = 'aonCardText';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
 export const AON_CARD_TOTAL = 'aonCardTotal';
@@ -139,9 +137,6 @@ export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
 export const AON_BADGE = 'aonBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
-
-export const AON_PARENT_DIV = 'aonParentDiv';
-export const AON_WELCOME_DIV = 'aonWelcomeDiv';
 
 export const AON_COMPANY_DIV = 'aonCompanyDiv';
 export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
@@ -444,9 +439,3 @@ export const variable = (name) => {return "var(" + name + ")";}
 
 export const AON_INVOICE_ERROR = 'aonInvoiceError';
 export const AON_INVOICE_WARNING = 'aonInvoiceWarning';
-
-// Tabs
-export const AON_TAB = 'aonTab';
-export const AON_TAB_ITEM = 'aonTabItem';
-export const AON_TAB_ITEM_TEXT = 'aonTabItemText';
-export const AON_TAB_ITEM_TEXT_SELECTED = 'aonTabItemTextSelected';

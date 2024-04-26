@@ -657,16 +657,6 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			}
 		});
 		
-//		customerFeeSuggestBox.addKeyUpHandler(e -> {
-//			String customerFeeQuery = customerFeeSuggestBox.getValue();
-//			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-//				customerFeeSuggestBox.setValue("");
-//				customerFeeQuery = null;
-//				getCustomerFeeSuggestion(customerFeeQuery);
-//			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
-//				getCustomerFeeSuggestion(customerFeeQuery);
-//		});
-		
 		toolbar.add(syncCustomerFeesLabel);
 		toolbar.add(customerFeeSuggestBox);
 		toolbar.add(syncCustomerFees);

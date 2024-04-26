@@ -8,9 +8,10 @@ import { AonSelect } from './aon-select.js';
 import { TABLE } from '../environments/aonTag.js';
 import { AonBasicTable } from './aon-basic-table.js';
 import { getStreetTypes, streetType } from '../services/StreetType.js';
-import * as LS from '../services/localStorageService.js';
 import { AonNewInput } from './aon-new-input.js';
 import { AonNewSelect } from './aon-new-select.js';
+
+import * as LS from '../services/localStorageService.js';
 
 export class AonAddress extends AonElement {
 
@@ -113,8 +114,8 @@ export class AonAddress extends AonElement {
   buildAddress() {
     let table = new AonBasicTable();
     table.id = this.EDIT;
-		table.style.display = "none";
-    table.style.backgroundColor = "#f1f1f1";
+  	table.style.display = "none";
+    if(!LS.isNewTheme()) table.style.backgroundColor = "#f1f1f1";
     this.appendChild(table);
 
     table.addRow();
@@ -129,7 +130,8 @@ export class AonAddress extends AonElement {
       })
     );
     streetTypeSelect.readonly = this.isReadonly();
-    streetTypeSelect.value = this.address.getStreetType();
+    streetTypeSelect.value = this.address.getStreetType() && this.address.getStreetType() != 'undefined' 
+      ? this.address.getStreetType : '';
     streetTypeSelect.addEventListener(EVENT.SELECT, () => {
       this.address.setStreetType(streetTypeSelect.value);
       this.getElement(this.INPUT).value = this.address.getFullAddress();
@@ -140,6 +142,7 @@ export class AonAddress extends AonElement {
     let addressInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     addressInput.id = this.ADDRESS;
     addressInput.description = MSG.ADDRESS;
+    addressInput.title = MSG.ADDRESS;
     addressInput.className = CSS.AON_WIDTH_ALL;
     addressInput.value = this.address.getAddress();
     addressInput.readonly = this.isReadonly();
@@ -155,6 +158,7 @@ export class AonAddress extends AonElement {
     let numberInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     numberInput.id = this.NUMBER;
     numberInput.description = MSG.NUMBER;
+    numberInput.title = MSG.NUMBER;
     numberInput.className = CSS.AON_WIDTH_ALL;
     numberInput.value = this.address.getNumber();
     numberInput.readonly = this.isReadonly();
@@ -168,6 +172,7 @@ export class AonAddress extends AonElement {
     let address2Input = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     address2Input.id = this.ADDRESS2;
     address2Input.description = 'Resto Dirección';//MSG.ADDRESS;
+    address2Input.title = 'Resto Dirección';//MSG.ADDRESS;
     address2Input.className = CSS.AON_WIDTH_ALL;
     address2Input.value = this.address.getAddress2();
     address2Input.readonly = this.isReadonly();
@@ -184,9 +189,10 @@ export class AonAddress extends AonElement {
     let countryInput = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
     countryInput.id = this.COUNTRY;
     countryInput.title = MSG.COUNTRY;
+    countryInput.autocomplete = true;
     countryInput.options = JSON.stringify(
       Countries.map((c) => {
-        return { value: c.iso2, name: c.iso2 };
+        return { value: c.iso2, name: c.nombre };
       })
     );
     countryInput.readonly = this.isReadonly();
@@ -202,6 +208,7 @@ export class AonAddress extends AonElement {
     let zipInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     zipInput.id = this.ZIP;
     zipInput.description = MSG.POSTAL_CODE_MIN;
+    zipInput.title = MSG.POSTAL_CODE_MIN;
     zipInput.value = this.address.getZip();
     zipInput.readonly = this.isReadonly();
     zipInput.addEventListener(EVENT.CHANGE, () => {
@@ -215,6 +222,7 @@ export class AonAddress extends AonElement {
     let cityInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     cityInput.id = this.CITY;
     cityInput.description = MSG.CITY;
+    cityInput.title = MSG.CITY;
     cityInput.value = this.address.getCity();
     cityInput.readonly = this.isReadonly();
     cityInput.addEventListener(EVENT.CHANGE, () => {
@@ -228,6 +236,7 @@ export class AonAddress extends AonElement {
     let provinceInput = LS.isNewTheme() ? new AonNewInput() : new AonInput();
     provinceInput.id = this.PROVINCE;
     provinceInput.description = MSG.PROVINCE;
+    provinceInput.title = MSG.PROVINCE;
     provinceInput.value = this.address.getProvince();
     provinceInput.readonly = this.isReadonly();
     provinceInput.addEventListener(EVENT.CHANGE, () => {
