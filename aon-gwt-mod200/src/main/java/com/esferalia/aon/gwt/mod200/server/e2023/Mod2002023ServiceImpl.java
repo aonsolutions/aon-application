@@ -81,3 +81,4 @@ public class Mod2002023ServiceImpl extends AonStatelessRemoteServiceServlet impl
 		return AON.getCompanyBanks(occam.getDomainName(),occam.getDomain(), occam.getUser());
 	}
 }
+

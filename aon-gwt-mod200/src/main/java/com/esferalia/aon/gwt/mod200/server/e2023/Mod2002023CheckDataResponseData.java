@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Mod2002023 Check Data Reponse Data", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002023CheckDataResponseData" })
 public class Mod2002023CheckDataResponseData extends HttpServlet {
 
-	private static final long serialVersionUID = 8962165983359245524L;
+	private static final long serialVersionUID = 8816099596502576968L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

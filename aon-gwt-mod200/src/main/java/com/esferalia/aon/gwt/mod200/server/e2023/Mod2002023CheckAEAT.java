@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Mod2002023 Check AEAT", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002023CheckAEAT" })
 public class Mod2002023CheckAEAT extends HttpServlet {
 	
-	private static final long serialVersionUID = -5285792409304196280L;
+	private static final long serialVersionUID = 5317866544961138534L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

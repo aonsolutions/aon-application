@@ -33,8 +33,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Mod200 2023 Validate Print AEAT", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002023ValidatePrintAEAT" })
 public class Mod2002023ValidatePrintAEAT extends HttpServlet {
 
+	private static final long serialVersionUID = 8746029270554525955L;
 	private static final Logger LOGGER = Logger.getLogger(Mod2002023ValidatePrintAEAT.class.getName()); 
-	private static final long serialVersionUID = 8890384572299785489L;
 
 	private enum AeatUrl {
 		URL_2023 {
@@ -114,3 +114,4 @@ public class Mod2002023ValidatePrintAEAT extends HttpServlet {
 		}
 	}
 }
+
