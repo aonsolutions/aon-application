@@ -152,6 +152,13 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
@@ -169,6 +176,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -211,6 +219,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -306,6 +315,7 @@ import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
+import com.esferalia.aon.occam.impl.jooq.NewsImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
 import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
@@ -426,6 +436,10 @@ public class AON {
 	
 	private static IEmployeeIT getEmployeeIT() {
 		return new EmployeeITImpl();
+	}
+	
+	private static INews getNews() {
+		return new NewsImpl();
 	}
 
 	// ********************************************
@@ -8250,6 +8264,102 @@ public class AON {
 	public static FBatch createUpdateFBatch(String domainName, int domainId, String user, FBatch fBatch) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
 			return getFinance().createUpdateFBatch(ctx, fBatch);
+		}
+	}
+	
+	// ---------------- Marketing Campaign
+	
+	public static List<MarketingCampaign> getMarketingCampaignlist(MarketingCompaignParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingCampaignlist(ctx, params);
+		}
+	}
+
+	public static void deleteMarketingCampaign(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingCampaign(ctx, id);
+		}
+	}
+
+	public static MarketingCampaign saveMarketingCampaign(String domainName, int domain, String user, MarketingCampaign marketingCampaign) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingCampaign(ctx, marketingCampaign);
+		}
+	}
+
+	public static MarketingCampaign getMarketingCampaign(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getMarketingCampaign(ctx, id);
+		}
+	}
+	
+	// ---------------- Marketing Action
+
+	public static List<MarketingAction> getMarketingActions(MarketingActionParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingActions(ctx, params);
+		}
+	}
+	
+	public static MarketingAction getMarketingAction(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getMarketingAction(ctx, id);
+		}
+	}
+
+	public static void deleteMarketingAction(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingAction(ctx, id);
+		}
+	}
+
+	public static MarketingAction saveMarketingAction(String domainName, int domain, String user, MarketingAction marketingAction) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingAction(ctx, marketingAction);
+		}
+	}
+	
+	public static List<News> getNewsStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getNews().getNewsStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Newsletter> getNewsletterStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getNewsletterStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Survey> getSurveyStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getSurveyStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+	
+	// ---------------- Marketing Action Target
+
+	public static List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingActionTargets(ctx, params);
+		}
+	}
+
+	public static void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingActionTarget(ctx, id);
+		}
+	}
+
+	public static MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user, MarketingActionTarget marketingActionTarget) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingActionTarget(ctx, marketingActionTarget);
+		}
+	}
+
+	public static List<Target> getTargetSuggestion(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getTargetStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 		}
 	}
 	
