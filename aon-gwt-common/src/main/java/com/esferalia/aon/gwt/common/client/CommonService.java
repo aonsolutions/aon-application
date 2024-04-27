@@ -12,13 +12,22 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -28,9 +37,9 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -133,4 +142,37 @@ public interface CommonService extends RemoteService {
 	FBatch getFBatch(String domainName, Integer domainId, String user, Integer fbatchId) throws AonCoreException;
 	FBatch createUpdateFBatch(String domainName, Integer domainId, String user, FBatch fbatch) throws AonCoreException;
 	LinkedList<RegistryBank> getCompanyBanks(String domainName, Integer domainId, String user) throws AonCoreException;
+	
+	// **************************************************
+	// ***************************** [MARKETING CAMPAIGN]
+	// **************************************************
+	
+	List<MarketingCampaign> getMarketingCampaigns(MarketingCompaignParams params) throws AonCoreException;
+	void deleteMarketingCampaign(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	MarketingCampaign saveMarketingCampaign(String domainName, int domain, String user, MarketingCampaign marketingCampaign) throws AonCoreException;
+	MarketingCampaign getMarketingCampaign(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	
+	// **************************************************
+	// ******************************* [MARKETING ACTION]
+	// **************************************************
+	
+	List<MarketingAction> getMarketingActions(MarketingActionParams params) throws AonCoreException;
+	MarketingAction getMarketingAction(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	void deleteMarketingAction(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	MarketingAction saveMarketingAction(String domainName, int domain, String user, MarketingAction marketingAction) throws AonCoreException;
+	
+	List<News> getNewsSuggestion(String domainName, int domain, String user) throws AonCoreException;
+	List<Newsletter> getNewsletterSuggestion(String domainName, int domain, String user) throws AonCoreException;
+	List<Survey> getSurveySuggestion(String domainName, int domain, String user) throws AonCoreException;
+	
+	// **************************************************
+	// ************************ [MARKETING ACTION TARGET]
+	// **************************************************
+	
+	List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) throws AonCoreException;
+	void deleteMarketingActionTarget(String domainName, int domain, String user, Integer actionTargetId) throws AonCoreException;
+	MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user,MarketingActionTarget marketingActionTarget) throws AonCoreException;
+	
+	List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException;
+
 }
