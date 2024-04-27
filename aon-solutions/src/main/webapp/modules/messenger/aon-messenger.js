@@ -370,10 +370,11 @@ export class AonMessenger extends AonElement {
 		let data = {
 			id: "myInbox",
 			name: "Mi bandeja",
-			app: Apps.MESSENGER			
+			app: Apps.MESSENGER,
+			options: messengerOpts		
 		}
 
-		this.getApplication().addSidenavOptions2(data, messengerOpts);
+		this.getApplication().addSidenavOptions3(data);
 	}
 
 	inboxNavBarCau(){
@@ -403,11 +404,12 @@ export class AonMessenger extends AonElement {
 		];
 
 		
-		this.getApplication().addSidenavOptions2({
+		this.getApplication().addSidenavOptions3({
 			id: 'inbox',
 			name: 'Bandeja',
-			app: Apps.MESSENGER			
-		}, messengerOpts);
+			app: Apps.MESSENGER	,
+			options: messengerOpts		
+		});
 	}
 
 
@@ -456,30 +458,33 @@ export class AonMessenger extends AonElement {
 	}
 
     groupNavBar() {
-		this.getApplication().addSidenavOptions2({
+		this.getApplication().addSidenavOptions3({
 			id: 'Workgroup',
 			name: MSG.WORKGROUP,
-			app: Apps.MESSENGER			
-		}, []);
+			app: Apps.MESSENGER,
+			options:[]		
+		});
 	}
 
     tagNavBar() {
 
 		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag({}, TAG_TYPE.TASK_LABEL) : null; 
 		
-		this.getApplication().addSidenavOptions2({
+		this.getApplication().addSidenavOptions3({
 			id: TAG_TYPE.TASK_LABEL,
 			name: this.cau ? MSG.APPLICATION : MSG.TAG,
-			app: Apps.MESSENGER
-		}, [], fnTag);
+			app: Apps.MESSENGER,
+			options: []
+		}, fnTag);
 
 		if(!this.cau){
 			const fnTagType = this.getDur().isMessengerManager() ? () => this.dialogTag({}, TAG_TYPE.TASK_TYPE) : null; 
-			this.getApplication().addSidenavOptions2({
+			this.getApplication().addSidenavOptions3({
 				id: TAG_TYPE.TASK_TYPE,
 				name: MSG.TYPE,
-				app: Apps.MESSENGER
-			}, [], fnTagType);
+				app: Apps.MESSENGER,
+				options: []
+			}, fnTagType);
 		}
 	}
 

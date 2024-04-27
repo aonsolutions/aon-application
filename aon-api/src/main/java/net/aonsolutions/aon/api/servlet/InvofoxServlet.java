@@ -293,6 +293,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				r.getData().get().getTotalAmount().get().getValue().orElse(new BigDecimal(0)));
 			json.put("token", token);
 			json.put("status", toString(r.getPublicState().orElse(OCRSeverity.error)));
+			json.put("invofox", true);
 			array.put(json);
 		    });
 		}
