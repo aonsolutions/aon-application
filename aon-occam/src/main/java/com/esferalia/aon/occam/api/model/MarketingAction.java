@@ -55,6 +55,7 @@ public class MarketingAction implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private String description;
+	private Double budget;
 	
 	private Survey survey;
 	private Integer newsletter;
@@ -132,6 +133,13 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setNews(Integer news) {
 		this.news = news;
+		return this;
+	}
+	public Double getBudget() {
+		return budget == null ? 0.00 : budget;
+	}
+	public MarketingAction setBudget(Double budget) {
+		this.budget = budget;
 		return this;
 	}
 	public boolean isDeleted() {

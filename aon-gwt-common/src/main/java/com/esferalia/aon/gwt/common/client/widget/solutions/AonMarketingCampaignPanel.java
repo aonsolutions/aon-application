@@ -43,6 +43,7 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 	}
 
 	private TextBox description = new TextBox();
+	private AonDoubleBox budget = new AonDoubleBox(15, 2);
 	private ListBox scope = new ListBox();
 	private Button active = new Button();
 	
@@ -89,19 +90,24 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 		table.getCellFormatter().setStyleName(0, 1, AON.CSS.aonWidthAll());
 		table.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
-		table.setWidget(1,0,new InlineLabel(AON.MSG.scope()));
+		table.setWidget(1,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(1, 0).setPropertyString("min-width", "135px");
-		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
-		scope.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(1,1,scope);
+		budget.setValue(marketingCampaign.getBudget());
+		table.setWidget(1,1,budget);
 		
-		table.setWidget(2,0,new InlineLabel("Activo"));
+		table.setWidget(2,0,new InlineLabel(AON.MSG.scope()));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
 		table.getCellFormatter().getElement(2, 0).setPropertyString("min-width", "135px");
+		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
+		scope.setStyleName(AON.CSS.aonInputText());
+		table.setWidget(2,1,scope);
+		
+		table.setWidget(3,0,new InlineLabel("Activo"));
+		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
+		table.getCellFormatter().getElement(3, 0).setPropertyString("min-width", "135px");
 		getEnableDisableButton(active, true);
 		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
-		table.setWidget(2,1,active);
+		table.setWidget(3,1,active);
 		
 		tablePanel.add( table );
 		
@@ -125,6 +131,7 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 				marketingCampaign.setActive(isActiveToggleButton(active));
 				marketingCampaign.setDescription(description.getValue());
 				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scope.getSelectedValue())));
+				marketingCampaign.setBudget(budget.getValue());
 				
 				commonService.saveMarketingCampaign(domainName, domain, user, marketingCampaign, new AsyncCallback<MarketingCampaign>() {
 
