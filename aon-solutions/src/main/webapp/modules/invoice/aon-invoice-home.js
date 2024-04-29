@@ -407,20 +407,7 @@ export class AonInvoiceHome extends AonElement {
 	}
 
 	aonInvoiceList(filter, invofoxFilter) {
-		let invoiceList = this.getElement('aonInvoiceList');
-		if(invoiceList) {
-			invoiceList.setFilter(filter);
-			invoiceList.init();
-		} else {
-			let table = this.isMobile() 
-				? new AonMobileInvoiceList() 
-				: new AonInvoiceList();
-			table.id = 'aonInvoiceList';
-			table.setFilter(filter);
-			table.invofoxFilter = invofoxFilter;
-			this.getApplication().setContent(table);
-		}
-		this.getApplication().buildDragAndDrop(true);
+		this.getApplication().getParent().aonInvoiceList(filter, invofoxFilter);
 	}
 
 	// PROVISIONAL - AÑADIRLO EN UNICO SITIO.

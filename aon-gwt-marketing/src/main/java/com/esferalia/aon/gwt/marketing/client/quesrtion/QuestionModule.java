@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.marketing.client.marketing;
+package com.esferalia.aon.gwt.marketing.client.quesrtion;
 
 import java.util.logging.Logger;
 
@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonQuestionPanel.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
-import com.esferalia.aon.gwt.marketing.client.marketing.panel.QuestionModulePanel;
+import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.gwt.marketing.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;

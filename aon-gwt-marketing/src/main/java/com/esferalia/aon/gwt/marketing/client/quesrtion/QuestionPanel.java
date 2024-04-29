@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.marketing.client.marketing.panel;
+package com.esferalia.aon.gwt.marketing.client.quesrtion;
 
 import java.util.List;
 import java.util.function.Consumer;
