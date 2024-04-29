@@ -470,7 +470,7 @@ export class AonInvoice extends AonElement {
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION )) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR )) {
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.ERROR )) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
@@ -3083,7 +3083,7 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		if(this.isInvofoxInvoice()) {
-			this.setInvofoxState(CONSTANT.REJECTED);
+			this.setInvofoxState(CONSTANT.DISCARDED);
 		} else {
 			this.getInvoice().status = CONSTANT.DRAFT;
 			this.save(MSG.MOVED_TO_TRASH);
@@ -3156,7 +3156,7 @@ export class AonInvoice extends AonElement {
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
-			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.DISCARDED);	
+			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.REJECTED);	
 			this.back();
 		});
 		d.open();
