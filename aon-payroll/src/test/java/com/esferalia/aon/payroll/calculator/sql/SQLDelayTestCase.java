@@ -64,7 +64,9 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -6392,6 +6394,83 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), DELTA);
 		
 		
+		delayCtx = new SQLContractPPECalculatorContext(connection, getFirstDayOfMonth(getToday()), add(startDate, DAY_OF_MONTH, -1), endDate, criteria);
+		delayCtx.next();
+
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Date delaysStartDate = getFirstDayOfMonth(getToday());
+		Date delaysEndDate = add(startDate, DAY_OF_MONTH, -1);
+		Double ppeDelays = 
+				ctx.getExpressionContext().eval(
+				String.format(
+				"SELF.getPPEDelaysLiquid(FECHA(%d,%d,%d), FECHA(%d,%d,%d))"
+				,get(delaysStartDate, Calendar.YEAR)
+				,get(delaysStartDate, Calendar.MONTH)
+				,get(delaysStartDate, Calendar.DATE)
+
+				,get(delaysEndDate, Calendar.YEAR)
+				,get(delaysEndDate, Calendar.MONTH)
+				,get(delaysEndDate, Calendar.DATE)
+				), 
+				startDate, endDate, Double.class)
+				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+		
+		ppeDelays = 
+				ctx.getExpressionContext().eval(
+				String.format(
+				"ATRASOS_PPE(FECHA(%d,%d,%d), FECHA(%d,%d,%d))"
+				,get(delaysStartDate, Calendar.YEAR)
+				,get(delaysStartDate, Calendar.MONTH)
+				,get(delaysStartDate, Calendar.DATE)
+
+				,get(delaysEndDate, Calendar.YEAR)
+				,get(delaysEndDate, Calendar.MONTH)
+				,get(delaysEndDate, Calendar.DATE)
+				), 
+				startDate, endDate, Double.class)
+				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+
+		ppeDelays = 
+				ctx.getExpressionContext().eval(
+				String.format(
+				"ATRASOS_PPE('%d/%d/%d', '%d/%d/%d')"
+				,get(delaysStartDate, Calendar.DATE)
+				,get(delaysStartDate, Calendar.MONTH)
+				,get(delaysStartDate, Calendar.YEAR)
+
+				,get(delaysEndDate, Calendar.DATE)
+				,get(delaysEndDate, Calendar.MONTH)
+				,get(delaysEndDate, Calendar.YEAR)
+				), 
+				startDate, endDate, Double.class)
+				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+
+		ppeDelays = 
+				ctx.getExpressionContext().eval(
+				String.format(
+				"ATRASOS_PPE()"
+				,get(delaysStartDate, Calendar.DATE)
+				,get(delaysStartDate, Calendar.MONTH)
+				,get(delaysStartDate, Calendar.YEAR)
+
+				,get(delaysEndDate, Calendar.DATE)
+				,get(delaysEndDate, Calendar.MONTH)
+				,get(delaysEndDate, Calendar.YEAR)
+				), 
+				startDate, endDate, Double.class)
+				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
 	}
 
 	@Test
@@ -6411,7 +6490,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				"4.6 / 100.00 * BASE_CGC"
 				}, null);
 		//@formatter:on
-		setData(aonContext, contract, "HORAS_NOMINA", "MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, 100.00)))");
 		setData(aonContext, contract, "COEFICIENTE_PARCIALIDAD","0.50");
 
 		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
@@ -6450,6 +6528,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				(PaymentType) null, 
 				(Byte) null);
 		
+
+		setData(aonContext, contract, "HORAS_NOMINA", "MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, 100.00)))");
 
 		addData(aonContext, contract, firstDayOfMonth, null, "APORTACION_EMPRESA_PPE","100.00");
 
@@ -6498,7 +6578,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
 		
 		
-		List<SalaryData> delaySalaryHours = delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.SALARY_HOURS.getName())).toList();
+		List<SalaryData> delaySalaryHours = delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.SALARY_HOURS.getName())).sorted((v1,v2) -> v1.getStartDate().compareTo(v2.getStartDate())).toList();
 		for (int i = 0; i < delaySalaryHours.size(); i++) {
 			String salaryHour = delaySalaryHours.get(i).getExpression();
 			org.junit.Assert.assertEquals(salaryHour, salaryHours.get(i));

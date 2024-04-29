@@ -411,6 +411,8 @@ public enum ContextVariable implements IResourceable {
 	public static final String AGREEMENT = "CONVENIO";
 	public static final String DELAY_PREVENT = "ANTICIPO_ATRASOS";
 
+	public static final String PPE_DELAYS = "ATRASOS_PPE";
+	
 	// Old
 	public static final String CHECK = "CHECK";
 	public static final String INPUT = "INPUT";
@@ -447,6 +449,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
 	
 	public static final String HIDE_BASE_CGC_MIN = "HIDE_BASE_CGC_MIN";
+	
 	
 	private static final List<String> NAMES =
 	Arrays.asList(new String []{
