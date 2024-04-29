@@ -1282,6 +1282,31 @@ public interface Properties {
 		Property<String> getCategoryNameProperty();
 	}
 	
+	public interface NewsletterProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getLayoutProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getSubjectProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getScopeNameProperty();
+		Property<Byte> getHighlightFirstProperty();
+		Property<Integer> getTemplateProperty();
+		Property<Byte> getNewsSeparatorProperty();
+	}
+	
+	public interface SurveyProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getScopeNameProperty();
+		Property<Byte> getActiveProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getDescriptionProperty();
+	}
+	
 	public interface EmployeeProperties{
 		Property<String> getNafProperty();
 		Property<String> getCCCProperty();
@@ -1877,5 +1902,13 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<String> getArgumentProperty();
 		Property<String> getAliasProperty();
+	}
+	
+	public interface MarketingCampaignProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getScopeProperty();
 	}
 }

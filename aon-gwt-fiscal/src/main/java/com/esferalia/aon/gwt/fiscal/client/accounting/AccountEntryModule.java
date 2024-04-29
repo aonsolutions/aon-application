@@ -1312,7 +1312,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		final AonTextBox concept = new AonTextBox();
 		concept.setVisibleLength(25);
-		concept.setMaxLength(32);
+		concept.setMaxLength(64);
 		concept.setEnabled(false);
 		concept.setValue("Mantener original");
 		

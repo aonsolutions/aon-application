@@ -56,6 +56,8 @@ public class Contract {
 	
 	private Over52Years over52Years; // ¿ Mayores de 25 años ?
 	
+	private boolean writtenContract;
+	
 	
 	//discapacidad
 	private String discapacidadType;
@@ -236,6 +238,10 @@ public class Contract {
 		return isBonus;
 	}
 	
+	public boolean isWrittenContract() {
+		return writtenContract;
+	}
+	
 	public Optional<Over52Years> getOver52Years() {
 		return Optional.ofNullable(over52Years);
 	}
@@ -306,6 +312,8 @@ public class Contract {
 		private boolean planRecovery;
 		
 		private Over52Years over52Years; // ¿ Mayores de 52 años ?
+
+		private boolean writtenContract;
 		
 		//discapacidad
 		private String discapacidadType;
@@ -556,6 +564,9 @@ public class Contract {
 			this.details.add(detail);
 		}
 		
+		public void setWrittenContract(boolean writtenContract) {
+			this.writtenContract = writtenContract;
+		}
 
 		public Contract build() {
 			Contract contract = new Contract();
@@ -605,6 +616,7 @@ public class Contract {
 			contract.discapacidadType = this.discapacidadType;
 			contract.collectiveType   = this.collectiveType;
 			contract.over52Years      = this.over52Years;
+			contract.writtenContract  = this.writtenContract;
 			return contract;
 		}
 	}

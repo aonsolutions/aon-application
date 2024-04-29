@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.marketing.client;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.marketing.client.marketing.QuestionModule;
+import com.esferalia.aon.gwt.marketing.client.quesrtion.QuestionModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -29,6 +29,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== MARKETING
 	
 	private static final String MARK_QUESTION_ENTRY_POINT = "QuestionModule";
+	private static final String MARKETING_CAMPAIGN_ENTRY_POINT = "MarketingCampaign";
 	
 	//	  ================================================================== ON MODULE LOAD
 	
@@ -74,8 +75,24 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if ( entryPoint.equalsIgnoreCase(MARKETING_CAMPAIGN_ENTRY_POINT)) {
+			GWT.runAsync(QuestionModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					QuestionModule questionModule = new QuestionModule();
+					questionModule.onModuleLoad();
+				}
+				
+			});
 		} 
 	}
+	
 	protected Occam getOccam() {
 		return new Occam()
 			.setDomainName(getCurrentDomainName())

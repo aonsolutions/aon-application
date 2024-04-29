@@ -262,6 +262,20 @@ export class AonTable extends AonElement {
         if(value.fn){
           td.addEventListener(EVENT.CLICK, value.fn);
         }
+      }  else if("icons" === item.type && value[id]) {
+        let span = this.createSpan(this.getId() + 'Icons')
+        value[id].forEach((icon,i) => {
+          let icon2 = this.createElement(TAG.I);
+          icon2.id = this.getId() + "Icon" + i;
+          icon2.className = icon.class || "material-icons";
+          icon2.style.marginRight = '15px';
+          icon2.innerHTML = icon.icon;
+          icon2.style.color = icon.color || "#5f6368";
+          icon2.title = icon.title; 
+          if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
+          span.appendChild(icon2);
+        });
+        td.appendChild(span);       
       } else if(item.type && item.type === "list" ) {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);

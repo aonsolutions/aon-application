@@ -19,11 +19,11 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinanceOrder;
@@ -245,7 +245,7 @@ public class FinanceEntryDAO {
 			if (invoice.getType() == null ) {
 				throw new AonCoreException( AonError.INVOICE_EMPTY_TYPE.getMessage() );
 			}
-			invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+			invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
 				private void fill( Account acc) {
 					if (acc == null) {
 						throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
@@ -256,22 +256,26 @@ public class FinanceEntryDAO {
 				}
 				
 				@Override
-				public void visitSales(Invoice invoice) {
+				public Void visitSales(Invoice invoice) {
 					fill( CustomerDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
+					return null;
 				}
 				
 				@Override
-				public void visitPurchase(Invoice invoice) {
+				public Void visitPurchase(Invoice invoice) {
 					fill( SupplierDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
+					return null;
 				}
 				
 				@Override
-				public void visitExpenses(Invoice invoice) {
+				public Void visitExpenses(Invoice invoice) {
 					fill( CreditorDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
+					return null;
 				}
 				@Override
-				public void visitUndeductible(Invoice invoice) {
+				public Void visitUndeductible(Invoice invoice) {
 					visitExpenses(invoice);
+					return null;
 				}
 				
 			});

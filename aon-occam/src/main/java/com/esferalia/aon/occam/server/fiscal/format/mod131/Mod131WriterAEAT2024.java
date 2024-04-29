@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IMod131W
 import com.esferalia.aon.occam.server.fiscal.format.mod131.Mod131Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod131WriterAEAT2024 implements IMod131Writer{ 
@@ -75,7 +76,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C02),17,2))
 
 		   // Actividades sin posibilidad de determinar datos base - Deducción por rentas obtenidas en Ceuta y Melilla
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod131Key.C03_1)))
+		   ,(wr, mod) -> wr.append(mod.getAmount(Mod131Key.C03_1)==1?"1":"2")
 		   // Actividades sin posibilidad de determinar datos base - Volumen de ventas o ingresos del trimestre
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03),10,2))
 //		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03_2),10,2))
@@ -120,7 +121,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		   // *******
 		   // *******
 			// Liquidación (3) - IV. Total liquidación - Deducción del art. 110.3.c) del Reglamento del Impuesto - Cuantía de los rendimientos netos de actividades económicas del ejercicio anterior al de devengo, en el caso de que no excedieran de 12.000 euros
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(0,1))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(getCuantiaDeduccion(mod),1))
 			// Liquidación (3) - IV. Total liquidación - Deducción del art. 110.3.c) del Reglamento del Impuesto - En el caso excepcional de que en el trimestre deba presentar tambien el modelo 130 de pago fraccionado, indique la cantidad reflejada en él por la presente deducción
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(0,5,2))
 		   // *******
@@ -177,6 +178,15 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 			this.propertyFillers = pf;
 		}
 		
+		private static int getCuantiaDeduccion(Mod131 mod) {
+			double c09 = mod.getAmount(Mod131Key.C091);
+			if ( AonNumberUtils.equals(100,c09)) return 1;
+			else if ( AonNumberUtils.equals(75,c09)) return 2;
+			else if ( AonNumberUtils.equals(50,c09)) return 3;
+			else if ( AonNumberUtils.equals(25,c09)) return 4;
+			return 0;
+		}
+
 		private void fillPage(Mod131 mod131, Writer wr) throws IOException {
 			for (IPropertyFiller propertyFiller : this.propertyFillers) {
 				propertyFiller.propertyFill(wr, mod131);
@@ -199,7 +209,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 			//6	13	4	An	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Epigrafe IAE
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(act), 4))
 			//7	17	1	An	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Epigrafe IAE  - Indicador auxiliar de actividad en el caso de epígrafes 659.4 y 691.9		blanco, "1" o "2"  (Nota 2)
-			,(wr, mod, act, comp) -> wr.append(" ")  // TODO
+			,(wr, mod, act, comp) -> wr.append(getSpecialEpigraph(act))  // TODO
 			//8	18	4	Num	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Comunidad, sociedad civil o similar: porcentaje de participación		2 enteros y 2 decimales
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.unsigned(act.getCom(), 4,2))
 			//9	22	3	Num	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Actividad de temporada: nº de días de ejercicio en el año anterior		3 enteros
@@ -332,7 +342,7 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		}
 		
 		private static int extractMun(Mod131Activity act) {
-			if ( "6594".equals(extractEpigraph( act) )) { // quioscos
+			if ( "6594".equals(extractEpigraph( act) ) && (AonStringUtils.contains(act.getDescription(),"revista"))) { // quioscos
 				if (act.getMun() == 0) return 5;		// Hasta 2.000 habitantes. 
 				else if (act.getMun() == 1) return 4;	// Desde 2.001 hasta 5.000 habitantes.
 				else if (act.getMun() == 2) return 3;	// Desde 5.001 hasta 10.000 habitantes.
@@ -396,6 +406,21 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 	public static String extractEpigraph(Mod131Activity activity) {
 		return AonStringUtils.remove(activity.getEpigraph(), AonStringUtils.DOT);
 	}
-	
+	public static String getSpecialEpigraph(Mod131Activity act) {
+		if ( "6594".equals(extractEpigraph( act) )) { // quioscos
+			if (AonStringUtils.contains(act.getDescription(),"revista")) {
+				return "2";
+			} else {
+				return "1";
+			}
+		} else if ( "6919".equals(extractEpigraph( act) )) { // Reparación de calzado
+			if (AonStringUtils.contains(act.getDescription(),"consumo")) {
+				return "2";
+			} else {
+				return "1";
+			}
+		} 
+		return " ";
+	}
 }
 

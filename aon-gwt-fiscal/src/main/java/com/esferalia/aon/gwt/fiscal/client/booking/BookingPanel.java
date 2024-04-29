@@ -1508,12 +1508,12 @@ public class BookingPanel extends MainEntryPoint {
 			onSearchFees();
 		});
 		
-		syncDomains = new AonToolbarButton("Sincronizar dominio", AON.CSS.aonIconSync());
+		syncDomains = new AonToolbarButton("Sincronizaci\u00f3n contrataci\u00f3n clientes", AON.CSS.aonIconSync());
 		syncDomains.addClickHandler(e -> {
 			syncDomain();
 		});
 		
-		unSyncDomains = new AonToolbarButton("Desincronizar dominio", AON.CSS.aonIconSyncDisabled());
+		unSyncDomains = new AonToolbarButton("Desincronizaci\u00f3n contrataci\u00f3n clientes", AON.CSS.aonIconSyncDisabled());
 		unSyncDomains.addClickHandler(e -> {
 			unSyncDomain();
 		});

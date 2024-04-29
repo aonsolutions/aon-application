@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
@@ -109,23 +112,24 @@ public abstract class SyncCustomerFeeDialog extends AonCustomDialog {
 		customerFeeSuggestBox.setAutoSelectEnabled(false);
 		customerFeeSuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
 		
+		getCustomerFeeSuggestion(null);
+		
 		customerFeeSuggestBox.addSelectionHandler(e -> {
 			customerFeeSuggestBox.hideSuggestionList();
-			selectedCustomerFee = customerFeeSuggestions.get(customerFeeSuggestBox.getValue());
+			
+			Integer feeId = Integer.parseInt(customerFeeSuggestBox.getValue().split("\\[")[1].split("\\]")[0]);
+			List<Fee> fees = customerFeeSuggestions.values().stream().collect(Collectors.toList());
+			for(Fee fee : fees) {
+				if(fee.getId().equals(feeId)) {
+					selectedCustomerFee = fee;
+					break;
+				}
+			}
+
 		});
 		
 		customerFeeSuggestBox.addValueChangeHandler(e -> {
 			if(AonStringUtils.isBlank(customerFeeSuggestBox.getValue())) AonMessagePanel.showError(messagePanel, "El campo cuota es obligatorio");
-		});
-		
-		customerFeeSuggestBox.addKeyUpHandler(e -> {
-			String customerFeeQuery = customerFeeSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				customerFeeSuggestBox.setValue("");
-				customerFeeQuery = null;
-				getCustomerFeeSuggestion(customerFeeQuery);
-			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
-				getCustomerFeeSuggestion(customerFeeQuery);
 		});
 		
 		customerFeePanel.add(customerFeeLabel);
@@ -139,11 +143,13 @@ public abstract class SyncCustomerFeeDialog extends AonCustomDialog {
 			public void onSuccess(Map<String, Fee> customerFeeSuggestionsDB) {
 				customerFeeSuggestions = customerFeeSuggestionsDB;
 				
+				List<String> suggestions = new ArrayList<String>();
+				customerFeeSuggestions.values().forEach(fee -> suggestions.add("[" + fee.getId() + "] " + fee.getDescription()));
+				
 				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerFeeSuggestBox.getSuggestOracle();
 				orclSb.clear();
-				orclSb.addAll(customerFeeSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(customerFeeSuggestions.keySet());
-				customerFeeSuggestBox.showSuggestionList();
+				orclSb.addAll(suggestions);
+				orclSb.setDefaultSuggestionsFromText(suggestions);
 			}
 			
 			@Override
