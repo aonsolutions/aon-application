@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -66,12 +67,13 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, DES(AON.MSG.description()					,"auto"  ,null)
-		, TYP(AON.MSG.type()						,"100px"  ,null)
+		, TYP(AON.MSG.type()						,"100px" ,null)
 		, CAN("Canal"								,"150px" ,null)
-		, STD("F. Inicio"							,"150px" ,null)
-		, END("F. Fin"								,"150px" ,null)
+		, BUD("Presupuesto"							,"150px" ,null)
+		, STD("F. Inicio"							,"100px" ,null)
+		, END("F. Fin"								,"100px" ,null)
 		, SUR("Cuestionario"						,"150px" ,null)
-		, TGT("Clientes Potenciales"				,"150px" ,null)
+		, TGT("Clientes Potenciales"				,"120px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
 
@@ -253,6 +255,9 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		tab.setWidget(r, col, new Label(marketingAction.getMediaType().getDescription()));
 		col++;
 		
+		tab.setWidget(r, col, new Label(marketingAction.getBudget().toString()));
+		col++;
+		
 		tab.setWidget(r, col, new Label(marketingAction.getStartDate() == null ? "" : formatDate.format(marketingAction.getStartDate())));
 		col++;
 		
@@ -273,6 +278,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		TextBox descriptionBox = new TextBox();
 		Label typeAction = new Label();
 		ListBox typeListBox = new ListBox();
+		AonDoubleBox budget = new AonDoubleBox(15, 2);
 		AonDateBox startDate = new AonDateBox();
 		AonDateBox endDate = new AonDateBox();
 		
@@ -284,6 +290,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 				marketingAction.setMediaType(MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue())));
 				marketingAction.setStartDate(startDate.getValue());
 				marketingAction.setEndDate(endDate.getValue());
+				marketingAction.setBudget(budget.getValue());
 				
 				save(marketingAction, msg);
 			}
@@ -297,6 +304,21 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 				marketingAction.setMediaType(MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue())));
 				marketingAction.setStartDate(startDate.getValue());
 				marketingAction.setEndDate(endDate.getValue());
+				marketingAction.setBudget(budget.getValue());
+				
+				save(marketingAction, msg);
+			}
+		};
+		
+		ValueChangeHandler<Double> valueChangeHandlerDouble = new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				marketingAction.setDescription(descriptionBox.getValue());
+				marketingAction.setMediaType(MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue())));
+				marketingAction.setStartDate(startDate.getValue());
+				marketingAction.setEndDate(endDate.getValue());
+				marketingAction.setBudget(budget.getValue());
 				
 				save(marketingAction, msg);
 			}
@@ -312,6 +334,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 			marketingAction.setMediaType(MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue())));
 			marketingAction.setStartDate(startDate.getValue());
 			marketingAction.setEndDate(endDate.getValue());
+			marketingAction.setBudget(budget.getValue());
 			
 			switch (MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue()))) {
 				case PHONE:
@@ -338,6 +361,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 			
 			save(marketingAction, msg);
 		});
+		budget.addValueChangeHandler(valueChangeHandlerDouble);
 		startDate.addValueChangeHandler(valueChangeHandlerDate);
 		endDate.addValueChangeHandler(valueChangeHandlerDate);
 		
@@ -367,6 +391,12 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		}
 		setSelectedValueLB(typeListBox, marketingAction.getMediaType().getValue() + "");
 		tab.setWidget(r, col, typeListBox);
+		col++;
+		
+		budget.setStyleName(AON.CSS.aonBorderNone());
+		budget.addStyleName(AON.CSS.aonWidthAll());
+		budget.setValue(marketingAction.getBudget());
+		tab.setWidget(r, col, budget);
 		col++;
 		
 		startDate.setStyleName(AON.CSS.aonBorderNone());

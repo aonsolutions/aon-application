@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -11,13 +12,18 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonErrorPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetCreationPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetCreationPanel.AonMarketingActionTargetCreationPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetPanel.AonMarketingActionTargetPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
@@ -30,12 +36,20 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -65,6 +79,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	private TextBox description = new TextBox();
 	private Label actionType = new Label();
 	private ListBox typeListBox = new ListBox();
+	private AonDoubleBox budget = new AonDoubleBox(15, 2);
 	private AonDateBox startDate = new AonDateBox();
 	private AonDateBox endDate = new AonDateBox();
 	
@@ -107,17 +122,106 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		backButton.addClickHandler(e -> onActionBackClick());
 		toolbar.add(backButton);
 		
+		AonToolbarButton deleteButton = new AonToolbarButton("Borrar acci\u00f3n", AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(e -> {
+			deleteButton.setEnabled(false);
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Acci\u00f3n",
+					new HTML("Se va a proceder a eliminar la acci\u00f3n <b>" + marketingAction.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					deleteButton.setEnabled(true);
+				}
+
+				@Override
+				public void onAccept() {
+					onActionDeleteClick(marketingAction);
+				}
+			});
+			
+		});
+		toolbar.add(deleteButton);
+		
 		AonToolbarButton saveButton = new AonToolbarButton("Guardar acci\u00f3n", AON.CSS.aonIconSave());
 		saveButton.addClickHandler(e -> saveMarketingAction());
 		toolbar.add(saveButton);
 		
-		AonToolbarButton newActionButton = new AonToolbarButton("Nuevo cliente", AON.CSS.aonIconAdd());
-		newActionButton.addClickHandler(e -> showMarketingActionTargetDialog());
-		toolbar.add(newActionButton);
+		AonToolbarButton newActionTargetButton = new AonToolbarButton("A\u00f1adir cliente potencial", AON.CSS.aonIconAdd());
+		newActionTargetButton.addClickHandler(e -> showMarketingActionTargetDialog());
+		toolbar.add(newActionTargetButton);
+		
+		AonToolbarButton importActionTargetButton = new AonToolbarButton("Crear cliente potencial (Servlet)", AON.CSS.aonIconImport());
+		importActionTargetButton.addClickHandler(e -> importActionTarget());
+		toolbar.add(importActionTargetButton);
 		
 		addNorth(toolbar, 50);
 	}
-	
+
+	private void importActionTarget() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption( "Cliente Potencial" );
+		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), this.marketingAction, new AonMarketingActionTargetCreationPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(JSONObject json) {
+				dialog.hide();
+				String host = Window.Location.getHost();
+				String endPoint = "/ms/api/action-target/";
+				
+				HashMap<String, String> headers = new HashMap<>();
+				headers.put("domain_name", options.getDomainName());
+				headers.put("domain_login", options.getUser());
+				headers.put("domain_id", String.valueOf(options.getDomain()));
+				
+				JSONObject body = new JSONObject();
+				body.put("actionTarget", json);
+				
+				// Create a URL builder and add query parameters
+				UrlBuilder urlBuilder = new UrlBuilder();
+				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+				urlBuilder.setHost(host); 
+				urlBuilder.setPath(endPoint);
+				
+				// Create the request builder with the complete URL
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				
+				headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+				
+				try {
+				    // Send the request
+				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				        public void onResponseReceived(Request request, Response response) {
+				        	marketingActionPanel.resetSearchOffset();
+							setMarketingAction(marketingAction);
+				        }
+
+						public void onError(Request request, Throwable exception) {
+							
+				        }
+				    });
+				} catch (RequestException exception) {
+					
+				}
+			}
+		}) {
+
+			@Override
+			protected void onResize() {
+				dialog.showLoaded();
+			}};
+		
+		dialog.add( aonMarketingActionPanel );
+		dialog.showLoaded();
+	}
+
 	private void saveMarketingAction() {
 		AonMessagePanel.showLoading(messagePanel, "Guardando acci\u00f3n " + this.marketingAction.getDescription());
 		
@@ -125,6 +229,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		marketingAction.setMediaType(MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue())));
 		marketingAction.setStartDate(startDate.getValue());
 		marketingAction.setEndDate(endDate.getValue());
+		marketingAction.setBudget(budget.getValue());
 		
 		switch (MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue()))) {
 			case PHONE:
@@ -179,7 +284,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 
 	private void showMarketingActionTargetDialog() {
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "ACCI\u00d3N" );
+		dialog.setCaption( "Cliente Potencial" );
 		final AonMarketingActionTargetPanel aonMarketingActionPanel = new AonMarketingActionTargetPanel( options.getDomainName(), options.getDomain(), options.getUser(), this.marketingAction, new AonMarketingActionTargetPanelCallback() {
 			
 			@Override
@@ -283,21 +388,27 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		});
 		setSelectedValueLB(typeListBox, marketingAction.getMediaType().getValue().toString());
 		table.setWidget(3,1,typeListBox);
-
-		table.setWidget(4,0,new InlineLabel("F. Inicio"));
+		
+		table.setWidget(4,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
+		budget.setStyleName(AON.CSS.aonInputText());
+		budget.setValue(marketingAction.getBudget());
+		table.setWidget(4,1,budget);
+
+		table.setWidget(5,0,new InlineLabel("F. Inicio"));
+		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
 		startDate.setStyleName(AON.CSS.aonInputText());
 		startDate.setValue(marketingAction.getStartDate());
-		table.setWidget(4,1,startDate);
+		table.setWidget(5,1,startDate);
 
-		table.setWidget(5,0,new InlineLabel("F. Fin"));
-		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
+		table.setWidget(6,0,new InlineLabel("F. Fin"));
+		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
 		endDate.setStyleName(AON.CSS.aonInputText());
 		endDate.setValue(marketingAction.getEndDate());
-		table.setWidget(5,1,endDate);
+		table.setWidget(6,1,endDate);
 
-		table.setWidget(6,0,new InlineLabel("Noticia"));
-		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
+		table.setWidget(7,0,new InlineLabel("Noticia"));
+		table.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTableLabel());
 		newsSuggestBox.setStyleName(AON.CSS.aonInputText());
 		newsSuggestBox.addStyleName(AON.CSS.aonWidthAll());
 		newsSuggestBox.setAutoSelectEnabled(false);
@@ -313,11 +424,11 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				newsSuggestBox.setValue(newOpt.isPresent() ? "[" + newOpt.get().getId() + "] " + newOpt.get().getTitle() : "");
 			} else newsSuggestBox.setValue(null);
 		});
-		table.setWidget(6,1,newsSuggestBox);
-		table.getCellFormatter().setStyleName(6, 1, AON.CSS.aonWidthAll());
+		table.setWidget(7,1,newsSuggestBox);
+		table.getCellFormatter().setStyleName(7, 1, AON.CSS.aonWidthAll());
 
-		table.setWidget(7,0,new InlineLabel("Boletin"));
-		table.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTableLabel());
+		table.setWidget(8,0,new InlineLabel("Boletin"));
+		table.getCellFormatter().setStyleName(8, 0, AON.CSS.aonTableLabel());
 		newsletterSuggestBox.setStyleName(AON.CSS.aonInputText());
 		newsletterSuggestBox.addStyleName(AON.CSS.aonWidthAll());
 		newsletterSuggestBox.setAutoSelectEnabled(false);
@@ -333,11 +444,11 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				newsletterSuggestBox.setValue(newletterOpt.isPresent() ? "[" + newletterOpt.get().getId() + "] " + newletterOpt.get().getName() : "");
 			} else newsletterSuggestBox.setValue(null);
 		});
-		table.setWidget(7,1,newsletterSuggestBox);
-		table.getCellFormatter().setStyleName(7, 1, AON.CSS.aonWidthAll());
+		table.setWidget(8,1,newsletterSuggestBox);
+		table.getCellFormatter().setStyleName(8, 1, AON.CSS.aonWidthAll());
 		
-		table.setWidget(8,0,new InlineLabel("Cuestionario"));
-		table.getCellFormatter().setStyleName(8, 0, AON.CSS.aonTableLabel());
+		table.setWidget(9,0,new InlineLabel("Cuestionario"));
+		table.getCellFormatter().setStyleName(9, 0, AON.CSS.aonTableLabel());
 		surveySuggestBox.setStyleName(AON.CSS.aonInputText());
 		surveySuggestBox.addStyleName(AON.CSS.aonWidthAll());
 		surveySuggestBox.setAutoSelectEnabled(false);
@@ -353,8 +464,8 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				surveySuggestBox.setValue(surveyOpt.isPresent() ? "[" + surveyOpt.get().getId() + "] " + surveyOpt.get().getDescription() : "");
 			} else surveySuggestBox.setValue(null);
 		});
-		table.setWidget(8,1,surveySuggestBox);
-		table.getCellFormatter().setStyleName(8, 1, AON.CSS.aonWidthAll());
+		table.setWidget(9,1,surveySuggestBox);
+		table.getCellFormatter().setStyleName(9, 1, AON.CSS.aonWidthAll());
 		
 		showMarketingActionMediaOptions(table, marketingAction.getMediaType());
 		
@@ -615,5 +726,6 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	}
 	
 	protected abstract void onActionBackClick();
+	protected abstract void onActionDeleteClick(MarketingAction marketingAction);
 
 }

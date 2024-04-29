@@ -73,6 +73,11 @@ public class MarketingCompaignModule extends MainEntryPoint {
 			protected void onBackClick() {
 				showMarketingCampaignList();
 			}
+
+			@Override
+			protected void onCampaignDeleteClick(MarketingCampaign marketingCampaign) {
+				deleteMarketingCampaign(marketingCampaign);
+			}
 			
 		};
 		
@@ -102,6 +107,21 @@ public class MarketingCompaignModule extends MainEntryPoint {
 	private void showSelectedMarketingCampaign(MarketingCampaign marketingCampaign) {
 		deckLayoutPanel.showWidget(marketignCampaignEntryPanel);
 		marketignCampaignEntryPanel.setMarketingCampaign(marketingCampaign);
+	}
+	
+	private void deleteMarketingCampaign(MarketingCampaign marketingCampaign) {
+		COMMON_SERVICE.deleteMarketingCampaign(options.getDomainName(), options.getDomain(), options.getUser(), marketingCampaign.getId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				showMarketingCampaignList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error borrado: " + caught.getMessage());
+			}
+		});
 	}
 	
 }

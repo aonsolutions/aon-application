@@ -73,6 +73,24 @@ public class MarketingCampaignDAO {
 		
 		return marketingCampaign;
 	}
+	
+	public static MarketingCampaign getByAction(CloseableAONContext ctx, Integer actionId) {
+		Record marketingCampaignRecord = ctx.getDslContext().select().from(MK_ACTION)
+				.join(MK_CAMPAIGN)
+				.on(MK_CAMPAIGN.ID.eq(MK_ACTION.CAMPAIGN))
+				.leftOuterJoin(SCOPE)
+				.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+				.where(MK_ACTION.ID.eq(actionId))
+				.fetchOne();
+		
+		if(null == marketingCampaignRecord) return null;
+		
+		MarketingCampaign marketingCampaign = new MarketingCampaignFiller().apply(marketingCampaignRecord);
+		
+		getMarketingCampaignActions(ctx, marketingCampaign);
+		
+		return marketingCampaign;
+	}
 
 	public static List<MarketingCampaign> getList(CloseableAONContext ctx, MarketingCompaignParams params) {
 		Condition condition = paramsToCondition(ctx, params);
@@ -136,6 +154,7 @@ public class MarketingCampaignDAO {
 				.set(MK_CAMPAIGN.ACTIVE, marketingCampaign.isActive() ? (byte)1 : (byte)0)
 				.set(MK_CAMPAIGN.DESCRIPTION, marketingCampaign.getDescription())
 				.set(MK_CAMPAIGN.SCOPE, marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getId())
+				.set(MK_CAMPAIGN.BUDGET, marketingCampaign.getBudget())
 				.returning(MK_CAMPAIGN.ID)
 				.fetchOne()
 				.getValue(MK_CAMPAIGN.ID);
@@ -153,6 +172,7 @@ public class MarketingCampaignDAO {
 		.set(MK_CAMPAIGN.ACTIVE, marketingCampaign.isActive() ? (byte)1 : (byte)0)
 		.set(MK_CAMPAIGN.DESCRIPTION, marketingCampaign.getDescription())
 		.set(MK_CAMPAIGN.SCOPE, marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getId())
+		.set(MK_CAMPAIGN.BUDGET, marketingCampaign.getBudget())
 		.where(MK_CAMPAIGN.ID.eq(marketingCampaign.getId()))
 		.execute();
 		
@@ -161,10 +181,13 @@ public class MarketingCampaignDAO {
 		return marketingCampaign;
 	}
 
-	public static void delete(AONContext ctx, Integer id) {
+	public static void delete(CloseableAONContext ctx, Integer id) {
+		List<Integer> marketingActionIds = ctx.getDslContext().select(MK_ACTION.ID).from(MK_ACTION).where(MK_ACTION.CAMPAIGN.eq(id)).fetch(MK_ACTION.ID);
+		marketingActionIds.forEach(marketingActionId -> deleteAction(ctx, marketingActionId));
+		
 		ctx.getDslContext().delete(MK_CAMPAIGN)
-		.where(MK_CAMPAIGN.ID.eq(id))
-		.execute();
+			.where(MK_CAMPAIGN.ID.eq(id))
+			.execute();
 		
 		ctx.log().debug("DELETE MK_CAMPAIGN id:" + id);
 	}
@@ -202,6 +225,10 @@ public class MarketingCampaignDAO {
 			.fetchOne();
 		
 		MarketingAction marketingAction = MarketingActionFiller.build(marketingActionRecord);
+		
+		if(marketingAction.getMarketingCampaign() == null) {
+			marketingAction.setMarketingCampaign(getByAction(ctx, marketingAction.getId()));
+		}
 			
 		getMarketingActionTargets(ctx, marketingAction);
 		
@@ -230,9 +257,12 @@ public class MarketingCampaignDAO {
 	}
 
 	public static void deleteAction(CloseableAONContext ctx, Integer id) {
+		List<Integer> marketingActionTargetIds = ctx.getDslContext().select(MK_ACTION_TARGET.ID).from(MK_ACTION_TARGET).where(MK_ACTION_TARGET.ACTION.eq(id)).fetch(MK_ACTION_TARGET.ID);
+		marketingActionTargetIds.forEach(marketingActionTargetId -> deleteActionTarget(ctx, marketingActionTargetId));
+		
 		ctx.getDslContext().delete(MK_ACTION)
-		.where(MK_ACTION.ID.eq(id))
-		.execute();
+			.where(MK_ACTION.ID.eq(id))
+			.execute();
 		
 		ctx.log().debug("DELETE MK_ACTION id:" + id);
 	}
@@ -255,6 +285,7 @@ public class MarketingCampaignDAO {
 				.set(MK_ACTION.NEWSLETTER, marketingAction.getNewsletter())
 				.set(MK_ACTION.DESCRIPTION, marketingAction.getDescription())
 				.set(MK_ACTION.NEWS, marketingAction.getNews())
+				.set(MK_ACTION.BUDGET, marketingAction.getBudget())
 				.returning(MK_ACTION.ID)
 				.fetchOne()
 				.getValue(MK_ACTION.ID);
@@ -277,6 +308,7 @@ public class MarketingCampaignDAO {
 			.set(MK_ACTION.NEWSLETTER, marketingAction.getNewsletter())
 			.set(MK_ACTION.DESCRIPTION, marketingAction.getDescription())
 			.set(MK_ACTION.NEWS, marketingAction.getNews())
+			.set(MK_ACTION.BUDGET, marketingAction.getBudget())
 			.where(MK_ACTION.ID.eq(marketingAction.getId()))
 		.execute();
 		
@@ -404,6 +436,7 @@ public class MarketingCampaignDAO {
 				.setActive(r.getValue(MK_CAMPAIGN.ACTIVE) == (byte)1)
 				.setDescription(r.getValue(MK_CAMPAIGN.DESCRIPTION))
 				.setScope(null != r.getValue(MK_CAMPAIGN.SCOPE) ? ScopeFiller.buildScope(r) : null)
+				.setBudget(r.getValue(MK_ACTION.BUDGET))
 				;
 		}
 	}
@@ -433,6 +466,7 @@ public class MarketingCampaignDAO {
 				.setNewsletter(r.getValue(MK_ACTION.NEWSLETTER))
 				.setDescription(r.getValue(MK_ACTION.DESCRIPTION))
 				.setNews(r.getValue(MK_ACTION.NEWS))
+				.setBudget(r.getValue(MK_ACTION.BUDGET))
 				;
 		}
 
