@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- XML Schema SEPE ver.5.000 31/05/2012-->
-<!-- ============================================= -->
-<!-- Updated by Esferalia Networks v1.0 20/11/2012 -->
-<!-- Added inheritance definition -->
+<!-- XML Schema SEPE ver.5.000 22/07/2014-->
+<!-- Updated by AON Solutions 26/04/2024 -->
+<!-- Added inheritance definition        -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
@@ -23,7 +22,7 @@
 	</xsd:annotation>
 	<xsd:element name="CONTRATOS">
 		<xsd:complexType>
-			<xsd:sequence maxOccurs="5">
+			<xsd:sequence maxOccurs="1000">
 				<xsd:element name="CONTRATO_100" type="CONTRATO100TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_130" type="CONTRATO130TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_150" type="CONTRATO150TYPE" minOccurs="0"/>
@@ -36,7 +35,13 @@
 				<xsd:element name="CONTRATO_401" type="CONTRATO401TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_402" type="CONTRATO402TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_403" type="CONTRATO403TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_404" type="CONTRATO404TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_405" type="CONTRATO405TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_406" type="CONTRATO406TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_407" type="CONTRATO407TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_410" type="CONTRATO410TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_412" type="CONTRATO412TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_413" type="CONTRATO413TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_420" type="CONTRATO420TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_421" type="CONTRATO421TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_430" type="CONTRATO430TYPE" minOccurs="0"/>
@@ -46,7 +51,11 @@
 				<xsd:element name="CONTRATO_501" type="CONTRATO501TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_502" type="CONTRATO502TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_503" type="CONTRATO503TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_505" type="CONTRATO505TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_506" type="CONTRATO506TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_507" type="CONTRATO507TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_510" type="CONTRATO510TYPE" minOccurs="0"/>
+				<xsd:element name="CONTRATO_513" type="CONTRATO513TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_520" type="CONTRATO520TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_530" type="CONTRATO530TYPE" minOccurs="0"/>
 				<xsd:element name="CONTRATO_540" type="CONTRATO540TYPE" minOccurs="0"/>
@@ -77,6 +86,9 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_1_2015" type="DATOS_RDL_1_2015TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -97,6 +109,7 @@
 			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -119,6 +132,9 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
+			<!-- <xsd:element name="DATOS_AYUDA_SNGJ" type="DATOS_AYUDA_SNGJTYPE" minOccurs="0" /> -->
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -141,6 +157,10 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_1_2015" type="DATOS_RDL_1_2015TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -163,6 +183,7 @@
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -186,6 +207,9 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -208,6 +232,9 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_1_2015" type="DATOS_RDL_1_2015TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -230,6 +257,7 @@
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -254,13 +282,15 @@
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EMPRENDEDORES" type="DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_3_2014" type="DATOS_RDL_3_2014TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO401TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Obra o servicio a tiempo completo</xsd:documentation>
+			<xsd:documentation xml:lang="es">Obra o servicio a tiempo completo. Por el RDL 32/2021 no se pueden comunicar los contratos 401 con fecha igual o superior al 31 de marzo de 2022.</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -274,13 +304,14 @@
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO402TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Eventual por circunstancias de la producción a tiempo completo</xsd:documentation>
+			<xsd:documentation xml:lang="es">Por circunstancias de la producción a tiempo completo</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -294,6 +325,8 @@
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -316,9 +349,9 @@
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="CONTRATO410TYPE">
+		<xsd:complexType name="CONTRATO404TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Interinidad a tiempo completo</xsd:documentation>
+			<xsd:documentation xml:lang="es">Personal investigador predoctoral en formación</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -327,9 +360,115 @@
 			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
-			<xsd:element name="DATOS_CONTRATO_INTERINIDAD" type="DATOS_CONTRATOINTERINIDADTYPE"/>
+			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_INVESTIGACION" type="DATOS_CONTRATOINVESTIGACIONTYPE"/>
+			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO405TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Vinculado a programas de políticas activas de empleo. T. Completo</xsd:documentation>
+			<!--xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo-->
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO406TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Duración determinada financiado con fondos europeos tiempo completo</xsd:documentation>
+			<!--xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo-->
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO407TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Contrato Artístico de duración determinada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO410TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Sustitución a tiempo completo</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_SUSTITUCION" type="DATOS_CONTRATOSUSTITUCIONTYPE"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO412TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Contrato de acceso de personal investigador doctor a tiempo completo</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOSCONTRATOPRACTICAS" type="DATOSCONTRATOPRACTICASTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_INVESTIGACION" type="DATOS_CONTRATOINVESTIGACIONTYPE"/>
+			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO413TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Deportistas profesionales a tiempo completo</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
@@ -337,7 +476,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO420TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Prácticas a tiempo completo</xsd:documentation>
+			<xsd:documentation xml:lang="es">Formativo para la obtención de la práctica profesional a tiempo completo</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -351,13 +490,15 @@
 			<xsd:element name="DATOS_CONTRATO_INVESTIGACION" type="DATOS_CONTRATOINVESTIGACIONTYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="REDUCCION_D_A_20" type="REDUCCION_D_A_20TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO421TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Formación</xsd:documentation>
+			<xsd:documentation xml:lang="es">Formación en alternancia</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -371,6 +512,8 @@
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_FORMACION" type="DATOS_REDUCCION_FORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="REDUCCION_D_A_20" type="REDUCCION_D_A_20TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_AYUDA_ACOMP_SNGJ" type="DATOS_AYUDA_ACOMP_SNGJTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -424,16 +567,21 @@
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
 			<xsd:element name="DATOS_EXCLUSION_SOCIAL" type="DATOS_EXCLUSIONSOCIALTYPE"/>
-			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOSCONTRATOPRACTICAS" type="DATOSCONTRATOPRACTICASTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE" minOccurs="0"/>
-			<xsd:element name="DATOS_CONTRATO_INTERINIDAD" type="DATOS_CONTRATOINTERINIDADTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_SUSTITUCION" type="DATOS_CONTRATOSUSTITUCIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COPIA_BASICA" type="DATOS_COPIABASICATYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_FORMACION" type="DATOS_REDUCCION_FORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_AYUDA_ACOMP_SNGJ" type="DATOS_AYUDA_ACOMP_SNGJTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -461,7 +609,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO501TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Obra o servicio a tiempo parcial</xsd:documentation>
+			<xsd:documentation xml:lang="es">Obra o servicio a tiempo parcial. Por el RDL 32/2021 no se pueden comunicar los contratos 501 con fecha igual o superior al 31 de marzo de 2022.</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -477,13 +625,15 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO502TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Eventual por circunstancias de la producción a tiempo parcial</xsd:documentation>
+			<xsd:documentation xml:lang="es">Por circunstancias de la producción a tiempo parcial</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -498,6 +648,8 @@
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_EXTRANJERO" type="DATOS_CONTRATO_EXTRANJEROTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -521,9 +673,40 @@
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="CONTRATO510TYPE">
+	<xsd:complexType name="CONTRATO505TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Interinidad a tiempo parcial</xsd:documentation>
+			<xsd:documentation xml:lang="es">Vinculado a programas de políticas activas de empleo. T. Parcial</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO506TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Duración determinada financiado con fondos europeos a tiempo parcial</xsd:documentation>
+			<!--xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo-->
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO507TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Contrato Artístico de duración determinada</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -533,9 +716,45 @@
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
 			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
-			<xsd:element name="DATOS_CONTRATO_INTERINIDAD" type="DATOS_CONTRATOINTERINIDADTYPE"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO510TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Sustitución a tiempo parcial</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_SUSTITUCION" type="DATOS_CONTRATOSUSTITUCIONTYPE"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CONTRATO513TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Deportistas profesionales a tiempo parcial</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
+			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
@@ -543,7 +762,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO520TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Prácticas a tiempo parcial</xsd:documentation>
+			<xsd:documentation xml:lang="es">Formativo para la obtención de la práctica profesional a tiempo parcial</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -559,6 +778,8 @@
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="REDUCCION_D_A_20" type="REDUCCION_D_A_20TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -633,16 +854,20 @@
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
 			<xsd:element name="DATOS_EXCLUSION_SOCIAL" type="DATOS_EXCLUSIONSOCIALTYPE"/>
-			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOSCONTRATOPRACTICAS" type="DATOSCONTRATOPRACTICASTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
-			<xsd:element name="DATOS_CONTRATO_INTERINIDAD" type="DATOS_CONTRATOINTERINIDADTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_CONTRATO_SUSTITUCION" type="DATOS_CONTRATOSUSTITUCIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COPIA_BASICA" type="DATOS_COPIABASICATYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_REDUCCION_RDL_1_2011" type="DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_4_2013" type="DATOS_RDL_4_2013TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_GARANTIA_JUVENIL" type="DATOS_RDL_GARANTIA_JUVENILTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -671,7 +896,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="CONTRATO970TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Adscripción en colaboración social</xsd:documentation>
+			<xsd:documentation xml:lang="es">Adscripción en colaboración social.</xsd:documentation>
 			<xsd:appinfo>
 				<inheritance:implements>com.esferalia.aon.sepe.api.contract.model.IContratoType</inheritance:implements>
 			</xsd:appinfo>
@@ -683,6 +908,7 @@
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -715,10 +941,12 @@
 			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
 			<xsd:element name="DATOS_TRABAJADOR" type="DATOS_TRABAJADORTYPE"/>
 			<xsd:element name="DATOS_GENERALES_CONTRATO" type="DATOS_GENERALESCONTRATOTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COPIA_BASICA" type="DATOS_COPIABASICATYPE"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_RDL_13_2020" type="DATOS_RDL_13_2020TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -821,16 +1049,25 @@
 			</xsd:element>
 			<xsd:element name="FECHA_TERMINO" type="FECHATYPE" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Fecha de término del contrato.  Obligatoria para los contratos de códigos: 402, 502, 430, 530, 420, 520, 421, 441, 541, 452, 552, 970.    Opcional para los contratos de códigos :  401, 501, 410, 510, 403, 503, 540, 980, 990.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Fecha de término del contrato.  Obligatoria para los contratos de códigos: 402, 502, 405, 505, 430, 530, 412, 420, 520, 421, 441, 541, 452, 552, 970. Opcional para los contratos de códigos :  401, 501, 404, 406, 407, 506, 507, 410, 510, 540, 413, 513, 980, 990.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="IND_CONVENIO_COLECTIVO" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de convenio colectivo.   Obligatorio para : - contratos de códigos 402 y 502 cuando su duración está entre 6 y 12 meses.   - contratos de código 421 cuando su duración está entre 6 y 12 meses  - contratos de código 401, 501, 450 con modalidad 401 y 550 con modalidad 501 iniciados a partir del 18/06/2010 cuando su duración está entre 36 y 48 meses.    Refleja la existencia ("S") o no existencia ("N") de un convenio colectivo que autorice estas duraciones. Para el resto de contratos que no se encuentran en uno de los casos anteriores, este elemento no debe aparecer en el fichero a enviar.</xsd:documentation>
+					<xsd:documentation xml:lang="es">
+						Indicador de convenio colectivo.   Obligatorio para:
+						- contratos de códigos 402 y 502 cuando su duración está entre 6 y 12 meses.  
+						- contrato de código 404 cuando su duración sea inferior a un año, si el trabajador ha tenido un contrato predoctoral anterior. Refleja la existencia ("S") o no existencia ("N") de un contrato predoctoral.
+						- contrato de código 412 cuando su duración sea inferior a tres años, si el trabajador ha tenido un contrato anterior de este tipo. Refleja la existencia ("S") o no existencia ("N") de un contrato de este tipo.
+						- contratos de código 421 cuando su duración está entre 24 y 36 meses, y la fecha de inicio sea anterior al 30-03-2022. Refleja la existencia ("S") o no existencia ("N") de un convenio colectivo que autorice estas duraciones.
+						- Para los contratos de códigos 402 y 502 y sus modalidades 450-402 y 550-502 cuando su duración sea igual o inferior a 90 días, situación previsible:
+						Respuesta Si ("C") o Respuesta No ("D").
+						Para el resto de contratos que no se encuentran en uno de los casos anteriores, este elemento no debe aparecer en el fichero a enviar.					
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[SN\s]"/>
+						<xsd:pattern value="[SNCD\s]"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -850,7 +1087,7 @@
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[SCEFG\s]"/>
+						<xsd:pattern value="[SCEFGHJK\s]"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -936,7 +1173,7 @@
 			</xsd:element>
 			<xsd:element name="IND_EMPRESA_AAPP_UNIVERSIDAD" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de empresa. Obligatorio (S/N) para los códigos 401, 501, 450 con modalidad 401 y 550 con modalidad 501 iniciados a partir de 19/09/2010 cuando no cumpla con la duración válida y tampoco esté acogido a convenio colectivo que justifique esta duración. Indica si el contrato se realiza (S) por la Administración Pública , Organismo Público vinculado o Universidad , o no es una empresa de estos tipos (N). </xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador de empresa. Obligatorio (S/N) para los códigos 401, 404, 501, 450 con modalidad 401 y 550 con modalidad 501 iniciados a partir de 19/09/2010 cuando no cumpla con la duración válida y tampoco esté acogido a convenio colectivo que justifique esta duración. Indica si el contrato se realiza (S) por la Administración Pública , Organismo Público vinculado o Universidad , o no es una empresa de estos tipos (N). </xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -954,9 +1191,19 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="ACOGIDO_LEGISLACION_ANTERIOR" minOccurs="0">
+			<xsd:element name="IND_LEY_27_2011" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de acogida a la legislación anterior. Obligatorio para los códigos 421 y 450 con modalidad 421 de Escuela Taller o de empleo-formación promovido por las Comunidades Autónomas, iniciados a partir de el 31/08/2011. El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a la legislación anterior y no a los nuevos RDL. </xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador de que el trabajador pertenece a alguno de los colectivos contemplados en el apartado 2 de la Disposición final duodécima de la Ley 27/2011. Los posibles valores son "S" (SI) o "N" (No) para indicar si pertenece a los colectivos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>	
+			<xsd:element name="PROGRAMA_ACTIVACION_EMPLEO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al Programa de Activación para el Empleo y está en posesión del documento acreditativo o resolución del SEPE.  (Real Decreto-ley 16/2014). El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a dicho proceso.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -964,16 +1211,63 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="PROYECTO_EMPLEO_FORMACION" minOccurs="0">
+			<xsd:element name="REAL_DECRETO_368_2021" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de si el contrato es de un proyecto de empleo-formación promovido por las Comunidades Autónomas. Opcional y sólo para los códigos 421 y 450 con modalidad 421 . El único valor posible que puede tomar es "S" (SI) para indicar que es promovido. </xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al RD 368/2021 y está en posesión del certificado de persona con capacidad intelectual límite. El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a dicho decreto. Opcional para los contratos 421 y 450-421.</xsd:documentation>
 				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[S\s]"/>
-					</xsd:restriction>
-				</xsd:simpleType>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="[S\s]"/>
+						</xsd:restriction>
+					</xsd:simpleType>
 			</xsd:element>
+			<xsd:element name="REAL_DECRETO_1435_1985" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al RD 1435/1985. Sus posibles valores se encuentran codificados en la tabla TXREADEC.txt de la Ayuda XML - Ultima versión - Tablas de códigos. Obligatorio para los contratos 407/507.</xsd:documentation>
+				</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="collapse"/>
+							<xsd:pattern value="[AB\s]"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="REAL_DECRETO_1006_1985" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al RD 1006/1985. Sus posibles valores se encuentran codificados en la tabla TXREADEC.txt de la Ayuda XML - Ultima versión - Tablas de códigos. Obligatorio para los contratos 413/513.</xsd:documentation>
+				</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="collapse"/>
+							<xsd:pattern value="[C\s]"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="INDICATIVO_PRTR" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al Plan de Transformación, Recuperación y Resiliencia. Obligatorio (S/N) para todos los contratos, a excepción de los 405/505 y 413/513.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="[SN\s]"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ORDEN_MINISTERIAL" minOccurs="0">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="es">
+					Indicativo de Orden Ministerial y preguntas relacionadas con el Plan de Transformación, Recuperación y Resiliencia.
+					Opcional para todos los contratos (exceptuando los 405/505 y 413/513) y obligatorio para los contratos 406/506.
+					No se debe de indicar para los contratos 405/505 y 413/513.
+					Sus posibles valores se encuentran codificados en la tabla TXORDMIN.txt de la Ayuda XML - Ultima versión - Tablas de códigos.
+				</xsd:documentation>
+				</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+			</xsd:element>							
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="DATOS_EXCLUSIONSOCIALTYPE">
@@ -1000,17 +1294,17 @@
 		<xsd:sequence>
 			<xsd:element name="TITULACION_ACADEMICA">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Código de titulación académica. No es necesario especificar su valor en los contratos de prácticas, cuando el Nivel Formativo del trabajador sea 60. Sus posibles valores se encuentran codificados en la tabla THITIACA.txt de la Ayuda XML - Ultima versión - Tablas de códigos.  La codificación tabulada de este elemento corresponde a códigos de 12 posiciones, hasta ahora se debían enviar códigos de 4 posiciones con 8 ceros por la izquierda hasta completar las 12, a partir de ahora los códigos ya son de 12 posiciones por lo que no habrá que rellenar con ceros.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Código de titulación académica. No es necesario especificar su valor en los contratos de prácticas, cuando el Nivel Formativo del trabajador sea 60 , 21, 31, 41, 52, 53, 57 ó 58. Sus posibles valores se encuentran codificados en la tabla THITIACA.txt de la Ayuda XML - Ultima versión - Tablas de códigos.  La codificación tabulada de este elemento corresponde a códigos de 12 posiciones, hasta ahora se debían enviar códigos de 4 posiciones con 8 ceros por la izquierda hasta completar las 12, a partir de ahora los códigos ya son de 12 posiciones por lo que no habrá que rellenar con ceros.  A partir de 01/2013 se quita la restricción sobre el campo de ser un código numérico ante la incorporación de nuevos códigos que contienen caracteres alfanuméricos.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{12}"/>
+						<xsd:length value="12"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
 			<xsd:element name="IND_CERTIF_PROFESIONALIDAD" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 420, 520, 450 con modalidad 420 y 550 con modalidad 520 iniciados a partir del 18/06/2010 cuando el Nivel Formativo del trabajador no sea uno de los siguientes códigos: 33, 51, 54, 55, 59 o 60. Indica si el trabajador tiene o no un certificado de profesionalidad. </xsd:documentation>
+					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 412, 420, 520, 450 con modalidad 420 y 550 con modalidad 520 iniciados a partir del 18/06/2010 cuando el Nivel Formativo del trabajador no sea uno de los siguientes códigos: 33, 51, 54, 55, 59 o 60. Indica si el trabajador tiene o no un certificado de profesionalidad. </xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1027,7 +1321,7 @@
 		<xsd:sequence>
 			<xsd:element name="TIPO_JORNADA">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Período de tiempo. Sus posibles valores se encuentran codificados en la tabla TEQPTIEM.txt de la Ayuda XML - Ultima versión - Tablas de códigos. En el caso de  contratos fijos discontinuos (300, 330 y 350) el tipo de jornada será siempre ANUAL (A). </xsd:documentation>
+					<xsd:documentation xml:lang="es">Período de tiempo. Sus posibles valores se encuentran codificados en la tabla TEQPTIEM.txt de la Ayuda XML - Ultima versión - Tablas de códigos. En el caso de  contratos fijos discontinuos (300, 330 y 350) el tipo de jornada será siempre ANUAL (A). En contratos tipo 990 es opcional.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1065,9 +1359,19 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
+			<xsd:element name="INDICATIVO_FORMACION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 421 cuando las horas de trabajo efectivo superan el 75%. Indica si el trabajador ha tenido anteriormente contratos para la Formación y el Aprendizaje con la misma ocupación por un periodo superior a un año  </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
 			<xsd:element name="INDIC_FORMACION_TEORICA" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de formación teórica recibida. Obligatorio para los contratos de código 421 si no vienen especificadas las horas de formación. Los posibles valores que puede tomar son "S" (SI) ó "N" (NO) para indicar si ya había sido recibida con anterioridad la formación o no. </xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador de formación teórica recibida. Obligatorio para los contratos de código 421 si no vienen especificadas las horas de formación. Los posibles valores que puede tomar son "S" (SI) ó "N" (NO) para indicar si ya había sido recibida con anterioridad la formación o no.  (  ¡¡¡  Campo  no válido para los contratos de formacion que se inicien a partir del 01/09/2011  !!!  )</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1105,16 +1409,6 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="FIJODISCONTINUO_PERIODICO" minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador de trabajo fijo discontinuo o periódico. Obligatorio para los contratos de código 200, 230 ó 250 iniciados a partir del 01/07/2006. Los posibles valores que puede tomar son "S" (SI) ó "N" (NO) para indicar si el contrato indefinido a tiempo parcial corresponde a la realización de trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas dentro del volumen normal de la actividad de la empresa. </xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[SN\s]"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
 			<xsd:element name="PORC_JORNADA_PACTADA" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Porcentaje de jornada pactada a realizar. Obligatorio para los contratos de código 250 ó 350 iniciados a partir del 08/03/2009 que se acojan a los colectivos de bonificación de beneficiarios de prestaciones (124,125 o 126). Su formato es EEDD, siendo las dos primeras posiciones la parte entera del porcentaje y las dos últimas la parte decimal (ej. 25% será enviado como 2500). </xsd:documentation>
@@ -1137,14 +1431,14 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="DATOS_CONTRATOINTERINIDADTYPE">
+	<xsd:complexType name="DATOS_CONTRATOSUSTITUCIONTYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Datos de los contratos de interinidad.</xsd:documentation>
+			<xsd:documentation xml:lang="es">Datos de los contratos de sustitución.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="CAUSA_INTERINIDAD">
+			<xsd:element name="CAUSA_SUSTITUCION">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Código de la causa objeto de la interinidad. Sus posibles valores se encuentran codificados en la tabla TEIINTER.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Código de la causa objeto de la sustitución. Sus posibles valores se encuentran codificados en la tabla TEIINTER.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1181,6 +1475,27 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
+			<xsd:element name="EXCLUIDO_MENOR_30" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a la medida de contrato para excluidos sociales menores de 30 años en empresas de inserción. Refleja si el contrato se acoge a esta medida (S). Opcional para los contratos de códigos 150, 250, 350, 450, 452, 550 y 552 iniciados a partir del 24/02/2013.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEY_31_2015" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Selección de la Ley 31/2015. Refleja si el contrato se acoge a esta medida (S). Opcional para los contratos de códigos 150, 250, 350, 450, 452, 550 y 552 iniciados a partir del 10/10/2015.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="DATOS_MEDIDASFOMENTOTYPE">
@@ -1239,7 +1554,7 @@
 		<xsd:sequence>
 			<xsd:element name="CODIGO_ET_CO_TE">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Código de escuela taller, casas de oficio y talleres de empleo. Sus posibles valores se encuentran codificados en la tabla TESCETCO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.   Para los contratos con códigos 100, 130, 150, 200, 230, 250, 300, 330, 350, 441, 540, 541 y 980 los códigos de escuela taller válidos sólo son los acabados en 2 (T02, O02 y E02).</xsd:documentation>
+					<xsd:documentation xml:lang="es">Código de escuela taller, casas de oficio y talleres de empleo. Sus posibles valores se encuentran codificados en la tabla TESCETCO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.   Para los contratos con códigos 100, 130, 150, 200, 230, 250, 300, 330, 350, 441, 540, 541 y 980 los códigos de escuela taller válidos sólo son los acabados en 2 (T02, O02, E02 y F02).</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1260,7 +1575,7 @@
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{1}"/>
+						<xsd:pattern value="\d{2}"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -1276,7 +1591,7 @@
 			</xsd:element>
 			<xsd:element name="IND_RD63_2006" fixed="S" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation>Indicador contrato de investigador formación para los acogidos al Real Decreto 63/2006 . No se rellena junto a los otros valores y solo admite el valor 'S'.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador contrato de investigador formación para los acogidos al Real Decreto 63/2006 . No se rellena junto a los otros valores y solo admite el valor 'S'.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string"/>
@@ -1284,7 +1599,7 @@
 			</xsd:element>
 			<xsd:element name="IND_CONTRATO_PREDOCTORAL" fixed="S" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation>Indicador de contrato para personal investigador predoctoral acogidos a la Ley 14/2011. Solo admite el valor 'S' para indicar que el contrato es de este tipo. Opcional para los contratos con código 401 iniciados a partir del 02/06/2012. En el caso de tratarse de un contrato predoctoral deberá rellenarse también el elemento IND_EMPLEADOR.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador de contrato para personal investigador predoctoral acogidos a la Ley 14/2011. Solo admite el valor 'S' para indicar que el contrato es de este tipo. Opcional para los contratos con código 401 iniciados a partir del 02/06/2012. En el caso de tratarse de un contrato predoctoral deberá rellenarse también el elemento IND_EMPLEADOR.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string"/>
@@ -1364,6 +1679,17 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
+			<xsd:element name="NUMERO_EXPEDIENTE_PFEA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es"> Número de expediente de PFEA.  Opcional  para los contratos que en el elemento CODIGOPROGRAMAEMPLEO hayan especificado el valor 1 (Fomento de Empleo Agrario) o  el valor 12 (Interés Social Corporación Local).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
+						<xsd:length value="11"/>
+					</xsd:restriction>
+			</xsd:simpleType>
+			</xsd:element>	
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="DATOS_CONTRATOINSERCIONTYPE">
@@ -1393,12 +1719,23 @@
 					<xsd:documentation xml:lang="es">CIF/ NIF de la empresa usuaria del contrato.  Dato obligatorio en el caso de ser un contrato de puesta a disposición, salvo en el caso de que la empresa usuaria sea una empresa extranjera.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="CUENTA_COTIZACION_EMPRESA_USUARIA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de la cuenta de cotización de la empresa usuaria del contrato. Opcional en el caso de ser un contrato de puesta a disposición. Su composición corresponde a la unión de los datos de : régimen de cotización(4)-provincia(2)-número de cuenta de cotización(7)-dígito de control(2). Los posibles valores que puede tomar el régimen de cotización se encuentran codificados en la tabla TCHRGCOT.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{15}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
 			<xsd:element name="RAZON_SOCIAL_EMPRESA_USUARIA" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Razón social de la empresa usuaria del contrato. Dato obligatorio en el caso de ser un contrato de puesta a disposición.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="55"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1416,6 +1753,16 @@
 			<xsd:element name="IND_EMPRESA_EXTRANJERA" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Indicador de empresa extranjera.   Refleja si el contrato es de puesta a disposición y la empresa usuaria tiene su centro de trabajo en el extranjero, en este caso el único dato a aportar será el de la razón social de la empresa usuaria .</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="IND_EMPRESARIO_AUTONOMO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de empresario autónomo. Refleja si el contrato es de puesta a disposición y el empresario usuario es un trabajador autónomo, en este caso el dato de la cuenta de cotización de la empresa usuaria no deberá ser aportado .</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1459,11 +1806,11 @@
 		<xsd:sequence>
 			<xsd:element name="IND_EMPRESA_INSERCION">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Indicador del tipo de empresa.  Refleja si la empresa que contrata es de inserción (S) ó no (N) ( dato obligatorio para contratos de código 452 , 552 y para los de exclusion social iniciados a partir del 13-01-2008). </xsd:documentation>
+					<xsd:documentation xml:lang="es">Indicador del tipo de empresa. Refleja si la empresa que contrata es de inserción (S) ó no (N) (dato obligatorio para contratos de código 452 , 552 y para los de exclusion social iniciados a partir del 13-01-2008), o si el trabajador procede de una empresa de inserción (P), para contratos 450 y 550 iniciados a partir del 10-10-2015.</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[SN\s]"/>
+						<xsd:pattern value="[SNP\s]"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -1481,7 +1828,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="DATOS_REDUCCION_RDL_1_2011TYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Datos de reducción de cuotas por contratación a tiempo parcial (RDL 1/2011). Opcional para los contratos a tiempo parcial (salvo los de interinidad, jubilación parcial, relevo e inserción con los que no es compatible) iniciados a partir del 13/02/2011.  Tampoco es compatible con contratos de extranjeros en origen , ni con los de centros especiales de empleo.</xsd:documentation>
+			<xsd:documentation xml:lang="es">Datos de reducción de cuotas por contratación a tiempo parcial (RDL 1/2011). Opcional para los contratos a tiempo parcial (salvo los de sustitución, jubilación parcial, relevo e inserción con los que no es compatible) iniciados a partir del 13/02/2011.  Tampoco es compatible con contratos de extranjeros en origen , ni con los de centros especiales de empleo.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="CODIGO_COLECTIVO_REDUCCION">
@@ -1549,7 +1896,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="DATOS_CONTRATO_EMPRENDEDORESTYPE">
 		<xsd:annotation>
-			<xsd:documentation xml:lang="es">Datos del contrato de emprendedores (RDL 3/2012). Opcional para los contratos de códigos 100, 150, 300 y 350 iniciados a partir del 12/02/2012.</xsd:documentation>
+			<xsd:documentation xml:lang="es">Datos del contrato de emprendedores (RDL 3/2012). Opcional para los contratos de códigos 100, 150, 300 y 350 iniciados a partir del 12/02/2012 , y 200 y 250 iniciados a partir del 22/12/2013.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="CODIGO_COLECTIVO_DEDUCCION_FISCAL" maxOccurs="2">
@@ -1559,6 +1906,158 @@
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_RDL_4_2013TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del RDL 4/2013 (Ley 11/2013). Opcional para los contratos de códigos 100, 200, 300, 402, 420, 450 (modalidad 420), 501, 502, 510, 520 y 550 (modalidad 520) iniciados a partir del 24/02/2013. Se añaden los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 05/07/2014 de Garantía Juvenil </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción de cuotas. Opcional para los contratos de códigos 100, 200, 300, 420, 450 (modalidad 420), 501, 502, 510, 520 y 550 (modalidad 520) iniciados a partir del 24/02/2013. Sus posibles valores (del 08 al 17 dependiendo del código de contrato) se encuentran codificados en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. Se añaden los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 05/07/2014 de Garantía Juvenil (valor 19).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="DATOS_TPARC_VINC_FORM" type="DATOS_TPARC_VINC_FORMTYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Datos de los contratos a tiempo parcial con vinculación formativa.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PRIMER_EMPLEO_JOVEN" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a la medida de primer contrato para menores de 30 años. Refleja si el contrato se acoge a esta medida (S). Opcional para los contratos de códigos 402 y 502 iniciados a partir del 24/02/2013.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PORCENTAJE_JORNADA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Porcentaje del tiempo de jornada del contrato respecto a una jornada a tiempo completo. Obligatorio para  los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 24/02/2013 cuyo código de colectivo de reducción de cuotas sea 08 , 09 , 10 ó 16 ; y también para los contratos de código 502 iniciados a partir del 24/02/2013 que se hayan acogido a la medida de primer contrato para menores de 30 años. Su valor debe ser menor ó igual al 50% en el primero de los casos y mayor del 75% en el segundo. Su formato es EEDD, siendo las dos primeras posiciones la parte entera del porcentaje y las dos últimas la parte decimal (ej. 50% será enviado como 5000).  Se añaden al primer supuesto los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 05/07/2014 de Garantía Juvenil cuyo código de colectivo de reducción de cuotas es 19.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{4}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_RDL_3_2014TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del RDL 3/2014. Opcional para los contratos de códigos 100, 200, 300 iniciados a partir del 25/02/2014. Se añaden los contratos de códigos 150, 250 y 350 iniciados a partir del 05/07/2014 de Garantía Juvenil.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción de cuotas. Su posible valor (18) se encuentra codificado en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_RDL_GARANTIA_JUVENILTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">
+				Datos del RDL 8/2014. Opcional para los contratos de códigos 130, 150, 230, 250, 330, 350, 450 (modalidad 420) y 550 (modalidad 520), iniciados a partir del 05/07/2014.
+				Datos del RDL 1/2023. Opcional para los contratos de códigos 150, 250, 350 iniciados a partir del 01/09/2023.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="GARANTIA_JUVENIL">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de contrato realizado según las normas del Sistema Nacional de Garantía Juvenil.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_RDL_1_2015TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del RDL 1/2015.
+				Opcional para los contratos de códigos 100, 200, 300 iniciados a
+				partir del 01/03/2015 y hasta el 31/08/2016.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de
+						reducción de cuotas. Su posible valor (20) se encuentra codificado
+						en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas
+						de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="REDUCCION_D_A_20TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Reducción de Cuotas contemplada en la Disposición Adicional 20 del Estatuto de los Trabajadores, para personas con un grado de discapacidad igual o superior al 33%. Opcional para los contratos de códigos 420, 520, 421.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="COLECTIVO_REDUCCION_DA20" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción. Su posible valor en función del código de contrato, para los 421  colectivo 21 y para los 420 y 520 colectivo 22, se encuentra codificado en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_AYUDA_ACOMP_SNGJTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Dato a rellenar si el contrato se acoge a la ayuda de Acompañamiento para la contratación de jóvenes inscritos en el Registro del Sistema Nacional de Garantía Juvenil (D.A. 120 Ley 6/2018). Contratos con código 450 (modalidad 421), iniciados a partir del XX/XX/201X.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IND_AYUDA_ACOMP_SNGJ">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Dato a rellenar si el contrato se acoge a la ayuda de Acompañamiento para la contratación de jóvenes inscritos en el Registro del Sistema Nacional de Garantía Juvenil (D.A. 120 Ley 6/2018). El único valor que puede tomar es "S"(Sí) para indicar que se acoge a la ayuda.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_RDL_13_2020TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del RDL 13/2020. Refleja si el contrato se acoge a esta medida (S). Opcional para     los contratos de códigos 401, 501, 402, 502, 410, 510, 990, 970 450 (modalidades 401, 402,410) y 550 (modalidades 501, 502,510)  iniciados a partir del 09/04/2020.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IND_RDL_13_2020">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de contrato realizado según las normas de RDL 13/2020.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -1585,6 +2084,7 @@
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="750"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1595,6 +2095,7 @@
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="150"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1609,6 +2110,7 @@
 			<xsd:element name="USOLIBRE_EMPRESA">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="30"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1624,6 +2126,7 @@
 			<xsd:element name="NOMBRE">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="15"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1631,6 +2134,7 @@
 			<xsd:element name="PRIMER_APELLIDO">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="20"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1641,6 +2145,7 @@
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="collapse"/>
 						<xsd:maxLength value="20"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1656,6 +2161,45 @@
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:pattern value="[0-9A-Z]\d{7}[0-9A-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_TPARC_VINC_FORMTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Obligatorio para los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 24/02/2013 cuyo código de colectivo de reducción de cuotas sea 08 , 09 , 10 ó 16.  Se añaden los contratos de códigos 200, 300, 501, 502 y 510 iniciados a partir del 05/07/2014 de Garantía Juvenil cuyo código de colectivo de reducción de cuotas es 19.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="VINCULACION_FORMATIVA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Tipo de formación. Sus posibles valores se encuentran codificados en la tabla TDTVINFO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FORMACION_DURANTE_EMPLEO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si se compatibilizará el empleo con la formación (S) ó no (N).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PORCENTAJE_REDUCCION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Porcentaje de reducción de cuotas. Solo admite 2 valores : 75% para empresas con 250 trabajadores ó más, y 100% para empresas con menos de 250 trabajadores. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="2"/>
+						<xsd:maxLength value="3"/>
+						<xsd:pattern value="([0-9])+"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>

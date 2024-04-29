@@ -380,6 +380,7 @@ public enum ContextVariable implements IResourceable {
 	CRA_0012("CRA_0012", VariableType.INTEGER),
 	CRA_0010("CRA_0010", VariableType.INTEGER),
 	CRA_0008("CRA_0008", VariableType.INTEGER),
+	CRA_0033("CRA_0033", VariableType.INTEGER),
 
 	ADDITIONAL("HORAS_COMPL", VariableType.DOUBLE, false),
 

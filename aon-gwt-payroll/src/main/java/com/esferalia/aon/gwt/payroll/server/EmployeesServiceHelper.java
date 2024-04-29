@@ -119,6 +119,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractPPECalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
@@ -134,6 +135,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -2165,6 +2167,37 @@ public class EmployeesServiceHelper {
 		return draftCtx;
 	}
 	
+	static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getPPEDelayCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+	
+		SQLContractSalaryCalculatorContext ctx = new SQLContractPPECalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), draft.getChargeDate(), criteria) {
+	
+		};
+	
+		ctx.setListener(listener);
+		ctx.next();
+	
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx) {
+			@Override
+			protected Collection<IContractPayment> getDraftPayments() {
+				return Collections.emptyList();
+			}
+		};
+		draftCtx.setListener(listener);
+		
+		draftCtx.loadDraftContext(ctx.getExpressionContext());
+
+		return draftCtx;
+	}
+
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
@@ -2190,12 +2223,31 @@ public class EmployeesServiceHelper {
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitDelay(
 							SalaryType salaryType) {
 						try {
-							return getDelayCalculatorContextImpl(conn, draft,
-									listener);
+							
+							SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> delayCalculatorContext = 
+							getDelayCalculatorContextImpl(conn, draft,listener);
+
+							if ( isPPEDelay(delayCalculatorContext) ) {
+								return getPPEDelayCalculatorContextImpl(conn, draft, 
+										listener);
+							}
+							
+							return delayCalculatorContext;
+						
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
 							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+
+					private boolean isPPEDelay(SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx) {
+						try {
+							List<ITimedResult<PaymentType>> results = 
+							ctx.getExpressionContext().eval(ContextVariable.DELAY_CAUSE.getName(), ctx.getStartDate(), ctx.getEndDate(), PaymentType.class);
+							return results.stream().anyMatch( r -> r.getValue() == PaymentType.CRA_0033);
+						} catch ( Exception e ) {
+							return false;
 						}
 					}
 	
