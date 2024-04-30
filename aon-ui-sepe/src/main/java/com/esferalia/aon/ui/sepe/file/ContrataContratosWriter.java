@@ -71,7 +71,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
-import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOSUSTITUCIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
@@ -337,7 +337,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	}
 	private CONTRATO410TYPE createContract410(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
 		CONTRATO410TYPE c = (CONTRATO410TYPE) contratoType;
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(ContrataContratoParams));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoSustitucion(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
 		return c;
@@ -378,7 +378,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSBONIFICACION(createDatosBonificacion(ContrataContratoParams));
 		c.setDATOSCONTRATOPRACTICAS(createDatosContratoPracticas(ContrataContratoParams));
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(ContrataContratoParams));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(ContrataContratoParams));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoSustitucion(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
@@ -423,7 +423,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	private CONTRATO510TYPE createContract510(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
 		CONTRATO510TYPE c = (CONTRATO510TYPE) contratoType;
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(ContrataContratoParams));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(ContrataContratoParams));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoSustitucion(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
 		return c;
@@ -466,7 +466,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSBONIFICACION(createDatosBonificacion(ContrataContratoParams));
 		c.setDATOSCONTRATOPRACTICAS(createDatosContratoPracticas(ContrataContratoParams));
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(ContrataContratoParams));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(ContrataContratoParams));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoSustitucion(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
@@ -1499,9 +1499,9 @@ public class ContrataContratosWriter implements IContrataWriter{
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
 		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getCode():null);
-		if( tc2.equals("200") || tc2.equals("230") || tc2.equals("250") ){
-			datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
-		}
+		//if( tc2.equals("200") || tc2.equals("230") || tc2.equals("250") ){
+		//	datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
+		//}
 		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
@@ -1986,12 +1986,12 @@ public class ContrataContratosWriter implements IContrataWriter{
 		return datos;
 	}
 	/**
-	 * <xsd:complexType name="DATOS_CONTRATOINTERINIDADTYPE">
+	 * <xsd:complexType name="DATOS_CONTRATOSUSTITUCIONTYPE">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="es">Datos de los contratos de interinidad.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="CAUSA_INTERINIDAD">
+			<xsd:element name="CAUSA_SUSTITUCION">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">
 						Código de la causa objeto de la interinidad. Sus posibles valores se encuentran codificados 
@@ -2009,11 +2009,11 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * 
 	 * @return
 	 */
-	private DATOSCONTRATOINTERINIDADTYPE createDatosContratoInterinidad(ContrataContratoParams params) {
+	private DATOSCONTRATOSUSTITUCIONTYPE createDatosContratoSustitucion(ContrataContratoParams params) {
 		if(params.isInterimData()){
-			DATOSCONTRATOINTERINIDADTYPE datos = new DATOSCONTRATOINTERINIDADTYPE();
+			DATOSCONTRATOSUSTITUCIONTYPE datos = new DATOSCONTRATOSUSTITUCIONTYPE();
 			if(params.getCausaInterinidad()!=null){
-				datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
+				datos.setCAUSASUSTITUCION(params.getCausaInterinidad().getCode());
 			}
 			return datos;
 		}

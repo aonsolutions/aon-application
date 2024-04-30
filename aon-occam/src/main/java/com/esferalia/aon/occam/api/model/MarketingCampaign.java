@@ -14,6 +14,7 @@ public class MarketingCampaign implements Serializable {
 	private boolean active;
 	private String description;
 	private Scope scope;
+	private Double budget;
 	
 	private List<MarketingAction> actions;
 	
@@ -61,6 +62,15 @@ public class MarketingCampaign implements Serializable {
 		this.scope = scope;
 		return this;
 	}
+	
+	public Double getBudget() {
+		return budget == null ? 0.00 : budget;
+	}
+	
+	public MarketingCampaign setBudget(Double budget) {
+		this.budget = budget;
+		return this;
+	}
 
 	public void addAction(MarketingAction action) {
 		actions.add(action);
@@ -68,6 +78,10 @@ public class MarketingCampaign implements Serializable {
 
 	public void setActions(List<MarketingAction> marketingActions) {
 		actions = marketingActions;
+	}
+	
+	public List<MarketingAction> getActions() {
+		return actions;
 	}
 	
 }

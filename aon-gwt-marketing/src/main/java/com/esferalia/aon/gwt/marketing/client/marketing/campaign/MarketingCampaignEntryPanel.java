@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonErrorPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionPanel.AonMarketingActionPanelCallback;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.gwt.marketing.client.marketing.action.MarketingActionEntryPanel;
 import com.esferalia.aon.gwt.marketing.client.marketing.action.MarketingActionPanel;
@@ -33,6 +36,7 @@ import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -62,6 +66,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 
 	// MarketingCampaign Info
 	private TextBox description = new TextBox();
+	private AonDoubleBox budget = new AonDoubleBox(15, 2);
 	private ListBox scope = new ListBox();
 	private Button active = new Button();
 	
@@ -95,6 +100,11 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 			protected void onActionBackClick() {
 				showMarketingActionList();
 			}
+
+			@Override
+			protected void onActionDeleteClick(MarketingAction marketingAction) {
+				deleteMarketingAction(marketingAction);
+			}
 		};
 		
 		add(marketingActionEntryPanel);
@@ -109,6 +119,28 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		backButton.addClickHandler(e -> onBackClick());
 		toolbar.add(backButton);
 		
+		AonToolbarButton deleteButton = new AonToolbarButton( "Borrar Campa\u00f1a", AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(e -> {
+			deleteButton.setEnabled(false);
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Campa\u00f1a",
+					new HTML("Se va a proceder a eliminar la campa\u00f1a <b>" + marketingCampaign.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					deleteButton.setEnabled(true);
+				}
+
+				@Override
+				public void onAccept() {
+					onCampaignDeleteClick(marketingCampaign);
+				}
+			});
+			
+		});
+		toolbar.add(deleteButton);
+		
 		AonToolbarButton saveButton = new AonToolbarButton("Guardar campa\u00f1a", AON.CSS.aonIconSave());
 		saveButton.addClickHandler(e -> saveMarketingCampaign());
 		toolbar.add(saveButton);
@@ -119,13 +151,14 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		
 		marketingCampaignEntryPanel.addNorth(toolbar, 50);
 	}
-	
+
 	private void saveMarketingCampaign() {
 		AonMessagePanel.showLoading(messagePanel, "Guardando campa\u00f1a " + this.marketingCampaign.getDescription());
 		
 		marketingCampaign.setActive(isActiveToggleButton(active));
 		marketingCampaign.setDescription(description.getValue());
 		marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scope.getSelectedValue())));
+		marketingCampaign.setBudget(budget.getValue());
 		
 		commonService.saveMarketingCampaign(options.getDomainName(), options.getDomain(), options.getUser(), marketingCampaign, new AsyncCallback<MarketingCampaign>() {
 			
@@ -207,22 +240,27 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		table.getCellFormatter().setStyleName(0, 1, AON.CSS.aonWidthAll());
 		table.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
-		table.setWidget(1,0,new InlineLabel(AON.MSG.scope()));
+		table.setWidget(1,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(1, 0).setPropertyString("min-width", "135px");
+		budget.setValue(marketingCampaign.getBudget());
+		table.setWidget(1,1,budget);
+		
+		table.setWidget(2,0,new InlineLabel(AON.MSG.scope()));
+		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
+		table.getCellFormatter().getElement(2, 0).setPropertyString("min-width", "135px");
 		scope.clear();
 		options.getConfiguration().getAvailableScopes().forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
 		scope.setStyleName(AON.CSS.aonInputText());
 		setSelectedValueLB(scope, null != marketingCampaign.getScope() ? marketingCampaign.getScope().getId().toString() : null);
-		table.setWidget(1,1,scope);
+		table.setWidget(2,1,scope);
 		
 		active = new Button();
-		table.setWidget(2,0,new InlineLabel("Activo"));
-		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(2, 0).setPropertyString("min-width", "135px");
+		table.setWidget(3,0,new InlineLabel("Activo"));
+		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
+		table.getCellFormatter().getElement(3, 0).setPropertyString("min-width", "135px");
 		getEnableDisableButton(active, marketingCampaign.isActive());
 		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
-		table.setWidget(2,1,active);
+		table.setWidget(3,1,active);
 		
 		tablePanel.add( table );
 		
@@ -394,6 +432,22 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		marketingActionEntryPanel.setMarketingAction(marketingAction);
 	}
 	
+	private void deleteMarketingAction(MarketingAction marketingAction) {
+		commonService.deleteMarketingAction(options.getDomainName(), options.getDomain(), options.getUser(), marketingAction.getId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				showMarketingActionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error borrado: " + caught.getMessage());
+			}
+		});
+	}
+	
 	protected abstract void onBackClick();
+	protected abstract void onCampaignDeleteClick(MarketingCampaign marketingCampaign);
 
 }
