@@ -254,10 +254,18 @@ public class CompanyServlet extends AonApiHttpServlet{
 		JSONArray result = new JSONArray();
 		for(int i = 0; i < json.length(); i++) {
 			Occam occam = new Occam();
-			occam.setDomain(json.getJSONObject(i).getInt(IJsonNames.ID));
-			occam.setDomainName(json.getJSONObject(i).getString(IJsonNames.DOMAIN));
-			occam.setUser(api.getUser().getLogin());
-			Domain domain = AON.getDomain(occam, json.getJSONObject(i).getInt(IJsonNames.ID));
+			Domain domain;
+			if(api.getData().has(IJsonNames.PARENT_ID)) {
+				occam.setDomain(json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID));
+				occam.setDomainName(json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getString(IJsonNames.NAME));
+				occam.setUser(api.getUser().getLogin());
+				domain = AON.getDomain(occam, json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID));
+			} else {				
+				occam.setDomain(json.getJSONObject(i).getInt(IJsonNames.ID));
+				occam.setDomainName(json.getJSONObject(i).getString(IJsonNames.DOMAIN));
+				occam.setUser(api.getUser().getLogin());
+				domain = AON.getDomain(occam, json.getJSONObject(i).getInt(IJsonNames.ID));
+			}
 			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 			DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
 			AonDomainUserRoles adur = new AonDomainUserRoles(dur);
