@@ -1306,23 +1306,23 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 3
 
 		// ----- CATEGORY
-
-		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-		category.id = this.CATEGORY;
-		category.title = MSG.CATEGORY;
-		category.autocomplete = true;
-		category.readonly = this.invoice.isReadonly();
-		category.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setCategory(category.value);
-			if(this.autosave) this.save();
-		});
-		table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
-		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-			category.options = JSON.stringify(accs);
-			category.value = this.invoice.getCategory();
-		});
-
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
+			category.id = this.CATEGORY;
+			category.title = MSG.CATEGORY;
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				this.invoice.setCategory(category.value);
+				if(this.autosave) this.save();
+			});
+			table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
+			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
+				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				category.options = JSON.stringify(accs);
+				category.value = this.invoice.getCategory();
+			});
+		}
 
 		getWorkplaces().then(r => {
 			if(!this.invoice.workplace && r.length > 0) {
@@ -1666,10 +1666,12 @@ export class AonInvoice extends AonElement {
 			type: this.invoice.type
 		};
 
-		getRegistrySuggestedAccount(data).then(r => {
-			this.invoice.setCategory(r.code);
-			this.getElement(this.CATEGORY).value = r.code;
-		});
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()){
+			getRegistrySuggestedAccount(data).then(r => {
+				this.invoice.setCategory(r.code);
+				this.getElement(this.CATEGORY).value = r.code;
+			});
+		}
 
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
@@ -2170,29 +2172,30 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
-
-		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-		category.id = this.DETAIL_CATEGORY + i;
-		category.title = MSG.CATEGORY;
-		category.autocomplete = true;
-		category.readonly = this.invoice.isReadonly();
-		category.addEventListener(EVENT.SELECT, () => {
-			detail.category = category.value;
-			this.invoice.setDetail(detail, i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(category, '2');
-		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-			category.options = JSON.stringify(accs);
-			category.value = detail.category || this.invoice.getCategory();
-		});
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
+			category.id = this.DETAIL_CATEGORY + i;
+			category.title = MSG.CATEGORY;
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				detail.category = category.value;
+				this.invoice.setDetail(detail, i);
+				if(this.autosave) this.save();
+			});
+			table.addCell(category, '2');
+			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
+				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				category.options = JSON.stringify(accs);
+				category.value = detail.category || this.invoice.getCategory();
+			});	
+		}
 
 		// ----- BIEN AFECTO
 		// TODO
 		let bienAfecto = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
-		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
+		bienAfecto.title = 'Bien Afecto'; 
 		bienAfecto.autocomplete = true;
 		bienAfecto.setAlias('id', 'description');
 		bienAfecto.readonly = this.invoice.isReadonly();
@@ -2698,7 +2701,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(!this.invoice.category) {
+		if((this.getDur().hasAccounting() || this.getDur().hasParentAccounting())
+			&& !this.invoice.category) {
 			this.showError({
 				type: CONSTANT.ERROR,
 				message: "Para Aceptar es necesaria la categoría."
