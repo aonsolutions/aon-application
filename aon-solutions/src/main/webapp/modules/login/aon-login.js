@@ -23,7 +23,7 @@ import { Language } from "../../models/Language.js";
 import * as COLORS from "../../environments/colors.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonEmail } from "../../components/aon-email.js";
-import {openCamera} from "../../services/actionService.js";
+
 export class AonLogin extends AonElement {
   tag;
   constructor() {
@@ -288,10 +288,6 @@ export class AonLogin extends AonElement {
     this.buildLogo();
     if(!this.isAndroidApp() && !webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
-    }
-
-    if(this.isAndroidApp()) {
-      openCamera();
     }
 
     let aonManifest = this.getElement("aonManifest");

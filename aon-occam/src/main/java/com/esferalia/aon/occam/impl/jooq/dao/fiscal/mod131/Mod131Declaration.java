@@ -280,6 +280,11 @@ public abstract class Mod131Declaration {
 					prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
 					idx++;
 				}
+				long prevDias = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(prev131),FiscalUtils.getPeriodEnd(prev131)) + 1;
+				if (prevAct.getDia() == prevDias) {
+					long newDias = 	AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod131),FiscalUtils.getPeriodEnd(mod131)) + 1;
+					prevAct.setDia((int) newDias);
+				}
 				return prevAct;
 			})
 			.collect(Collectors.toCollection(LinkedList::new));

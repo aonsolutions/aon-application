@@ -3686,8 +3686,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N\u00BA de empleados al inicio del ejercicio (o en la fecha de inicio de la actividad)")
 	String irpfActivityEmp();
 
-	@DefaultMessage("Si realiza la actividad en LORCA, seleccione lo que proceda")
+	@DefaultMessage("Si realiza la actividad en Lorca, seleccione lo que proceda")
 	String irpfActivityLor();
+
+	@DefaultMessage("Si realiza la actividad en la Isla de la Palma, seleccione lo que proceda")
+	String irpfActivityPal();
 
 	@DefaultMessage("Reducci\u00F3n extraordinaria de la cuota anual devengada por operaciones corrientes (Reducci\u00F3n extraordinaria por covid-19, art. 9 RD-Ley 35/2020)")
 	String covidReduction();
@@ -3730,6 +3733,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca")
 	String irpfActivityRlo();
+
+	@DefaultMessage("Reducci\u00F3n para actividades econ\u00F3micas desarrolladas en la Isla de La Palma")
+	String irpfActivityRpa();
 
 	@DefaultMessage("Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n")
 	String irpfActivityRdr();

@@ -221,6 +221,9 @@ public class InvoiceValidation {
 	 * El centro de trabajo es un dato obligatorio.
 	 */
 	public static final BiConsumer<InvoiceDetail,AonConfigurationContext> EMPTY_WORKPLACE = (det,ctx) -> {
+		if(det.getWorkPlace() == null && det.getWorkplace() != null && det.getWorkplace().getId() != null) {
+			det.setWorkPlace(det.getWorkplace().getId());
+		}
 		if (det.getWorkPlace() == null ) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_WORKPLACE.getMessage());
 		}

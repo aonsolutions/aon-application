@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -79,6 +80,13 @@ public class Mod131 extends FiscalModel implements Serializable {
 			&& ((AonMathUtils.isZero(getDeclarationResult()))
 			 || (AonMathUtils.isLessThanZero(getDeclarationResult()) && getPeriod() == Period.T4));
 	}
+	
+	@Override
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isCustomerAccepted() ||isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
+	}
+	
 	
 	// ******************************************************
 	// ******************************************************

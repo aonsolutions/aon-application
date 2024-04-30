@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.NewsletterFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -34,11 +35,20 @@ import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -72,6 +82,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorSupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.MarketingCampaignDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.NewsletterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -87,6 +99,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
 public class RegistryImpl implements IRegistry{
@@ -878,5 +891,85 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value) {
 		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx,registryId, questionAlias, value));
+	}
+	
+	// MARKETING CAMPAIGN
+
+	@Override
+	public List<MarketingCampaign> getMarketingCampaignlist(CloseableAONContext ctx, MarketingCompaignParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.getList(ctx, params));
+	}
+
+	@Override
+	public void deleteMarketingCampaign(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> MarketingCampaignDAO.delete(ctx, id));
+	}
+
+	@Override
+	public MarketingCampaign saveMarketingCampaign(CloseableAONContext ctx, MarketingCampaign marketingCampaign) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.save(ctx, marketingCampaign));
+	}
+
+	@Override
+	public MarketingCampaign getMarketingCampaign(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.get(ctx, id));
+	}
+	
+	// MARKETING ACTION
+
+	@Override
+	public List<MarketingAction> getMarketingActions(CloseableAONContext ctx, MarketingActionParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.getActionList(ctx, params));
+	}
+
+	@Override
+	public MarketingAction getMarketingAction(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration -> MarketingCampaignDAO.getAction(ctx, id));
+	}
+
+	@Override
+	public void deleteMarketingAction(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> MarketingCampaignDAO.deleteAction(ctx, id));
+	}
+
+	@Override
+	public MarketingAction saveMarketingAction(CloseableAONContext ctx, MarketingAction marketingAction) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.saveAction(ctx, marketingAction));
+	}
+
+	@Override
+	public Stream<Newsletter> getNewsletterStream(CloseableAONContext ctx, NewsletterFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> NewsletterDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<Survey> getSurveyStream(CloseableAONContext ctx, SurveyFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SurveyDAO.getStream(ctx, filter));
+	}
+	
+	// MARKETING ACTION TARGET
+
+	@Override
+	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.getActionTargetList(ctx, params));
+	}
+
+	@Override
+	public void deleteMarketingActionTarget(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> MarketingCampaignDAO.deleteActionTarget(ctx, id));
+	}
+
+	@Override
+	public MarketingActionTarget saveMarketingActionTarget(CloseableAONContext ctx, MarketingActionTarget marketingActionTarget) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.saveActionTarget(ctx, marketingActionTarget));
 	}
 }

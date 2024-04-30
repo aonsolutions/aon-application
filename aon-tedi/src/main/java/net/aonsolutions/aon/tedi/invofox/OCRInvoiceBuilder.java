@@ -17,8 +17,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -295,29 +295,37 @@ public class OCRInvoiceBuilder {
 		if (invoiceType == null) {
 			throw new OCRUndefinedTypeException();
 		} else {
-			invoiceType.visit(invoice, new IInvoiceTypeVisitor() {
+			invoiceType.visit(invoice, new IInvoiceTypeVisitor<Void>() {
 				@Override
-				public void visitSales(Invoice invoice) {
+				public Void visitSales(Invoice invoice) {
 					String recipientDocument = toAonDocument( ocrInvoice.getRecipientDocument() );
 					String recipientCountry = ocrInvoice.getRecipientCountry().flatMap( s -> s.getValue() ).orElse(null);
 					Country country = Country.safeValueOf( recipientCountry );
 					invoice
 						.setRegistryDocument( recipientDocument )
-						.setRegistryDocumentCountry( country );					
+						.setRegistryDocumentCountry( country );
+					return null;
 				}
 				
 				@Override
-				public void visitPurchase(Invoice invoice) {
+				public Void visitPurchase(Invoice invoice) {
 					String issuerDocument = toAonDocument( ocrInvoice.getIssuerDocument() );
 					String issuerCountry = ocrInvoice.getIssuerCountry().flatMap( s -> s.getValue() ).orElse(null);
 					Country country = Country.safeValueOf( issuerCountry );
 					invoice
 						.setRegistryDocument( issuerDocument )
-						.setRegistryDocumentCountry( country );					
+						.setRegistryDocumentCountry( country );
+					return null;
 				}
 				
-				@Override public void visitExpenses(Invoice invoice) { visitPurchase(invoice); }
-				@Override public void visitUndeductible(Invoice invoice) { visitPurchase(invoice);} 
+				@Override 
+				public Void visitExpenses(Invoice invoice) { 
+					return visitPurchase(invoice); 
+				}
+				@Override 
+				public Void visitUndeductible(Invoice invoice) { 
+					return visitPurchase(invoice);
+				} 
 			});
 		}
 	}
@@ -359,16 +367,16 @@ public class OCRInvoiceBuilder {
         		    invoice);
 	    } catch ( OCRTooManyOwnersException | OCROwnerNotFoundException e) {
 		
-		if ( invoice.isUndeductible() ) {
-		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
-		    if (defaultCreditor != null) {
-			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
-			defaultCreditor.getType().visit(defaultCreditor,
-				new InvoiceRegistryInitializer(aonCtx, invoice, config));
-			return;
-		    }
-		}   
-		throw e;
+//		if ( invoice.isUndeductible() ) {
+//		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
+//		    if (defaultCreditor != null) {
+//			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
+//			defaultCreditor.getType().visit(defaultCreditor,
+//				new InvoiceRegistryInitializer(aonCtx, invoice, config));
+//			return;
+//		    }
+//		}   
+	    	throw e;
 	    }
 
 	}
@@ -789,9 +797,9 @@ public class OCRInvoiceBuilder {
 	private static void fillFinanceBank(OCRInvoice ocrInvoice, Finance finance) {
 	    String iban = ocrInvoice.getIBAN().flatMap(d -> d.getValue()).orElse(null);
 	    if (AonStringUtils.isNotBlank(iban)) {
-		iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
-		BankAccount bankAccount = new BankAccount(iban);
-		finance.setBankAccount(bankAccount);
+	    	iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
+	    	BankAccount bankAccount = new BankAccount(iban);
+	    	finance.setBankAccount(bankAccount);
 	    }
 	}
 
@@ -860,6 +868,23 @@ public class OCRInvoiceBuilder {
 		    return finance;
 		}).toList();
 
+	    if(finances.isEmpty()) {
+	    	finances = new LinkedList<>();
+	    	Finance finance = new Finance();
+	    	finance.setDomain(invoice.getDomain());
+		    finance.setInvoice(invoice);
+		    finance.setDueDate(invoice.getIssueDate());
+		    finance.setAmount(invoice.getTotal());
+		    
+		    // INVOICE_FINANCE_PAYMETHOD
+		    fillFinancePayMethod(aonContext, ocrInvoice, finance);
+		    
+		    // INVOICE_FINANCE_BANK
+		    fillFinanceBank(ocrInvoice, finance);
+		    // INVOICE_FINANCE_SWIFT
+		    fillFinanceSwift(ocrInvoice, finance);
+		    finances.add(finance);
+	    }
 	    	// ADD_INVOICE_FINANCE
 		invoice.setFinances(finances);
 		

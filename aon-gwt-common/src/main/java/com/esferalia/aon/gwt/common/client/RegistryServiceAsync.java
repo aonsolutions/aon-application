@@ -69,6 +69,7 @@ public interface RegistryServiceAsync {
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> asyncCallback);
+	void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
 	
 	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
 	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
@@ -81,6 +82,8 @@ public interface RegistryServiceAsync {
 	void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback);
 	
 	void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback);
+	
+	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> asyncCallback);
 	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
@@ -100,7 +103,5 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> asyncCallback);
 	void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> asyncCallback);
-	
-	
 	
 }

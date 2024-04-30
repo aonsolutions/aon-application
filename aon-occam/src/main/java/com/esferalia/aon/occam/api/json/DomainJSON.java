@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -64,8 +66,33 @@ public class DomainJSON {
 			.setAonCustomer(JsonUtils.getInteger(json, IJsonNames.AON_CUSTOMER))
 			.setAonStatus(AonStatus.safeValueOf(JsonUtils.getString(json,IJsonNames.AON_STATUS)))
 			.setApps(getDomainApps(JsonUtils.getJSONArray(json, IJsonNames.APPS)))
+			.setUsers(getDomainUsers(JsonUtils.getJSONArray(json, IJsonNames.USERS)))
 		;
 		
+	}
+	
+	private static List<User> getDomainUsers(JSONArray jsonArray) {
+		LinkedList<User> list = new LinkedList<>();
+		for(Integer i = 0; i < jsonArray.length(); i++) {
+			JSONObject userJson = jsonArray.getJSONObject(i);
+			
+			if(null != userJson) {
+				User user = new User()
+					.setId(JsonUtils.getInteger(userJson, IJsonNames.ID))
+					.setDomain(JsonUtils.getInteger(userJson, IJsonNames.DOMAIN))
+					.setType(UserType.valueOf(JsonUtils.getString(userJson, IJsonNames.TYPE)))
+					.setName(JsonUtils.getString(userJson, IJsonNames.NAME))
+					.setLogin(JsonUtils.getString(userJson, IJsonNames.LOGIN))
+					.setActive(JsonUtils.getBoolean(userJson, IJsonNames.ACTIVE))
+					;
+				
+				if(JsonUtils.getBoolean(userJson, IJsonNames.PORTAL))
+					user.setType(UserType.PORTAL);
+					
+				list.add(user);
+			}
+		}
+ 		return list;
 	}
 	
 	private static List<DomainApp> getDomainApps(JSONArray jsonArray) {

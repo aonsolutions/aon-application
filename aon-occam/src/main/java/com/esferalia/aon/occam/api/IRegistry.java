@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.NewsletterFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -32,11 +33,20 @@ import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -263,5 +273,26 @@ public interface IRegistry {
 	
 	// REGISTRY PROFILE
 	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value);
+	
+	// MARKETING CAMPAIGN
+	public List<MarketingCampaign> getMarketingCampaignlist(CloseableAONContext ctx, MarketingCompaignParams params);
+	public void deleteMarketingCampaign(CloseableAONContext ctx, Integer id);
+	public MarketingCampaign saveMarketingCampaign(CloseableAONContext ctx, MarketingCampaign marketingCampaign);
+	public MarketingCampaign getMarketingCampaign(CloseableAONContext ctx, Integer id);
+	
+	// MARKETING ACTION
+	public List<MarketingAction> getMarketingActions(CloseableAONContext ctx, MarketingActionParams params);
+	public MarketingAction getMarketingAction(CloseableAONContext ctx, Integer id);
+	public void deleteMarketingAction(CloseableAONContext ctx, Integer id);
+	public MarketingAction saveMarketingAction(CloseableAONContext ctx, MarketingAction marketingAction);
+	
+	public Stream<Newsletter> getNewsletterStream(CloseableAONContext ctx, NewsletterFilter filter);
+	public Stream<Survey> getSurveyStream(CloseableAONContext ctx, SurveyFilter filter);
+	
+	// MARKETING ACTION TARGET
+	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetParams params);
+	public void deleteMarketingActionTarget(CloseableAONContext ctx, Integer id);
+	public MarketingActionTarget saveMarketingActionTarget(CloseableAONContext ctx, MarketingActionTarget marketingActionTarget);
+	
 
 }

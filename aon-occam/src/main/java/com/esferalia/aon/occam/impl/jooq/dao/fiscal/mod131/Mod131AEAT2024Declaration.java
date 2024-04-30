@@ -32,8 +32,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -249,6 +249,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_RLO ( Mod131Key.AC1_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRlo())
 			,(mod,key) -> ensureActivity(mod,0).setRlo(mod.getAmount(key)))
+		,AC1_RPA ( Mod131Key.AC1_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRpa())
+			,(mod,key) -> ensureActivity(mod,0).setRpa(mod.getAmount(key)))
 		,AC1_RDR ( Mod131Key.AC1_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRdr())
 			,(mod,key) -> ensureActivity(mod,0).setRdr(mod.getAmount(key)))
@@ -515,6 +518,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC2_RLO ( Mod131Key.AC2_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRlo())
 			,(mod,key) -> ensureActivity(mod,1).setRlo(mod.getAmount(key)))
+		,AC2_RPA ( Mod131Key.AC2_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRpa())
+			,(mod,key) -> ensureActivity(mod,1).setRpa(mod.getAmount(key)))
 		,AC2_RDR ( Mod131Key.AC2_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRdr())
 			,(mod,key) -> ensureActivity(mod,1).setRdr(mod.getAmount(key)))
@@ -780,6 +786,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC3_RLO ( Mod131Key.AC3_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRlo())
 			,(mod,key) -> ensureActivity(mod,2).setRlo(mod.getAmount(key)))
+		,AC3_RPA ( Mod131Key.AC3_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRpa())
+			,(mod,key) -> ensureActivity(mod,2).setRpa(mod.getAmount(key)))
 		,AC3_RDR ( Mod131Key.AC3_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRdr())
 			,(mod,key) -> ensureActivity(mod,2).setRdr(mod.getAmount(key)))
@@ -1045,6 +1054,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC4_RLO ( Mod131Key.AC4_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRlo())
 			,(mod,key) -> ensureActivity(mod,3).setRlo(mod.getAmount(key)))
+		,AC4_RPA ( Mod131Key.AC4_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRpa())
+			,(mod,key) -> ensureActivity(mod,3).setRpa(mod.getAmount(key)))
 		,AC4_RDR ( Mod131Key.AC4_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRdr())
 			,(mod,key) -> ensureActivity(mod,3).setRdr(mod.getAmount(key)))
@@ -1310,6 +1322,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC5_RLO ( Mod131Key.AC5_RLO
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRlo())
 			,(mod,key) -> ensureActivity(mod,4).setRlo(mod.getAmount(key)))
+		,AC5_RPA ( Mod131Key.AC5_RPA
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRpa())
+			,(mod,key) -> ensureActivity(mod,4).setRpa(mod.getAmount(key)))
 		,AC5_RDR ( Mod131Key.AC5_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRdr())
 			,(mod,key) -> ensureActivity(mod,4).setRdr(mod.getAmount(key)))
@@ -2307,101 +2322,104 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// Los índices correctores especiales sólo se aplicarán en aquellas 
 		// actividades concretas que se citan a continuación:
 		double ic1 = 0.0;
-		act.setIndiceEmpresasPequenaDimensionAplicable(true); 
-		if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
-
-			// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
-			if (act.getModules() != null && act.getModules().size() == 4) {
-				
-				// Actividad de comercio al por menor de prensa, revistas y libros 
-				// en quioscos situados en la v?a p?blica:
-				//	Ubicaci?n de los quioscos					?ndice
-				//  --------------------------------------------------
-				//	Madrid y Barcelona							  1,00
-				//	Municipios de m?s de 100.000 habitantes		  0,95
-				//	Resto de municipios							  0,80
-				if (AonMathUtils.round(mun) == 6.0) {
-					ic1 = 1.0;
-				} else if (AonMathUtils.round(mun) == 5.0) {
+		act.setIndiceEmpresasPequenaDimensionAplicable(true);
+		
+		if (!AonMathUtils.isLessThanZero( act.getRnm() )) {
+			if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
+	
+				// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
+				if (act.getModules() != null && act.getModules().size() == 4) {
+					
+					// Actividad de comercio al por menor de prensa, revistas y libros 
+					// en quioscos situados en la v?a p?blica:
+					//	Ubicaci?n de los quioscos					?ndice
+					//  --------------------------------------------------
+					//	Madrid y Barcelona							  1,00
+					//	Municipios de m?s de 100.000 habitantes		  0,95
+					//	Resto de municipios							  0,80
+					if (AonMathUtils.round(mun) == 6.0) {
+						ic1 = 1.0;
+					} else if (AonMathUtils.round(mun) == 5.0) {
+						ic1 = 0.95;
+					} else {
+						ic1 = 0.80;
+					}
+				}
+			} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
+					|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {
+				// Actividad de transporte urbano colectivo y de viajeros por carretera:
+				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
+				if (AonMathUtils.round(veh) == 1.0) {
+					ic1 = 0.80;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
+				}
+			} else if (Epigraph.E_721_2.getEpigraph().equals(act.getEpigraph())) {
+				//	Actividad de transporte por autotaxis.
+				//		Poblaci?n del municipio				  ?ndice
+				//		--------------------------------------------
+				//		Hasta 2.000 habitantes					0,75
+				//		De 2.001 hasta 10.000 habitantes		0,80
+				//		De 10.001 hasta 50.000 habitantes		0,85
+				//		De 50.001 hasta 100.000 habitantes		0,90
+				//		M?s de 100.000 habitantes				1,00
+				act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				if (AonMathUtils.round(mun) == 0.0) {
+					ic1 = 0.75;
+				} else if (AonMathUtils.round(mun) == 1.0 || AonMathUtils.round(mun) == 2.0) {
+					ic1 = 0.80;
+				} else if (AonMathUtils.round(mun) == 3.0) {
+					ic1 = 0.85;
+				} else if (AonMathUtils.round(mun) == 4.0) {
+					ic1 = 0.90;
+				} else {
+					ic1 = 1.00;
+				}
+			} else if (Epigraph.E_722A.getEpigraph().equals(act.getEpigraph())) {
+				//Actividades de transporte de mercanc?as por carretera y servicios de mudanzas:
+				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
+				// Se aplicar? el ?ndice 0,90 cuando la actividad se realice con tractocamiones
+				// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
+				// un ?nico tractocami?n y sin semirremolques, se aplicar?, exclusivamente, el ?ndice 0,75.
+	
+				if (AonMathUtils.round(veh) == 1.0) {
+					ic1 = 0.80;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+				// Indique si la actividad se realiza con un ?nico tractocami?n y sin semirremolques.
+				if (act.isTss()) {
+					ic1 = 0.75;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+				// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
+				if (act.isTns()) {
+					ic1 = 0.90;
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				}
+			} else if (Epigraph.E____.getEpigraph().equals(act.getEpigraph())) {
+				// Actividad de producci?n de mejill?n en batea:
+				//	- Empresa con una sola batea y sin barco auxiliar: 0,75.
+				//	- Empresa con una sola batea y con un barco auxiliar de 
+				//	  menos de 15 toneladas de registro bruto (T.R.B.): 0,85.
+				//	- Empresa con una sola batea y con un barco auxiliar de 15 
+				//	  a 30 T.R.B.; y empresa con dos bateas y sin barco auxiliar: 0,90.
+				//	- Empresa con una sola batea y con un barco auxiliar de m?s 
+				//	  de 30 T.R.B.; y empresa con dos bateas y un barco auxiliar 
+				//    de menos de 15 T.R.B.: 0,95.
+				act.setIndiceEmpresasPequenaDimensionAplicable(false);
+				// N?mero de bateas y de barcos auxiliares de la empresa.
+				double bat = act.getBat();
+				if (AonMathUtils.round(bat) == 1.0) {
+					ic1 = 0.75;
+				} else if (AonMathUtils.round(bat) == 2.0) {
+					ic1 = 0.85;
+				} else if (AonMathUtils.round(bat) == 3.0 || AonMathUtils.round(bat) == 5.0) {
+					ic1 = 0.90;
+				} else if (AonMathUtils.round(bat) == 4.0 || AonMathUtils.round(bat) == 6.0) {
 					ic1 = 0.95;
 				} else {
-					ic1 = 0.80;
+					// Otros: numero de bateas, barcos o TRB distintos de los anteriores.
+					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
 				}
-			}
-		} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
-				|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {
-			// Actividad de transporte urbano colectivo y de viajeros por carretera:
-			// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
-			if (AonMathUtils.round(veh) == 1.0) {
-				ic1 = 0.80;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);	
-			}
-		} else if (Epigraph.E_721_2.getEpigraph().equals(act.getEpigraph())) {
-			//	Actividad de transporte por autotaxis.
-			//		Poblaci?n del municipio				  ?ndice
-			//		--------------------------------------------
-			//		Hasta 2.000 habitantes					0,75
-			//		De 2.001 hasta 10.000 habitantes		0,80
-			//		De 10.001 hasta 50.000 habitantes		0,85
-			//		De 50.001 hasta 100.000 habitantes		0,90
-			//		M?s de 100.000 habitantes				1,00
-			act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			if (AonMathUtils.round(mun) == 0.0) {
-				ic1 = 0.75;
-			} else if (AonMathUtils.round(mun) == 1.0 || AonMathUtils.round(mun) == 2.0) {
-				ic1 = 0.80;
-			} else if (AonMathUtils.round(mun) == 3.0) {
-				ic1 = 0.85;
-			} else if (AonMathUtils.round(mun) == 4.0) {
-				ic1 = 0.90;
-			} else {
-				ic1 = 1.00;
-			}
-		} else if (Epigraph.E_722A.getEpigraph().equals(act.getEpigraph())) {
-			//Actividades de transporte de mercanc?as por carretera y servicios de mudanzas:
-			// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
-			// Se aplicar? el ?ndice 0,90 cuando la actividad se realice con tractocamiones
-			// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
-			// un ?nico tractocami?n y sin semirremolques, se aplicar?, exclusivamente, el ?ndice 0,75.
-
-			if (AonMathUtils.round(veh) == 1.0) {
-				ic1 = 0.80;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-			// Indique si la actividad se realiza con un ?nico tractocami?n y sin semirremolques.
-			if (act.isTss()) {
-				ic1 = 0.75;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-			// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
-			if (act.isTns()) {
-				ic1 = 0.90;
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			}
-		} else if (Epigraph.E____.getEpigraph().equals(act.getEpigraph())) {
-			// Actividad de producci?n de mejill?n en batea:
-			//	- Empresa con una sola batea y sin barco auxiliar: 0,75.
-			//	- Empresa con una sola batea y con un barco auxiliar de 
-			//	  menos de 15 toneladas de registro bruto (T.R.B.): 0,85.
-			//	- Empresa con una sola batea y con un barco auxiliar de 15 
-			//	  a 30 T.R.B.; y empresa con dos bateas y sin barco auxiliar: 0,90.
-			//	- Empresa con una sola batea y con un barco auxiliar de m?s 
-			//	  de 30 T.R.B.; y empresa con dos bateas y un barco auxiliar 
-			//    de menos de 15 T.R.B.: 0,95.
-			act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			// N?mero de bateas y de barcos auxiliares de la empresa.
-			double bat = act.getBat();
-			if (AonMathUtils.round(bat) == 1.0) {
-				ic1 = 0.75;
-			} else if (AonMathUtils.round(bat) == 2.0) {
-				ic1 = 0.85;
-			} else if (AonMathUtils.round(bat) == 3.0 || AonMathUtils.round(bat) == 5.0) {
-				ic1 = 0.90;
-			} else if (AonMathUtils.round(bat) == 4.0 || AonMathUtils.round(bat) == 6.0) {
-				ic1 = 0.95;
-			} else {
-				// Otros: numero de bateas, barcos o TRB distintos de los anteriores.
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);	
 			}
 		}
 		act.setIc1(ic1);
@@ -2420,16 +2438,17 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			if (act.isLoc() && act.getRnm() > 0) {
 				if (AonMathUtils.round(act.getVeh()) <= 1.0) {
 					if (!act.isCap()) {
+						double emp = getSalariedStaff( act );
 						ic2 = 0.7; 
 						if (AonMathUtils.round(act.getMun()) == 1.0) {
 							ic2 = 0.75;
 						} else if (AonMathUtils.round(act.getMun()) >= 2.0) {
 							ic2 = 0.80;
 						}
-						if (act.getEmp() > 0.0 && act.getEmp() <= 2.0) {
+						if (emp > 0.0 && emp <= 2.0) {
 							ic2 = 0.90;
 						}
-						if (act.getEmp() > 2) {
+						if (emp > 2) {
 							ic2 = 0.0;
 						}
 					}
@@ -2455,7 +2474,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		if (AonMathUtils.isZero(act.getIc2())) {
 			double tope = AonMathUtils.round(act.getMaxImport());
 			if (AonMathUtils.isZero(tope)) {
-				Epigraph epi = Modules2016.Epigraph.getEpigraph(act.getEpigraph());
+				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
 				if (epi != null) {
 					tope = epi.getLimExceso();
 				}
@@ -2514,8 +2533,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// *****************************************************************
 		// 		RENDIMIENTO A EFECTOS DE PAGOS FRACCIONADOS (i.R.P.F.)
 		// *****************************************************************
-		double rpf = 0.0;
-		rpf = act.getRnm();
+		double rpf = act.getRnm();
 		if (AonMathUtils.isNotZero(act.getIc1())) {
 			rpf = rpf * act.getIc1();	
 		}
@@ -2526,9 +2544,16 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			rpf = rpf * act.getIc3();	
 		}
 		if (AonMathUtils.isNotZero(act.getIc4())) {
-			double baseExceso = rpf - act.getMaxImport();
+			double  tope = act.getMaxImport();
+			if (AonMathUtils.isZero(tope)) {
+				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
+				if (epi != null) {
+					tope = epi.getLimExceso();
+				}
+			}
+			double baseExceso = rpf - tope;
 			baseExceso = baseExceso * act.getIc4(); 
-			rpf = baseExceso + act.getMaxImport();	
+			rpf = baseExceso + tope;	
 		}
 		if (AonMathUtils.isNotZero(act.getIc5())) {
 			rpf = rpf * act.getIc5();	
@@ -2537,8 +2562,10 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// Disposición adicional primera. Reducción en 2024 del rendimiento neto calculado por el método de estimación objetiva. 
 		//		1. Los contribuyentes que determinen el rendimiento neto de sus actividades
 		//		económicas por el método de estimación objetiva, podrán reducir el rendimiento neto de
-		//		módulos obtenido en 2024 en un 5 por ciento.
-		rpf = rpf - (rpf * 5 / 100);
+		//		módulos obtenido en 2024 en un 5 por ciento.Rpf
+		if (AonMathUtils.isGreatherThanZero( rpf )) {
+			rpf = rpf - (rpf * 5 / 100);
+		}
 		
 		
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.
@@ -2560,35 +2587,61 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// municipal de Lorca y determinen el rendimiento neto por el m?todo de estimaci?n objetiva,
 		// podr?n reducir el rendimiento neto de m?dulos de 2013 correspondiente a tales
 		// actividades en un 20 por ciento.
-		double rlo = 0.0;
-		if (AonMathUtils.isNotZero(act.getLor())) {
-			rlo = AonMathUtils.round(act.getRpf() * 20 / 100); 	
+		if (AonMathUtils.equals(0,act.getLor())) {
+			act.setRlo(0.0);
+		} else if (AonMathUtils.equals(1,act.getLor())) {
+			act.setRlo(AonMathUtils.round(act.getRpf() * 20 / 100));
+			act.setRpa(0.0);
 		}
-		act.setRlo(rlo);		
+		if (AonMathUtils.equals(0,act.getPal())) {
+			act.setRpa(0.0);
+		} else if (AonMathUtils.equals(1,act.getPal())) {
+			act.setRpa(AonMathUtils.round(act.getRpf() * 20 / 100));
+			act.setRlo(0.0);
+		}
 	}
 	
 	private static void calcRendimientoEfectosPagoFraccionadoDespuesReduccion(AONContext ctx, Mod131Activity act) {
-		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo()));
+		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo() - act.getRpa()));
+	}
+	
+	private static double getSalariedStaff( Mod131Activity act ) {
+		double salariedStaff = 0.0;
+		for (Mod131ActivityModule mod : act.getModules()) {
+			String desc = mod.getDescription();
+			if (mod.isSalariedStaff() 
+				|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
+				|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
+				salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
+			}
+		}
+		return salariedStaff;
 	}
 	
 	private static void calcResultadoPagoTrimestral(AONContext ctx, Mod131Activity act) {
-		double salariedStaff = act.getEmp();
-		if (AonMathUtils.isZero(salariedStaff)) {
-			for (Mod131ActivityModule mod : act.getModules()) {
-				String desc = mod.getDescription();
-				if (mod.isSalariedStaff() 
-					|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
-					|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
-					salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
-				}
-			}
-		}
+		double salariedStaff = getSalariedStaff( act );
+//		if (AonMathUtils.isZero(salariedStaff)) {
+//			for (Mod131ActivityModule mod : act.getModules()) {
+//				String desc = mod.getDescription();
+//				if (mod.isSalariedStaff() 
+//					|| AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription())
+//					|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())) {
+//					salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
+//				}
+//			}
+//		}
 		
 		int periodDays = (int) AonDateUtils.getDaysBetweenDates(
 				 FiscalUtils.getPeriodStart(act.getYear(),act.getPeriod())

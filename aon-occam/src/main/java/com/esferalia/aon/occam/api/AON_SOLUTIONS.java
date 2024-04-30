@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.Task2Impl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix.InvoiceDuplicateFixDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
@@ -1195,6 +1196,13 @@ public class AON_SOLUTIONS {
 	public static Double getFinanceGroupStatus(Domain domain, User user, FinanceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			return getFinance().getFinanceGroupStatus(ctx, filter);
+		}
+	}
+	
+	public static void invoiceDuplicateFix(Domain domain, User user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			InvoiceDuplicateFixDAO.invoiceDuplicateFix(ctx);
+			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
 		}
 	}
 }

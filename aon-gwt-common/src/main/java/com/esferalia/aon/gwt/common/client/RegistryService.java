@@ -73,6 +73,7 @@ public interface RegistryService extends RemoteService {
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params);
+	void deleteCustomerFee(String domainName, int domain, String user, Fee fee);
 	
 	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery);
 	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);
@@ -85,6 +86,8 @@ public interface RegistryService extends RemoteService {
 	ImportError importFee(Domain domain, User user, Fee fee, Integer index);
 	
 	List<Customer> getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams);
+	
+	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer);
 	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]

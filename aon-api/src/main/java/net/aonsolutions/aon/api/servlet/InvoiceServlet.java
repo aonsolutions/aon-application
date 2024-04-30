@@ -921,6 +921,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.STATUS, invoice.isRecorded() 
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
+		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
 		return json;
 	}
 	

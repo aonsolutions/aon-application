@@ -114,11 +114,17 @@
 							<aon:div styleClass="aon-direct-access-list">	
 								<!-- Campañas -->
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketingCampaignModule" action="gwt_marketingCampaignModule"
+										value="#{bundle.marketing_campaign_module}" />
+								</aon:div>
+								
+								<!-- Campañas 
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
 										action="marketingCampaign_list"
 										actionListener="#{marketingCampaign.onSearch}"
-										value="#{bundle.marketing_campaign_module}" />
-								</aon:div>
+										value="#{bundle.marketing_campaign_module} [Antiguo]" />
+								</aon:div> -->
 								
 								<!-- Centro de Comunicaciones -->
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -203,6 +209,7 @@
 													actionListener="#{question.onSearch}"
 													value="#{bundle.registry_question_module} [Antiguo]" />
 											</aon:div>
+											
 										</aon:div>
 									</aon:panelGrid>									
 								</aon:if>

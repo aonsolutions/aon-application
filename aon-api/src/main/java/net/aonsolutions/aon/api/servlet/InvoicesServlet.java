@@ -51,6 +51,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     public static final String RECORD = "/record";
     public static final String COUNT = "/count";
     
+    public static final String INVOICE_DUPLICATE_FIX = "/invoiceduplicatefix";
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -98,6 +99,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
             Object object = new AonRouting(api)
                     .addRoute(ACCEPT, InvoicesServlet::acceptInvoice)
                     .addRoute(RECORD, InvoicesServlet::recordInvoices)
+                    .addRoute(INVOICE_DUPLICATE_FIX, InvoicesServlet::invoiceDuplicateFix)
             		.addRoute(INVOICES, InvoicesServlet::saveInvoice)
                     .addRoute(INVOICE, InvoicesServlet::saveInvoice)
                     .addRoute(INVOICE_RECORD, InvoicesServlet::recordInvoice)
@@ -316,5 +318,10 @@ public class InvoicesServlet extends AonApiHttpServlet {
 //		}
     	return new JSONObject();    	
     }
+    
+	private static JSONObject invoiceDuplicateFix(AonApiData api) {
+		AON_SOLUTIONS.invoiceDuplicateFix(api.getDomain(), api.getUser());
+		return new JSONObject();
+	}
 	
 }

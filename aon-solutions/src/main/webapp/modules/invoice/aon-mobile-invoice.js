@@ -1088,10 +1088,10 @@ export class AonMobileInvoice extends AonInvoice {
 			rectify.backgroundColor = INVOICE.color;
 			rectify.fn = () => this.rectifyInvoice();
 
-			let duplicate = ACTION.DUPLICATE_INVOICE;
-			duplicate.permission = true;
-			duplicate.backgroundColor = INVOICE.color;
-			duplicate.fn = () => this.duplicateInvoice();
+			// let duplicate = ACTION.DUPLICATE_INVOICE;
+			// duplicate.permission = true;
+			// duplicate.backgroundColor = INVOICE.color;
+			// duplicate.fn = () => this.duplicateInvoice();
 
 			let addFile = ACTION.ADD_FILE;
 			addFile.permission = true;
@@ -1105,12 +1105,12 @@ export class AonMobileInvoice extends AonInvoice {
 				actions = [restore, deleteForever];
 			}  else if(this.invoice.isInbox()){
 				if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){
-					actions = [addComment, send, deleteInvoice, reject, record, duplicate];
+					actions = [addComment, send, deleteInvoice, reject, record];
 				} else {
-					actions = [addComment, deleteInvoice, duplicate];
+					actions = [addComment, deleteInvoice];
 				}
 			} else {
-				actions = [send, rectify, duplicate];
+				actions = [send, rectify];
 			}
 			if(!this.invoice.file && !this.invoice.isEmitida()){
 				actions.push(addFile);
