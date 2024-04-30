@@ -4,6 +4,8 @@ import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext.split;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
@@ -75,7 +77,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -137,6 +142,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -4478,10 +4484,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
-		this.implicitExpressionContext.setVariable(SALARY, salaryType == SalaryType.SALARY, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(SETTLE, salaryType == SalaryType.SETTLE, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(DELAY, salaryType == SalaryType.DELAY, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.SALARY, salaryType == SalaryType.SALARY, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.SETTLE, salaryType == SalaryType.SETTLE, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.DELAY, salaryType == SalaryType.DELAY, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, getEnd());
 		
 		this.implicitExpressionContext.setVariable(TODAY,
 				DateUtils.truncate(new Date(), DAY_OF_MONTH), startDate, getEnd());
@@ -6493,6 +6499,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return currentEreFactor < startEreFactor;
 	}
 
+	public Double getPPEDelaysLiquid(Date startDate, Date endDate) {
+		return
+		new AONContext(connection)
+		.getDslContext()
+		.select()
+		.from(SALARY)
+		.innerJoin(SALARY_DATA)
+		.on(SALARY_DATA.SALARY.eq(SALARY.ID))
+		.where(SALARY.CONTRACT.eq(getId()))
+		.and(SALARY.START_DATE.le(toSqlDate(endDate)))
+		.and(SALARY.END_DATE.ge(toSqlDate(startDate)))
+		.and(SALARY.TYPE.eq((byte)SalaryType.DELAY.ordinal()))
+		.and(SALARY_DATA.NAME.eq(ContextVariable.DELAY_CAUSE.getName()))
+		.and(SALARY_DATA.EXPRESSION.eq(PaymentType.CRA_0033.name()))
+		.fetchStreamInto(SALARY)
+		.collect(Collectors.summingDouble(SalaryRecord::getSocialSecurityContributions));
+	}
 
 	
 	// ------------------------------------------------------------------------
