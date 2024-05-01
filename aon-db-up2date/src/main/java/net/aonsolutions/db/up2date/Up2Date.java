@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
+import net.aonsolutions.db.up2date.payroll.PPEUpdate;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionBudget;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignBudget;
 import net.aonsolutions.db.up2date.registry.AlterRitemEdiSalesCode;
@@ -437,9 +438,10 @@ public class Up2Date {
 		// RefreshMod131Result.REFRESH_MOD131_RESULT
     		
     	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
-		InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+		  InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
         UdpateDomainApp.UPDATE_DOMAIN_APP,
         AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
+        PPEUpdate.PPE_UPDATE,
         AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
         AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET
 	};
