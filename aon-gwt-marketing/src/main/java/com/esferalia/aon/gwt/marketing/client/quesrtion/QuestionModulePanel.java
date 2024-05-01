@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.marketing.client.marketing.panel;
+package com.esferalia.aon.gwt.marketing.client.quesrtion;
 
 import java.util.Arrays;
 
@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
