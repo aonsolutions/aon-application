@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -95,51 +96,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static final String COUNT = "/count";
 	public static final String TEXT_CONTENT= "/text_content";
 	public static final String CONFIGURATION= "/configuration";
-	
-	
-	public static enum CompanyActsLike {
-		ISSUER {
-			@Override
-			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
-				ocrDocumentsParams.withIssuerTaxId(ocrCompany.getTaxId().orElse("This must return false"));
-			}
-		},
-		RECIPIENT {
-			@Override
-			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
-				ocrDocumentsParams.withRecipientTaxId(ocrCompany.getTaxId().orElse("This must return false"));
-			}
-		},
-		UNKNOWN {
-			@Override
-			public void withCompanyActsLike(OCRCompany ocrCompany, OCRDocumentsParams ocrDocumentsParams) {
-				ocrDocumentsParams
-						.withPredicate(ocrDocument -> {
-								return ocrCompany.getTaxId().isEmpty() 
-								|| ocrDocument.getData().isEmpty()
-								|| (AonStringUtils.notEquals(normalize(ocrDocument.getData().get().getIssuerDocument()),
-										ocrCompany.getTaxId().get())
-										&& AonStringUtils.notEquals(normalize(ocrDocument.getData().get().getRecipientDocument()),
-												ocrCompany.getTaxId().get()));
-						}
-						);
-			}
-		},
-		;
-		
-		public abstract void withCompanyActsLike ( OCRCompany  ocrCompany, OCRDocumentsParams ocrDocumentsParams );
-		
-		public static Optional<CompanyActsLike> get(String name) {
-			for ( CompanyActsLike companyActsLike: CompanyActsLike.values() ) {
-				if ( AonStringUtils.equalsIgnoreCase(companyActsLike.name(), name) ) {
-					return Optional.of(companyActsLike);
-				}
-			}
-			return Optional.empty();
-		}
-		
-	}
-	
+	public static final String ACCEPT = "/accept";
 	
 	@Override	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -164,6 +121,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(DOCUMENTS, InvofoxServlet::getDocuments)
 				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
+				.addRoute(ACCEPT, InvofoxServlet::acceptDocument)
 				.addRoute(TEXT_CONTENT, InvofoxServlet::getTextContent)
 				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
 				.addRoute(COUNT, InvofoxServlet::getCount)
@@ -195,6 +153,33 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    JSONObject params = api.getData();
 	    String documentId    = params.optString(IJsonNames.ID);
 	    return getDocument(api.getDomain(), api.getUser(), documentId);
+	}
+	
+	private static JSONObject acceptDocument(AonApiData api) {
+	    JSONObject params = api.getData();
+	    String documentId    = params.optString(IJsonNames.ID);
+
+	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
+	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),  documentId);
+	    OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
+	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
+	    
+	    Invoice inv = response.getDocument()
+		    .map(InvofoxServlet::toInvoice)
+		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
+		    .map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
+		    .map(invoice -> fillCategory(aonContext, invoice))
+		    .map(invoice -> fillActivity(aonContext, invoice))
+		    .orElse(null);
+	    if(inv != null && !AonStringUtils.isBlank(inv.getTediCategory())) {
+	    	inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), inv, null);	    	
+	    	if(inv != null && inv.getId() != null) {
+	    		InvoiceServlet.processInvoiceFile(api, inv);
+	    	}
+	    }
+	    return new JSONObject();
 	}
 	
 	public static JSONObject getDocument(Domain domain, User user, String documentId) {
@@ -272,7 +257,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    OCRCompany ocrCompany = companies.get(0);
 		    OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
 		    type.ifPresent( ocrDocumentParams::withType);
-		    ocrDocumentParams.withEnvironment("65491eee49f881000dd14c72"); //64804a43d883e2000ac0423a
+		    ocrDocumentParams.withEnvironment(invofoxConfiguration.isTest() ?  "65491eee49f881000dd14c72" : "64804a43d883e2000ac0423a");
 		    ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC); 
 		    ocrDocumentParams.withCompany(ocrCompany.getId()).skiping(page * perPage);
 		    ocrDocumentParams.withCompanyActsLike(companyActsLike);
@@ -439,28 +424,25 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    
 	}
 
-        private static final JSONObject getFileJSON(OCRDocument ocrDocument) {
-            JSONObject jsonObject = new JSONObject();
-            ocrDocument.getClientData()
-            .ifPresent( clientData ->  
-            			clientData.getS3Object().ifPresent( 
-            				s3Object ->  
-            				s3Object.getBucket().ifPresent( 
-            						bucketName ->  
-                					    s3Object.getKey().ifPresent(key ->  {
-                							URL url = S3.getURL(bucketName, key);
-                							jsonObject.put("url",url.toExternalForm());
-                							jsonObject.put("path",url.toExternalForm());
-                							String contentType = S3.getContentType(bucketName, key);
-                							jsonObject.put("content_type", contentType);
-                							jsonObject.put("s3Bucket", key);
-                							jsonObject.put("s3Key", key);
-                					    })   
-                					)
-                			    )
-                	);
-            return jsonObject;
-        }
+	private static final JSONObject getFileJSON(OCRDocument ocrDocument) {
+		JSONObject jsonObject = new JSONObject();
+		ocrDocument.getClientData().ifPresent( clientData ->  
+			clientData.getS3Object().ifPresent(s3Object ->  
+				s3Object.getBucket().ifPresent(bucketName ->  
+					s3Object.getKey().ifPresent(key ->  {
+						URL url = S3.getURL(bucketName, key);
+						jsonObject.put("url",url.toExternalForm());
+						jsonObject.put("path",url.toExternalForm());
+						String contentType = S3.getContentType(bucketName, key);
+						jsonObject.put("content_type", contentType);
+						jsonObject.put("s3Bucket", key);
+						jsonObject.put("s3Key", key);
+					})   
+				)
+			)
+		);
+        return jsonObject;
+	}
 	
 	private static final Invoice fillFinances (AONContext ctx , OCRInvoice ocrInvoice, Invoice invoice ) {
 	    OCRInvoiceBuilder.fillFinances(ctx, ocrInvoice, invoice);
