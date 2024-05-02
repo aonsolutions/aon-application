@@ -900,7 +900,7 @@ public class AccountingInvoiceDAO {
 					InputStream in = null;
 					try {
 						Rawdoc rawdoc = RawdocDAO.getFull(ctx, accInvoice.getAttach().getId());
-						attach.setData( rawdoc.getData() );
+						if(rawdoc != null) attach.setData( rawdoc.getData() );
 					} finally {
 						AonIOUtils.closeQuietly(in);
 					}
