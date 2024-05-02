@@ -513,18 +513,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONArray getRawdocNewPortal(AonApiData api) {
 	    JSONArray jsArray = new JSONArray();
-	
 	    RawdocFilter filter = new RawdocFilter()
 	    		.setType(api.getData().optInt(IConstants.TYPE))
 	    		.setStatus(api.getData().optString(IConstants.STATUS))
 	    		.setGlobal(api.getData().optString("global"));
-	    System.out.println(api.getData().optString("global"));
-	    		
 	    Integer page = api.getData().optInt("page");
 	    Integer perPage = api.getData().optInt("per_page");
 	    boolean ticket = api.getData().optBoolean("ticket");
-		System.out.println("page" + page + "perPage" + perPage);
-
 	    AON.getRawdocNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
 	            f -> rawdocFilter(f,api.getDomain().getId() , filter), page, perPage, ticket).forEach(rawdoc ->{
 	                JSONObject json = rawdoc2json(rawdoc, api);
@@ -716,7 +711,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
     	
-    	if(!invoiceFilter.getDescription().isEmpty()) {
+    	if(!AonStringUtils.isBlank(invoiceFilter.getDescription())) {
     		filter = filter.and(
     			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
     			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
@@ -748,7 +743,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
     	}
     	
-    	if(!invoiceFilter.getGlobal().isEmpty()) {
+    	if(!AonStringUtils.isBlank(invoiceFilter.getGlobal())) {
     		Filter filter3 = f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%")
     				.or(f.getTotalProperty().like("%" + invoiceFilter.getGlobal() + "%"))
     				.or(f.getReferenceCodeProperty().like("%" + invoiceFilter.getGlobal() + "%"))
@@ -774,13 +769,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getTypeProperty().eq(RawdocType.safeValueOf(rawdocFilter.getType()).value()));
 		}
 		
-		if(rawdocFilter.getStatus().isEmpty()) {
+		if(AonStringUtils.isBlank(rawdocFilter.getStatus())) {
 			filter = filter.and(f.getStatusProperty().eq(RawdocStatus.INBOX.value()));
 		}else {
 			filter = filter.and(f.getStatusProperty().eq(RawdocStatus.safeValueOf(rawdocFilter.getStatus()).value()));
 		}
 		
-		if(rawdocFilter.getGlobal() != null ) {
+		if(!AonStringUtils.isBlank(rawdocFilter.getGlobal())) {
 			filter = filter.and((f.getJsonNameProperty().like("%"+ rawdocFilter.getGlobal() + "%"))
 					.or(f.getReferenceCodeProperty().like("%" + rawdocFilter.getGlobal() + "%"))
 					.or(f.getJsonTotalProperty().like("%" + rawdocFilter.getGlobal() +"%"))
