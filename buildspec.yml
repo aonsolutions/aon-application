@@ -99,7 +99,7 @@ phases:
       #  && docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:hotfix \
       #  && docker push $REPOSITORY_URI/aon-solutions:hotfix \
       #  || echo $COMMIT_MESSAGE
-      #- |
+      - |
         printf '[
         {"name":"CADIZ-APPLICATION","imageUri":"%s/aon-application:%s"}
         ]' $REPOSITORY_URI ${TAG:=snapshot} > applicationimgdef.json
