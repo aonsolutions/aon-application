@@ -25,6 +25,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface AccountEntryService extends RemoteService {
 
 	AccountEntry getAccountEntry(Occam occam, int id) throws AonCoreException;
+	AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) throws AonCoreException;
+	AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException;
+	LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(Occam occam, String query) throws AonCoreException;
+
+	//	-----------------------------------
 
 	LinkedList<AccountEntry> getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit) throws AonCoreException;
 	AccountEntry getAccountEntry(String domainName, int domain, String user, int id) throws AonCoreException;
@@ -32,12 +37,9 @@ public interface AccountEntryService extends RemoteService {
 	void deleteAccountEntry(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry) throws AonCoreException;
 	AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException;
-	LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user, String query) throws AonCoreException;
 	AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) throws AonCoreException;
-	AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException;
 	AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException;
 	AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) throws AonCoreException;
-	AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData);
 	AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) throws AonCoreException;
 	AccountingInvoice rectifyInvoice(String domainName, int domain, String user, Integer id, InvoiceRectificationData data) throws AonCoreException;
 	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String user, Date from, Date to) throws AonCoreException;

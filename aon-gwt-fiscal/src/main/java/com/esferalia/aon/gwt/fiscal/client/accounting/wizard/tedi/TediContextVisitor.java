@@ -188,7 +188,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 					if (ar != null) {
 						LOGGER.info( ar.getId() + " " + ar.getAccountCode() + " " + ar.getName());
 					}
-					SERVICE.initializeInvoice(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(), ar, null,
+					SERVICE.initializeInvoice(getOptions().getOccam(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 						
 						@Override
@@ -236,7 +236,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onAccept(AccountingRegistry registry) {
 					final AccountingRegistry ar = registry;
-					SERVICE.initializeInvoice(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(), ar, null,
+					SERVICE.initializeInvoice(getOptions().getOccam(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 	
 								@Override

@@ -38,6 +38,21 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	public AccountEntry getAccountEntry(Occam occam, int id) throws AonCoreException {
 		return ACCOUNTING.getAccountEntry(occam, id);
 	}
+	
+	@Override
+	public AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
+		return ACCOUNTING.initializeInvoice(occam, registry, ai, preserveData);
+	}
+
+	@Override
+	public AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException {
+		return ACCOUNTING.initializeInvoice(occam, registry, activity, issueDate);
+	}
+	
+	// *************************************	
+	// *************************************	
+	// *************************************	
+	// *************************************	
 
 	@Override
 	public LinkedList<AccountEntry> getAccountEntries(String domainName, int domain, String user, final AccountEntryParams params, int offset, int limit) throws AonCoreException {
@@ -70,16 +85,6 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException {
-		return ACCOUNTING.initializeInvoice(domainName, domain, user, registry, activity, issueDate);
-	}
-	
-	@Override
-	public AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
-		return ACCOUNTING.initializeInvoice(domainName, domain, user, registry, ai, preserveData);
-	}
-	
-	@Override
 	public AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException {
 		return ACCOUNTING.removeInvoiceAttach(domainName, domain, user, invoiceId);
 	}
@@ -100,8 +105,8 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user, String query) throws AonCoreException {
-		return ACCOUNTING.getPendingImportAccountingInvoices(domainName, domain, user, query);
+	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(Occam occam, String query) throws AonCoreException {
+		return ACCOUNTING.getPendingImportAccountingInvoices(occam, query);
 	}
 
 	@Override
