@@ -107,7 +107,7 @@ phases:
       - |
         printf '[
         {"name":"CADIZ-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-        ]' $REPOSITORIO_URI ${TAG:=snapshot} > solutionsimgdef.json
+        ]' $REPOSITORY_URI ${TAG:=snapshot} > solutionsimgdef.json
       - cat solutionsimgdef.json
       # - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
       # - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
