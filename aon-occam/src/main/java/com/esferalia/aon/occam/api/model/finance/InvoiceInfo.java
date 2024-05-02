@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class InvoiceInfo implements Serializable {
 	
@@ -11,6 +12,11 @@ public class InvoiceInfo implements Serializable {
 	private Integer invoice;
 	private InvoiceCommunicationType type;
 	private InvoiceCommunicationStatus status;
+	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 
 	public Integer getId() {
 		return id;
@@ -73,6 +79,42 @@ public class InvoiceInfo implements Serializable {
 
 	public InvoiceInfo setStatus(InvoiceCommunicationStatus status) {
 		this.status = status;
+		return this;
+	}
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	
+	public InvoiceInfo setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public InvoiceInfo setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	
+	public InvoiceInfo setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	
+	public InvoiceInfo setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 		return this;
 	}
 	

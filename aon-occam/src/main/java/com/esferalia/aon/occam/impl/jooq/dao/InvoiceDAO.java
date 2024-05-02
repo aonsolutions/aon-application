@@ -990,7 +990,7 @@ public class InvoiceDAO {
 		}
 		if(rawdocId != null) {
 			Rawdoc rawdoc = RawdocDAO.getFull(ctx, rawdocId);
-			if(rawdoc.getData() != null) {
+			if(rawdoc != null && rawdoc.getData() != null) {
 				Attach attach = new Attach()
 					.setDate(new Date())
 					.setDomain(new Domain().setId(invoice.getDomain()))
