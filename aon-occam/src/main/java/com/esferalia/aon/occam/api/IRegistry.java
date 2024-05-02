@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.CreditorSupplier;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
@@ -132,6 +133,8 @@ public interface IRegistry {
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
 
 	// ------------------- CUSTOMER
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter);
+	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter);
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
 	public Customer saveCustomer(AONContext ctx, Customer customer);
@@ -158,12 +161,18 @@ public interface IRegistry {
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit);
 	public Supplier saveSupplier(AONContext ctx, Supplier supplier);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
+	public long getSuppliersCount(AONContext ctx, SupplierFilter filter);
 
 	// ------------------- CREDITOR
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit);
 	public Creditor saveCreditor(AONContext ctx, Creditor creditor);
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
+	public long getCreditorsCount(AONContext ctx, CreditorFilter filter);
+	
+	// ------------------- CREDITOR UNION SUPPLIER
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter);
+	public long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter);
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
@@ -227,6 +236,7 @@ public interface IRegistry {
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
 	public Domain getDomainLinked(AONContext ctx, Integer customerId);
 	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
+	public long getCustomersCount(AONContext ctx, CustomerFilter filter);
 	
 	public List<Customer> getCustomerWithoutFee(AONContext ctx);
 	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams);

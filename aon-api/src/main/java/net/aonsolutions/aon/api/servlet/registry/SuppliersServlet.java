@@ -1,5 +1,9 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,10 +13,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
+import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.SupplierJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -28,6 +38,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 	public static final String SUPPLIERS = "/";
 	public static final String SUPPLIER = "/:id";
 	public static final String SUPPLIER_TRANSACTION = "/:id/transaction";
+	public static final String SUPPLIERS_COUNT = "/count";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -51,6 +62,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(SUPPLIERS, SuppliersServlet::getSuppliers)
+				.addRoute(SUPPLIERS_COUNT, SuppliersServlet::getSuppliersCount)
 				.addRoute(SUPPLIER, SuppliersServlet::getSupplier)
 				.addRoute(SUPPLIER_TRANSACTION, SuppliersServlet::getSupplierTransaction)
 				.apply();
@@ -109,9 +121,42 @@ public class SuppliersServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PAGE) : 1;
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
-
-		return SupplierJSON.toJSON(AON.getSupplierStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+		
+		JSONArray result = SupplierJSON.toJSON(AON.getSupplierStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> supplierFilter(api, api.getData(), f), perPage * (page -1), perPage));
+		 if (api.getData().opt("additional_info") != null) {
+		        LinkedList<RegistryAdditionalInfo> rais = new LinkedList<>();			
+		        JSONArray additionalInfo = (JSONArray) api.getData().opt("additional_info");
+		        for (int i = 0; i < additionalInfo.length(); i++) {
+		            rais.add(RegistryAdditionalInfo.safeValueOf(additionalInfo.get(i).toString()));
+		        }
+		        for (int i = 0; i < result.length(); i++) {
+		            JSONObject supplierObj = result.getJSONObject(i);
+		            int id = supplierObj.getInt("id");
+		            List<RegistryAddress> registryAddresses = new ArrayList<>();
+		            List<RegistryMedia> registryMedia = new ArrayList<>();
+		            rais.stream().forEach(rai -> {
+		                if (RegistryAdditionalInfo.ADDRESSES.equals(rai)) {
+		                    RegistryAddressFilter filtro = fil -> fil.getRegistryProperty().eq(id);
+		                    Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filtro);
+		                    addresses.forEach(registryAddresses::add); 
+		                }
+		                if (RegistryAdditionalInfo.MEDIA.equals(rai)) {
+							RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(id);
+							Stream<RegistryMedia> media = AON.getStream(api.getDomain(), api.getUser(), filter);
+							media.forEach(registryMedia::add);
+						}
+		            });
+		            supplierObj.put("registryAddresses", RegistryAddressJSON.toJSON(registryAddresses));
+		            supplierObj.put("media", RegistryMediaJSON.toJSON(registryMedia));
+		        }
+		    }
+		return result;
+	}
+	
+	private static long getSuppliersCount(AonApiData api) {
+		return AON.getSuppliersCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				 f -> supplierFilter(api,api.getData(), f));
 	}
 	
 	private static Filter supplierFilter(AonApiData api, JSONObject json, SupplierProperties f) {

@@ -18,6 +18,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
@@ -133,6 +134,16 @@ public class SupplierDAO {
 				.fetch()
 				.stream()
 				.map(new SupplierFiller());
+	}
+	
+	public static long getSuppliersCount(AONContext ctx, SupplierFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(SUPPLIER)
+				.where(SUPPLIER_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();
 	}
 
 	public static Supplier get(AONContext ctx, Integer id){

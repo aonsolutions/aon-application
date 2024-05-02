@@ -15,11 +15,16 @@ import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.JSON;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
+import org.jooq.tools.json.JSONValue;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -77,6 +82,22 @@ public class RawdocDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.MODIFICATION_USER);}
+		@Override public Property<String> getReferenceCodeProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.reference"));}
+		@Override public Property<String> getJsonNameProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.name"));}
+		@Override public Property<String> getJsonTotalProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.total"));}
+		@Override public Property<String> getJsonDateProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.date"));}
+		
+		
+		public Integer getPage(RawdocFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.getPage();
+		}
+
+		
+		public Integer getPerPage(RawdocFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.getPage();
+		}
 	}
 	
 	private static class RawdocFiller  implements Function<Record,Rawdoc> {
@@ -146,6 +167,7 @@ public class RawdocDAO {
 	}
 	
 	public static Stream<Rawdoc> get(AONContext ctx, RawdocFilter filter, int offset, int limit) {
+		
 		return ctx.getDslContext()
 				.select( SELECT_FIELDS )
 				.from(RAWDOC)
@@ -155,6 +177,37 @@ public class RawdocDAO {
 				.fetch()
 				.stream()
 				.map(new RawdocFiller());
+	}
+	
+	
+	public static SelectConditionStep<Record> prepareQuery(AONContext ctx , RawdocFilter filter, boolean ticket) {
+		System.out.println(ctx.getDslContext()
+				.select( SELECT_FIELDS )
+				.from(RAWDOC)
+				.where(RAWDOC_PROPERTIES.getConditions(filter)).getSQL());
+		SelectConditionStep<Record> query = ctx.getDslContext()
+				.select().
+				from(RAWDOC).
+				where(RAWDOC_PROPERTIES.getConditions(filter));
+		if(ticket) {
+			query.and(RAWDOC.JSON.like("%\"type\":\"ticket\"%")).orderBy(RAWDOC.CREATION_DATE.desc());
+		}else {
+			query.and(RAWDOC.JSON.notLike("%\"type\":\"ticket\"%")).orderBy(RAWDOC.CREATION_DATE.desc());
+
+		}
+		return query;
+	}
+	
+	public static Stream<Rawdoc> getRawdocNewPortal(AONContext ctx , RawdocFilter filter , Integer page, Integer perPage, boolean ticket){
+		return prepareQuery(ctx, filter, ticket).limit(perPage)
+				.offset(perPage * (page -1)).
+				fetch().
+				stream().
+				map(new RawdocFiller());
+	}
+	
+	public static long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
+		return prepareQuery(ctx, filter, ticket).fetch().stream().count();
 	}
 
 	public static Rawdoc get(AONContext ctx, Integer id) {

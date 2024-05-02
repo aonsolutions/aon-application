@@ -21,9 +21,11 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
@@ -56,7 +58,8 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 	}	
 	
 	private void magicLink(JSONObject json, String url) {
-		String email = JsonUtils.getString(json, IJsonNames.EMAIL);
+		String email 	 = JsonUtils.getString(json, IJsonNames.EMAIL);
+		String urlPortal = JsonUtils.optString(json, IJsonNames.URL);
 		if(Utils.isEmail(email)) {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.isEmpty()) {
@@ -64,7 +67,7 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 			}
 			Date expireDate = AonDateUtils.addDays(new Date(), 1);
 			String token = AonToken.build(auth, expireDate);
-			String magicLink = "https://" + url + "?token=" + token; 
+			String magicLink = !AonStringUtils.isBlank(urlPortal) ? urlPortal + "?token=" + token : "https://"+ url + "?token=" + token; 
 			sendGmail(auth, magicLink, expireDate);
 		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage());
 	}
@@ -95,4 +98,5 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 
         return writer.toString();
     }
+	
 }

@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.CreditorSupplier;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -5079,6 +5080,12 @@ public class AON {
 		} 
 	}
 	
+	public static long getCustomersCount(String domainName, Integer domainId, String login, CustomerFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getCustomersCount(ctx, filter);
+		}
+	}
+	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -5883,6 +5890,18 @@ public class AON {
 		}
 	}
 	
+	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter);
+		}
+	}
+	
+	public static long getSupplierCreditorCount(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, String globalFilter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierCreditorCount(ctx, filter, filter2, globalFilter);
+		}
+	}
+	
 	public static LinkedList<Creditor> getCreditorList(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		return getCreditorStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -5897,6 +5916,12 @@ public class AON {
 	public static Creditor saveCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().saveCreditor(ctx, creditor);
+		}
+	}
+	
+	public static long getCreditorsCount(String domainName, Integer domainId, String login, CreditorFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCreditorsCount(ctx ,filter);
 		}
 	}
 	
@@ -6829,6 +6854,12 @@ public class AON {
 		}
 	}
 	
+	public static Certificate getOneCertificate(String domainName, Integer domainId, String login, Integer userId, Integer certificateId) throws IllegalArgumentException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getOneCertificate(ctx, domainId, userId, certificateId);
+		}
+	}
+	
 	public static List<Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
@@ -7422,6 +7453,19 @@ public class AON {
 			return getFinance().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
+	
+	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket ){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket);
+		}
+	}
+	
+	public static long getRawdocCount(String domainName, int domain, String user, RawdocFilter filter, boolean ticket) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocCount(ctx, filter, ticket);
+		}
+
+	}
 
 	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
 		CloseableAONContext ctx = null;
@@ -7545,9 +7589,32 @@ public class AON {
 		}
 	}
 	
+	
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
+	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static long getCustomerCount(String domainName, int domain, String user, CustomerFilter filter, String globalFilter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomerCount(ctx, filter, globalFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<Customer> getCustomers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
 		CloseableAONContext ctx = null;
 		try {
@@ -7678,6 +7745,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static long getSuppliersCount(String domainName, Integer domainId, String login, SupplierFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSuppliersCount(ctx ,filter);
 		}
 	}
 	

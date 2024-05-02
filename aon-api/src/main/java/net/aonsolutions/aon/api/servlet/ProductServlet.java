@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.registry.BookingStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
@@ -59,6 +61,12 @@ public class ProductServlet extends AonApiHttpServlet {
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getProducts(api));
+				break;
+			case "/product_new_portal":
+				response(req, resp, getProductsNewPortal(api));
+				break;
+			case "/product_count_new_portal":
+				response(req,resp, getProductsCount(api));
 				break;
 			case "/item":
 				response(req, resp, getItem(api));
@@ -163,7 +171,6 @@ public class ProductServlet extends AonApiHttpServlet {
 		} else if(products.isEmpty()) {
 			return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> productFilter(api, f));
 		}
-
 		return ProductJSON.toJSON(products);
 	}
 	
@@ -344,14 +351,50 @@ public class ProductServlet extends AonApiHttpServlet {
 			
 		}
 		
-		return new JSONObject();
+		return new JSONObject();	
+	}
+	private JSONArray getProductsNewPortal(AonApiData api) {
+		Integer page = api.getData().optInt("page");
+	    Integer perPage = api.getData().optInt("per_page");
+	    if(page != 0 && perPage != 0)
+	    	return ProductJSON.toJSON(AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f), page, perPage));
+	    else
+	    	return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> newProductFilter(api, f));
+	}
+	
+	private long getProductsCount(AonApiData api) {
+		return AON_SOLUTIONS.getProductCount(api.getDomain().getName(), api.getDomain().getId(),api.getUser().getLogin(), f -> newProductFilter(api, f));
+	}
+	
+	
+	private Filter newProductFilter(AonApiData api, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		Filter trueFilter;
+		String inputValue = api.getData().optString("global");
+		ArrayList<Integer> lista = new ArrayList<>();
 		
+		  if (inputValue != null && !inputValue.isEmpty()) {
+			  
+			  trueFilter = (f.getNameProperty().like("%" + inputValue + "%"));
+
+			  trueFilter = trueFilter.or(f.getCodeProperty().like("%" + inputValue + "%"));
+
+		        List<ProductCategory> category = AON.getProductCategoryStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+		                j -> j.getDomainProperty().eq(api.getDomain().getId()).and(j.getNameProperty().like("%" + inputValue + "%"))).collect(Collectors.toList());
+
+		        for (int i = 0; i < category.size(); i++) {
+		        	lista.add(category.get(i).getId());
+		        }
+		        trueFilter = trueFilter.or(f.getCategoryProperty().in(lista.toArray(Integer[] :: new)));
+	        	filter = filter.and(trueFilter);
+		    }
+		  
+		return filter;
 	}
 
 	
 	private Filter productFilter(AonApiData api, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-		
 		if(api.getData().opt("expense") !=null) {
 			if(JsonUtils.getboolean(api.getData(), "expense")) {
 				filter = filter.and(f.getTypeProperty().eq(ProductType.EXPENSE.value()));

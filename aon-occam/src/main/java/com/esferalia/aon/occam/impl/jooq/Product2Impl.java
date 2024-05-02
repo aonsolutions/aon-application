@@ -63,6 +63,10 @@ public class Product2Impl implements IProduct2{
 		ctx.getDslContext().transaction( configuration -> 
 			ProductDAO.delete(ctx, id));
 	}
+	@Override
+	public long getProductCount(AONContext ctx, ProductFilter filter) {
+		return ProductDAO.getProductCount(ctx, filter);
+	}
 
 	// ------------------------------------- ITEM
 	

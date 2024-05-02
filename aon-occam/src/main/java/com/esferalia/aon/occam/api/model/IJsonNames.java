@@ -489,6 +489,7 @@ public final class IJsonNames {
 	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
+	public static final String REPRESENTATION = "representation";
 	public static final String RESERVATION = "reservation";
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";

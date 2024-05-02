@@ -435,6 +435,7 @@ public class AccountingInvoiceDAO {
 				if ( invBr.getTaxType() == br.getTaxType() && AonNumberUtils.equals(invBr.getPercentage(), br.getPercentage())) {
 					invBr.setBase(AonMathUtils.round( invBr.getBase() + br.getBase(), 4));
 					invBr.setQuota(AonMathUtils.round( invBr.getQuota() + br.getQuota(), 4));
+					invBr.setSurchargeQuota(AonMathUtils.round( invBr.getSurchargeQuota() + br.getSurchargeQuota(), 4));
 					added = true;
 				} 
 			}

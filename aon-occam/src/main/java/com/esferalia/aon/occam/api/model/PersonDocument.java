@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.Country;
 
-public class PersonDocument implements Serializable{
+public class PersonDocument implements Serializable {
 	
 	
 	private static final long serialVersionUID = 1368595314415096448L;

@@ -23,9 +23,9 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID $AWS_DEFAULT_REGION
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      #- echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID $AWS_DEFAULT_REGION
+      #- $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      #- REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
       - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID eu-south-2
       - $(aws ecr get-login --no-include-email --region eu-south-2)
       - REPOSITORIO_URI=$AWS_ACCOUNT_ID.dkr.ecr.eu-south-2.amazonaws.com
@@ -37,60 +37,60 @@ phases:
       - echo Building TEST version...
       - echo Build started on `date`
       #- mvn --offline --fail-fast -DbuildNumber=666 -Dgwt.working=true clean install
-      - mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
-      - echo Building TEST Docker images...
-      - docker build --no-cache -t aonsolutions/aon-application:test .
+      #- mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
+      #- echo Building TEST Docker images...
+      #- docker build --no-cache -t aonsolutions/aon-application:test .
       #- docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
       #- docker push $REPOSITORY_URI/aon-application:test      
-      - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
-      - mysql -h $(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') -u dbuser --password=serubd2000 < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
-      - |
-        docker run \
-        -e DB_USER=dbuser \
-        -e DB_PASSWD=serubd2000 \
-        -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
-        aonsolutions/aon-db-up2date:test
-      - |
-        docker run \
-        -d -p 8080:8080 \
-        -e DB_USER=dbuser \
-        -e DB_PASSWD=serubd2000 \
-        -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
-        aonsolutions/aon-application:test
-      - |
-        mvn -B \
-        --fail-at-end \
-        -Dintegration.test.user=admin \
-        -Dintegration.test.password=org \
-        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
-        -f aon-htmlunit/pom.xml integration-test
+      #- docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+      #- mysql -h $(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') -u dbuser --password=serubd2000 < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      #- |
+      #  docker run \
+      #  -e DB_USER=dbuser \
+      #  -e DB_PASSWD=serubd2000 \
+      #  -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
+      #  aonsolutions/aon-db-up2date:test
+      #- |
+      #  docker run \
+      #  -d -p 8080:8080 \
+      #  -e DB_USER=dbuser \
+      #  -e DB_PASSWD=serubd2000 \
+      #  -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
+      #  aonsolutions/aon-application:test
+      #- |
+      #  mvn -B \
+      #  --fail-at-end \
+      #  -Dintegration.test.user=admin \
+      #  -Dintegration.test.password=org \
+      #  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
+      #  -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
+      #  -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
+      #  -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
+      #  -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
+      #  -f aon-htmlunit/pom.xml integration-test
       - echo Building PRODUCTION version...
-      - mvn -B --resume-from aon-js-payroll -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
+      - mvn -B -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
       - echo Building PRODUCTION Docker images...
       - docker build --no-cache -t aonsolutions/aon-application:${TAG:=snapshot} .
       - docker build --no-cache -t aonsolutions/aon-db-up2date:${TAG:=snapshot} ./aon-db-up2date
       - docker build --no-cache -t aonsolutions/aon-solutions:${TAG:=snapshot} -f ./aon-solutions/Dockerfile .
-      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
-      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      #- docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-db-up2date:${TAG:=snapshot} $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
       - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
       - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
-      - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-oauth2 clean install
-      - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
+      #- mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-oauth2 clean install
+      #- mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
       # - command
   post_build:
     commands:
       - echo Entered the post_build phase...
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
-      - docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
-      - docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      #- docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
       - docker push $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
@@ -101,16 +101,16 @@ phases:
       #  || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"AON-APPLICATION","imageUri":"%s/aon-application:%s"}
+        {"name":"CADIZ-APPLICATION","imageUri":"%s/aon-application:%s"}
         ]' $REPOSITORIO_URI ${TAG:=snapshot} > applicationimgdef.json
       - cat applicationimgdef.json
       - |
         printf '[
-        {"name":"AON-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        {"name":"CADIZ-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
         ]' $REPOSITORIO_URI ${TAG:=snapshot} > solutionsimgdef.json
       - cat solutionsimgdef.json
-      - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
-      - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
+      # - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
+      # - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
 reports:
@@ -129,8 +129,8 @@ reports:
     base-directory: 'aon-htmlunit/target/surefire-reports'
 artifacts:
   files:
-    - aon-oauth2.jar
-    - aon-in-payroll.jar
+    # - aon-oauth2.jar
+    # - aon-in-payroll.jar
     - applicationimgdef.json
     - solutionsimgdef.json
     # - location

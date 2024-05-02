@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,6 +73,31 @@ public class CertificateDAO {
 
 	// -------------------------- Methods
 	
+	public static Certificate getOne(AONContext ctx, Integer domainId, Integer userId, Integer certificateId) {
+		Integer registryUserId = ctx.getDslContext().select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
+		Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+		Stream<Certificate> stream = ctx.getDslContext().select().from(RATTACH)
+				.where(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.ID.eq(certificateId))
+				.fetch().stream().map(r -> {	
+					Certificate cert = CertificateFiller.build(r);
+					if(r.getValue(RATTACH.REGISTRY).equals(registryUserId))
+						cert.setOwner(CertificateOwner.USER);
+					else if(r.getValue(RATTACH.DOMAIN).equals(domainId) && r.getValue(RATTACH.REGISTRY).equals(registryEnterpriseId))
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+					else
+						throw new IllegalArgumentException("No se encontro el certificado.");
+					getCertificateTags(ctx, cert);
+					getCertificateInfo(ctx, cert);
+					return cert;
+				});
+		Optional<Certificate> certificate = stream.findFirst();
+		if(certificate.isPresent())
+			return certificate.get();
+		else
+			throw new IllegalArgumentException("No se encontro el certificado.");
+	}
+	
 	public static Stream<Certificate> getStream(AONContext ctx, CertificateFilter filter) {
 		return ctx.getDslContext().select().from(RATTACH)
 			.leftOuterJoin(RATTACH_TAG).on(RATTACH_TAG.RATTACH.eq(RATTACH.ID))
@@ -125,7 +151,7 @@ public class CertificateDAO {
 		if(raddinfoFilter != null) ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(raddinfoFilter)).execute();
 	}
 	
-	public static void save(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {		
+	public static void save(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {
 		// TGSS CERTIFICATE
 		if(certificate.getOwner() == CertificateOwner.USER)
 			saveUserCertificate(ctx, userId, certificate);

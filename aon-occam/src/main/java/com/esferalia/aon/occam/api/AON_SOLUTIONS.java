@@ -492,6 +492,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static long getInvoiceNewPortalCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoiceNewPortalCount(ctx, filter);
+		}
+	} 
+	
 	public static Date getInvoiceExpDate(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceExpDate(ctx, id);
@@ -913,6 +919,12 @@ public class AON_SOLUTIONS {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Stream<Product> products = getProduct().getProductStream(ctx, filter);
 			return ProductJSON.toJSON(products);
+		}
+	}
+	
+	public static long getProductCount(String domainName, Integer domainId, String login, ProductFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProduct().getProductCount(ctx, filter);
 		}
 	}
 	

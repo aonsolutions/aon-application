@@ -205,6 +205,8 @@ public interface IFinance {
 	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
 	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
+	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter, Integer page, Integer perPage, boolean ticket);
+	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket);
 	
 	// 	***********************************************
 	// 	************************** PAY_METHOD *********

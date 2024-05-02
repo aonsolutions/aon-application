@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -60,10 +61,8 @@ public class DownloadAttachmentServlet extends HttpServlet {
 	}
 
 	@Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-		System.out.println("GET METHOD");
-		
-		
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{		
+		Utils.addCorsHeader(resp);
 		String[] pathInfo = req.getPathInfo().split("/");
 			
 		Boolean bool = pathInfo.length <= 2;
