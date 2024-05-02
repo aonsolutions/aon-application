@@ -55,7 +55,9 @@ export class AonNewDesktop extends AonElement {
 		
 		
 		for ( const app in this.apps ) {
-			desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
+			if (this.apps[app].title!=null) {
+				desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
+			}
 		}
 		
 		desktopDiv.appendChild(desktopAppsDiv);
@@ -90,11 +92,14 @@ export class AonNewDesktop extends AonElement {
 		let cardDiv  = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
 		cardDiv.classList.add(CSS.AON_CARD);
+		cardDiv.style.position = 'relative';
 
 		let cardButton = this.createElement(TAG.SPAN);
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 		cardButton.innerHTML = 'more_horiz';
-		cardButton.style.alignSelf = "flex-end";
+		cardButton.style.position = 'absolute';
+		cardButton.style.right = '10px';
+		cardButton.style.top = "10px";
 		cardButton.classList.add('aonAppMoreBtn');
 		cardButton.style.visibility = 'hidden';
 
@@ -146,6 +151,7 @@ export class AonNewDesktop extends AonElement {
 		window.addEventListener(EVENT.CLICK, function(e) {
 			if (cardButton.contains(e.target)) {
 				optionsDiv.style.position = 'fixed';
+				optionsDiv.style.zIndex = 8;
 				let position = cardButton.getBoundingClientRect();
 				optionsDiv.style.top = position.top + 15;
 				optionsDiv.style.left = position.left + 15;
@@ -218,14 +224,17 @@ export class AonNewDesktop extends AonElement {
 
 	buildMasApp(app) {
 		
-		let cardDiv  = this.createElement(TAG.DIV);
+		let cardDiv = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
 		cardDiv.classList.add(CSS.AON_CARD);
+		cardDiv.style.position = 'relative';
 
 		let cardButton = this.createElement(TAG.SPAN);
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 		cardButton.innerHTML = 'more_horiz';
-		cardButton.style.alignSelf = "flex-end";
+		cardButton.style.position = 'absolute';
+		cardButton.style.right = '10px';
+		cardButton.style.top = "10px";
 		cardButton.classList.add('aonAppMoreBtn');
 		cardButton.style.visibility = 'hidden';
 
@@ -277,6 +286,7 @@ export class AonNewDesktop extends AonElement {
 		window.addEventListener(EVENT.CLICK, function(e) {
 			if (cardButton.contains(e.target)) {
 				optionsDiv.style.position = 'fixed';
+				optionsDiv.style.zIndex = 8;
 				let position = cardButton.getBoundingClientRect();
 				optionsDiv.style.top = position.top + 15;
 				optionsDiv.style.left = position.left + 15;
@@ -318,8 +328,7 @@ export class AonNewDesktop extends AonElement {
 		mainDiv.style.display = 'flex';
 		mainDiv.style.alignItems = 'center';
 		mainDiv.style.flexDirection = 'row';
-		mainDiv.style.justifyContent = 'space-between';
-		mainDiv.style.width = '75%';
+		mainDiv.style.width = '100%';
 
 		appDiv.append(mainDiv);
 
@@ -350,10 +359,12 @@ export class AonNewDesktop extends AonElement {
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
 		titleSpan.style.textAlign = 'center';
 		titleSpan.innerHTML = app.title;
+		titleSpan.style.marginLeft = '10px';
 		mainDiv.appendChild(titleSpan);
 
 		let descriptionDiv = this.createElement(TAG.DIV);
 		descriptionDiv.style.textAlign = 'left';
+		descriptionDiv.style.marginTop = '10px';
 
 		let descriptionSpan = this.createElement(TAG.SPAN);
 		descriptionSpan.innerHTML = app.description;
@@ -367,6 +378,29 @@ export class AonNewDesktop extends AonElement {
 		appA.appendChild(appDiv);
 
 		cardDiv.appendChild(appA);
+
+		if (app.price != " ") {
+			cardDiv.style.paddingRight = '32px';
+
+			let priceDiv = this.createElement(TAG.DIV);
+			priceDiv.style.position = 'absolute';
+			priceDiv.style.padding = '10px';
+			priceDiv.style.right = '0px';
+			priceDiv.style.bottom = '0px';
+			priceDiv.style.width = '28px';
+			priceDiv.style.height = '28px';
+			priceDiv.style.background = 'linear-gradient(to bottom right, #ffffff 50%, #e6e6e6 50%)';
+			
+			let priceSpan = this.createElement(TAG.SPAN);
+			priceSpan.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			priceSpan.innerHTML = 'euro_symbol';
+			priceSpan.style.color = '#242424';
+			priceSpan.style.fontSize = '15px';
+
+			priceDiv.appendChild(priceSpan);
+
+			cardDiv.appendChild(priceDiv);
+		}
 
 		return cardDiv;		
 	}
