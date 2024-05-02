@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
@@ -456,45 +457,13 @@ public class AccountingInvoiceDAO {
 			.compare(b1, b2));
 	}
 
-	public static AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType invoiceType, Integer registryId, AccountingInvoice ai, boolean preserveData) {
+	public static AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType type, Integer registryId, AccountingInvoice ai, boolean preserveData) {
 		if (!preserveData) {
-			return initializeInvoice(ctx, invoiceType, registryId, ai.getAccountEntry().getActivity(), ai.getAccountEntry().getEntryDate());
+			return initializeInvoice(ctx, type, registryId, ai.getAccountEntry().getActivity(), ai.getAccountEntry().getEntryDate());
 		}
-		return initializeInvoice(ctx, invoiceType, registryId, ai);
+		return refreshInvoice(ctx, type, registryId, ai);
 	}
 	
-	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, AccountingInvoice ai) {
-		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry)).filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
-				.findFirst().orElse(null);
-		if (reg == null) {
-			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
-		}
-		if (type == InvoiceType.UNDEDUCTIBLE && reg.getType() == AccountingRegistryType.CREDITOR) {
-			reg.setType(AccountingRegistryType.UNDED_CREDITOR);
-		}
-		if (reg.getType().getInvoiceType() != type) {
-			throw new AonCoreException(
-					"No se puede inicializar una factura de " + type.getDescription() + ". El titular suministrado " + "genera facturas de " + reg.getType().getInvoiceType().getDescription());
-		}
-		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
-		ai.setRegistry(reg);
-		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
-		ai.getInvoice()
-			.setRegistry(registry);
-		
-		LinkedList<Finance> newFinances = new LinkedList<>();
-		newFinances.addAll(FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice()));
-		for (Finance finance : ai.getInvoice().getFinances()) {
-			finance.setRemoved(true);
-		}
-		newFinances.addAll(ai.getInvoice().getFinances());
-		
-		ai.setAuthFinanceCalculation(true)
-		  .getInvoice().setFinances( newFinances );
-		ai.setSuggestedAccounts(getSuggestedAccounts(ctx, ai.getRegistry().getId()));
-		return ai;
-	}
-
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
 			final Integer activity, final Date issueDate) {
 		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
@@ -667,6 +636,11 @@ public class AccountingInvoiceDAO {
 			.toList();	
 	}
 
+	// ---------------------------------------------------------------
+	// USED in 
+	//  - net.aonsolutions.aon.tedi.AccountingInvoiceBuilder 
+	//  - net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder
+	// ---------------------------------------------------------------
 	public static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
 		private AONContext ctx;
 		private Invoice invoice;
@@ -1451,5 +1425,195 @@ public class AccountingInvoiceDAO {
 			throw new AonCoreException( t );
 		}
 	}
+	
+	// *********************************************************
+	// *********************************************************
+	// *********************************************************
+	// *********************************************************
+	// *********************************************************
+	
+	private static AccountingInvoice refreshInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, AccountingInvoice ai) {
+		if (ai == null) throw new AonCoreException("No se pudo inicializar una factura vacia");
+		if (type == null) throw new AonCoreException("No se pudo inicializar una factura sin tipo");
+		if (registry == null) throw new AonCoreException("No se pudo inicializar una factura sin titular");
+		if (ai.getInvoice() == null) throw new AonCoreException("No se pudo inicializar un apunte sin factura");
+		
+		boolean hasRegistry = ai.getInvoice().getRegistry() != null;
+		boolean registryChanged = hasRegistry
+			&& AonNumberUtils.notEquals( ai.getInvoice().getRegistry() , registry);  
+			
+		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry))
+			.findFirst()
+			.orElseThrow( () -> new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\""));
+
+		// Si se ha seleccionado un acreedor y la factura es no deducible, se marca al registry como unded.
+		boolean expenseToUndeductible = false;
+		if (type == InvoiceType.UNDEDUCTIBLE && reg.getType() == AccountingRegistryType.CREDITOR) {
+			expenseToUndeductible = true;
+			reg.setType(AccountingRegistryType.UNDED_CREDITOR);
+		}
+		
+		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
+		ai.setRegistry(reg);
+		reg.getType().visit(reg, new  InvoiceRegistryRefresh(ctx, ai, config));
+		ai.getInvoice().setRegistry(registry);
+		
+		if (expenseToUndeductible) {
+			REFRESH_UNDEDUCTIBLE
+			.accept( new RefreshContext(ctx,config,ai));
+		}
+		if (registryChanged) {
+			REFRESH_INVEST_ASSET
+			.andThen(REFRESH_SURCHARGE)
+			.andThen(REFRESH_FINANCES)
+			.andThen(REFRESH_SUGGESTED_ACCOUNTS)
+			.accept( new RefreshContext(ctx,config,ai));
+		}
+		return ai;
+	}
+	
+	private static class RefreshContext {
+		private AONContext ctx;
+		private AccountingInvoice accountingInvoice;
+		private AonConfiguration config;
+		
+		private RefreshContext(AONContext ctx, AonConfiguration config, AccountingInvoice accountingInvoice) {
+			this.ctx = ctx;
+			this.accountingInvoice = accountingInvoice;
+			this.config = config;
+		}
+		
+		public AONContext getCtx() {
+			return ctx;
+		}
+		public AccountingInvoice getAccountingInvoice() {
+			return accountingInvoice;
+		}
+		public AonConfiguration getConfig() {
+			return config;
+		}
+		public Invoice getInvoice() {
+			return accountingInvoice.getInvoice();
+		}
+		
+	}
+	
+	private static final Consumer<RefreshContext> REFRESH_UNDEDUCTIBLE = (rctx) -> {
+		AonCollectionUtils.stream(rctx.getInvoice().getDetails())
+			.map( d -> d.setSurcharge( 0.0 ))
+			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
+			.forEach( t -> t
+				.setPercentage(0.0)
+				.setQuota(0.0)
+				.setDeductiblePercent( 100.0 )
+				.setDeductibleQuota( 0.0 )
+		);
+		AonCollectionUtils.stream(rctx.getAccountingInvoice().getVats())
+			.forEach( v -> v
+				.setBase( AonMathUtils.round(v.getBase() + v.getQuota() + v.getSurchargeQuota()) )
+				.setPercentage(0.0)
+				.setQuota(0.0)
+				.setDeductiblePercent( 100.0 )
+				.setDeductibleQuota( 0.0 )
+		);
+	};
+	
+	private static final Consumer<RefreshContext> REFRESH_INVEST_ASSET = (rctx) -> {
+		boolean investAssetsAvailable = 
+			   !rctx.getAccountingInvoice().isSales() 
+			&& !rctx.getAccountingInvoice().isSurcharge()
+			&& rctx.getAccountingInvoice().isOutputVatEnabled() != rctx.getAccountingInvoice().isInputVatEnabled()
+			&& rctx.getConfig().isInvestAssetsAvailable();
+		if (!investAssetsAvailable) {
+			AonCollectionUtils.stream(rctx.getInvoice().getDetails())
+				.map( d -> d
+					.setInvestAsset( null )
+					.setInvestAssetData(null))
+				.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
+				.forEach( t -> t 
+					.setInvestAsset( null )
+					.setDeductiblePercent(100.0)
+					.setDeductibleQuota( t.getQuota() )	
+					);
+			AonCollectionUtils.stream(rctx.getAccountingInvoice().getVats())
+				.forEach( v -> v
+					.setInvestAsset( null )
+					.setDeductiblePercent(100.0)
+					.setDirectTaxPercent(100.0)						
+				);
+		}
+	};
+	
+	private static final Consumer<RefreshContext> REFRESH_SURCHARGE = (rctx) -> {
+		if (!rctx.getInvoice().isSurcharge()) {
+			AonCollectionUtils.stream(rctx.getInvoice().getDetails())
+			.map( d -> d.setSurcharge( 0.0 ))
+			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
+			.forEach( t -> t 
+				.setSurcharge( 0.0 )
+				.setSurchargeQuota( 0.0 )	
+				);
+		AonCollectionUtils.stream(rctx.getAccountingInvoice().getVats())
+			.forEach( v -> v
+				.setSurcharge( 0.0 )
+				.setSurchargeQuota( 0.0 )	
+			);
+		}
+	};
+	
+	private static final Consumer<RefreshContext> REFRESH_FINANCES = (rctx) -> {
+		LinkedList<Finance> newFinances = new LinkedList<>();
+		newFinances.addAll(FinanceDAO.getFinancesForInvoice(rctx.getCtx(), rctx.getInvoice()));
+		AonCollectionUtils.stream(rctx.getInvoice().getFinances())
+			.filter( f -> f.getId() != null)
+			.map( f -> f.setRemoved(true))
+			.forEach( f -> newFinances.add(f));
+		rctx.getAccountingInvoice()
+			.setAuthFinanceCalculation(true)
+			.getInvoice().setFinances( newFinances );
+	};
+	
+	private static final Consumer<RefreshContext> REFRESH_SUGGESTED_ACCOUNTS = (rctx) -> {
+		rctx.getAccountingInvoice().setSuggestedAccounts(getSuggestedAccounts(rctx.getCtx(), rctx.getAccountingInvoice().getRegistry().getId()));
+	};
+	
+	private static class InvoiceRegistryRefresh extends InvoiceRegistryInitializer {
+		
+		private AccountingInvoice ai;
+		
+		private InvoiceRegistryRefresh(AONContext ctx,AccountingInvoice ai,AonConfiguration config) {
+			super(ctx,ai.getInvoice(),config);
+			this.ai = ai;
+		}
+		
+		@Override
+		public void visitCustomer(AccountingRegistry reg) {
+			System.out.println("visitCustomer");
+			ai.getInvoice().setType( InvoiceType.SALES );			
+			super.visitCustomer( reg );
+		}
+
+		@Override
+		public void visitSupplier(AccountingRegistry reg) {
+			System.out.println("visitSupplier");
+			ai.getInvoice().setType( InvoiceType.PURCHASE);
+			super.visitSupplier( reg );
+		}
+
+		@Override
+		public void visitCreditor(AccountingRegistry reg) {
+			System.out.println("visitCreditor");
+			ai.getInvoice().setType( InvoiceType.EXPENSES);
+			super.visitCreditor( reg );
+		}
+		
+		@Override
+		public void visitUndedCreditor(AccountingRegistry reg) {
+			System.out.println("visitUndedCreditor");
+			ai.getInvoice().setType( InvoiceType.UNDEDUCTIBLE);
+			super.visitUndedCreditor( reg );
+		}
+	}
+	
 }
 

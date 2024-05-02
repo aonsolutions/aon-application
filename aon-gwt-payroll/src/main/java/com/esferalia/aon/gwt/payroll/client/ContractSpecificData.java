@@ -806,10 +806,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		} else {
 			resetInterimCauseDataTable();
 			hideInterimCauseDataTable();
-			this.contractSpecificData.setInterimCause(null);
+			this.contractSpecificData.setSustitucionCause(null);
 		}
 		
-		this.contractSpecificData.setIsInterimCause(event.getValue());
+		this.contractSpecificData.setIsSustitucionCause(event.getValue());
 	}
 	
 	@UiHandler("entrepreneurSupportCB")
@@ -994,7 +994,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiHandler("interimCauseLB")
 	void onInterimCauseLBChange(ChangeEvent event) {
 		String interimCauseValue = interimCauseLB.getSelectedValue();
-		this.contractSpecificData.setInterimCause(interimCauseValue);
+		this.contractSpecificData.setSustitucionCause(interimCauseValue);
 	}
 	
 	@UiHandler("bonusColectiveLB")
@@ -2693,7 +2693,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		if(Boolean.TRUE.equals(this.contractSpecificData.getIsInterimCause())) {
 			showInterimCauseDataTable();
 			interimCauseCB.setValue(true);
-			setSelectedValueLB(interimCauseLB, this.contractSpecificData.getInterimCause());	
+			setSelectedValueLB(interimCauseLB, this.contractSpecificData.getSustitucionCause());	
 		} else {
 			interimCauseCB.setValue(false);
 			resetInterimCauseDataTable();

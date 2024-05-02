@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
@@ -117,6 +119,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	protected static final String TAG_ITEM_BACKGROUND_COLOR = "#DDD";
 	protected static final String TAG_ITEM_FOREGROUND_COLOR = "Black";
 	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
+	
+//	private FlowPanel invoiceDataRectifierTableRowDiv;
 	
 	private SimplePanel invoicePanelContainer;
 	private AonAccountingRegistryBox registryBox;
@@ -302,19 +306,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		regTable.add(registryBox);
 		
-		undeductible.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final AccountingRegistry ar = invoiceCallback.getInvoice().getRegistry();
-				if (undeductible.getValue()) {
-					ar.setType(AccountingRegistryType.UNDED_CREDITOR);
-				} else {
-					ar.setType(AccountingRegistryType.CREDITOR);
-				}
-				registryChanged(invoiceCallback, ar );
-			}
-		});
+		undeductible.addClickHandler(event -> invoiceTypeChanged(invoiceCallback));
 		undeductible.setStyleName(AON.CSS.aonNowrap());
 		undeductible.addStyleName(AON.CSS.aonMarginLeft());
 		regTable.add(undeductible);
@@ -616,8 +608,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		rootScrollPanel.setStyleName(AON.CSS.aonScrollArea());
 		rootScrollPanel.setWidget(invoiceRootPanel);
 		
-		LOGGER.info("EditablePanel Constructor " + (invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null));
-
 		if ( invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null) {
 			undeductible.setValue(invoiceCallback.getInvoice().isUndeductible());
 			if (invoiceCallback.getInvoice().getRegistry() != null) {
@@ -632,91 +622,127 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		setWidget(rootScrollPanel);
 	}
 
+	private void invoiceTypeChanged(InvoicePanelCallback invoiceCallback) {
+		if ( invoiceCallback.getInvoice() != null 
+			&& invoiceCallback.getInvoice().getRegistry() != null ) {
+			final AccountingRegistry ar = invoiceCallback.getInvoice().getRegistry();
+			if (undeductible.getValue().booleanValue()) {
+				invoiceCallback.getInvoice().getInvoice().setType( InvoiceType.UNDEDUCTIBLE); 
+				ar.setType(AccountingRegistryType.UNDED_CREDITOR);
+			} else {
+				invoiceCallback.getInvoice().getInvoice().setType( InvoiceType.EXPENSES);
+				ar.setType(AccountingRegistryType.CREDITOR);
+			}
+			LOGGER.info("invoiceTypeChanged --> initializeInvoice");
+			LOGGER.info("invoiceTypeChanged --> " + ar.getType().getDescription()  + " - " + ar.getType().getInvoiceType().getDescription() );
+			initializeInvoice(invoiceCallback, ar, true);
+		}
+	}
+
 	private void registryChanged(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {
-		boolean preserveData = (invoiceCallback.getInvoice() != null 
-				&& invoiceCallback.getInvoice().hasTotal()
-				&& invoiceCallback.getInvoice().getInvoice() != null
-				&& invoiceCallback.getInvoice().getInvoice().getType() == ar.getType().getInvoiceType()  
-				);
-		initializeInvoice(invoiceCallback, ar , preserveData);
+		
+		// NEW invoice
+		if (invoiceCallback.getInvoice() == null || invoiceCallback.getInvoice().getInvoice() == null) {
+			initializeInvoice(invoiceCallback, ar , false);
+			return;
+		}
+		
+		InvoiceType invoiceType = invoiceCallback.getInvoice().getInvoice().getType();
+		InvoiceType registryInvoiceType = ar.getType().getInvoiceType();
+		
+		if (invoiceType == registryInvoiceType) {
+			initializeInvoice(invoiceCallback, ar , invoiceCallback.getInvoice().hasTotal());
+			return;
+		}
+		
+		if ( invoiceCallback.getInvoice().getInvoice().getId() != null		 // Factura ya grabada 
+			&& (invoiceCallback.getInvoice().getInvoice().isDUAAllowed()	 // Factura DUA
+			 || invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() // Factura con DUA asociada
+			 || invoiceCallback.getInvoice().getInvoice().isRectified()		 // Factura Rectificada
+			 || invoiceCallback.getInvoice().getInvoice().isRectifier())	 // Factura Rectificativa
+			) {
+			String msg = "";
+			if (invoiceCallback.getInvoice().getInvoice().isDUAAllowed()) {
+				msg = "No se permite el cambio de titular en una factura DUA";	
+			}
+			if (invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed()) {
+				msg = "No se permite el cambio de titular en una factura vinculada a un DUA";	
+			}
+			if (invoiceCallback.getInvoice().getInvoice().isRectified()) {
+				msg = "No se permite el cambio de titular en una factura rectificada";
+			}
+			if (invoiceCallback.getInvoice().getInvoice().isRectifier()) {
+				msg = "No se permite el cambio de titular en una factura rectificativa";
+			}
+			AonMessageDialog.error(msg, ( ) -> registryBox.setValue( invoiceCallback.getInvoice().getRegistry(), false ));
+			return;
+		}
+		
+		AonConfirmDialog.showConfirm( "Va a proceder a un cambio de titular en la factura. "
+			+ "La factura actual de de tipo \""
+			+ invoiceType.getDescription() 
+			+ "\" y el titular seleccionado genera facturas de \"" 
+			+ registryInvoiceType.getDescription() 
+			+ "\". Si contin\u00FAa, revise la factura.",
+			new AonConfirmDialogCallback() {
+					
+					@Override
+					public void onAccept() {
+						initializeInvoice(invoiceCallback, ar , true);
+					}
+					
+					@Override
+					public void onCancel() {
+						registryBox.setValue( invoiceCallback.getInvoice().getRegistry(), false );
+					};
+			}
+		);
+		
 	}
 	
 	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar, boolean preserveData) {
+		AsyncCallback<AccountingInvoice> initializeCallback = new AsyncCallback<AccountingInvoice>() {
+			
+			@Override
+			public void onSuccess(AccountingInvoice result) {
+				if (invoiceCallback.getInvoice().isDocumentAttached()) {
+					result.setAttach(invoiceCallback.getInvoice().getAttach());
+					result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
+				}
+				AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
+				invoiceCallback.setInvoice(result);
+				invoiceCallback.setAccountEntry(ae);
+				undeductible.setVisible((result.isExpenses() || result.isUndeductible()) && invoiceCallback.getInvoice().getInvoice().getId() == null);
+				
+				Account account = new Account();
+				account.setId(ar.getAccountId());
+				account.setCode(ar.getAccountCode());
+				account.setDescription(ar.getAccountDescription());
+				invoiceCallback.paintEntry();
+				LOGGER.info("initializeInvoice ready To edit!");
+				invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				invoiceCallback.getModule().onError(caught.getMessage());
+			}
+		};
+		
 		if (preserveData) {
-			ACCOUNT_ENTRY_SERVICE.initializeInvoice(
-					invoiceCallback.getCurrentDomainName()
-					,invoiceCallback.getCurrentDomainId()
-					,invoiceCallback.getCurrentUser()
-					,ar
-					,invoiceCallback.getInvoice()
-					,true
-					,new AsyncCallback<AccountingInvoice>() {
-						
-						@Override
-						public void onSuccess(AccountingInvoice result) {
-							if (invoiceCallback.getInvoice().isDocumentAttached()) {
-								result.setAttach(invoiceCallback.getInvoice().getAttach());
-							}
-							AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
-							invoiceCallback.setInvoice(result);
-							invoiceCallback.setAccountEntry(ae);
-							undeductible.setVisible((result.isExpenses() || result.isUndeductible()) && invoiceCallback.getInvoice().getInvoice().getId() == null);
-							
-							Account account = new Account();
-							account.setId(ar.getAccountId());
-							account.setCode(ar.getAccountCode());
-							account.setDescription(ar.getAccountDescription());
-							invoiceCallback.paintEntry();
-							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							invoiceCallback.getModule().onError(caught.getMessage());
-						}
-					});
+			LOGGER.info("initializeInvoice preserving data!");
+			LOGGER.info("initializeInvoice preserving data! " + ar.getType().getDescription() + " - " + ar.getType().getInvoiceType().getDescription() );
+			ACCOUNT_ENTRY_SERVICE.initializeInvoice(invoiceCallback.getOccam(),ar,invoiceCallback.getInvoice(),true, initializeCallback);
 		} else {
-			ACCOUNT_ENTRY_SERVICE.initializeInvoice(
-					invoiceCallback.getCurrentDomainName()
-					,invoiceCallback.getCurrentDomainId()
-					,invoiceCallback.getCurrentUser()
-					,ar
-					,invoiceCallback.getModule().getActivity()
-					,invoiceCallback.getModule().getEntryDate()
-					,new AsyncCallback<AccountingInvoice>() {
-						
-						@Override
-						public void onSuccess(AccountingInvoice result) {
-							if (invoiceCallback.getInvoice().isDocumentAttached()) {
-								result.setAttach(invoiceCallback.getInvoice().getAttach());
-								result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
-							}
-							AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
-							invoiceCallback.setInvoice(result);
-							invoiceCallback.setAccountEntry(ae);
-							undeductible.setVisible((result.isExpenses() || result.isUndeductible()) && invoiceCallback.getInvoice().getInvoice().getId() == null);
-							
-							Account account = new Account();
-							account.setId(ar.getAccountId());
-							account.setCode(ar.getAccountCode());
-							account.setDescription(ar.getAccountDescription());
-							invoiceCallback.paintEntry();
-							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							invoiceCallback.getModule().onError(caught.getMessage());
-						}
-					});
+			LOGGER.info("initializeInvoice NOT preserving data!");
+			LOGGER.info("initializeInvoice NOT preserving data! " + ar.getType().getDescription() + " - " + ar.getType().getInvoiceType().getDescription() );
+			ACCOUNT_ENTRY_SERVICE.initializeInvoice(invoiceCallback.getOccam(),ar,invoiceCallback.getModule().getActivity(),invoiceCallback.getModule().getEntryDate(), initializeCallback);
 		}
 	}
 
 	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {
 		ACCOUNT_ENTRY_SERVICE.initializeInvoice(
-				invoiceCallback.getCurrentDomainName()
-				,invoiceCallback.getCurrentDomainId()
-				,invoiceCallback.getCurrentUser()
+				invoiceCallback.getOccam()
 				,ar
 				,invoiceCallback.getModule().getActivity()
 				,invoiceCallback.getModule().getEntryDate()
@@ -772,6 +798,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatPanel.headerInfoChanged(new EditableInvoicePanelCallback(invoiceCallback));
 		withholdingPanel.setVisible(invoiceCallback.getInvoice().isWithholding());
 		withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
+//		invoiceDataRectifierTableRowDiv.setVisible( invoiceCallback.getInvoice().isRectifier() );
 		invoiceTotal.setValue(invoiceCallback.getInvoice().getTotalInvoice(),false);
 		invoiceCallback.paintEntry();
 		invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
@@ -1502,6 +1529,25 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		checksTableRow1.add(importRegime);
 		
 
+//		// *************************************************************************
+//		// ***************** PANEL RECTIFICATIVA ***********************************
+//		// *************************************************************************
+//		invoiceDataRectifierTableRowDiv = new FlowPanel();
+//		invoiceDataRectifierTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+//		invoiceDataInnerTableDiv.add(invoiceDataRectifierTableRowDiv);
+//
+//		FlowPanel headerRectifierPanel = new FlowPanel();
+//		headerRectifierPanel.setStyleName(AON.CSS.aonDisplayTableCell());
+//		headerRectifierPanel.addStyleName(AON.CSS.aonPadding());
+//		headerRectifierPanel.addStyleName(AON.CSS.aonMargin());
+//		headerRectifierPanel.addStyleName(AON.CSS.aonBackgroundOrange());
+//		invoiceDataRectifierTableRowDiv.add(headerRectifierPanel);
+//		
+//		InlineLabel rectInvoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumber());
+//		rectInvoiceNumberLabel.setStyleName(AON.CSS.aonFlexLabel());
+//		rectInvoiceNumberLabel.getElement().getStyle().setWidth(80,Unit.PX);
+//		headerRectifierPanel.add(rectInvoiceNumberLabel);
+
 		// *************************************************************************
 		// ***************** PANEL ( Número Factura, total factura ) ******
 		// *************************************************************************
@@ -1893,11 +1939,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			&& invoiceCallback.getConfiguration().getInvoiceSalesSeries().size() > 0) {
 			LinkedList<String> rectificationSeries = invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries();
 			for (String ser : invoiceCallback.getConfiguration().getInvoiceSalesSeries()) {
-				LOGGER.info("Serie ..: " + ser);
 				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
-				LOGGER.info("\t rectifierSerie ..: " + rectifierSerie);
 				if (!rectifierSerie || (rectifierSerie && inv.getInvoice().isRectifier())) {
-					LOGGER.info("\t Adding ..: " + ser);
 					series.addItem(ser);
 				}
 			}
@@ -2103,7 +2146,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onDrop(DropEvent event) {
 				dropPanel.removeStyleName(AON.CSS.aonDropZoneHover());
-				LOGGER.info("File Droped!");
 				event.preventDefault();
 				fileDrop(event.getNativeEvent());
 			}
@@ -2113,7 +2155,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 	
 	protected void setDocument(final String doc, final String name, String type) {
-		LOGGER.info("BEFORE invCallback setDocument!");
 		invCallback.setDocument(doc, name, type);
 	}
 	

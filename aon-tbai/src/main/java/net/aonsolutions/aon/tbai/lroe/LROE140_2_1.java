@@ -102,12 +102,13 @@ public class LROE140_2_1 extends LROE140 {
 		emisor.setApellidosNombreRazonSocial(invoice.getRegistryName());
 		
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
-			emisor.setNIF(invoice.getRegistryDocument());
+			emisor.setNIF(invoice.getRegistryDocument().replace(" ", ""));
 		} else if(invoice.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			
-			String document = invoice.getRegistryDocument();
+			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+				otro.setCodigoPais(CountryEnum.GB);
+			} else otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));			
+			String document = invoice.getRegistryDocument().replace(" ", "");
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
 				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
@@ -119,7 +120,7 @@ public class LROE140_2_1 extends LROE140 {
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			otro.setID(invoice.getRegistryDocument());
+			otro.setID(invoice.getRegistryDocument().replace(" ", ""));
 			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
 		}
@@ -309,11 +310,13 @@ public class LROE140_2_1 extends LROE140 {
 		DocumentoType emisor = new DocumentoType();
 		
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
-			emisor.setNIF(invoice.getRegistryDocument());
+			emisor.setNIF(invoice.getRegistryDocument().replace(" ", ""));
 		} else if(invoice.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			String document = invoice.getRegistryDocument();
+			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+				otro.setCodigoPais(CountryEnum.GB);
+			} else otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			String document = invoice.getRegistryDocument().replace(" ", "");
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
 				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
@@ -325,7 +328,7 @@ public class LROE140_2_1 extends LROE140 {
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			otro.setID(invoice.getRegistryDocument());
+			otro.setID(invoice.getRegistryDocument().replace(" ", ""));
 			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
 		}

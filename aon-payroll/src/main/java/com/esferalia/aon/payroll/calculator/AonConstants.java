@@ -82,6 +82,8 @@ public class AonConstants {
 	public static PaymentType CRA_0010 = PaymentType.CRA_0010;
 	@Variable(ContextVariable.CRA_0008)
 	public static PaymentType CRA_0008 = PaymentType.CRA_0008;
+	@Variable(ContextVariable.CRA_0033)
+	public static PaymentType CRA_0033 = PaymentType.CRA_0033;
 
 	@Variable(ContextVariable.HOME)
 	public static CCCType HOME = CCCType.HOME_EMPLOYEES;

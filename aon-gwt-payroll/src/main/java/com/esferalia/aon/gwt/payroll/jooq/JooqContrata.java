@@ -54,7 +54,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
-import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOSUSTITUCIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
@@ -291,7 +291,7 @@ public class JooqContrata {
 	
 	private static void readContract410(CONTRATO410TYPE o, ContractSpecificData contractSpecificData) {
 		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), contractSpecificData);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), contractSpecificData);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOSUSTITUCION(), contractSpecificData);
 		completeDatosEtCote(o.getDATOSETCOTE(), contractSpecificData);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), contractSpecificData);
 		completeDatosEtt(o.getDATOSETT(), contractSpecificData); 
@@ -346,7 +346,7 @@ public class JooqContrata {
 		completeDatosBonificacion(o.getDATOSBONIFICACION(), contractSpecificData);
 		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), contractSpecificData);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), contractSpecificData);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), contractSpecificData);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOSUSTITUCION(), contractSpecificData);
 		completeDatosEtCote(o.getDATOSETCOTE(), contractSpecificData);
 		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), contractSpecificData);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), contractSpecificData);
@@ -406,7 +406,7 @@ public class JooqContrata {
 	private static void readContract510(CONTRATO510TYPE o, ContractSpecificData contractSpecificData) {
 		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), contractSpecificData);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), contractSpecificData);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), contractSpecificData);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOSUSTITUCION(), contractSpecificData);
 		completeDatosEtCote(o.getDATOSETCOTE(), contractSpecificData);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), contractSpecificData);
 		completeDatosEtt(o.getDATOSETT(), contractSpecificData); 
@@ -464,7 +464,7 @@ public class JooqContrata {
 		completeDatosBonificacion(o.getDATOSBONIFICACION(), contractSpecificData);
 		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), contractSpecificData);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), contractSpecificData);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), contractSpecificData);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOSUSTITUCION(), contractSpecificData);
 		completeDatosEtCote(o.getDATOSETCOTE(), contractSpecificData);
 		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), contractSpecificData);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), contractSpecificData);
@@ -558,8 +558,8 @@ public class JooqContrata {
 			}
 			
 			// Plan de Transformación, Recuperación y Resiliencia
-			if(datos.getPROYECTOEMPLEOFORMACION() != null)
-				contractSpecificData.setPlanRecovery(AonStringUtils.equalsIgnoreCase(datos.getPROYECTOEMPLEOFORMACION(), "S") ? true : false);
+			//if(datos.getPROYECTOEMPLEOFORMACION() != null)
+			//	contractSpecificData.setPlanRecovery(AonStringUtils.equalsIgnoreCase(datos.getPROYECTOEMPLEOFORMACION(), "S") ? true : false);
 			
 		}
 	}
@@ -692,9 +692,9 @@ public class JooqContrata {
 		if(datos != null){
 //			params.setActividadSinFechaCierta(datos.getACTIVIDADSINFECHACIERTA());
 //			params.setColectivoEdad(THPCOLFO.getEnumByValue(datos.getCOLECTIVOEDAD()));
-			if(datos.getFIJODISCONTINUOPERIODICO()!=null){
-				contractSpecificData.setRepeatFD(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
-			}
+//			if(datos.getFIJODISCONTINUOPERIODICO()!=null){
+//				contractSpecificData.setRepeatFD(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
+//			}
 //			params.setHorasAnualesTiempoCompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
 			contractSpecificData.setAgreementHours(getHoras(datos.getHORASCONVENIO()));
 			contractSpecificData.setAgreementMinutes(getMinutos(datos.getHORASCONVENIO()));
@@ -739,10 +739,10 @@ public class JooqContrata {
 		// TODO
 	}
 	
-	private static void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos, ContractSpecificData contractSpecificData) {
+	private static void completeDatosContratoInterinidad(DATOSCONTRATOSUSTITUCIONTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
-			contractSpecificData.setIsInterimCause(true);
-			contractSpecificData.setInterimCause(datos.getCAUSAINTERINIDAD());
+			contractSpecificData.setIsSustitucionCause(true);
+			contractSpecificData.setSustitucionCause(datos.getCAUSASUSTITUCION());
 		}
 	}
 	private static void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos, ContractSpecificData contractSpecificData) {
@@ -1142,8 +1142,8 @@ public class JooqContrata {
 			}
 			
 			// Plan de Transformación, Recuperación y Resiliencia
-			if(tc2.equals("420"))
-				datos.setPROYECTOEMPLEOFORMACION(contractSpecificData.getPlanRecovery() ? "S" : "N");
+			//if(tc2.equals("420"))
+			//	datos.setPROYECTOEMPLEOFORMACION(contractSpecificData.getPlanRecovery() ? "S" : "N");
 					
 			return datos;
 		} catch (Exception e) {
@@ -1372,9 +1372,9 @@ public class JooqContrata {
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = new DATOSCONTRATOTIEMPOPARCIALTYPE();
 //		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 //		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getCode():null);
-		if( tc2.equals("200") || tc2.equals("230") || tc2.equals("250") ){
-			datos.setFIJODISCONTINUOPERIODICO(employeeContractInfo.getContractSpecificData().getRepeatFD()!=null && employeeContractInfo.getContractSpecificData().getRepeatFD()?"S":"N");
-		}
+//		if( tc2.equals("200") || tc2.equals("230") || tc2.equals("250") ){
+//			datos.setFIJODISCONTINUOPERIODICO(employeeContractInfo.getContractSpecificData().getRepeatFD()!=null && employeeContractInfo.getContractSpecificData().getRepeatFD()?"S":"N");
+//		}
 //		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
 		
 		String duracionconvenio = AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getAgreementHours()) ? "" : employeeContractInfo.getContractSpecificData().getAgreementHours(), 4, '0')+AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getAgreementMinutes()) ? "" : employeeContractInfo.getContractSpecificData().getAgreementMinutes(), 2, '0');
@@ -1581,17 +1581,17 @@ public class JooqContrata {
 	
 	private static CONTRATO410TYPE createContract410(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
 		CONTRATO410TYPE c = (CONTRATO410TYPE) contratoType;
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(employeeContractInfo));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoInterinidad(employeeContractInfo));
 		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
 		return c;
 	}
 	
-	private static DATOSCONTRATOINTERINIDADTYPE createDatosContratoInterinidad(EmployeeContractInfo employeeContractInfo) {
+	private static DATOSCONTRATOSUSTITUCIONTYPE createDatosContratoInterinidad(EmployeeContractInfo employeeContractInfo) {
 		if(employeeContractInfo.getContractSpecificData().getIsInterimCause()){
-			DATOSCONTRATOINTERINIDADTYPE datos = new DATOSCONTRATOINTERINIDADTYPE();
-			if(employeeContractInfo.getContractSpecificData().getInterimCause()!=null){
-				datos.setCAUSAINTERINIDAD(employeeContractInfo.getContractSpecificData().getInterimCause());
+			DATOSCONTRATOSUSTITUCIONTYPE datos = new DATOSCONTRATOSUSTITUCIONTYPE();
+			if(employeeContractInfo.getContractSpecificData().getSustitucionCause()!=null){
+				datos.setCAUSASUSTITUCION(employeeContractInfo.getContractSpecificData().getSustitucionCause());
 			}
 			return datos;
 		}
@@ -1656,7 +1656,7 @@ public class JooqContrata {
 		c.setDATOSBONIFICACION(createDatosBonificacion(employeeContractInfo));
 		c.setDATOSCONTRATOPRACTICAS(createDatosContratoPracticas(employeeContractInfo));
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(employeeContractInfo));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoInterinidad(employeeContractInfo));
 		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
@@ -1709,7 +1709,7 @@ public class JooqContrata {
 	private static CONTRATO510TYPE createContract510(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
 		CONTRATO510TYPE c = (CONTRATO510TYPE) contratoType;
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(employeeContractInfo));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoInterinidad(employeeContractInfo));
 		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
 		return c;
@@ -1752,7 +1752,7 @@ public class JooqContrata {
 		c.setDATOSBONIFICACION(createDatosBonificacion(employeeContractInfo));
 		c.setDATOSCONTRATOPRACTICAS(createDatosContratoPracticas(employeeContractInfo));
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
-		c.setDATOSCONTRATOINTERINIDAD(createDatosContratoInterinidad(employeeContractInfo));
+		c.setDATOSCONTRATOSUSTITUCION(createDatosContratoInterinidad(employeeContractInfo));
 		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));

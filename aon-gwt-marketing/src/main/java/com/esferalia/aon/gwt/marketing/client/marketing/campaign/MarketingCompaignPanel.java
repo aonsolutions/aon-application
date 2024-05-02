@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
@@ -64,6 +65,8 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, DES(AON.MSG.description()					,"auto"  ,null)
+		, BUD("Presupuesto"							,"150px" ,null)
+		, BDA("Presu. Acumulado"					,"150px" ,null)
 		, TYP(AON.MSG.scope()						,"150px" ,null)
 		, ACT("Activa"								,"50px"  ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
@@ -242,6 +245,12 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		tab.setWidget(r, col, new Label(marketingCampaign.getDescription()));
 		col++;
 		
+		tab.setWidget(r, col, new Label(marketingCampaign.getBudget().toString()));
+		col++;
+		
+		tab.setWidget(r, col, new Label(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum() + ""));
+		col++;
+		
 		tab.setWidget(r, col, new Label(marketingCampaign.getScope() == null ? "" : marketingCampaign.getScope().getDescription()));
 		col++;
 		
@@ -257,6 +266,7 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		AonTableButton msg = new AonTableButton("");
 		AonTableButton sel = new AonTableButton("", AON.CSS.aonIconRight());
 		TextBox descriptionBox = new TextBox();
+		AonDoubleBox budget = new AonDoubleBox(15, 2);
 		ListBox scopeListBox = new ListBox();
 		Button activeBtn = new Button();
 		
@@ -268,6 +278,21 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
 				boolean currentActive = isActiveToggleButton(activeBtn);
 				marketingCampaign.setActive(currentActive);
+				marketingCampaign.setBudget(budget.getValue());
+				
+				save(marketingCampaign, msg);
+			}
+		};
+		
+		ValueChangeHandler<Double> valueChangeHandlerDouble = new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				marketingCampaign.setDescription(descriptionBox.getValue());
+				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
+				boolean currentActive = isActiveToggleButton(activeBtn);
+				marketingCampaign.setActive(currentActive);
+				marketingCampaign.setBudget(budget.getValue());
 				
 				save(marketingCampaign, msg);
 			}
@@ -278,11 +303,13 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		});
 		
 		descriptionBox.addValueChangeHandler(valueChangeHandlerString);
+		budget.addValueChangeHandler(valueChangeHandlerDouble);
 		scopeListBox.addChangeHandler(e -> {
 			marketingCampaign.setDescription(descriptionBox.getValue());
 			marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
 			boolean currentActive = isActiveToggleButton(activeBtn);
 			marketingCampaign.setActive(currentActive);
+			marketingCampaign.setBudget(budget.getValue());
 			
 			save(marketingCampaign, msg);
 		});
@@ -294,6 +321,7 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 			marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
 			boolean currentActive = isActiveToggleButton(activeBtn);
 			marketingCampaign.setActive(currentActive);
+			marketingCampaign.setBudget(budget.getValue());
 			
 			save(marketingCampaign, msg);
 		});
@@ -309,6 +337,15 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		descriptionBox.setMaxLength(128);
 		descriptionBox.setValue(marketingCampaign.getDescription());
 		tab.setWidget(r, col, descriptionBox);
+		col++;
+		
+		budget.setStyleName(AON.CSS.aonBorderNone());
+		budget.addStyleName(AON.CSS.aonWidthAll());
+		budget.setValue(marketingCampaign.getBudget());
+		tab.setWidget(r, col, budget);
+		col++;
+		
+		tab.setWidget(r, col, new Label(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum() + ""));
 		col++;
 		
 		scopeListBox.setStyleName(AON.CSS.aonBorderNone());

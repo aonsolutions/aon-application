@@ -42,6 +42,7 @@ public abstract class AonMarketingActionPanel extends SimplePanel {
 
 	private TextBox description = new TextBox();
 	private ListBox typeListBox = new ListBox();
+	private AonDoubleBox budget = new AonDoubleBox(15, 2);
 	private AonDateBox startDate = new AonDateBox();
 	private AonDateBox endDate = new AonDateBox();
 	
@@ -98,17 +99,21 @@ public abstract class AonMarketingActionPanel extends SimplePanel {
 		typeListBox.setStyleName(AON.CSS.aonInputText());
 		table.setWidget(1,1,typeListBox);
 		
-		table.setWidget(2,0,new InlineLabel("F. Inicio"));
+		table.setWidget(2,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(2, 0).setPropertyString("min-width", "135px");
-		startDate.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(2,1,startDate);
+		table.setWidget(2,1,budget);
 		
-		table.setWidget(3,0,new InlineLabel("F. Fin"));
+		table.setWidget(3,0,new InlineLabel("F. Inicio"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
 		table.getCellFormatter().getElement(3, 0).setPropertyString("min-width", "135px");
+		startDate.setStyleName(AON.CSS.aonInputText());
+		table.setWidget(3,1,startDate);
+		
+		table.setWidget(4,0,new InlineLabel("F. Fin"));
+		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
+		table.getCellFormatter().getElement(4, 0).setPropertyString("min-width", "135px");
 		endDate.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(3,1,endDate);
+		table.setWidget(4,1,endDate);
 		
 		tablePanel.add( table );
 		
@@ -133,6 +138,7 @@ public abstract class AonMarketingActionPanel extends SimplePanel {
 				marketingAction.setStartDate(startDate.getValue());
 				marketingAction.setEndDate(endDate.getValue());
 				marketingAction.setDescription(description.getValue());
+				marketingAction.setBudget(budget.getValue());
 				
 				commonService.saveMarketingAction(domainName, domain, user, marketingAction, new AsyncCallback<MarketingAction>() {
 
