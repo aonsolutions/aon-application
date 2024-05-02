@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
+import { MSG, CONSTANT, CSS, EVENT, TAG } from "aonsolutions/environments/environments.js";
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
 import { AonCard } from 'aonsolutions/components/aon-card.js';
 import { Language } from 'aonsolutions/models/Language.js';
@@ -7,7 +7,8 @@ import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonConfig extends AonElement {
 
-	MENU_SWITCH;
+	TOP_SWITCH;
+	LEFT_SWITCH;
 	LANG_CARD;
 
 	get id() {
@@ -25,24 +26,44 @@ export class AonConfig extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'AonConfig';
-		this.MENU_SWITCH = this.id + 'SwitchMenu';
+		this.TOP_SWITCH = this.id + 'SwitchTop';
+		this.LEFT_SWITCH = this.id + 'SwitchLeft';
 		this.LANG_CARD = this.id + 'HelpLangCard';
 	}
 
 	build() {
 
-		let span = this.createSpan();
-		span.innerHTML = MSG.UPPER_MENU;
-		span.style.marginLeft = '10px';
-		this.appendChild(span);
+		let div = this.createDiv();
+		div.innerHTML = MSG.UPPER_MENU;
+		div.style.marginLeft = '10px';
+		div.style.position = "relative";
+		div.style.top = "-15px";
+		this.appendChild(div);
 
-		let rightPanelSwitchMenuButton = new AonSwitch();
-		rightPanelSwitchMenuButton.id = this.MENU_SWITCH;
-		rightPanelSwitchMenuButton.style.marginLeft = '10px';
-		rightPanelSwitchMenuButton.style.right = '30px';
-		rightPanelSwitchMenuButton.style.position = 'absolute';
-		rightPanelSwitchMenuButton.style.top = "66px";
-		this.appendChild(rightPanelSwitchMenuButton);
+		let rightPanelSwitchTopButton = new AonSwitch();
+		rightPanelSwitchTopButton.id = this.TOP_SWITCH;
+		rightPanelSwitchTopButton.style.marginLeft = '10px';
+		rightPanelSwitchTopButton.style.right = '30px';
+		rightPanelSwitchTopButton.style.position = 'absolute';
+		rightPanelSwitchTopButton.style.top = "-1px";
+		rightPanelSwitchTopButton.checked = LS.isTopMenu();
+		div.appendChild(rightPanelSwitchTopButton);
+
+		let span2= this.createSpan();
+		span2.innerHTML = "Menú lateral";
+		span2.style.marginLeft = '10px';
+		span2.style.position = "relative";
+		span2.style.top = '0px';
+		this.appendChild(span2);
+
+		let rightPanelSwitchLeftButton = new AonSwitch();
+		rightPanelSwitchLeftButton.id = this.LEFT_SWITCH;
+		rightPanelSwitchLeftButton.style.marginLeft = '10px';
+		rightPanelSwitchLeftButton.style.right = '30px';
+		rightPanelSwitchLeftButton.style.position = 'absolute';
+		rightPanelSwitchLeftButton.style.top = "90px";
+		rightPanelSwitchLeftButton.checked =  LS.isLeftMenu();
+		this.appendChild(rightPanelSwitchLeftButton);
 
 		let rightPanelLangCard = new AonCard();
 		rightPanelLangCard.id = this.LANG_CARD;
@@ -63,20 +84,28 @@ export class AonConfig extends AonElement {
 		divGenerall.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
 		divGenerall.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
 		divGenerall.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
-		console.log(JSON.stringify(divGenerall));
 		rightPanelLangCard.setContent(divGenerall);
-
-		let aonMenu = this.getElement("aonMenu");
-		rightPanelSwitchMenuButton.checked = aonMenu.isTopNavVisible();
 	
-		rightPanelSwitchMenuButton.addEventListener(EVENT.CHANGE, () => {
-            if(rightPanelSwitchMenuButton.isChecked()) {
+		rightPanelSwitchTopButton.addEventListener(EVENT.CHANGE, () => {
+			LS.setTopMenu(rightPanelSwitchTopButton.checked);
+			if(LS.isTopMenu()) {
 				aonMenu.showTopNav();
             } else {
-				aonMenu.showSideNav();
+				aonMenu.hideTopNav();
 			};
 			
 	    });
+
+		rightPanelSwitchLeftButton.addEventListener(EVENT.CHANGE, () => {
+			LS.setLeftMenu(rightPanelSwitchLeftButton.checked);
+			if(LS.isLeftMenu()) {
+				aonMenu.showSideNav();
+            } else {
+				aonMenu.hideSideNav();
+			};
+			
+	    });
+
 	}
 
 	buildLanguageData(value,language) {
@@ -111,9 +140,14 @@ export class AonConfig extends AonElement {
 		return div;		
 	}
 
-	getMenuButton() {
-		return this.getElement(this.MENU_SWITCH);
+	getTopButton() {
+		return this.getElement(this.TOP_SWITCH);
 	}
+
+	getLeftButton() {
+		return this.getElement(this.LEFT_SWITCH);
+	}
+
 
 }
 if(!window.customElements.get(TAG.AON_CONFIG)){

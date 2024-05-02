@@ -178,21 +178,22 @@ export class AonNewMenu extends AonElement {
 		aonMenuLefttop.className = CSS.AON_MENU_LEFTOP;
 		this.appendChild(aonMenuLefttop);
 		aonMenuLefttop.style.width = '68px';
+		aonMenuLefttop.style.visibility = "hidden";
 		this.buildMenuLeftop();
 
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
 		this.appendChild(aonMenuSidenav);
-		aonMenuSidenav.style.width = '68px';
-		this.getRootPanel().style.marginLeft = '69px';
+		aonMenuSidenav.style.width = '0px';
+		this.getRootPanel().style.marginLeft = '0px';
 		this.buildMenuSidenav();
 
 		let aonMenuTopnav = this.createElement(TAG.DIV);
 		aonMenuTopnav.id = this.AON_MENU_TOPNAV;
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
-		aonMenuTopnav.style.height = '68px';
+		aonMenuTopnav.style.height = '0px';
 		this.getRootPanel().style.marginTop = '0px'; //'69px';
 		this.buildMenuTopnav();
 	}
@@ -284,19 +285,11 @@ export class AonNewMenu extends AonElement {
 */
 	showTopNav() {	
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
-		let menulist = this.getElement("aonMenuList");
-		let aonlogo = this.getElement("aonLogo");
 		let rightPanel = this.getElement("aonRightPanel");
 
-		sidenav.style.width = '0px';
-		sidenav.style.display = "none";
-		rootPanel.style.marginLeft = '0px';
-		menulist.style.visibility = "hidden";
 		topnav.style.height = '68px';
 		rootPanel.style.marginTop = '69px';
-		aonlogo.style.paddingLEft = '0px';
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
 			rightPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
@@ -307,41 +300,54 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
 	}
 
-	showSideNav() {
+	hideTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
-		let menulist = this.getElement("aonMenuList");
-		let aonlogo = this.getElement("aonLogo");
 		let rightPanel = this.getElement("aonRightPanel");
+		topnav.style.height = '0px';
+		if(rightPanel){
+			rightPanel.style.marginTop = topnav.offsetHeight;
+			rightPanel.style.height = `calc(100vh - 49px)`;
+		}
+		rootPanel.style.marginTop = topnav.offsetHeight;
+		rootPanel.style.height = `calc(100vh - 49px)`;
+	}
+
+	showSideNav() {
+		
+		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
+		let menulist = this.getElement("aonMenuList");
+		let rootPanel = this.getElement("rootPanel");
+		let aonlogo = this.getElement("aonLogo");		
+		let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";
 		
 		menulist.style.visibility = "visible";
-		topnav.style.height = '0px';
-		aonlogo.style.paddingLeft = '';
-		aonlogo.style.width = '';
-
-		if(rightPanel){
-			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 49px)`;
-		}
 		
+		aonlogo.style.left = '50px';
+		aonlogo.style.position = 'relative';
+
+		icon.style.visibility = "visible";
 
 		rootPanel.style.marginLeft = '69px';
-		rootPanel.style.marginTop = topnav.offsetHeight;
-		rootPanel.style.height = `calc(100vh - 49px)`;
+
 	}
 
-	isTopNavVisible(){
-		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		return topnav.style.height != "0px";
-	}
-
-	isSideNavVisible(){
+	hideSideNav(){
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-		return sidenav.style.width != "0px";
+		let rootPanel = this.getElement("rootPanel");
+		let menulist = this.getElement("aonMenuList");
+		let aonlogo = this.getElement("aonLogo");
+		let icon = this.getElement("aonMenuLeftop");
+		sidenav.style.width = '0px';
+		sidenav.style.display = "none";
+		aonlogo.style.position = "relative";
+		icon.style.visibility = "hidden";
+		aonlogo.style.left = '0px';
+		rootPanel.style.marginLeft = '0px';
+		menulist.style.visibility = "hidden";
 	}
 
 	showMenuButton() {

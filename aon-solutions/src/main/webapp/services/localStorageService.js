@@ -14,6 +14,8 @@ export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
 export const RIGHT_PANEL = 'rightPanel';
+export const TOP_MENU = 'aonMenuTopnav';
+export const LEFT_MENU = 'aonMenuSidenav';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -32,11 +34,36 @@ export const setLanguage = (value) => {
     location.reload();
 }
 
+export const isTopMenu= () => {
+    let aon = getTopMenu();
+    return  CONSTANT.TRUE ==  aon;
+}
+
+export const isLeftMenu = () => {
+    let aon = getLeftMenu();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getTopMenu = () => {
+    return get (TOP_MENU);
+}
+
+export const setTopMenu = (value) => {
+    set(TOP_MENU, value);
+}
+
+export const getLeftMenu = () => {
+    return get (LEFT_MENU);
+}
+
+export const setLeftMenu = (value) => {
+    set(LEFT_MENU,value);
+} 
+
 export const isRightPanel= () => {
     let aon = getRightPanel();
     return  aon;
 }
-
 
 export const getRightPanel = () => {
     return get(RIGHT_PANEL);
