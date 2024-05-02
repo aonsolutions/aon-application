@@ -29,7 +29,7 @@ export const TIMECONTROL = {
       name: "Empleado",
     },
   ],
-  price: " ", //  '-',
+  price: "-", //  '-',
   disabled: false,
   options: {
     menu: false,
@@ -59,7 +59,7 @@ export const ACCOUNTING = {
       name: "Empresa",
     },
   ],
-  price: " ", // '60€/mes',
+  price: "60€/mes", // '60€/mes',
   options: {
     menu: true,
     add: false,
@@ -88,7 +88,7 @@ export const FISCAL = {
       name: "Empresa",
     },
   ],
-  price: " ", // '60€/mes',
+  price: "60€/mes", // '60€/mes',
   options: {
     menu: true,
     add: false,
@@ -121,7 +121,7 @@ export const PAYROLL = {
       name: "Empleado",
     },
   ],
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   options: {
     menu: true,
     add: false,
@@ -140,7 +140,7 @@ export const TREASURY = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -155,7 +155,7 @@ export const MARKETING = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -169,7 +169,7 @@ export const SERES = {
   color: "#0000ff",
   backgroundColor: "rgba(0, 0, 255, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -185,7 +185,7 @@ export const COMMERCIAL = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -199,7 +199,7 @@ export const GROUPWARE = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: "90€/mes", // '90€/mes',
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -227,7 +227,7 @@ export const COMUNICA = {
     },
   ],
 // apps: [TIMECONTROL],
-  price: " ", // '60€/mes'
+  price: "60€/mes", // '60€/mes'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -254,7 +254,7 @@ export const DOCUMENTAL = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: "-", // '-',
   disabled: false,
   options: {
     menu: false,
@@ -274,7 +274,7 @@ export const WAREHOUSE = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-',
+  price: "-", // '-',
   disabled: false,
   options: {
     menu: false,
@@ -309,7 +309,7 @@ export const INVOICE = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: "-", // '-',
   disabled: false,
   options: {
     menu: false,
@@ -354,7 +354,7 @@ export const MESSENGER = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: "-", // '-',
   disabled: false,
   options: {
     menu: false,
@@ -372,7 +372,7 @@ export const TOOLS = {
   color: "#535353",
   backgroundColor: "rgba(83, 83, 83, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: "-", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -383,19 +383,19 @@ export const NOTES = {
   color: "#ffc000",
   backgroundColor: "rgba(255, 192, 0, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: "-", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const AON_SOLUTIONS = {
   app: "aio",
   title: "aonSolutions",
-  description: "El único software fiscal, laboral y contable 100% en la nube. Gestión de todas las áreas de tu asesoría desde un mismo sitio.",
+  description: "El único software fiscal, laboral y contable 100% en la nube.",
 
   icon: AON_ICONS.AON_APP,
   color: "var(--aonBlue)", 
   logo: "../assets/aon.png",
-  price: " ", //  '-'
+  price: "-", //  '-'
 };
 
 export const BIDOQ = {
@@ -403,7 +403,7 @@ export const BIDOQ = {
   title: "Bidoq",
   description: "Bidoq.",
   logo: "../assets/apps/bidoq.png",
-  price: " ", // '-'
+  price: "-", // '-'
 };
 
 export const SELFCONTA = {
@@ -411,7 +411,7 @@ export const SELFCONTA = {
   title: "Selfconta",
   description: "Selfconta.",
   logo: "../assets/apps/selfconta.png",
-  price: " ", // '-'
+  price: "-", // '-'
 };
 
 export const AON_SALTRA = {
@@ -437,7 +437,7 @@ export const AON_SALTRA = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: "-", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -457,7 +457,7 @@ export const OCR = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: "Desde 45€/mes", // 'Desde 45€/mes'
 };
 
 
@@ -470,7 +470,7 @@ export const INVOFOX = {
   color: "#35A86C",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: "Desde 45€/mes", // 'Desde 45€/mes'
 };
 
 export const CONVENIOS = {
@@ -481,7 +481,7 @@ export const CONVENIOS = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: "Desde 45€/mes", // 'Desde 45€/mes'
 };
 
 export const BANK = {
@@ -492,7 +492,7 @@ export const BANK = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: "Desde 45€/mes", // 'Desde 45€/mes'
 };
 
 export const CONSOLE = {
@@ -523,7 +523,7 @@ export const API_SERVICE = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: "Desde 45€/mes", // 'Desde 45€/mes'
 };
 
 export const AULA = {
@@ -535,7 +535,7 @@ export const AULA = {
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'aonSidenavHover',
   moreInfo: "https://faqs.aonsolutions.es/",
-  price: " ", // '-',
+  price: "-", // '-',
   disabled: false,
 };
 
@@ -778,7 +778,7 @@ export const PACK_PORTAL = {
     Apps.INVOICE,
     Apps.MESSENGER
   ],
-  price: " ", // '120€/mes'
+  price: " 120€/mes", // '120€/mes'
 };
 
 export const PACK_PAYROLL = {
@@ -788,7 +788,7 @@ export const PACK_PAYROLL = {
   subtitle: " Laboral | Comunic@",
   color: "#002469",
   apps: [Apps.PAYROLL, Apps.COMUNICA],
-  price: " ", // '120€/mes'
+  price: " 120€/mes", // '120€/mes'
 };
 
 export const PACK_FISCAL_ACCOUNTING = {
@@ -798,7 +798,7 @@ export const PACK_FISCAL_ACCOUNTING = {
   subtitle: " Fiscal | Contabilidad",
   color: "#002469",
   apps: [Apps.FISCAL, Apps.ACCOUNTING],
-  price: " ", // '120€/mes'
+  price: " 120€/mes", // '120€/mes'
 };
 
 export const PACK_SUITE = {
