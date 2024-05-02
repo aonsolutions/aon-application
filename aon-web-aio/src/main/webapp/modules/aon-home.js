@@ -64,9 +64,7 @@ export class AonHome extends AonElement {
 		aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
 			let app = e.detail; 
 			console.log(JSON.stringify(e.detail));
-			
 			if ( !app.home ){
-				
 				let appEl = aonMenu.buildApp(app, 
 				{
 					height: '32px',
@@ -81,7 +79,6 @@ export class AonHome extends AonElement {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
 			}
-			
 			aonHeader.setColor(app.color && '#fff');
 			aonHeader.setBackgroundColor(app.color);
 		});
@@ -108,8 +105,15 @@ export class AonHome extends AonElement {
 			rightPanel.open();
 
 		}
-	
-		aonMenu.showSideNav();
+
+		if(LS.isTopMenu()){
+			aonMenu.showTopNav();
+		}
+
+		if(LS.isLeftMenu()){
+			aonMenu.showSideNav();
+		} 
+
 		let headerConfig = this.getElement('aonHeaderConfig');
 		if (headerConfig) {
 			headerConfig.addEventListener(EVENT.CLICK, () => {
