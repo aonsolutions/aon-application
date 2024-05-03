@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.print.DocFlavor.STRING;
+
 import org.json.JSONArray;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -109,18 +111,30 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		Map<String, String> imagesWithURL = new HashMap<>();
 		Map<String, String> attachesNames = new HashMap<>();
 		String html = "";
+		String subject = "";
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
 		String subjectArray[] = mimeMessage.getHeader("Subject");
-		String subject = subjectArray[0].replace("Fwd", "Asunto de la tarea");
+		if(subjectArray[0].contains("Fwd")) subject = subjectArray[0].replace("Fwd", "Asunto de la tarea");
+		else subject =  "Asunto de la tarea: " + subjectArray[0];
 		System.out.println(subject);
 		Multipart multipart = (Multipart) mimeMessage.getContent();
 		for (int i = 0; i < multipart.getCount(); i++) {
 			 //System.out.println(multipart.getContentType());
 			BodyPart bodyPart = multipart.getBodyPart(i);
-			System.out.println(multipart.getBodyPart(i).getFileName());
+			System.out.println(multipart.getBodyPart(i).getContentType());
 			if(multipart.getBodyPart(i).getFileName() != null ) fileNames.add(multipart.getBodyPart(i).getFileName());
-			attachIdList = getAttachIds(bodyPart, attachIdList);
+			attachIdList = getAttachIds(bodyPart, attachIdList, attachesNames);
+			if(bodyPart.getContentType().startsWith("multipart/related")) {
+				Multipart m = (Multipart) bodyPart.getContent();
+				System.out.println(m.getBodyPart(0).getContentType());
+				BodyPart b = m.getBodyPart(0);
+				Multipart m2 = (Multipart) b.getContent();
+				html =  m2.getBodyPart(1).getContent().toString();
+				BodyPart bAttach = m.getBodyPart(1);
+				attachIdList = getAttachIds(bAttach, attachIdList, attachesNames);
+				
+			}
 			if (bodyPart.getContentType().startsWith("multipart/alternative")) {
 				Multipart m = (Multipart) bodyPart.getContent();
 				html = m.getBodyPart(1).getContent().toString();
@@ -128,9 +142,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 			}
 		}
 		
-		for (int i = 0; i < attachIdList.size(); i++) {
-			attachesNames.put(attachIdList.get(i), fileNames.get(i));
-		}
+		
 		
 		StringBuilder newHtml = new StringBuilder(html);
 		System.out.println(attachIdList);
@@ -226,18 +238,29 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 	}
 
-	private static List<String> getAttachIds(BodyPart bodyPart, List<String> attachIds) throws MessagingException {
+	private static List<String> getAttachIds(BodyPart bodyPart, List<String> attachIds, Map<String, String> attachesNames) throws MessagingException {
 
 		Enumeration<Header> headers = bodyPart.getAllHeaders();
+		String fileName = "";
+		String attachId = "";
 		for (Iterator<Header> iterator = headers.asIterator(); iterator.hasNext();) {
 			Header header = iterator.next();
 			System.out.println(header.getName() + "=" + header.getValue());
-			if (header.getName().equals("X-Attachment-Id"))
+			if(header.getName().equals("Content-Disposition")) {
+				String headerName[] = header.getValue().split(";");
+				String headerValue = headerName[1].substring(10);
+				fileName = headerValue.replaceAll("\"", "");
+				System.out.println(fileName);
+			}
+			if (header.getName().equals("X-Attachment-Id")) {
 				attachIds.add(header.getValue());
-			if(header.getName().contains("filen")) System.out.println("Es correcto");
-
+				attachId  =header.getValue();
+			}
+	
 		}
-
+        
+		if(!fileName.isBlank()) attachesNames.put(attachId, fileName);
+		
 		return attachIds;
 	}
 
@@ -276,7 +299,132 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 				html.append(" "); 
 			}
 			
-			 html.append("<a" + " " + "href=\"" + entry.getValue() + "\">" + attachesNames.get(entry.getKey()) + "</a>");
+			String script = "<script>\n"
+					+ "const cuadrado = document.querySelector('.cuadrado');\n"
+					+ "const botonCuadrado = document.querySelector('.boton-cuadrado');\n"
+					+ "\n"
+					+ "// Agregar un manejador de eventos al cuadrado para el evento mouseover\n"
+					+ "cuadrado.addEventListener('mouseover', function() {\n"
+					+ "    // Mostrar el botón cambiando su estilo de display\n"
+					+ "    botonCuadrado.style.display = 'inline-block';\n"
+					+ "});\n"
+					+ "\n"
+					+ "// Agregar un manejador de eventos al cuadrado para el evento mouseout\n"
+					+ "cuadrado.addEventListener('mouseout', function() {\n"
+					+ "    // Ocultar el botón cambiando su estilo de display\n"
+					+ "    botonCuadrado.style.display = 'none';\n"
+					+ "});\n"
+					+ "</script>";
+			
+			
+			String html1= "<body>\n"
+					+ "   \n"
+					+ "\n"
+					+ "<div>\n"
+					+ "    <a class=\"descarga\" href=\""+entry.getValue() +"\" title=\"" + attachesNames.get(entry.getKey()) + "\" ><span>Descargar</span><span>" + attachesNames.get(entry.getKey()) + "</span></a>\n"
+					+ "</div>\n"
+					+ "\n"
+					+ "</body>";
+			
+			
+            String css ="<style>\n"
+            		+ ".descarga {\n"
+            		+ "    background: #ffffff;\n"
+            		+ "    border: solid 2px #ccc;\n"
+            		+ "    border-radius: 2px;\n"
+            		+ "    display: inline-block;\n"
+            		+ "    height: 100px;\n"
+            		+ "    line-height: 100px;\n"
+            		+ "    margin: 5px;\n"
+            		+ "    position: relative;\n"
+            		+ "    text-align: center;\n"
+            		+ "    vertical-align: middle;\n"
+            		+ "    width: 100px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span {\n"
+            		+ "    background: #f2594b;\n"
+            		+ "    border-radius: 4px;\n"
+            		+ "    color: #ffffff;\n"
+            		+ "    display: inline-block;\n"
+            		+ "    font-size: 11px;\n"
+            		+ "    font-weight: 700;\n"
+            		+ "    line-height: normal;\n"
+            		+ "    padding: 5px 10px;\n"
+            		+ "    position: relative;\n"
+            		+ "    text-transform: uppercase;\n"
+            		+ "    z-index: 1;\n"
+            		+ "    top: 45%;\n"
+            		+ "    text-align: center;\n"
+            		+ "    max-width: 95%;;\n"
+            		+ "    text-overflow: ellipsis;\n"
+            		+ "    overflow: hidden;\n"
+            		+ "    white-space: nowrap;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span:last-child {\n"
+            		+ "    margin: auto;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:before,\n"
+            		+ ".descarga:after {\n"
+            		+ "    background: #ffffff;\n"
+            		+ "    border: solid 3px #9fb4cc;\n"
+            		+ "    border-radius: 4px;\n"
+            		+ "    content: '';\n"
+            		+ "    display: block;\n"
+            		+ "    height: 35px;\n"
+            		+ "    left: 50%;\n"
+            		+ "    margin: -17px 0 0 -12px;\n"
+            		+ "    position: absolute;\n"
+            		+ "    top: 50%;\n"
+            		+ "    /*transform:translate(-50%,-50%);*/\n"
+            		+ "    \n"
+            		+ "    width: 25px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover:before,\n"
+            		+ ".descarga:hover:after {\n"
+            		+ "    background: #e2e8f0;\n"
+            		+ "}\n"
+            		+ "/*a:before{transform:translate(-30%,-60%);}*/\n"
+            		+ "\n"
+            		+ ".descarga:before {\n"
+            		+ "    margin: -23px 0 0 -5px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover {\n"
+            		+ "    background: #e2e8f0;\n"
+            		+ "    border-color: #9fb4cc;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:active {\n"
+            		+ "    background: #dae0e8;\n"
+            		+ "    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .25);\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span:first-child {\n"
+            		+ "    display: none;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover span:first-child {\n"
+            		+ "    display: inline-block;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover span:last-child {\n"
+            		+ "    display: none;\n"
+            		+ "}\n"
+            		+ "</style>" ;
+            
+			
+			html.append(css);
+			html.append(html1);
+			//html.append(script);
+			
+			 //html.append("<a" + " " + "href=\"" + entry.getValue() + "\" class=\"fas fa-file-download\">" + attachesNames.get(entry.getKey()) + "</a>");
+			 //html.append("<div" + " " + "class=\""  + attachesNames.get(entry.getKey()) +  "\"> ");
+			 //html.append("<i class=\"fas fa-file-download\" aria-hidden=\"true\"></i>");
+			 //html.append("<p style=\"display: inline-block\">" + attachesNames.get(entry.getKey()) + "</p>");
 		}
         
 		System.out.println(html.toString());

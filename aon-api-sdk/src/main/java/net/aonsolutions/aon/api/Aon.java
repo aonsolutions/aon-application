@@ -28,9 +28,10 @@ class Aon {
     static final String AON_API_URL = "https://%s/%s"; 
    */
     
+   
      private static final String AON_API_URL = "http://%s:8080/aon-aio/%s";
      
-     
+    
     
 
     static final String PREDEFINED_TOKEN = "AONd95770f269e711eb94390242ac130002";  

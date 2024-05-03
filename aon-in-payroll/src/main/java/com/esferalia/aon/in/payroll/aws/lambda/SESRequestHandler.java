@@ -240,7 +240,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     private static MimeMessage handleMIME( InputStream is, Callback callback, Handler ...handlers ) throws Exception {
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
-		Multipart multipart = (Multipart ) mimeMessage.getContent() ;
+		Multipart multipart = (Multipart ) mimeMessage.getContent();
 		for ( int i = 0; i < multipart.getCount(); i++) {
 			BodyPart bodyPart  = multipart.getBodyPart(i);
 			callback.startFile(bodyPart.getFileName());
