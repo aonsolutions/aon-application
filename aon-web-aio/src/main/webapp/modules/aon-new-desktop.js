@@ -51,7 +51,8 @@ export class AonNewDesktop extends AonElement {
 		desktopAppsDiv.classList.add('aonDesktopAppsContainer');		
 		
 		for ( const app in this.apps ) {
-			if (this.apps[app].title!=null) {
+			let titulo = this.apps[app].title;
+			if (titulo!=null && titulo!="Inicio" && titulo!="Aplicaciones") {
 				desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
 			}
 		}
@@ -387,7 +388,7 @@ export class AonNewDesktop extends AonElement {
 
 		cardDiv.appendChild(appA);
 
-		if (app.price != "-") {
+		if (app.price != " ") {
 			cardDiv.style.paddingRight = '32px';
 
 			let priceDiv = this.createElement(TAG.DIV);
