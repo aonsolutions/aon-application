@@ -4545,7 +4545,7 @@ aon-textarea pre{
 }
 
 .rootPanel {
-  z-index: 3;	
+  /* z-index: 3;	 */
   position: relative;
   height: calc(100vh - 17px);
   overflow-y: auto;
