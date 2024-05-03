@@ -2302,3 +2302,49 @@ aon-access-card{
   color: #464feb !important;
 }
 
+.aonDesktopAppsContainer {
+  display: grid;
+  column-gap: 20px;
+  row-gap: 20px;
+  grid-template-columns: repeat(1, minmax(0px, 1fr));
+}
+
+.aonDesktopAonAppsContainer {
+  display: grid;
+  column-gap: 20px;
+  row-gap: 20px;
+  grid-template-columns: repeat(1, minmax(0px, 1fr));
+}
+
+@media(min-width: 400px) {
+  .aonDesktopAppsContainer {
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+@media(min-width: 500px) {
+  .aonDesktopAppsContainer {
+    grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+  
+  .aonDesktopAonAppsContainer {
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+@media(min-width: 750px) {
+  .aonDesktopAppsContainer {
+    grid-template-columns: repeat(5, minmax(0px, 1fr));
+  }
+  
+  .aonDesktopAonAppsContainer {
+    grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+}
+
+@media(min-width: 1000px) {
+  .aonDesktopAppsContainer {
+    grid-template-columns: repeat(7, minmax(0px, 1fr));
+  }
+}
+
