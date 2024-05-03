@@ -48,10 +48,11 @@ export class AonNewDesktop extends AonElement {
 		desktopDiv.appendChild(bannerAppsDiv);
 		
 		let desktopAppsDiv =  this.createElement(TAG.DIV);
-		desktopAppsDiv.style.display = 'grid';
-		desktopAppsDiv.style.rowGap = '20px';
-		desktopAppsDiv.style.columnGap = '20px';
-		desktopAppsDiv.style.gridTemplateColumns = 'repeat(7, minmax(0px, 1fr))';
+		desktopAppsDiv.classList.add('aonDesktopAppsContainer');
+		// desktopAppsDiv.style.display = 'grid';
+		// desktopAppsDiv.style.rowGap = '20px';
+		// desktopAppsDiv.style.columnGap = '20px';
+		// desktopAppsDiv.style.gridTemplateColumns = 'repeat(7, minmax(0px, 1fr))';
 		
 		
 		for ( const app in this.apps ) {
@@ -73,10 +74,11 @@ export class AonNewDesktop extends AonElement {
 		desktopDiv.appendChild(bannerAonAppsDiv);
 
 		let desktopAonAppsDiv =  this.createElement(TAG.DIV);
-		desktopAonAppsDiv.style.display = 'grid';
-		desktopAonAppsDiv.style.rowGap = '20px';
-		desktopAonAppsDiv.style.columnGap = '20px';
-		desktopAonAppsDiv.style.gridTemplateColumns = 'repeat(3, minmax(0px, 1fr))';
+		desktopAonAppsDiv.classList.add('aonDesktopAonAppsContainer');
+		// desktopAonAppsDiv.style.display = 'grid';
+		// desktopAonAppsDiv.style.rowGap = '20px';
+		// desktopAonAppsDiv.style.columnGap = '20px';
+		// desktopAonAppsDiv.style.gridTemplateColumns = 'repeat(3, minmax(0px, 1fr))';
 
 		for ( const app in this.aonApps ) {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
@@ -99,7 +101,7 @@ export class AonNewDesktop extends AonElement {
 		cardButton.innerHTML = 'more_horiz';
 		cardButton.style.position = 'absolute';
 		cardButton.style.right = '10px';
-		cardButton.style.top = "10px";
+		cardButton.style.top = "5px";
 		cardButton.classList.add('aonAppMoreBtn');
 		cardButton.style.visibility = 'hidden';
 
@@ -117,6 +119,8 @@ export class AonNewDesktop extends AonElement {
 		
 		let optionsItem1 = this.createElement(TAG.LI);
 		optionsItem1.classList.add('aonAppMoreListItem');
+
+		let item1Anchor = this.createElement(TAG.A);
 		
 		let item1Icon = this.createElement(TAG.SPAN);
 		item1Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -126,11 +130,15 @@ export class AonNewDesktop extends AonElement {
 		let item1Label = this.createElement(TAG.SPAN)
 		item1Label.innerHTML = "Open in new tab";
 
-		optionsItem1.appendChild(item1Icon);
-		optionsItem1.appendChild(item1Label);
+		item1Anchor.appendChild(item1Icon);
+		item1Anchor.appendChild(item1Label);
+
+		optionsItem1.appendChild(item1Anchor);
 
 		let optionsItem2 = this.createElement(TAG.LI);
 		optionsItem2.classList.add('aonAppMoreListItem');
+
+		let item2Anchor = this.createElement(TAG.A);
 
 		let item2Icon = this.createElement(TAG.SPAN);
 		item2Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -140,8 +148,10 @@ export class AonNewDesktop extends AonElement {
 		let item2Label = this.createElement(TAG.SPAN);
 		item2Label.innerHTML = "About";
 
-		optionsItem2.appendChild(item2Icon);
-		optionsItem2.appendChild(item2Label);
+		item2Anchor.appendChild(item2Icon);
+		item2Anchor.appendChild(item2Label);
+
+		optionsItem2.appendChild(item2Anchor);
 
 		optionsList.append(optionsItem1);
 		optionsList.append(optionsItem2);
@@ -252,6 +262,8 @@ export class AonNewDesktop extends AonElement {
 		
 		let optionsItem1 = this.createElement(TAG.LI);
 		optionsItem1.classList.add('aonAppMoreListItem');
+
+		let item1Anchor = this.createElement(TAG.A);
 		
 		let item1Icon = this.createElement(TAG.SPAN);
 		item1Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -261,11 +273,15 @@ export class AonNewDesktop extends AonElement {
 		let item1Label = this.createElement(TAG.SPAN)
 		item1Label.innerHTML = "Open in new tab";
 
-		optionsItem1.appendChild(item1Icon);
-		optionsItem1.appendChild(item1Label);
+		item1Anchor.appendChild(item1Icon);
+		item1Anchor.appendChild(item1Label);
+
+		optionsItem1.appendChild(item1Anchor);
 
 		let optionsItem2 = this.createElement(TAG.LI);
 		optionsItem2.classList.add('aonAppMoreListItem');
+
+		let item2Anchor = this.createElement(TAG.A);
 
 		let item2Icon = this.createElement(TAG.SPAN);
 		item2Icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -275,8 +291,10 @@ export class AonNewDesktop extends AonElement {
 		let item2Label = this.createElement(TAG.SPAN);
 		item2Label.innerHTML = "About";
 
-		optionsItem2.appendChild(item2Icon);
-		optionsItem2.appendChild(item2Label);
+		item2Anchor.appendChild(item2Icon);
+		item2Anchor.appendChild(item2Label);
+
+		optionsItem2.appendChild(item2Anchor);
 
 		optionsList.append(optionsItem1);
 		optionsList.append(optionsItem2);
@@ -379,7 +397,7 @@ export class AonNewDesktop extends AonElement {
 
 		cardDiv.appendChild(appA);
 
-		if (app.price != " ") {
+		if (app.price != "-") {
 			cardDiv.style.paddingRight = '32px';
 
 			let priceDiv = this.createElement(TAG.DIV);
