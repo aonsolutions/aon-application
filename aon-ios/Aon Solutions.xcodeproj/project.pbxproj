@@ -1,0 +1,673 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CC4335DB2BBD41BB004D0CA8 /* Aon_SolutionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4335DA2BBD41BB004D0CA8 /* Aon_SolutionsApp.swift */; };
+		CC4335DD2BBD41BB004D0CA8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4335DC2BBD41BB004D0CA8 /* ContentView.swift */; };
+		CC4335DF2BBD41BD004D0CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC4335DE2BBD41BD004D0CA8 /* Assets.xcassets */; };
+		CC4335E32BBD41BE004D0CA8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC4335E22BBD41BE004D0CA8 /* Preview Assets.xcassets */; };
+		CC4335ED2BBD41BE004D0CA8 /* Aon_SolutionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4335EC2BBD41BE004D0CA8 /* Aon_SolutionsTests.swift */; };
+		CC4335F72BBD41BE004D0CA8 /* Aon_SolutionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4335F62BBD41BE004D0CA8 /* Aon_SolutionsUITests.swift */; };
+		CC4335F92BBD41BE004D0CA8 /* Aon_SolutionsUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4335F82BBD41BE004D0CA8 /* Aon_SolutionsUITestsLaunchTests.swift */; };
+		CC616B152BCFAE2F0081F5BB /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = CC616B142BCFAE2F0081F5BB /* CodeScanner */; };
+		CC9E108F2BBEBFF900FB7974 /* WelcomeToWord.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CC9E108E2BBEBFF900FB7974 /* WelcomeToWord.pdf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC4335E92BBD41BE004D0CA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC4335CF2BBD41BB004D0CA8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC4335D62BBD41BB004D0CA8;
+			remoteInfo = "Aon Solutions";
+		};
+		CC4335F32BBD41BE004D0CA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC4335CF2BBD41BB004D0CA8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC4335D62BBD41BB004D0CA8;
+			remoteInfo = "Aon Solutions";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CC4335D72BBD41BB004D0CA8 /* Aon Solutions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Aon Solutions.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC4335DA2BBD41BB004D0CA8 /* Aon_SolutionsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aon_SolutionsApp.swift; sourceTree = "<group>"; };
+		CC4335DC2BBD41BB004D0CA8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CC4335DE2BBD41BD004D0CA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CC4335E02BBD41BE004D0CA8 /* Aon_Solutions.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Aon_Solutions.entitlements; sourceTree = "<group>"; };
+		CC4335E22BBD41BE004D0CA8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		CC4335E82BBD41BE004D0CA8 /* Aon SolutionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Aon SolutionsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC4335EC2BBD41BE004D0CA8 /* Aon_SolutionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aon_SolutionsTests.swift; sourceTree = "<group>"; };
+		CC4335F22BBD41BE004D0CA8 /* Aon SolutionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Aon SolutionsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC4335F62BBD41BE004D0CA8 /* Aon_SolutionsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aon_SolutionsUITests.swift; sourceTree = "<group>"; };
+		CC4335F82BBD41BE004D0CA8 /* Aon_SolutionsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aon_SolutionsUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CC4336092BBD45CB004D0CA8 /* Aon-Solutions-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Aon-Solutions-Info.plist"; sourceTree = SOURCE_ROOT; };
+		CC9E108E2BBEBFF900FB7974 /* WelcomeToWord.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = WelcomeToWord.pdf; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CC4335D42BBD41BB004D0CA8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC616B152BCFAE2F0081F5BB /* CodeScanner in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335E52BBD41BE004D0CA8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335EF2BBD41BE004D0CA8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CC4335CE2BBD41BB004D0CA8 = {
+			isa = PBXGroup;
+			children = (
+				CC9E108E2BBEBFF900FB7974 /* WelcomeToWord.pdf */,
+				CC4335D92BBD41BB004D0CA8 /* Aon Solutions */,
+				CC4335EB2BBD41BE004D0CA8 /* Aon SolutionsTests */,
+				CC4335F52BBD41BE004D0CA8 /* Aon SolutionsUITests */,
+				CC4335D82BBD41BB004D0CA8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CC4335D82BBD41BB004D0CA8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CC4335D72BBD41BB004D0CA8 /* Aon Solutions.app */,
+				CC4335E82BBD41BE004D0CA8 /* Aon SolutionsTests.xctest */,
+				CC4335F22BBD41BE004D0CA8 /* Aon SolutionsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CC4335D92BBD41BB004D0CA8 /* Aon Solutions */ = {
+			isa = PBXGroup;
+			children = (
+				CC4336092BBD45CB004D0CA8 /* Aon-Solutions-Info.plist */,
+				CC4335DA2BBD41BB004D0CA8 /* Aon_SolutionsApp.swift */,
+				CC4335DC2BBD41BB004D0CA8 /* ContentView.swift */,
+				CC4335DE2BBD41BD004D0CA8 /* Assets.xcassets */,
+				CC4335E02BBD41BE004D0CA8 /* Aon_Solutions.entitlements */,
+				CC4335E12BBD41BE004D0CA8 /* Preview Content */,
+			);
+			path = "Aon Solutions";
+			sourceTree = "<group>";
+		};
+		CC4335E12BBD41BE004D0CA8 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				CC4335E22BBD41BE004D0CA8 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		CC4335EB2BBD41BE004D0CA8 /* Aon SolutionsTests */ = {
+			isa = PBXGroup;
+			children = (
+				CC4335EC2BBD41BE004D0CA8 /* Aon_SolutionsTests.swift */,
+			);
+			path = "Aon SolutionsTests";
+			sourceTree = "<group>";
+		};
+		CC4335F52BBD41BE004D0CA8 /* Aon SolutionsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CC4335F62BBD41BE004D0CA8 /* Aon_SolutionsUITests.swift */,
+				CC4335F82BBD41BE004D0CA8 /* Aon_SolutionsUITestsLaunchTests.swift */,
+			);
+			path = "Aon SolutionsUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CC4335D62BBD41BB004D0CA8 /* Aon Solutions */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC4335FC2BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon Solutions" */;
+			buildPhases = (
+				CC4335D32BBD41BB004D0CA8 /* Sources */,
+				CC4335D42BBD41BB004D0CA8 /* Frameworks */,
+				CC4335D52BBD41BB004D0CA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Aon Solutions";
+			packageProductDependencies = (
+				CC616B142BCFAE2F0081F5BB /* CodeScanner */,
+			);
+			productName = "Aon Solutions";
+			productReference = CC4335D72BBD41BB004D0CA8 /* Aon Solutions.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CC4335E72BBD41BE004D0CA8 /* Aon SolutionsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC4335FF2BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon SolutionsTests" */;
+			buildPhases = (
+				CC4335E42BBD41BE004D0CA8 /* Sources */,
+				CC4335E52BBD41BE004D0CA8 /* Frameworks */,
+				CC4335E62BBD41BE004D0CA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC4335EA2BBD41BE004D0CA8 /* PBXTargetDependency */,
+			);
+			name = "Aon SolutionsTests";
+			productName = "Aon SolutionsTests";
+			productReference = CC4335E82BBD41BE004D0CA8 /* Aon SolutionsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CC4335F12BBD41BE004D0CA8 /* Aon SolutionsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC4336022BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon SolutionsUITests" */;
+			buildPhases = (
+				CC4335EE2BBD41BE004D0CA8 /* Sources */,
+				CC4335EF2BBD41BE004D0CA8 /* Frameworks */,
+				CC4335F02BBD41BE004D0CA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC4335F42BBD41BE004D0CA8 /* PBXTargetDependency */,
+			);
+			name = "Aon SolutionsUITests";
+			productName = "Aon SolutionsUITests";
+			productReference = CC4335F22BBD41BE004D0CA8 /* Aon SolutionsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CC4335CF2BBD41BB004D0CA8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					CC4335D62BBD41BB004D0CA8 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					CC4335E72BBD41BE004D0CA8 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = CC4335D62BBD41BB004D0CA8;
+					};
+					CC4335F12BBD41BE004D0CA8 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = CC4335D62BBD41BB004D0CA8;
+					};
+				};
+			};
+			buildConfigurationList = CC4335D22BBD41BB004D0CA8 /* Build configuration list for PBXProject "Aon Solutions" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CC4335CE2BBD41BB004D0CA8;
+			packageReferences = (
+				CC616B132BCFAE2F0081F5BB /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
+			productRefGroup = CC4335D82BBD41BB004D0CA8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CC4335D62BBD41BB004D0CA8 /* Aon Solutions */,
+				CC4335E72BBD41BE004D0CA8 /* Aon SolutionsTests */,
+				CC4335F12BBD41BE004D0CA8 /* Aon SolutionsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CC4335D52BBD41BB004D0CA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC9E108F2BBEBFF900FB7974 /* WelcomeToWord.pdf in Resources */,
+				CC4335E32BBD41BE004D0CA8 /* Preview Assets.xcassets in Resources */,
+				CC4335DF2BBD41BD004D0CA8 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335E62BBD41BE004D0CA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335F02BBD41BE004D0CA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CC4335D32BBD41BB004D0CA8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC4335DD2BBD41BB004D0CA8 /* ContentView.swift in Sources */,
+				CC4335DB2BBD41BB004D0CA8 /* Aon_SolutionsApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335E42BBD41BE004D0CA8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC4335ED2BBD41BE004D0CA8 /* Aon_SolutionsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC4335EE2BBD41BE004D0CA8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC4335F92BBD41BE004D0CA8 /* Aon_SolutionsUITestsLaunchTests.swift in Sources */,
+				CC4335F72BBD41BE004D0CA8 /* Aon_SolutionsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC4335EA2BBD41BE004D0CA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC4335D62BBD41BB004D0CA8 /* Aon Solutions */;
+			targetProxy = CC4335E92BBD41BE004D0CA8 /* PBXContainerItemProxy */;
+		};
+		CC4335F42BBD41BE004D0CA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC4335D62BBD41BB004D0CA8 /* Aon Solutions */;
+			targetProxy = CC4335F32BBD41BE004D0CA8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CC4335FA2BBD41BE004D0CA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CC4335FB2BBD41BE004D0CA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		CC4335FD2BBD41BE004D0CA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Aon Solutions/Aon_Solutions.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Aon Solutions/Preview Content\"";
+				DEVELOPMENT_TEAM = 3B8YJDL6X6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Aon-Solutions-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) camera use to take photos";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "$(PRODUCT_NAME) file access";
+				INFOPLIST_KEY_NSFileProviderPresenceUsageDescription = "$(PRODUCT_NAME) file access";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "$(PRODUCT_NAME) photo library access to save photos";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-Solutions";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CC4335FE2BBD41BE004D0CA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Aon Solutions/Aon_Solutions.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Aon Solutions/Preview Content\"";
+				DEVELOPMENT_TEAM = 3B8YJDL6X6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Aon-Solutions-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) camera use to take photos";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "$(PRODUCT_NAME) file access";
+				INFOPLIST_KEY_NSFileProviderPresenceUsageDescription = "$(PRODUCT_NAME) file access";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "$(PRODUCT_NAME) uses location";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "$(PRODUCT_NAME) photo library access to save photos";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-Solutions";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CC4336002BBD41BE004D0CA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-SolutionsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Aon Solutions.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Aon Solutions";
+			};
+			name = Debug;
+		};
+		CC4336012BBD41BE004D0CA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-SolutionsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Aon Solutions.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Aon Solutions";
+			};
+			name = Release;
+		};
+		CC4336032BBD41BE004D0CA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-SolutionsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Aon Solutions";
+			};
+			name = Debug;
+		};
+		CC4336042BBD41BE004D0CA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "solutions.aon.Aon-SolutionsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Aon Solutions";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CC4335D22BBD41BB004D0CA8 /* Build configuration list for PBXProject "Aon Solutions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC4335FA2BBD41BE004D0CA8 /* Debug */,
+				CC4335FB2BBD41BE004D0CA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC4335FC2BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon Solutions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC4335FD2BBD41BE004D0CA8 /* Debug */,
+				CC4335FE2BBD41BE004D0CA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC4335FF2BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon SolutionsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC4336002BBD41BE004D0CA8 /* Debug */,
+				CC4336012BBD41BE004D0CA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC4336022BBD41BE004D0CA8 /* Build configuration list for PBXNativeTarget "Aon SolutionsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC4336032BBD41BE004D0CA8 /* Debug */,
+				CC4336042BBD41BE004D0CA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CC616B132BCFAE2F0081F5BB /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CC616B142BCFAE2F0081F5BB /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC616B132BCFAE2F0081F5BB /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = CC4335CF2BBD41BB004D0CA8 /* Project object */;
+}
