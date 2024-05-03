@@ -48,12 +48,7 @@ export class AonNewDesktop extends AonElement {
 		desktopDiv.appendChild(bannerAppsDiv);
 		
 		let desktopAppsDiv =  this.createElement(TAG.DIV);
-		desktopAppsDiv.classList.add('aonDesktopAppsContainer');
-		// desktopAppsDiv.style.display = 'grid';
-		// desktopAppsDiv.style.rowGap = '20px';
-		// desktopAppsDiv.style.columnGap = '20px';
-		// desktopAppsDiv.style.gridTemplateColumns = 'repeat(7, minmax(0px, 1fr))';
-		
+		desktopAppsDiv.classList.add('aonDesktopAppsContainer');		
 		
 		for ( const app in this.apps ) {
 			if (this.apps[app].title!=null) {
@@ -75,16 +70,11 @@ export class AonNewDesktop extends AonElement {
 
 		let desktopAonAppsDiv =  this.createElement(TAG.DIV);
 		desktopAonAppsDiv.classList.add('aonDesktopAonAppsContainer');
-		// desktopAonAppsDiv.style.display = 'grid';
-		// desktopAonAppsDiv.style.rowGap = '20px';
-		// desktopAonAppsDiv.style.columnGap = '20px';
-		// desktopAonAppsDiv.style.gridTemplateColumns = 'repeat(3, minmax(0px, 1fr))';
 
 		for ( const app in this.aonApps ) {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
-
 
 		this.appendChild(desktopDiv);		
 	}
