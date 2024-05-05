@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.util.LinkedList;
@@ -21,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderWorkgroupValidation;
 
@@ -55,7 +58,10 @@ public class TaskHolderWorkgroupDAO {
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		return ctx.getDslContext().select()
-				.from(TASK_HOLDER_WORKGROUP).join(WORKGROUP).on(WORKGROUP.ID.eq(TASK_HOLDER_WORKGROUP.WORKGROUP))
+				.from(TASK_HOLDER_WORKGROUP)
+				.join(WORKGROUP).on(WORKGROUP.ID.eq(TASK_HOLDER_WORKGROUP.WORKGROUP))
+				.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter));
 	}
 	
@@ -110,7 +116,7 @@ public class TaskHolderWorkgroupDAO {
 			return new TaskHolderWorkgroup()
 					.setId(r.getValue(TASK_HOLDER_WORKGROUP.ID))
 					.setDomain(r.getValue(TASK_HOLDER_WORKGROUP.DOMAIN))
-					.setTaskHolder(r.getValue(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+					.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
 					.setWorkgroup(WorkgroupFiller.buildWorkgroup(r));
 		}
 	}

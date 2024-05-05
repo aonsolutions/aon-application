@@ -12,6 +12,8 @@ public class MarketingActionTargetParams implements Serializable{
 	
 	private String description;
 	
+	private Byte status;
+	
 	private MarketingAction marketingAction;
 	
 	private int limit;
@@ -44,6 +46,13 @@ public class MarketingActionTargetParams implements Serializable{
 	}
 	public MarketingActionTargetParams setDescription(String description) {
 		this.description = description;
+		return this;
+	}
+	public Byte getStatus() {
+		return status;
+	}
+	public MarketingActionTargetParams setStatus(Byte status) {
+		this.status = status;
 		return this;
 	}
 	public MarketingAction getMarketingAction() {
