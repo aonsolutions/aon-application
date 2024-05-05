@@ -62,6 +62,7 @@ public class TaskHolderDAO {
 			return new TaskHolder()
 					.copy(RegistryFiller.build(r, registry)
 						.setDomain(new Domain().setId(r.getValue(TASK_HOLDER.DOMAIN))))
+					.setRegistry(r.getValue(TASK_HOLDER.REGISTRY))
 					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
@@ -73,6 +74,7 @@ public class TaskHolderDAO {
 			if(registry == null) registry = REGISTRY;
 			return new TaskHolder()
 					.copy(RegistryFiller.build(r, registry))
+					.setRegistry(r.getValue(TASK_HOLDER.REGISTRY))
 					.setActive(getBoolean(r, th.ACTIVE))
 					.setCostProfile(r.getValue(th.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(th.TYPE)))

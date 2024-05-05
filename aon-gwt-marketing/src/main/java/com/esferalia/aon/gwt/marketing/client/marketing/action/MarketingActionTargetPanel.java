@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
-import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,10 +22,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -56,7 +51,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	private MarketingActionTargetParams params;
 	
 	private static enum COLS {
-		DES(AON.MSG.description()					,"auto"  ,null)
+		DES("Cliente Potencial"						,"auto"  ,null)
 		, COM(AON.MSG.comments()					,"250px" ,null)
 		, STA(AON.MSG.status()						,"150px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)

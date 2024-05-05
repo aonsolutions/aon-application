@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class MarketingCampaign implements Serializable {
 
@@ -15,6 +16,9 @@ public class MarketingCampaign implements Serializable {
 	private String description;
 	private Scope scope;
 	private Double budget;
+	private Double expense;
+	private Workgroup workgroup;
+	private TaskHolder taskHolder;
 	
 	private List<MarketingAction> actions;
 	
@@ -69,6 +73,33 @@ public class MarketingCampaign implements Serializable {
 	
 	public MarketingCampaign setBudget(Double budget) {
 		this.budget = budget;
+		return this;
+	}
+
+	public Double getExpense() {
+		return expense;
+	}
+
+	public MarketingCampaign setExpense(Double expense) {
+		this.expense = expense;
+		return this;
+	}
+
+	public Workgroup getWorkgroup() {
+		return workgroup;
+	}
+
+	public MarketingCampaign setWorkgroup(Workgroup workgroup) {
+		this.workgroup = workgroup;
+		return this;
+	}
+
+	public TaskHolder getTaskHolder() {
+		return taskHolder;
+	}
+
+	public MarketingCampaign setTaskHolder(TaskHolder taskHolder) {
+		this.taskHolder = taskHolder;
 		return this;
 	}
 
