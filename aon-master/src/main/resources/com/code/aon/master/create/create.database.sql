@@ -5454,17 +5454,24 @@ CREATE TABLE `mk_action` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Accion',
   `news` int DEFAULT NULL COMMENT 'Identificador de la Noticia',
   `budget` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Presupuesto de la accion',
+  `expense` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Inversion/gasto de la accion',
+  `workgroup` int(11) DEFAULT NULL COMMENT 'Grupo de trabajo de la accion',
+  `task_holder` int(11) DEFAULT NULL COMMENT 'Entidad susceptible de recibir tareas de la accion',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_ACTION_MK_CAMPAIGN` (`campaign`),
   KEY `IDX_MK_ACTION_SURVEY` (`survey`),
   KEY `IDX_MK_ACTION_DOMAIN` (`domain`),
   KEY `IDX_MK_ACTION_NEWSLETTER` (`newsletter`),
   KEY `IDX_MK_ACTION_NEWS` (`news`),
+  KEY `IDX_MK_ACTION_WORKGROUP` (`workgroup`),
+  KEY `IDX_MK_ACTION_TASK_HOLDER` (`task_holder`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
-  CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
+  CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
+  CONSTRAINT `FK_MK_ACTION_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
 
 #
@@ -5504,11 +5511,18 @@ CREATE TABLE `mk_campaign` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
   `budget` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Presupuesto de la campaña',
+  `expense` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Inversion/gasto de la campaña',
+  `workgroup` int(11) DEFAULT NULL COMMENT 'Grupo de trabajo de la campaña',
+  `task_holder` int(11) DEFAULT NULL COMMENT 'Entidad susceptible de recibir tareas de la campaña',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
   KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  KEY `IDX_MK_CAMPAIGN_WORKGROUP` (`workgroup`),
+  KEY `IDX_MK_CAMPAIGN_TASK_HOLDER` (`task_holder`),
   CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_MK_CAMPAIGN_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
+  CONSTRAINT `FK_MK_CAMPAIGN_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
