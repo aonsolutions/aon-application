@@ -528,9 +528,16 @@ public class Invoice implements Serializable, HasAudit {
 		}
 		return details;
 	}
+	
 	public Invoice setDetails(List<InvoiceDetail> details) {
 		this.details = details;
 		return this;
+	}
+	
+	public Invoice addDetail(InvoiceDetail detail) {
+		getDetails().add(detail);
+		return this;
+		
 	}
 
 	public List<InvoiceBreakdown> getBreakdown() {

@@ -4,14 +4,11 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -45,7 +42,7 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccountingInvoiceBox extends ResizeComposite implements HasValue<String>
+public abstract class AccountingInvoiceBox extends ResizeComposite implements HasValue<String>
 	, HasDescription, Focusable, HasSelectionHandlers<AccountingInvoice>, HasAllFocusHandlers
 	,HasAllKeyHandlers, HasEnabled {
 	
@@ -54,8 +51,6 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 9;
-
-	private AccountEntryServiceAsync SERVICE;
 
 	private Integer id;
 	private String description;
@@ -116,16 +111,14 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 		
 	}
 	
-	public AccountingInvoiceBox(final String domainName, final int domain,final String user) {
-		this(domainName,domain,user,null,true);
+	public AccountingInvoiceBox(final Occam occam) {
+		this(occam, null, true);
 	}
-	public AccountingInvoiceBox(final String domainName, final int domain, final String user,final AonConfiguration config) {
-		this(domainName,domain,user,config,true);
+	public AccountingInvoiceBox(final Occam occam,final AonConfiguration config) {
+		this(occam, config, true);
 	}
 	
-	public AccountingInvoiceBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
-		AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
-		SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw );
+	public AccountingInvoiceBox(final Occam occam,final AonConfiguration config, boolean showDescription) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -133,31 +126,31 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					SERVICE.getPendingImportAccountingInvoices(domainName,domain,user,request.getQuery()
+					getSuggestedData(occam,request.getQuery() 
 							,new AsyncCallback<LinkedList<AccountingInvoice>>() {
-		
-								public void onFailure(Throwable caught) {
-									descriptionLabel.setText(AON.MSG.noData());
-									descriptionLabel.addStyleName(AON.CSS.aonColorRed());
-									callback.onSuggestionsReady(request, new Response());
-								}
-		
-								public void onSuccess(LinkedList<AccountingInvoice> result) {
-									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
-									if (result != null) {
-										for (final AccountingInvoice accountingInvoice : result) {
-											suggestions.add(new AccountingInvoiceSuggestion(
-												accountingInvoice
-											   ,accountingInvoice.getInvoice().getReferenceCode()
-											   ,decorate(accountingInvoice, request.getQuery())));
-										}
-									}
-									Response resp = new Response(suggestions);
-									callback.onSuggestionsReady(request, resp);
-									
-								}
+						
+						public void onFailure(Throwable caught) {
+							descriptionLabel.setText(AON.MSG.noData());
+							descriptionLabel.addStyleName(AON.CSS.aonColorRed());
+							callback.onSuggestionsReady(request, new Response());
+						}
 
-							});
+						public void onSuccess(LinkedList<AccountingInvoice> result) {
+							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
+							if (result != null) {
+								for (final AccountingInvoice accountingInvoice : result) {
+									suggestions.add(new AccountingInvoiceSuggestion(
+										accountingInvoice
+									   ,accountingInvoice.getInvoice().getReferenceCode()
+									   ,decorate(accountingInvoice, request.getQuery())));
+								}
+							}
+							Response resp = new Response(suggestions);
+							callback.onSuggestionsReady(request, resp);
+							
+						}
+
+					});
 				}
 			}
 		};
@@ -397,5 +390,8 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	public void setEnabled(boolean enabled) {
 		accountingInvoice.setEnabled(enabled);
 	}
+	
+	protected abstract void getSuggestedData(Occam occam, String query, AsyncCallback<LinkedList<AccountingInvoice>> dataCallback);
+	
 }
    
