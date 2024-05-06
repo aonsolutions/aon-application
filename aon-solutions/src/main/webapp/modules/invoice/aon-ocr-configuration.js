@@ -16,9 +16,10 @@ export class AonOcrConfiguration extends AonElement {
         this.id = this.id || 'aonInvoiceConfigurationCommunication';
         this.DIV = this.id + 'Div';
         this.TEST = this.id + 'Test';
+        this.AUTO_ACCEPT = this.id + 'AutoAccept';
+        this.AUTO_RECORD = this.id + 'AutoRecord';
         this.CARD = this.id + 'Card';
         this.CARD_DIV = this.CARD + 'Div';
-
     }
 
     build() {
@@ -27,7 +28,6 @@ export class AonOcrConfiguration extends AonElement {
         div.style.display = 'flex';
         div.style.width = '100%';
         this.appendChild(div);
-
         this.buildCard(div);
     }
     
@@ -41,12 +41,35 @@ export class AonOcrConfiguration extends AonElement {
         let content = this.createDiv(this.CARD_DIV);
 		card.setContent(content);
     
+        let div1 = this.createDiv();
+        div1.style.marginBottom = '10px';
+        content.appendChild(div1)
         let test = new AonSwitch()
         test.id = this.TEST;
         test.title = 'Entorno de Pruebas';
-        content.appendChild(test);
+        div1.appendChild(test);
         test.checked = this.configuration.test;
         test.addEventListener(EVENT.CHANGE, () => this.configuration.test = test.checked);
+
+        let div2 = this.createDiv();
+        div2.style.marginBottom = '10px';
+        content.appendChild(div2)
+        let autoAccept = new AonSwitch()
+        autoAccept.id = this.AUTO_ACCEPT;
+        autoAccept.title = 'Aceptar Facturas Automáticamente';
+        div2.appendChild(autoAccept);
+        autoAccept.checked = this.configuration.autoAccept;
+        autoAccept.addEventListener(EVENT.CHANGE, () => this.configuration.autoAccept = autoAccept.checked);
+
+        let div3 = this.createDiv();
+        div3.style.marginBottom = '10px';
+        content.appendChild(div3)
+        let autoRecord = new AonSwitch()
+        autoRecord.id = this.AUTO_RECORD;
+        autoRecord.title = 'Contabilizar Facturas Automáticamente';
+        div3.appendChild(autoRecord);
+        autoRecord.checked = this.configuration.autoRecord;
+        autoRecord.addEventListener(EVENT.CHANGE, () => this.configuration.autoRecord = autoRecord.checked);
     }
 
     getConfiguration() {
