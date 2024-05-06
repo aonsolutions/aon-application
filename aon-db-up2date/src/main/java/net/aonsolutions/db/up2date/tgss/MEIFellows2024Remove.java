@@ -2,20 +2,18 @@ package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-
-import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -62,17 +60,17 @@ public class MEIFellows2024Remove implements Update {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 
-			DeductionConceptRecord meiConcept = 
-			dslContext.select()
+			List<Integer> meiConceptIds = dslContext.select()
 			.from(DEDUCTION_CONCEPT)
 			.where(DEDUCTION_CONCEPT.CODE.eq(MEI))
-			.fetchOneInto(DEDUCTION_CONCEPT)
+			.and(DEDUCTION_CONCEPT.DOMAIN.eq(0))
+			.fetch(DEDUCTION_CONCEPT.ID)
 			;
 
 			dslContext.update(SYSTEM_DEDUCTION)
 			.set(SYSTEM_DEDUCTION.EXPRESSION, "REMOVE()")
 			.where(SYSTEM_DEDUCTION.DOMAIN.eq(FELLOWS_DOMAIN))
-			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(meiConcept.getId()))
+			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(meiConceptIds))
 			.and(SYSTEM_DEDUCTION.START_DATE.eq(startOf2024Date))
 			.execute()
 			;
