@@ -22,7 +22,7 @@
 		}
 		
 		.firstColumn {
-			min-width: 150px;
+			min-width: 170px;
 			padding: 5px;
 			background-color: #f6f6f6;
 		}
@@ -243,6 +243,27 @@
 						<g:Label styleName='{style.firstColumn}'>Convenio</g:Label>
 						<g:SuggestBox ui:field="enterpriseAgreement"
 							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel
+			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
+			debugId="otherDataHTMLPanel">
+			<g:HTMLPanel styleName="{style.styleBorder}">
+				<g:Label styleName='{style.tittle}'>Sistema RED</g:Label>
+				<g:HTMLPanel ui:field="tgssDataTable"
+					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.firstColumn}'>Clave autorización</g:Label>
+						<g:TextBox ui:field="enterprisePayAuthorizationKey"
+								styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' maxLength="8"></g:TextBox>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.firstColumn}'>Entidad gestora del plan de pensiones</g:Label>
+						<g:ListBox ui:field="enterprisePaySsMutual"
+							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} ' />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -47,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -228,11 +231,20 @@ public class InvoiceAutoComplete {
 					} else {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
-						
-						c = CustomerDAO.save(ctx.getContext(), new Customer()
-							.copy(inv.getRegistryData()
+			
+						Customer customer = new Customer()
+								.copy(registry.getId() != null ? registry : inv.getRegistryData()
 								.setId(registry.getId()))
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope());
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "430"))
+								.setAlias(customer.getAlias())
+								.setDescription(customer.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
+						customer.setAccount(account.getId());
+						c = CustomerDAO.save(ctx.getContext(), customer);
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);
@@ -256,11 +268,19 @@ public class InvoiceAutoComplete {
 					} else {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
-						
-						s = SupplierDAO.save(ctx.getContext(), new Supplier()
-							.copy(inv.getRegistryData())
+						Supplier supplier = new Supplier()
+								.copy(registry.getId() != null ? registry :inv.getRegistryData())
 								.setId(registry.getId())
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope());
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "400"))
+								.setAlias(supplier.getAlias())
+								.setDescription(supplier.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
+						supplier.setAccount(account.getId());
+						s = SupplierDAO.save(ctx.getContext(), supplier);
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
 							inv.setRegistryData(s);
@@ -286,10 +306,21 @@ public class InvoiceAutoComplete {
 						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
 								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
 						
-						c = CreditorDAO.save(ctx.getContext(), new Creditor()
-							.copy(inv.getRegistryData())
+						Creditor creditor =  new Creditor()
+								.copy(registry.getId() != null ? registry : inv.getRegistryData())
 								.setId(registry.getId())
-								.setScope(inv.getScope()));
+								.setScope(inv.getScope());
+						
+						Account account = new Account()
+								.setDomain(inv.getDomain())
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "410"))
+								.setAlias(creditor.getAlias())
+								.setDescription(creditor.getName())
+								.setActive(true);
+						account = AccountDAO.save(ctx.getContext(), account);
+						creditor.setAccount(account.getId());
+
+						c = CreditorDAO.save(ctx.getContext(),creditor);
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);
@@ -535,6 +566,19 @@ public class InvoiceAutoComplete {
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}
+			
+			if(detail.getWorkplace() == null || detail.getWorkplace().getId() == null) {
+				if(detail.getWorkPlace() != null){
+					Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkPlace()));
+					detail.setWorkplace(wp);
+				} else {
+					Workplace wp = ctx.getConfiguration().getWorkplaces().getFirst();
+					if(wp != null && wp.getId() != null) {
+						detail.setWorkPlace(wp.getId());
+						detail.setWorkplace(wp);
+					}
+				}
+			}
 		});
 	};
 	
@@ -598,52 +642,29 @@ public class InvoiceAutoComplete {
 	
 
 	/**
-	 * Aseguramos el nombre del titular de la factura.
+	 * Aseguramos el ambito de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
-			Integer scope;
-			User user = SecurityDAO.getUser(ctx.getContext());	
-			
-			if(inv.getDomain().equals(user.getDomain())) {
-				Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
-				
-				if(s == null) {
-					Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
-					if(scopes != null && scopes.length > 0)
-						scope = scopes[0];
-					else {
-						s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-							f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
-						if(s == null) {
-							s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
-								.setDescription("GENERAL")
-								.setDomain(inv.getDomain()));
-						}
-						scope = s.getId();
-					}
-				} else scope = s.getId();
-			} else {
-				Scope s = null;
-				List<Scope> list = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
-					f.getDomainProperty().eq(inv.getDomain())).toList();
-				if(list != null && !list.isEmpty()) {
-					s = list.stream().filter(f -> "GENERAL".equalsIgnoreCase(f.getDescription())).findFirst().orElse(null);
-					if(s == null) {
-						s = list.stream().findFirst().orElse(null);
-					}
-				}
-
-				if(s == null) {
-					s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+			List<Scope> scopes = SecurityDAO.getScopeStream(ctx.getContext(),  f -> f.getDomainProperty().eq(inv.getDomain())).toList();
+			if(scopes.isEmpty()) {
+				Scope scope = SecurityDAO.insertScope(ctx.getContext(), new Scope()
 						.setDescription("GENERAL")
 						.setDomain(inv.getDomain()));
+				inv.setScope(scope);
+			} else if(scopes.size() == 1) {
+				inv.setScope(scopes.getFirst());	
+			} else {
+				Workplace wp = new Workplace();
+				if(!inv.getDetails().isEmpty() && inv.getDetails().getFirst().getWorkplace() != null) {
+					wp = inv.getDetails().getFirst().getWorkplace();
 				}
-				scope = s.getId();
-			}	
-			inv.setScope(new Scope().setId(scope));				
+				if((wp == null ||  wp.getId() == null) && !ctx.getConfiguration().getWorkplaces().isEmpty()) {
+					wp = ctx.getConfiguration().getWorkplaces().getFirst();  
+				}
+				inv.setScope(wp.getScope() != null ? new Scope().setId(wp.getScope()): scopes.getFirst());
+			}
 		}
-
 	};
 	
 
@@ -654,8 +675,10 @@ public class InvoiceAutoComplete {
 		if(inv.getTaxableBase() == 0) {
 			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 					.mapToDouble(r -> r.getBase()).sum();
+			double prepayment = inv.getDetails().stream().filter(f -> f.isPrepayment())
+			.mapToDouble(r -> r.getAmount()).sum();
 			
-			inv.setTaxableBase(AonMathUtils.round(taxableBase));
+			inv.setTaxableBase(AonMathUtils.round(taxableBase + prepayment));
 		}
 	};
 	

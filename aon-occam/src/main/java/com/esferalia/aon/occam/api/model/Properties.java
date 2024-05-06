@@ -1,12 +1,9 @@
 package com.esferalia.aon.occam.api.model;
 
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-
 import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
 public interface Properties {
 	
@@ -597,6 +594,7 @@ public interface Properties {
 		Property<Integer> getItemProperty();
 		Property<Byte> getTypeProperty();
 		Property<String> getCodeProperty();
+		Property<String> getEdiSalesCodeProperty();
 		Property<Double> getPriceProperty();
 		Property<String> getDiscountExprProperty();
 		Property<Byte> getPriorityProperty();
@@ -1284,6 +1282,31 @@ public interface Properties {
 		Property<String> getCategoryNameProperty();
 	}
 	
+	public interface NewsletterProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getLayoutProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getSubjectProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getScopeNameProperty();
+		Property<Byte> getHighlightFirstProperty();
+		Property<Integer> getTemplateProperty();
+		Property<Byte> getNewsSeparatorProperty();
+	}
+	
+	public interface SurveyProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getScopeNameProperty();
+		Property<Byte> getActiveProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getDescriptionProperty();
+	}
+	
 	public interface EmployeeProperties{
 		Property<String> getNafProperty();
 		Property<String> getCCCProperty();
@@ -1874,5 +1897,13 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<String> getArgumentProperty();
 		Property<String> getAliasProperty();
+	}
+	
+	public interface MarketingCampaignProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getScopeProperty();
 	}
 }

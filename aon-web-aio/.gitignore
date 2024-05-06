@@ -3,3 +3,6 @@
 /.classpath
 /.project
 /bin/
+/node_modules/
+/temp/
+/package-lock.json

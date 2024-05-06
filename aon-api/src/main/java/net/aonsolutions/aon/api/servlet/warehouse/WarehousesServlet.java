@@ -10,9 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.WarehouseJSON;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -101,22 +104,27 @@ public class WarehousesServlet extends AonApiHttpServlet{
     }
     
     public static JSONObject getWarehouse(AonApiData api) {
-        // TODO
-        return new JSONObject();
+        return WarehouseJSON.toJSON(AON.getWarehouse(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+        		f -> warehouseFilter(api,f)));
     }
     
     public static JSONObject saveWarehouse(AonApiData api) {
-        // TODO
-        return new JSONObject();
+    	Warehouse warehouse = WarehouseJSON.fromJSON(api.getData());
+    	warehouse = AON.saveWarehouse(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), warehouse);
+        return WarehouseJSON.toJSON(warehouse);
     }
     
     public static JSONObject deleteWarehouse(AonApiData api) {
-        // TODO
-        return new JSONObject();
+    	Integer warehouseId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+    	AON.deleteWarehouse(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), warehouseId);
+    	return new JSONObject();
     }
     
     private static Filter warehouseFilter(AonApiData api, WarehouseProperties f) {
         Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
+        if(JsonUtils.has(api.getData(), IJsonNames.ID)) {
+        	filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
+        }
         return filter;
     }
     

@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
@@ -60,6 +61,7 @@ public interface IAccounting {
 	public String getAccountNextCode(AONContext ctx, String prefix);
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
 	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
+	public List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type);
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]
@@ -90,6 +92,7 @@ public interface IAccounting {
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
 	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query);
+	public LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate);
@@ -166,5 +169,6 @@ public interface IAccounting {
 	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;
 	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException;
 	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
+	
 	
 }

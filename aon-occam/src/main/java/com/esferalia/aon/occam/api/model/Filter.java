@@ -488,6 +488,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface NewsletterFilter{
+		Filter filter(NewsletterProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface SurveyFilter{
+		Filter filter(SurveyProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface EmployeeFilter{
 		Filter filter(EmployeeProperties properties);
 	}
@@ -749,6 +759,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface QuestionFilter{
 		Filter filter(QuestionProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface MarketingCampaignFilter{
+		Filter filter(MarketingCampaignProperties properties);
 	}
 	
 }

@@ -177,6 +177,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-web.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconWeb();
+	
 	@Source("icons/aon-icon-move-right.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMoveRight();

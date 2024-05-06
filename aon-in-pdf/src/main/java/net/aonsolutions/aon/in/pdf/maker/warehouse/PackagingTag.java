@@ -16,16 +16,18 @@ public class PackagingTag {
 		return company;
 	}
 
-	public void setCompany(CompanyFull company) {
+	public PackagingTag setCompany(CompanyFull company) {
 		this.company = company;
+		return this;
 	}
 
 	public byte[] getLogo() {
 		return logo;
 	}
 
-	public void setLogo(byte[] logo) {
+	public PackagingTag setLogo(byte[] logo) {
 		this.logo = logo;
+		return this;
 	}
 
 	public List<PackagingTagDetail> getDetails() {
@@ -40,8 +42,9 @@ public class PackagingTag {
 		return this;
 	}
 
-	public void setDetails(List<PackagingTagDetail> details) {
+	public PackagingTag setDetails(List<PackagingTagDetail> details) {
 		this.details = details;
+		return this;
 	}
 
 }

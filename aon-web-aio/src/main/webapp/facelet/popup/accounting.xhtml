@@ -1,0 +1,655 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+
+	<aon:div id="accountingMenuPopup" style="display:none" 
+	onclick="javascript:selectItemHeader(this.id)"
+	onmouseout="javascript:hideMenuPopup(this.id)" 
+	onmouseover="javascript:showMenuPopup(this.id)" >
+
+		<aon:form id="accountMenuForm">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-200,
+							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
+
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_module_accounting"
+							rendered="#{actionDenied.renderedGroup('group_module_accounting')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_accounting}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountEntryTEDI"
+										rendered="#{actionDenied.renderedOption('gwt_accountEntryTEDI-deposit')}"
+										action="gwt_accountEntryTEDI-deposit"
+										title="#{bundle.accounting_entry_module}"
+										value="#{bundle.accounting_entry_module}" >
+									</aon:commandLink>
+								</aon:div>
+<!-- 
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountEntry"
+										rendered="#{actionDenied.renderedOption('gwt_accountEntry-deposit')}"
+										action="gwt_accountEntry-deposit"
+										title="#{bundle.accounting_entry_module}"
+										value="#{bundle.accounting_entry_module}" />
+								</aon:div>
+ -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="periodAmortization"
+										rendered="#{actionDenied.renderedOption('periodAmortization_search')}"
+										action="periodAmortization_search"
+										value="#{bundle.accounting_period_amortization_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="endPeriodEntries"
+										rendered="#{actionDenied.renderedOption('endPeriodEntries_form')}"
+										action="endPeriodEntries_form"
+										actionListener="#{endPeriodEntries.onInit}"
+										value="#{bundle.accounting_en_period_entries_management}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoiceRecorder-accounting"
+										rendered="#{actionDenied.renderedOption('invoiceRecorder_search-accounting')}"
+										action="invoiceRecorder_search-accounting"
+										actionListener="#{invoiceRecorder.onEditSearch}"
+										value="#{bundle.finance_invoice_recording_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="financeTrackingEntry-accounting"
+										rendered="#{actionDenied.renderedOption('financeTrackingEntry_form-accounting')}"
+										action="financeTrackingEntry_form-accounting"
+										actionListener="#{financeTrackingEntry.onReset}"
+										value="#{bundle.accounting_entry_finance_tracking_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_rawdoc-accounting"
+										rendered="#{actionDenied.renderedOption('gwt_rawdoc-accounting')}"
+										action="gwt_rawdoc-accounting"
+										title="Documentos Pendientes">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="Documentos Pendientes" />
+									</aon:commandLink>
+								</aon:div>
+								
+							</aon:div>
+						</aon:panelGrid>
+					</aon:if>
+
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_accounting_reports"
+							rendered="#{actionDenied.renderedGroup('group_accounting_reports')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-reports aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.menu_reports}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountStatement"
+										rendered="#{actionDenied.renderedOption('gwt_accountStatement-acc')}"
+										action="gwt_accountStatement-acc"
+										title="Extracto de cuenta"
+										value="Extracto de cuenta" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountOperatingStatement"
+										rendered="#{actionDenied.renderedOption('gwt_accountOperatingStatement-acc')}"
+										action="gwt_accountOperatingStatement-acc"
+										title="#{bundle.accounting_profit_and_loss_module}"
+										value="#{bundle.accounting_profit_and_loss_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountTrialBalance"
+										rendered="#{actionDenied.renderedOption('gwt_accountTrialBalance-acc')}"
+										action="gwt_accountTrialBalance-acc"
+										title="#{bundle.account_trial_balance_report}"
+										value="#{bundle.account_trial_balance_report}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountJournal"
+										rendered="#{actionDenied.renderedOption('gwt_accountJournal-acc')}"
+										action="gwt_accountJournal-acc"
+										title="#{bundle.account_journal_report}"
+										value="#{bundle.account_journal_report}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountLedger"
+										rendered="#{actionDenied.renderedOption('gwt_accountLedger-acc')}"
+										action="gwt_accountLedger-acc"
+										title="#{bundle.accounting_ledger_module}"
+										value="#{bundle.accounting_ledger_module}" >
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountBalance"
+										rendered="#{actionDenied.renderedOption('gwt_accountBalance-acc')}"
+										action="gwt_accountBalance-acc"
+										title="#{bundle.accounting_balance_sheet}">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.accounting_balance_sheet}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountAnalyticStatement"
+										rendered="#{actionDenied.renderedOption('gwt_accountAnalyticStatement-acc')}"
+										action="gwt_accountAnalyticStatement-acc"
+										title="#{bundle.accounting_profit_and_loss_module} ANALÍTICA">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.accounting_profit_and_loss_module} ANALÍTICA"/>
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:if>
+
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_auxiliary" 
+							rendered="#{actionDenied.renderedGroup('group_auxiliary')}"
+							styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-auxiliary aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.menu_auxiliary_tables}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_account"
+										action="gwt_account-acc"
+										title="PLAN GENERAL CONTABLE"
+										value="Plan General Contable">
+									</aon:commandLink>
+								</aon:div>
+
+								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="autConcept-account"
+											rendered="#{actionDenied.renderedOption('autConcept-account')}"
+											action="autConcept-account"
+											value="#{bundle.accounting_aut_concept_module}" />
+									</aon:div>
+									<!-- aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="costCenter" 
+											rendered="#{actionDenied.renderedOption('costCenter')}"
+											action="costCenter"
+											value="#{bundle.accounting_cost_center_module}" />
+									</aon:div  -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="costCenter" 
+											rendered="#{actionDenied.renderedOption('costCenter')}"
+											action="gwt_accountCostCenter"
+											value="#{bundle.accounting_cost_center_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod-accounting"
+											rendered="#{actionDenied.renderedOption('accPeriod-accounting')}"
+											action="accPeriod-accounting"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{bundle.accounting_period_module}" />
+									</aon:div>
+								</aon:if>
+								<!-- <aon:if test="#{domainSwitcher.alphaUser}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountingPeriod"
+											rendered="#{actionDenied.renderedOption('gwt_accountingPeriod-acc')}"
+											action="gwt_accountingPeriod-acc"
+											title="#{bundle.accounting_period_module}">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="#{bundle.accounting_period_module}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_customer-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_customer-accounting')}"
+											action="gwt_customer-accounting"
+											title="Clientes">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Clientes" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_supplier-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_supplier-accounting')}"
+											action="gwt_supplier-accounting"
+											title="Proveedores">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Proveedores" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_creditor-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_creditor-accounting')}"
+											action="gwt_creditor-accounting"
+											title="Acreedores">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Acreedores" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:if> -->
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_fixed_assets" 
+							rendered="#{actionDenied.renderedGroup('group_fixed_assets')}"
+							styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-fixed-asset aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.menu_fixed_assets}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="amortization"
+										rendered="#{actionDenied.renderedOption('amortization_list')}"
+										action="amortization_list"
+										value="#{bundle.accounting_amortization_form_module}" />
+								</aon:div>
+								
+								<!-- <aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType"
+											rendered="#{actionDenied.renderedOption('amortizationType_list')}"
+											action="amortizationType_list"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</aon:if> -->
+								
+								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_amortizationType"
+											rendered="#{actionDenied.renderedOption('gwt_amortization_type')}"
+											action="gwt_amortization_type"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</aon:if>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_investAsset" 
+										rendered="#{actionDenied.renderedOption('investAsset_search')}"
+										action="gwt_invest_asset"
+										value="#{bundle.accounting_invest_asset_form_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_accounting_statements"
+							rendered="#{actionDenied.renderedGroup('group_accounting_statements')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-product aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="Listados Hacienda" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_vatReport"
+										rendered="#{actionDenied.renderedOption('gwt_vatReport-deposit')}"
+										action="gwt_vatReport-deposit" 
+										title="Panel de control de IVA"
+										value="Panel de control de IVA" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_irpfReport-acc"
+										rendered="#{actionDenied.renderedOption('gwt_irpfReport-acc')}"
+										action="gwt_irpfReport-acc" 
+										title="Panel de control de IRPF"
+										value="Panel de control de IRPF" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountingOperationReport-acc"
+										rendered="#{actionDenied.renderedOption('gwt_accountingOperationReport-acc')}"
+										action="gwt_accountingOperationReport-acc"
+										title="Panel de Compras y Gastos / Ventas e Ingresos"
+										value="Panel de Compras y Gastos / Ventas e Ingresos" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoice_report"
+										rendered="#{actionDenied.renderedOption('invoiceReport_search')}"
+										action="invoiceReport_search"
+										actionListener="#{invoiceReport.onReset}"
+										value="#{bundle.fiscal_invoice_report}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_accounting_utilities"
+							rendered="#{actionDenied.renderedGroup('group_accounting_utilities')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-utilities aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_utilities}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_accountingUtilities-child"
+										rendered="#{actionDenied.renderedOption('gwt_accountingUtilities-child')}"
+										action="gwt_accountingUtilities-child"
+										title="Utilidades y chequeos contables"
+										value="Utilidades y chequeos contables" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountChange" 
+										rendered="#{actionDenied.renderedOption('accountChange_form')}"
+										action="accountChange_form"
+										actionListener="#{accountChange.onReset}"
+										value="#{bundle.accounting_change_account}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="regenerateVat" 
+										rendered="#{actionDenied.renderedOption('regenerateVat')}"
+										action="regenerateVat"
+										actionListener="#{vatRegenerator.onEditSearch}"
+										value="#{bundle.accounting_regenerate_vat_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoiceIntegrity"
+										rendered="#{actionDenied.renderedOption('invoiceIntegrity_search')}"
+										action="invoiceIntegrity_search"
+										actionListener="#{invoiceIntegrity.onStart}"
+										value="#{bundle.finance_invoice_integrity_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_financeUtilities-acc"
+										rendered="#{actionDenied.renderedOption('gwt_financeUtilities')}"
+										action="gwt_financeUtilities-acc"
+										title="#{bundle.aon_utilities_treasury}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;" 
+											value="#{bundle.aon_utilities_treasury}" />												
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:if
+							test="#{aonRole.financeOperator}">
+							<aon:panelGrid id="group_treasury_bank_statement_acc"
+								rendered="#{actionDenied.renderedGroup('group_treasury_bank_statement_acc')}"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-statement aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.finance_statement_menu}"
+										style="margin-left: 20px;" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="bankStatement-accounting"
+												rendered="#{actionDenied.renderedOption('bankStatement_search')}"
+												action="bankStatement_search-accounting"
+												actionListener="#{bankStatement.onEditSearch}"
+												value="Conciliador Bancario" />
+										</aon:div>
+									</aon:div>
+
+									<aon:if test="#{dur.bank}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_nordigen-accounting"
+												rendered="#{actionDenied.renderedOption('gwt_nordigen-accounting')}"
+												action="gwt_nordigen-accounting"
+												title="Agregador Bancario">
+												<aon:outputText value="Agregador Bancario" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_finance-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_finance-accounting')}"
+											action="gwt_finance-accounting"
+											title="Cartera de cobros y pagos">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Cartera de cobros y pagos" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_payMethod-accounting"
+											rendered="#{actionDenied.renderedOption('gwt_payMethod-accounting')}"
+											action="gwt_payMethod-accounting"
+											title="Formas de pago">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Formas de pago" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+
+						<aon:panelGrid id="group_fiscal_mercantile_registry"
+							rendered="#{actionDenied.renderedGroup('group_fiscal_mercantile_registry')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-registradores aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.fiscal_mercantile_registry}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountingBook_report"
+										rendered="#{actionDenied.renderedOption('accountingBook_search')}"
+										action="accountingBook_search"
+										actionListener="#{accountingBook.onReset}"
+										value="#{bundle.accounting_book_module}" />
+								</aon:div>
+
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_deposit_new" 
+											rendered="#{actionDenied.renderedOption('gwt_deposit_new')}"
+											action="gwt_deposit_new"
+											title="#{bundle.accounting_annual_financial_statements_module}"
+											value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_deposit_text_mode" 
+											rendered="#{actionDenied.renderedOption('gwt_deposit_text_mode')}"
+											action="gwt_deposit_text_mode"
+											title="#{bundle.accounting_annual_financial_statements_module}"
+											value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
+								</aon:if>		
+								
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="treasury-temporal"
+							rendered="#{actionDenied.renderedGroup('treasury-temporal')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-registradores aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="TESORERÍA DE GESTIÓN (TEMPORAL)" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								
+								<!-- Gestión de Cobros -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="financeCharge-accounting"
+										rendered="#{actionDenied.renderedOption('finance_search-charge-accounting')}"
+										action="finance_search-charge-accounting"
+										actionListener="#{finance.onEditSearchCharge}"
+										value="#{bundle.finance_charge_module}" />
+								</aon:div>
+									
+								<!-- Remesas de Cobro -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fbatchCharge-accounting"
+										rendered="#{actionDenied.renderedOption('fbatch_search-charge-accounting')}" 
+										action="fbatch_search-charge-accounting"
+										actionListener="#{fbatch.onEditSearchCharge}"
+										value="#{bundle.finance_fbatch_charge_module}">
+										<f:setPropertyActionListener target="#{fbatch.payroll}"
+											value="#{false}" />
+									</aon:commandLink>
+								</aon:div>
+								
+								<!-- Gestión de Pagos -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="financePayment-accounting"
+										rendered="#{actionDenied.renderedOption('finance_search-payment-accounting')}"
+										action="finance_search-payment-accounting"
+										actionListener="#{finance.onEditSearchPayment}"
+										value="#{bundle.finance_payment_module}" />
+								</aon:div>
+										
+								<!-- Remesas de Pago -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fbatchPayment-accounting" 
+										rendered="#{actionDenied.renderedOption('fbatch_search-payment-accounting')}"
+										action="fbatch_search-payment-accounting"
+										actionListener="#{fbatch.onEditSearchPayment}"
+										value="#{bundle.finance_fbatch_payment_module}">
+										<f:setPropertyActionListener target="#{fbatch.payroll}"
+											value="#{false}" />
+									</aon:commandLink>
+								</aon:div>
+										
+							</aon:div>
+						</aon:panelGrid>
+					</aon:if>
+
+					<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_parent_accounting"
+							rendered="#{actionDenied.renderedGroup('group_parent_accounting')}"					
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_accounting}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account-parent"
+										rendered="#{actionDenied.renderedOption('account_list-parent')}"
+										action="account_list-parent" 
+										value="#{bundle.account_module}" />
+								</aon:div>
+								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="autConcept-parent"
+											rendered="#{actionDenied.renderedOption('autConcept-parent')}"
+											action="autConcept-parent"
+											value="#{bundle.accounting_aut_concept_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance-parent"
+											rendered="#{actionDenied.renderedOption('balance_list-parent')}"
+											action="balance_list-parent"
+											value="#{bundle.accounting_balance_menu2}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType-parent"
+											rendered="#{actionDenied.renderedOption('amortizationType_list-parent')}"
+											action="amortizationType_list-parent"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="investAsset" 
+											rendered="#{actionDenied.renderedOption('investAsset_search')}"
+											action="investAsset_search"
+											value="#{bundle.accounting_invest_asset_form_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountingUtilities-parent"
+											rendered="#{actionDenied.renderedOption('gwt_accountingUtilities-parent')}"
+											action="gwt_accountingUtilities-parent"
+											title="Utilidades y chequeos contables"
+											value="Utilidades y chequeos contables" />
+									</aon:div>
+									<aon:if
+										test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="accPeriod-parent"
+												rendered="#{actionDenied.renderedOption('accPeriod-parent')}"
+												action="accPeriod-parent"
+												actionListener="#{accPeriod.onSearch}"
+												value="#{bundle.accounting_period_module}" />
+										</aon:div>
+									</aon:if>
+								</aon:if>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
+							<aon:panelGrid id="group_accounting_reports_parent"
+								rendered="#{actionDenied.renderedGroup('group_accounting_reports_parent')}"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-reports aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.menu_reports}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountConsolidatedBalance"
+											rendered="#{actionDenied.renderedOption('gwt_accountConsolidatedBalance-acc')}"
+											action="gwt_accountConsolidatedBalance-acc"
+											title="Balances consolidados">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Balances consolidados" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+
+						<aon:panelGrid id="group_fiscal_mercantile_registry-parent"
+							rendered="#{actionDenied.renderedGroup('group_fiscal_mercantile_registry-parent')}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-registradores aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.fiscal_mercantile_registry}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_deposit_text_mode"
+										rendered="#{actionDenied.renderedOption('gwt_deposit_text_mode')}"
+										action="gwt_deposit_text_mode"
+										title="#{bundle.accounting_annual_financial_statements_module}">
+										<aon:outputText styleClass="aon-fiscal-link-label"
+											value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+					</aon:if>
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</aon:div>
+</ui:composition>
+
+
+
+

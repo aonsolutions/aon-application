@@ -1,5 +1,7 @@
 // MATERIAL 
 export const MATERIAL_ICONS = 'material-icons';
+export const MATERIAL_SYMBOLS_OUTLINED = "material-symbols-outlined";
+
 // aon.css
 export const AON_UL = 'aonUl';
 export const AON_APP_LI = 'aonAppLi';
@@ -55,6 +57,7 @@ export const AON_TOOLBAR_SECTION_END = 'aonToolbarSectionEnd';
 export const AON_SECONDARY_TOOLBAR = 'aonSecondaryToolbar';
 export const AON_SECONDARY_TOOLBAR_TITLE = 'aonSecondaryToolbarTitle';
 export const AON_TABLE = 'aonTable';
+export const AON_MENU_TOPNAV = 'aonMenuTopnav';
 export const AON_MENU_SIDENAV = 'aonMenuSidenav';
 export const AON_MENU_SIDENAV_BETA = 'aonMenuSidenavBeta';
 export const AON_MENU_SIDENAV_APP_TOOLBAR = 'aonMenuSidenavAppToolbar';
@@ -73,7 +76,6 @@ export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
 export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
-export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
 export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
@@ -81,6 +83,7 @@ export const AON_DIV_BUTTON = 'aonDivButton';
 export const AON_SEARCH_BOX = 'aonSearchBox';
 export const AON_SEARCH_BOX_BETA = 'aonSearchBoxBeta';
 export const AON_FORM_CENTER = 'aonFormCenter';
+export const AON_FORM_CENTER_ANDROID_APP = 'aonFormCenterAndroidApp';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
@@ -105,6 +108,7 @@ export const PROFILE_LETTER = 'profile-letters';
 export const AON_NONE = 'aonNone';
 export const AON_DOT = 'aonDot';
 export const ACTIVE = 'active';
+export const AON_DESKTOP = 'aonDesktop';
 export const AON_DESKTOP_SLIDE_FADE = 'aonDesktopSlideFade';
 export const AON_FLEX = 'aonFlex';
 export const AON_FLEX_COLUMN = 'aonFlexColumn';

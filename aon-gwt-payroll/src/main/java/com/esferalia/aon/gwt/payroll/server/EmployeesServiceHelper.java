@@ -97,14 +97,13 @@ import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.Setup;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
-import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -120,6 +119,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractPPECalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
@@ -135,6 +135,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -889,48 +890,49 @@ public class EmployeesServiceHelper {
 				return null;
 			});
 			
+			if(contract.getEndDate() == null || sqlDate.before(contract.getEndDate())) {
+				
+				LinkedList<ContractData> dataList = PAYROLL
+				.getContractDataList(domainName, domainId, userLogin, p -> 
+				p.getContractProperty().eq(contractId)
+				.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
+				);
 			
-			LinkedList<ContractData> dataList = PAYROLL
-			.getContractDataList(domainName, domainId, userLogin, p -> 
-			p.getContractProperty().eq(contractId)
-			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
-			);
-			
-			
-			// check tipo_contrato == tc2 			
-			if ( employee.getContractType().isPresent() ) {
-				String ssContractType = employee.getContractType().get();
-				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedContractType()
-							.setAonContractType(aonContractType)
-							.setSsContractType(ssContractType)
-							.setVariables(Collections.singletonList(
-									new StringVariable.Builder()
-									.setName(TC2.getName())
-									.setStartDate(employee.getStartDate())
-									.create()))
-							);
+				// check tipo_contrato == tc2 			
+				if ( employee.getContractType().isPresent() ) {
+					String ssContractType = employee.getContractType().get();
+					String aonContractType = getString(dataList, ContextVariable.TC2, "");
+					if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedContractType()
+								.setAonContractType(aonContractType)
+								.setSsContractType(ssContractType)
+								.setVariables(Collections.singletonList(
+										new StringVariable.Builder()
+										.setName(TC2.getName())
+										.setStartDate(employee.getStartDate())
+										.create()))
+								);
+					}
 				}
-			}
-			
-			// check grupo_cotizacion == quote_group 
-			if ( employee.getQuoteGroup().isPresent()) {
-				String ssQuoteGroup = employee.getQuoteGroup().get();
-				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
-				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedQuoteGroup()
-							.setAonQuoteGroup(aonQuoteGroup)
-							.setSsQuoteGroup(ssQuoteGroup)
-							.setVariables(Collections.singletonList(
-									new StringVariable.Builder()
-									.setName(QUOTE_GROUP.getName())
-									.setStartDate(employee.getStartDate())
-									.create()))
-							);
-				} 
+				
+				// check grupo_cotizacion == quote_group 
+				if ( employee.getQuoteGroup().isPresent()) {
+					String ssQuoteGroup = employee.getQuoteGroup().get();
+					String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
+					if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedQuoteGroup()
+								.setAonQuoteGroup(aonQuoteGroup)
+								.setSsQuoteGroup(ssQuoteGroup)
+								.setVariables(Collections.singletonList(
+										new StringVariable.Builder()
+										.setName(QUOTE_GROUP.getName())
+										.setStartDate(employee.getStartDate())
+										.create()))
+								);
+					} 
+				}
 			}
 			
 			
@@ -2165,6 +2167,37 @@ public class EmployeesServiceHelper {
 		return draftCtx;
 	}
 	
+	static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getPPEDelayCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+	
+		SQLContractSalaryCalculatorContext ctx = new SQLContractPPECalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), draft.getChargeDate(), criteria) {
+	
+		};
+	
+		ctx.setListener(listener);
+		ctx.next();
+	
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx) {
+			@Override
+			protected Collection<IContractPayment> getDraftPayments() {
+				return Collections.emptyList();
+			}
+		};
+		draftCtx.setListener(listener);
+		
+		draftCtx.loadDraftContext(ctx.getExpressionContext());
+
+		return draftCtx;
+	}
+
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
@@ -2190,12 +2223,31 @@ public class EmployeesServiceHelper {
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitDelay(
 							SalaryType salaryType) {
 						try {
-							return getDelayCalculatorContextImpl(conn, draft,
-									listener);
+							
+							SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> delayCalculatorContext = 
+							getDelayCalculatorContextImpl(conn, draft,listener);
+
+							if ( isPPEDelay(delayCalculatorContext) ) {
+								return getPPEDelayCalculatorContextImpl(conn, draft, 
+										listener);
+							}
+							
+							return delayCalculatorContext;
+						
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
 							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+
+					private boolean isPPEDelay(SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx) {
+						try {
+							List<ITimedResult<PaymentType>> results = 
+							ctx.getExpressionContext().eval(ContextVariable.DELAY_CAUSE.getName(), ctx.getStartDate(), ctx.getEndDate(), PaymentType.class);
+							return results.stream().anyMatch( r -> r.getValue() == PaymentType.CRA_0033);
+						} catch ( Exception e ) {
+							return false;
 						}
 					}
 	

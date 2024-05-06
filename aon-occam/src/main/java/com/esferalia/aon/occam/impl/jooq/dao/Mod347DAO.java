@@ -545,10 +545,10 @@ public class Mod347DAO {
 			throw new AonCoreException(
 				MessageFormat.format("La longitud del num. documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
 				,declared.getDocument(),declared.getName()));
-		} 
-		if (AonStringUtils.length(declared.getOperatorNif()) > 15) {									
+		}		
+		if (AonStringUtils.length(declared.getOperatorNif()) > 17) {									
 			throw new AonCoreException(
-				MessageFormat.format("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. [{0} - {1}]"
+				MessageFormat.format("La longitud del NIF Operador Comunitario/Extracomunitario no puede ser mayor de 17 caracteres. [{0} - {1}]"
 				,declared.getOperatorNif(),declared.getName()));
 			
 		}

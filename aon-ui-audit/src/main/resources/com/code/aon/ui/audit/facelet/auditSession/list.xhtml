@@ -20,7 +20,13 @@
 						value="#{bundle.audit_more_used_module}"
 						action="auditSession_moreUsed"
 						actionListener="#{sessionMoreUsed.onInit}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						styleClass="aon-finding-toolbar-item aon-icon-search" />
+					<aon:htmlCommandLink id="toExcel" 
+						value="Exportar" 
+						target="_new" 
+						actionListener="#{auditSession.onExcel}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:htmlCommandLink>
 					<aon:if test="#{aonRole.sysAdmin}">				
 						<aon:confirmButton id="removeSessions"
 							title="#{bundle.aon_key_remove_accelerator}"

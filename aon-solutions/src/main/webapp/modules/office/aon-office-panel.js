@@ -107,7 +107,7 @@ export class AonOfficePanel extends AonElement {
         options.push(taskHolder);
 
 
-        if(this.isSig() && !LS.isNewTheme()){
+        if(this.isSig()){
             let consoleOptions = [];
             let linkDomain = LINK_DOMAINS;
             linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
@@ -125,9 +125,10 @@ export class AonOfficePanel extends AonElement {
         let types = {
             id: 'Types',
             name: "Tipos de expediente",
+            options: []
         };
 
-        application.addSidenavOptions2(types, [], ({target}) =>
+        application.addSidenavOptions3(types, ({target}) =>
             this.getApplication().buildOptionsMenu(target, [
                 {
                     name: "Añadir expediente",
@@ -265,7 +266,7 @@ export class AonOfficePanel extends AonElement {
                 }]
             }));
 
-            this.getApplication().addSidenavOptions2({id:"ActivitiesAll", name:"Otras actividades"}, options, ()=> {
+            this.getApplication().addSidenavOptions3({id:"ActivitiesAll", name:"Otras actividades", options}, ()=> {
                 ProjectUtils.buildDialogActivityType(this)
             });
 

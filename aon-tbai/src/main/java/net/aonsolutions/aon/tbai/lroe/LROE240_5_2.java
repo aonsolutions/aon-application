@@ -13,10 +13,10 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryMiembroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.TipoDeclaradoEnum;
@@ -24,18 +24,14 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Tipo
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionBienInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesBienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienInversionType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleOpIntracomunitariaTransfPericialesOtrosPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.EntregaBienesInversionPeriodoRegularizacionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDBienInversionModelo240Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFIVAType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFNIFIVAPersonaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.OtraInformacionTrascendenciaTributariaOpIntraType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciaPericialOtroPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciasPericialesOtrosPJType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_altamodifpeticion_v1_0_1.LROEPJ240BienesAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_anulacionpeticion_v1_0_0.LROEPJ240BienesAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_4_1_determinadasopintracomunitarias_transfpericialesotros_altamodifpeticion_v1_0_2.LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
@@ -84,8 +80,11 @@ public class LROE240_5_2 extends LROE240 {
 		persona.setApellidosNombreRazonSocial(invoice.getRegistryName());
 
 		NIFIVAType otro = new NIFIVAType();
-		otro.setCodigoPais(CountryMiembroType.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-		String document = invoice.getRegistryDocument();
+		if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+			otro.setCodigoPais(CountryMiembroType.GB);
+		} else otro.setCodigoPais(CountryMiembroType.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+		
+		String document = invoice.getRegistryDocument().replace(" ", "");
 		if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 			document = invoice.getRegistryDocumentCountry().getIso2() + document;
 		}

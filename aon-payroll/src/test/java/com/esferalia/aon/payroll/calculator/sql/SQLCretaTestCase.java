@@ -33,6 +33,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
+import static com.esferalia.aon.payroll.enumeration.LeaveType.COMMON_DISEASE;
 import static com.esferalia.aon.payroll.enumeration.LeaveType.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEASE;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -227,6 +228,86 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	;
 
     }
+
+    @Test
+    public void testCretaPPE() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+	
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos 
+		= getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+		org.junit.Assert.assertEquals(1, bases.size());
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
+		double baseCgc = getDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 100.00 * 100);
+		
+    }
+
+    @Test
+    public void testCretaPPEIT() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		int monthDays = get(endDate, DAY_OF_MONTH);
+	
+		
+		Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
+		Date endItDate = add(startItDate, Calendar.DAY_OF_MONTH, 4);
+		addIT(aonContext, contract, COMMON_DISEASE, startItDate, endItDate, null);
+		int activeDays = monthDays - 5;
+
+
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/10.00 * " + activeDays + "/**/); 0.00", "__PPE");
+	
+
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos 
+		= getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+		org.junit.Assert.assertEquals(3, bases.size());
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
+		double baseCgc = getDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 10.00 * 9  * 100.00);
+		
+		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "601");
+		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "301");
+		baseCgc = getDato(bases.get(2).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(2).getDatosTramo().getDato(), "C", "301", baseCgc - 10.00 * ( activeDays - 9 ) * 100.00);
+    }
+
 
     @Test
     public void testCretaFormacionEnAlternanciaNormal() throws ExpressionException, SQLException, SalaryException,
@@ -2364,6 +2445,84 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo);
 
+    }
+
+    @Test
+    public void testCretaTrabajadoresYTramosPPE()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+	
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+	
+		Tramo tramo = tramos.get(0);
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+		
+		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
+
+    }
+
+    @Test
+    public void testCretaTrabajadoresYTramosITPPE()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
+		Date endItDate = add(startItDate, Calendar.DAY_OF_MONTH, 4);
+		addIT(aonContext, contract, COMMON_DISEASE, startItDate, endItDate, null);
+	
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(3, tramos.size());
+	
+		Tramo tramo = tramos.get(0);
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
+
+		tramo = tramos.get(1);
+		Assert.assertEquals("10", tramo.getFechaDesde().getDia());
+		assertTramoIT15PrimerosDias(tramo);
+		assertNoDatoSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301");
+
+		tramo = tramos.get(2);
+		Assert.assertEquals("15", tramo.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
     }
 
     @Test
@@ -8416,7 +8575,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	throw new AssertException("Dato Solicitado " + codigo + " Not Found");
     }
 
-    private static void assertDato(List<Dato> datos, String tipoDato, String codigo) {
+    private static double getDato(List<Dato> datos, String tipoDato, String codigo) {
+	for (Dato dato : datos) {
+	    if (dato.getCodigo().equals(codigo)) {
+	    	return Double.parseDouble(dato.getValor());
+	    }
+	}
+	throw new AssertException("Dato " + codigo + " Not Found");
+	}
+
+	private static void assertDato(List<Dato> datos, String tipoDato, String codigo) {
 	for (Dato dato : datos) {
 	    if (dato.getCodigo().equals(codigo)) {
 		Assert.assertEquals(tipoDato, dato.getTipoDato());

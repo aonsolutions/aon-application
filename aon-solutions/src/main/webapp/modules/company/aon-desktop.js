@@ -47,6 +47,7 @@ import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/compan
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 import { AonDialog } from '../../components/aon-dialog.js';
+import { AonMarketing } from '../marketing/aon-marketing.js';
 
 export class AonDesktop extends AonElement {
 
@@ -198,9 +199,10 @@ export class AonDesktop extends AonElement {
 		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {
 				id: 'Gestor',
-				name: MSG.MY_MANAGER
+				name: MSG.MY_MANAGER,
+				options: []
 			};
-			aonDesktop.addSidenavOptions2(myGestor, []);
+			aonDesktop.addSidenavOptions3(myGestor);
 			getOfficeProjects({}).then(offices => {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
 				offices.forEach(office => {
@@ -413,7 +415,7 @@ export class AonDesktop extends AonElement {
 			let newInvoice = new AonDashboardButton();
 			newInvoice.setId('newInvoice');
 			newInvoice.setIcon('note_add');
-			newInvoice.setMessage('NUEVA FACTURA');
+			newInvoice.setMessage(MSG.NEW_INVOICE);
 			newInvoice.addEventListener(EVENT.CLICK, () => {
 				this.addInvoice(newInvoice, dashboard);
 			});
@@ -424,7 +426,7 @@ export class AonDesktop extends AonElement {
 			let newDocument = new AonDashboardUploadButton();
 			newDocument.setId('newDocument');
 			newDocument.setIcon('post_add');
-			newDocument.setMessage('NUEVO DOCUMENTO');
+			newDocument.setMessage(MSG.NEW_DOCUMENT);
 			fastAccessButtons.appendChild(newDocument);
 		}
 
@@ -443,7 +445,7 @@ export class AonDesktop extends AonElement {
 			let newEmployee = new AonDashboardButton();
 			newEmployee.setId('newEmployee');
 			newEmployee.setIcon('person_add');
-			newEmployee.setMessage('NUEVO EMPLEADO');
+			newEmployee.setMessage(MSG.NEW_EMPLOYEE);
 			newEmployee.addEventListener(EVENT.CLICK, () => {
 				let aonMessengerChat = new AonMessenger();	
 				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
@@ -662,8 +664,7 @@ export class AonDesktop extends AonElement {
 			let documentalCard = new AonCard();
 			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			documentalCard.id = "documentalCard";
-			// documentalCard.title = "Documental";
-			documentalCard.message = "Documental";
+			documentalCard.message = MSG.DOCUMENTARY;
 			documentalCard.setApp(Apps.DOCUMENTAL);
 			documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.DOCUMENTAL.app);
@@ -1343,6 +1344,9 @@ export class AonDesktop extends AonElement {
 				case Apps.WAREHOUSE.app:
 					this.rootPanel(new AonWarehouse());
 					break;
+				case Apps.MARKETING.app:
+					this.rootPanel(new AonMarketing());
+					break;
 				case ClassicApps.AON_SOLUTIONS.app:
 					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
 					break;
@@ -1403,6 +1407,8 @@ export class AonDesktop extends AonElement {
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		}else if(Apps.MARKETING.app === app.app){
+			return this.getDur().isMarketing() && this.isBeta();
 		} else if(ClassicApps.AON_SOLUTIONS.app === app.app){
 			return this.getDur().isAon();	
 		} else if(ClassicApps.BIDOQ.app === app.app){
@@ -1425,10 +1431,11 @@ export class AonDesktop extends AonElement {
 	async getSidenavActivity(){
 		let application = this.getApplication();
 
-		application.addSidenavOptions2({
+		application.addSidenavOptions3({
 			id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-			name:MSG.ACTIVITY_SUMMARY.toUpperCase()
-		},[]);
+			name:MSG.ACTIVITY_SUMMARY.toUpperCase(),
+			options: []
+		});
 
 		if(this.getDur().isInvoice()) {
 			await this.invoiceSidenav();
@@ -1469,8 +1476,8 @@ export class AonDesktop extends AonElement {
 			});
 
 			this.SIDENAV_ACTIVITY_SUMMARY.push({
-				name: MSG.REJECTED_INVOICES,
-				icon: MATERIAL_ICONS.REPORT,
+				name: MSG.PENDING_REVIEW,
+				icon: MATERIAL_ICONS.ERROR,
 				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();
@@ -1624,21 +1631,21 @@ export class AonDesktop extends AonElement {
 
 		const NEW_INVOICE = {
 			id: 'invoice',
-			name: 'Nueva Factura',
+			name: MSG.NEW_INVOICE,
 			icon: MATERIAL_ICONS.RECEIPT,
 			fn: () => this.getElement(this.INPUT_INVOICE_FILE).click()
 		};
 
 		const NEW_DOCUMENT = {
 			id: 'document',
-			name: 'Nuevo Documento',
+			name: MSG.NEW_DOCUMENT,
 			icon: 'description',
 			fn: () => this.getElement(this.INPUT_DOCUMENT_FILE).click()
 		};
 
 		const NEW_MESSENGER = {
 			id: 'messenger',
-			name: 'Nueva Solicitud',
+			name: MSG.NEW_REQUEST,
 			icon: 'message',
 			fn: () => {this.development(MSG.NEW_REQUEST);}
 		};

@@ -1,0 +1,271 @@
+package net.aonsolutions.aon.api.servlet.marketing;
+import java.io.PrintWriter;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "AonApiActionTargetServlet", urlPatterns = {"/ms/api/action-target/*"})
+public class ActionTargetServlet extends AonApiHttpServlet {
+		
+	private static final Logger LOGGER  = Logger.getLogger(ActionTargetServlet.class.getName());
+	
+	public static final String ACTION_TAGET = "/";
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		
+		try {
+			String domainName = req.getParameter("domainName");
+			Integer domainId = Integer.parseInt(req.getParameter("domainId"));
+			String login = req.getParameter("login");
+			
+			Domain domain = new Domain().setName(domainName).setId(domainId);
+			
+			// Marketing Action Target
+			Integer actionId = Integer.parseInt(req.getParameter("id"));
+			MarketingAction marketingAction = AON.getMarketingAction(domainName, domainId, login, actionId);
+			
+			// Target
+			String name = req.getParameter("name");
+			String documentType = req.getParameter("documentType");
+			String documentCountry = req.getParameter("documentCountry");
+			String document = req.getParameter("document");
+			
+			String streetType = req.getParameter("streetType");
+			String address = req.getParameter("address");
+			String number = req.getParameter("number");
+			String zip = req.getParameter("zip");
+			String geozone = req.getParameter("geozone");
+			String city = req.getParameter("city");
+			
+			String phone = req.getParameter("phone");
+			String email = req.getParameter("email");
+
+			Target target = new Target()
+					.copy(
+						new Registry()
+							.setDomain(domain)
+							.setName(name)
+							.setDocumentType(DocumentType.values()[Integer.parseInt(documentType)])
+							.setDocumentCountry(Country.safeValueOf(documentCountry))
+							.setDocument(document)
+							.setNationality(Country.safeValueOf(documentCountry))
+					)
+					.setScope(marketingAction.getMarketingCampaign().getScope())
+					;
+			
+			target = AON.save(domainName, domainId, login, target);
+			
+			Integer raddressId = null;
+			if(AonStringUtils.isNotBlank(address)) {
+				Stream<GeoZone> geozoneStream = AON.geozoneStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getCodeProperty().eq(geozone)));
+				Optional<GeoZone> geozoneOpt = geozoneStream.findFirst();
+				
+				RegistryAddress registryAddress = new RegistryAddress()
+						.setDomain(target.getDomain().getId())
+						.setRegistry(target.getId())
+						.setMain(true)
+						.setStreetType(StreetType.getForAeatCode(streetType, AonLanguage.SPANISH))
+						.setAddress(address)
+						.setNumber(number)
+						.setZip(zip)
+						.setCity(city)
+						.setGeozone(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getId())
+						.setGeozoneCode(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getCode())
+						.setGeozoneName(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getName())
+						;
+				
+				registryAddress = AON.save(domain, login, registryAddress);
+				raddressId = registryAddress.getId();
+			}
+			
+			if(AonStringUtils.isNotBlank(phone)) {
+				RegistryMedia registryMediaPhone = new RegistryMedia()
+						.setDomain(target.getDomain().getId())
+						.setRegistry(target.getId())
+						.setMedia(MediaType.CELLULAR)
+						.setValue(phone)
+						.setCommercial(true)
+						.setRaddress(raddressId)
+						;
+				
+				AON.save(domain, login, registryMediaPhone);
+						
+			}
+			
+			if(AonStringUtils.isNotBlank(email)) {
+				RegistryMedia registryMediaEmail = new RegistryMedia()
+						.setDomain(target.getDomain().getId())
+						.setRegistry(target.getId())
+						.setMedia(MediaType.EMAIL)
+						.setValue(email)
+						.setCommercial(true)
+						.setRaddress(raddressId)
+						;
+				
+				AON.save(domain, login, registryMediaEmail);
+			}
+			
+			// Marketing Action Target
+			
+			MarketingActionTarget mkActionTarget = new MarketingActionTarget()
+					.copy(target)
+					.setActionTargetDomain(target.getDomain().getId())
+					.setMarketingAction(new MarketingAction().setId(actionId))
+					.setActionTargetStatus((byte)0)
+					;
+			
+			AON.saveMarketingActionTarget(domainName, domainId, login, mkActionTarget);
+			
+			resp.setContentType("application/json");     
+			PrintWriter out = resp.getWriter();
+			out.print("{\"message\": \"Cliente Importado\"}");
+			out.flush();
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+		
+		
+		// GWT FORM
+//		try {
+//			AonApiData api = initialize(req);
+//			
+//			Object object = new AonRouting(api)
+//				.addRoute(ACTION_TAGET, ActionTargetServlet::saveActionTarget)
+//				.apply();
+//			
+//			response(req, resp, object);
+//		} catch (Exception e) {
+//			error(req, resp, e);
+//		}
+	}
+
+	public static JSONObject saveActionTarget(AonApiData api) {
+		JSONObject actionTargetJson = api.getData().optJSONObject("actionTarget");
+		JSONObject targetJson = actionTargetJson.optJSONObject("target");
+		JSONObject marketingActionJson = actionTargetJson.optJSONObject("marketingAction");
+		
+		// Marketing Action Target
+		Integer actionId = Integer.parseInt(marketingActionJson.getString("id"));
+		MarketingAction marketingAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionId);
+		
+		// Target
+		String name = targetJson.getString("name");
+		String documentType = targetJson.getString("documentType");
+		String documentCountry = targetJson.getString("documentCountry");
+		String document = targetJson.getString("document");
+		
+		String streetType = targetJson.getString("streetType");
+		String address = targetJson.getString("address");
+		String number = targetJson.getString("number");
+		String zip = targetJson.getString("zip");
+		String geozone = targetJson.getString("geozone");
+		String geozoneCode = targetJson.getString("geozoneCode");
+		String geozoneName = targetJson.getString("geozoneName");
+		String city = targetJson.getString("city");
+		
+		String phone = targetJson.getString("phone");
+		String email = targetJson.getString("email");
+
+		Target target = new Target()
+				.copy(
+					new Registry()
+						.setDomain(api.getDomain())
+						.setName(name)
+						.setDocumentType(DocumentType.values()[Integer.parseInt(documentType)])
+						.setDocumentCountry(Country.safeValueOf(documentCountry))
+						.setDocument(document)
+						.setNationality(Country.safeValueOf(documentCountry))
+				)
+				.setScope(marketingAction.getMarketingCampaign().getScope())
+				;
+		
+		target = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), target);
+		
+		Integer raddressId = null;
+		if(AonStringUtils.isNotBlank(address)) {
+			RegistryAddress registryAddress = new RegistryAddress()
+					.setDomain(target.getDomain().getId())
+					.setRegistry(target.getId())
+					.setMain(true)
+					.setStreetType(StreetType.getForAeatCode(streetType, AonLanguage.SPANISH))
+					.setAddress(address)
+					.setNumber(number)
+					.setZip(zip)
+					.setCity(city)
+					.setGeozone(Integer.parseInt(geozone))
+					.setGeozoneCode(geozoneCode)
+					.setGeozoneName(geozoneName)
+					;
+			
+			registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
+			raddressId = registryAddress.getId();
+		}
+		
+		if(AonStringUtils.isNotBlank(phone)) {
+			RegistryMedia registryMediaPhone = new RegistryMedia()
+					.setDomain(target.getDomain().getId())
+					.setRegistry(target.getId())
+					.setMedia(MediaType.CELLULAR)
+					.setValue(phone)
+					.setCommercial(true)
+					.setRaddress(raddressId)
+					;
+			
+			AON.save(api.getDomain(), api.getUser().getLogin(), registryMediaPhone);
+					
+		}
+		
+		if(AonStringUtils.isNotBlank(email)) {
+			RegistryMedia registryMediaEmail = new RegistryMedia()
+					.setDomain(target.getDomain().getId())
+					.setRegistry(target.getId())
+					.setMedia(MediaType.EMAIL)
+					.setValue(email)
+					.setCommercial(true)
+					.setRaddress(raddressId)
+					;
+			
+			AON.save(api.getDomain(), api.getUser().getLogin(), registryMediaEmail);
+		}
+		
+		// Marketing Action Target
+		
+		MarketingActionTarget mkActionTarget = new MarketingActionTarget()
+				.copy(target)
+				.setActionTargetDomain(target.getDomain().getId())
+				.setMarketingAction(new MarketingAction().setId(actionId))
+				.setActionTargetStatus((byte)0)
+				;
+		
+		AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
+		
+		return api.getData();
+	}
+}

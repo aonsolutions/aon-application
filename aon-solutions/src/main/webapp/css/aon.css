@@ -928,14 +928,6 @@
   font-size: 1.3rem;
 }
 
-.aonVerticalCenter {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-
 .aonClip {
   clip: rect(0px, 250px, 112px, 0px) !important;
   opacity: 1;
@@ -982,6 +974,15 @@
 .aonFormCenter {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.aonFormCenterAndroidApp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 }
 
 .aonConnected {
@@ -1006,10 +1007,6 @@
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: white;
-}
-
-.aonCardHover:hover {
-  border: 1px solid black;
 }
 
 .aonCardFlex{

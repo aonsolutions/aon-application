@@ -327,6 +327,9 @@ public class LROE implements Serializable {
 	}
 	
 	public Integer getEjercicio(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
+		if(invoice.getDomain().equals(29434) && invoice.getId().equals(27075541)) {
+			return 2024;
+		}
 		Date ejercicioDate = new Date(); 
 		if(invoice.isSales()) {
 			ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();

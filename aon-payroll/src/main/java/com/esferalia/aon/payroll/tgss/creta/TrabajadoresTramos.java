@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -414,6 +416,10 @@ public class TrabajadoresTramos {
 							}
 							
 							@Override
+							public void visitPPE() {
+							}
+							
+							@Override
 							public void visitFormacionNormal() {
 							}
 
@@ -525,6 +531,8 @@ public class TrabajadoresTramos {
 						
 						class DefaultSalaryVisitor implements SalaryVisitor {
 							
+							
+							
 							@Override
 							public void endVisit() {
 							}
@@ -533,6 +541,10 @@ public class TrabajadoresTramos {
 							public void startVisit() {
 							}
 							
+							@Override
+							public void visitPPE() {
+							}
+
 							@Override
 							public void visitFormacionNormal() {
 								// 3.1 Contratos para la formación (TRL 087)  
@@ -600,18 +612,18 @@ public class TrabajadoresTramos {
 							
 							@Override
 							public void visitJornadasRealesNormal() {
-							    	// PEC: 40 Tipo cotización especial.SEA
-                        					
-							    	// Base de contingencias comunes
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("500");
-                        					dataSolicitadoBuilder.setObligatorio(true);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
-                        					// Base de Accidentes de Trabajo
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("601");
-                        					dataSolicitadoBuilder.setObligatorio(true);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+						    	// PEC: 40 Tipo cotización especial.SEA
+                    					
+						    	// Base de contingencias comunes
+	        					dataSolicitadoBuilder.setTipo("C");
+	        					dataSolicitadoBuilder.setCodigo("500");
+	        					dataSolicitadoBuilder.setObligatorio(true);
+	        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	        					// Base de Accidentes de Trabajo
+	        					dataSolicitadoBuilder.setTipo("C");
+	        					dataSolicitadoBuilder.setCodigo("601");
+	        					dataSolicitadoBuilder.setObligatorio(true);
+	        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							    
 							}
 
@@ -661,28 +673,28 @@ public class TrabajadoresTramos {
 							
 							@Override
 							public void visitFormacionEnAlternanciaNormal() {
-							    	// 3.1 Contratos formativos en alternancia (TRL 087 )
-							    	// 3.1.1 Tramo en situación de activo "normal" (PEC 0978 o 0979)
-                        					// Base de contingencias comunes
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("500");
-                        					dataSolicitadoBuilder.setObligatorio(true);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
-                        					// Base de Aportación plan pensiones
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("301");
-                        					dataSolicitadoBuilder.setObligatorio(false);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
-                        					// Base de Accidentes de Trabajo
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("601");
-                        					dataSolicitadoBuilder.setObligatorio(true);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
-                        					// Base de Horas Extras Fuerza Mayor
-                        					dataSolicitadoBuilder.setTipo("C");
-                        					dataSolicitadoBuilder.setCodigo("501");
-                        					dataSolicitadoBuilder.setObligatorio(false);
-                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+						    	// 3.1 Contratos formativos en alternancia (TRL 087 )
+						    	// 3.1.1 Tramo en situación de activo "normal" (PEC 0978 o 0979)
+            					// Base de contingencias comunes
+            					dataSolicitadoBuilder.setTipo("C");
+            					dataSolicitadoBuilder.setCodigo("500");
+            					dataSolicitadoBuilder.setObligatorio(true);
+            					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+            					// Base de Aportación plan pensiones
+            					dataSolicitadoBuilder.setTipo("C");
+            					dataSolicitadoBuilder.setCodigo("301");
+            					dataSolicitadoBuilder.setObligatorio(false);
+            					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+            					// Base de Accidentes de Trabajo
+            					dataSolicitadoBuilder.setTipo("C");
+            					dataSolicitadoBuilder.setCodigo("601");
+            					dataSolicitadoBuilder.setObligatorio(true);
+            					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+            					// Base de Horas Extras Fuerza Mayor
+            					dataSolicitadoBuilder.setTipo("C");
+            					dataSolicitadoBuilder.setCodigo("501");
+            					dataSolicitadoBuilder.setObligatorio(false);
+            					tramoBuilder.addDato(dataSolicitadoBuilder.create());
 								// N horas formación teórica presencial 
 								dataSolicitadoBuilder.setTipo("H");
 								dataSolicitadoBuilder.setCodigo("03");
@@ -1057,6 +1069,153 @@ public class TrabajadoresTramos {
 							
 						}
 						
+						class MainSalaryVisitor implements SalaryVisitor {
+							
+							SalaryVisitor salaryVisitor = new DefaultSalaryVisitor();
+							SalaryVisitor normalSalaryVisitor = new DefaultSalaryVisitor() {
+								@Override
+								public void visitPPE() {
+									// Base de cotización sin aportación al plan de pensiones de empleo
+									dataSolicitadoBuilder.setTipo("C");
+									dataSolicitadoBuilder.setCodigo("301");
+									dataSolicitadoBuilder.setObligatorio(true);
+									tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								}
+							};
+
+							@Override
+							public void endVisit() {
+								salaryVisitor.endVisit();
+							}
+
+							@Override
+							public void startVisit() {
+								salaryVisitor.startVisit();
+							}
+
+							@Override
+							public void visitPPE() {
+								salaryVisitor.visitPPE();
+							}
+
+							@Override
+							public void visitFormacionNormal() {
+								salaryVisitor.visitFormacionNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitTiempoParcialNormal() {
+								salaryVisitor.visitTiempoParcialNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitTiempoCompletoNormal() {
+								salaryVisitor.visitTiempoCompletoNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitJornadasRealesNormal() {
+								salaryVisitor.visitJornadasRealesNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitRegimenArtistasNormal() {
+								salaryVisitor.visitRegimenArtistasNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitFormacionEnAlternanciaNormal() {
+								salaryVisitor.visitFormacionEnAlternanciaNormal();
+								salaryVisitor = normalSalaryVisitor;
+							}
+
+							@Override
+							public void visitGrupoCotizacionDiario() {
+								salaryVisitor.visitGrupoCotizacionDiario();
+							}
+
+							@Override
+							public void visitGrupoCotizacionMensual() {
+								salaryVisitor.visitGrupoCotizacionMensual();
+							}
+
+							@Override
+							public void visitIncapacidadTemporal15PrimerosDias() {
+								salaryVisitor.visitIncapacidadTemporal15PrimerosDias();
+							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDelegado() {
+								salaryVisitor.visitIncapacidadTemporalPagoDelegado();
+							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDirecto() {
+								salaryVisitor.visitIncapacidadTemporalPagoDirecto();
+							}
+
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegado() {
+								salaryVisitor.visitIncapacidadTemporalATEPPagoDelegado();
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoCompleto() {
+								salaryVisitor.visitMaternidadPaternidadTiempoCompleto();
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcial() {
+								salaryVisitor.visitMaternidadPaternidadTiempoParcial();
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoTotal() {
+								salaryVisitor.visitExpedienteRegulacionEmpleoTotal();
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcial() {
+								salaryVisitor.visitExpedienteRegulacionEmpleoParcial();
+							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+								salaryVisitor.visitIncapacidadTemporalPagoDelegadoFormacion();
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+								salaryVisitor.visitExpedienteRegulacionEmpleoParcialFormacion();
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacion() {
+								salaryVisitor.visitMaternidadPaternidadTiempoParcialFormacion();
+							}
+
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+								salaryVisitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+								salaryVisitor.visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+								salaryVisitor.visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
+							}
+
+							
+						};
 						
 						
 						SalaryVisitor salaryVisitor = 
@@ -1069,22 +1228,22 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("54");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								return new DefaultSalaryVisitor();
+								return new MainSalaryVisitor();
 							}
 
 							@Override
 							public SalaryVisitor visitL00() {
-								return new DefaultSalaryVisitor();
+								return new MainSalaryVisitor();
 							}
 
 							@Override
 							public SalaryVisitor visitL02() {
-								return new DefaultSalaryVisitor();
+								return new MainSalaryVisitor();
 							}
 
 							@Override
 							public SalaryVisitor visitL13() {
-								return new DefaultSalaryVisitor() {
+								return new MainSalaryVisitor() {
 									public void visitTiempoParcialNormal(){
 										visitTiempoCompletoNormal();
 									}
@@ -1093,12 +1252,12 @@ public class TrabajadoresTramos {
 
 							@Override
 							public SalaryVisitor visitL91() {
-								return new DefaultSalaryVisitor();
+								return new MainSalaryVisitor();
 							}
 
 							@Override
 							public SalaryVisitor visitL90() {
-								return new DefaultSalaryVisitor();
+								return new MainSalaryVisitor();
 							}
 							
 						});
@@ -1114,6 +1273,7 @@ public class TrabajadoresTramos {
 							//TODO: Log this please
 						}
 						
+
 						trabajadorBuilder.addTramo(tramoBuilder.create());
 						
 					}
@@ -1177,6 +1337,10 @@ public class TrabajadoresTramos {
 				public void startVisit() {
 				}
 				
+				@Override
+				public void visitPPE() {
+				}
+
 				@Override
 				public void visitFormacionNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
@@ -1304,6 +1468,10 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitPPE() {
+				}
+
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
@@ -1425,6 +1593,10 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void startVisit() {
+				}
+				
+				@Override
+				public void visitPPE() {
 				}
 				
 				@Override
@@ -1558,6 +1730,10 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitPPE() {
+				}
+				
+				@Override
 				public void visitFormacionNormal() {
 					visitOthers();
 				}
@@ -1678,6 +1854,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void endVisit() {
 			    state.endVisit();
+			}
+			
+			@Override
+			public void visitPPE() {
+				state.visitPPE();
 			}
 			
 			@Override
@@ -1861,6 +2042,7 @@ public class TrabajadoresTramos {
 	private static interface SalaryVisitor {
 	    	void endVisit();
 	    	void startVisit();
+		void visitPPE();
 		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
@@ -1967,7 +2149,9 @@ public class TrabajadoresTramos {
 		
 		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
-		if ( becarios )
+		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00;
+
+			if ( becarios )
 			if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
 			else if ( atEPPagoDelegado )
@@ -2093,7 +2277,10 @@ public class TrabajadoresTramos {
 		else if (tiempoCompleto)
 			grupoCotizacion.visit();		
 		else 
-			grupoCotizacion.visit();		
+			grupoCotizacion.visit();	
+		
+		if ( ppe )
+			visitor.visitPPE();
 		
 		
 	}

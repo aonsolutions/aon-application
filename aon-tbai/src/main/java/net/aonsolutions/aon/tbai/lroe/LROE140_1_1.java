@@ -64,6 +64,8 @@ public class LROE140_1_1 extends LROE140 {
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		detalleRenta.setEpigrafe(invoice.getEpigraph());
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();
@@ -208,6 +210,8 @@ public class LROE140_1_1 extends LROE140 {
 		FiltroConsultaIngresosConFacturaType filtro = new FiltroConsultaIngresosConFacturaType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
 		filtro.setDestinatario(buildDestinatario(invoice));
+		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		filtro.setEpigrafe(invoice.getEpigraph());
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
 		filtro.setNumPaginaConsulta(1);
@@ -218,11 +222,15 @@ public class LROE140_1_1 extends LROE140 {
 	private DocumentoType buildDestinatario(Invoice invoice) {
 		DocumentoType destinatario = new DocumentoType();
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
-			destinatario.setNIF(invoice.getRegistryDocument());
+			destinatario.setNIF(invoice.getRegistryDocument().replace(" ", ""));
 		} else if(invoice.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			String document = invoice.getRegistryDocument();
+
+			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+				otro.setCodigoPais(CountryEnum.GB);
+			} else otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			
+			String document = invoice.getRegistryDocument().replace(" ", "");
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 				document = invoice.getRegistryDocumentCountry().getIso2() + document;
 			}
@@ -232,7 +240,7 @@ public class LROE140_1_1 extends LROE140 {
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			otro.setID(invoice.getRegistryDocument());
+			otro.setID(invoice.getRegistryDocument().replace(" ", ""));
 			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
 			destinatario.setIDOtro(otro);
 		}

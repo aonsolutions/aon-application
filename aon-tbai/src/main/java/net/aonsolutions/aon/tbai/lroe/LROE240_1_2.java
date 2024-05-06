@@ -197,11 +197,14 @@ public class LROE240_1_2 extends LROE240 {
 		destinatario.setCodigoPostal(invoice.getAddress().getZip());
 
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
-			destinatario.setNIF(invoice.getRegistryDocument());
+			destinatario.setNIF(invoice.getRegistryDocument().replace(" ", ""));
 		} else if(invoice.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			String document = invoice.getRegistryDocument();
+			if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+				otro.setCodigoPais(CountryEnum.GB);
+			} else otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+			
+			String document = invoice.getRegistryDocument().replace(" ", "");
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 				document = invoice.getRegistryDocumentCountry().getIso2() + document;
 			}
@@ -211,7 +214,7 @@ public class LROE240_1_2 extends LROE240 {
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			otro.setID(invoice.getRegistryDocument());
+			otro.setID(invoice.getRegistryDocument().replace(" ", ""));
 			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
 			destinatario.setIDOtro(otro);
 		}

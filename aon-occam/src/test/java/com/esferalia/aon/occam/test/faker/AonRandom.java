@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -471,6 +472,15 @@ public class AonRandom {
 	public static RegistryStatus getRandomRegistryStatus(int nullThreshold) {
 		return gt(nullThreshold)
 			?RegistryStatus.values()[faker.random().nextInt(RegistryStatus.values().length)]
+			:null;
+	}
+	
+	public static CarrierStatus getRandomCarrierStatus() {
+		return getRandomCarrierStatus (-1);
+	}
+	public static CarrierStatus getRandomCarrierStatus(int nullThreshold) {
+		return gt(nullThreshold)
+			?CarrierStatus.values()[faker.random().nextInt(CarrierStatus.values().length)]
 			:null;
 	}
 	

@@ -107,6 +107,10 @@ public class DefaultPayrollFuseBox {
 		return getPaymentsByCras(allPayments, INDEMN_CRAS);
 	}
 	
+	public static List<PDFPayment> getPPEs(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.PPE} );
+	}
+
 	public static List<PDFPayment> getInfos(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
 		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.INFO} );
 	}
@@ -129,6 +133,7 @@ public class DefaultPayrollFuseBox {
 		filteredCras.add(1);
 		filteredCras.add(100);
 		
+		filteredCras.add(IPayrollTemplate.PPE);
 		filteredCras.add(IPayrollTemplate.INFO);
 		filteredCras.add(IPayrollTemplate.NOTE);
 		filteredCras.add(IPayrollTemplate.WARNING);

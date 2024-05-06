@@ -123,4 +123,9 @@ public class ConsoleImpl implements IConsole {
 		return DomainCustomerDAO.getDomains(ctx, filter);
 	}
 	
+	@Override
+	public Stream<DomainCompany> areDomainsSync(AONContext ctx, DomainFilter filter) {
+		return DomainCustomerDAO.areDomainsSync(ctx, filter);
+	}
+	
 }

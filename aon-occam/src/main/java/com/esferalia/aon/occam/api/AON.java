@@ -149,8 +149,16 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
@@ -161,12 +169,14 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -209,6 +219,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -304,6 +315,7 @@ import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
+import com.esferalia.aon.occam.impl.jooq.NewsImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
 import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
@@ -425,6 +437,10 @@ public class AON {
 	private static IEmployeeIT getEmployeeIT() {
 		return new EmployeeITImpl();
 	}
+	
+	private static INews getNews() {
+		return new NewsImpl();
+	}
 
 	// ********************************************
 	// *************************** CONFIGURATION **
@@ -460,7 +476,7 @@ public class AON {
 		}
 	}
 	
-	public static AonConfiguration getConfiguration(CloseableAONContext ctx) {
+	public static AonConfiguration getConfiguration(AONContext ctx) {
 		return getConfiguration(ctx, null);  
 	}
 	
@@ -721,6 +737,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
 		}
 	}
 	
@@ -1797,6 +1819,12 @@ public class AON {
 		}
 	}
 	
+	public static InvoiceCounter getInvoiceCounter(Domain domain, User user) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceCounter(ctx);
+		}
+	}
+	
 	public static Invoice acceptInvoice(Occam occam, Invoice invoice){
 		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
 	}
@@ -2713,6 +2741,18 @@ public class AON {
 		}
 	}
 	
+	public static Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domainId, String login, Integer itemId, Integer customerId, String customerFeeQuery) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery);
+		}
+	}
+	
+	public static void reorderCustomerFeeLine(String domainName, int domainId, String login, Integer customer) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().reorderCustomerFeeLine(ctx, domainId, customer);
+		}
+	}
+	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
@@ -2765,6 +2805,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Fee> getFullFeeList(String domainName, Integer domainId, String login, CustomerFeeParams customerFeeParams){
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFullFeeList(ctx, customerFeeParams);
+		}
+	}
+	
 	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
 		return getFeeStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -2788,11 +2834,17 @@ public class AON {
 		}
 	}
 	
-	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
+	public static Fee createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			getFinance().createCustomerFeeList(ctx, fee);
+			return getFinance().createCustomerFeeList(ctx, fee);
 		}
 	}
+	
+	public static void updateRitemCustomerFee(String domainName, int domainId, String login, Integer customerFee, Integer ritem) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().updateRitemCustomerFee(ctx, customerFee, ritem);
+		}
+	}	
 
 	public static void deleteFee(AONContext ctx, Fee f) {
 		getFinance().deleteFee(ctx, f);
@@ -3362,40 +3414,29 @@ public class AON {
 	// ********************************************
 
 	public static Stream<Warehouse> getWarehouseStream(String domainName, Integer domainId, String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouseStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Warehouse getWarehouse(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Warehouse getWarehouse(String domainName, Integer domainId, String login, WarehouseFilter filter) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getWarehouse().getWarehouse(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
-
-	public static LinkedList<Warehouse> getWarehouseList(String domainName, Integer domainId,
-			String login, WarehouseFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getWarehouseStream(ctx, filter)
-					.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	
+	public static Warehouse saveWarehouse(String domainName, Integer domainId, String login, Warehouse warehouse) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getWarehouse().saveWarehouse(ctx, warehouse);
 		}
 	}
+	
+	public static void deleteWarehouse(String domainName, Integer domainId, String login, Integer warehouseId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deleteWarehouse(ctx, warehouseId);
+		}
+	}
+	
 	
 	public static Stream<IncomeDetail> getIncomeDetails(String domainName,
 			Integer domainId, String login, IncomeFilter filter) {
@@ -4433,40 +4474,59 @@ public class AON {
 		}
 	}
 	
-	
 	// ------------------ CARRIER 
-	
-	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getCarrierStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+
+	public static Carrier getCarrier(Domain domain, User user, Integer id) {
+		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id));
 	}
 	
-	public static LinkedList<Carrier> getCarrierList(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		return getCarrierStream(domainName, domainId, login, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Carrier getCarrier(String domainName, Integer domainId, String login, CarrierFilter filter) {
-		return getCarrierStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Carrier());
+	public static Carrier getCarrier(Domain domain, String login, Integer id) {
+		return getCarrier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id) {
 		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static Carrier insertCarrier(String domainName, Integer domainId, String login, Carrier carrier) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertCarrier(ctx, carrier);
-		} finally {
-			if (ctx != null) ctx.close();
+	public static Carrier getCarrier(Domain domain, User user, CarrierFilter filter, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+	
+	public static Carrier getCarrier(Domain domain, String login, CarrierFilter filter, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), login, filter, options);
+	}
+	
+	public static Carrier getCarrier(String domainName, Integer domainId, String login, CarrierFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCarrier(ctx, filter, options);
+		} 
+	}
+
+	public static Stream<Carrier> getCarrierStream(Domain domain, User user, CarrierFilter filter, Options...options) {
+		return getCarrierStream(domain, user.getLogin(), filter, options);
+	}
+	
+	public static Stream<Carrier> getCarrierStream(Domain domain, String login, CarrierFilter filter, Options...options) {
+		return getCarrierStream(domain, login, filter, options);
+	}
+	
+	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCarrierStream(ctx, filter, options);
+		} 
+	}
+
+	public static Carrier saveCarrier(Domain domain, User user, Carrier carrier) {
+		return saveCarrier(domain.getName(), domain.getId(), user.getLogin(), carrier);
+	}
+	
+	public static Carrier saveCarrier(Domain domain, String login, Carrier carrier) {
+		return saveCarrier(domain.getName(), domain.getId(), login, carrier);
+	}
+	
+	public static Carrier saveCarrier(String domainName, Integer domainId, String login, Carrier carrier) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCarrier(ctx, carrier);
 		}
 	}
 	
@@ -7384,6 +7444,12 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static RawdocInvoiceCounter getRawdocInvoiceCounter(Domain domain, User user) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getRawdocInvoiceCounter(ctx);
+		}
+	}
 	
 	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
@@ -8124,6 +8190,12 @@ public class AON {
 			return getFinance().getCustomerBookingCheckList(ctx, params);
 		}
 	}
+	
+	public static LinkedList<BookingCheck> getCustomerChildBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getCustomerChildBookingCheckList(ctx, params);
+		}
+	}
 
 	public static void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
@@ -8193,6 +8265,108 @@ public class AON {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, user)){
 			return getFinance().createUpdateFBatch(ctx, fBatch);
 		}
-	}	
+	}
+	
+	// ---------------- Marketing Campaign
+	
+	public static List<MarketingCampaign> getMarketingCampaignlist(MarketingCompaignParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingCampaignlist(ctx, params);
+		}
+	}
+
+	public static void deleteMarketingCampaign(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingCampaign(ctx, id);
+		}
+	}
+
+	public static MarketingCampaign saveMarketingCampaign(String domainName, int domain, String user, MarketingCampaign marketingCampaign) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingCampaign(ctx, marketingCampaign);
+		}
+	}
+
+	public static MarketingCampaign getMarketingCampaign(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getMarketingCampaign(ctx, id);
+		}
+	}
+	
+	// ---------------- Marketing Action
+
+	public static List<MarketingAction> getMarketingActions(MarketingActionParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingActions(ctx, params);
+		}
+	}
+	
+	public static MarketingAction getMarketingAction(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getMarketingAction(ctx, id);
+		}
+	}
+
+	public static void deleteMarketingAction(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingAction(ctx, id);
+		}
+	}
+
+	public static MarketingAction saveMarketingAction(String domainName, int domain, String user, MarketingAction marketingAction) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingAction(ctx, marketingAction);
+		}
+	}
+	
+	public static List<News> getNewsStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getNews().getNewsStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Newsletter> getNewsletterStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getNewsletterStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Survey> getSurveyStream(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getSurveyStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+	
+	// ---------------- Marketing Action Target
+
+	public static List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingActionTargets(ctx, params);
+		}
+	}
+
+	public static void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteMarketingActionTarget(ctx, id);
+		}
+	}
+
+	public static MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user, MarketingActionTarget marketingActionTarget) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveMarketingActionTarget(ctx, marketingActionTarget);
+		}
+	}
+
+	public static List<Target> getTargetSuggestion(String domainName, int domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getTargetStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		}
+	}
+
+	public static Stream<GeoZone> geozoneStream(String domainName, Integer domain, String user, GeoZoneFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().geozoneStream(ctx, filter);
+		}
+	}
 	
 }

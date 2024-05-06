@@ -31,6 +31,8 @@ import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
+import com.esferalia.aon.occam.api.model.RawdocInvoiceCounterDetail;
 import com.esferalia.aon.occam.api.model.RawdocNotice;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -148,6 +150,7 @@ public class RawdocDAO {
 				.select( SELECT_FIELDS )
 				.from(RAWDOC)
 				.where(RAWDOC_PROPERTIES.getConditions(filter))
+				.orderBy(RAWDOC.ID.desc())
 				.limit(offset,limit)
 				.fetch()
 				.stream()
@@ -234,7 +237,7 @@ public class RawdocDAO {
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))
 			.execute();
-		if(rawdoc.getData() != null && rawdoc.getMimeType() != null) {
+		if(rawdoc != null && rawdoc.getData() != null && rawdoc.getMimeType() != null) {
 			updateFile(ctx, rawdoc);
 		}
 		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());
@@ -336,6 +339,29 @@ public class RawdocDAO {
 				}
 			});
 		return rawdocUserData;
+	}
+	
+	public static RawdocInvoiceCounter getInvoiceCounter(AONContext ctx) {
+		RawdocInvoiceCounter counter = new RawdocInvoiceCounter();
+		
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
+		
+		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, COUNT)
+		.from(RAWDOC)
+		.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
+		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE)
+		.fetch().stream().forEach(r -> {
+			RawdocStatus status = RawdocStatus.safeValueOf(r.getValue(RAWDOC.STATUS));
+			RawdocType type = RawdocType.safeValueOf(r.getValue(RAWDOC.TYPE));
+			Integer count = r.getValue(COUNT);
+			counter.getMap().computeIfAbsent(status, k -> new RawdocInvoiceCounterDetail());
+			counter.getMap().get(status).addCount(count);
+			if(RawdocStatus.INBOX.equals(status)) {
+				counter.getMap().get(status).getMap().put(type, count);
+			}
+		});
+		
+		return counter;
 	}
 	
 	public static RawdocUserData getUserData(AONContext ctx, byte[] auth){

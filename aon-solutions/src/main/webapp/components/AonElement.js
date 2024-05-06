@@ -4,6 +4,7 @@ import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { getDomainUserRoles } from '../services/companyService.js';
 import * as COLORS from '../environments/colors.js';
 import * as LS from '../services/localStorageService.js';
+import * as UA from '../services/userAgentService.js';
 
 export class AonElement extends HTMLElement{
 
@@ -15,40 +16,23 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    const reg = new RegExp(/mobile/i);
-    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg) || this.isAppMobile();
+    return UA.isMobile();
   }
 
   iOS() {
-    const reg = new RegExp(/iphone|ipad|ipod/i);
-    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+    return UA.iOS();
   }
 
   android() {
-    const reg =  new RegExp(/android/i);
-    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+    return UA.android();
   }
 
-  blackBerry() {
-    const reg =  new RegExp(/blackberry/i);
-    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+  isAndroidApp() {
+    return UA.isAndroidApp();
   }
 
-  windowsPhone() {
-    const reg =  new RegExp(/windows phone/i);
-    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
-  }
-
-  isAppMobile(){
-    return webkitRequestMobile();
-  }
-
-  navigatorPlatform(){
-    return navigator.platform.toLowerCase();
-  }
-
-  navigatorUserAgent(){
-    return navigator.userAgent.toLowerCase();
+  isApp() {
+    return UA.isApp();
   }
 
   getElement(id) {
@@ -193,6 +177,9 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('console.aonsolutions.org')
       || href.includes('console-pro.aonsolutions.net')
+      || href.includes('console-zar.aonsolutions.net')
+      || href.includes('console-udapa.aonsolutions.net')
+      || href.includes('console-etl.aonsolutions.net')
       || href.includes('console-ayudat.aonsolutions.net')
       || href.includes('console-grupoayudat.aonsolutions.net');
 	}

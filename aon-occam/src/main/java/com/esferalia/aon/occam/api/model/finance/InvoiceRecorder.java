@@ -554,7 +554,7 @@ public class InvoiceRecorder {
 		}
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		InvoiceEntryDetailType.visit(invoice,map);	
-		ae.setDetails(new LinkedList<AccountEntryDetail>());
+		ae.setDetails(new LinkedList<>());
 		ae.getDetails().addAll(map.values());
 		String concept = obtainConcept(invoice.getInvoice(), invoice.getManualConcept());
 		for (AccountEntryDetail detail : ae.getDetails()) {

@@ -99,6 +99,9 @@ public class BookingDAO {
 			resume.setChildBillingUsers(childBillingUsers);
 			resume.setChildDefinedUsers(childDefinedUsers);
 			
+			Integer totalChilds = getTotalChildDomains(ctx, domain.getId());
+			resume.setTotalChilds(totalChilds);
+			
 			Map<UserType, Long> userTypes = childs.stream().map(r -> r.getUsers())
 				.flatMap(l -> l.stream().map(User::getType))
 				.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
@@ -236,6 +239,21 @@ public class BookingDAO {
 			e.printStackTrace();
 		}
 		return bos.toByteArray();
+	}
+	
+
+
+	private static Integer getTotalChildDomains(AONContext ctx, Integer parent) {
+		Integer totalActiveChilds = ctx.getDslContext()
+				.selectCount()
+				.from(DOMAIN)
+				.where(DOMAIN.PARENT.eq(parent))
+				.and(DOMAIN.ACTIVE.eq((byte) 1))
+				.and(DOMAIN.EXPIRATIONDATE.isNull().or(DOMAIN.EXPIRATIONDATE.gt(new java.sql.Date(new Date().getTime()))))
+				.fetchOne()
+				.value1();
+		
+		return totalActiveChilds;
 	}
 
 	public static List<Domain> getActiveChildDomains(AONContext ctx, Integer parent) {

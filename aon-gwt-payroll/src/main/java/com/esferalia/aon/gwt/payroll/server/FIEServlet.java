@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -100,8 +101,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		    Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 		    
 		    Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domainName, domainId, userLogin).toList();
-		    
+		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domainName, domainId, userLogin).collect(Collectors.toList());		    
 		    List<Integer> itIds = new ArrayList<Integer>();
 
 		    for (CCCInfo ccc : cccs) {
@@ -227,6 +227,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private Date confirmationDate;
 		private String confirmationPartNumber;
 		
+		private boolean isRagged;
+		
 		private boolean cancel;
 		
 		public String getCcc() {
@@ -348,6 +350,14 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void setCancel(boolean cancel) {
 			this.cancel = cancel;
 		}
+
+		public boolean isRagged() {
+			return isRagged;
+		}
+
+		public void setRagged(boolean isRagged) {
+			this.isRagged = isRagged;
+		}
 	}
 	
 	private static class Fie2AON implements FieListener {
@@ -385,7 +395,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 		@Override
 		public void onDitRelapse(Boolean relapse) {
-			// TODO Auto-generated method stub
+			it.setRagged(relapse);
 		}
 
 		@Override
@@ -430,7 +440,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// P=consulta la Dirección Provincial del INSS
 			switch (deficiencyIndicator) {
 			case "N":
-				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+				if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
 				break;
 			default:
 				break;
@@ -551,6 +561,18 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
 				contractLeaveRecord.setDischargeCause(it.getHightCause());
 		
+				// Try to find ragged it
+				if(it.isRagged()) {
+					ContractLeaveRecord itRaggedRecord = ctx.selectFrom(CONTRACT_LEAVE)
+						.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
+						.and(CONTRACT_LEAVE.START_DATE.eq(new java.sql.Date(it.getPrevItDate().get().getTime())))
+						.orderBy(CONTRACT_LEAVE.ID.desc())
+						.limit(1)
+						.fetchOne();
+					
+					contractLeaveRecord.setParent(null == itRaggedRecord ? null : itRaggedRecord.getId());
+				}
+				
 				contractLeaveRecord.store();
 				
 				// Create Contract Leave Detail (LOW)
@@ -714,11 +736,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 				.innerJoin(ENTERPRISE_CCC).onKey()
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
 				.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
 				.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
 				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
 				.and(CONTRACT.START_DATE.le(itStartDate))
 				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.and(DOMAIN.ACTIVE.eq((byte)1))
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );

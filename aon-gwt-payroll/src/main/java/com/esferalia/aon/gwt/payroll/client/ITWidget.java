@@ -1996,6 +1996,8 @@ public abstract class ITWidget extends ResizeComposite {
 			@Override protected void onCommunicateITPart(IT it, ITPart part) {}
 
 			@Override protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
+
+			@Override protected void onDownloadFDIITPart(IT it, ITPart itPart) {}
     	};
     	
     	itDialog.setEmployeesList(getActiveEmployeesList());
@@ -2056,6 +2058,22 @@ public abstract class ITWidget extends ResizeComposite {
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
 				confirmDeleteITToTGSS(ItNotExist);
 			}
+
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart part) {
+				startLoading(true);
+				
+				normalizeITToSave();
+				
+				acceptSave(itEmployee);
+				
+				hide();
+				startLoading(false);
+				
+				String fileDownloadURL = GWT.getModuleBaseURL() + "/download_fdi/" + "?contract=" + itEmployee.getContractInfo().getContractId() + "&it=" + it.getId() + "&quoteDays=" + it.getQuoteDays();
+				Window.open(fileDownloadURL, "_blank", null);
+				
+			}
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
@@ -2084,6 +2102,12 @@ public abstract class ITWidget extends ResizeComposite {
 		},f -> {});
 	}
 	
+	private void acceptSave(ITEmployee itEmployee) {
+		setITEmployee(itEmployee, s -> {
+			loadITWidget();
+		},f -> {});
+	}
+	
     
      private void showMessage(String title, String body) {
           Map<String, String> successMap = new HashMap<>();
@@ -2105,6 +2129,10 @@ public abstract class ITWidget extends ResizeComposite {
 
      private void showCommunicateIT() {
 	 showMessage("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
+     }
+     
+     private void showDownloadFIEIT() {
+    	 showMessage("Fichero FIE", "Fichero FIE descargado correctamente");
      }
 
      private void showDeleteMessage() {

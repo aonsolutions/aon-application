@@ -14,15 +14,17 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
@@ -35,8 +37,10 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -291,29 +295,37 @@ public class OCRInvoiceBuilder {
 		if (invoiceType == null) {
 			throw new OCRUndefinedTypeException();
 		} else {
-			invoiceType.visit(invoice, new IInvoiceTypeVisitor() {
+			invoiceType.visit(invoice, new IInvoiceTypeVisitor<Void>() {
 				@Override
-				public void visitSales(Invoice invoice) {
+				public Void visitSales(Invoice invoice) {
 					String recipientDocument = toAonDocument( ocrInvoice.getRecipientDocument() );
 					String recipientCountry = ocrInvoice.getRecipientCountry().flatMap( s -> s.getValue() ).orElse(null);
 					Country country = Country.safeValueOf( recipientCountry );
 					invoice
 						.setRegistryDocument( recipientDocument )
-						.setRegistryDocumentCountry( country );					
+						.setRegistryDocumentCountry( country );
+					return null;
 				}
 				
 				@Override
-				public void visitPurchase(Invoice invoice) {
+				public Void visitPurchase(Invoice invoice) {
 					String issuerDocument = toAonDocument( ocrInvoice.getIssuerDocument() );
 					String issuerCountry = ocrInvoice.getIssuerCountry().flatMap( s -> s.getValue() ).orElse(null);
 					Country country = Country.safeValueOf( issuerCountry );
 					invoice
 						.setRegistryDocument( issuerDocument )
-						.setRegistryDocumentCountry( country );					
+						.setRegistryDocumentCountry( country );
+					return null;
 				}
 				
-				@Override public void visitExpenses(Invoice invoice) { visitPurchase(invoice); }
-				@Override public void visitUndeductible(Invoice invoice) { visitPurchase(invoice);} 
+				@Override 
+				public Void visitExpenses(Invoice invoice) { 
+					return visitPurchase(invoice); 
+				}
+				@Override 
+				public Void visitUndeductible(Invoice invoice) { 
+					return visitPurchase(invoice);
+				} 
 			});
 		}
 	}
@@ -341,28 +353,30 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	public static final void fillRegistry (AONContext aonCtx, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException {
+	public static final void fillRegistry (AONContext aonCtx, AonConfiguration config, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException {
 	    try {
         	    OCRInvoiceBuilderRegistry.fillRegistry(
         		    aonCtx, 
+        		    config, 
         		    f -> 
         		    ( invoice.isSales() && f.getType() == AccountingRegistryType.CUSTOMER ) 
         		    || ( invoice.isUndeductible() && f.getType() == AccountingRegistryType.CREDITOR )
-        		    || ( ( invoice.isPurchase() || invoice.isSales() ) &&  ( f.getType() == AccountingRegistryType.CREDITOR  || f.getType() == AccountingRegistryType.SUPPLIER ) )
+        		    || ( ( invoice.isPurchase() || invoice.isExpenses() ) 
+    		    		&&  ( f.getType() == AccountingRegistryType.CREDITOR  || f.getType() == AccountingRegistryType.SUPPLIER ) )
         		    , 
         		    invoice);
 	    } catch ( OCRTooManyOwnersException | OCROwnerNotFoundException e) {
 		
-		if ( invoice.isUndeductible() ) {
-		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
-		    if (defaultCreditor != null) {
-			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
-			defaultCreditor.getType().visit(defaultCreditor,
-				new InvoiceRegistryInitializer(aonCtx, invoice, null));
-			return;
-		    }
-		}   
-		throw e;
+//		if ( invoice.isUndeductible() ) {
+//		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
+//		    if (defaultCreditor != null) {
+//			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
+//			defaultCreditor.getType().visit(defaultCreditor,
+//				new InvoiceRegistryInitializer(aonCtx, invoice, config));
+//			return;
+//		    }
+//		}   
+	    	throw e;
 	    }
 
 	}
@@ -596,7 +610,7 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContextDetail> ADD_INVOICE_DETAIL = ocr -> 
 		ocr.getInvoice().getDetails().add( ocr.getDetail() );
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItems;		
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItemsOrAccounts;		
 
 	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
 		if ( mustImportFromBreakdown(ocr.getOCRInvoice()) ) {
@@ -659,6 +673,26 @@ public class OCRInvoiceBuilder {
         			   invoice.getDetails().add(detail); 
         			}
 			);
+			
+			ocrInvoice.getReimbursableExpensesAmount().ifPresent(r -> {
+				BigDecimal value = r.getValue().orElse(null);
+				double prep = AonNumberUtils.zeroIfNull(value);
+				if(prep != 0.0) {
+					Integer size = invoice.getDetails().size();
+	     			InvoiceDetail detail = new InvoiceDetail()
+	     				.setDomain(invoice.getDomain())
+     					.setDescription("Suplido")
+     					.setQuantity(1.0)
+     					.setPrice(prep)
+     					.setPrepayment(true)
+    				   	.setDiscount(0.0)
+    				   	.setInvoice(invoice)
+    				   	.setTaxableBase(prep)
+    				   	.setLine(size.shortValue());
+	     			fillDetailSource(detail);
+	     			invoice.addDetail(detail);
+				}
+			});
 		} else {
 			Stream.of( ocrInvoice.getLines() )
 			.filter( Optional::isPresent )
@@ -783,9 +817,9 @@ public class OCRInvoiceBuilder {
 	private static void fillFinanceBank(OCRInvoice ocrInvoice, Finance finance) {
 	    String iban = ocrInvoice.getIBAN().flatMap(d -> d.getValue()).orElse(null);
 	    if (AonStringUtils.isNotBlank(iban)) {
-		iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
-		BankAccount bankAccount = new BankAccount(iban);
-		finance.setBankAccount(bankAccount);
+	    	iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
+	    	BankAccount bankAccount = new BankAccount(iban);
+	    	finance.setBankAccount(bankAccount);
 	    }
 	}
 
@@ -854,6 +888,23 @@ public class OCRInvoiceBuilder {
 		    return finance;
 		}).toList();
 
+	    if(finances.isEmpty()) {
+	    	finances = new LinkedList<>();
+	    	Finance finance = new Finance();
+	    	finance.setDomain(invoice.getDomain());
+		    finance.setInvoice(invoice);
+		    finance.setDueDate(invoice.getIssueDate());
+		    finance.setAmount(invoice.getTotal());
+		    
+		    // INVOICE_FINANCE_PAYMETHOD
+		    fillFinancePayMethod(aonContext, ocrInvoice, finance);
+		    
+		    // INVOICE_FINANCE_BANK
+		    fillFinanceBank(ocrInvoice, finance);
+		    // INVOICE_FINANCE_SWIFT
+		    fillFinanceSwift(ocrInvoice, finance);
+		    finances.add(finance);
+	    }
 	    	// ADD_INVOICE_FINANCE
 		invoice.setFinances(finances);
 		
@@ -968,7 +1019,7 @@ public class OCRInvoiceBuilder {
 				.setBase( AonNumberUtils.zeroIfNull(irpfBase) )
 				.setPercentage( AonNumberUtils.zeroIfNull(irpfPercentage) )
 				.setQuota( AonNumberUtils.zeroIfNull(irpfQuota) )
-				.setWithholdingType( guessWitholdingType( invoice ) )
+				.setWithholdingType( guessWitholdingType( invoice, AonNumberUtils.zeroIfNull(irpfPercentage) ) )
 				;
 			invoice.getBreakdown().add(ib);
 		}
@@ -1005,6 +1056,12 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static boolean mustImportFromBreakdown(OCRInvoice ocrInvoice) {
+		// Mientras los se devuelvan las línea correctamente, se importa siempre el BreakDown
+		// En otro caso descomentar el método.
+		return Boolean.TRUE;
+		//----------------
+			
+		/*
 		double breakdownTax = Stream.of( ocrInvoice.getBreakdowns() )
 			.filter( Optional::isPresent )
 			.map( Optional::get )
@@ -1023,6 +1080,7 @@ public class OCRInvoiceBuilder {
 			.sum()
 		;
 		return AonMathUtils.notEquals(breakdownTax,linesTax);
+		*/
 	}
 
 	private static String extractDescription(OCRInvoiceBreakdown ocrBreakdown) {
@@ -1045,18 +1103,64 @@ public class OCRInvoiceBuilder {
 	// ****************************************************************************
 	// *************************************************************** TO DO ******
 	// ****************************************************************************
+	private static void guessItemsOrAccounts(OCRContextDetail ocr) {
+		
+		guessItemsOrAccounts(ocr.getCtx(),ocr.getInvoice(),ocr.getDetail());
+		
+		// Si no se ha rellenado ni iten ni account, se busca el parámetro por defecto. 
+		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccount() == null) {
+			if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
+				ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
+			} else {
+				throw new AonCoreException("No existe producto por defecto definido en la configuración");
+			}
+		}
+	}
+	
+	public static Invoice guessItemsOrAccounts(AONContext ctx, Invoice invoice) {
+		if (AonCollectionUtils.isNotEmpty( invoice.getDetails() )) {
+			for (int i = 0; i < AonCollectionUtils.size( invoice.getDetails() ); i++) {
+				if (i == 0) {
+					guessItemsOrAccounts(ctx, invoice, invoice.getDetails().get(i) );			
+				} else {
+					invoice.getDetails().get(i).setItem( invoice.getDetails().get(0).getItem() );
+					invoice.getDetails().get(i).setAccount( invoice.getDetails().get(0).getAccount() );
+					invoice.getDetails().get(i).setAccountCode( invoice.getDetails().get(0).getAccountCode() );
+					invoice.getDetails().get(i).setAccountDescription( invoice.getDetails().get(0).getAccountDescription() );
+				}
+			}
+		}
+		return invoice;
+	}
 
-	// Buscar artículos para resolver el artículo
-	private static void guessItems(OCRContextDetail ocr) {
-		if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
-			ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
-		} else {
-			throw new AonCoreException("No existe producto por defecto definido en la configuración");
+	private static void guessItemsOrAccounts(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
+		if (invoice != null && invoice.getRegistry() != null) {
+			// Se busca el último item del registry que se trata
+			Optional<Item> opItem = InvoiceDAO.getLastItem(ctx, invoice.getRegistry());
+			if (opItem.isPresent()) {
+				invoiceDetail.setItem( opItem.get() );	
+			} else {
+				// Se busca la ´tulima cuanta contable del registry que se trata
+				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry());
+				Account account = AonCollectionUtils.stream(accounts)
+					.findFirst()
+					.orElse(null);
+				if (account != null) {
+					invoiceDetail.setAccount( account.getId() );	
+					invoiceDetail.setAccountCode( account.getCode() );
+					invoiceDetail.setAccountDescription( account.getDescription() );
+				}
+			}
 		}
 	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
-	private static WithholdingType guessWitholdingType(Invoice invoice) {
-		return WithholdingType.PROFESSIONAL;
+	private static WithholdingType guessWitholdingType(Invoice invoice, double percentage) {
+		if(percentage == 19.0) return WithholdingType.RENTING;
+		else if(percentage == 2.0) return WithholdingType.FARMER;
+		else if(percentage == 1.0) return WithholdingType.TRANSPORT_OPERATOR;
+		else if(percentage == 7.0) return WithholdingType.M190_G_02;
+		else if(percentage == 24.0) return WithholdingType.M190_I_01;
+		else return WithholdingType.PROFESSIONAL;
 	}
 	// ****************************************************************************
 	// ****************************************************************************

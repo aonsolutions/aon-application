@@ -4,15 +4,19 @@ import java.util.LinkedList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 
 import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder.OCRContext;
@@ -32,7 +36,7 @@ class OCRInvoiceBuilderRegistry {
 	
 		protected boolean fillRegistry(OCRContext ocr, Predicate<AccountingRegistry> filterExpression) {
 		    try {
-			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), filterExpression, ocr.getInvoice());
+			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), ocr.getConfig(), filterExpression, ocr.getInvoice());
 			return true;
 		    } catch (OCRTooManyOwnersException e) {
 			ocr.add(TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
@@ -101,7 +105,9 @@ class OCRInvoiceBuilderRegistry {
 		,new TicketFiller() 
 	};
 	
-	public static final void fillRegistry (AONContext aonCtx,  Predicate<AccountingRegistry> filterExpression, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException  {
+	public static final void fillRegistry (AONContext aonCtx,
+			AonConfiguration config,
+			Predicate<AccountingRegistry> filterExpression, Invoice invoice) throws OCRTooManyOwnersException, OCROwnerNotFoundException  {
 		LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
 				.getAccountingRegistries(aonCtx, f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 				.filter(filterExpression)
@@ -121,8 +127,15 @@ class OCRInvoiceBuilderRegistry {
 						.setAlias(ar.getAlias())
 						.setNationality(ar.getNationality())
 					);
-				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, null));
+				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, config));
 				
+				if(invoice.getAddress() == null || invoice.getAddress().isEmpty()) {
+					RegistryAddress address = RegistryAddressDAO.getMain(aonCtx, ar.getId());
+					if(!address.isEmpty()) {
+						invoice.setAddress(address);
+						invoice.setRegistryAddress(address.getId());
+					}
+				}
 				return;
 			} else {
 			    	throw new OCRTooManyOwnersException ();

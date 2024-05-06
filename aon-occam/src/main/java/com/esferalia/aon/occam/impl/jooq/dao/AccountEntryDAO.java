@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
+import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -900,6 +901,24 @@ public class AccountEntryDAO {
 		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
 
 			@Override
+			public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getId() != null) {
+					ctx.checkWrite();
+					ae.setEntryType(AccountEntryType.MANUAL);
+					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
+							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().getValue()) 
+							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
+							.execute();
+					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [ManualType] {1}",i,ae.getId());
+					return new AccountEntryWrapper( getAccountEntry(ctx, ae.getId()) );
+				}
+				return wrapper;
+			}
+
+			@Override
 			public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
 				AccountEntry ae = wrapper.getAccountEntry();
 				if (ae != null && ae.getId() != null) {
@@ -1165,6 +1184,22 @@ public class AccountEntryDAO {
 	public static LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(final AONContext ctx, IAccountEntryWrapper wrp) {
 		final  LinkedList<AccountEntryUpdate> list = new LinkedList<AccountEntryUpdate>();
 		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+			
+			@Override
+			public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive() && ae.getEntryType() == AccountEntryType.AMORTIZATION) {
+					boolean hasAmortizationDetail = ctx.getDslContext().fetchExists(
+						ctx.getDslContext().select()
+							.from(AMORTIZATION_DETAIL)
+							.where(AMORTIZATION_DETAIL.DOMAIN.eq(ae.getDomain()))
+							.and(AMORTIZATION_DETAIL.ACCOUNT_ENTRY.eq(ae.getId())));
+					if (!hasAmortizationDetail) {
+						list.add(AccountEntryUpdate.MANUAL_TYPE);			
+					}
+				}
+				return wrapper;
+			}
 			
 			@Override
 			public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {

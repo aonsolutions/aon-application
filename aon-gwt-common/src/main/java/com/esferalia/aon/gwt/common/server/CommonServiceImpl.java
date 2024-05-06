@@ -16,16 +16,27 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -35,7 +46,9 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -279,7 +292,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// *************************************** [QUESTION]
 	// **************************************************
 
-	
 	@Override
 	public List<Question> getQuestions(QuestionParams params) throws AonCoreException {
 		return AON.getQuestionList(params);
@@ -317,6 +329,104 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public LinkedList<RegistryBank> getCompanyBanks(String domainName, Integer domainId, String user) throws AonCoreException {
 		return AON.getCompanyRegistryBanks(domainName, domainId, user);
+	}
+	
+	// **************************************************
+	// ***************************** [MARKETING CAMPAIGN]
+	// **************************************************
+	
+	@Override
+	public List<MarketingCampaign> getMarketingCampaigns(MarketingCompaignParams params) throws AonCoreException {
+		return AON.getMarketingCampaignlist(params);
+	}
+	
+	@Override
+	public void deleteMarketingCampaign(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteMarketingCampaign(domainName, domain, user, id);
+	}
+	
+	@Override
+	public MarketingCampaign saveMarketingCampaign(String domainName, int domain, String user, MarketingCampaign marketingCampaign) throws AonCoreException {
+		return AON.saveMarketingCampaign(domainName, domain, user, marketingCampaign);
+	}
+	
+	@Override
+	public MarketingCampaign getMarketingCampaign(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getMarketingCampaign(domainName, domain, user, id);
+	}
+	
+	// **************************************************
+	// ******************************* [MARKETING ACTION]
+	// **************************************************
+	
+	@Override
+	public List<MarketingAction> getMarketingActions(MarketingActionParams params) throws AonCoreException {
+		return AON.getMarketingActions(params);
+	}
+	@Override
+	public MarketingAction getMarketingAction(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getMarketingAction(domainName, domain, user, id);
+	}
+	
+	@Override
+	public void deleteMarketingAction(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteMarketingAction(domainName, domain, user, id);
+	}
+	
+	@Override
+	public MarketingAction saveMarketingAction(String domainName, int domain, String user, MarketingAction marketingAction) throws AonCoreException {
+		return AON.saveMarketingAction(domainName, domain, user, marketingAction);
+	}
+	
+	@Override
+	public List<News> getNewsSuggestion(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getNewsStream(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Newsletter> getNewsletterSuggestion(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getNewsletterStream(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Survey> getSurveySuggestion(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getSurveyStream(domainName, domain, user);
+	}
+	
+	// **************************************************
+	// ************************ [MARKETING ACTION TARGET]
+	// **************************************************
+	
+	@Override
+	public List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) throws AonCoreException {
+		return AON.getMarketingActionTargets(params);
+	}
+	
+	@Override
+	public void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteMarketingActionTarget(domainName, domain, user, id);
+	}
+	
+	@Override
+	public MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user, MarketingActionTarget marketingActionTarget) throws AonCoreException {
+		return AON.saveMarketingActionTarget(domainName, domain, user, marketingActionTarget);
+	}
+	
+	@Override
+	public List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getTargetSuggestion(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException {
+		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		return workgroups;
+	}
+	
+	@Override
+	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
+		return taskHolders;
 	}
 	
 }

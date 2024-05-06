@@ -23,19 +23,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface AccountEntryServiceAsync {
 
 	void getAccountEntry(Occam occam, int id, AsyncCallback<AccountEntry> callback);
-
+	void initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback);
+	void initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback);
+	void getPendingImportAccountingInvoices(Occam occam, String query, AsyncCallback<LinkedList<AccountingInvoice>> asyncCallback);
+	//	-----------------------------------
 	
 	void getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit, AsyncCallback<LinkedList<AccountEntry>> callback);
 	void getAccountEntry(String domainName, int domain, String user, int id, AsyncCallback<AccountEntry> callback);
 	void save(String domainName, int domain, String user, AccountEntry ae, AsyncCallback<AccountEntry> callback);
 	void deleteAccountEntry(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback);
-	void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback);
-	void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback);
 	void removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback);
 	void addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai, AsyncCallback<AccountingInvoice> callback);
 	void getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry, AsyncCallback<AccountingInvoice> callback);
 	void getAccountingInvoiceFromInvoice(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback);
-	void getPendingImportAccountingInvoices(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<AccountingInvoice>> asyncCallback);
 	void save(String domainName, int domain, String user, AccountingInvoice invoice, AsyncCallback<AccountingInvoice> callback);
 	void getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId, AsyncCallback<AccountingInvoice> asyncCallback);
 	void rectifyInvoice(String domainName, int domain, String user, Integer id, InvoiceRectificationData data, AsyncCallback<AccountingInvoice> asyncCallback);

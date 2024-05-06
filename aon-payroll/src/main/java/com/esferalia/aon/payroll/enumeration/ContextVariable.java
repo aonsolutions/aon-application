@@ -339,6 +339,8 @@ public enum ContextVariable implements IResourceable {
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
+	BASE_PPE("__PPE",  VariableType.DOUBLE, false),
+
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 
 	MEI_EMPLOYEE_PERCENT("PORCENTAJE_MEI", VariableType.DOUBLE,false), 
@@ -378,6 +380,7 @@ public enum ContextVariable implements IResourceable {
 	CRA_0012("CRA_0012", VariableType.INTEGER),
 	CRA_0010("CRA_0010", VariableType.INTEGER),
 	CRA_0008("CRA_0008", VariableType.INTEGER),
+	CRA_0033("CRA_0033", VariableType.INTEGER),
 
 	ADDITIONAL("HORAS_COMPL", VariableType.DOUBLE, false),
 
@@ -408,6 +411,8 @@ public enum ContextVariable implements IResourceable {
 	public static final String AGREEMENT = "CONVENIO";
 	public static final String DELAY_PREVENT = "ANTICIPO_ATRASOS";
 
+	public static final String PPE_DELAYS = "ATRASOS_PPE";
+	
 	// Old
 	public static final String CHECK = "CHECK";
 	public static final String INPUT = "INPUT";
@@ -427,6 +432,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String NOTE = "NOTA";
 	public static final String CAUTION = "ADVERTENCIA";
 	
+	public static final String PPE = "PPE";
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
@@ -443,6 +449,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
 	
 	public static final String HIDE_BASE_CGC_MIN = "HIDE_BASE_CGC_MIN";
+	
 	
 	private static final List<String> NAMES =
 	Arrays.asList(new String []{

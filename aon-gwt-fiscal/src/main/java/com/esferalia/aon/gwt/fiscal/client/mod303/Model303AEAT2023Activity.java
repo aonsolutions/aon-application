@@ -162,15 +162,14 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	private Widget getActivityData(IModel303AEATActivityCallback<Mod303Activity> callback) {
 		populate(callback.getActivity());		
 		tabLayoutPanel.clear();
-		// 0
 		tabLayoutPanel.add(getAdditionalDataPanel(callback), AON.MSG.additionalData());
-		// 1
 		tabLayoutPanel.add(getModulesPanel(callback), AON.MSG.modules());
-		// 20
-		tabLayoutPanel.add(getModulesStaffDataPanel(callback), "Inf. M\u00F3dulo \"Personal\"");
-		// 3
-		tabLayoutPanel.add(getModulesDeskDataPanel(callback), "Inf. M\u00F3dulo \"Mesas\"");
-		// 4
+		if (staffModuleIndex(callback) != -1) {
+			tabLayoutPanel.add(getModulesStaffDataPanel(callback), "Inf. M\u00F3dulo \"Personal\"");
+		}
+		if (deskModuleIndex(callback) != -1) {
+			tabLayoutPanel.add(getModulesDeskDataPanel(callback), "Inf. M\u00F3dulo \"Mesas\"");
+		}
 		tabLayoutPanel.add(getResultPanel(callback), AON.MSG.result());
 		
 		tabLayoutPanel.addSelectionHandler( e -> {
@@ -442,6 +441,9 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		tab1.addStyleName(AON.CSS.aonMarginLeft());
 		tab1.addStyleName(AON.CSS.aonMarginBottom());
 		
+		tab1.addRow()
+			.addCell( new Label("Horas anuales"), AON.CSS.aonBold(), AON.CSS.aonWidthAuto() )
+			.addCell( new Label("") , AON.CSS.aonWidth150());
 		ownerHours.addValueChangeHandler(event -> {
 			if (ownerHours.getValue() == null) ownerHours.setValue(0.0,false);
 			callback.getActivity().setOwnerHours(ownerHours.getValue());
@@ -500,13 +502,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		footer.add(staffLabel);
 		flowPanel.add(footer);
 		
-		
-		InlineLabel msg1 = new InlineLabel(AON.MSG.actMsg1());
-		msg1.setStyleName(AON.CSS.aonBold());
-		msg1.addStyleName(AON.CSS.aonMarginRight());
-		flowPanel.add(msg1);
-		
-		InlineLabel msg2 = new InlineLabel(AON.MSG.actMsg2());
+		Label msg2 = new Label(AON.MSG.actMsg2());
 		flowPanel.add(msg2);
 		
 		scroll.setWidget(flowPanel);

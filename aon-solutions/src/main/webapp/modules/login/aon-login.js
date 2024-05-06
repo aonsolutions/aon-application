@@ -42,11 +42,12 @@ export class AonLogin extends AonElement {
     }
 
     let div = this.createElement(TAG.DIV);
-    div.className = CSS.AON_FORM_CENTER;
+    div.className = this.isAndroidApp()
+        ? CSS.AON_FORM_CENTER_ANDROID_APP 
+        : CSS.AON_FORM_CENTER;
     this.appendChild(div);
 
     let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_VERTICAL_CENTER);
     div2.classList.add(CSS.AON_WIDTH_300);
     div2.style.top = '47%';
     if(!this.isMobile()){
@@ -285,7 +286,7 @@ export class AonLogin extends AonElement {
     this.build();
     
     this.buildLogo();
-    if(!webkitRequestMobile() && this.isMobile()){ // si es app
+    if(!this.isAndroidApp() && !webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
     }
 

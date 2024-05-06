@@ -244,7 +244,11 @@ public class Invoice2tbai {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));							
 			} else {
 				IDOtro other = new IDOtro();
-				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+
+				if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+					other.setCodigoPais(CountryType2.GB);
+				} else other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+				
 				other.setIDType(invoice.isIntracommunity() 
 						? IDType.NIF_IVA.getName()
 						: IDType.OTRO.getName());
@@ -313,16 +317,17 @@ public class Invoice2tbai {
 				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 				detalle.setCantidad(doubleToString(AonMathUtils.round(detail.getQuantity(), 4)));
 				String description = detail.getDescription().replace("\n", " ");
+				if(AonStringUtils.isBlank(description)) {
+					description = "Detalle";
+				}
 				if(description.length() > 249) {
 					description = description.substring(0, 249);
 				}			
 				detalle.setDescripcionDetalle(description);
 				detalle.setImporteUnitario(doubleToString(AonMathUtils.round(detail.getPrice(), 4)));
 
-				double descuento = 0.0;
-				if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
-					descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
-				}
+				double descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+
 				detalle.setDescuento(doubleToString(descuento));
 			
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
@@ -341,6 +346,9 @@ public class Invoice2tbai {
 				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 				detalle.setCantidad(doubleToString(AonMathUtils.round(detail.getQuantity(), 4)));
 				String description = detail.getDescription().replace("\n", " ");
+				if(AonStringUtils.isBlank(description)) {
+					description = "Detalle";
+				}
 				if(description.length() > 249) {
 					description = description.substring(0, 249);
 				}			
@@ -384,7 +392,7 @@ public class Invoice2tbai {
 		IDClaveType clave = new IDClaveType();
 		
 		String key = "01";
-		if(invoice.isExtracommunity()) key = "02";
+		if(invoice.isExtracommunity() || invoice.isCanCeuMel()) key = "02";
 //		if(invoice.isSurcharge()) key = "51";
 		
 		clave.setClaveRegimenIvaOpTrascendencia(key);
@@ -408,7 +416,8 @@ public class Invoice2tbai {
 		} else {
 			SujetaType sujeta = new SujetaType();
 		
-			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() || invoice.isExtracommunity();
+			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() 
+					|| invoice.isExtracommunity() || invoice.isCanCeuMel();
 			
 			NoExentaType noExenta = new NoExentaType();
 			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
@@ -458,7 +467,7 @@ public class Invoice2tbai {
 				
 				if(invoice.isIntracommunity())
 					detalleExenta.setCausaExencion(CausaExencionType.E_5);
-				if(invoice.isExtracommunity())
+				if(invoice.isExtracommunity() || invoice.isCanCeuMel())
 					detalleExenta.setCausaExencion(CausaExencionType.E_2);
 				exenta.getDetalleExenta().add(detalleExenta);
 			});

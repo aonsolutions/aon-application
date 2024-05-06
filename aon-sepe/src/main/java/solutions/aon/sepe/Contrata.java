@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.time.temporal.ChronoUnit;
@@ -24,7 +26,12 @@ import org.htmlunit.CollectingAlertHandler;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
+import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
+import org.htmlunit.WebResponse;
+import org.htmlunit.WebWindowEvent;
+import org.htmlunit.WebWindowListener;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlCheckBoxInput;
@@ -41,6 +48,8 @@ import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
+import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.util.WebConnectionWrapper;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Contract;
@@ -425,6 +434,7 @@ public class Contrata {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setPopupBlockerEnabled(false);
 
 			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
 			webClient.setAlertHandler(alertHandler);
@@ -823,7 +833,7 @@ public class Contrata {
 			
 			webClient.waitForBackgroundJavaScript(5000);
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
-			
+
 			// For contract 502 check if duration equals or less than 90 days
 			try {
 				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
@@ -843,6 +853,8 @@ public class Contrata {
 			} catch (Exception e) {}
 			
 			// For contract 402 check if has writen contract
+			
+			
 			try {
 				if(contract.equals("402")) {
 					webClient.waitForBackgroundJavaScript(5000);
@@ -851,6 +863,8 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					setOccupation(cto, form);
 					
+					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
+
 					webClient.waitForBackgroundJavaScript(5000);
 					htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=aceptar]")).click();
 				}

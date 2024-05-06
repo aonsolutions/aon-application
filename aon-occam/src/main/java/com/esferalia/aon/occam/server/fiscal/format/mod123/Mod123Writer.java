@@ -26,12 +26,15 @@ public class Mod123Writer {
 
 	
 	private enum Writers {
-		 AEAT_2019		(mod123 -> (mod123.isAEAT() && mod123.getYear() >= 2019) 	, Mod123WriterAEAT2019::new)
-		,AEAT_2016		(mod123 -> (mod123.isAEAT() && mod123.getYear() >= 2016 && mod123.getYear() < 2019)
-				 																	, Mod123WriterAEAT2016::new)
-		,BIZKAIA_2016	(mod123 -> (mod123.isBizkaia() && mod123.getYear() >= 2016) , Mod123WriterBIZKAIA2016::new)
-		,ARABA_2016		(mod123 -> (mod123.isAraba() && mod123.getYear() >= 2016 )	, Mod123WriterARABA2016::new)
-		,GIPUZKOA_2016	(mod123 -> (mod123.isGipuzkoa() && mod123.getYear() >= 2016), Mod123WriterGIPUZKOA2016::new)
+		 AEAT_2024		(mod123 -> (mod123.isAEAT() && mod123.getYear() >= 2024), Mod123WriterAEAT2024::new)
+		,AEAT_2019		(mod123 -> (mod123.isAEAT() && mod123.getYear() >= 2019 && mod123.getYear() <= 2023), Mod123WriterAEAT2019::new)
+		,AEAT_2016		(mod123 -> (mod123.isAEAT() && mod123.getYear() >= 2016 && mod123.getYear() < 2019 ), Mod123WriterAEAT2016::new)
+		,BIZKAIA_2024	(mod123 -> (mod123.isBizkaia() && mod123.getYear() >= 2024), Mod123WriterBIZKAIA2024::new)
+		,BIZKAIA_2016	(mod123 -> (mod123.isBizkaia() && mod123.getYear() >= 2016 && mod123.getYear() <= 2023), Mod123WriterBIZKAIA2016::new)
+		,ARABA_2024		(mod123 -> (mod123.isAraba() && mod123.getYear() >= 2024 ), Mod123WriterARABA2024::new)
+		,ARABA_2016		(mod123 -> (mod123.isAraba() && mod123.getYear() >= 2016 && mod123.getYear() <= 2023), Mod123WriterARABA2016::new)
+		,GIPUZKOA_2024	(mod123 -> (mod123.isGipuzkoa() && mod123.getYear() >= 2024), Mod123WriterGIPUZKOA2024::new)
+		,GIPUZKOA_2016	(mod123 -> (mod123.isGipuzkoa() && mod123.getYear() >= 2016 && mod123.getYear() <= 2023), Mod123WriterGIPUZKOA2016::new)
 		,NAVARRA_2016	(mod123 -> (mod123.isNavarra() && mod123.getYear() >= 2016), Mod123WriterNAVARRA2016::new)
 		;
 		private IModelAccepter accepter;

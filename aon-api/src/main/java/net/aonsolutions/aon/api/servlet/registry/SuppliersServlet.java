@@ -27,6 +27,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 	
 	public static final String SUPPLIERS = "/";
 	public static final String SUPPLIER = "/:id";
+	public static final String SUPPLIER_TRANSACTION = "/:id/transaction";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -51,6 +52,7 @@ public class SuppliersServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(SUPPLIERS, SuppliersServlet::getSuppliers)
 				.addRoute(SUPPLIER, SuppliersServlet::getSupplier)
+				.addRoute(SUPPLIER_TRANSACTION, SuppliersServlet::getSupplierTransaction)
 				.apply();
 			
 			response(req, resp, object);
@@ -85,6 +87,21 @@ public class SuppliersServlet extends AonApiHttpServlet {
 		JSONObject object = SupplierJSON.toJSON(supplier);
 		
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), id, null);
+	}
+	
+	private static JSONObject getSupplierTransaction(AonApiData api) {
+		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
+				? api.getData().optInt(IJsonNames.REGISTRY)
+				: api.getData().optInt(IJsonNames.ID);
+		
+		Supplier supplier = AON.getSupplier(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id))
+				.orElse(new Supplier());
+
+		JSONObject object = new JSONObject();
+		if(supplier != null && !supplier.isEmpty() && supplier.getTransaction() != null) {
+			object.put(IJsonNames.TRANSACTION, supplier.getTransaction().getTediName());
+		}
+		return object;
 	}
 	
 	private static JSONArray getSuppliers(AonApiData api) {

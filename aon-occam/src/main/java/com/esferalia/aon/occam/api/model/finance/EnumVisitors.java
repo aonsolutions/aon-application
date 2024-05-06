@@ -4,7 +4,15 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 
 public class EnumVisitors {
 
+	public interface IInvoiceTypeVisitor<T> {
+		T visitPurchase(Invoice invoice);
+		T visitSales(Invoice invoice);
+		T visitExpenses(Invoice invoice);
+		T visitUndeductible(Invoice invoice);
+	}
+
 	public static interface IAccountEntryUpdateVisitor {
+		IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper);
 		IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper);

@@ -129,7 +129,7 @@ export const DELETED_DATA = "The data has been deleted successfully";
 export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
 export const DEUTSCH = 'Deuthsch';
-export const DOCUMENT = 'Document';
+export const DOCUMENT = 'Dokument';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
 export const DOMAIN_SEARCH = 'Domänensuche';
@@ -173,6 +173,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Finden Sie verknüpfte Domains";
 export const FOOTER = 'Footer';
+export const FROM = 'From';
 
 // ----- G
 
@@ -260,12 +261,18 @@ export const MY_USER = 'My User';
 // ----- N
 
 export const NAME = 'Name';
-export const NEW = 'New';
-export const NEW_COMPANY = 'New Company';
-export const NEW_EXPENSE = 'New Expense';
-export const NEW_PRODUCT = 'New Product';
-export const NEW_REQUEST = 'New Request';
-export const NEW_WAREHOUSE = 'New Warehouse';
+export const NEW = 'Neu';
+export const NEW_COMPANY = 'Neue Company';
+export const NEW_DOCUMENT = 'Neues Dokument';
+export const NEW_EMPLOYEE = 'Neuer Angestellter';
+export const NEW_EXPENSE = 'Neue Expense';
+export const NEW_INVOICE = 'Neue Rechnung';
+export const NEW_ISSUED_INVOICE = 'Neue Rechnung Ausgestellt';
+export const NEW_PRODUCT = 'Neue Product';
+export const NEW_RECEIVED_INVOICE = 'Neue Rechnung Erhalten';
+export const NEW_REQUEST = 'Neue Request';
+export const NEW_TICKET = 'Neue Ticket';
+export const NEW_WAREHOUSE = 'Neue Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
 export const NOT_LINKED = 'Nicht verbunden';
@@ -300,10 +307,12 @@ export const PAYMETHOD = 'Payment Method';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
 export const PAYSHEETS = 'Paysheets';
-export const PENDING = 'Pending';
-export const PENDING_DOCUMENTS = 'Pending Documents';
-export const PENDING_INVOICES = 'Pending Invoices';
-export const PENDINGS = 'Pending';
+export const PENDING = 'Ausstehend';
+export const PENDING_DOCUMENTS = 'Ausstehende Dokumente';
+export const PENDING_INVOICES = 'Ausstehende Rechnungen';
+export const PENDING_REVIEW = 'Ausstehende Bewertung';
+export const PENDING_TASKS = 'Ausstehende Aufgaben';
+export const PENDINGS = 'Ausstehende';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
 export const POSTAL_CODE = 'Postal Code';
@@ -355,6 +364,7 @@ export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Rezension';
 
 // ----- S
 
@@ -407,6 +417,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Time Control';
 export const TITLE = 'Títle';
 export const TITULAR_DATA = 'Titular Data';
+export const TO = 'To';
 export const TO_TRASH = 'Send to Trash';
 export const TODAY = 'Today';
 export const TOMORROW = 'Tomorrow';
@@ -425,8 +436,9 @@ export const UNLINK_DOMAIN_QUESTION = "Möchten Sie die Verknüpfung dieses Clie
 export const UNLINK_CLIENT = "Verknüpfung mit dem Client aufheben";
 export const UNLINKED = "Nicht verknüpft";
 export const UPDATED_CONTRACT = "The contract has been modified successfully";
-export const UPLOAD = 'Upload';
-export const UPLOAD_FILE = 'Upload File';
+export const UPLOAD = 'Hochladen';
+export const UPLOAD_FILE = 'Datei hochladen';
+export const UPLOAD_INVOICE = 'Rechnung Hochladen';
 export const USER = 'Nutzername';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';

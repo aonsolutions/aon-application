@@ -248,12 +248,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		AccountEntryModuleOptions options = new AccountEntryModuleOptions();
-		options.setParentWidget(root);
-		options.setDomainName(getCurrentDomainName());
-		options.setDomain(getCurrentDomain());
-		options.setUser(getCurrentUser());
-		this.onModuleLoad( options );
+		this.onModuleLoad( 
+			new AccountEntryModuleOptions()
+				.setParentWidget(root)
+				.setDomainName(getCurrentDomainName())
+				.setDomain(getCurrentDomain())
+				.setUser(getCurrentUser()) 
+		);
 	}
 
 	public void onModuleLoad(AccountEntryModuleOptions options) {
@@ -1312,7 +1313,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		final AonTextBox concept = new AonTextBox();
 		concept.setVisibleLength(25);
-		concept.setMaxLength(32);
+		concept.setMaxLength(64);
 		concept.setEnabled(false);
 		concept.setValue("Mantener original");
 		
@@ -1672,6 +1673,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			updatePanel.addCell(descLabel,AON.CSS.aonFlexGrow1());
 
 			IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+
+				@Override
+				public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
+					updatePanel.addCell(new InlineLabel());
+					paintToggleButton( false );
+					return wrapper;
+				}
 
 				@Override
 				public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {

@@ -1837,10 +1837,10 @@ public class BookingCustomerPanel extends MainEntryPoint {
 			
 			@Override
 			protected void onCreate(Fee fee) {
-				SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+				SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
 					
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(Fee customerFee) {
 						AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 						resetFeeTable();
 						enableMoreData();
@@ -1858,6 +1858,9 @@ public class BookingCustomerPanel extends MainEntryPoint {
 
 			@Override
 			protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+			@Override
+			protected void onCreate(Fee fee, Integer ritem) {}
 			
 		};
 	}

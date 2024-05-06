@@ -46,8 +46,10 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AmortizationTypeValidation;
@@ -109,6 +111,12 @@ public class ACCOUNTING {
 	public static String getAccountNextCode(String domainName, int domain, String login, String prefix) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)) {
 			return getAccounting().getAccountNextCode(ctx, prefix);
+		}
+	}
+	
+	public static List<Account> getSuggestedAccounts(Domain domain, User user, Integer registry, InvoiceType type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+			return getAccounting().getSuggestedAccounts(ctx, registry, type);
 		}
 	}
 
@@ -366,15 +374,14 @@ public class ACCOUNTING {
 	}
 
 
-	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
-			AccountingRegistry registry,Integer activity, Date issueDate) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry,Integer activity, Date issueDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().initializeInvoice(ctx, registry, activity, issueDate);
 		}
 	}
 	
-	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().initializeInvoice(ctx, registry, ai, preserveData);
 		}
 	}
@@ -405,9 +412,8 @@ public class ACCOUNTING {
 		}
 	}
 
-	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user,
-			String query) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(Occam occam, String query) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getPendingImportAccountingInvoices(ctx, query);
 		}
 	}

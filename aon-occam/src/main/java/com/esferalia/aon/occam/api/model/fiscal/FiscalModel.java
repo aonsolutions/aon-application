@@ -423,6 +423,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public double getAmount(IFiscalModelKey key) {
 		return getAmount(key.getValue());
 	}
+	public int getAmountAsInt(IFiscalModelKey key) {
+		return (int) getAmount(key.getValue());
+	}
 	public boolean getCheck(IFiscalModelKey key) {
 		return getAmount(key.getValue()) == 1;
 	}

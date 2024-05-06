@@ -33,6 +33,8 @@ public final class OCRNames {
 	public static final String CODE = "code";
 	public static final String COMMENTS = "comments";
 	public static final String COMPANY = "company";
+	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
+	public static final String COMPANY_ACTS_LIKE2 = "data.companyActsLike.value";
 	public static final String CONFIDENCE = "confidence";
 	public static final String CONTRACT_REF = "contractRef";
 	public static final String COORDINATES = "coordinates";

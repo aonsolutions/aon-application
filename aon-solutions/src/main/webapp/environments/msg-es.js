@@ -131,6 +131,7 @@ export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DESCRIPTION = 'Descripción';
 export const DETAILED = 'Detallado';
 export const DEUTSCH = 'Alemán';
+export const DISCARDED = 'Descartadas';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
@@ -176,6 +177,7 @@ export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
+export const FROM = 'Desde';
 
 // ----- G
 
@@ -196,6 +198,7 @@ export const HIRING = 'Contratación';
 export const HIRING_DATA = "Datos de contratación";
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
+export const HOME = "Inicio";
 export const HOURS = "Horas";
 export const HISTORIC = "Historial";
 
@@ -265,9 +268,15 @@ export const MY_USER = 'Mi Usuario';
 export const NAME = 'Nombre';
 export const NEW = 'Nuevo';
 export const NEW_COMPANY = 'Nueva Empresa';
+export const NEW_DOCUMENT = 'Nuevo Documento';
+export const NEW_EMPLOYEE = 'Nuevo Empleado';
 export const NEW_EXPENSE = 'Nuevo Gasto';
+export const NEW_INVOICE = 'Nueva Factura';
+export const NEW_ISSUED_INVOICE = 'Nueva Factura Emitida';
 export const NEW_PRODUCT = 'Nuevo Producto';
+export const NEW_RECEIVED_INVOICE = 'Nueva Factura Recibida';
 export const NEW_REQUEST = 'Nueva Solicitud';
+export const NEW_TICKET = 'Nuevo Ticket';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
@@ -282,6 +291,7 @@ export const NUMBER_OF_USERS = 'Número de usuarios';
 
 // ----- O
 
+export const OCR = 'OCR';
 export const OBSERVATION = 'Observación';
 export const OFFICE = 'Despacho';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Solo dominios sin cliente vinculado";
@@ -306,6 +316,8 @@ export const PAYSHEETS = 'Nóminas';
 export const PENDING = 'Pendiente';
 export const PENDING_DOCUMENTS = 'Documentos Pendientes';
 export const PENDING_INVOICES = 'Facturas Pendientes';
+export const PENDING_REVIEW = 'Pendiente de Revisión';
+export const PENDING_TASKS = 'Tareas Pendientes';
 export const PENDINGS = 'Pendiente';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
@@ -358,6 +370,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Facturas';
 export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Revisar';
 
 // ----- S
 
@@ -410,6 +423,7 @@ export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Control Horario'; //'Control de Horario';
 export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos del Titular';
+export const TO = 'Hasta';
 export const TO_TRASH = 'Enviar a la Papelera';
 export const TODAY = 'Hoy';
 export const TOMORROW = 'Mañana';
@@ -430,6 +444,7 @@ export const UNLINKED = "Sin vincular";
 export const UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
 export const UPLOAD = 'Subir';
 export const UPLOAD_FILE = 'Subir Fichero';
+export const UPLOAD_INVOICE = 'Subir Factura';
 export const USER = 'Usuario';
 export const USER_DATA = 'Datos del Usuario';
 export const USER_MANAGEMENT = 'Gestión de Usuarios';

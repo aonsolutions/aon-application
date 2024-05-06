@@ -73,21 +73,21 @@ public class FinanceDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.DOMAIN);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.SECURITY_LEVEL);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.REGISTRY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.DOMAIN);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.REGISTRY);}
 		@Override public Property<Date> getDueDateProperty() {return new FilterDAO.DatePropertyDAO(FINANCE.DUE_DATE);}
-		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.INVOICE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.STATUS);}
-		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(FINANCE.AMOUNT);}
-		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(FINANCE.CONCEPT);}
-		@Override public Property<Byte> getPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYMENT);}
+		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.INVOICE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.STATUS);}
+		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.AMOUNT);}
+		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.CONCEPT);}
+		@Override public Property<Byte> getPaymentProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAYMENT);}
 		@Override public Property<Date> getInvoiceDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.PAY_METHOD);}
-		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PAY_METHOD.TYPE);}
-		@Override public Property<Byte> getPayrollProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYROLL);}
+		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.REFERENCE_CODE);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAY_METHOD);}
+		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterDAO.PropertyDAO<>(PAY_METHOD.TYPE);}
+		@Override public Property<Byte> getPayrollProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAYROLL);}
 	}
 	
 	// ---------------------------------------------------------- ORDER
@@ -125,6 +125,7 @@ public class FinanceDAO {
 				   	.and(p.getIdProperty().eq(id)), 0, 1)
 		.findFirst().orElse(null);
 	}
+	
 	public static Stream<Finance> getFinanceStream(AONContext ctx,FinanceFilter filter) {
 		return getFinanceStream(ctx,filter, FinanceOrder.CREATION_DATE);
 	}

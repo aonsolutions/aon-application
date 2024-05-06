@@ -62,8 +62,8 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbala
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
-import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -1253,19 +1253,20 @@ public class AccountingUtilitiesDAO {
 		if ( invoice == null) {
 			result.addMessage("Factura no encontrada");
 		} else {
-			invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+			invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
 				@Override
-				public void visitSales(Invoice invoice) {
+				public Void visitSales(Invoice invoice) {
 					Customer customer = CustomerDAO.get(ctx, invoice.getRegistry());
 					if (customer != null) {
 						result.addMessage("Factura de venta vinculada a un cliente. Nada que hacer.");
 					} else {
 						result.addMessage("Factura de venta. No se puede modificar desde esta utilidad.");
 					}
+					return null;
 				}
 
 				@Override
-				public void visitPurchase(Invoice invoice) {
+				public Void visitPurchase(Invoice invoice) {
 					Supplier supplier = SupplierDAO.get(ctx, invoice.getRegistry());
 					if (supplier != null) {
 						result.addMessage("Factura de compra vinculada a un proveedor. Nada que hacer.");
@@ -1302,10 +1303,11 @@ public class AccountingUtilitiesDAO {
 								;
 						}
  					}
+					return null;
 				}
 				
 				@Override
-				public void visitExpenses(Invoice invoice) {
+				public Void visitExpenses(Invoice invoice) {
 					Creditor creditor = CreditorDAO.get(ctx, invoice.getRegistry());
 					if (creditor != null) {
 						result.addMessage("Factura de gastos vinculada a un acreedor. Nada que hacer.");			
@@ -1342,10 +1344,12 @@ public class AccountingUtilitiesDAO {
 							;
 						}
 					}
+					return null;
 				}
 				@Override
-				public void visitUndeductible(Invoice invoice) {
+				public Void visitUndeductible(Invoice invoice) {
 					visitExpenses(invoice);
+					return null;
 				}
 			});
 		}

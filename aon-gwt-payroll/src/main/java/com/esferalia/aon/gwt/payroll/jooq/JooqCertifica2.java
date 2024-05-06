@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -690,47 +691,52 @@ public class JooqCertifica2 {
 	}
 
 	private static Double checkCGCDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
-		SalaryRecord delaySalary = dslContext.selectFrom(SALARY)
+		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
 			.where(SALARY.TYPE.eq((byte)3))
 			.and(SALARY.CONTRACT.eq(contractId))
 			.and(SALARY.START_DATE.le(salaryStartDate))
 			.and(SALARY.END_DATE.ge(salaryStartDate))
-			.fetchOne();
+			.fetch();
 		
-		if(delaySalary == null) return 0.00;
+		if(delaySalaries.isEmpty()) return 0.00;
 		
-		SalaryDataRecord delaySalaryData = dslContext.selectFrom(SALARY_DATA)
-			.where(SALARY_DATA.SALARY.eq(delaySalary.getId()))
+		Result<SalaryDataRecord> delaySalaryDatas = dslContext.selectFrom(SALARY_DATA)
+			.where(SALARY_DATA.SALARY.in(delaySalaries.stream().map(delaySalary -> delaySalary.getId()).collect(Collectors.toList())))
 			.and(SALARY_DATA.NAME.eq("BASE_CGC"))
 			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
 			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
-			.fetchOne();
+			.fetch();
 		
-		if(delaySalaryData == null) return 0.00;
+		if(delaySalaryDatas.isEmpty()) return 0.00;
 		
-		return Double.parseDouble(delaySalaryData.getExpression());
+		double cgcDelaySum = delaySalaryDatas.stream().mapToDouble(delaySalaryData -> Double.parseDouble(delaySalaryData.getExpression())).sum();
+		
+		return cgcDelaySum;
 	}
 
 	private static Double checkCGPDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
-		SalaryRecord delaySalary = dslContext.selectFrom(SALARY)
-				.where(SALARY.TYPE.eq((byte)3))
-				.and(SALARY.CONTRACT.eq(contractId))
-				.and(SALARY.START_DATE.le(salaryStartDate))
-				.and(SALARY.END_DATE.ge(salaryStartDate))
-				.fetchOne();
-			
-		if(delaySalary == null) return 0.00;
+		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
+			.where(SALARY.TYPE.eq((byte)3))
+			.and(SALARY.CONTRACT.eq(contractId))
+			.and(SALARY.START_DATE.le(salaryStartDate))
+			.and(SALARY.END_DATE.ge(salaryStartDate))
+			.fetch();
 		
-		SalaryDataRecord delaySalaryData = dslContext.selectFrom(SALARY_DATA)
-			.where(SALARY_DATA.SALARY.eq(delaySalary.getId()))
+		if(delaySalaries.isEmpty()) return 0.00;
+		
+		Result<SalaryDataRecord> delaySalaryDatas = dslContext.selectFrom(SALARY_DATA)
+			.where(SALARY_DATA.SALARY.in(delaySalaries.stream().map(delaySalary -> delaySalary.getId()).collect(Collectors.toList())))
 			.and(SALARY_DATA.NAME.eq("BASE_CGP"))
 			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
 			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
-			.fetchOne();
+			.fetch();
 		
-		if(delaySalaryData == null) return 0.00;
+		if(delaySalaryDatas.isEmpty()) return 0.00;
 		
-		return Double.parseDouble(delaySalaryData.getExpression());
+		double cgcDelaySum = delaySalaryDatas.stream().mapToDouble(delaySalaryData -> Double.parseDouble(delaySalaryData.getExpression())).sum();
+		
+		return cgcDelaySum;
+		
 	}
 
 	private static boolean checkQuoteData(List<Map<String, String>> quoteDataList, Map<String, String> quoteData) {
