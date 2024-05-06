@@ -192,14 +192,13 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	}
 	
 	private void itNoExistToAon(HorizontalPanel horizontalPanel, ItNotExist status) {
-		String confirmOrder = status.getConfirmOrder().isPresent() ? "#"+status.getConfirmOrder().get() : "";
 		String reason = status.getType()!=null ? "por "+status.getType().getName(): "";
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
 				+status.getName()
-				+" parte de "+getPartStr(status.getPart())+" "+confirmOrder+" "+reason+" "
-				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" it "+ reason 
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getStartDate()) 
 				+" ) no encontrada en aon Solutions."
 			   +" Pulse"
 			)
@@ -233,14 +232,13 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	
 	private void itNoExistToSS(HorizontalPanel horizontalPanel, ItNotExist status) {
-		String confirmOrder = status.getConfirmOrder().isPresent() ? " #"+status.getConfirmOrder().get() : "";
 		String reason = status.getType()!=null ? "por "+status.getType().getName(): "";
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
 				+status.getName()
-				+" parte de "+getPartStr(status.getPart())+" "+confirmOrder+" "+reason+" "
-				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" it " + reason
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getStartDate()) 
 				+" ) no encontrada en SISTEMA RED."
 			   +" Pulse"
 			)
@@ -374,7 +372,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		horizontalPanel.add(
 		new Label(
 			"(" + notFoundItem.getChildCount() + ")"
-			+ " PARTES NO ENCONTRADAS."
+			+ " IT NO ENCONTRADAS."
 //			+" PULSE"
 			)
 		);

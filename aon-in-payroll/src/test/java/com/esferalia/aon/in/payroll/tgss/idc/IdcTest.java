@@ -6314,6 +6314,117 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcXXXIV() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIV.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("04-04-2024");
+				Date dateTo = simpleDateFormat.parse("17-04-2024");
+				public void onEmployeeIT(String suspensionType, Date from, Date to) {
+					assertEquals("ACCIDENTE DE TRABAJO", suspensionType);
+					assertEquals(dateFrom, from);
+					assertEquals(dateTo, to);
+				}
+				
+			});
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testIdcXXV() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXV.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("09-10-2022");
+				Date dateTo = simpleDateFormat.parse("28-01-2023");
+				public void onEmployeeIT(String suspensionType, Date from, Date to) {
+					assertEquals("MATERNIDAD", suspensionType);
+					assertEquals(dateFrom, from);
+					assertEquals(dateTo, to);
+				}
+				
+			});
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testIdcX() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcX.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date firstDateFrom = simpleDateFormat.parse("25-08-2020");
+				Date firstDateTo = simpleDateFormat.parse("21-10-2020");
+				Date secondDateFrom = simpleDateFormat.parse("24-08-2020");
+				Date secondDateTo = simpleDateFormat.parse("24-08-2020");
+				Date thirdDateFrom = simpleDateFormat.parse("20-05-2021");
+				Date thirdDateTo = simpleDateFormat.parse("23-05-2021");
+				
+				public void onEmployeeIT(String suspensionType, Date from, Date to) {
+					
+					if ("INCAPACIDAD TEMPORAL".equals(suspensionType)) {
+						assertEquals(firstDateFrom, from);
+						assertEquals(firstDateTo, to);
+					} else if ("ACCIDENTE DE TRABAJO".equals(suspensionType)) {
+	                    assertEquals(secondDateFrom, from);
+	                    assertEquals(secondDateTo, to);
+	                } else if ("ENFERMEDAD COMUN".equals(suspensionType)) {
+	                     assertEquals(thirdDateFrom, from);
+	                     assertEquals(thirdDateTo, to);
+	                }
+				
+				}
+				
+			});
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testIdcVII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcVII.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("20-05-2021");
+				public void onEmployeeIT(String suspensionType, Date from, Date to) {
+					assertEquals("RIESGO DURANTE EMB", suspensionType);
+					assertEquals(dateFrom, from);
+				}
+				
+			});
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testIdcXXXIII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIII.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				public void onEmployeeIT(String suspensionType, Date from, Date to) {
+					
+				}
+				
+			});
+		} 
+	}
+	
+	@Test
+	public void testIdcErroneo() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcErroneo.pdf")) {
+			IdcParser.parse(is, new IdcParserListener() {
+				
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}

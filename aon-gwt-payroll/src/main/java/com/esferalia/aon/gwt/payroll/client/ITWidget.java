@@ -836,7 +836,7 @@ public abstract class ITWidget extends ResizeComposite {
 		printTimelineChart();
 
 		// By now this doesn't work
-		//checkStatusITs();
+		checkStatusITs();
 	}
 	
 	private void loadITsList() {
@@ -1791,7 +1791,7 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFileUpload.click();
 	}
 	
-	private void __checkStatusITs() {
+	private void checkStatusITs() {
 		showProgressPanel();
 		checkStatus(status -> {
 			SistemaREDITResults results = new SistemaREDITResults() {

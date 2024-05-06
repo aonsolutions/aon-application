@@ -111,10 +111,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return this;
 		}
 		
-		public Date getDate() {
-			return getEmployeeITPart().getDate();
-		}
-		
 		public Date getStartDate() {
 			return getEmployeeIT().getStartDate();
 		}
@@ -136,12 +132,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return getEmployeeIT().getType();
 		}
 		
-		public Byte getPart() {
-			return getEmployeeITPart().getType().value();
-		}
-		
 		public Optional<Integer> getIdPart() {
-			return Optional.ofNullable(getEmployeeITPart().getId());
+			return Optional.ofNullable(getEmployeeIT().getId());
 		}
 		
 		public EmployeeIT getEmployeeIT() {
@@ -150,10 +142,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 		
 		public EmployeeITPart getEmployeeITPart() {
 			return employeeITPart;
-		}
-		
-		public Optional<Byte> getConfirmOrder() {
-			return getEmployeeITPart().getConfirmOrder();
 		}
 	
 		@Override
@@ -294,7 +282,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
-				System.out.println("ItNotExist "+ itNotExist.getName() +" "+ itNotExist.getNaf() + "[" + itNotExist.getDate() + "]");
+				System.out.println("ItNotExist "+ itNotExist.getName() +" "+ itNotExist.getNaf() + "[" + itNotExist.getStartDate() + "]");
 			}
 
 			@Override public void onFinish() {}

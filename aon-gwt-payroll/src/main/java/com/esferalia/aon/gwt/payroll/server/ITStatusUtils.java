@@ -184,89 +184,32 @@ public class ITStatusUtils {
 	/*
 	 * FIRST LIST NOT EXIST IN SECOND LIST
 	 */
-	private static AndEmployeeITStatus compareEmployeesITs(List<EmployeeIT> firstList, List<EmployeeIT>secondList, 
+	private static AndEmployeeITStatus compareEmployeesITs(List<EmployeeIT> oneList, List<EmployeeIT>anotherList, 
 		AndEmployeeITStatus employeeITStatus, Domain domain) {
 		List<EmployeeIT> itsUpdate = new ArrayList<>();
 
-		for (EmployeeIT second : secondList) {
+		for (EmployeeIT anotherIt : anotherList) {
 			AtomicBoolean change = new AtomicBoolean(false);
-			Optional<String> name = second.getName();
-			if(!name.isEmpty() && second.getStartDate()!=null) {
-				Optional<EmployeeITPart> ssITBaja = second.getItBaja();
-				List<EmployeeITPart> ssITConfirmations = second.getItConfirmations();
-				Optional<EmployeeITPart> ssITAlta = second.getItAlta();
+			Optional<String> name = anotherIt.getName();
+			if(!name.isEmpty() && anotherIt.getStartDate()!=null) {
 
-				List<EmployeeIT> first = firstList.stream().filter(e->e.getNss().equals(second.getNss())).collect(Collectors.toList());
-				if(!ssITBaja.isEmpty()) {
-					Optional<EmployeeIT> exist = first.stream()
-					.filter(e-> !e.getItBaja().isEmpty() && e.getItBaja().get().getDate().equals(ssITBaja.get().getDate()))
-					.findFirst();
-					if(!exist.isEmpty()) {					
-						second.setType(exist.get().getType());
-						if(ssITBaja.get().getId()!=null && !ssITBaja.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
-							ssITBaja.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
-							change.getAndSet(true);
-						}
-					} else {
-						logger.info("BAJA NSS:"+second.getNss()+ " type: "+second.getType() +" date:"+ssITBaja.get().getDate()+" toAon:"+ssITBaja.get().getId());
-						employeeITStatus.and( 
-							new EnterpriseITStatus.ItNotExist()
-							.setEmployeeIT(second)
-							.setEmployeeITPart(ssITBaja.get())
-						);
-					}
-				}
-
-				if(!ssITAlta.isEmpty()) {
-					first.stream().map(EmployeeIT::getItAlta)
-					.filter(Optional::isPresent)
-					.map(Optional::get)
-					.filter(e->e.getDate().equals(ssITAlta.get().getDate()))
-					.findFirst()
-					.ifPresentOrElse(e->{
-						if(ssITAlta.get().getId()!=null && !ssITAlta.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
-							ssITAlta.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
-							change.getAndSet(true);
-						}
-					}, ()->{
-						logger.info("ALTA NSS:"+second.getNss()+  " type: "+second.getType() +" date:"+ssITAlta.get().getDate()+" toAon:"+ssITAlta.get().getId());
-						employeeITStatus.and( 
-							new EnterpriseITStatus.ItNotExist()
-							.setEmployeeIT(second)
-							.setEmployeeITPart(ssITAlta.get())
-						);
-					});
+				List<EmployeeIT> oneIt = oneList.stream()
+						.filter(e -> e.getNss().equals(anotherIt.getNss()))
+						.peek(e -> System.out.println(e.getNss() + ":" + e.getStartDate() + ", "
+								+ anotherIt.getStartDate() + " = " + e.getStartDate().equals(anotherIt.getStartDate())))
+						.filter(e -> e.getStartDate().equals(anotherIt.getStartDate()))
+						.collect(Collectors.toList());
+				logger.info("BAJA NSS:"+anotherIt.getNss()+ " type: "+anotherIt.getType() +" date:"+anotherIt.getStartDate()+" toAon:"+anotherIt.getId());
+				if ( oneIt.isEmpty() ) {
+					employeeITStatus.and(new EnterpriseITStatus.ItNotExist().setEmployeeIT(anotherIt)
+					// .setEmployeeITPart(null);
+					);
 				}
 				
-				if(!ssITConfirmations.isEmpty()) {
-					for (EmployeeITPart ssITConfirmation:ssITConfirmations) {
-						first.stream()
-						.map(EmployeeIT::getItConfirmations)
-						.flatMap(Collection::stream)
-						.filter(e-> !e.getConfirmOrder().isEmpty() && !ssITConfirmation.getConfirmOrder().isEmpty() ? 
-							(
-								e.getConfirmOrder().get().equals( ssITConfirmation.getConfirmOrder().get()) && 
-								e.getDate().equals(ssITConfirmation.getDate())
-							) : 
-							e.getDate().equals(ssITConfirmation.getDate())
-						)
-						.findFirst().ifPresentOrElse(e->{
-							if(ssITConfirmation.getId()!=null && !ssITConfirmation.getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
-								ssITConfirmation.setStatus(ContractLeaveDetailStatus.PROCESSED);
-								change.getAndSet(true);
-							}
-						}, ()->{
-							employeeITStatus.and(
-								new EnterpriseITStatus.ItNotExist()
-								.setEmployeeIT(second)
-								.setEmployeeITPart(ssITConfirmation)
-							);
-						});
-					} // FOR CONFIRMATIONS
-				} //IF CONFIRMATION NOT EMPTY
+
 				
 				if(change.get())
-					itsUpdate.add(second);
+					itsUpdate.add(anotherIt);
 			} //IF NAME
 		}
 
