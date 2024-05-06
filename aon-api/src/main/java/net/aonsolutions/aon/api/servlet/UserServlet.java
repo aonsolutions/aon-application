@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.UserJSON;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -302,9 +301,9 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	
 	private JSONObject getDomainUser(AonApiData api) {
-		Integer userId = api.getData().opt("user") != null ? api.getData().optInt("user",0) : null;
+		Integer userId = api.getData().opt("user") != null ? api.getData().optInt("user") : null;
 		User user = new User();
-		if(userId != null && userId != 0 ) {
+		if(userId != null) {
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
 		} else {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
@@ -315,7 +314,6 @@ public class UserServlet extends AonApiHttpServlet {
 				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
 					f.getDomainProperty().eq(api.getDomain().getParentId())
 					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
-			
 		}
 		JSONObject json = new JSONObject();
 		json.put("id", user.getId());
@@ -324,7 +322,6 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("newAon", UserToolbar.AON_SOLUTIONS.equals(user.getToolbar()));
 		json.put("portal", user.isPortal());
 		json.put("shared", user.isShared());
-		json.put("registry", RegistryJSON.toJSON(user.getRegistry()));
 		
 		JSONArray scopes = new JSONArray();
 		AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), userId, null)

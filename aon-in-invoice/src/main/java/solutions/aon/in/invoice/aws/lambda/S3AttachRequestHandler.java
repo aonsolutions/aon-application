@@ -72,35 +72,9 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
 	return matcher.group(param);
     }
     
-    private static InputStream getAttachContent(MimeMultipart mimeMultipart, String attachId) throws MessagingException, IOException {
-    	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
-    		BodyPart part = mimeMultipart.getBodyPart(i);
-    		if ( part instanceof MimeBodyPart mimeBodyPart 
-    			    && Objects.equals(mimeBodyPart.getContentID(), "<"+attachId+">")) {
-    			    return mimeBodyPart.getInputStream();
-    		    }
-    		    if ( Objects.equals(part.getFileName(), attachId) ) { 
-    			return part.getInputStream();
-    		    }  		
-    	}
-    	
-    	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
-    		BodyPart part = mimeMultipart.getBodyPart(i);
-    		Object bodyContent = part.getContent();
-    		if ( bodyContent instanceof MimeMultipart ) {
-    			try {
-    				return getAttachContent((MimeMultipart) bodyContent, attachId);
-    			} catch (IOException e)  {
-    				System.out.println("Element not found");
-    			}
-    		}    		
-    	}
-    	throw new IOException();
-    }
     
     private static InputStream getAttachContent(MimeMessage mimeMessage, String attachId ) throws IOException, MessagingException {
 	MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-	
 	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
 	    BodyPart  part = mimeMultipart.getBodyPart(i);
 	    if ( part instanceof MimeBodyPart mimeBodyPart 
@@ -111,24 +85,11 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
 		return part.getInputStream();
 	    }
 	}
-	
-	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
-		BodyPart part = mimeMultipart.getBodyPart(i);
-		Object bodyContent = part.getContent();
-		if ( bodyContent instanceof MimeMultipart ) {
-			try {
-				return getAttachContent((MimeMultipart) bodyContent, attachId);
-			} catch ( IOException e)  {
-				System.out.println("Element not found");
-			}
-		}    		
-	}
-	
 	throw new IOException("");
     }
 
     public static void main(String[] args) throws IOException {
-	ByteArrayInputStream input = new ByteArrayInputStream("\"path\": \"/soporte/nuu8v13tdp0qcv5hk6v5vpea4j2nf0hknsdond81/ii_lfvb7niq1\"".getBytes());
+	ByteArrayInputStream input = new ByteArrayInputStream("\"path\": \"/facturas/p0ka88cor625i4s9ntrs1bu6aqrvjild29nftg01/f_kbhsa5rn0\"".getBytes());
 	new S3AttachRequestHandler().handleRequest(input, System.out, null);
     }
 
