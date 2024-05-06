@@ -258,26 +258,42 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		
 		table.setWidget(1,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
+		
+		HTMLPanel budgetPanel = new HTMLPanel("");
+		budgetPanel.addStyleName(AON.CSS.aonItemFlex());
+		budgetPanel.addStyleName(AON.CSS.aonWidthAll());
 		budget.setValue(marketingCampaign.getBudget());
 		addInputStyle(budget.getElement());
-		table.setWidget(1,1,budget);
+		budgetPanel.add(budget);
+		Label actionBudgets = new Label(" + " + AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		actionBudgets.addStyleName(AON.CSS.aonNowrap());
+		budgetPanel.add(actionBudgets);
+		table.setWidget(1,1,budgetPanel);
 		
 		table.setWidget(1,2,new InlineLabel("P. Acumulado"));
 		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
 		acumulateBudget.addStyleName(AON.CSS.aonTextRight());
-		acumulateBudget.setText(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		acumulateBudget.setText(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
 		table.setWidget(1,3,acumulateBudget);
 		
 		table.setWidget(2,0,new InlineLabel("Gastos"));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
+		
+		HTMLPanel expensePanel = new HTMLPanel("");
+		expensePanel.addStyleName(AON.CSS.aonItemFlex());
+		expensePanel.addStyleName(AON.CSS.aonWidthAll());
 		expense.setValue(marketingCampaign.getExpense());
 		addInputStyle(expense.getElement());
-		table.setWidget(2,1,expense);
+		expensePanel.add(expense);
+		Label actionExpenses = new Label(" + " + AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		actionExpenses.addStyleName(AON.CSS.aonNowrap());
+		expensePanel.add(actionExpenses);
+		table.setWidget(2,1,expensePanel);
 		
 		table.setWidget(2,2,new InlineLabel("G. Acumulados"));
 		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
 		acumulateExpense.addStyleName(AON.CSS.aonTextRight());
-		acumulateExpense.setText(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		acumulateExpense.setText(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
 		table.setWidget(2,3,acumulateExpense);
 		
 		workgroup = new ListBox();
