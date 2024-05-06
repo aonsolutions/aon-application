@@ -8,11 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.fasterxml.jackson.core.JsonEncoding;
 
 public class UserJSON {
 	
@@ -25,25 +22,7 @@ public class UserJSON {
 	}
 	
 	public static User fromJSON(JSONObject json) {
-		User user = new User();
-		user.setId(json.optInt(IJsonNames.ID));
-		user.setDomain(json.optInt(IJsonNames.DOMAIN));
-		//user.setType(json.getEnum(UserType.class, IJsonNames.TYPE));
-		user.setType(json.optEnum(UserType.class, IJsonNames.TYPE));
-		user.setName(json.optString(IJsonNames.NAME));
-		if(json.optBoolean(IJsonNames.PORTAL) != false) user.setType(UserType.PORTAL);
-		user.setShared(json.optBoolean(IJsonNames.SHARED));
-		user.setLogin(json.optString(IJsonNames.LOGIN));
-		user.setActive(json.optBoolean(IJsonNames.ACTIVE));
-		if(json.optJSONArray("taskHolders") != null) user.setTaskHolders(TaskHolderJSON.fromJSON(json.optJSONArray("taskHolders")));
-		else user.setTaskHolders(null);
-		user.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)));
-		
-		
-
-		
-		
-		return user;
+		return new User();
 	}
 	
 	public static JSONArray toJSON(List<User> list) {
@@ -72,7 +51,6 @@ public class UserJSON {
 			.put(IJsonNames.SHARED, user.isShared())
 			.put(IJsonNames.LOGIN, user.getLogin())
 			.put(IJsonNames.ACTIVE, user.isActive())
-			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()))
-			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(user.getRegistry()));
+			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()));
 	}
 }
