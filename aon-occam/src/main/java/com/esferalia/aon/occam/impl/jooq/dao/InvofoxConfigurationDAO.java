@@ -32,8 +32,11 @@ public class InvofoxConfigurationDAO {
 				invofoxConfiguration.setApiKey(r.getValue());
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_API_URL.toString())) {
 				invofoxConfiguration.setApiUrl(r.getValue());
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_AUTO_ACCEPT.toString())) {
+				invofoxConfiguration.setAutoAccept(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_AUTO_RECORD.toString())) {
+				invofoxConfiguration.setAutoRecord(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
 			}
-
 		});
 
 		return invofoxConfiguration;
@@ -42,9 +45,17 @@ public class InvofoxConfigurationDAO {
 	public static InvofoxConfiguration save(AONContext ctx, InvofoxConfiguration invofoxConfiguration) {
 		ctx.checkWrite();	
 		
-		AppParamDAO.insertApplicationParameter(ctx, 
+		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOFOX_TEST.toString(),
 				Boolean.toString(invofoxConfiguration.isTest()));
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_AUTO_ACCEPT.toString(),
+				Boolean.toString(invofoxConfiguration.isAutoAccept()));
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_AUTO_RECORD.toString(),
+				Boolean.toString(invofoxConfiguration.isAutoRecord()));
 		
 		return invofoxConfiguration;
 	}
