@@ -92,7 +92,7 @@ export class AonNewDesktop extends AonElement {
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 		cardButton.innerHTML = 'more_horiz';
 		cardButton.style.position = 'absolute';
-		cardButton.style.right = '10px';
+		cardButton.style.right = '5px';
 		cardButton.style.top = "5px";
 		cardButton.classList.add('aonAppMoreBtn');
 		cardButton.style.visibility = 'hidden';
@@ -152,27 +152,31 @@ export class AonNewDesktop extends AonElement {
 
 		window.addEventListener(EVENT.CLICK, function(e) {
 			if (cardButton.contains(e.target)) {
-				optionsDiv.style.position = 'fixed';
-				optionsDiv.style.zIndex = 8;
-				let position = cardButton.getBoundingClientRect();
-				if (position.left + 175 >= window.screen.width) {
-					optionsDiv.style.left = position.left - 150;
+				if (optionsDiv.style.display == 'block') {
+					optionsDiv.style.display = 'none';
 				} else {
-					optionsDiv.style.left = position.left + 15;
+					optionsDiv.style.position = 'fixed';
+					optionsDiv.style.zIndex = 8;
+					let position = cardButton.getBoundingClientRect();
+					if (position.left + 200 >= window.screen.width) {
+						optionsDiv.style.left = position.left - 150;
+					} else {
+						optionsDiv.style.left = position.left + 15;
+					}
+					if (position.top + 150 >= window.screen.height) {
+						optionsDiv.style.top = position.top - 100;
+					} else {
+						optionsDiv.style.top = position.top + 15;
+					}
+					optionsDiv.style.display = 'block';
+					optionsDiv.animate([
+						{transform: 'translateY(-10px)'},
+						{transform: 'translateY(0px)'}
+					], {
+						duration: 100,
+						fill: 'forwards'
+					});
 				}
-				if (position.top + 125 >= window.screen.height) {
-					optionsDiv.style.top = position.top - 100;
-				} else {
-					optionsDiv.style.top = position.top + 15;
-				}
-				optionsDiv.style.display = 'block';
-				optionsDiv.animate([
-					{transform: 'translateY(-10px)'},
-					{transform: 'translateY(0px)'}
-				], {
-					duration: 100,
-					fill: 'forwards'
-				});
 			} else {
 				optionsDiv.style.display = 'none';
 			}
@@ -259,7 +263,7 @@ export class AonNewDesktop extends AonElement {
 		optionsDiv.style.display = 'none';
 		optionsDiv.style.backgroundColor = 'white';
 		optionsDiv.style.padding = '5px';
-		optionsDiv.style.borderRadius = '10px';
+		optionsDiv.style.borderRadius = '5px';
 		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
 
 		let optionsList = this.createElement(TAG.UL);
@@ -310,27 +314,31 @@ export class AonNewDesktop extends AonElement {
 
 		window.addEventListener(EVENT.CLICK, function(e) {
 			if (cardButton.contains(e.target)) {
-				optionsDiv.style.position = 'fixed';
-				optionsDiv.style.zIndex = 8;
-				let position = cardButton.getBoundingClientRect();
-				if (position.left + 175 >= window.screen.width) {
-					optionsDiv.style.left = position.left - 150;
+				if (optionsDiv.style.display == 'block') {
+					optionsDiv.style.display = 'none';
 				} else {
-					optionsDiv.style.left = position.left + 15;
+					optionsDiv.style.position = 'fixed';
+					optionsDiv.style.zIndex = 8;
+					let position = cardButton.getBoundingClientRect();
+					if (position.left + 200 >= window.screen.width) {
+						optionsDiv.style.left = position.left - 150;
+					} else {
+						optionsDiv.style.left = position.left + 15;
+					}
+					if (position.top + 150 >= window.screen.height) {
+						optionsDiv.style.top = position.top - 100;
+					} else {
+						optionsDiv.style.top = position.top + 15;
+					}
+					optionsDiv.style.display = 'block';
+					optionsDiv.animate([
+						{transform: 'translateY(-10px)'},
+						{transform: 'translateY(0px)'}
+					], {
+						duration: 100,
+						fill: 'forwards'
+					});
 				}
-				if (position.top + 125 >= window.screen.height) {
-					optionsDiv.style.top = position.top - 100;
-				} else {
-					optionsDiv.style.top = position.top + 15;
-				}
-				optionsDiv.style.display = 'block';
-				optionsDiv.animate([
-					{transform: 'translateY(-10px)'},
-					{transform: 'translateY(0px)'}
-				], {
-					duration: 100,
-					fill: 'forwards'
-				});
 			} else {
 				optionsDiv.style.display = 'none';
 			}
