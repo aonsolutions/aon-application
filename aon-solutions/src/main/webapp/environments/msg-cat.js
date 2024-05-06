@@ -385,6 +385,7 @@ export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
 export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
+export const SIDE_MENI = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sessió';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sessió sense Contrasenya';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sessió amb Certificat';

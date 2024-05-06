@@ -50,7 +50,7 @@ export class AonConfig extends AonElement {
 		div.appendChild(rightPanelSwitchTopButton);
 
 		let span2= this.createSpan();
-		span2.innerHTML = "Menú lateral";
+		span2.innerHTML = MSG.SIDE_MENU;
 		span2.style.marginLeft = '10px';
 		span2.style.position = "relative";
 		span2.style.top = '0px';

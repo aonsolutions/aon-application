@@ -38,6 +38,9 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
+		if(LS.isNewTheme()){
+			
+		}
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		this.appendChild(gradiantHeader);
@@ -158,7 +161,6 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.backgroundColor = '#ffffff';
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
-		
 	}
 }
 window.customElements.define('aon-home', AonHome);
