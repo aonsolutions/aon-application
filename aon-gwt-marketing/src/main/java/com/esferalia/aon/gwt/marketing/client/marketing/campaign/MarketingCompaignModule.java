@@ -85,7 +85,18 @@ public class MarketingCompaignModule extends MainEntryPoint {
 
 			@Override
 			protected void onMarketingCampaignSelect(MarketingCampaign marketingCampaign) {
-				showSelectedMarketingCampaign(marketingCampaign);
+				COMMON_SERVICE.getMarketingCampaign(options.getDomainName(), options.getDomain(), options.getUser(), marketingCampaign.getId(), new AsyncCallback<MarketingCampaign>() {
+					
+					@Override
+					public void onSuccess(MarketingCampaign marketingCampaign) {
+						showSelectedMarketingCampaign(marketingCampaign);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error obteniendo campaña: " + caught.getMessage());
+					}
+				});
 			}
 		
 		};
