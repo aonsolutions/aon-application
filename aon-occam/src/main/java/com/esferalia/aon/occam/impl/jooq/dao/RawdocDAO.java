@@ -237,7 +237,7 @@ public class RawdocDAO {
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))
 			.execute();
-		if(rawdoc.getData() != null && rawdoc.getMimeType() != null) {
+		if(rawdoc != null && rawdoc.getData() != null && rawdoc.getMimeType() != null) {
 			updateFile(ctx, rawdoc);
 		}
 		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());

@@ -19,22 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
-import net.aonsolutions.db.up2date.doc.InvoiceDocCreate;
-import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod131Result;
-import net.aonsolutions.db.up2date.registry.AlterRitemEdiSalesCode;
-import net.aonsolutions.db.up2date.registry.RItemAddCustomerFeeColumn;
-import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
-import net.aonsolutions.db.up2date.security.UdpateDomainApp;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2024Update;
-import net.aonsolutions.db.up2date.tgss.Art1512024Update;
-import net.aonsolutions.db.up2date.tgss.BasesMin2024UpdateIV;
-import net.aonsolutions.db.up2date.tgss.FellowsBases2024Update;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2024Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2024Update;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2024Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2024Update;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionExpense;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTaskHolder;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionWorkgroup;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignExpense;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignTaskHolder;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignWorkgroup;
+import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 
 public class Up2Date {
 
@@ -446,10 +437,22 @@ public class Up2Date {
 		// FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
 		// RefreshMod131Result.REFRESH_MOD131_RESULT
     		
-    	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
-		InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
-        UdpateDomainApp.UPDATE_DOMAIN_APP,
-        AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE
+    	//AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
+		//InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+        //UdpateDomainApp.UPDATE_DOMAIN_APP,
+        //AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
+        //PPEUpdate.PPE_UPDATE,
+		//InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT
+		//AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
+		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
+
+		MEIFellows2024Remove.MEIFELLOWSREMOVE,
+        AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
+        AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
+        AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
+        AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
+        AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
+        AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER
 	};
 
     // ------------------------------------------------------------------------

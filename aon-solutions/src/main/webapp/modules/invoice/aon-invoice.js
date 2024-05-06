@@ -2,7 +2,8 @@ import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount, 
+	getInvofoxDocument} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -368,79 +369,83 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		invoiceToolbar.addButton('Options', 'more_vert', (e) => {
-			e.preventDefault();
-			let rect = e.target.getBoundingClientRect();
-		    let x = e.clientX - rect.left;
-			let y = e.clientY - rect.top;
-
-			const top  = rect.top + y;
-			const left = rect.left + x;
-
-			let d = document.getElementById(aonInvoice.OPTION_DIALOG);
-			let moreActions = [];
-			if(this.getInvoice().isInbox() ){
-				let remarks = ACTION.REMARKS;
-				remarks.permission = true;
-				remarks.backgroundColor = INVOICE.color;
-				remarks.fn = () => this.addInvoiceRemarks();
-				moreActions.push(remarks);
-			}
-
-			let comment = ACTION.COMMENT;
-			comment.permission = true;
-			comment.backgroundColor = INVOICE.color;
-			comment.fn = () => this.addInvoiceComment();
-			moreActions.push(comment);
-
-			let send = ACTION.SEND_INVOICE;
-			send.permission = true;
-			send.backgroundColor = INVOICE.color;
-			send.fn = () => this.sendInvoice();
-			moreActions.push(send);
-
-			if(!this.getInvoice().isRawdoc()){
-				let rectify = ACTION.RECTIFY_INVOICE;
-				rectify.permission = true;
-				rectify.backgroundColor = INVOICE.color;
-				rectify.fn = () => this.rectifyInvoice();
-				moreActions.push(rectify);
-			}
-
-			let duplicate = ACTION.DUPLICATE_INVOICE;
-			duplicate.permission = true;
-			duplicate.backgroundColor = INVOICE.color;
-			duplicate.fn = () => this.duplicateInvoice();
-			moreActions.push(duplicate);
-			if(this.getInvoice().isInbox()){
-				let changeType = ACTION.CHANGE_TYPE;
-				changeType.permission = true;
-				changeType.backgroundColor = INVOICE.color;
-				changeType.fn = () => this.changeType();
-				moreActions.push(changeType);
-			}
-			if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
-				let sign = ACTION.SIGN_INVOICE;
-				sign.permission = true;
-				sign.backgrounColor = INVOICE.color;
-				sign.fn = () => this.signInvoice();
-				moreActions.push(sign);
-				let face = ACTION.FACTURAE;
-				face.permission = true;
-				face.backgrounColor = INVOICE.color;
-				face.fn = () => this.facturae();
-				moreActions.push(face);
-			}
-			d.setMenuOptions(moreActions, top, left);
-			d.open();
-		});
+		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR, CONSTANT.DISCARDED )
+			&& !this.getInvoice().isDraft()){
+			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
+				e.preventDefault();
+				let rect = e.target.getBoundingClientRect();
+				let x = e.clientX - rect.left;
+				let y = e.clientY - rect.top;
+	
+				const top  = rect.top + y;
+				const left = rect.left + x;
+	
+				let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+				let moreActions = [];
+				if(this.getInvoice().isInbox() ){
+					let remarks = ACTION.REMARKS;
+					remarks.permission = true;
+					remarks.backgroundColor = INVOICE.color;
+					remarks.fn = () => this.addInvoiceRemarks();
+					moreActions.push(remarks);
+				}
+	
+				let comment = ACTION.COMMENT;
+				comment.permission = true;
+				comment.backgroundColor = INVOICE.color;
+				comment.fn = () => this.addInvoiceComment();
+				moreActions.push(comment);
+	
+				let send = ACTION.SEND_INVOICE;
+				send.permission = true;
+				send.backgroundColor = INVOICE.color;
+				send.fn = () => this.sendInvoice();
+				moreActions.push(send);
+	
+				if(!this.getInvoice().isRawdoc()){
+					let rectify = ACTION.RECTIFY_INVOICE;
+					rectify.permission = true;
+					rectify.backgroundColor = INVOICE.color;
+					rectify.fn = () => this.rectifyInvoice();
+					moreActions.push(rectify);
+				}
+	
+				let duplicate = ACTION.DUPLICATE_INVOICE;
+				duplicate.permission = true;
+				duplicate.backgroundColor = INVOICE.color;
+				duplicate.fn = () => this.duplicateInvoice();
+				moreActions.push(duplicate);
+				if(this.getInvoice().isInbox()){
+					let changeType = ACTION.CHANGE_TYPE;
+					changeType.permission = true;
+					changeType.backgroundColor = INVOICE.color;
+					changeType.fn = () => this.changeType();
+					moreActions.push(changeType);
+				}
+				if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
+					let sign = ACTION.SIGN_INVOICE;
+					sign.permission = true;
+					sign.backgrounColor = INVOICE.color;
+					sign.fn = () => this.signInvoice();
+					moreActions.push(sign);
+					let face = ACTION.FACTURAE;
+					face.permission = true;
+					face.backgrounColor = INVOICE.color;
+					face.fn = () => this.facturae();
+					moreActions.push(face);
+				}
+				d.setMenuOptions(moreActions, top, left);
+				d.open();
+			});
+		}
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REVIEW, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
-		if((this.isInvofoxInvoice() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
+		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
+		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
@@ -458,10 +463,18 @@ export class AonInvoice extends AonElement {
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
-		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION, CONSTANT.ERROR, CONSTANT.DISCARDED ) ) {
+		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION )) {
+			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.ERROR )) {
+			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
+			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
+
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
@@ -1293,23 +1306,23 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 3
 
 		// ----- CATEGORY
-
-		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-		category.id = this.CATEGORY;
-		category.title = MSG.CATEGORY;
-		category.autocomplete = true;
-		category.readonly = this.invoice.isReadonly();
-		category.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setCategory(category.value);
-			if(this.autosave) this.save();
-		});
-		table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
-		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-			category.options = JSON.stringify(accs);
-			category.value = this.invoice.getCategory();
-		});
-
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
+			category.id = this.CATEGORY;
+			category.title = MSG.CATEGORY;
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				this.invoice.setCategory(category.value);
+				if(this.autosave) this.save();
+			});
+			table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
+			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
+				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				category.options = JSON.stringify(accs);
+				category.value = this.invoice.getCategory();
+			});
+		}
 
 		getWorkplaces().then(r => {
 			if(!this.invoice.workplace && r.length > 0) {
@@ -1653,10 +1666,12 @@ export class AonInvoice extends AonElement {
 			type: this.invoice.type
 		};
 
-		getRegistrySuggestedAccount(data).then(r => {
-			this.invoice.setCategory(r.code);
-			this.getElement(this.CATEGORY).value = r.code;
-		});
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()){
+			getRegistrySuggestedAccount(data).then(r => {
+				this.invoice.setCategory(r.code);
+				this.getElement(this.CATEGORY).value = r.code;
+			});
+		}
 
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
@@ -2157,29 +2172,30 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
-
-		let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-		category.id = this.DETAIL_CATEGORY + i;
-		category.title = MSG.CATEGORY;
-		category.autocomplete = true;
-		category.readonly = this.invoice.isReadonly();
-		category.addEventListener(EVENT.SELECT, () => {
-			detail.category = category.value;
-			this.invoice.setDetail(detail, i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(category, '2');
-		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-			category.options = JSON.stringify(accs);
-			category.value = detail.category || this.invoice.getCategory();
-		});
+		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
+			category.id = this.DETAIL_CATEGORY + i;
+			category.title = MSG.CATEGORY;
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				detail.category = category.value;
+				this.invoice.setDetail(detail, i);
+				if(this.autosave) this.save();
+			});
+			table.addCell(category, '2');
+			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
+				let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+				category.options = JSON.stringify(accs);
+				category.value = detail.category || this.invoice.getCategory();
+			});	
+		}
 
 		// ----- BIEN AFECTO
 		// TODO
 		let bienAfecto = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
-		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
+		bienAfecto.title = 'Bien Afecto'; 
 		bienAfecto.autocomplete = true;
 		bienAfecto.setAlias('id', 'description');
 		bienAfecto.readonly = this.invoice.isReadonly();
@@ -2578,9 +2594,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	back() {
+		let parent = this.getApplication().getParent();
 		if(this.isMobile())
-			this.getApplication().getParent().buildToolbarOptions();
-		this.getApplication().getParent().aonInvoiceList();
+			parent.buildToolbarOptions();
+		parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
 	}
 
 	more(e) {
@@ -2668,8 +2685,12 @@ export class AonInvoice extends AonElement {
 
 	changeInvoice(invoice) {
 		let inv = new Invoice(invoice);
-
-		if(invoice && inv && !inv.isRawdoc()){
+		if(invoice.invofox) {
+			getInvofoxDocument(invoice.id).then( doc => {
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoice(invoice.type, doc);
+			}); 
+		} else if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
 				let aip = document.querySelector('aon-invoice-panel');
 				aip.aonInvoice(invoice.type, inv);
@@ -2680,27 +2701,51 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
-			let d = this.getApplication().getDialog();
-			d.clear();
-			if(!this.isMobile()) d.width = '400px';
-			d.setTitle(MSG.ACCEPT);
-			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
-			getAeatCertificates().then(certs => {
-				certSelect.setOptions(certs.map(s => {
-					return {
-					  value: s.id,
-					  name: s.name
-					}
-				  }));
-			}); 
-			d.setContent(certSelect);
-			d.addAcceptAction(() => {
+		if((this.getDur().hasAccounting() || this.getDur().hasParentAccounting())
+			&& !this.invoice.category) {
+			this.showError({
+				type: CONSTANT.ERROR,
+				message: "Para Aceptar es necesaria la categoría."
+			});
+		} else {
+			if(this.invoice.isEmitida() && this.configuration.tbai.active) {
+				let d = this.getApplication().getDialog();
+				d.clear();
+				if(!this.isMobile()) d.width = '400px';
+				d.setTitle(MSG.ACCEPT);
+				let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
+				getAeatCertificates().then(certs => {
+					certSelect.setOptions(certs.map(s => {
+						return {
+						  value: s.id,
+						  name: s.name
+						}
+					  }));
+				}); 
+				d.setContent(certSelect);
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					this.accept = false;
+					let data = this.getInvoice();
+					data.cert = certSelect.value;
+					acceptInvoice(data).then(r => {
+						this.getApplication().getParent().buildCounter();
+						this.invoice = new Invoice(r);
+						this.getApplication().stopLoader(); 
+						this.reload();
+					}).catch(e => {
+						this.accept = true;
+						this.getApplication().stopLoader(); 
+						this.showError(e)
+					});
+				});			
+				d.open();
+			} else if(this.accept) {
 				this.getApplication().startLoader();
 				this.accept = false;
-				let data = this.getInvoice();
-				data.cert = certSelect.value;
-				acceptInvoice(data).then(r => {
+				acceptInvoice(this.getInvoice())
+				.then(r => {
+					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 					this.getApplication().getParent().buildCounter();
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
@@ -2710,22 +2755,7 @@ export class AonInvoice extends AonElement {
 					this.getApplication().stopLoader(); 
 					this.showError(e)
 				});
-			});			
-			d.open();
-		} else if(this.accept) {
-			this.getApplication().startLoader();
-			this.accept = false;
-			acceptInvoice(this.getInvoice())
-			.then(r => {
-				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-				this.invoice = new Invoice(r);
-				this.getApplication().stopLoader(); 
-				this.reload();
-			}).catch(e => {
-				this.accept = true;
-				this.getApplication().stopLoader(); 
-				this.showError(e)
-			});
+			}
 		}
 	}
 	
@@ -2758,9 +2788,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		
 		if ( this.isInvofoxInvoice() ) {
-			this.setInvofoxState(CONSTANT.REJECTED);
+			this.setInvofoxState(CONSTANT.PENDING_DECISSION);
 			this.back();
 			return;
 		}
@@ -2768,7 +2797,7 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.REVIEW);
+		d.setTitle(MSG.REJECT);
 		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -3057,8 +3086,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashInvoice() {
-		this.getInvoice().status = CONSTANT.DRAFT;
-		this.save(MSG.MOVED_TO_TRASH);
+		if(this.isInvofoxInvoice()) {
+			this.setInvofoxState(CONSTANT.DISCARDED);
+		} else {
+			this.getInvoice().status = CONSTANT.DRAFT;
+			this.save(MSG.MOVED_TO_TRASH);
+		}
 		this.reload();
 	}
 
@@ -3099,8 +3132,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	restoreInvoice() {
-		this.getInvoice().status = CONSTANT.INBOX;
-		this.save(MSG.RESTORED_DATA);
+		if (this.isInvofoxInvoice()) {
+			this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
+		} else {
+			this.getInvoice().status = CONSTANT.INBOX;
+			this.save(MSG.RESTORED_DATA);
+		}		
 		this.reload();
 	}
 
@@ -3115,6 +3152,20 @@ export class AonInvoice extends AonElement {
 			d.open();
 		});
 	}
+
+	removeOcrInvoice() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE_FOREVER);
+		d.setContentHTML(MSG.DELETE_CONFIRM);
+		d.addAcceptAction(() => {
+			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.REJECTED);	
+			this.back();
+		});
+		d.open();
+	}
+
 }
 if(!window.customElements.get(TAG.AON_INVOICE)){
 	window.customElements.define(TAG.AON_INVOICE, AonInvoice);

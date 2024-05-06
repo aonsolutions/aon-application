@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -153,9 +154,7 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public void delete(AONContext ctx, AccountPeriod ap) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountPeriodDAO.delete(ctx, ap);
-		} );		
+		ctx.getDslContext().transaction(configuration -> AccountPeriodDAO.delete(ctx, ap) );		
 	}
 
 	// --------- REGISTRY -------------------------------------------------
@@ -237,9 +236,7 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public void delete(AONContext ctx, Integer id) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.delete(ctx, id);
-		} );		
+		ctx.getDslContext().transaction(configuration -> AccountEntryDAO.delete(ctx, id) );		
 	}
 	
 	@Override
@@ -284,7 +281,7 @@ public class AccountingImpl implements IAccounting {
 		if (registry.getType() == null) {
 			throw new AonCoreException("No se puede inicializar una factura sin tipo");
 		}
-		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), ai, preserveData);
+		return AccountingInvoiceDAO.initializeInvoice(ctx, ai.getInvoice().getType(), registry.getId(), ai, preserveData);
 	}
 	
 	@Override
@@ -313,17 +310,12 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
-		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-			 	?((AonStringUtils.isNumeric(query)? AonStringUtils.EMPTY:AonStringUtils.PERCENT) 
-			 			+ query 
-			 			+ AonStringUtils.PERCENT)
-				:(query);
-		
+		final String filter = decorateQueryString( query );
 		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
 				p.getDomainProperty().eq(ctx.getDomainId())
-				 .and(p.getRegistryDocumentProperty().like(q)
-				  .or(p.getRegistryNameProperty().like(q))
-				  .or(p.getReferenceCodeProperty().like(q))
+				 .and(p.getRegistryDocumentProperty().like(filter)
+				  .or(p.getRegistryNameProperty().like(filter))
+				  .or(p.getReferenceCodeProperty().like(filter))
 				  )
 				 .and(p.getTransactionProperty().eq(InvoiceTransactionType.EXTRACOMMUNITY.value())
 				  .or(p.getTransactionProperty().eq(InvoiceTransactionType.CAN_CEU_MEL.value()))
@@ -331,11 +323,42 @@ public class AccountingImpl implements IAccounting {
 			,0,50)
 			.filter( inv -> AccountingInvoiceDAO.isPresentInInvoiceDUA(ctx, inv.getId()) )
 			.map( inv -> AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
-			.filter( ai -> ai != null )
+			.filter( Objects::nonNull )
 			.filter( ai -> ai.getDuaInvoice() == null )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	private String decorateQueryString( String query) {
+		String q = null; 
+		if (!AonStringUtils.contains(query, AonStringUtils.PERCENT)) {
+			if (AonStringUtils.isNumeric(query)) {
+				q = AonStringUtils.EMPTY;
+			} else {
+				q = AonStringUtils.PERCENT; 
+			}
+			q = q + query  + AonStringUtils.PERCENT;
+		} else {
+			q = query;
+		}
+		return q;
+	}
+	
+	@Override
+	public LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryProperty().eq(registry))
+				 .and(p.getRectificationTypeProperty().isNull())
+				 .and(p.getReferenceCodeProperty().like(filter))
+			,0,50)
+			.filter( inv -> AccountingInvoiceDAO.isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	@Override
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
 		return ctx.getDslContext().transactionResult(

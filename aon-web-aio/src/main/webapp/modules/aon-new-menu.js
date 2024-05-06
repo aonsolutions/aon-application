@@ -41,7 +41,6 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
-
 	selectedApp;
 
 	get id() {
@@ -247,6 +246,7 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
+
 	applySelectionClass() {
 		let element = this.selectedApp;
 		do {
@@ -306,7 +306,7 @@ export class AonNewMenu extends AonElement {
 		});
 
 		a.appendChild(hoverDiv);
-
+		
 		let div = this.createElement(TAG.DIV);
 		div.style.height = '56px';
 		div.style.padding = '1px';

@@ -87,6 +87,8 @@ public interface RegistryService extends RemoteService {
 	
 	List<Customer> getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams);
 	
+	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer);
+	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************

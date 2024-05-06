@@ -77,8 +77,9 @@ export class AonNewDesktop extends AonElement {
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
 
-		this.appendChild(desktopDiv);		
+		this.appendChild(desktopDiv);			
 	}
+	
 	
 	buildApp(app) {
 		
@@ -415,7 +416,6 @@ export class AonNewDesktop extends AonElement {
 	}
 	
 }
-
 
 if(!window.customElements.get('aon-new-desktop')){
 	window.customElements.define('aon-new-desktop', AonNewDesktop);

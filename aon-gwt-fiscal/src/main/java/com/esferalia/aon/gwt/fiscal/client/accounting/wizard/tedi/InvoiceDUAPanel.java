@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.gwt.fiscal.client.widget.AccountingInvoiceBox;
+import com.esferalia.aon.gwt.fiscal.client.widget.AccountingImportInvoiceBox;
 import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHandlers<IInvoicePanelCallback>, Focusable {
 	
-	private AccountingInvoiceBox duaInvoice;
+	private AccountingImportInvoiceBox duaInvoice;
 	private AonDisplayTable duaDataTab;
 	private AonDisplayTable duaDataTaxTab; 
 	private TextBox code; 
@@ -90,7 +90,7 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 		InlineLabel lbl3 = new InlineLabel("Fra. Importaci\u00F3n");
 		lbl3.setStyleName(AON.CSS.aonFlexLabel());
 		invoicePanel.add(lbl3);
-		duaInvoice = new AccountingInvoiceBox(callback.getCurrentDomainName(),callback.getCurrentDomainId(),callback.getCurrentUser(),callback.getConfiguration());
+		duaInvoice = new AccountingImportInvoiceBox(callback.getOccam(),callback.getConfiguration());
 		duaInvoice.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {

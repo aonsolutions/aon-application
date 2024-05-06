@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -561,6 +562,36 @@ public class InvoiceImport extends ImportUtils{
 			} else {
 				Finance finance = new Finance()
 						.setPayMethodName(paymethod);
+				inv.getFinances().add(finance);
+			}
+		}
+		
+		if(title.contains("IBAN VTO")) {
+			String iban = o.toString();
+			
+			String numberStr = title.substring(title.length()-1);
+			Integer number = AonNumberUtils.toint(numberStr);
+			if(inv.getFinances().size() > number) {
+				inv.getFinances().get(number)
+					.setBankAccount(new BankAccount(iban));
+			} else {
+				Finance finance = new Finance()
+						.setBankAccount(new BankAccount(iban));
+				inv.getFinances().add(finance);
+			}
+		}
+		
+		if(title.contains("BIC VTO")) {
+			String bic = o.toString();
+			
+			String numberStr = title.substring(title.length()-1);
+			Integer number = AonNumberUtils.toint(numberStr);
+			if(inv.getFinances().size() > number) {
+				inv.getFinances().get(number)
+					.setBic(bic);
+			} else {
+				Finance finance = new Finance()
+						.setBic(bic);
 				inv.getFinances().add(finance);
 			}
 		}

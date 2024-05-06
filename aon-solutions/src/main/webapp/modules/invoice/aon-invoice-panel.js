@@ -26,6 +26,7 @@ import { AonSelect } from '../../components/aon-select.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonInvoiceList } from './aon-invoice-list.js';
 import { AonMobileInvoiceList } from './aon-mobile-invoice-list.js';
+import { AonInvoiceHome } from './aon-invoice-home.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
@@ -41,6 +42,8 @@ export class AonInvoicePanel extends AonElement {
 
 	selectedOption;
 	filter;
+	invofoxFilter;
+	counterActive;
 
 	INVOICE;
 	INPUT_FILE;
@@ -99,7 +102,9 @@ export class AonInvoicePanel extends AonElement {
 			status: this.status || CONSTANT.INBOX,
 			page: 0,
 			per_page: 50
-		}
+		};
+		this.counterActive = true;
+
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 	}
@@ -130,8 +135,8 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvoice(this.invoice.type, this.invoice);
 		} else if(this.value){
 			this.aonInvoiceById(this.value);
-		} else 
-			this.selectOption(this.option);
+		} else if(this.isBeta()) this.aonInvoiceHome();
+		else this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -152,6 +157,7 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvest());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
+				this.getApplication().addToolbarOption('Refresh', 'refresh', () => this.refreshInvoicePanel());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 				if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
 					|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
@@ -235,16 +241,21 @@ export class AonInvoicePanel extends AonElement {
 		this.buildCounter();
 	}
 
+
 	buildCounter() {
-		clearCounter();
-		this.invoiceCounter();
-		if(this.getDur().isInvofox()) {
-			this.invofoxCounter();
+		if(this.counterActive) {
+			this.counterActive = false;
+			clearCounter();
+			this.invoiceCounter();
+			if(this.getDur().isInvofox()) {
+				this.invofoxCounter();
+			}
 		}
 	}
 
 	invoiceCounter() {
 		getRawdocCount({}).then(r => {
+			this.counterActive = !this.getDur().isInvofox();
 			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
 				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
 				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
@@ -288,59 +299,74 @@ export class AonInvoicePanel extends AonElement {
 				addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
 			}
+			this.updateCounterHome();
 		});
 	}
 
 	invofoxCounter() {
-		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' };	
+		let issuedFilter = {publicStatus:['approved', 'pendingCorrection'], type:['invoice','ticket'], companyActsLike:'issuer' };	
 		getInvofoxCount(issuedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
 				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+
+				this.updateCounterHome();
 			}
 		});
 
 
-		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'};	
+		let receivedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(receivedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+
+				this.updateCounterHome();
 			}
 		});
 
 
-		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'};	
+		let ticketFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'};	
 		getInvofoxCount(ticketFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
-				addCounter(OPTION.RAWDOC_INBOX, r.count);
+				addCounter(OPTION.INVOICE_PENDINGS, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
 
 				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
+
+				this.updateCounterHome();
 			}
 		});
 
 
-		let rejectedFilter = {publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'};	
+		let rejectedFilter = {publicStatus:['pendingDecission'], type: ['invoice', 'ticket']};	
 		getInvofoxCount(rejectedFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
+
+				this.updateCounterHome();
 			}
 		});
 
-		let trashFilter = {publicStatus:['discarded', 'rejected', 'error' ]};	
+		let trashFilter = {publicStatus:['discarded', 'error' ]};	
 		getInvofoxCount(trashFilter).then(r => {
+			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_DRAFT, r.count);
 				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+				this.updateCounterHome();
 			}
 		});
 	}
@@ -349,9 +375,30 @@ export class AonInvoicePanel extends AonElement {
 		let span = document.getElementById("aonMenuItemSpan" + option.id);
 		if(span){
 			let count = getCounter()[option.id];
-			span.innerHTML = option.name + " (" + (count > 49 ? "+49" : count) + ")";
+			span.innerHTML = option.name + " (" + count + ")";
 			span.style.fontWeight = "bold";
 		} else setTimeout(this.updateCounterSpan, 100, option);
+	}
+
+	updateCounterHome() {
+		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
+		let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
+		let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
+		let total = issued + received + ticket;
+		let pendingRecordNumber = this.getElement('pendingRecordNumber');
+		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
+
+		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
+		let pendingNumber = this.getElement('pendingNumber');
+		if(pendingNumber) pendingNumber.innerHTML = pending;
+
+		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
+		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
+		if(pendingRevisionNumber) pendingRevisionNumber.innerHTML = pendingRevision;
+
+		let trash = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+		let trashNumber = this.getElement('trashNumber');
+		if(trashNumber) trashNumber.innerHTML = trash;
 	}
 	
 	search(detail) {
@@ -375,13 +422,14 @@ export class AonInvoicePanel extends AonElement {
 			this.filter.to = detail.endDate; 
 			this.filter.page = 1;
 			this.filter.perPage = 50;
-			this.aonInvoiceList();
+			this.aonInvoiceList(this.filter, this.invofoxFilter);
 		}
 	}
 
 	aonInvoiceList(filter, invofoxFilter) {
-		filter = filter || this.filter;
 		this.filter = filter;
+		this.invofoxFilter = invofoxFilter;
+
 		let invoiceList = this.getElement('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
@@ -391,8 +439,8 @@ export class AonInvoicePanel extends AonElement {
 				? new AonMobileInvoiceList() 
 				: new AonInvoiceList();
 			table.id = 'aonInvoiceList';
-			table.setFilter(filter);
-			table.invofoxFilter = invofoxFilter;
+			table.setFilter(this.filter);
+			table.invofoxFilter = this.invofoxFilter;
 			this.getApplication().setContent(table);
 		}
 		this.getApplication().buildDragAndDrop(true);
@@ -648,6 +696,11 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
+	refreshInvoicePanel() {
+		this.buildCounter();
+		this.aonInvoiceHome();
+	}
+
 	addInvoiceFile() {
 		this.getElement(this.INPUT_FILE).click();
 	}
@@ -712,6 +765,11 @@ export class AonInvoicePanel extends AonElement {
 		aonInvoice.setContent(component);
 	}
 
+	aonInvoiceHome() {
+		this.getApplication().setContent(new AonInvoiceHome());
+		this.getApplication().buildDragAndDrop(false);
+	}
+
 	aonInvoiceById(id) {
 		getInvoice(id).then(invoice => this.aonInvoice(invoice.type, invoice)).catch(error =>this.showToast(error));
 	}
@@ -738,31 +796,31 @@ export class AonInvoicePanel extends AonElement {
 				case OPTION.RAWDOC_INBOX_ISSUED.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'emitida'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'issuer' }
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer' }
 					);
 					break;
 				case OPTION.RAWDOC_INBOX_RECEIVED.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'recibida'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'recipient'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice'], companyActsLike:'ne+issuer'}
 					);
 					break;
 				case OPTION.RAWDOC_INBOX_TICKET.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.INBOX, type: 'ticket'},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'recipient'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['ticket'], companyActsLike:'ne+issuer'}
 					);
 					break;
 				case OPTION.RAWDOC_REJECT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.REJECTED},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type: ['invoice', 'deliveryNote', 'promissoryNote', 'supplyNote'], companyActsLike:'unknown'}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
 					);
 					break;
 				case OPTION.RAWDOC_DRAFT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.DRAFT},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error' ]}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'error' ]}
 					);
 					break;
 				case OPTION.INVOICE_ISSUED.id:

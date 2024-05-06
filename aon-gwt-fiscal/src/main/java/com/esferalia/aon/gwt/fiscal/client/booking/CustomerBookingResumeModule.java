@@ -1571,9 +1571,22 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Void result) {
-									AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
-									selectionModel.clear();
-									loadModule();
+									AonMessagePanel.showLoading(messagePanel, "Actualizando lineas de las cuotas ...");
+									SERVICE.reorderCustomerFeeLine(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees.get(0).getCustomer().getId(),
+											new AsyncCallback<Void>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error actualizando lineas de las cuotas: " + caught.getMessage());
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+													selectionModel.clear();
+													loadModule();
+												}
+											});
 								}
 							});
 				}
@@ -1707,6 +1720,10 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 			conceptTextArea.setValue(fee.getDescription());
 			
 			Label productStatusLabel = new Label(getFeeStatus(fee));
+			if(AonStringUtils.isNotBlank(getFeeStatus(fee)) && AonStringUtils.equalsIgnoreCase(getFeeStatus(fee), "Expirado")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("orange");
+			}
 			
 			Label ritemLabel = new Label(fee.hasRItem() ? "SI" : "NO");
 			if(!fee.hasRItem() && !AonStringUtils.containsIgnoreCase(fee.getItem().getBarcode(), "info")) {
@@ -1837,8 +1854,21 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 
 									@Override
 									public void onSuccess(Void result) {
-										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la cuota correctamente");
-										loadModule();
+										AonMessagePanel.showLoading(messagePanel, "Actualizando lineas de las cuotas ...");
+										SERVICE.reorderCustomerFeeLine(options.getDomainName(), options.getDomain(), options.getUser(), fee.getCustomer().getId(),
+												new AsyncCallback<Void>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessagePanel.showError(messagePanel, "Error actualizando lineas de las cuotas: " + caught.getMessage());
+													}
+
+													@Override
+													public void onSuccess(Void result) {
+														AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la cuota correctamente");
+														loadModule();
+													}
+												});
 									}
 								});
 					}

@@ -248,12 +248,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		AccountEntryModuleOptions options = new AccountEntryModuleOptions();
-		options.setParentWidget(root);
-		options.setDomainName(getCurrentDomainName());
-		options.setDomain(getCurrentDomain());
-		options.setUser(getCurrentUser());
-		this.onModuleLoad( options );
+		this.onModuleLoad( 
+			new AccountEntryModuleOptions()
+				.setParentWidget(root)
+				.setDomainName(getCurrentDomainName())
+				.setDomain(getCurrentDomain())
+				.setUser(getCurrentUser()) 
+		);
 	}
 
 	public void onModuleLoad(AccountEntryModuleOptions options) {

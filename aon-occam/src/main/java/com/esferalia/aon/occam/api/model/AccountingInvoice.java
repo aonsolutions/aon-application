@@ -238,6 +238,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null && invoice.isInvestment();
 	}
 
+	public boolean isRectifier() {
+		return invoice != null && invoice.isRectifier();
+	}
+
 	/*
 	 * ----------------------------------------------
 	 * Este método debería delegar directamenten en invoice.isInputVatEnabled

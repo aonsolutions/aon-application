@@ -452,6 +452,15 @@
 									<g:CheckBox ui:field="planRecoveryCB"/>
 								</td>
 							</tr>
+							<!-- LINEA 20 -->
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Indicador contrato escrito</g:Label>
+								</td>
+								<td>
+									<g:CheckBox ui:field="writenContractCB"/>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</g:HTMLPanel>

@@ -692,7 +692,7 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
-			String key  = String.format("%s-%s-%3$td",
+			String key  = String.format("%s-%s-%3$td-%3$tm-%3$tY",
 			r.get(CONTRACT.ID)/*!AonStringUtils.isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(SALARY.SOCIAL_SECURITY_NUMBER) : r.get(SALARY.EMPLOYEE_DOCUMENT)*/, 
 			getSalaryTypeKey(salaryType),
 			r.get(SALARY.END_DATE)

@@ -651,7 +651,8 @@ public class ConnectSaleInvoiceWriter {
 			sinci.setPorcentajeTipoDeImpuesto(CommonUtil.round(tax.getTaxPercent()));
 			sinci.setImporteTipoDeImpuesto(CommonUtil.round(tax.getBase() * tax.getTaxPercent()
 					/ 100, isDia(invoice.getRegistry()) ? 2 : 3));
-			sinci.setBaseImponible(tax.getBase());
+			sinci.setBaseImponible(CommonUtil.round(tax.getBase(),
+					isDia(invoice.getRegistry()) ? 2 : 3));
 		}
 		return sinci;
 	}

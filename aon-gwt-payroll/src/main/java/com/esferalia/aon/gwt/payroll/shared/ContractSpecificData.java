@@ -89,6 +89,8 @@ public class ContractSpecificData implements Serializable {
 	private Boolean trueDate;
 	private Boolean planRecovery;
 	
+	private Boolean writenContract;
+	
 	public ContractSpecificData() {
 		super();
 	}
@@ -542,15 +544,15 @@ public class ContractSpecificData implements Serializable {
 		return null == interimCauseB ? Boolean.FALSE : interimCauseB;
 	}
 
-	public void setIsInterimCause(Boolean interimCauseB) {
+	public void setIsSustitucionCause(Boolean interimCauseB) {
 		this.interimCauseB = interimCauseB;
 	}
 
-	public String getInterimCause() {
+	public String getSustitucionCause() {
 		return null == interimCause ? "" : interimCause;
 	}
 
-	public void setInterimCause(String interimCause) {
+	public void setSustitucionCause(String interimCause) {
 		this.interimCause = interimCause;
 	}
 
@@ -688,6 +690,14 @@ public class ContractSpecificData implements Serializable {
 
 	public void setPlanRecovery(Boolean planRecovery) {
 		this.planRecovery = planRecovery;
+	}
+	
+	public Boolean getWritenContract() {
+		return null == writenContract ? Boolean.FALSE : writenContract;
+	}
+
+	public void setWritenContract(Boolean writenContract) {
+		this.writenContract = writenContract;
 	}
 	
 }

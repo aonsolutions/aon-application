@@ -36,7 +36,28 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.getAccountEntry(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.initializeInvoice(occam, registry, ai, preserveData, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.initializeInvoice(occam, registry, activity, issueDate, new AsyncCallbackWrapper<>(callback));
+	}
 	
+
+	@Override
+	public void getPendingImportAccountingInvoices(Occam occam, String query, AsyncCallback<LinkedList<AccountingInvoice>> callback) {
+		AON.start();
+		fsa.getPendingImportAccountingInvoices(occam, query, new AsyncCallbackWrapper<>(callback));
+	}
+	// *************************************	
+	// *************************************	
+	// *************************************	
+	// *************************************	
 	@Override
 	public void getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit, AsyncCallback<LinkedList<AccountEntry>> callback) {
 		AON.start();
@@ -62,18 +83,6 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 
 	@Override
-	public void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.initializeInvoice(domainName, domain, user, registry, activity, issueDate, new AsyncCallbackWrapper<>(callback));
-	}
-	
-	@Override
-	public void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.initializeInvoice(domainName, domain, user, registry, ai, preserveData, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.removeInvoiceAttach(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<>(callback));
@@ -95,12 +104,6 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	public void getAccountingInvoiceFromInvoice(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.getAccountingInvoiceFromInvoice(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getPendingImportAccountingInvoices(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<AccountingInvoice>> callback) {
-		AON.start();
-		fsa.getPendingImportAccountingInvoices(domainName, domain, user, query, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

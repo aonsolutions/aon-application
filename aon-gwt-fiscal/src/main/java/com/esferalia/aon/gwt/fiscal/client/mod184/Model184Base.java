@@ -21,12 +21,15 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -41,6 +44,7 @@ abstract class Model184Base extends DockLayoutPanel {
 
 	private static final String WIDTH_200PX = "200px";
 	static final String MODEL184_FILE = "/aon_gwt_fiscal/ms/Model184File";
+	private static final String MODEL184_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model184CertificatePrint";
 	
 	protected interface IModel184Income extends IsWidget {
 		Integer getSelectedIncomeIndex();
@@ -68,11 +72,18 @@ abstract class Model184Base extends DockLayoutPanel {
 	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
+	protected final AonToolbarButton certificateButton = new AonToolbarButton(AON.MSG.printCertificate(),AON.CSS.aonIconPdf());
 	
 	protected final AonToolbar decToolbar = new AonToolbar();
 	protected final InlineLabel dirtyLabel = new InlineLabel();
 	protected final InlineLabel replacedLabel = new InlineLabel();
 	protected final Label statusLabel = new Label();
+	
+	protected FormPanel diskForm = new FormPanel("_blank");
+	protected Hidden mod184Hidden = new Hidden("mod184");
+	protected Hidden domainIdHidden = new Hidden("domainId");
+	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 
 	private IModel184Income  incomeManager;
 	private IModel184Partner partnerManager;
@@ -139,7 +150,10 @@ abstract class Model184Base extends DockLayoutPanel {
 		toolbarPanel.add(resetButton);		
 		
 		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
-		toolbarPanel.add(duplicateButton);		
+		toolbarPanel.add(duplicateButton);
+		
+		certificateButton.addClickHandler(event -> certificate());
+		toolbarPanel.add(certificateButton);
 
 		commentsButton.addClickHandler( event -> {
 			final AonToast toast = new AonToast();
@@ -175,6 +189,8 @@ abstract class Model184Base extends DockLayoutPanel {
 
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
+		
+		toolbarPanel.add(diskForm);
 		
 		return toolbarPanel;
 	}
@@ -361,6 +377,43 @@ abstract class Model184Base extends DockLayoutPanel {
 		});
 	}
 	
+	private void certificate() {
+		if (isDirty()) {
+			new AonConfirmDialog().confirm(AON.MSG.printCertificate(), AON.MSG.printNote(),
+					new AonConfirmDialogCallback() {
+
+						@Override
+						public void onAccept() {							
+							submitForm(MODEL184_CERTIFICATE_PRINT);
+						}
+
+						@Override
+						public void onCancel() {							
+							// Nothing
+						}
+					});
+		} else {			
+			submitForm(MODEL184_CERTIFICATE_PRINT);
+		}
+	}
+	
+	protected void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod184Hidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
+		mod184Hidden.setValue(String.valueOf(getModel().getId()));
+		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+		userHidden.setValue(getCallback().getOptions().getUser());
+		diskForm.submit();
+	}
+
 	private void audit() {
 		AonAuditDialog dialog = new AonAuditDialog();
 		dialog.show(getModel());

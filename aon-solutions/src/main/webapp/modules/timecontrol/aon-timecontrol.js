@@ -96,9 +96,10 @@ export class AonTimecontrol extends AonElement {
 			id: MSG.TIMECONTROL,
 			title: MSG.TIMECONTROL,
       name: MSG.TIMECONTROL,
-  		app: Apps.TIMECONTROL
+  		app: Apps.TIMECONTROL,
+      options
 		}
-    this.applicationEl.addSidenavOptions2(data, options);
+    this.applicationEl.addSidenavOptions3(data);
 
     const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
     const options2 = [
@@ -128,10 +129,11 @@ export class AonTimecontrol extends AonElement {
 			id: "Periodo",
 			title: "Periodo",
       name: "Periodo",
-      app: Apps.TIMECONTROL
+      app: Apps.TIMECONTROL,
+      options: options2
 		}
     
-    this.applicationEl.addSidenavOptions2(data2, options2);
+    this.applicationEl.addSidenavOptions3(data2);
 
 
     if(this.getDur().isTimecontrol() && LS.isNewTheme()) {

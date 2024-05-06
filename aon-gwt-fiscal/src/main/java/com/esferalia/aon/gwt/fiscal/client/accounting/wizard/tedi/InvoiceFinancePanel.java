@@ -45,6 +45,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -541,6 +542,15 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			}			
 			final FinanceActionsPanel actionsPanel = actionsPanel0;
 			
+			boolean titularChanged = callback != null
+				&& callback.getInvoice() != null
+				&& callback.getInvoice().getRegistry() != null
+				&& finance.getRegistry() != null
+				&& finance.getId() != null 
+				&& AonNumberUtils.notEquals( finance.getRegistry().getId() , callback.getInvoice().getRegistry().getId() )
+				&& finance.isRemoved();
+			
+			
 			AonTableButton restoreButton = new AonTableButton( AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
 			AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 			if (finance.isPending() && amount != firstAmount) {
@@ -557,7 +567,8 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				buttonsPanel.add(removeButton);
 				add(buttonsPanel);
 				
-				restoreButton.setVisible(finance.isRemoved());
+				restoreButton.setVisible(finance.isRemoved() && !titularChanged);
+				
 				removeButton.setVisible(!finance.isRemoved());
 				restoreButton.addClickHandler(new ClickHandler() {
 					@Override
@@ -627,7 +638,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			// ------------------ SO FAR
 			
 			if ( finance.isRemoved()) {
-				restoreButton.setVisible(true);
+				restoreButton.setVisible(!titularChanged);
 				removeButton.setVisible(false);		
 				finance.setRemoved(true);
 				dueDate.addStyleName(AON.CSS.aonTextLineThrough());

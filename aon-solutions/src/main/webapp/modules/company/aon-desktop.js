@@ -199,9 +199,10 @@ export class AonDesktop extends AonElement {
 		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {
 				id: 'Gestor',
-				name: MSG.MY_MANAGER
+				name: MSG.MY_MANAGER,
+				options: []
 			};
-			aonDesktop.addSidenavOptions2(myGestor, []);
+			aonDesktop.addSidenavOptions3(myGestor);
 			getOfficeProjects({}).then(offices => {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
 				offices.forEach(office => {
@@ -1430,10 +1431,11 @@ export class AonDesktop extends AonElement {
 	async getSidenavActivity(){
 		let application = this.getApplication();
 
-		application.addSidenavOptions2({
+		application.addSidenavOptions3({
 			id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-			name:MSG.ACTIVITY_SUMMARY.toUpperCase()
-		},[]);
+			name:MSG.ACTIVITY_SUMMARY.toUpperCase(),
+			options: []
+		});
 
 		if(this.getDur().isInvoice()) {
 			await this.invoiceSidenav();

@@ -70,8 +70,8 @@ import * as UA from '../../services/userAgentService.js';
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.PENDING_REVIEW,
-    icon: MATERIAL_ICONS.ERROR
+    name: MSG.REJECTEDS,
+    icon: MATERIAL_ICONS.REPORT
   }
   
   export const RAWDOC_DRAFT = {
@@ -84,7 +84,6 @@ import * as UA from '../../services/userAgentService.js';
     id: CONSTANT.PENDINGS.initCap(),
     name: MSG.PENDINGS,
     icon: MATERIAL_ICONS.INBOX,
-    clickable: true,
     opened: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }

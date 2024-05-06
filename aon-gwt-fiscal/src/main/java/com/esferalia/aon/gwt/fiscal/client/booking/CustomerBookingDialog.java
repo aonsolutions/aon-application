@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -543,7 +544,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		bookingPanel.addStyleName(AON.CSS.aonFlexColumn());
 		bookingPanel.getElement().getStyle().setProperty("padding", "1rem");
 		
-		this.setCaption("Contrataciones");
+		this.setCaption("Contrataciones " + childDomain.getDescription());
 		
 		this.add(bookingPanel);
 		
@@ -655,16 +656,6 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 				syncCustomerFees.setEnabled(false);
 			}
 		});
-		
-//		customerFeeSuggestBox.addKeyUpHandler(e -> {
-//			String customerFeeQuery = customerFeeSuggestBox.getValue();
-//			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-//				customerFeeSuggestBox.setValue("");
-//				customerFeeQuery = null;
-//				getCustomerFeeSuggestion(customerFeeQuery);
-//			} else if(AonStringUtils.isNotBlank(customerFeeQuery) && customerFeeQuery.length() > 3) 
-//				getCustomerFeeSuggestion(customerFeeQuery);
-//		});
 		
 		toolbar.add(syncCustomerFeesLabel);
 		toolbar.add(customerFeeSuggestBox);
@@ -785,31 +776,6 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		}
 		
 	}
-
-	private void getCustomerFeeSuggestion(String customerFeeQuery) {
-		SERVICE.getCustomerFeeSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, customerId, customerFeeQuery, new AsyncCallback<Map<String, Fee>>() {
-			
-			@Override
-			public void onSuccess(Map<String, Fee> customerFeeSuggestionsDB) {
-				customerFeeSuggestions = customerFeeSuggestionsDB;
-				
-				List<String> suggestions = new ArrayList<String>();
-				customerFeeSuggestions.values().forEach(fee -> suggestions.add("[" + fee.getId() + "] " + fee.getDescription()));
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerFeeSuggestBox.getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(suggestions);
-				orclSb.setDefaultSuggestionsFromText(suggestions);
-				customerFeeSuggestBox.showSuggestionList();
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-			
-		});
-	}
 	
 	private void showBookingGrid() {
 		bookingDeckPanel.showWidget(0);
@@ -820,7 +786,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 	}
 	
 	private void createBookingGrid() {
-		bookingGrid = new Grid(0, 6);
+		bookingGrid = new Grid(0, 7);
 		bookingGrid.clear();
 		bookingGrid.setWidth("100%");
 
@@ -828,6 +794,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 
 		Label concept = new Label("PRODUCTO");
 		Label code = new Label("CODIGO");
+		Label barcode = new Label("C. BARRAS");
 		Label fee = new Label("CUOTA");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
@@ -835,6 +802,7 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		
 		concept.addStyleName(AON.CSS.aonHeaderTable());
 		code.addStyleName(AON.CSS.aonHeaderTable());
+		barcode.addStyleName(AON.CSS.aonHeaderTable());
 		fee.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
@@ -843,10 +811,11 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 
 		bookingGrid.setWidget(row, 0, concept);
 		bookingGrid.setWidget(row, 1, code);
-		bookingGrid.setWidget(row, 2, fee);
-		bookingGrid.setWidget(row, 3, conceptStatus);
-		bookingGrid.setWidget(row, 4, quantity);
-		bookingGrid.setWidget(row, 5, action);
+		bookingGrid.setWidget(row, 2, barcode);
+		bookingGrid.setWidget(row, 3, fee);
+		bookingGrid.setWidget(row, 4, conceptStatus);
+		bookingGrid.setWidget(row, 5, quantity);
+		bookingGrid.setWidget(row, 6, action);
 		
 		bookingGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		bookingGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -854,17 +823,19 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 		bookingGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
 		bookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		bookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
 		
 		setColumnWidthBooking();
 		fillBooking();
 	}
 
 	private void setColumnWidthBooking() {
-		bookingGrid.getColumnFormatter().getElement(1).getStyle().setWidth(160, Unit.PX);
-		bookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-		bookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(85, Unit.PX);
-		bookingGrid.getColumnFormatter().getElement(4).getStyle().setWidth(160, Unit.PX);
-		bookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(25, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(1).getStyle().setWidth(140, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(160, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(4).getStyle().setWidth(100, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(90, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
 	}
 
 	private void fillBooking() {
@@ -890,7 +861,14 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 							else {
 								bookingList = bookingCheckListDB;
 //								bookingList.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
-								bookingList.sort((o1, o2) -> o2.getItem().getProduct().getName().compareTo(o1.getItem().getProduct().getName()));
+								bookingList.sort((o1, o2) -> {
+									int statusCompare = o1.getStatus().compareTo(o2.getStatus());
+									
+									if (statusCompare != 0) return statusCompare;
+									
+									return o2.getItem().getProduct().getName().compareTo(o1.getItem().getProduct().getName());
+									
+								});
 								fillBookingGrid();
 							}
 							
@@ -939,13 +917,42 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			Label productLabel = new Label(bookingCheck.getItem().getProduct().getName());
 			
 			Label codeLabel = new Label(bookingCheck.getItem().getProduct().getCode());
+			
+			Label barcodeLabel = new Label(bookingCheck.getItem().getBarcode());
+			
 			Label feeLabel = new Label(bookingCheck.hasFee() ? "SI" : "NO");
 			if(!bookingCheck.hasFee() && !bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) {
 				feeLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				feeLabel.getElement().getStyle().setColor("red");
 			}
 			
-			Label productStatusLabel = new Label(getProductStatus(bookingCheck));
+//			Label productStatusLabel = new Label(getProductStatus(bookingCheck));
+			
+			ListBox statusListBox = new ListBox();
+			statusListBox.setHeight("2em");
+			statusListBox.addItem("Facturable", "0");
+			statusListBox.addItem("No Facturable", "1");
+			statusListBox.addItem("No Contratado", "2");
+			statusListBox.addItem("Inactivo", "3");
+			statusListBox.addChangeHandler(e -> {
+				bookingCheck.setStatus(RegistryItemStatus.safeValueOf(Byte.parseByte(statusListBox.getSelectedValue())));
+				SERVICE.saveBookingCheck(options.getDomainName(), options.getDomain(), options.getUser(), bookingCheck, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						AonMessagePanel.showSuccess(messagePanel, "Se ha actualizado la contrataci\u00f3n correctamente");
+						initializeBooking();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error actualizando contrataci\u00f3n: " + caught.getMessage());
+					}
+				});
+			});
+			
+			setSelectedValueLB(statusListBox, bookingCheck.getStatus().ordinal() + "");
+			
 			
 			Label quantityLabel = createQuantityLabel(bookingCheck);
 			
@@ -965,15 +972,17 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			
 			bookingGrid.setWidget(row, 0, productLabel);
 			bookingGrid.setWidget(row, 1, codeLabel);
-			bookingGrid.setWidget(row, 2, feeLabel);
-			bookingGrid.setWidget(row, 3, productStatusLabel);
-			bookingGrid.setWidget(row, 4, quantityLabel);
-			bookingGrid.setWidget(row, 5, actionBtn);
+			bookingGrid.setWidget(row, 2, barcodeLabel);
+			bookingGrid.setWidget(row, 3, feeLabel);
+			bookingGrid.setWidget(row, 4, statusListBox);
+			bookingGrid.setWidget(row, 5, quantityLabel);
+			bookingGrid.setWidget(row, 6, actionBtn);
 			
 			rowLabels.add(productLabel);
 			rowLabels.add(codeLabel);
+			rowLabels.add(barcodeLabel);
 			rowLabels.add(feeLabel);
-			rowLabels.add(productStatusLabel);
+//			rowLabels.add(productStatusLabel);
 			rowLabels.add(quantityLabel);
 			
 			for(Label label : rowLabels) {
@@ -987,8 +996,9 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
 				codeLabel.addStyleName(AON.CSS.aonOddTableRow());
+				barcodeLabel.addStyleName(AON.CSS.aonOddTableRow());
 				feeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
+				statusListBox.addStyleName(AON.CSS.aonOddTableRow());
 				quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
 				actionBtn.addStyleName(AON.CSS.aonOddTableRow());
 				
@@ -998,10 +1008,11 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 				bookingGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
 				bookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
 				bookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
 			}
 			
-			bookingGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 			bookingGrid.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingGrid.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			bookingGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 				
 			bookingGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
@@ -1078,6 +1089,18 @@ public abstract class CustomerBookingDialog extends AonCustomDialog {
 			grid.getWidget(row, column).removeStyleName(AON.CSS.aonRowHighlight());
 			grid.getCellFormatter().removeStyleName(row, column, AON.CSS.aonRowHighlight());
 		}
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+		String text = str;
+		int indexToFind = 0;
+		for (int i = 0; i < lBox.getItemCount(); i++) {
+			if (lBox.getValue(i).equals(text)) {
+				indexToFind = i;
+				break;
+			}
+		}
+		lBox.setSelectedIndex(indexToFind);
 	}
 	
 	public void showDialog() {
