@@ -167,11 +167,6 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption( "Ejemplo formulario web (API)" );
 		dialog.showCloseButton(true);
-//		dialog.getCloseButton().addClickHandler(e -> {
-//			dialog.hide();
-//			marketingActionPanel.resetSearchOffset();
-//			setMarketingAction(marketingAction);
-//		});
 		
 		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), this.marketingAction, new AonMarketingActionTargetCreationPanelCallback() {
 			
@@ -408,7 +403,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		table.setWidget(2, 1, typeListBox);
 
 		table.setWidget(2, 2, new InlineLabel("Tipo"));
-		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
+		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
 		actionType.setText(getActivonType(marketingAction.getMediaType().getValue()));
 		table.setWidget(2, 3, actionType);
 
@@ -427,6 +422,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		table.setWidget(4, 0, new InlineLabel("F. Inicio"));
 		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
 		startDate.setStyleName(AON.CSS.aonInputText());
+		startDate.addStyleName(AON.CSS.aonTextCenter());
 		addInputStyle(startDate.getElement());
 		startDate.setValue(marketingAction.getStartDate());
 		table.setWidget(4, 1, startDate);
@@ -434,6 +430,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		table.setWidget(4, 2, new InlineLabel("F. Fin"));
 		table.getCellFormatter().setStyleName(4, 2, AON.CSS.aonTableLabel());
 		endDate.setStyleName(AON.CSS.aonInputText());
+		endDate.addStyleName(AON.CSS.aonTextCenter());
 		addInputStyle(endDate.getElement());
 		endDate.setValue(marketingAction.getEndDate());
 		table.setWidget(4, 3, endDate);

@@ -1,9 +1,11 @@
 package net.aonsolutions.aon.api.servlet.marketing;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
@@ -36,119 +38,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		
-//		try {
-//			String domainName = req.getParameter("domainName");
-//			Integer domainId = Integer.parseInt(req.getParameter("domainId"));
-//			String login = req.getParameter("login");
-//			
-//			Domain domain = new Domain().setName(domainName).setId(domainId);
-//			
-//			// Marketing Action Target
-//			Integer actionId = Integer.parseInt(req.getParameter("id"));
-//			MarketingAction marketingAction = AON.getMarketingAction(domainName, domainId, login, actionId);
-//			
-//			// Target
-//			String name = req.getParameter("name");
-//			String documentType = req.getParameter("documentType");
-//			String documentCountry = req.getParameter("documentCountry");
-//			String document = req.getParameter("document");
-//			
-//			String streetType = req.getParameter("streetType");
-//			String address = req.getParameter("address");
-//			String number = req.getParameter("number");
-//			String zip = req.getParameter("zip");
-//			String geozone = req.getParameter("geozone");
-//			String city = req.getParameter("city");
-//			
-//			String phone = req.getParameter("phone");
-//			String email = req.getParameter("email");
-//
-//			Target target = new Target()
-//					.copy(
-//						new Registry()
-//							.setDomain(domain)
-//							.setName(name)
-//							.setDocumentType(DocumentType.values()[Integer.parseInt(documentType)])
-//							.setDocumentCountry(Country.safeValueOf(documentCountry))
-//							.setDocument(document)
-//							.setNationality(Country.safeValueOf(documentCountry))
-//					)
-//					.setScope(marketingAction.getMarketingCampaign().getScope())
-//					;
-//			
-//			target = AON.save(domainName, domainId, login, target);
-//			
-//			Integer raddressId = null;
-//			if(AonStringUtils.isNotBlank(address)) {
-//				Stream<GeoZone> geozoneStream = AON.geozoneStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getCodeProperty().eq(geozone)));
-//				Optional<GeoZone> geozoneOpt = geozoneStream.findFirst();
-//				
-//				RegistryAddress registryAddress = new RegistryAddress()
-//						.setDomain(target.getDomain().getId())
-//						.setRegistry(target.getId())
-//						.setMain(true)
-//						.setStreetType(StreetType.getForAeatCode(streetType, AonLanguage.SPANISH))
-//						.setAddress(address)
-//						.setNumber(number)
-//						.setZip(zip)
-//						.setCity(city)
-//						.setGeozone(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getId())
-//						.setGeozoneCode(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getCode())
-//						.setGeozoneName(geozoneOpt.isEmpty() ? null : geozoneOpt.get().getName())
-//						;
-//				
-//				registryAddress = AON.save(domain, login, registryAddress);
-//				raddressId = registryAddress.getId();
-//			}
-//			
-//			if(AonStringUtils.isNotBlank(phone)) {
-//				RegistryMedia registryMediaPhone = new RegistryMedia()
-//						.setDomain(target.getDomain().getId())
-//						.setRegistry(target.getId())
-//						.setMedia(MediaType.CELLULAR)
-//						.setValue(phone)
-//						.setCommercial(true)
-//						.setRaddress(raddressId)
-//						;
-//				
-//				AON.save(domain, login, registryMediaPhone);
-//						
-//			}
-//			
-//			if(AonStringUtils.isNotBlank(email)) {
-//				RegistryMedia registryMediaEmail = new RegistryMedia()
-//						.setDomain(target.getDomain().getId())
-//						.setRegistry(target.getId())
-//						.setMedia(MediaType.EMAIL)
-//						.setValue(email)
-//						.setCommercial(true)
-//						.setRaddress(raddressId)
-//						;
-//				
-//				AON.save(domain, login, registryMediaEmail);
-//			}
-//			
-//			// Marketing Action Target
-//			
-//			MarketingActionTarget mkActionTarget = new MarketingActionTarget()
-//					.copy(target)
-//					.setActionTargetDomain(target.getDomain().getId())
-//					.setMarketingAction(new MarketingAction().setId(actionId))
-//					.setActionTargetStatus((byte)0)
-//					;
-//			
-//			AON.saveMarketingActionTarget(domainName, domainId, login, mkActionTarget);
-//			
-//			resp.setContentType("application/json");     
-//			PrintWriter out = resp.getWriter();
-//			out.print("{\"message\": \"Cliente Importado\"}");
-//			out.flush();
-//		} catch (Exception e) {
-//			error(req, resp, e);
-//		}
-		
-		
-		// GWT FORM
 		try {
 			AonApiData api = initialize(req);
 			
@@ -181,9 +70,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		String address = targetJson.getString("address");
 		String number = targetJson.getString("number");
 		String zip = targetJson.getString("zip");
-		String geozone = targetJson.getString("geozone");
 		String geozoneCode = targetJson.getString("geozoneCode");
-		String geozoneName = targetJson.getString("geozoneName");
 		String city = targetJson.getString("city");
 		
 		String phone = targetJson.getString("phone");
@@ -206,6 +93,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		
 		Integer raddressId = null;
 		if(AonStringUtils.isNotBlank(address)) {
+			Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(geozoneCode))).findFirst();			
+			
 			RegistryAddress registryAddress = new RegistryAddress()
 					.setDomain(target.getDomain().getId())
 					.setRegistry(target.getId())
@@ -215,9 +104,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 					.setNumber(number)
 					.setZip(zip)
 					.setCity(city)
-					.setGeozone(Integer.parseInt(geozone))
+					.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
 					.setGeozoneCode(geozoneCode)
-					.setGeozoneName(geozoneName)
+					.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
 					;
 			
 			registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);

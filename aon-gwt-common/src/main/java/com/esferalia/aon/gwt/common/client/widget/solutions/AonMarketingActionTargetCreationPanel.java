@@ -13,18 +13,13 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -36,9 +31,6 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		void onAccept(JSONObject json);
 		void onCancel();
 	}
-
-	private Label marketingActionId = new Label();
-	private Label marketingActionDescription = new Label();
 	
 	private TextBox name = new TextBox();
 	private ListBox documentType = new ListBox();
@@ -59,274 +51,23 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 	
 	private  MarketingAction marketingAction;
 	
-	private boolean isLocalDev = true;
+	private static String EMPTY_STRING = "";
+	private HTMLPanel request = new HTMLPanel(EMPTY_STRING);
+	
+	private String domainName;
+	private Integer domainId;
+	private String user;
 	
 	public AonMarketingActionTargetCreationPanel(final String domainName,final int domain, final String user, LinkedList<Scope> aviableScopes, LinkedList<GeoZone> aviableGeozones, final MarketingAction marketingAction, final AonMarketingActionTargetCreationPanelCallback aonMarketingActionTargetCreationPanelCallback) {
 		this.aviableGeozones = aviableGeozones;
 		this.marketingAction = marketingAction;
-//		showForm(domainName, domain, user, marketingAction);
-		
-		// GWT FORM
-		show(domainName, domain, user, aviableScopes, marketingAction, aonMarketingActionTargetCreationPanelCallback);
+		this.domainName = domainName;
+		this.domainId = domain;
+		this.user = user;
+		show(aonMarketingActionTargetCreationPanelCallback);
 	}
 
-//	private void showForm(String domainName, int domain, String user, MarketingAction marketingAction) {
-//		ScrollPanel scrollPanel = new ScrollPanel();
-//		scrollPanel.setHeight("680px");
-//		String htmlFormCode = 
-//							"<div class=\"formbold-main-wrapper\">\n"
-//					+ "        <div class=\"formbold-form-wrapper\">\n"
-//					+ "            <form action=\"" + (isLocalDev ? "http://" : "https://") + Window.Location.getHost() + "/ms/api/action-target/" + "\" method=\"POST\" target=\"_blank\" id=\"actionTargetForm\">\n"
-//					+ "\n"
-//					+ "				   <input type=\"hidden\" id=\"domainName\" name=\"domainName\" value=\"" + domainName + "\">\n"
-//					+ "				   <input type=\"hidden\" id=\"domainId\" name=\"domainId\" value=\"" + domain + "\">\n"
-//					+ "				   <input type=\"hidden\" id=\"login\" name=\"login\" value=\"" + user + "\">\n"
-//					+ "				   <input type=\"hidden\" id=\"id\" name=\"id\" value=\"" + marketingAction.getId() + "\">\n"
-//					+ "\n"
-//					+ "                <h3>Ejemplo formulario web (API)</h3>\n"
-//					+ "                <div class=\"formbold-mb-3 formbold-mt-3 formbold-input-wrapp\">\n"
-//					+ "                    <label for=\"phone\" class=\"formbold-form-label\"> Campa\u00f1a </label>\n"
-//					+ "\n"
-//					+ "                    <div>\n"
-//					+ "                        <input type=\"text\" name=\"campaign\" id=\"campaign\" value=\"(" + marketingAction.getMarketingCampaign().getId() + ") " + marketingAction.getMarketingCampaign().getDescription() + "\" class=\"formbold-form-input disabled\" />\n"
-//					+ "                    </div>\n"
-//					+ "\n"
-//					+ "                </div>\n"
-//					+ "                <div class=\"formbold-mb-3 formbold-mt-3 formbold-input-wrapp\">\n"
-//					+ "                    <label for=\"phone\" class=\"formbold-form-label\"> Acci\u00f3n </label>\n"
-//					+ "\n"
-//					+ "                    <div>\n"
-//					+ "                        <input type=\"text\" name=\"description\" id=\"description\" value=\"(" + marketingAction.getId() + ") " + marketingAction.getDescription() + "\" class=\"formbold-form-input disabled\" />\n"
-//					+ "                    </div>\n"
-//					+ "\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-mb-3\">\n"
-//					+ "                    <label for=\"age\" class=\"formbold-form-label\"> Nombre / Raz\u00f3n Social * </label>\n"
-//					+ "                    <input type=\"text\" name=\"name\" id=\"name\" placeholder=\"Nombre\" class=\"formbold-form-input\" required />\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-input-wrapp formbold-mb-3\">\n"
-//					+ "                    <label for=\"firstname\" class=\"formbold-form-label\"> Documento </label>\n"
-//					+ "\n"
-//					+ "                    <div>\n"
-//					+ "                        <input type=\"text\" name=\"document\" id=\"document\" placeholder=\"ej: 00000000A\" class=\"formbold-form-input\" />\n"
-//					+ "\n"
-//					+ "                        <select class=\"formbold-form-input formbold-w-30\" name=\"documentType\" id=\"documentType\">\n";
-//					
-//					for(int i=0; i<DocumentType.values().length; i++) {
-//						DocumentType documentTypeValue = DocumentType.values()[i];
-//						htmlFormCode +=	"		  <option value=\"" + documentTypeValue.ordinal() + "\">" + documentTypeValue.getDescription() + "</option>\n";
-//					}
-//					
-//		htmlFormCode+= "                        </select>\n"
-//					+ "\n"
-//					+ "                        <select class=\"formbold-form-input formbold-w-55\" name=\"documentCountry\" id=\"documentCountry\">\n"
-//					+ "                            <option value=\"\">Pa\u00eds Emisi\u00f3n</option>\n";
-//		
-//					for(int i=0; i<Country.values().length; i++) {
-//						Country country = Country.values()[i];
-//						htmlFormCode += "			<option value=\"" + country.getIso2() + "\" " + (AonStringUtils.equals(country.getIso2(), "ES") ? "selected" : "") + ">" + capitalizeFirstLetterOfEachWord(country.getName()) + "</option>\n";
-//					}
-//					
-//		htmlFormCode+= "                        </select>\n"
-//					+ "\n"
-//					+ "                    </div>\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-input-wrapp formbold-mb-3\">\n"
-//					+ "                    <label for=\"firstname\" class=\"formbold-form-label\"> Direcci\u00f3n </label>\n"
-//					+ "\n"
-//					+ "                    <div>\n"
-//					+ "                        <select class=\"formbold-form-input formbold-w-45\" name=\"streetType\" id=\"streetType\">\n";
-//		
-//					for(StreetType streetTypeValue : StreetType.getSpanishTypes()) {
-//							htmlFormCode +=  "		<option value=\"" + streetTypeValue.getAeatCode() + "\" " + (AonStringUtils.equals(streetTypeValue.getAeatCode(), "CL") ? "selected" : "") + ">" + capitalizeFirstLetterOfEachWord(streetTypeValue.getDescription()) + "</option>\n";
-//					}
-//		
-//		htmlFormCode+= "                        </select>\n"
-//					+ "\n"
-//					+ "                        <input type=\"text\" name=\"address\" id=\"address\" placeholder=\"Info direcci\u00f3n\" class=\"formbold-form-input\" />\n"
-//					+ "\n"
-//					+ "						<input type=\"text\" name=\"number\" id=\"number\" placeholder=\"N\u00ba\" class=\"formbold-form-input formbold-w-30\" />\n"
-//					+ "\n"
-//					+ "                    </div>\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-input-flex\">\n"
-//					+ "                    <div>\n"
-//					+ "                        <label for=\"post\" class=\"formbold-form-label\"> C\u00f3digo Postal </label>\n"
-//					+ "                        <input type=\"text\" name=\"zip\" id=\"zip\" placeholder=\"00000\" class=\"formbold-form-input\" />\n"
-//					+ "                    </div>\n"
-//					+ "                    <div>\n"
-//					+ "                        <label for=\"city\" class=\"formbold-form-label\"> Provincia </label>\n"
-//					+ "                        <select class=\"formbold-form-input\" name=\"geozone\" id=\"geozone\">\n";
-//		
-//					for(GeoZone geozone : aviableGeozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())).collect(Collectors.toList())) {
-//						htmlFormCode += "			<option value=\"" + geozone.getCode() + "\">" + capitalizeFirstLetterOfEachWord(geozone.getName()) + "</option>\n";
-//					}
-//					
-//		htmlFormCode+= "                        </select>\n"
-//					+ "                    </div>\n"
-//					+ "                  	<div class=\"formbold-w-100\">\n"
-//					+ "                        <label for=\"post\" class=\"formbold-form-label\"> Localidad </label>\n"
-//					+ "                  	<input type=\"text\" name=\"city\" id=\"city\" placeholder=\"Localidad\" class=\"formbold-form-input\" />\n"
-//					+ "                  </div>\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-mb-3\">\n"
-//					+ "                    <label for=\"email\" class=\"formbold-form-label\"> Email * </label>\n"
-//					+ "                    <input type=\"email\" name=\"email\" id=\"email\" placeholder=\"example@email.com\" class=\"formbold-form-input\" required />\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                <div class=\"formbold-mb-3 formbold-input-wrapp\">\n"
-//					+ "                    <label for=\"phone\" class=\"formbold-form-label\"> Phone </label>\n"
-//					+ "\n"
-//					+ "                    <div>\n"
-//					+ "                        <input type=\"text\" name=\"phone\" id=\"phone\" placeholder=\"Phone number\" class=\"formbold-form-input\" />\n"
-//					+ "                    </div>\n"
-//					+ "                </div>\n"
-//					+ "\n"
-//					+ "                \n"
-//					+ "\n"
-//					+ "                <button class=\"formbold-btn\" type=\"submit\">Enviar</button>\n"
-//					+ "            </form>\n"
-//					+ "        </div>\n"
-//					+ "    </div>\n"
-//					+ "    <style>\n"
-//					+ "        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');\n"
-//					+ "\n"
-//					+ "        * {\n"
-//					+ "            margin: 0;\n"
-//					+ "            padding: 0;\n"
-//					+ "            box-sizing: border-box;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        body {\n"
-//					+ "            font-family: 'Inter', sans-serif;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        h3 {\n"
-//					+ "            	color: #536387;\n"
-//					+ "    			font-size: 17px;\n"
-//					+ "    			display: block;\n"
-//					+ "   			margin-bottom: 10px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-mb-3 {\n"
-//					+ "            margin-bottom: 15px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-main-wrapper {\n"
-//					+ "            display: flex;\n"
-//					+ "            align-items: center;\n"
-//					+ "            justify-content: center;\n"
-//					+ "            padding: 0 48px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-form-wrapper {\n"
-//					+ "            margin: 0 auto;\n"
-//					+ "            max-width: 570px;\n"
-//					+ "            width: 100%;\n"
-//					+ "            background: white;\n"
-//					+ "            padding: 0 40px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-input-wrapp>div {\n"
-//					+ "            display: flex;\n"
-//					+ "            gap: 20px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-input-flex {\n"
-//					+ "            display: flex;\n"
-//					+ "            gap: 20px;\n"
-//					+ "            margin-bottom: 15px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-input-flex>div {\n"
-//					+ "            width: 50%;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-form-input {\n"
-//					+ "            width: 100%;\n"
-//					+ "            padding: 9px 20px;\n"
-//					+ "            border-radius: 5px;\n"
-//					+ "            border: 1px solid #dde3ec;\n"
-//					+ "            background: #ffffff;\n"
-//					+ "            font-weight: 500;\n"
-//					+ "            font-size: 14px;\n"
-//					+ "            color: #536387;\n"
-//					+ "            outline: none;\n"
-//					+ "            resize: none;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-form-input::placeholder,\n"
-//					+ "        select.formbold-form-input,\n"
-//					+ "        .formbold-form-input[type='date']::-webkit-datetime-edit-text,\n"
-//					+ "        .formbold-form-input[type='date']::-webkit-datetime-edit-month-field,\n"
-//					+ "        .formbold-form-input[type='date']::-webkit-datetime-edit-day-field,\n"
-//					+ "        .formbold-form-input[type='date']::-webkit-datetime-edit-year-field {\n"
-//					+ "            color: rgba(83, 99, 135, 0.5);\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-form-input:focus {\n"
-//					+ "            border-color: #6a64f1;\n"
-//					+ "            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-form-label {\n"
-//					+ "            color: #536387;\n"
-//					+ "            font-size: 14px;\n"
-//					+ "            line-height: 15px;\n"
-//					+ "            display: block;\n"
-//					+ "            margin-bottom: 5px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-btn {\n"
-//					+ "            font-size: 16px;\n"
-//					+ "            border-radius: 5px;\n"
-//					+ "            padding: 14px 25px;\n"
-//					+ "            border: none;\n"
-//					+ "            font-weight: 500;\n"
-//					+ "            background-color: #6a64f1;\n"
-//					+ "            color: white;\n"
-//					+ "            cursor: pointer;\n"
-//					+ "            margin-top: 15px;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-btn:hover {\n"
-//					+ "            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-w-45 {\n"
-//					+ "            width: 45%;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-w-30 {\n"
-//					+ "            width: 30%;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-w-55 {\n"
-//					+ "            width: 55%;\n"
-//					+ "        }\n"
-//					+ "\n"
-//					+ "        .formbold-w-100 {\n"
-//					+ "            width: 100%;\n"
-//					+ "        }\n"
-//					+"\n"
-//					+ "		   .disabled {\n"
-//					+ "				pointer-events: none;\n"
-//					+ "			}\n"
-//					+ "    </style>\n"
-//					;
-//		
-//		HTMLPanel formHtml = new HTMLPanel(htmlFormCode);
-//		scrollPanel.add(formHtml);
-//		setWidget(scrollPanel);
-//	}
-
-	// GWT FORM
-	public void show(final String domainName, final int domain, final String user, LinkedList<Scope> aviableScopes, final MarketingAction marketingAction, final AonMarketingActionTargetCreationPanelCallback callback) {
+	public void show(final AonMarketingActionTargetCreationPanelCallback callback) {
 		getElement().getStyle().setProperty("padding", "1rem 0");
 		
 		FlowPanel rootPanel = new FlowPanel();
@@ -338,153 +79,15 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 		FlowPanel tablePanel = new FlowPanel();
 		tablePanel.setStyleName(AON.CSS.aonScrollArea());
+		addTableStyle(tablePanel.getElement());
 		
-		KeyUpHandler keyUpHandler = new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					callback.onCancel();	
-				}
-			}
-		};
-
-		FlexTable table = new FlexTable();
-		table.setStyleName(AON.CSS.aonTable());
-		table.addStyleName(AON.CSS.aonWidthAll());
+		tablePanel.add( createForm(callback) );
 		
-		table.setWidget(0, 0, new InlineLabel("Acci\u00f3n"));
-		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		marketingActionDescription.addStyleName(AON.CSS.aonItemFlex());
-		addInputStyle(marketingActionDescription.getElement());
-		marketingActionDescription.setText(marketingAction.getDescription());
-		table.setWidget(0, 1, marketingActionDescription);
-		table.getFlexCellFormatter().setColSpan(0, 1, 3);
+		createJson();
+		tablePanel.add( request );
 		
-//		table.setWidget(0, 0, new InlineLabel("C\u00f3digo"));
-//		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-//		marketingActionId.setText(marketingAction.getId().toString());
-//		table.setWidget(0, 1, marketingActionId);
-//		
-//		table.setWidget(0, 2, new InlineLabel("Acci\u00f3n"));
-//		table.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
-//		marketingActionDescription.setText(marketingAction.getDescription());
-//		table.setWidget(0, 3, marketingActionDescription);
-		
-		table.setWidget(1, 0, new InlineLabel("Nombre/Raz\u00f3n Social"));
-		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		table.setWidget(1, 1, name);
-		addInputStyle(name.getElement());
-		table.getFlexCellFormatter().setColSpan(1, 1, 4);
-		
-		table.setWidget(2, 0, new InlineLabel("Documento"));
-		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		for(int i=0; i<DocumentType.values().length; i++) {
-			DocumentType documentTypeValue = DocumentType.values()[i];
-			documentType.addItem(documentTypeValue.getDescription(), documentTypeValue.ordinal() + "");
-		}
-		document.addValueChangeHandler(e -> {
-			DocumentType documentTypeValidator = DocumentValidator.validateDocument(document.getValue());
-			setSelectedValueLB(documentType, documentTypeValidator.ordinal() + "");
-		});
-		addInputStyle(document.getElement());
-		addSelectStyle(document.getElement());
-		table.setWidget(2, 1, document);
-		table.setWidget(2, 2, documentType);
-		
-		table.setWidget(2, 3, new InlineLabel("Pa\u00eds Emisi\u00f3n"));
-		table.getCellFormatter().setStyleName(2, 3, AON.CSS.aonTableLabel());
-		for(int i=0; i<Country.values().length; i++) {
-			Country country = Country.values()[i];
-			documentCountry.addItem(country.getName(), country.getIso2());
-		}
-		setSelectedValueLB(documentCountry, "ES");
-		addSelectStyle(documentCountry.getElement());
-		documentCountry.getElement().getStyle().setProperty("max-width", "13rem");
-		table.setWidget(2, 4, documentCountry);
-		
-		table.setWidget(3, 0, new InlineLabel("Direcci\u00f3n"));
-		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
-		StreetType.getSpanishTypes().forEach(streetTypeValue -> streetType.addItem(streetTypeValue.getDescription(), streetTypeValue.getAeatCode()));
-		setSelectedValueLB(streetType, "CL");
-		addSelectStyle(streetType.getElement());
-		addInputStyle(address.getElement());
-		addInputStyle(number.getElement());
-		table.setWidget(3, 1, streetType);
-		table.setWidget(3, 2, address);
-		table.setWidget(3, 3, new InlineLabel("N\u00famero"));
-		table.getCellFormatter().setStyleName(3, 3, AON.CSS.aonTableLabel());
-		table.setWidget(3, 4, number);
-		
-		table.setWidget(4, 0, new InlineLabel("C\u00f3digo Postal"));
-		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
-		zip.addValueChangeHandler(e -> {
-			if(AonStringUtils.isNotBlank(zip.getValue()) && zip.getValue().length() >= 2) {
-				setSelectedValueLB(province, AonStringUtils.substring(zip.getValue(), 0, 2));
-			}
-		});
-		addInputStyle(zip.getElement());
-		table.setWidget(4, 1, zip);
-		table.setWidget(4, 2, new InlineLabel("Provincia"));
-		table.getCellFormatter().setStyleName(4, 2, AON.CSS.aonTableLabel());
-		aviableGeozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())).forEach(geozone -> province.addItem(geozone.getName(), geozone.getCode()));
-		addSelectStyle(province.getElement());
-		table.setWidget(4, 3, province);
-		
-		table.setWidget(5, 0, new InlineLabel("Localidad"));
-		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
-		addInputStyle(city.getElement());
-		table.setWidget(5, 1, city);
-		table.getFlexCellFormatter().setColSpan(5, 1, 2);
-		
-		table.setWidget(6, 0, new InlineLabel("M\u00f3vil"));
-		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
-		addInputStyle(phone.getElement());
-		table.setWidget(6, 1, phone);
-		
-		table.setWidget(7, 0, new InlineLabel("Email"));
-		table.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTableLabel());
-		table.setWidget(7, 1, email);
-		addInputStyle(email.getElement());
-		table.getFlexCellFormatter().setColSpan(7, 1, 4);
-		
-		tablePanel.add( table );
 		rootPanel.add( tablePanel );
 		
-		FlowPanel buttons = new FlowPanel();
-    	buttons.setStyleName(AON.CSS.aonTextCenter());
-    	
-    	final Button okButton = new Button();
-    	okButton.setStyleName(AON.CSS.aonOkButton());
-    	okButton.setText( AON.MSG.accept());
-    	okButton.addKeyUpHandler( keyUpHandler);
-    	
-    	okButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				callback.onAccept(createActionTargetJSON());
-			}
-			
-		});
-    	
-    	buttons.add(okButton);
-    	
-    	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-    	cancelButton.setText( AON.MSG.cancelAction());
-    	cancelButton.addKeyUpHandler( keyUpHandler);
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				callback.onCancel();
-			}
-		});
-    	buttons.add(cancelButton);
-    	rootPanel.add(buttons);
 		setWidget(rootPanel);
 		
 		Scheduler.get().scheduleDeferred(new Command() {
@@ -496,6 +99,261 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 	}
 	
+	private void addTableStyle(Element el) {
+		el.getStyle().setProperty("display", "flex");
+		el.getStyle().setProperty("align-items", "flex-start");
+		el.getStyle().setProperty("gap", "1rem");
+	}
+
+	private HTMLPanel createForm(AonMarketingActionTargetCreationPanelCallback callback) {
+		HTMLPanel form = new HTMLPanel(EMPTY_STRING);
+		addFormStyle(form.getElement());
+		
+		// Campaña
+		HTMLPanel campaignGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(campaignGroup.getElement());
+		
+		Label campaignTitle = new Label("Campa\u00f1a");
+		addInputTitleStyle(campaignTitle.getElement());
+		
+		Label campaignLabel = new Label(marketingAction.getMarketingCampaign().getDescription());
+		addInputStyle(campaignLabel.getElement());
+		
+		campaignGroup.add(campaignTitle);
+		campaignGroup.add(campaignLabel);
+		form.add(campaignGroup);
+		
+		// Acción
+		HTMLPanel actionGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(actionGroup.getElement());
+		
+		Label actionTitle = new Label("Acci\u00f3n");
+		addInputTitleStyle(actionTitle.getElement());
+		
+		Label actionLabel = new Label(marketingAction.getMarketingCampaign().getDescription());
+		addInputStyle(actionLabel.getElement());
+		
+		actionGroup.add(actionTitle);
+		actionGroup.add(actionLabel);
+		form.add(actionGroup);
+		
+		// Nombre/Razón Social	
+		HTMLPanel nameGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(nameGroup.getElement());
+		
+		Label nameTitle = new Label("Nombre / Raz\u00f3n Social *");
+		addInputTitleStyle(nameTitle.getElement());
+		
+		name.addValueChangeHandler(e -> createJson());
+		addInputStyle(name.getElement());
+		
+		nameGroup.add(nameTitle);
+		nameGroup.add(name);
+		form.add(nameGroup);
+		
+		// Documento	
+		HTMLPanel documentPanel = new HTMLPanel(EMPTY_STRING);
+		documentPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		HTMLPanel documentGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(documentGroup.getElement());
+		
+		Label documentTitle = new Label("Documento");
+		addInputTitleStyle(documentTitle.getElement());
+		
+		document.addValueChangeHandler(e -> {
+			DocumentType documentTypeValidator = DocumentValidator.validateDocument(document.getValue());
+			setSelectedValueLB(documentType, documentTypeValidator.ordinal() + "");
+			createJson();
+		});
+		addInputStyle(document.getElement());
+		
+		documentGroup.add(documentTitle);
+		documentGroup.add(document);
+		documentPanel.add(documentGroup);
+		
+		HTMLPanel documentTypeGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(documentTypeGroup.getElement());
+		
+		Label documentTypeTitle = new Label("Tipo");
+		addInputTitleStyle(documentTypeTitle.getElement());
+		
+		for(int i=0; i<DocumentType.values().length; i++) {
+			DocumentType documentTypeValue = DocumentType.values()[i];
+			documentType.addItem(documentTypeValue.getDescription(), documentTypeValue.ordinal() + "");
+		}
+		documentType.getElement().getStyle().setWidth(60.0, Unit.PX);
+		addInputStyle(documentType.getElement());
+		documentType.addChangeHandler(e -> createJson());
+		
+		documentTypeGroup.add(documentTypeTitle);
+		documentTypeGroup.add(documentType);
+		documentPanel.add(documentTypeGroup);
+		
+		HTMLPanel documentCountryGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(documentCountryGroup.getElement());
+		
+		Label documentCountryTitle = new Label("Pa\u00eds Emisi\u00f3n");
+		addInputTitleStyle(documentCountryTitle.getElement());
+		
+		for(int i=0; i<Country.values().length; i++) {
+			Country countryValue = Country.values()[i];
+			documentCountry.addItem(capitalizeFirstLetterOfEachWord(countryValue.getName()), countryValue.getIso2() + "");
+		}
+		setSelectedValueLB(documentCountry, "ES");
+		addInputStyle(documentCountry.getElement());
+		documentCountry.addChangeHandler(e -> createJson());
+		
+		documentCountryGroup.add(documentCountryTitle);
+		documentCountryGroup.add(documentCountry);
+		documentPanel.add(documentCountryGroup);
+		
+		form.add(documentPanel);
+		
+		// Dirección
+		
+		HTMLPanel addressPanel = new HTMLPanel(EMPTY_STRING);
+		addressPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		HTMLPanel streetTypeGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(streetTypeGroup.getElement());
+		
+		Label streeTitle = new Label("Tipo de v\u00eda");
+		addInputTitleStyle(streeTitle.getElement());
+		
+		StreetType.getSpanishTypes().forEach(streetTypeValue -> streetType.addItem(capitalizeFirstLetterOfEachWord(streetTypeValue.getDescription()), streetTypeValue.getAeatCode()));
+		setSelectedValueLB(streetType, "CL");
+		streetType.getElement().getStyle().setWidth(60.0, Unit.PX);
+		addInputStyle(streetType.getElement());
+		streetType.addChangeHandler(e -> createJson());
+		
+		streetTypeGroup.add(streeTitle);
+		streetTypeGroup.add(streetType);
+		addressPanel.add(streetTypeGroup);
+		
+		HTMLPanel addressGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(addressGroup.getElement());
+		
+		Label addressTitle = new Label("Direcci\u00f3n");
+		addInputTitleStyle(addressTitle.getElement());
+		
+		addInputStyle(address.getElement());
+		address.addValueChangeHandler(e -> createJson());
+		
+		addressGroup.add(addressTitle);
+		addressGroup.add(address);
+		addressPanel.add(addressGroup);
+		
+		HTMLPanel addressNumberGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(addressNumberGroup.getElement());
+		
+		Label addressNumberTitle = new Label("N\u00famero");
+		addInputTitleStyle(addressNumberTitle.getElement());
+		
+		number.getElement().getStyle().setWidth(60.0, Unit.PX);
+		addInputStyle(number.getElement());
+		number.addValueChangeHandler(e -> createJson());
+		
+		addressNumberGroup.add(addressNumberTitle);
+		addressNumberGroup.add(number);
+		addressPanel.add(addressNumberGroup);
+		
+		form.add(addressPanel);
+		
+		// Dirección II
+		
+		HTMLPanel address2Panel = new HTMLPanel(EMPTY_STRING);
+		address2Panel.addStyleName(AON.CSS.aonItemFlex());
+		
+		HTMLPanel zipGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(zipGroup.getElement());
+		
+		Label zipTitle = new Label("C\u00f3digo Postal");
+		addInputTitleStyle(zipTitle.getElement());
+		
+		zip.addValueChangeHandler(e -> {
+			if(AonStringUtils.isNotBlank(zip.getValue()) && zip.getValue().length() >= 2) {
+				setSelectedValueLB(province, AonStringUtils.substring(zip.getValue(), 0, 2));
+			}
+			createJson();
+		});
+		zip.getElement().getStyle().setWidth(60.0, Unit.PX);
+		addInputStyle(zip.getElement());
+		
+		zipGroup.add(zipTitle);
+		zipGroup.add(zip);
+		address2Panel.add(zipGroup);
+		
+		HTMLPanel provinceGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(provinceGroup.getElement());
+		
+		Label provinceTitle = new Label("Provincia");
+		addInputTitleStyle(provinceTitle.getElement());
+		
+		aviableGeozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())).forEach(geozone -> province.addItem(capitalizeFirstLetterOfEachWord(geozone.getName()), geozone.getCode()));
+		addInputStyle(province.getElement());
+		province.addChangeHandler(e -> createJson());
+		
+		provinceGroup.add(provinceTitle);
+		provinceGroup.add(province);
+		address2Panel.add(provinceGroup);
+		
+		HTMLPanel cityGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(cityGroup.getElement());
+		
+		Label cityTitle = new Label("Localidad");
+		addInputTitleStyle(cityTitle.getElement());
+		
+		addInputStyle(city.getElement());
+		city.addValueChangeHandler(e -> createJson());
+		
+		cityGroup.add(cityTitle);
+		cityGroup.add(city);
+		address2Panel.add(cityGroup);
+		
+		form.add(address2Panel);
+		
+		// Telefono	
+		HTMLPanel phoneGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(phoneGroup.getElement());
+		
+		Label phoneTitle = new Label("Tel\u00e9fono");
+		addInputTitleStyle(phoneTitle.getElement());
+		
+		addInputStyle(phone.getElement());
+		phone.addValueChangeHandler(e -> createJson());
+		
+		phoneGroup.add(phoneTitle);
+		phoneGroup.add(phone);
+		form.add(phoneGroup);
+		
+		// Email	
+		HTMLPanel emailGroup = new HTMLPanel(EMPTY_STRING);
+		addInputGroupStyle(emailGroup.getElement());
+		
+		Label emailTitle = new Label("Email *");
+		addInputTitleStyle(emailTitle.getElement());
+		
+		addInputStyle(email.getElement());
+		email.addValueChangeHandler(e -> createJson());
+		
+		emailGroup.add(emailTitle);
+		emailGroup.add(email);
+		form.add(emailGroup);
+		
+		Button sendButton = new Button();
+		sendButton.setStyleName(AON.CSS.aonButton());
+		sendButton.setText("Enviar");
+		addButtonStyle(sendButton.getElement());
+		sendButton.addClickHandler(e -> {
+			sendButton.setEnabled(false);
+			callback.onAccept(createActionTargetJSON());
+		});
+		form.add(sendButton);
+		
+		return form;
+	}
+
 	private boolean canBeCastToInt(String str) {
 	    try {
 	        Integer.parseInt(str);
@@ -537,24 +395,194 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
+	private void addFormStyle(Element el) {
+		el.getStyle().setProperty("display", "flex");
+		el.getStyle().setProperty("flex-direction", "column");
+		el.getStyle().setProperty("gap", "1rem");
+		el.getStyle().setProperty("border-right", "1px solid rgb(221, 227, 236)");
+		el.getStyle().setProperty("padding-right", "1rem");
+	}
+	
+	private void addInputGroupStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("display", "flex");
+		el.getStyle().setProperty("flex-direction", "column");
+		el.getStyle().setProperty("gap", ".5rem");
+	}
+	
+	private void addInputTitleStyle(Element el) {
+		el.getStyle().setProperty("font-weight", "bold");
+	}
+	
 	private void addInputStyle(Element el) {
 		el.getStyle().setProperty("width", "-moz-available");
 		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.1rem");
+		el.getStyle().setProperty("padding", ".5rem 1rem");
+		el.getStyle().setProperty("border", "1px solid #dde3ec");
 	}
 	
-	private void addSelectStyle(Element el) {
+	private void addButtonStyle(Element el) {
 		el.getStyle().setProperty("width", "-moz-available");
 		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.2rem");
+		el.getStyle().setProperty("padding", ".5rem 1rem");
+		el.getStyle().setProperty("border", "1px solid #f6f8fc");
+		el.getStyle().setProperty("border-radius", "5px");
+		el.getStyle().setProperty("font-size", "15px");
+		el.getStyle().setProperty("cursor", "pointer");
+		el.getStyle().setProperty("background-color", "#2152a5");
+		el.getStyle().setProperty("color", "white");
 	}
+	
+	private void createJson() {
+		request.clear();
+		addRequestStyle(request.getElement());
+		
+		// Header
+		Label headerTitle = new Label("HEADER");
+		addRequestTitleStyle(headerTitle.getElement());
+		request.add(headerTitle);
+		
+		// Domain Name Header
+		HTMLPanel domainNameGroup = new HTMLPanel(EMPTY_STRING);
+		domainNameGroup.addStyleName(AON.CSS.aonItemFlex());
+		addRequestGroupStyle(domainNameGroup.getElement());
+		
+		Label domainNameTitle = new Label("domain_name");
+		addRequestSubTitleStyle(domainNameTitle.getElement());
+		Label domainNameValue = new Label(this.domainName);
+		domainNameGroup.add(domainNameTitle);
+		domainNameGroup.add(domainNameValue);
+		request.add(domainNameGroup);
+		
+		// Domain Id Header
+		HTMLPanel domainIdGroup = new HTMLPanel(EMPTY_STRING);
+		domainIdGroup.addStyleName(AON.CSS.aonItemFlex());
+		addRequestGroupStyle(domainIdGroup.getElement());
+		
+		Label domainIdTitle = new Label("domain_id");
+		addRequestSubTitleStyle(domainIdTitle.getElement());
+		Label domainIdValue = new Label(this.domainId.toString());
+		domainIdGroup.add(domainIdTitle);
+		domainIdGroup.add(domainIdValue);
+		request.add(domainIdGroup);
+		
+		// Domain Id Header
+		HTMLPanel userGroup = new HTMLPanel(EMPTY_STRING);
+		userGroup.addStyleName(AON.CSS.aonItemFlex());
+		addRequestGroupStyle(userGroup.getElement());
+		
+		Label userTitle = new Label("domain_login");
+		addRequestSubTitleStyle(userTitle.getElement());
+		Label userValue = new Label(this.user);
+		userGroup.add(userTitle);
+		userGroup.add(userValue);
+		request.add(userGroup);
+		
+		// Domain Id Header
+		HTMLPanel sessionIdGroup = new HTMLPanel(EMPTY_STRING);
+		sessionIdGroup.addStyleName(AON.CSS.aonItemFlex());
+		addRequestGroupStyle(sessionIdGroup.getElement());
+		
+		Label sessionIdTitle = new Label("session_id");
+		addRequestSubTitleStyle(sessionIdTitle.getElement());
+		Label sessionIdValue = new Label("AONd95770f269e711eb94390242ac130002");
+		sessionIdGroup.add(sessionIdTitle);
+		sessionIdGroup.add(sessionIdValue);
+		request.add(sessionIdGroup);
+		
+		// Body
+		HTMLPanel bodyGroup = new HTMLPanel(EMPTY_STRING);
+		bodyGroup.addStyleName(AON.CSS.aonItemFlex());
+		Label bodyTitle = new Label("BODY");
+		addRequestTitleStyle(bodyTitle.getElement());
+		bodyGroup.add(bodyTitle);
+		AonTableButton copy = new AonTableButton("Copiar JSON", AON.CSS.aonIconCopy());
+		copy.addClickHandler(e -> copyToClipboard(createActionTargetJSON().toString()));
+		bodyGroup.add(copy);
+		request.add(bodyGroup);
+		
+		String json = 
+		"{\n"
+		+ "<br>"
+		+ "  &ensp;\"marketingAction\":{\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"id\":\"" + marketingAction.getId() + "\",\n"
+		+ "<br>"
+		+ "   &ensp;},\n"
+		+ "\n"
+		+ "   &ensp;\"target\":{\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"name\":\"" + name.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"documentType\":\"" + documentType.getSelectedValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"documentCountry\":\"" + documentCountry.getSelectedValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"document\":\"" + document.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"streetType\":\"" + streetType.getSelectedValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"address\":\"" + address.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"number\":\"" + number.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"zip\":\"" + zip.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"geozoneCode\":\"" + province.getSelectedValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"city\":\"" + city.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"phone\":\"" + phone.getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"email\":\"" + email.getValue() + "\"\n"
+		+ "<br>"
+		+ "   &ensp;}\n"
+		+ "<br>"
+		+ "}"
+		;
+		
+		HTMLPanel jsonPanel = new HTMLPanel(json);
+		request.add(jsonPanel);
+		
+	}
+	
+	private void addRequestStyle(Element el) {
+		el.getStyle().setProperty("display", "flex");
+		el.getStyle().setProperty("flex-direction", "column");
+		el.getStyle().setProperty("gap", "1rem");
+	}
+
+	private void addRequestTitleStyle(Element el) {
+		el.getStyle().setProperty("font-weight", "bold");
+	}
+
+	private void addRequestGroupStyle(Element el) {
+		el.getStyle().setProperty("border", "1px solid rgb(221, 227, 236)");
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("padding", "0.5rem 1rem");
+	}
+
+	private void addRequestSubTitleStyle(Element el) {
+		el.getStyle().setProperty("border-right", "1px solid rgb(221, 227, 236)");
+		el.getStyle().setProperty("padding-right", ".5rem");
+		el.getStyle().setProperty("font-weight", "bold");
+	}
+	
+	private final native void copyToClipboard(String text) /*-{
+		var textField = $doc.createElement('textarea');
+	    textField.value = text;
+	    $doc.body.appendChild(textField);
+	    textField.select();
+	    $doc.execCommand('copy');
+	    $doc.body.removeChild(textField);
+	}-*/;
 
 	private JSONObject createActionTargetJSON() {
 		JSONObject actionTarget = new JSONObject();
 		
 		JSONObject action = new JSONObject();
 		action.put("id", new JSONString(marketingAction.getId().toString()));
-		action.put("description", new JSONString(marketingAction.getDescription()));
 		actionTarget.put("marketingAction", action);
 		
 		JSONObject target = new JSONObject();
@@ -562,19 +590,15 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		target.put("documentType", new JSONString(documentType.getSelectedValue())); // DNI, CIF, NIE, OTROS
 		target.put("documentCountry", new JSONString(documentCountry.getSelectedValue())); 
 		target.put("document", new JSONString(document.getValue()));
-		
 		target.put("streetType", new JSONString(streetType.getSelectedValue()));
 		target.put("address", new JSONString(address.getValue()));
 		target.put("number", new JSONString(number.getValue()));
 		target.put("zip", new JSONString(zip.getValue()));
-		target.put("geozone", new JSONString(aviableGeozones.stream().filter(geozone -> geozone.getCode().equals(province.getSelectedValue())).findFirst().get().getId().toString()));
 		target.put("geozoneCode", new JSONString(province.getSelectedValue()));
-		target.put("geozoneName", new JSONString(aviableGeozones.stream().filter(geozone -> geozone.getCode().equals(province.getSelectedValue())).findFirst().get().getName()));
 		target.put("city", new JSONString(city.getValue()));
 		target.put("phone", new JSONString(phone.getValue()));
 		target.put("email", new JSONString(email.getValue()));
 		actionTarget.put("target", target);
-		
 		return actionTarget;
 	}
 	
