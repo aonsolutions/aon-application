@@ -99,8 +99,8 @@ export class AonNewDesktop extends AonElement {
 		let optionsDiv = this.createElement(TAG.DIV);
 		optionsDiv.style.display = 'none';
 		optionsDiv.style.backgroundColor = 'white';
-		optionsDiv.style.padding = '15px';
-		optionsDiv.style.borderRadius = '15px';
+		optionsDiv.style.padding = '5px';
+		optionsDiv.style.borderRadius = '10px';
 		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
 
 		let optionsList = this.createElement(TAG.UL);
@@ -154,9 +154,24 @@ export class AonNewDesktop extends AonElement {
 				optionsDiv.style.position = 'fixed';
 				optionsDiv.style.zIndex = 8;
 				let position = cardButton.getBoundingClientRect();
-				optionsDiv.style.top = position.top + 15;
-				optionsDiv.style.left = position.left + 15;
+				if (position.left + 175 >= window.screen.width) {
+					optionsDiv.style.left = position.left - 150;
+				} else {
+					optionsDiv.style.left = position.left + 15;
+				}
+				if (position.top + 125 >= window.screen.height) {
+					optionsDiv.style.top = position.top - 100;
+				} else {
+					optionsDiv.style.top = position.top + 15;
+				}
 				optionsDiv.style.display = 'block';
+				optionsDiv.animate([
+					{transform: 'translateY(-10px)'},
+					{transform: 'translateY(0px)'}
+				], {
+					duration: 100,
+					fill: 'forwards'
+				});
 			} else {
 				optionsDiv.style.display = 'none';
 			}
@@ -242,8 +257,8 @@ export class AonNewDesktop extends AonElement {
 		let optionsDiv = this.createElement(TAG.DIV);
 		optionsDiv.style.display = 'none';
 		optionsDiv.style.backgroundColor = 'white';
-		optionsDiv.style.padding = '15px';
-		optionsDiv.style.borderRadius = '15px';
+		optionsDiv.style.padding = '5px';
+		optionsDiv.style.borderRadius = '10px';
 		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
 
 		let optionsList = this.createElement(TAG.UL);
@@ -297,9 +312,24 @@ export class AonNewDesktop extends AonElement {
 				optionsDiv.style.position = 'fixed';
 				optionsDiv.style.zIndex = 8;
 				let position = cardButton.getBoundingClientRect();
-				optionsDiv.style.top = position.top + 15;
-				optionsDiv.style.left = position.left + 15;
+				if (position.left + 175 >= window.screen.width) {
+					optionsDiv.style.left = position.left - 150;
+				} else {
+					optionsDiv.style.left = position.left + 15;
+				}
+				if (position.top + 125 >= window.screen.height) {
+					optionsDiv.style.top = position.top - 100;
+				} else {
+					optionsDiv.style.top = position.top + 15;
+				}
 				optionsDiv.style.display = 'block';
+				optionsDiv.animate([
+					{transform: 'translateY(-10px)'},
+					{transform: 'translateY(0px)'}
+				], {
+					duration: 100,
+					fill: 'forwards'
+				});
 			} else {
 				optionsDiv.style.display = 'none';
 			}
