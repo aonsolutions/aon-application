@@ -1,12 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonCard } from 'aonsolutions/components/aon-card.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
-import { Language } from 'aonsolutions/models/Language.js';
 import {  getManifest} from "aonsolutions/services/service.js";
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
-import { AonNewSelect } from "aonsolutions/components/aon-new-select.js";
 import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
 export class AonHelp extends AonElement {
 

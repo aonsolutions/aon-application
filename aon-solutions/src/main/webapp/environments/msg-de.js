@@ -387,6 +387,7 @@ export const SERVICES = 'Services';
 export const SETTING = 'Einstellung';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIDE_MENU = 'Seitliches Menü';
 export const SIGN_IN = 'Einloggen';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
 export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';

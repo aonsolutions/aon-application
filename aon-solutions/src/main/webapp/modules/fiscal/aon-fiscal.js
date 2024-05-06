@@ -57,6 +57,8 @@ export class AonFiscal extends AonElement {
 
   buildToolbar() {
 
+    console.log("buildToolbar");
+
     let application = this.getApplication();
 
     application.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
@@ -68,8 +70,9 @@ export class AonFiscal extends AonElement {
 		} else {
 
     if(!LS.isNewTheme()) {
+      console.log("buildToolbaroldtheme")
        application.addToolbarOption2(VAT_PANEL, () =>{
-          application.closeSidenav();
+          application.closeSidenav(); 
           this.showView(FISCAL_VIEWS.VAT_PANEL);
         });
   
@@ -145,7 +148,7 @@ export class AonFiscal extends AonElement {
           fn: () =>{
             this._filter.model = this._filter.model  === model.model ? undefined : model.model;
             this.addBackgroundSidenav();
-            this.showView(FISCAL_VIEWS.AON_TAX);
+            this.showView(FISCAL_VIEWS.AON_TAX);addToolbarOption2
           }
       }));
 

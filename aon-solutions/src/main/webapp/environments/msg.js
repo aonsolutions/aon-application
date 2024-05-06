@@ -589,6 +589,7 @@ export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';
 export const SHOW_FILE = MSG.SHOW_FILE;
+export const SIDE_MENU = MSG.SIDE_MENU;
 export const SIGN_IN = MSG.SIGN_IN;
 export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
 export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;

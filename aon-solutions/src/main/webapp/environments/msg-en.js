@@ -390,6 +390,7 @@ export const SERVICES = 'Services';
 export const SETTING = 'Setting';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIDE_MENU = 'Side Menu';
 export const SIGN_IN = 'Sign in';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Sign in without Password';
 export const SIGN_IN_WITH_CERTIFICATE = 'Sign in with Cetificate';

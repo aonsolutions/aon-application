@@ -122,15 +122,17 @@ export class AonHeader extends AonElement {
 		div.appendChild(aonHeaderSearch);
 
 		let aonHeaderButtons = this.createElement(TAG.DIV);
-		aonHeaderButtons.div = "aonHeaderButtons";
+		aonHeaderButtons.id = 'aonHeaderButtons';
+		aonHeaderButtons.className = "aonHeaderButtons";
 		if (!LS.isNewTheme()){
 			aonHeaderButtons.style.display = "flex";
-			aonHeaderButtons.style.alignItems = "center";
+			aonHeaderButtons.style.alignItems = "center";		
 		}
-
+		
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.style.display = "none";
+		aonHeaderCompany.style.height = "14px";
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
@@ -211,7 +213,7 @@ export class AonHeader extends AonElement {
  		 		aonHeaderButtons.style.top = '10px';
 
 				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-				aonHeaderSearch2.style.marginLeft = '33px';
+				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
