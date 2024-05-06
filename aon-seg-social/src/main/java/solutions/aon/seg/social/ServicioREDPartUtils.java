@@ -306,7 +306,7 @@ public abstract class ServicioREDPartUtils extends ServicioREDRegeXML {
 	            ItPartId idPartId = new ItPartId(workLeaveDate.get(), naf.get());
 	            orderedItParts.computeIfAbsent(idPartId, k -> new ArrayList<>()).add(itp);
 	        }
-	    }
+	    }	    
 	    
 	    // Creamos una lista para almacenar las instancias de It que se creen a partir de las ITPart agrupadas
 	    List<It> its = new ArrayList<>();
@@ -319,14 +319,15 @@ public abstract class ServicioREDPartUtils extends ServicioREDRegeXML {
 		
 			// Recorremos la lista de ITPart y buscamos las ITPart de inicio, confirmaci�n y fin
 	        for (ITPart itp : values) {
-	            String partType = itp.getPartType().toLowerCase();
-	            if (partType.contains("baja") || partType.contains("pb")) {
-	                start = itp;
-	            } else if ((partType.contains("confirmaci\u00f3n") || partType.contains("pc")) && !confirmations.contains(itp)) {
-	                confirmations.add(itp);
-	            } else if (partType.contains("alta") || partType.contains("pa")) {
-	                end = itp;
-	            }
+	        	start = itp;
+//	            String partType = itp.getPartType().toLowerCase();
+//	            if (partType.contains("baja") || partType.contains("pb")) {
+//	                start = itp;
+//	            } else if ((partType.contains("confirmaci\u00f3n") || partType.contains("pc")) && !confirmations.contains(itp)) {
+//	                confirmations.add(itp);
+//	            } else if (partType.contains("alta") || partType.contains("pa")) {
+//	                end = itp;
+//	            }
 	         }
 			
 	        // Si se ha encontrado una ITPart de inicio, creamos una instancia de It a partir de las ITPart encontradas
@@ -350,6 +351,8 @@ public abstract class ServicioREDPartUtils extends ServicioREDRegeXML {
 		}
 		return its.stream().sorted((o1, o2)-> o1.getStart().getWorkLeaveDate().get().compareTo(o2.getStart().getWorkLeaveDate().get())).collect(Collectors.toList());
 	}
+	
+	
 	
 	protected static HtmlPage setUrlParseRemoveXml(HtmlPage htmlPage, HtmlAnchor link) throws IOException {
 		link = HtmlUnitToolkit.setUrlParse(htmlPage, link);

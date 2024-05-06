@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.xml.transform.TransformerException;
+
 import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.seg.social.exception.ForbiddenException;
@@ -748,7 +750,7 @@ public class SistemaRED {
 
 	public static Collection<It> getIts(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String regime, final String ccc, final Date startDate,
-			final Date endDate, final Optional<String> naf) throws SegSocialException {
+			final Date endDate, final Optional<String> naf) throws SegSocialException{
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					startDate, endDate, naf);
@@ -759,7 +761,7 @@ public class SistemaRED {
 
 	public static Collection<It> getIts(final InputStream cert, final String certificatePassword,
 			final String certificateType, final String regime, final String ccc, final Date startDate,
-			final Date endDate, final Optional<String> naf) throws SegSocialException {
+			final Date endDate, final Optional<String> naf) throws SegSocialException, FailingHttpStatusCodeException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(cert.readAllBytes())) {
 			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					startDate, endDate, naf);
