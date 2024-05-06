@@ -181,7 +181,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 							.setCreationDate(new Date())
 							.setCreationUser(user.getLogin())
 							.setDomain(company.getDomain())
-							.setTitle(subject)
+							.setTitle(subject.replace("Asunto de la tarea:", ""))
 							.setTaskHolder(user.getTaskHolders().get(0))
 							.setSender(user.getTaskHolders().get(0))
 							.setRegistry(user.getRegistry())
