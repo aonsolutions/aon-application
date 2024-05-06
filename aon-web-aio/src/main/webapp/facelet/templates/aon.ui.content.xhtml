@@ -17,9 +17,32 @@
 		rendered="#{aonRole.guest}"
 		method="#{aonRole.renderedCommand}">
  	 	
+
+ 	 				
+			<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
+				<ui:insert name="content" />
+			</aon:div>
+			
+			<aon:div>
+			
+		    <script>
+                 window.GPTTConfig = {
+                 uuid: "bd9ed844ccc940a5a477e4c2b6f5f59e",
+                 token: "token=#{dur.generateToken()}" 
+                 }
+                 
+            </script>
+            <script src="https://app.gpt-trainer.com/widget-asset.min.js" defer="true" domain="#{domainSwitcher.domainNameURL}"> </script>
+			
+				
+			
+			</aon:div>
+		
+
 		<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
 			<ui:insert name="content" />
 		</aon:div>
+
 	  	
 	</aon:componentGroup>
 
