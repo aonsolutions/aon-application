@@ -9,6 +9,6 @@ target
 .project
 .classpath
 .settings/
-.min.css
-.min.js
+*.min.css
+*.min.js
 
