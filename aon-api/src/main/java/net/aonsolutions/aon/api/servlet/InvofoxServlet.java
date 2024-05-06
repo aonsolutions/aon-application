@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -121,7 +120,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(DOCUMENTS, InvofoxServlet::getDocuments)
 				.addRoute(DOCUMENT, InvofoxServlet::getDocument)
-				.addRoute(ACCEPT, InvofoxServlet::acceptDocument)
 				.addRoute(TEXT_CONTENT, InvofoxServlet::getTextContent)
 				.addRoute(CONFIGURATION, InvofoxServlet::getConfiguration)
 				.addRoute(COUNT, InvofoxServlet::getCount)
@@ -141,6 +139,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(DOCUMENT, InvofoxServlet::updateDocument)
 				.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
+				.addRoute(ACCEPT, InvofoxServlet::acceptDocument)
 				.apply();
 			
 			response(req, resp, object);
@@ -164,7 +163,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(),  documentId);
 	    OCRDocument ocrDocument = response.getDocument().orElseThrow(RuntimeException::new);
 	    OCRInvoice ocrInvoice = ocrDocument.getData().orElseThrow(RuntimeException::new);
-	    
 	    Invoice inv = response.getDocument()
 		    .map(InvofoxServlet::toInvoice)
 		    .map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
@@ -173,11 +171,18 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    .map(invoice -> fillCategory(aonContext, invoice))
 		    .map(invoice -> fillActivity(aonContext, invoice))
 		    .orElse(null);
-	    if(inv != null && !AonStringUtils.isBlank(inv.getTediCategory())) {
+	    
+	    OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
+	    if(inv != null && !AonStringUtils.isBlank(inv.getTediCategory()) && publicState != null && OCRSeverity.approved.equals(publicState)) {
 	    	inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), inv, null);	    	
 	    	if(inv != null && inv.getId() != null) {
 	    		InvoiceServlet.processInvoiceFile(api, inv);
 	    	}
+	    	JSONObject data = new JSONObject();
+			data.put("_id", documentId);
+			data.put("publicState", "exported");
+			api.setData(data);
+			updateDocument(api);
 	    }
 	    return new JSONObject();
 	}
