@@ -705,6 +705,7 @@ public class InvoiceDAO {
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
+				.setSeller(getValue(r, INVOICE.SELLER))
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
