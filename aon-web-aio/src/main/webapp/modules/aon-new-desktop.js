@@ -326,7 +326,7 @@ export class AonNewDesktop extends AonElement {
 						optionsDiv.style.left = position.left + 15;
 					}
 					if (position.top + 150 >= window.screen.height) {
-						optionsDiv.style.top = position.top - 100;
+						optionsDiv.style.top = position.top - 80;
 					} else {
 						optionsDiv.style.top = position.top + 15;
 					}
