@@ -42,6 +42,7 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
 	selectedApp;
+	aonAppLauncher;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -181,6 +182,16 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.style.height = '68px';
 		this.getRootPanel().style.marginTop = '69px';
 		this.buildMenuTopnav();
+
+		this.buildAppLauncher();
+
+		window.addEventListener(EVENT.CLICK, function(e) {
+			if (e.target == this.getElement('aonMenuBar-applications')) {
+				this.aonAppLauncher.style.display = 'block';
+			} else {
+				this.getElement('aonAppLauncher').style.display = 'none';
+			}
+		});
 	}
 
 	buildMenuSidenav() {
@@ -246,6 +257,76 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
+	buildAppLauncher() {
+		let position = this.getElement('aonMenuBar-applications').getBoundingClientRect();
+
+		this.aonAppLauncher = this.createElement(TAG.DIV);
+		this.aonAppLauncher.id = 'aonAppLauncher';
+		this.aonAppLauncher.style.display = 'none';
+		this.aonAppLauncher.classList.add('aonAppLauncher');
+		this.aonAppLauncher.style.top = position.top + 50;
+		this.aonAppLauncher.style.left = position.left;
+
+		let container = this.createElement(TAG.DIV);
+		container.classList.add('aonAppLauncherContainer');
+
+		for (let item in MENU_APPS) {
+			if (this.isApp(MENU_APPS[item])) {
+				let app = MENU_APPS[item];
+				let div = this.createElement(TAG.DIV);
+				div.classList.add('aonAppLauncherApp');
+				div.id = `aonLauncherApp-${app.app}`;
+
+				let a = this.createElement(TAG.A);
+				a.addEventListener(EVENT.CLICK, () => {
+					this.appSelection(app);
+				});
+
+				if (app.symbol) {
+					let icon = this.createElement(TAG.SPAN);
+					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+					icon.classList.add('aonMenuAppHighlight');
+					icon.id = `aonMenuListAppImg-${app.app}`;
+					icon.innerHTML = app.symbol;
+					icon.style.padding = "4px";
+					icon.style.fontSize = "24px";
+					div.appendChild(icon);
+				} else if (app.icon) {
+					let aonIcon = new AonIcon();
+					aonIcon.id = `aonMenuListAppImg-${app.app}`;
+					aonIcon.icon = app.icon;
+					aonIcon.color = app.color;
+					aonIcon.size = "32px";
+					div.appendChild(aonIcon);
+				} else if (app.logo) {
+					let img = this.createElement(TAG.IMG);
+					img.id = `aonMenuListAppImg-${app.app}`;
+					img.style.width = '24px';
+					img.src = app.logo;
+					img.title = app.title;
+					div.appendChild(img);
+				}
+
+				if (app.title) {
+					let titles = app.title.match(/\b\w+\b/g);
+					for (let i = 0; i < 2; i++) {
+						let span = this.createElement(TAG.SPAN);
+						span.id = `aonMenuListAppTitle-${app.app}-${i}`;
+						span.style.textAlign = 'center';
+						span.innerHTML = titles.length > i ? titles[i] : '&nbsp;';
+						div.appendChild(span);
+					}
+				}
+
+				div.appendChild(a);
+				container.appendChild(div);
+			}
+		}
+
+		this.aonAppLauncher.appendChild(container);
+
+		this.appendChild(this.aonAppLauncher);
+	}
 
 	applySelectionClass() {
 		let element = this.selectedApp;
@@ -267,19 +348,30 @@ export class AonNewMenu extends AonElement {
 		return element.id == this.AON_MENU_TOPNAV;
 	}
 
-	buildApp(app) {
+	buildApp(app) {  
+
 
 		let a = this.createElement(TAG.A);
 		a.classList.add('aonMenuApp');
-		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app);
-			if (this.selectedApp) {
-				this.selectedApp.classList.remove('aonMenuAppSideSelected');
-				this.selectedApp.classList.remove('aonMenuAppTopSelected');
-			}
-			this.selectedApp = a;
-			this.applySelectionClass();
-		});
+		if (!app.title) {
+			// window.addEventListener(EVENT.CLICK, function(e) {
+			// 	if (e.target == a) {
+			// 		this.getElement('aonAppLauncher').style.display = 'block';
+			// 	} else {
+			// 		this.getElement('aonAppLauncher').style.display = 'none';
+			// 	}
+			// });
+		} else {
+			a.addEventListener(EVENT.CLICK, () => {
+				this.appSelection(app);
+				if (this.selectedApp) {
+					this.selectedApp.classList.remove('aonMenuAppSideSelected');
+					this.selectedApp.classList.remove('aonMenuAppTopSelected');
+				}
+				this.selectedApp = a;
+				this.applySelectionClass();
+			});
+		}
 
 		let hoverDiv = this.createElement(TAG.DIV);
 		hoverDiv.innerHTML = app.title;
