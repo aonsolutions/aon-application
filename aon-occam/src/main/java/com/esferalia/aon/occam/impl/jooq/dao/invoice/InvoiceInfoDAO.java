@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Timestamp;
