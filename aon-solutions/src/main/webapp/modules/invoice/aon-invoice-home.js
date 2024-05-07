@@ -169,7 +169,7 @@ export class AonInvoiceHome extends AonElement {
 		invoiceResumeCard.firstChild.style.margin = '0';
 
 
-		if(LS.isAonSolutions()) {
+		if(!LS.isSuite()) {
 			let cypCard = new AonCard();
 			cypCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			cypCard.id = this.CHARGE_AND_PAYMENTS;
@@ -315,7 +315,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingRevisionName = this.createDiv();
 		pendingRevisionName.id = 'pendingRevisionName';
-		pendingRevisionName.innerHTML = 'Pendientes de Revisión';
+		pendingRevisionName.innerHTML = 'Documentos Rechazados';
 		pendingRevisionName.style.fontWeight = 'normal';
 		pendingRevisionName.style.color = 'gray';
 		pendingRevisionName.style.lineHeight = '21px';
