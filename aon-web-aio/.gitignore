@@ -7,3 +7,5 @@
 /node_modules/
 webapp/dist/
 /package-lock.json
+*.min.css
+*.min.js
