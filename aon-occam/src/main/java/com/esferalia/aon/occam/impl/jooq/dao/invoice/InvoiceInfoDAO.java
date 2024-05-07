@@ -80,8 +80,8 @@ public class InvoiceInfoDAO {
 		.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
 		.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
 		.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
-		.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
-		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+		.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
+		.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 		.where(INVOICE_INFO.ID.eq(invoiceInfo.getId()))
 		.execute();
 		return invoiceInfo;
@@ -93,10 +93,10 @@ public class InvoiceInfoDAO {
 				.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
 				.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
 				.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
-				.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
-				.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
-				.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
-				.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(INVOICE_INFO.CREATION_USER ,ctx.getUser())
+				.set(INVOICE_INFO.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
+				.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE_INFO.ID).fetchOne().getId();
 		return invoiceInfo.setId(id);
 	}	
