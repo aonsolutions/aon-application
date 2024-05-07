@@ -953,6 +953,7 @@ public class SalaryDraft extends ResizeComposite
 				
 				@Override
 				public String getValue() {
+					
 
 					String value = super.getValue(getSelectedIndex());
 					if (AonStringUtils.isBlank(value))
@@ -978,6 +979,8 @@ public class SalaryDraft extends ResizeComposite
 						return "CRA_0011";
 					case CRA_0008:
 						return "CRA_0008";
+					case CRA_0033:
+						return "CRA_0033";
 					}
 					return null;
 				}
@@ -988,9 +991,12 @@ public class SalaryDraft extends ResizeComposite
 					Payment.Type.CRA_0009, 
 					Payment.Type.CRA_0010, 
 					Payment.Type.CRA_0011, 
-					Payment.Type.CRA_0012 
-			} )
+					Payment.Type.CRA_0012
+			} ) {
 				textListBox.addItem(e.getDescription(), e.name());
+			}
+			
+			textListBox.addItem("0033 INCR.BASES POR ATRASOS.PLANES.PENSIONES", Payment.Type.CRA_0033.name() );
 			
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 			textListBox.addStyleName("aon-WriteOnly");

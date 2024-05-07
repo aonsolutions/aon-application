@@ -50,6 +50,8 @@ public final class IJsonNames {
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
 	public static final String AUTH = "auth";
+	public static final String AUTO_ACCEPT = "autoAccept";
+	public static final String AUTO_RECORD = "autoRecord";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	public static final String AVAILABLE_BALANCE = "availableBalance";

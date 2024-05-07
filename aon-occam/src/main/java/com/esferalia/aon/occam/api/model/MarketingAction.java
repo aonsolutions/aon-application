@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+
 public class MarketingAction implements Serializable {
 	
 	public static enum MarketingActionMediaType {
@@ -55,6 +57,10 @@ public class MarketingAction implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private String description;
+	private Double budget;
+	private Double expense;
+	private Workgroup workgroup;
+	private TaskHolder taskHolder;
 	
 	private Survey survey;
 	private Integer newsletter;
@@ -132,6 +138,34 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setNews(Integer news) {
 		this.news = news;
+		return this;
+	}
+	public Double getBudget() {
+		return budget == null ? 0.00 : budget;
+	}
+	public MarketingAction setBudget(Double budget) {
+		this.budget = budget;
+		return this;
+	}
+	public Double getExpense() {
+		return expense == null ? 0.00 : expense;
+	}
+	public MarketingAction setExpense(Double expense) {
+		this.expense = expense;
+		return this;
+	}
+	public Workgroup getWorkgroup() {
+		return workgroup;
+	}
+	public MarketingAction setWorkgroup(Workgroup workgroup) {
+		this.workgroup = workgroup;
+		return this;
+	}
+	public TaskHolder getTaskHolder() {
+		return taskHolder;
+	}
+	public MarketingAction setTaskHolder(TaskHolder taskHolder) {
+		this.taskHolder = taskHolder;
 		return this;
 	}
 	public boolean isDeleted() {

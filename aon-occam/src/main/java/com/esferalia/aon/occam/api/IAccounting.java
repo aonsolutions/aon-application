@@ -92,6 +92,7 @@ public interface IAccounting {
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
 	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query);
+	public LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate);
@@ -168,5 +169,6 @@ public interface IAccounting {
 	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;
 	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException;
 	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
+	
 	
 }

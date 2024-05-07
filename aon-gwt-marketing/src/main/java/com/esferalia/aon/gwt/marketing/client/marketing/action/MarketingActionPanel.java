@@ -66,12 +66,14 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, DES(AON.MSG.description()					,"auto"  ,null)
-		, TYP(AON.MSG.type()						,"100px"  ,null)
 		, CAN("Canal"								,"150px" ,null)
-		, STD("F. Inicio"							,"150px" ,null)
-		, END("F. Fin"								,"150px" ,null)
-		, SUR("Cuestionario"						,"150px" ,null)
-		, TGT("Clientes Potenciales"				,"150px" ,null)
+		, TYP(AON.MSG.type()						,"100px" ,null)
+		, BUD("Presupuesto"							,"110px" ,null)
+		, EXP("Gastos"								,"110px" ,null)
+		, STD("F. Inicio"							,"100px" ,null)
+		, END("F. Fin"								,"100px" ,null)
+		, SUR("Cuestionario"						,"120px" ,null)
+		, TGT("C. Potenciales"						,"100px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
 
@@ -247,10 +249,20 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		tab.setWidget(r, col, new Label(marketingAction.getDescription()));
 		col++;
 		
+		tab.setWidget(r, col, new Label(marketingAction.getMediaType().getDescription()));
+		col++;
+		
 		tab.setWidget(r, col, new Label(getActivonType(marketingAction.getMediaType().getValue())));
 		col++;
 		
-		tab.setWidget(r, col, new Label(marketingAction.getMediaType().getDescription()));
+		Label budget = new Label(AON.FMT.format(marketingAction.getBudget()) + " \u20ac");
+		budget.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(r, col, budget);
+		col++;
+		
+		Label expense = new Label(AON.FMT.format(marketingAction.getExpense()) + " \u20ac");
+		expense.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(r, col, expense);
 		col++;
 		
 		tab.setWidget(r, col, new Label(marketingAction.getStartDate() == null ? "" : formatDate.format(marketingAction.getStartDate())));
@@ -271,8 +283,8 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		AonTableButton msg = new AonTableButton("");
 		AonTableButton sel = new AonTableButton("", AON.CSS.aonIconRight());
 		TextBox descriptionBox = new TextBox();
-		Label typeAction = new Label();
 		ListBox typeListBox = new ListBox();
+		Label typeAction = new Label();
 		AonDateBox startDate = new AonDateBox();
 		AonDateBox endDate = new AonDateBox();
 		
@@ -354,10 +366,6 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		tab.setWidget(r, col, descriptionBox);
 		col++;
 		
-		typeAction.setText(getActivonType(marketingAction.getMediaType().getValue()));
-		tab.setWidget(r, col, typeAction);
-		col++;
-		
 		typeListBox.setStyleName(AON.CSS.aonBorderNone());
 		typeListBox.addStyleName(AON.CSS.aonWidthAll());
 		typeListBox.addItem( "-", "");
@@ -367,6 +375,20 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		}
 		setSelectedValueLB(typeListBox, marketingAction.getMediaType().getValue() + "");
 		tab.setWidget(r, col, typeListBox);
+		col++;
+		
+		typeAction.setText(getActivonType(marketingAction.getMediaType().getValue()));
+		tab.setWidget(r, col, typeAction);
+		col++;
+		
+		Label budget = new Label(AON.FMT.format(marketingAction.getBudget()) + " \u20ac");
+		budget.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(r, col, budget);
+		col++;
+		
+		Label expense = new Label(AON.FMT.format(marketingAction.getExpense()) + " \u20ac");
+		expense.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(r, col, expense);
 		col++;
 		
 		startDate.setStyleName(AON.CSS.aonBorderNone());

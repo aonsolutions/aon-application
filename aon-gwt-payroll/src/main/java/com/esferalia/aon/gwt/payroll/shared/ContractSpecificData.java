@@ -544,15 +544,15 @@ public class ContractSpecificData implements Serializable {
 		return null == interimCauseB ? Boolean.FALSE : interimCauseB;
 	}
 
-	public void setIsInterimCause(Boolean interimCauseB) {
+	public void setIsSustitucionCause(Boolean interimCauseB) {
 		this.interimCauseB = interimCauseB;
 	}
 
-	public String getInterimCause() {
+	public String getSustitucionCause() {
 		return null == interimCause ? "" : interimCause;
 	}
 
-	public void setInterimCause(String interimCause) {
+	public void setSustitucionCause(String interimCause) {
 		this.interimCause = interimCause;
 	}
 

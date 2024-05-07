@@ -36,6 +36,9 @@ public class InvofoxConfiguration implements Serializable{
 	private String apiUrl ;
 	private String apiKey ;
 	private Environment environment = Environment.PRO ;
+
+	private boolean autoAccept;
+	private boolean autoRecord;
 	
 	public boolean isTest() {
 		return environment == Environment.TEST;
@@ -62,6 +65,21 @@ public class InvofoxConfiguration implements Serializable{
 	    return AonStringUtils.defaultIfEmpty(apiKey, environment.getApiKey());
 	}
 	
+	public boolean isAutoAccept() {
+		return autoAccept;
+	}
 	
+	public InvofoxConfiguration setAutoAccept(boolean autoAccept) {
+		this.autoAccept = autoAccept;
+		return this;
+	}
 	
+	public boolean isAutoRecord() {
+		return autoRecord;
+	}
+	
+	public InvofoxConfiguration setAutoRecord(boolean autoRecord) {
+		this.autoRecord = autoRecord;
+		return this;
+	}
 }

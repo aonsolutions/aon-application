@@ -3,10 +3,13 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.MkAction.MK_ACTION;
 import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
 import static com.esferalia.aon.jooq.tables.MkCampaign.MK_CAMPAIGN;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -31,7 +34,9 @@ import com.esferalia.aon.occam.api.model.Properties.MarketingCampaignProperties;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO.SurveyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingActionTargetValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingActionValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingCampaignValidation;
@@ -62,7 +67,37 @@ public class MarketingCampaignDAO {
 		Record marketingCampaignRecord = ctx.getDslContext().select().from(MK_CAMPAIGN)
 				.leftOuterJoin(SCOPE)
 				.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+				.leftOuterJoin(WORKGROUP)
+				.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER)
+				.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(MK_CAMPAIGN.ID.eq(id))
+				.fetchOne();
+		
+		if(null == marketingCampaignRecord) return null;
+		
+		MarketingCampaign marketingCampaign = new MarketingCampaignFiller().apply(marketingCampaignRecord);
+		
+		getMarketingCampaignActions(ctx, marketingCampaign);
+		
+		return marketingCampaign;
+	}
+	
+	public static MarketingCampaign getByAction(CloseableAONContext ctx, Integer actionId) {
+		Record marketingCampaignRecord = ctx.getDslContext().select().from(MK_ACTION)
+				.join(MK_CAMPAIGN)
+				.on(MK_CAMPAIGN.ID.eq(MK_ACTION.CAMPAIGN))
+				.leftOuterJoin(SCOPE)
+				.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+				.leftOuterJoin(WORKGROUP)
+				.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER)
+				.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.where(MK_ACTION.ID.eq(actionId))
 				.fetchOne();
 		
 		if(null == marketingCampaignRecord) return null;
@@ -80,6 +115,12 @@ public class MarketingCampaignDAO {
 		List<MarketingCampaign> marketingCampaigns = ctx.getDslContext().select().from(MK_CAMPAIGN)
 			.leftOuterJoin(SCOPE)
 			.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+			.leftOuterJoin(WORKGROUP)
+			.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER)
+			.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+			.leftOuterJoin(REGISTRY)
+			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.where(condition)
 			.limit(params.getOffset(), params.getLimit())
 			.fetch()
@@ -98,6 +139,12 @@ public class MarketingCampaignDAO {
 				.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
 				.leftOuterJoin(SCOPE)
 				.on(SCOPE.ID.eq(SURVEY.SCOPE))
+				.leftOuterJoin(WORKGROUP)
+				.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER)
+				.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(MK_ACTION.DOMAIN.eq(marketingCampaign.getDomain()))
 				.and(MK_ACTION.CAMPAIGN.eq(marketingCampaign.getId()))
 				.fetch()
@@ -120,6 +167,12 @@ public class MarketingCampaignDAO {
 		if(null != params.getActive())
 			condition = condition.and(MK_CAMPAIGN.ACTIVE.eq(params.getActive()));
 		
+		if(null != params.getBudget())
+			condition = condition.and(MK_CAMPAIGN.BUDGET.ge(params.getBudget()));
+		
+		if(null != params.getExpense())
+			condition = condition.and(MK_CAMPAIGN.EXPENSE.ge(params.getExpense()));
+		
 		return condition;
 	}
 
@@ -136,6 +189,10 @@ public class MarketingCampaignDAO {
 				.set(MK_CAMPAIGN.ACTIVE, marketingCampaign.isActive() ? (byte)1 : (byte)0)
 				.set(MK_CAMPAIGN.DESCRIPTION, marketingCampaign.getDescription())
 				.set(MK_CAMPAIGN.SCOPE, marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getId())
+				.set(MK_CAMPAIGN.BUDGET, marketingCampaign.getBudget())
+				.set(MK_CAMPAIGN.EXPENSE, marketingCampaign.getExpense())
+				.set(MK_CAMPAIGN.WORKGROUP, marketingCampaign.getWorkgroup() == null ? null : marketingCampaign.getWorkgroup().getId())
+				.set(MK_CAMPAIGN.TASK_HOLDER, marketingCampaign.getTaskHolder() == null ? null : marketingCampaign.getTaskHolder().getRegistry())
 				.returning(MK_CAMPAIGN.ID)
 				.fetchOne()
 				.getValue(MK_CAMPAIGN.ID);
@@ -153,6 +210,10 @@ public class MarketingCampaignDAO {
 		.set(MK_CAMPAIGN.ACTIVE, marketingCampaign.isActive() ? (byte)1 : (byte)0)
 		.set(MK_CAMPAIGN.DESCRIPTION, marketingCampaign.getDescription())
 		.set(MK_CAMPAIGN.SCOPE, marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getId())
+		.set(MK_CAMPAIGN.BUDGET, marketingCampaign.getBudget())
+		.set(MK_CAMPAIGN.EXPENSE, marketingCampaign.getExpense())
+		.set(MK_CAMPAIGN.WORKGROUP, marketingCampaign.getWorkgroup() == null ? null : marketingCampaign.getWorkgroup().getId())
+		.set(MK_CAMPAIGN.TASK_HOLDER, marketingCampaign.getTaskHolder() == null ? null : marketingCampaign.getTaskHolder().getRegistry())
 		.where(MK_CAMPAIGN.ID.eq(marketingCampaign.getId()))
 		.execute();
 		
@@ -161,10 +222,13 @@ public class MarketingCampaignDAO {
 		return marketingCampaign;
 	}
 
-	public static void delete(AONContext ctx, Integer id) {
+	public static void delete(CloseableAONContext ctx, Integer id) {
+		List<Integer> marketingActionIds = ctx.getDslContext().select(MK_ACTION.ID).from(MK_ACTION).where(MK_ACTION.CAMPAIGN.eq(id)).fetch(MK_ACTION.ID);
+		marketingActionIds.forEach(marketingActionId -> deleteAction(ctx, marketingActionId));
+		
 		ctx.getDslContext().delete(MK_CAMPAIGN)
-		.where(MK_CAMPAIGN.ID.eq(id))
-		.execute();
+			.where(MK_CAMPAIGN.ID.eq(id))
+			.execute();
 		
 		ctx.log().debug("DELETE MK_CAMPAIGN id:" + id);
 	}
@@ -180,6 +244,12 @@ public class MarketingCampaignDAO {
 			.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
 			.leftOuterJoin(SCOPE)
 			.on(SCOPE.ID.eq(SURVEY.SCOPE))
+			.leftOuterJoin(WORKGROUP)
+			.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER)
+			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+			.leftOuterJoin(REGISTRY)
+			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.where(condition)
 			.limit(params.getOffset(), params.getLimit())
 			.fetch()
@@ -198,10 +268,20 @@ public class MarketingCampaignDAO {
 			.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
 			.leftOuterJoin(SCOPE)
 			.on(SCOPE.ID.eq(SURVEY.SCOPE))
+			.leftOuterJoin(WORKGROUP)
+			.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER)
+			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+			.leftOuterJoin(REGISTRY)
+			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.where(MK_ACTION.ID.eq(id))
 			.fetchOne();
 		
 		MarketingAction marketingAction = MarketingActionFiller.build(marketingActionRecord);
+		
+		if(marketingAction.getMarketingCampaign() == null) {
+			marketingAction.setMarketingCampaign(getByAction(ctx, marketingAction.getId()));
+		}
 			
 		getMarketingActionTargets(ctx, marketingAction);
 		
@@ -226,13 +306,22 @@ public class MarketingCampaignDAO {
 		if(null != params.getMarketingCampaign())
 			condition = condition.and(MK_ACTION.CAMPAIGN.eq(params.getMarketingCampaign().getId()));
 		
+		if(null != params.getBudget())
+			condition = condition.and(MK_ACTION.BUDGET.ge(params.getBudget()));
+		
+		if(null != params.getExpense())
+			condition = condition.and(MK_ACTION.EXPENSE.ge(params.getExpense()));
+		
 		return condition;
 	}
 
 	public static void deleteAction(CloseableAONContext ctx, Integer id) {
+		List<Integer> marketingActionTargetIds = ctx.getDslContext().select(MK_ACTION_TARGET.ID).from(MK_ACTION_TARGET).where(MK_ACTION_TARGET.ACTION.eq(id)).fetch(MK_ACTION_TARGET.ID);
+		marketingActionTargetIds.forEach(marketingActionTargetId -> deleteActionTarget(ctx, marketingActionTargetId));
+		
 		ctx.getDslContext().delete(MK_ACTION)
-		.where(MK_ACTION.ID.eq(id))
-		.execute();
+			.where(MK_ACTION.ID.eq(id))
+			.execute();
 		
 		ctx.log().debug("DELETE MK_ACTION id:" + id);
 	}
@@ -255,6 +344,10 @@ public class MarketingCampaignDAO {
 				.set(MK_ACTION.NEWSLETTER, marketingAction.getNewsletter())
 				.set(MK_ACTION.DESCRIPTION, marketingAction.getDescription())
 				.set(MK_ACTION.NEWS, marketingAction.getNews())
+				.set(MK_ACTION.BUDGET, marketingAction.getBudget())
+				.set(MK_ACTION.EXPENSE, marketingAction.getExpense())
+				.set(MK_ACTION.WORKGROUP, marketingAction.getWorkgroup() == null ? null : marketingAction.getWorkgroup().getId())
+				.set(MK_ACTION.TASK_HOLDER, marketingAction.getTaskHolder() == null ? null : marketingAction.getTaskHolder().getRegistry())
 				.returning(MK_ACTION.ID)
 				.fetchOne()
 				.getValue(MK_ACTION.ID);
@@ -277,6 +370,10 @@ public class MarketingCampaignDAO {
 			.set(MK_ACTION.NEWSLETTER, marketingAction.getNewsletter())
 			.set(MK_ACTION.DESCRIPTION, marketingAction.getDescription())
 			.set(MK_ACTION.NEWS, marketingAction.getNews())
+			.set(MK_ACTION.BUDGET, marketingAction.getBudget())
+			.set(MK_ACTION.EXPENSE, marketingAction.getExpense())
+			.set(MK_ACTION.WORKGROUP, marketingAction.getWorkgroup() == null ? null : marketingAction.getWorkgroup().getId())
+			.set(MK_ACTION.TASK_HOLDER, marketingAction.getTaskHolder() == null ? null : marketingAction.getTaskHolder().getRegistry())
 			.where(MK_ACTION.ID.eq(marketingAction.getId()))
 		.execute();
 		
@@ -332,6 +429,9 @@ public class MarketingCampaignDAO {
 		
 		if(null != params.getMarketingAction())
 			condition = condition.and(MK_ACTION_TARGET.ACTION.eq(params.getMarketingAction().getId()));
+		
+		if(null != params.getStatus())
+			condition = condition.and(MK_ACTION_TARGET.STATUS.eq(params.getStatus()));
 		
 		return condition;
 	}
@@ -404,6 +504,10 @@ public class MarketingCampaignDAO {
 				.setActive(r.getValue(MK_CAMPAIGN.ACTIVE) == (byte)1)
 				.setDescription(r.getValue(MK_CAMPAIGN.DESCRIPTION))
 				.setScope(null != r.getValue(MK_CAMPAIGN.SCOPE) ? ScopeFiller.buildScope(r) : null)
+				.setBudget(r.getValue(MK_CAMPAIGN.BUDGET))
+				.setExpense(r.getValue(MK_CAMPAIGN.EXPENSE))
+				.setWorkgroup(null == r.getValue(MK_CAMPAIGN.WORKGROUP) ? null : WorkgroupFiller.build(r))
+				.setTaskHolder(null == r.getValue(MK_CAMPAIGN.TASK_HOLDER) ? null : TaskHolderFiller.build(r, REGISTRY))
 				;
 		}
 	}
@@ -433,6 +537,10 @@ public class MarketingCampaignDAO {
 				.setNewsletter(r.getValue(MK_ACTION.NEWSLETTER))
 				.setDescription(r.getValue(MK_ACTION.DESCRIPTION))
 				.setNews(r.getValue(MK_ACTION.NEWS))
+				.setBudget(r.getValue(MK_ACTION.BUDGET))
+				.setExpense(r.getValue(MK_ACTION.EXPENSE))
+				.setWorkgroup(null == r.getValue(MK_ACTION.WORKGROUP) ? null : WorkgroupFiller.build(r))
+				.setTaskHolder(null == r.getValue(MK_ACTION.TASK_HOLDER) ? null : TaskHolderFiller.build(r, REGISTRY))
 				;
 		}
 

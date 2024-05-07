@@ -73,6 +73,11 @@ public class MarketingCompaignModule extends MainEntryPoint {
 			protected void onBackClick() {
 				showMarketingCampaignList();
 			}
+
+			@Override
+			protected void onCampaignDeleteClick(MarketingCampaign marketingCampaign) {
+				deleteMarketingCampaign(marketingCampaign);
+			}
 			
 		};
 		
@@ -80,7 +85,18 @@ public class MarketingCompaignModule extends MainEntryPoint {
 
 			@Override
 			protected void onMarketingCampaignSelect(MarketingCampaign marketingCampaign) {
-				showSelectedMarketingCampaign(marketingCampaign);
+				COMMON_SERVICE.getMarketingCampaign(options.getDomainName(), options.getDomain(), options.getUser(), marketingCampaign.getId(), new AsyncCallback<MarketingCampaign>() {
+					
+					@Override
+					public void onSuccess(MarketingCampaign marketingCampaign) {
+						showSelectedMarketingCampaign(marketingCampaign);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error obteniendo campaña: " + caught.getMessage());
+					}
+				});
 			}
 		
 		};
@@ -102,6 +118,21 @@ public class MarketingCompaignModule extends MainEntryPoint {
 	private void showSelectedMarketingCampaign(MarketingCampaign marketingCampaign) {
 		deckLayoutPanel.showWidget(marketignCampaignEntryPanel);
 		marketignCampaignEntryPanel.setMarketingCampaign(marketingCampaign);
+	}
+	
+	private void deleteMarketingCampaign(MarketingCampaign marketingCampaign) {
+		COMMON_SERVICE.deleteMarketingCampaign(options.getDomainName(), options.getDomain(), options.getUser(), marketingCampaign.getId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				showMarketingCampaignList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error borrado: " + caught.getMessage());
+			}
+		});
 	}
 	
 }

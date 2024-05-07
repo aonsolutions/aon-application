@@ -89,7 +89,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
-import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOSUSTITUCIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
@@ -500,7 +500,7 @@ public class ContrataReader {
 	}
 	private void readContract410(CONTRATO410TYPE o, ContrataContratoParams params) {
 		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosContratoSustitucion(o.getDATOSCONTRATOSUSTITUCION(), params);
 		completeDatosEtCote(o.getDATOSETCOTE(), params);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
 		completeDatosEtt(o.getDATOSETT(), params); 
@@ -550,7 +550,7 @@ public class ContrataReader {
 		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
 		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosContratoSustitucion(o.getDATOSCONTRATOSUSTITUCION(), params);
 		completeDatosEtCote(o.getDATOSETCOTE(), params);
 		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
@@ -605,7 +605,7 @@ public class ContrataReader {
 	private void readContract510(CONTRATO510TYPE o, ContrataContratoParams params) {
 		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosContratoSustitucion(o.getDATOSCONTRATOSUSTITUCION(), params);
 		completeDatosEtCote(o.getDATOSETCOTE(), params);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
 		completeDatosEtt(o.getDATOSETT(), params); 
@@ -658,7 +658,7 @@ public class ContrataReader {
 		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
 		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
 		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosContratoSustitucion(o.getDATOSCONTRATOSUSTITUCION(), params);
 		completeDatosEtCote(o.getDATOSETCOTE(), params);
 		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
@@ -823,9 +823,6 @@ public class ContrataReader {
 		if(datos != null){
 			params.setActividadSinFechaCierta(datos.getACTIVIDADSINFECHACIERTA());
 			params.setColectivoEdad(THPCOLFO.getEnumByValue(datos.getCOLECTIVOEDAD()));
-			if(datos.getFIJODISCONTINUOPERIODICO()!=null){
-				params.setFijoDiscontinuoPeriodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
-			}
 			params.setHorasAnualesTiempoCompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
 			params.setHorasConvenio(getHoras(datos.getHORASCONVENIO()));
 			params.setMinutosConvenio(getMinutos(datos.getHORASCONVENIO()));
@@ -902,10 +899,10 @@ public class ContrataReader {
 	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos, ContrataContratoParams params) {
 		// TODO
 	}
-	private void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos, ContrataContratoParams params) {
+	private void completeDatosContratoSustitucion(DATOSCONTRATOSUSTITUCIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setInterimData(true);
-			params.setCausaInterinidad(TEIINTER.getEnumByValue(datos.getCAUSAINTERINIDAD()));
+			params.setCausaInterinidad(TEIINTER.getEnumByValue(datos.getCAUSASUSTITUCION()));
 		}
 	}
 	private void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos, ContrataContratoParams params) {
@@ -1219,7 +1216,6 @@ public class ContrataReader {
 			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSCONTRATOTIEMPOPARCIALTYPE datoscontratotiempoparcial, ContrataTransformacionesParams params) {
 		if(datoscontratotiempoparcial != null){
 			params.setActividadSinFechaCierta(datoscontratotiempoparcial.getACTIVIDADSINFECHACIERTA());
-			params.setFijoDiscontinuoPeriodico(datoscontratotiempoparcial.getFIJODISCONTINUOPERIODICO().equals("S"));
 			params.setHorasConvenio(getHoras(datoscontratotiempoparcial.getHORASCONVENIO()));
 			params.setMinutosConvenio(getMinutos(datoscontratotiempoparcial.getHORASCONVENIO()));
 			params.setHorasJornada(getHoras(datoscontratotiempoparcial.getHORASJORNADA()));

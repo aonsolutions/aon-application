@@ -117,7 +117,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = 
 				getSQLContractSettleContext(connection, seniority, contract);
 		
-		double fix29Feb = 0;//Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
+		double fix29Feb = 0; //Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 		Assert.assertEquals(seniority, ctx.getStartDate());
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("AÑOS_TRABAJADOS", seniority, getToday()))
 			Assert.assertEquals( (2.00 + 2/12.00 + fix29Feb/12.00), result.getValue());

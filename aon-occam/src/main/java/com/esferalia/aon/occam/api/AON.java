@@ -8362,5 +8362,11 @@ public class AON {
 			return getRegistry().getTargetStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 		}
 	}
+
+	public static Stream<GeoZone> geozoneStream(String domainName, Integer domain, String user, GeoZoneFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().geozoneStream(ctx, filter);
+		}
+	}
 	
 }

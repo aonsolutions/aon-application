@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -398,17 +401,32 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) throws AonCoreException {
 		return AON.getMarketingActionTargets(params);
 	}
+	
 	@Override
 	public void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deleteMarketingActionTarget(domainName, domain, user, id);
 	}
+	
 	@Override
 	public MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user, MarketingActionTarget marketingActionTarget) throws AonCoreException {
 		return AON.saveMarketingActionTarget(domainName, domain, user, marketingActionTarget);
 	}
+	
 	@Override
 	public List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getTargetSuggestion(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException {
+		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		return workgroups;
+	}
+	
+	@Override
+	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
+		return taskHolders;
 	}
 	
 }
