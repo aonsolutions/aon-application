@@ -73,7 +73,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				Rawdoc r = AON.getRawdocStream(domainName, domainId, login, 
 						f -> f.getDomainProperty().eq(domainId)
 						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
-				if(r.getId() != null) json = new JSONObject(r.getJson());
+				if(r != null && r.getId() != null) json = new JSONObject(r.getJson());
 				invoice = InvoiceJSON.fromJSON(json);
 				invoice = setPaymethod(domainName, domainId, login, invoice);
 			} else if(json.opt(IConstants.ID) != null){
