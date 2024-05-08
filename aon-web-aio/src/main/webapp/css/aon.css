@@ -797,6 +797,7 @@
 .aonMenuLeftop  {
 	top: 0;
 	left: 0;
+	z-index: 8;
 	height: 48px;
 	width: 68px;
 	position: fixed;
@@ -1899,6 +1900,10 @@ label.rating:hover {
   align-items: center;
 }
 
+.aonHeaderApp {
+	margin-left: 49px;
+}
+
 /*
 ********************************************
             RESPONSIVE DASHBOARD
@@ -2411,4 +2416,110 @@ aon-access-card{
     grid-template-columns: repeat(7, minmax(0px, 1fr));
   }
 }
+
+:has(>.aonMenuApp):hover{
+  background-color: white !important;
+  cursor: pointer;
+}
+
+:has(>.aonMenuApp):hover .aonMenuAppHighlight {
+  color: #464feb !important;
+  font-weight: bold !important;
+}
+
+:has(>.aonMenuAppSideSelected) {
+  border-left: 2px solid #464feb;
+  margin-left: 2px;
+}
+
+:has(>.aonMenuAppTopSelected) {
+  border-top: 2px solid #464feb;
+  margin-top: 2px;
+}
+
+.aonMenuAppSideSelected .aonMenuAppHighlight, .aonMenuAppTopSelected .aonMenuAppHighlight {
+  color: #464feb !important;
+  font-weight: bold !important;
+}
+
+.aonMenuAppHover {
+  text-wrap: nowrap;
+  z-index: 10 !important;
+  background-color: white;
+  border: 1px solid white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 10px !important;
+  padding: 5px;
+}
+
+.aonAppMoreBtn:hover {
+  cursor: pointer;
+}
+
+.aonAppMoreListItem {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.aonAppMoreListItem a {
+  display: flex;
+  justify-items: center !important;
+  align-items: flex-start;
+}
+
+.aonAppMoreIcon {
+  margin-right: 2px;
+}
+
+.aonAppMoreListItem:hover {
+  cursor: pointer;
+  background-color: lightgrey;
+}
+
+.aonAppMoreListItem:hover .aonAppMoreIcon {
+  color: #464feb !important;
+}
+
+.aonAppLauncher {
+  position: fixed;
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  z-index: 8;
+  max-width: 50%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.aonAppLauncherAppContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 5px;
+  height: 100%;
+  background-color: white;
+  padding: 10px;
+}
+
+.aonAppLauncherApp {
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 88px;
+  height: 96px;
+}
+
+.aonAppLauncherApp:hover {
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 

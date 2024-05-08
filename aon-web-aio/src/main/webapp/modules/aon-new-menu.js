@@ -366,6 +366,7 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
 		});
+		a.classList.add('aonMenuApp');
 
 		let hoverDiv = this.createElement(TAG.DIV);
 		hoverDiv.innerHTML = app.title;
@@ -751,6 +752,14 @@ export class AonNewMenu extends AonElement {
 
 		}
 	}
+	
+	isTopNav(a) {
+		let element = a;
+		do {
+			element = element.parentElement;
+		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		return element.id == this.AON_MENU_TOPNAV;
+	}	
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {
