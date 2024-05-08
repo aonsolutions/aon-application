@@ -1,4 +1,4 @@
-import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
+import { MSG, CONSTANT, AON_ICONS, COLORS, MATERIAL_ICONS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
 import * as LS from  "./localStorageService.js";
@@ -365,6 +365,17 @@ export const MESSENGER = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
+export const CALENDAR = {
+  app: CONSTANT.CALENDAR,
+  title: "Calendario",
+  icon: AON_ICONS.AON_CALENDAR,
+  color: "#682627",
+  backgroundColor: 'rgba(45, 45, 45, .2)',
+  hover: 'aonSidenavHover',
+  price: "-",
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+};
+
 export const TOOLS = {
   app: CONSTANT.TOOLS,
   title: MSG.TOOLS,
@@ -571,7 +582,8 @@ export const MenuApps = {
   MARKETING,
   // GROUPWARE,
   NOTES,
-  TOOLS
+  TOOLS,
+  CALENDAR
 };
 
 export const MobileMenuApps = [
@@ -634,7 +646,8 @@ export const Apps = {
   NOTES,
   WAREHOUSE,
   // GROUPWARE
-  MARKETING
+  MARKETING,
+  CALENDAR
 };
 
 export const ConsultancyBookingApps = {

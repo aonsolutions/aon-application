@@ -57,6 +57,7 @@ export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
+export const CALENDAR = 'calendar';
 export const CAMPAIGN = 'campaign';
 export const CARD = 'card';
 export const CARRIER = 'carrier';

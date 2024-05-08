@@ -2319,13 +2319,14 @@ aon-access-card{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.aonAppLauncherContainer {
+.aonAppLauncherAppContainer {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   flex-wrap: wrap;
+  gap: 5px;
   height: 100%;
   background-color: white;
   padding: 10px;
@@ -2333,11 +2334,15 @@ aon-access-card{
 
 .aonAppLauncherApp {
   background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 88px;
   height: 96px;
 }
 
 .aonAppLauncherApp:hover {
+  cursor: pointer;
   background-color: white;
   border: 1px solid white;
   border-radius: 5px;
