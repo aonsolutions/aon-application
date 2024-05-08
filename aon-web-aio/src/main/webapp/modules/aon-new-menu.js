@@ -195,7 +195,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
 		aonMenuTopnav.style.height = '0px';
-		this.getRootPanel().style.marginTop = '0px'; //'69px';
+		this.getRootPanel().style.marginTop = '49px'; //'69px';
 		this.buildMenuTopnav();
 	}
 
@@ -291,7 +291,7 @@ export class AonNewMenu extends AonElement {
 		let rightPanel = this.getElement("aonRightPanel");
 
 		topnav.style.height = '68px';
-		rootPanel.style.marginTop = '69px';
+		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 68}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
 			rightPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
