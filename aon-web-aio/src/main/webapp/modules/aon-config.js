@@ -90,7 +90,7 @@ export class AonConfig extends AonElement {
 
 		let rightPanelTypeCard = new AonCard();
 		rightPanelTypeCard.id = this.TYPE_CARD;
-		rightPanelTypeCard.title = "Seleccionar tipo de empresa";
+		rightPanelTypeCard.title = MSG.SELECT_COMPANY_TYPE;
 		rightPanelTypeCard.style.width = "90%";
 		rightPanelTypeCard.style.height = "fit-content";
 		rightPanelTypeCard.style.marginLeft = "10px";
@@ -101,7 +101,11 @@ export class AonConfig extends AonElement {
 		cardDivvv.style.borderRadius = '2px';
 
 		let divGeneralll = this.createDiv();
-		
+		divGeneralll.appendChild(this.buildTypeData(MSG.OFFICE,"business_center"));
+		divGeneralll.appendChild(this.buildTypeData(MSG.WORKSHOPS,"car_repair"));
+		divGeneralll.appendChild(this.buildTypeData(MSG.COMMERCE,"point_of_sale"));
+		divGeneralll.appendChild(this.buildTypeData(MSG.ACADEMIES,"dictionary"));
+		rightPanelTypeCard.setContent(divGeneralll);
 
 		rightPanelSwitchTopButton.addEventListener(EVENT.CHANGE, () => {
 			LS.setTopMenu(rightPanelSwitchTopButton.checked);
@@ -157,7 +161,7 @@ export class AonConfig extends AonElement {
 		return div;		
 	}
 
-	buildTypeData(value,icon) {
+	buildTypeData(value,icon,type) {
 		let div = this.createDiv();
 		div.style.marginTop = '5px';
 		div.style.title = "Idioma";
@@ -166,6 +170,7 @@ export class AonConfig extends AonElement {
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
 		i.style.marginRight = '5px';
+		i.innerHTML = icon;
 		i.style.verticalAlign = "middle";
 		div.appendChild(i);
 		
@@ -173,19 +178,6 @@ export class AonConfig extends AonElement {
 		span.className = CSS.AON_CARD_TEXT;
 		span.innerHTML = value;
 		div.appendChild(span);
-
-		if(language == LS.getLanguage()) {
-			i.innerHTML = "done";
-			span.style.fontWeight = "bold";
-		}else{
-			i.innerHTML= "language";
-		}
-
-		div.addEventListener(EVENT.CLICK, () => {
-			LS.setRightPanel(CONSTANT.TRUE);
-			LS.setLanguage(language);
-		})
-	
 		return div;		
 	}
 

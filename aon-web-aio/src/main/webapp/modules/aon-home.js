@@ -17,7 +17,6 @@ export class AonHome extends AonElement {
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
-	RIGHT_PANEL_HELP;
 
 	constructor () {
 		super();
@@ -35,7 +34,6 @@ export class AonHome extends AonElement {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.RIGHT_PANEL_HELP = 'rightPanelHelp'
 	}
 
 	build() {
@@ -153,7 +151,7 @@ export class AonHome extends AonElement {
 			headerUser.addEventListener(EVENT.CLICK, () => {
 				if(rightPanel.isClose()) {
 					rightPanel.setContent(new AonLoginPanel());
-					rightPanel.setTitle("Usuario");
+					rightPanel.setTitle(MSG.USER);
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				} else  {
 					rightPanel.close();

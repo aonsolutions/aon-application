@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Um'
+export const ACADEMIES = 'Akademien';
 export const ACCEPT = 'Akzeptieren';
 export const ACCESS = "Zugang";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'zugriff auf ihr AON-konto';
@@ -67,6 +68,7 @@ export const CERTIFICATE = 'Zertifikat';
 export const CERTIFICATES = 'Zertifikate';
 export const CHANGE_TYPE = 'Typ ändern';
 export const CHARGES_AND_PAYMENTS = 'Gebühren und Zahlungen';
+export const CHANGE_PASSWORD = 'Kennwort ändern';
 export const CHOOSE_A_DOMAIN = 'Bitte wählen Sie eine Domain aus';
 export const CITY = 'Stadt';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
@@ -76,6 +78,7 @@ export const CLOSE_SESSION = 'Ausloggen';
 export const CODE = 'Code';
 export const COMMENT = 'Kommentar';
 export const COMMENTS = 'Kommentare';
+export const COMMERCE = 'Handel';
 export const COMMUNICATION = 'Kommunikation';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -287,7 +290,7 @@ export const NUMBER_OF_USERS = 'Anzahl der Nutzer';
 
 // ----- O
 export const OBSERVATION = 'Observation';
-export const OFFICE = 'Office';
+export const OFFICE = 'Versenden';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Nur Domains ohne verknüpften Kunden";
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
@@ -406,6 +409,7 @@ export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
 export const SELECT_LANGUAGE = "Sprache auswählen";
+export const SELECT_COMPANY_TYPE = "Wählen Sie den Unternehmenstyp aus";
 
 // ----- T
 
@@ -464,6 +468,7 @@ export const WAREHOUSES = 'Lagerhaus';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';
+export const WORKSHOPS = 'Werkstätten';
 export const WRITE_YOUR_TITLE = "Write your title here";
 export const WRITE_A_COMMENT =  "Write a comment";
 export const WRITE_A_DESCRIPTION = "Write a description";

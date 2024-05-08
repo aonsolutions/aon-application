@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Acadèmies';
 export const ACCEPT = 'Acceptar';
 export const ACCESS = "Accés";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = "Accedeix al teu compte d'AON";
@@ -66,6 +67,7 @@ export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificat';
 export const CERTIFICATES = 'Certificats';
 export const CHANGE_TYPE = 'Canviar Tipus';
+export const CHANGE_PASSWORD = 'Canvia contrasenya';
 export const CHOOSE_A_DOMAIN = 'Si us plau, seleccioneu un domini';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
@@ -75,6 +77,7 @@ export const CLOSE_SESSION = 'Tancar Sessió';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
+export const COMMERCE = 'Comerç'
 export const COMMUNICATION = 'Comunicació';
 export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
@@ -404,6 +407,7 @@ export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
 export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_COMPANY_TYPE = "Seleccionar tipus d'empresa";
 
 // ----- T
 
@@ -463,6 +467,7 @@ export const WAREHOUSES = 'Magatzems';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';
+export const WORKSHOPS = 'Tallers';
 export const WRITE_YOUR_TITLE = "Escriu el teu títol aquí";
 export const WRITE_A_COMMENT =  "Escriu un comentari";
 export const WRITE_A_DESCRIPTION = "Escriu una descripció";

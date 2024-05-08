@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'About';
+export const ACADEMIES = 'Academies';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Acces to your AON account';
@@ -67,6 +68,7 @@ export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';
 export const CHARGES_AND_PAYMENTS = 'Charges and Payments';
+export const CHANGE_PASSWORD = 'Change password';
 export const CHOOSE_A_DOMAIN = 'Choose a domain, please';
 export const CITY = 'City';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
@@ -76,6 +78,7 @@ export const CLOSE_SESSION = 'Logout';
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
+export const COMMERCE = 'Commerce';
 export const COMMUNICATION = 'Communication';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -409,6 +412,7 @@ export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
 export const SELECT_LANGUAGE = "Select Language";
+export const SELECT_COMPANY_TYPE = "Select company type";
 
 // ----- T
 
@@ -467,6 +471,7 @@ export const WAREHOUSES = 'Warehouses';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';
+export const WORKSHOPS = 'Workshops';
 export const WRITE_YOUR_TITLE = "Write your title here";
 export const WRITE_A_COMMENT =  "Write a comment";
 export const WRITE_A_DESCRIPTION = "Write a description";

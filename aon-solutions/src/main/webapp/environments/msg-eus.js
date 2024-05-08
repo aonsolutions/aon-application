@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Guri buruz';
+export const ACADEMIES = 'Akademiak';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Sartu zure AON kontura';
@@ -67,6 +68,7 @@ export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
+export const CHANGE_PASSWORD = 'Aldatu pasahitza';
 export const CHOOSE_A_DOMAIN = 'Aukeratu domeinuren bat, mesedez';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
@@ -76,6 +78,7 @@ export const CLOSE_SESSION = 'Saioa Itxi';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
+export const COMMERCE = 'Merkataritza';
 export const COMMUNICATION = 'Komunikazioa';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
@@ -405,6 +408,7 @@ export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
 export const SELECT_LANGUAGE = "Hautatu hizkuntza";
+export const SELECT_COMPANY_TYPE = "Hautatu enpresa mota";
 
 // ----- T
 
@@ -463,6 +467,7 @@ export const WAREHOUSES = 'Biltegiak';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';
+export const WORKSHOPS = 'Tailerrak';
 export const WRITE_YOUR_TITLE = "Idatzi hemen zure izenburua";
 export const WRITE_A_COMMENT =  "Idatzi iruzkin bat";
 export const WRITE_A_DESCRIPTION = "Idatzi deskribapen bat";
