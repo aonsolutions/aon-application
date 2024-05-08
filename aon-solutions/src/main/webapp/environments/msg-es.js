@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Academias';
 export const ACCEPT = 'Aceptar';
 export const ACCESS = 'Acceso';
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede a tu cuenta de AON';
@@ -68,6 +69,7 @@ export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CHARGES_AND_PAYMENTS = 'Cobros y Pagos';
+export const CHANGE_PASSWORD = 'Cambiar contraseña';
 export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
@@ -77,6 +79,7 @@ export const CLOSE_SESSION = 'Cerrar Sesión';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
+export const COMMERCE = 'Comercio';
 export const COMMUNICATION = 'Comunicación';
 export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Empresas';
@@ -413,6 +416,7 @@ export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
 export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T
 
@@ -470,6 +474,7 @@ export const WAREHOUSES = 'Almacenes';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de trabajo';
+export const WORKSHOPS = 'Talleres';
 export const WRITE_YOUR_TITLE = "Escribe tu título aquí";
 export const WRITE_A_COMMENT =  "Escribe un comentario";
 export const WRITE_A_DESCRIPTION = "Escribe una descripción";

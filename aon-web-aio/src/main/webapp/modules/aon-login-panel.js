@@ -1,5 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
+import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  'aonsolutions/services/service.js';
 import { AonCard } from 'aonsolutions/components/aon-card.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import {  getManifest} from "aonsolutions/services/service.js";
@@ -11,6 +13,7 @@ export class AonLoginPanel extends AonElement {
 	CARD;
     NAME;
 	LOGOUT;
+	CHANGEPASSWORD;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -30,6 +33,7 @@ export class AonLoginPanel extends AonElement {
 		this.NAME = this.id + 'Name';
 		this.CARD = this.id + 'Card';
 		this.LOGOUT = this.id + 'Logout';
+		this.CHANGEPASSWORD = this.id+ 'ChangePassword';
 	}
 
 	build() {
@@ -38,9 +42,8 @@ export class AonLoginPanel extends AonElement {
 		rightPanel.style.marginTop = '0px';
 		rightPanel.style.height = '200px';
 
-
 		let divGeneral = this.createDiv();
-		divGeneral.style.display = "flex";
+		divGeneral.style.display = "flex";;
 
 		let divImagen = this.createDiv();
 		divImagen.appendChild(this.buildImage("AM"));
@@ -49,12 +52,13 @@ export class AonLoginPanel extends AonElement {
 		let divUserInfo = this.createDiv();
 		divUserInfo.style.marginLeft = "27px";
 		divUserInfo.style.marginTop = "-22px";
+		divUserInfo.style.maxWidth = "205px";
 		divUserInfo.appendChild(this.buildName("Alejandro Millán Molinero"));
-		divUserInfo.appendChild(this.buildInfo("mail","alejandromillanmolinero@gmail.com"));
-		divUserInfo.appendChild(this.buildInfo("phone","633143977"));
-		divUserInfo.appendChild(this.buildInfo("assignment_ind","53980921J"))
+		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,"alejandromillanmolinero@gmail.com"));
+		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,"633143977"));
+		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,"53980921J"))
 		divGeneral.appendChild(divUserInfo);
-		rightPanel.appendChild(divGeneral);
+		this.appendChild(divGeneral);
 
 		let divLogout = this.createDiv();
 		divLogout.id = this.LOGOUT;
@@ -74,8 +78,11 @@ export class AonLoginPanel extends AonElement {
 		divLogout.addEventListener("mouseout", function() {
 			this.style.backgroundColor = "rgba(0,0,0,.04)";
 		});
-		divLogout.appendChild(this.buildInfoLink("logout","Cerrar sesión"))
-		rightPanel.appendChild(divLogout);
+		divLogout.addEventListener(EVENT.CLICK, () => {
+			closeSession();
+		});
+		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT,MSG.CLOSE_SESSION))
+		this.appendChild(divLogout);
 
 	}
 
@@ -86,6 +93,7 @@ export class AonLoginPanel extends AonElement {
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
+		span.classList.add(CSS.AON_TEXT_OVERFLOW);
 		span.style.fontWeight = "bold";
 		span.style.fontSize = "16px	";
 		span.innerHTML = value;
@@ -109,6 +117,7 @@ export class AonLoginPanel extends AonElement {
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
+		span.classList.add(CSS.AON_TEXT_OVERFLOW);
 		span.innerHTML = value;
 		span.style.fontSize = "12px";
 		div.appendChild(span);
@@ -152,6 +161,8 @@ export class AonLoginPanel extends AonElement {
 	
 		return div;
 	}
+
+	
 
 
 }

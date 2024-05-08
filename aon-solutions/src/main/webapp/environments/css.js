@@ -96,6 +96,7 @@ export const AON_BANK_CARD_TOTAL = 'aonBankCardTotal';
 export const AON_FISCAL_CARD_TOTAL = 'aonFiscalCardTotal';
 export const AON_DIALOG = 'aonDialog';
 export const AON_DIALOG_CONTENT = 'aonDialogContent';
+export const AON_TEXT_OVERFLOW = 'aonTextOverflow';
 export const AON_DIALOG_MENU_CONTENT = 'aonDialogMenuContent';
 export const AON_PROGRESS = 'aonProgress';
 export const AON_DATEPICKER = 'aonDatepicker';
