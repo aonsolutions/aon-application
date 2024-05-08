@@ -84,8 +84,14 @@ export class AonRightPanel extends AonElement {
        this.getElement(this.CONTENT).appendChild(content);
     }
 
-    open(){
+    open(height,marginTop,boxShadow){
         this.getRightPanel().style.visibility = "visible";
+        if(height) this.getRightPanel().style.height = height;
+        else this.getRightPanel().style.height = "";
+        if (marginTop) this.getRightPanel().style.marginTop = marginTop;
+        else this.getRightPanel().style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
+        if (boxShadow) this.getRightPanel().style.boxShadow = boxShadow;
+        else this.getRightPanel().style.boxShadow = "";
     }
 
     toogle() {

@@ -386,6 +386,7 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SIDE_MENU = 'Alboko menua';
 export const SIGN_IN = 'Saioa Hasi';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';

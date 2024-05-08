@@ -1,4 +1,4 @@
-import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
+import { MSG, CONSTANT, AON_ICONS, COLORS, MATERIAL_ICONS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
 import * as LS from  "./localStorageService.js";
@@ -46,6 +46,7 @@ export const ACCOUNTING = {
   description: MSG.ACCOUNTING,
   tag: MSG_ES.ACCOUNTING,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
+  symbol: MATERIAL_ICONS.CALCULATE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonAccountingHover',
@@ -75,6 +76,7 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
+  symbol: MATERIAL_ICONS.EURO_SYMBOL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
   backgroundColor: '#fef3e7',
   hover: 'aonFiscalHover',
@@ -104,6 +106,7 @@ export const PAYROLL = {
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
+  symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
@@ -137,6 +140,7 @@ export const TREASURY = {
   description: MSG.TREASURY,
   tag: MSG.TREASURY,
   icon: AON_ICONS.AON_TREASURY,
+  symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
@@ -152,6 +156,7 @@ export const MARKETING = {
   description: MSG.MARKETING,
   tag: MSG.MARKETING,
   icon: AON_ICONS.AON_MARKETING,
+  symbol: MATERIAL_ICONS.CAMPAIGN,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
@@ -182,6 +187,7 @@ export const COMMERCIAL = {
   description: MSG.COMMERCIAL,
   tag: MSG.COMMERCIAL,
   icon: AON_ICONS.AON_COMMERCIAL,
+  symbol: MATERIAL_ICONS.LOCAL_MALL,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
@@ -271,6 +277,7 @@ export const WAREHOUSE = {
   description: MSG.WAREHOUSE,
   tag: MSG_ES.WAREHOUSE,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
+  symbol: MATERIAL_ICONS.INVENTORY_2,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
@@ -507,6 +514,7 @@ export const CONSOLE = {
 export const OFFICE = {
   app: "office",
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
+  symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: "Despacho",
   color: "black",
   backgroundColor: "rgba(0, 0, 0, .2)",
@@ -737,6 +745,7 @@ export const ENTERPRISE = {
 export const ACADEMY = {
   app: "academy",
   icon: AON_ICONS.AON_ACADEMY,
+  symbol: MATERIAL_ICONS.DICTIONARY,
   title: "Academia",
   color: "black",
   domainType: true,
@@ -745,6 +754,7 @@ export const ACADEMY = {
 export const GARAGE = {
   app: "garage",
   icon: AON_ICONS.AON_GTA,
+  symbol: MATERIAL_ICONS.CAR_REPAIR,
   title: "Taller",
   color: "black",
   domainType: true,
@@ -753,6 +763,7 @@ export const GARAGE = {
 export const COMMERCE = {
   app: CONSTANT.COMMERCE,
   icon: AON_ICONS.AON_COMMERCE,
+  symbol: MATERIAL_ICONS.POINT_OF_SALE,
   title: "Comercio",
   color: "black",
   domainType: true,

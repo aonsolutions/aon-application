@@ -10,6 +10,7 @@ export class AonConfig extends AonElement {
 	TOP_SWITCH;
 	LEFT_SWITCH;
 	LANG_CARD;
+	TYPE_CARD;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -29,6 +30,7 @@ export class AonConfig extends AonElement {
 		this.TOP_SWITCH = this.id + 'SwitchTop';
 		this.LEFT_SWITCH = this.id + 'SwitchLeft';
 		this.LANG_CARD = this.id + 'HelpLangCard';
+		this.TYPE_CARD = this.id + 'TypeCard';
 	}
 
 	build() {
@@ -85,7 +87,22 @@ export class AonConfig extends AonElement {
 		divGenerall.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
 		divGenerall.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
 		rightPanelLangCard.setContent(divGenerall);
-	
+
+		let rightPanelTypeCard = new AonCard();
+		rightPanelTypeCard.id = this.TYPE_CARD;
+		rightPanelTypeCard.title = "Seleccionar tipo de empresa";
+		rightPanelTypeCard.style.width = "90%";
+		rightPanelTypeCard.style.height = "fit-content";
+		rightPanelTypeCard.style.marginLeft = "10px";
+		this.appendChild(rightPanelTypeCard);
+
+		let cardDivvv = this.getElement(rightPanelTypeCard.CARD);
+		cardDivvv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+		cardDivvv.style.borderRadius = '2px';
+
+		let divGeneralll = this.createDiv();
+		
+
 		rightPanelSwitchTopButton.addEventListener(EVENT.CHANGE, () => {
 			LS.setTopMenu(rightPanelSwitchTopButton.checked);
 			if(LS.isTopMenu()) {
@@ -109,6 +126,38 @@ export class AonConfig extends AonElement {
 	}
 
 	buildLanguageData(value,language) {
+		let div = this.createDiv();
+		div.style.marginTop = '5px';
+		div.style.title = "Idioma";
+		div.style.cursor = "pointer";
+
+		let i = this.createElement(TAG.I);
+		i.className = CSS.MATERIAL_ICONS;
+		i.style.marginRight = '5px';
+		i.style.verticalAlign = "middle";
+		div.appendChild(i);
+		
+		let span = this.createElement(TAG.SPAN);
+		span.className = CSS.AON_CARD_TEXT;
+		span.innerHTML = value;
+		div.appendChild(span);
+
+		if(language == LS.getLanguage()) {
+			i.innerHTML = "done";
+			span.style.fontWeight = "bold";
+		}else{
+			i.innerHTML= "language";
+		}
+
+		div.addEventListener(EVENT.CLICK, () => {
+			LS.setRightPanel(CONSTANT.TRUE);
+			LS.setLanguage(language);
+		})
+	
+		return div;		
+	}
+
+	buildTypeData(value,icon) {
 		let div = this.createDiv();
 		div.style.marginTop = '5px';
 		div.style.title = "Idioma";
