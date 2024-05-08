@@ -34,6 +34,8 @@ export class AonHelp extends AonElement {
 	build() {
 		LS.setToken('AONd95770f269e711eb94390242ac130002')
 
+		let rightPanel = this.getElement("aonRightPanel");
+
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
 		span.style.marginLeft = '10px';

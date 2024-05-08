@@ -9,6 +9,7 @@ import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
 import { AonRightPanel } from './aon-right-panel.js';
+import { AonLoginPanel } from './aon-login-panel.js';
 
 export class AonHome extends AonElement {
 
@@ -106,7 +107,6 @@ export class AonHome extends AonElement {
 			rightPanel.setContent(new AonConfig());
 			rightPanel.setTitle(MSG.CONFIGURATION);
 			rightPanel.open();
-
 		}
 
 		if(LS.isTopMenu()){
@@ -142,6 +142,19 @@ export class AonHome extends AonElement {
 					rightPanel.open();
 				} else {
 					rootPanel.style.marginRight = '0px';
+					rightPanel.close();
+				}
+			});
+		}
+		
+		let headerUser = this.getElement('aonHeaderUser');
+		if (headerUser) {
+			headerUser.addEventListener(EVENT.CLICK, () => {
+				if(rightPanel.isClose()) {
+					rightPanel.setContent(new AonLoginPanel());
+					rightPanel.setTitle("Usuario");
+					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
+				} else  {
 					rightPanel.close();
 				}
 			});

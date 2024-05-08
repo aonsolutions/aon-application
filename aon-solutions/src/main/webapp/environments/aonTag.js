@@ -58,6 +58,7 @@ export const AON_INPUT = 'aon-input';
 export const AON_NEW_INPUT = 'aon-new-input';
 export const AON_LOADER = 'aon-loader';
 export const AON_LOGIN = 'aon-login';
+export const AON_LOGIN_PANEL = 'aon-login-panel';
 export const AON_NEW_LOGIN = 'aon-new-login';
 export const AON_NEW_MENU = 'aon-new-menu';
 export const AON_NOTES = 'aon-notes';

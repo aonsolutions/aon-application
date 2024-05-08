@@ -70,16 +70,20 @@ export const BUG_REPORT = 'bug_report';
 export const BUILD = 'build';
 export const BUILD_CIRCLE = 'build_circle';
 export const BUSINESS = 'business';
+export const BUSINESS_CENTER = 'business_center';
 
 // ----- C
 
 export const CACHED = 'cached';
+export const CALCULATE = 'calculate';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
+export const CAMPAIGN = 'campaign';
 export const CANCEL = 'cancel';
 export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
 export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
+export const CAR_REPAIR = 'car_repair';
 export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
@@ -109,6 +113,7 @@ export const DATA_OBJECT = 'data_object';
 export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
+export const DICTIONARY = 'dictionary';
 export const DONE = 'done';
 
 // ----- E
@@ -117,6 +122,7 @@ export const EDIT = 'edit';
 export const EQUALIZER = 'equalizer';
 export const ERROR = 'error';
 export const EURO = 'euro';
+export const EURO_SYMBOL = 'euro_symbol';
 export const EVENT = 'event';
 export const EXTENSION = 'extension';
 export const EXPAND_LESS = 'expand_less';
@@ -147,6 +153,7 @@ export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 // ----- G
 export const GROUP_OFF = 'group_off';
 export const GROUP_WORK = 'group_work';
+export const GROUP = 'group';
 export const GROUPS = 'groups';
 
 // ----- H
@@ -211,6 +218,7 @@ export const PEOPLE_ALT = 'people_alt';
 export const PEOPLE = 'people';
 export const PRIVACY_TIP = 'privacy_tip';
 export const PUSH_PIN = 'push_pin';
+export const POINT_OF_SALE = 'point_of_sale';
 
 // ----- Q
 
@@ -246,6 +254,7 @@ export const SYNC_ALT = 'sync_alt';
 
 export const TUNE = 'tune';
 export const THUNDERSTORM = 'thunderstorm';
+export const TROLLEY = 'trolley';
 
 // ----- U
 
@@ -260,6 +269,7 @@ export const VISIBILITY_OFF = 'visibility_off';
 // ----- W
 export const WAREHOUSE = 'warehouse';
 export const WARNING = 'warning';
+export const WORK = 'work';
 
 export const OPEN_IN_FULL = "open_in_full";
 export const OPEN_IN_NEW  = "open_in_new";

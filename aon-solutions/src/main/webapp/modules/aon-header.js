@@ -367,72 +367,74 @@ export class AonHeader extends AonElement {
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
-
-		aonHeaderUserButton.addEventListener('click', () => {
-			const top  = aonHeaderUserButton.getBoundingClientRect().top;
-			const left = aonHeaderUserButton.getBoundingClientRect().left;
-			if(this.activeTimecontrol) {
-				getTimeControl().then(r => {
-					this.timeControlStatus(r);
-
-					let d = this.getElement('aonHeaderDialogUserOption');
-					
-					let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
-					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
-					let options = [{
-							name: fichajeText,
-							icon: 'alarm',
-							id: 'dialogAlarm',
-							fn: () => this.aonFichar(signin)
-						}, {
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogLanguage',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => {
-								this.activeTimecontrol= false;
-								closeSession();
-							}
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					}).catch(e => {
+		if(!this.newTheme){
+			aonHeaderUserButton.addEventListener('click', () => {
+				const top  = aonHeaderUserButton.getBoundingClientRect().top;
+				const left = aonHeaderUserButton.getBoundingClientRect().left;
+				if(this.activeTimecontrol) {
+					getTimeControl().then(r => {
+						this.timeControlStatus(r);
+	
+						let d = this.getElement('aonHeaderDialogUserOption');
+						
+						let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
+						let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
+						let options = [{
+								name: fichajeText,
+								icon: 'alarm',
+								id: 'dialogAlarm',
+								fn: () => this.aonFichar(signin)
+							}, {
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogLanguage',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => {
+									this.activeTimecontrol= false;
+									closeSession();
+								}
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						}).catch(e => {
+							let d = this.getElement('aonHeaderDialogUserOption');
+							let options = [{
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						});
+					} else {
 						let d = this.getElement('aonHeaderDialogUserOption');
 						let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					});
-				} else {
-					let d = this.getElement('aonHeaderDialogUserOption');
-					let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-				}
-		});
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+					}
+			});
+		}
+		
 	}
 
 	timeControlStatus(signin) {

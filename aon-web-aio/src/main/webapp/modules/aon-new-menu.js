@@ -380,6 +380,7 @@ export class AonNewMenu extends AonElement {
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
+			if(app.color) icon.style.color = app.color;
 			icon.style.padding = "4px";
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
