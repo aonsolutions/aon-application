@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Acadèmies';
 export const ACCEPT = 'Acceptar';
 export const ACCESS = "Accés";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = "Accedeix al teu compte d'AON";
@@ -66,6 +67,7 @@ export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificat';
 export const CERTIFICATES = 'Certificats';
 export const CHANGE_TYPE = 'Canviar Tipus';
+export const CHANGE_PASSWORD = 'Canvia contrasenya';
 export const CHOOSE_A_DOMAIN = 'Si us plau, seleccioneu un domini';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
@@ -75,6 +77,7 @@ export const CLOSE_SESSION = 'Tancar Sessió';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
+export const COMMERCE = 'Comerç'
 export const COMMUNICATION = 'Comunicació';
 export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
@@ -88,6 +91,7 @@ export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
+export const CONTACT_DATA2 = "Dades de contacte"
 export const CONTACTS = 'Contactes';
 export const CONTAINER = 'Envàs';
 export const CONTRACT = 'Contractar';
@@ -369,6 +373,7 @@ export const REVIEW = "Revisar";
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE = 'Àmbit';
+export const SCHEDULE = "Horari";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Veure Totes';
 export const SEND = 'Enviar';
@@ -383,6 +388,7 @@ export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
 export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
+export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sessió';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sessió sense Contrasenya';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sessió amb Certificat';
@@ -400,6 +406,8 @@ export const SUPPORT = 'Suport';
 export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
+export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_COMPANY_TYPE = "Seleccionar tipus d'empresa";
 
 // ----- T
 
@@ -443,6 +451,7 @@ export const USER_DATA = `Dades de l'Usuari`;
 export const USER_MANAGEMENT = `Gestió d'Usuaris`;
 export const USERS = 'Usuaris';
 export const UTILITIES = 'Utilitats';
+export const UPPER_MENU = "Menú de capçalera";
 
 // ----- V
 
@@ -458,10 +467,13 @@ export const WAREHOUSES = 'Magatzems';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';
+export const WORKSHOPS = 'Tallers';
 export const WRITE_YOUR_TITLE = "Escriu el teu títol aquí";
 export const WRITE_A_COMMENT =  "Escriu un comentari";
 export const WRITE_A_DESCRIPTION = "Escriu una descripció";
 export const WRITE_A_NOTE =  "Escriu una nota";
+export const WEEK_SCHEDULE = "Dilluns a dijous de 8:00 a 15:00";
+export const WEEK_FRIDAY_SCHEDULE = "Divendres de 8:00 a 14:00";
 
 // ----- X
 

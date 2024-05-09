@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Academias';
 export const ACCEPT = 'Aceptar';
 export const ACCESS = 'Acceso';
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede a tu cuenta de AON';
@@ -68,6 +69,7 @@ export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CHARGES_AND_PAYMENTS = 'Cobros y Pagos';
+export const CHANGE_PASSWORD = 'Cambiar contraseña';
 export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
@@ -77,6 +79,7 @@ export const CLOSE_SESSION = 'Cerrar Sesión';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
+export const COMMERCE = 'Comercio';
 export const COMMUNICATION = 'Comunicación';
 export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Empresas';
@@ -90,7 +93,8 @@ export const CONCEPTS = 'Conceptos';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
-export const CONTACT_DATA = 'Datos Contacto';
+export const CONTACT_DATA = 'Datos contacto';
+export const CONTACT_DATA2 = "Datos de contacto";
 export const CONTACTS = 'Contactos';
 export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
@@ -262,6 +266,7 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const UPPER_MENU = 'Menú de cabecera';
 
 // ----- N
 
@@ -377,6 +382,7 @@ export const REVIEW = 'Revisar';
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE =  'Ámbito';
+export const SCHEDULE = "Horario";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Ver Todas';
 export const SEND = 'Enviar';
@@ -391,6 +397,7 @@ export const SERVICES = 'Servicios';
 export const SETTING =  'Configuración';
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Mostrar Fichero';
+export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sesión';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Sin Contraseña';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
@@ -408,6 +415,8 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
+export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T
 
@@ -465,10 +474,13 @@ export const WAREHOUSES = 'Almacenes';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de trabajo';
+export const WORKSHOPS = 'Talleres';
 export const WRITE_YOUR_TITLE = "Escribe tu título aquí";
 export const WRITE_A_COMMENT =  "Escribe un comentario";
 export const WRITE_A_DESCRIPTION = "Escribe una descripción";
 export const WRITE_A_NOTE =  "Escribe una nota";
+export const WEEK_SCHEDULE = "Lunes a jueves de 8:00 a 15:00";
+export const WEEK_FRIDAY_SCHEDULE = "Viernes de 8:00 a 14:00";
 
 // ----- X
 

@@ -27,6 +27,7 @@ if(Language.ENGLISH === language) {
 // ----- A
 
 export const ABOUT = MSG.ABOUT;
+export const ACADEMIES = MSG.ACADEMIES;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCESS_TO_YOUR_AON_ACCOUNT = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
@@ -120,7 +121,7 @@ export const CERTIFICATE = MSG.CERTIFICATE;
 export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
-export const CHANGE_PASSWORD = "Cambiar Contraseña"; //TODO
+export const CHANGE_PASSWORD = MSG.CHANGE_PASSWORD; 
 export const CHOOSE_A_DOMAIN = MSG.CHOOSE_A_DOMAIN;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
@@ -130,6 +131,7 @@ export const CLOSE_SESSION = MSG.CLOSE_SESSION;
 export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
+export const COMMERCE = MSG.COMMERCE;
 export const COMMERCIAL = 'Comercial'; // TODO
 export const COMMERCIAL_NAME = 'Nombre Comercial'; // TODO
 export const COMMERCIAL_PRODUCT = 'Producto Comercial'; // TODO
@@ -152,6 +154,7 @@ export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONSOLE = 'Console'; 
 export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
+export const CONTACT_DATA2 = MSG.CONTACT_DATA2;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTAINER = MSG.CONTAINER;
 export const CONTRACT = MSG.CONTRACT;
@@ -566,6 +569,7 @@ export const SALES_PREPARATION = 'Preparación de Pedidos';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
+export const SCHEDULE = MSG.SCHEDULE;
 export const SEARCH = MSG.SEARCH;
 export const SECTION = 'Sección'; // TODO
 export const SEE_ALL = MSG.SEE_ALL;
@@ -587,6 +591,7 @@ export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';
 export const SHOW_FILE = MSG.SHOW_FILE;
+export const SIDE_MENU = MSG.SIDE_MENU;
 export const SIGN_IN = MSG.SIGN_IN;
 export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
 export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;
@@ -612,6 +617,8 @@ export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
+export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
+export const SELECT_COMPANY_TYPE = MSG.SELECT_COMPANY_TYPE;
 
 // ----- T
 
@@ -671,6 +678,7 @@ export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
 export const UTILITIES = MSG.UTILITIES;
+export const UPPER_MENU = MSG.UPPER_MENU;
 
 // ----- V
 
@@ -692,6 +700,7 @@ export const VOLUME = "Tomo";
 
 export const WAREHOUSE = MSG.WAREHOUSE;
 export const WAREHOUSES = MSG.WAREHOUSES;
+export const WELCOME = "Le damos la bienvenida a aon Solutions";//TODO
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
@@ -703,6 +712,9 @@ export const WRITE_A_DESCRIPTION = MSG.WRITE_A_DESCRIPTION;
 export const WRITE_A_NOTE = MSG.WRITE_A_NOTE;
 export const WRONG_CODE = 'Código Erróneo';
 export const WORKPLACE = "Centro de trabajo";//TODO
+export const WORKSHOPS = MSG.WORKSHOPS;
+export const WEEK_SCHEDULE = MSG.WEEK_SCHEDULE;
+export const WEEK_FRIDAY_SCHEDULE = MSG.WEEK_FRIDAY_SCHEDULE;
 // ----- X
 
 // ----- Y

@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Guri buruz';
+export const ACADEMIES = 'Akademiak';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Sartu zure AON kontura';
@@ -67,6 +68,7 @@ export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
+export const CHANGE_PASSWORD = 'Aldatu pasahitza';
 export const CHOOSE_A_DOMAIN = 'Aukeratu domeinuren bat, mesedez';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
@@ -76,6 +78,7 @@ export const CLOSE_SESSION = 'Saioa Itxi';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
+export const COMMERCE = 'Merkataritza';
 export const COMMUNICATION = 'Komunikazioa';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
@@ -89,6 +92,7 @@ export const CONFIDENTIAL = 'Konfidentziala';
 export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
+export const CONTACT_DATA2 = "Harremanetarako informazioa";
 export const CONTACTS = 'Kontaktuak';
 export const CONTAINER = 'Ontzia';
 export const CONTRACT = 'Kontratatu';
@@ -370,6 +374,7 @@ export const REVIEW = 'Berrikusi';
 export const SAVE = 'Gorde';
 export const SAVED_DATA = 'Datuak zuzen gorde dira';
 export const SCOPE = 'Esparrua';
+export const SCHEDULE = "Ordutegia";
 export const SEARCH = 'Bilatu';
 export const SEE_ALL = 'Guztiak Ikusi';
 export const SEND = 'Bidali';
@@ -384,6 +389,7 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SIDE_MENU = 'Alboko menua';
 export const SIGN_IN = 'Saioa Hasi';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';
@@ -401,6 +407,8 @@ export const SUPPORT = 'Euskarri';
 export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
+export const SELECT_LANGUAGE = "Hautatu hizkuntza";
+export const SELECT_COMPANY_TYPE = "Hautatu enpresa mota";
 
 // ----- T
 
@@ -443,6 +451,7 @@ export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
 export const UTILITIES = 'Utilitateak';
+export const UPPER_MENU = "Goiburuko menua";
 
 // ----- V
 
@@ -458,10 +467,13 @@ export const WAREHOUSES = 'Biltegiak';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';
+export const WORKSHOPS = 'Tailerrak';
 export const WRITE_YOUR_TITLE = "Idatzi hemen zure izenburua";
 export const WRITE_A_COMMENT =  "Idatzi iruzkin bat";
 export const WRITE_A_DESCRIPTION = "Idatzi deskribapen bat";
 export const WRITE_A_NOTE =  "Idatzi ohar bat";
+export const WEEK_SCHEDULE = "Astelehenetik ostegunera 8:00etatik 15:00etara";
+export const WEEK_FRIDAY_SCHEDULE = "Ostiralean 08:00etatik 14:00etara";
 
 
 // ----- X

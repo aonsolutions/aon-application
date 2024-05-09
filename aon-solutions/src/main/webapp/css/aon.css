@@ -78,6 +78,7 @@
   font-weight: 400 !important;
   font-size: 14px !important;
   line-height: normal !important;
+  overflow: hidden;
   height: 100%;
 }
 
