@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import io.r2dbc.spi.Closeable;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -245,8 +247,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	    
 	    Optional<OCRType> type = OCRType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
 	    String companyActsLike = JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE);
-	    AONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin());
-	    InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    InvofoxConfiguration invofoxConfiguration = null;
+	    try (CloseableAONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin())) {
+	    	invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
+	    } catch (Exception e) {
+	    	LOGGER.log( Level.SEVERE, "Unable to read INVOFOX configuration. Cause: {0}", e.getMessage() );
+	    	return array;
+		}
 	    String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl()).getLoginToken().orElse(new OCRLoginToken()).getToken()
 		    .orElse(null);
 		String token2 = OCRInvofox.getLogin("app@aonsolutions.es", "U%4LjF~ai$5ZW[Z", invofoxConfiguration.getApiUrl()).getLogin().orElse(new OCRLogin()).getToken()
@@ -276,7 +283,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		    .forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId().get());
-			json.put("reference", r.getData().get().getDocumentNumber().get().getValue().orElse(""));
+			json.put("reference", r.getData().get().getReferenceCode().orElse(""));
 			json.put("name", r.getData().get().getIssuerName().get().getValue().orElse(""));
 			json.put("date", r.getData().get().getIssueDate().get().getValue().orElse(""));
 			json.put("total",
