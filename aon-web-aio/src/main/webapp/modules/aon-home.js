@@ -5,6 +5,7 @@ import { AonHeader } from 'aonsolutions/modules/aon-header.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js'; 
 
 import * as LS from 'aonsolutions/services/localStorageService.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -40,6 +41,7 @@ export class AonHome extends AonElement {
 		if(LS.isNewTheme()){
 			
 		}
+		
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		this.appendChild(gradiantHeader);
@@ -145,7 +147,7 @@ export class AonHome extends AonElement {
 				}
 			});
 		}
-		
+
 		let headerUser = this.getElement('aonHeaderUser');
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {
@@ -169,6 +171,9 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.backgroundColor = '#ffffff';
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
+	}
+	
+	showMenu(bool) {
 	}
 
 }

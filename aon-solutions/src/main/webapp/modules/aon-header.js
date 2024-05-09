@@ -468,7 +468,6 @@ export class AonHeader extends AonElement {
 				if(aonSign) {
 					aonSign.buildSignin(r);
 				}
-
 				this.timeControlStatus(r);
 			});
 		});

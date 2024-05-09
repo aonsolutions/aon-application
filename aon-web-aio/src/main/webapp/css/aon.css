@@ -317,7 +317,6 @@
   /* top | right | bottom | left */
   margin: 0px 0px 0px 0px;
   
-  padding: 5px;	
   /*background-color: #FAF9F8;*/
   box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));
 }
@@ -516,7 +515,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0 1rem;
-  position: fixed;
+  position: relative;
   top: 0%;
   z-index: 8;
   
