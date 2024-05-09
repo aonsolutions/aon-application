@@ -368,7 +368,7 @@ export const MESSENGER = {
 export const CALENDAR = {
   app: CONSTANT.CALENDAR,
   title: "Calendario",
-  icon: AON_ICONS.AON_CALENDAR,
+  symbol: MATERIAL_ICONS.EVENT,
   color: "#682627",
   backgroundColor: 'rgba(45, 45, 45, .2)',
   hover: 'aonSidenavHover',

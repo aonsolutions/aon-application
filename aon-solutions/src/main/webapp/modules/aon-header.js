@@ -79,6 +79,10 @@ export class AonHeader extends AonElement {
 		div.className = LS.isNewTheme() ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
+		let calendarOption = new AonDialogMenu();
+		calendarOption.id = 'aonHeaderDialogCalendarOption';
+		this.appendChild(calendarOption);
+
 		let helpOption = new AonDialogMenu();
 		helpOption.id = 'aonHeaderDialogHelpOption';
 		this.appendChild(helpOption);
@@ -107,6 +111,10 @@ export class AonHeader extends AonElement {
  
 					<span id="aonHeaderCompanyList" style="display:none;">
 						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
+					</span>
+
+					<span id="aonHeaderCalendar">
+						<aon-icon-button id="aonHeaderCalendarButton" icon="event"></aon-icon-button>
 					</span>
 
 					<span id="aonHeaderHelp">
@@ -145,6 +153,10 @@ export class AonHeader extends AonElement {
 						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
 					</span>
 
+					<span id="aonHeaderCalendar">
+						<aon-icon-button id="aonHeaderCalendarButton" icon="event"></aon-icon-button>
+					</span>
+
 					<span id="aonHeaderHelp">
 						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
 					</span>
@@ -181,6 +193,13 @@ export class AonHeader extends AonElement {
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
+			});
+
+			let aonHeaderCalendarButton = this.getElement(this.BASE_ID + 'CalendarButton');
+			aonHeaderCalendarButton.addEventListener('click', () => {
+				const top = aonHeaderCalendarButton.getBoundingClientRect().top;
+				const left = aonHeaderCalendarButton.getBoundingClientRect().left;
+				console.log("calendar click");
 			});
 
 			let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');

@@ -427,7 +427,7 @@ export class AonNewDesktop extends AonElement {
 
 		cardDiv.appendChild(appA);
 
-		if (app.price != " ") {
+		if (app.price != "-") {
 			cardDiv.style.paddingRight = '32px';
 
 			let priceDiv = this.createElement(TAG.DIV);

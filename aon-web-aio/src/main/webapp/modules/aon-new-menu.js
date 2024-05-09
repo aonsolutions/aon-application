@@ -43,6 +43,7 @@ export class AonNewMenu extends AonElement {
 	CLOSE;
 	selectedApp;
 	aonAppLauncher;
+	aonAppLauncherTyping;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -111,7 +112,7 @@ export class AonNewMenu extends AonElement {
 		//	});
 		//}
 	}
-
+ 
 	getDur() {
 		return this.dur;
 	}
@@ -189,20 +190,16 @@ export class AonNewMenu extends AonElement {
 		this.buildAppLauncher();
 
 		window.addEventListener(EVENT.CLICK, (e) => {
-			if (this.aonAppLauncher.style.display == 'none' && (e.target.id == 'aonMenuListAppImg-applications' || e.target.id == 'aonMenuListAppDivImg-applications')) {
+			let targetId = e.target?.id;
+			if (this.aonAppLauncher.style.display == 'none' && (targetId == 'aonMenuListAppImg-applications' || targetId == 'aonMenuListAppDivImg-applications')) {
 				document.getElementById('aonAppLauncher').style.display = 'block';
-			} else if (e.target.id != 'aonAppLauncherSearchButton' && e.target.id != 'aonAppLauncherSearchBox') { // if (this.isAppLauncher(e.target)) {
+			} else if (targetId != 'aonAppLauncherSearchButton'  && targetId != 'aonAppLauncherSearchButtonIcon' && targetId != 'aonAppLauncherSearchBox') {
 				document.getElementById('aonAppLauncher').style.display = 'none';
+			} else {
+				document.getElementById('aonAppLauncher').style.display = 'block';
+				e.stopPropagation();
 			}
 		});
-	}
-
-	isAppLauncher(e) {
-		let element = e;
-		while (element?.id != 'aonAppLauncher' && element?.id != this.AON_MENU_TOPNAV) {
-			element = element.parentElement;
-		}
-		return element.id == 'aonAppLauncher';
 	}
 
 	buildMenuSidenav() {
@@ -255,7 +252,6 @@ export class AonNewMenu extends AonElement {
 			}
 		}
 
-
 		aonMenuTopnav.appendChild(div);
 
 	}
@@ -270,6 +266,7 @@ export class AonNewMenu extends AonElement {
 
 	buildAppLauncher() {
 		let position = this.getElement('aonMenuBar-applications').getBoundingClientRect();
+		this.aonAppLauncherTyping = false;
 
 		this.aonAppLauncher = this.createElement(TAG.DIV);
 		this.aonAppLauncher.id = 'aonAppLauncher';
@@ -312,6 +309,7 @@ export class AonNewMenu extends AonElement {
 
 		let searchIcon = this.createElement(TAG.SPAN);
 		searchIcon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		searchIcon.id = 'aonAppLauncherSearchButtonIcon';
 		searchIcon.innerHTML = 'search';
 		searchIcon.style.fontSize = '12px';
 		searchIcon.style.display = 'inline-block';
@@ -335,6 +333,26 @@ export class AonNewMenu extends AonElement {
 		searchBox.style.textOverflow = 'ellipsis';
 		searchBox.style.outline = 'none';
 		searchBox.style.padding = 0;
+
+		searchBox.addEventListener(EVENT.MOUSEOVER, () => {
+			searchBox.style.borderBottom = '2px solid blue';
+		});
+
+		searchBox.addEventListener(EVENT.MOUSELEAVE, () => {
+			if (!this.aonAppLauncherTyping) {
+				searchBox.style.borderBottom = 'none';
+			}
+		});
+
+		searchBox.addEventListener(EVENT.FOCUS, () => {
+			searchBox.style.borderBottom = '2px solid blue';
+			this.aonAppLauncherTyping = true;
+		});
+
+		searchBox.addEventListener(EVENT.BLUR, () => {
+			searchBox.style.borderBottom = 'none';
+			this.aonAppLauncherTyping = false;
+		});
 
 		searchContainer.appendChild(searchBox);
 
