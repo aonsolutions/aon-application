@@ -109,10 +109,11 @@ export class AonFiscal extends AonElement {
 			id: "Ejercicio",
 			title:"Ejercicio",
   		name:"Ejercicio",
-      app: FISCAL
+      app: FISCAL,
+      options: ejercicios
 		};
 
-      application.addSidenavOptions2(data, ejercicios);
+      application.addSidenavOptions3(data);
 
 
       let periods = this.getDataForKey(mdls, 'period')
@@ -135,9 +136,10 @@ export class AonFiscal extends AonElement {
         id: "Periodo",
         title:"Periodo",
         name:"Periodo",
-        app: FISCAL
+        app: FISCAL,
+        options: periods
       };
-      application.addSidenavOptions2(data2, periods);
+      application.addSidenavOptions3(data2);
 
       let models = this.getModelsNoRepeat(mdls).map(model=> ({
           ...FiscalOptions.AON_TAX, 
@@ -156,9 +158,10 @@ export class AonFiscal extends AonElement {
         id: "Modelo",
         title:"Modelo",
         name:"Modelo",
-        app: FISCAL
+        app: FISCAL,
+        options: models
       };
-      application.addSidenavOptions2(data3, models);
+      application.addSidenavOptions3(data3);
 
       RETENTION_PANEL.fn = () =>{
         application.closeSidenav();

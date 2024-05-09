@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -79,8 +80,11 @@ public class LROE240_5_1 extends LROE240 {
 		persona.setApellidosNombreRazonSocial(invoice.getRegistryName());
 
 		NIFIVAType otro = new NIFIVAType();
-		otro.setCodigoPais(CountryMiembroType.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-		String document = invoice.getRegistryDocument();
+		if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+			otro.setCodigoPais(CountryMiembroType.GB);
+		} else otro.setCodigoPais(CountryMiembroType.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+		
+		String document = invoice.getRegistryDocument().replace(" ", "");
 		if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
 			document = invoice.getRegistryDocumentCountry().getIso2() + document;
 		}

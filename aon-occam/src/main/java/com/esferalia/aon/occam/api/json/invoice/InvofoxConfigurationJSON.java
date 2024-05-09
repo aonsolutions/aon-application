@@ -14,13 +14,18 @@ public class InvofoxConfigurationJSON {
 	
 	public static InvofoxConfiguration fromJSON(JSONObject json) {
 		return new InvofoxConfiguration()
-			.setTest(JsonUtils.getboolean(json, IJsonNames.TEST));
+			.setTest(JsonUtils.getboolean(json, IJsonNames.TEST))
+			.setAutoAccept(JsonUtils.getboolean(json, IJsonNames.AUTO_ACCEPT))
+			.setAutoRecord(JsonUtils.getboolean(json, IJsonNames.AUTO_RECORD))
+			;
 
 	}
 	
 	public static JSONObject toJSON(InvofoxConfiguration config) {
 		return new JSONObject()
-			.put(IJsonNames.TEST, config.isTest());
+			.put(IJsonNames.TEST, config.isTest())
+			.put(IJsonNames.AUTO_ACCEPT, config.isAutoAccept())
+			.put(IJsonNames.AUTO_RECORD, config.isAutoRecord());
 	}
 	
 }

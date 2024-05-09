@@ -11,6 +11,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
 
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -779,6 +781,47 @@ public class ContextFunctions {
 		return value.doubleValue();
 	}
 
+	public static Double getPPEDelays(Date startDate, Date endDate) throws MacroException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PPE_DELAYS),
+						String.format("%s.getPPEDelaysLiquid\\(", ContextVariable.SELF));
+			}
+		};
+	}
+
+	public static Double getPPEDelays(String startDate, String endDate) throws MacroException, ParseException {
+		SimpleDateFormat dateTimeFormat  = new SimpleDateFormat("dd/MM/yyyy");
+		Date delayStartDate = dateTimeFormat.parse(startDate);
+		Date delayEndDate = dateTimeFormat.parse(endDate);
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return String.format("%s.getPPEDelaysLiquid(FECHA(%d,%d,%d), FECHA(%d,%d,%d))", 
+						ContextVariable.SELF, 
+						
+						AonDateUtils.get(delayStartDate, Calendar.YEAR),
+						AonDateUtils.get(delayStartDate, Calendar.MONTH),
+						AonDateUtils.get(delayStartDate, Calendar.DATE),
+						
+						AonDateUtils.get(delayEndDate, Calendar.YEAR),
+						AonDateUtils.get(delayEndDate, Calendar.MONTH),
+						AonDateUtils.get(delayEndDate, Calendar.DATE)
+						);
+			}
+		};
+	}
+
+	public static Double getPPEDelays() throws MacroException, ParseException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return String.format("%s.getPPEDelaysLiquid(FECHA(2022,01,01), INICIO_NOMINA)", ContextVariable.SELF);
+			}
+		};
+	}
+
 	public static Calendar parseExtraDate(String str, Date date) {
 		str = AonStringUtils.trim(str);
 		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
@@ -1128,6 +1171,20 @@ public class ContextFunctions {
 
 	}
 
+	private static void loadPPEDelaysFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+
+		// WARNING function
+		try {
+			Method getPPEDelays = ContextFunctions.class.getMethod("getPPEDelays", Date.class, Date.class);
+			MethodStub getPPEDelaysStub = new MethodStub(getPPEDelays);
+			context.setVariable(ContextVariable.PPE_DELAYS, getPPEDelaysStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static boolean isWholeMonth(Period period) {
 		return AonDateUtils.get(period.getStart(), Calendar.DAY_OF_MONTH) == 1 && AonDateUtils.get(period.getEnd(),
 				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
@@ -1149,6 +1206,7 @@ public class ContextFunctions {
 		loadSectionFunction(context, startDate, endDate);
 		loadProrationFunction(context, startDate, endDate);
 		loadScopeFunction(context, startDate, endDate);
+		loadPPEDelaysFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)

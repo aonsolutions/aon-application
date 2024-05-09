@@ -13,6 +13,7 @@ export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
+export const SUITE = 'suite';
 export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
@@ -195,6 +196,16 @@ export const isNewTheme = () => {
 
 export const setNewTheme = (newTheme) => {
     set(NEW_THEME, newTheme);
+    location.reload();
+}
+
+export const isSuite = () => {
+    const suite = get(SUITE);
+    return suite &&  CONSTANT.TRUE === suite;
+}
+
+export const setSuite = (suite) => {
+    set(SUITE, suite);
     location.reload();
 }
 

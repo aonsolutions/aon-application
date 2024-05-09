@@ -3,4 +3,6 @@
 /.classpath
 /.project
 /bin/
-/src/main/webapp/dist/
+/node_modules/
+/temp/
+/package-lock.json

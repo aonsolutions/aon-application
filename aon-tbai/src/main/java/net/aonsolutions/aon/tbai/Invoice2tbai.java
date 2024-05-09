@@ -244,7 +244,11 @@ public class Invoice2tbai {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));							
 			} else {
 				IDOtro other = new IDOtro();
-				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+
+				if(invoice.getRegistryDocumentCountry().equals(Country.XI)) {
+					other.setCodigoPais(CountryType2.GB);
+				} else other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+				
 				other.setIDType(invoice.isIntracommunity() 
 						? IDType.NIF_IVA.getName()
 						: IDType.OTRO.getName());
@@ -476,7 +480,7 @@ public class Invoice2tbai {
 					.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
 			NoSujetaType noSujeta = new NoSujetaType();
 			DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
-			detalleNoSujeta.setCausa(CausaNoSujetaType.OT);
+			detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
 			detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
 			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
 			

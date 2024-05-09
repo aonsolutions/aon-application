@@ -194,7 +194,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
 		aonMenuTopnav.style.height = '0px';
-		this.getRootPanel().style.marginTop = '0px'; //'69px';
+		this.getRootPanel().style.marginTop = '49px'; //'69px';
 		this.buildMenuTopnav();
 	}
 
@@ -289,7 +289,7 @@ export class AonNewMenu extends AonElement {
 		let rightPanel = this.getElement("aonRightPanel");
 
 		topnav.style.height = '68px';
-		rootPanel.style.marginTop = '69px';
+		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 68}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
 			rightPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
@@ -364,6 +364,33 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
 		});
+		a.classList.add('aonMenuApp');
+
+		let hoverDiv = this.createElement(TAG.DIV);
+		hoverDiv.innerHTML = app.title;
+		if (!app.title) {
+			hoverDiv.classList.add('aonMenuAppHoverHidden');
+		}
+		hoverDiv.style.display = 'none';
+		hoverDiv.classList.add('aonMenuAppHover');
+
+		a.addEventListener(EVENT.MOUSEOVER, () => {
+			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
+				hoverDiv.style.position = 'fixed';
+				let position = a.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2);
+				hoverDiv.style.left = position.left + position.width + 10;
+				hoverDiv.style.display = 'block';
+				let hoverDivPosition = hoverDiv.getBoundingClientRect();
+				hoverDiv.style.top = position.top + (position.height / 2) - (hoverDivPosition.height / 2);
+			}
+		});
+
+		a.addEventListener(EVENT.MOUSELEAVE, () => {
+			hoverDiv.style.display = 'none';
+		});
+
+		a.appendChild(hoverDiv);
 
 		let div = this.createElement(TAG.DIV);
 		div.style.padding = '1px';
@@ -723,6 +750,14 @@ export class AonNewMenu extends AonElement {
 
 		}
 	}
+	
+	isTopNav(a) {
+		let element = a;
+		do {
+			element = element.parentElement;
+		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		return element.id == this.AON_MENU_TOPNAV;
+	}	
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

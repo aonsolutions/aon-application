@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.security;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 @SuppressWarnings("serial")
 public class TaskHolderWorkgroup implements Serializable {
@@ -10,6 +11,7 @@ public class TaskHolderWorkgroup implements Serializable {
 	Integer id;
 	Integer domain;
 	Integer taskHolder;
+	TaskHolder taskholder;
 	Workgroup workgroup;
 	
 	private boolean removed;
@@ -38,6 +40,15 @@ public class TaskHolderWorkgroup implements Serializable {
 
 	public TaskHolderWorkgroup setTaskHolder(Integer taskHolder) {
 		this.taskHolder = taskHolder;
+		return this;
+	}
+	
+	public TaskHolder getTaskHolderObj() {
+		return taskholder;
+	}
+
+	public TaskHolderWorkgroup setTaskHolder(TaskHolder taskholder) {
+		this.taskholder = taskholder;
 		return this;
 	}
 

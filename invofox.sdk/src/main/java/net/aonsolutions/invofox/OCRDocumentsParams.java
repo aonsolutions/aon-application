@@ -31,8 +31,6 @@ public class OCRDocumentsParams extends OCRParams {
 		}
 	}
 	
-	
-	
 	public static OCRDocumentsParams get() {
 		return new OCRDocumentsParams();
 	}
@@ -77,6 +75,10 @@ public class OCRDocumentsParams extends OCRParams {
 		return append(OCRNames.COMPANY, param);
 	}
 	
+	public OCRDocumentsParams withEnvironment(String param) {
+		return append(OCRNames.ENVIRONMENT, param);
+	}
+
 	public OCRDocumentsParams withIssuerTaxId(String param) {
 		return append(ocrDocument -> ocrDocument.getData()
 				.map(data -> AonStringUtils.equalsIgnoreCase(normalize(data.getIssuerDocument()),param)).orElse(true));
@@ -93,6 +95,10 @@ public class OCRDocumentsParams extends OCRParams {
 
 	public OCRDocumentsParams sort(String param, Sort sort) {
 		return append(OCRNames.SORT, sort.getStr() + param);
+	}
+	
+	public OCRDocumentsParams withCompanyActsLike(String param) {
+		return append(OCRNames.COMPANY_ACTS_LIKE2, param);
 	}
 
 	public static String normalize(String ocrDocument) {

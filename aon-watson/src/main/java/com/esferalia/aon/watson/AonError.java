@@ -263,7 +263,7 @@ public enum AonError implements Serializable{
 	,NULL_DATE_STRING("No se ha podido establecer la fecha, intentelo otra vez")
 	,GROUP_NOT_MATCH("No se ha podido encontrar el dato, intentelo otra vez")
 
-  // ---------------------------------------------- REGISTRY_BANK
+	// ---------------------------------------------- REGISTRY_BANK
 	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
 	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")
 	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
@@ -273,6 +273,28 @@ public enum AonError implements Serializable{
 	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID("La cuenta bancaria es inv\u00E1lida")
+	
+	// --------------------------------------------- MARKETING CAMPAIGN
+	,MARKETING_CAMPAIGN_NULL("El valor de la campa\u00f1a es nulo.")
+	,NULL_MARKETING_CAMPAIGN_DESCRIPTION("La descripci\u00f3n de la campa\u00f1a es nulo.")
+	,NULL_MARKETING_CAMPAIGN_ACTIVE("El estado activo de la campa\u00f1a es nulo.")
+	,NULL_MARKETING_CAMPAIGN_SCOPE("El \u00e1mbito de la campa\u00f1a es nulo.")
+	,INVALID_SIZE_MARKETING_CAMPAIGN_DESCRIPTION("El tama\u00F1o de la descripci\u00F3n es inv\u00E1lido")
+	,REPEATED_DESCRIPTION("No puede haber dos campa\u00f1as con la misma descripci\u00f3n")
+	
+	// --------------------------------------------- MARKETING ACTION
+	,MARKETING_ACTION_NULL("El valor de la acci\u00f3n es nulo.")
+	,NULL_MARKETING_ACTION_DESCRIPTION("La descripci\u00f3n de la acci\u00f3n es nulo.")
+	,NULL_MARKETING_CAMPAIGN_ACTION("La acci\u00f3n no esta vincula a una campa\u00f1a.")
+	,NULL_MARKETING_ACTION_START_DATE("La fecha de inicio de la acci\u00f3n  es nulo.")
+	,INVALID_SIZE_MARKETING_ACTION_DESCRIPTION("El tama\u00F1o de la descripci\u00F3n es inv\u00E1lido")
+	,REPEATED_ACTION_DESCRIPTION("No puede haber dos acciones con la misma descripci\u00f3n")
+	
+	// --------------------------------------------- MARKETING ACTION
+	,MARKETING_ACTION_TARGET_NULL("El valor del cliente potencial de la acci\u00f3n es nulo.")
+	,NULL_MARKETING_ACTION_TARGET("Debe existir seleccionar un cliente potencial.")
+	,NULL_MARKETING_CAMPAIGN_ACTION_TARGET("El cliente potencial no esta vinculado a una acci\u00f3n.")
+	,REPEATED_ACTION_TARGET("No puede haber dos veces el mismo cliente potencial para la misma acci\u00f3n")
 	;
 	
 	

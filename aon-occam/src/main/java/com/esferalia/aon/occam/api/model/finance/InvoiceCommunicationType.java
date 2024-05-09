@@ -8,10 +8,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationType implements Serializable{
  
-	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();} },
-	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();} },
-	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();} },
-	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();} }
+	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();}},
+	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();}},
+	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();}},
+	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}},
+	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}}
 	;
 	
 	

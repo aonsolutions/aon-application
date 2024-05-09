@@ -367,16 +367,16 @@ public class OCRInvoiceBuilder {
         		    invoice);
 	    } catch ( OCRTooManyOwnersException | OCROwnerNotFoundException e) {
 		
-		if ( invoice.isUndeductible() ) {
-		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
-		    if (defaultCreditor != null) {
-			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
-			defaultCreditor.getType().visit(defaultCreditor,
-				new InvoiceRegistryInitializer(aonCtx, invoice, config));
-			return;
-		    }
-		}   
-		throw e;
+//		if ( invoice.isUndeductible() ) {
+//		    AccountingRegistry defaultCreditor = ConfigurationDAO.getDefaultCreditor(aonCtx);
+//		    if (defaultCreditor != null) {
+//			invoice.setRegistry(defaultCreditor.getId()).setTransaction(defaultCreditor.getTransaction());
+//			defaultCreditor.getType().visit(defaultCreditor,
+//				new InvoiceRegistryInitializer(aonCtx, invoice, config));
+//			return;
+//		    }
+//		}   
+	    	throw e;
 	    }
 
 	}
@@ -673,6 +673,26 @@ public class OCRInvoiceBuilder {
         			   invoice.getDetails().add(detail); 
         			}
 			);
+			
+			ocrInvoice.getReimbursableExpensesAmount().ifPresent(r -> {
+				BigDecimal value = r.getValue().orElse(null);
+				double prep = AonNumberUtils.zeroIfNull(value);
+				if(prep != 0.0) {
+					Integer size = invoice.getDetails().size();
+	     			InvoiceDetail detail = new InvoiceDetail()
+	     				.setDomain(invoice.getDomain())
+     					.setDescription("Suplido")
+     					.setQuantity(1.0)
+     					.setPrice(prep)
+     					.setPrepayment(true)
+    				   	.setDiscount(0.0)
+    				   	.setInvoice(invoice)
+    				   	.setTaxableBase(prep)
+    				   	.setLine(size.shortValue());
+	     			fillDetailSource(detail);
+	     			invoice.addDetail(detail);
+				}
+			});
 		} else {
 			Stream.of( ocrInvoice.getLines() )
 			.filter( Optional::isPresent )
@@ -797,9 +817,9 @@ public class OCRInvoiceBuilder {
 	private static void fillFinanceBank(OCRInvoice ocrInvoice, Finance finance) {
 	    String iban = ocrInvoice.getIBAN().flatMap(d -> d.getValue()).orElse(null);
 	    if (AonStringUtils.isNotBlank(iban)) {
-		iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
-		BankAccount bankAccount = new BankAccount(iban);
-		finance.setBankAccount(bankAccount);
+	    	iban = iban.replaceAll(ALPHANUMERIC_PATTERN, "");
+	    	BankAccount bankAccount = new BankAccount(iban);
+	    	finance.setBankAccount(bankAccount);
 	    }
 	}
 
@@ -868,6 +888,23 @@ public class OCRInvoiceBuilder {
 		    return finance;
 		}).toList();
 
+	    if(finances.isEmpty()) {
+	    	finances = new LinkedList<>();
+	    	Finance finance = new Finance();
+	    	finance.setDomain(invoice.getDomain());
+		    finance.setInvoice(invoice);
+		    finance.setDueDate(invoice.getIssueDate());
+		    finance.setAmount(invoice.getTotal());
+		    
+		    // INVOICE_FINANCE_PAYMETHOD
+		    fillFinancePayMethod(aonContext, ocrInvoice, finance);
+		    
+		    // INVOICE_FINANCE_BANK
+		    fillFinanceBank(ocrInvoice, finance);
+		    // INVOICE_FINANCE_SWIFT
+		    fillFinanceSwift(ocrInvoice, finance);
+		    finances.add(finance);
+	    }
 	    	// ADD_INVOICE_FINANCE
 		invoice.setFinances(finances);
 		
@@ -982,7 +1019,7 @@ public class OCRInvoiceBuilder {
 				.setBase( AonNumberUtils.zeroIfNull(irpfBase) )
 				.setPercentage( AonNumberUtils.zeroIfNull(irpfPercentage) )
 				.setQuota( AonNumberUtils.zeroIfNull(irpfQuota) )
-				.setWithholdingType( guessWitholdingType( invoice ) )
+				.setWithholdingType( guessWitholdingType( invoice, AonNumberUtils.zeroIfNull(irpfPercentage) ) )
 				;
 			invoice.getBreakdown().add(ib);
 		}
@@ -1117,8 +1154,13 @@ public class OCRInvoiceBuilder {
 		}
 	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
-	private static WithholdingType guessWitholdingType(Invoice invoice) {
-		return WithholdingType.PROFESSIONAL;
+	private static WithholdingType guessWitholdingType(Invoice invoice, double percentage) {
+		if(percentage == 19.0) return WithholdingType.RENTING;
+		else if(percentage == 2.0) return WithholdingType.FARMER;
+		else if(percentage == 1.0) return WithholdingType.TRANSPORT_OPERATOR;
+		else if(percentage == 7.0) return WithholdingType.M190_G_02;
+		else if(percentage == 24.0) return WithholdingType.M190_I_01;
+		else return WithholdingType.PROFESSIONAL;
 	}
 	// ****************************************************************************
 	// ****************************************************************************

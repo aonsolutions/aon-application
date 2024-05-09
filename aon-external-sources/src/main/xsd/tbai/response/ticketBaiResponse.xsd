@@ -1,4 +1,4 @@
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:T="urn:ticketbai:emision" targetNamespace="urn:ticketbai:emision">                
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:T="urn:ticketbai:respuesta" targetNamespace="urn:ticketbai:respuesta">                
 	<element  name="TicketBaiResponse">
 		<complexType>
 			<sequence>

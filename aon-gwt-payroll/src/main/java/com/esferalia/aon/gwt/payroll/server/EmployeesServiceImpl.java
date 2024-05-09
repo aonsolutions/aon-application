@@ -7582,7 +7582,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Integer contractType = Integer.parseInt(employeeContractInfo.getContractInfo().getContractType());
 		builder.setCodContract(contractType.toString());
 		if (contractType == 410 || contractType == 510) {
-			String interimCause = employeeContractInfo.getContractSpecificData().getInterimCause();
+			String interimCause = employeeContractInfo.getContractSpecificData().getSustitucionCause();
 			if (AonStringUtils.isBlank(interimCause))
 				throw new IllegalArgumentException("La interinidad es obligatoria para este tipo de contrato. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
 			builder.setInterinidad(interimCause);
@@ -7663,6 +7663,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setDurationTypeCvnMin(employeeContractInfo.getContractSpecificData().getAgreementMinutes());
 		builder.setDurationFormationHour(employeeContractInfo.getContractSpecificData().getFormationHours());
 		builder.setDurationFormationMin(employeeContractInfo.getContractSpecificData().getFormationMinutes());
+
+		builder.setWrittenContract(employeeContractInfo.getContractSpecificData().getWritenContract());
 
 		return builder.build();
 	}

@@ -97,6 +97,9 @@ public class AonMessageDialog extends AonCustomDialog {
 	public static void error(String msg) {
 		_show(AON.MSG.error(),msg,null);
 	}
+	public static void error(String msg,final AonMessageDialogCallback callback) {
+		_show(AON.MSG.error(),msg,callback);
+	}
 	public static void warning (final String msg) {
 		_show(AON.MSG.warning(),msg,null);
 	}

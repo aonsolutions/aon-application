@@ -273,9 +273,10 @@ export class AonNotes extends AonElement {
       id: CONSTANT.NOTES.initCap(),
       name: MSG.STATUS.toUpperCase(),
       app: NOTES,
+      options: notesOpts
     };
 
-    this.getApplication().addSidenavOptions2(options, notesOpts);
+    this.getApplication().addSidenavOptions3(options);
   }
 
   // ----------------------------- SIDENAV (TAG)
@@ -315,10 +316,11 @@ export class AonNotes extends AonElement {
     let options = {
       id: "Tags",
       name: MSG.TAG,
-       app: NOTES,
+      app: NOTES,
+      options: notesOpts
     };
 
-    this.getApplication().addSidenavOptions2(options, notesOpts);
+    this.getApplication().addSidenavOptions3(options);
   }
 
   truncateKey(value){

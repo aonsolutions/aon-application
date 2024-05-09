@@ -13,13 +13,23 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.MarketingActionParams;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
+import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -29,7 +39,9 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -132,4 +144,40 @@ public interface CommonServiceAsync {
 	void getFBatch(String domainName, Integer domainId, String user, Integer fbatchId, AsyncCallback<FBatch> asyncCallback) throws AonCoreException;
 	void createUpdateFBatch(String domainName, Integer domainId, String user, FBatch fbatch, AsyncCallback<FBatch> asyncCallback) throws AonCoreException;
 	void getCompanyBanks(String domainName, Integer domainId, String user, AsyncCallback<LinkedList<RegistryBank>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ***************************** [MARKETING CAMPAIGN]
+	// **************************************************
+	
+	void getMarketingCampaigns(MarketingCompaignParams params, AsyncCallback<List<MarketingCampaign>> asyncCallback) throws AonCoreException;
+	void deleteMarketingCampaign(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveMarketingCampaign(String domainName, int domain, String user, MarketingCampaign marketingCampaign, AsyncCallback<MarketingCampaign> asyncCallback) throws AonCoreException;
+	void getMarketingCampaign(String domainName, int domain, String user, Integer id, AsyncCallback<MarketingCampaign> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ******************************* [MARKETING ACTION]
+	// **************************************************
+	
+	void getMarketingActions(MarketingActionParams params, AsyncCallback<List<MarketingAction>> asyncCallback) throws AonCoreException;
+	void getMarketingAction(String domainName, int domain, String user, Integer id, AsyncCallback<MarketingAction> asyncCallback) throws AonCoreException;
+	void deleteMarketingAction(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveMarketingAction(String domainName, int domain, String user, MarketingAction marketingAction, AsyncCallback<MarketingAction> asyncCallback) throws AonCoreException;
+	
+	void getNewsSuggestion(String domainName, int domain, String user, AsyncCallback<List<News>> asyncCallback) throws AonCoreException;
+	void getNewsletterSuggestion(String domainName, int domain, String user, AsyncCallback<List<Newsletter>> asyncCallback) throws AonCoreException;
+	void getSurveySuggestion(String domainName, int domain, String user, AsyncCallback<List<Survey>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ************************ [MARKETING ACTION TARGET]
+	// **************************************************
+	
+	void getMarketingActionTargets(MarketingActionTargetParams params, AsyncCallback<List<MarketingActionTarget>> asyncCallback) throws AonCoreException;
+	void deleteMarketingActionTarget(String domainName, int domain, String user, Integer actionTargetId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveMarketingActionTarget(String domainName, int domain, String user,MarketingActionTarget marketingActionTarget, AsyncCallback<MarketingActionTarget> asyncCallback) throws AonCoreException;
+	
+	void getTargetSuggestion(String domainName, int domain, String user, AsyncCallback<List<Target>> asyncCallback) throws AonCoreException;
+	
+	void getAviableWorkgroups(String domainName, int domain, String user, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
+	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+
 }

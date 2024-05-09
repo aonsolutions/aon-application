@@ -259,7 +259,9 @@ public enum AppParam {
 	, OCR_DEFAULT_ITEM
 	, INVOFOX_TEST	
 	, INVOFOX_API_URL	
-	, INVOFOX_API_KEY	
+	, INVOFOX_API_KEY
+	, INVOFOX_AUTO_ACCEPT	
+	, INVOFOX_AUTO_RECORD	
 	;
 	
 	public String getValue() {

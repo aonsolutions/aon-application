@@ -219,10 +219,18 @@
 	</navigation-rule>
 
 	<!-- AON GWT MARKETING -->
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_questionModule</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/question.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_marketingCampaignModule</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/marketingCampaign.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
