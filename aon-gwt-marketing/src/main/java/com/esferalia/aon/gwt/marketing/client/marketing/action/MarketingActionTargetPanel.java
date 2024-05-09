@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -52,7 +51,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private static enum COLS {
 		DES("Cliente Potencial"						,"auto"  ,null)
-		, COM(AON.MSG.comments()					,"250px" ,null)
+		, COM(AON.MSG.comments()					,"30rem" ,null)
 		, STA(AON.MSG.status()						,"150px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
@@ -207,30 +206,20 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private void paintRow(final int r, MarketingActionTarget marketingActionTarget) {
 		int col = 0;
-		boolean myMarketingActionTarget =  marketingActionTarget == null || AonNumberUtils.equals(marketingActionTarget.getDomain().getId() , params.getDomain()); 
-		if (myMarketingActionTarget) {
-			paintActiveRow(r,col,marketingActionTarget);
-		} else {
-			paintInactiveRow(r,col,marketingActionTarget);
-		}
-	}
-
-	private void paintInactiveRow(final int r, int col, MarketingActionTarget marketingActionTarget) {		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getComments()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));
-		col++;
+		paintActiveRow(r,col,marketingActionTarget);
 	}
 
 	private void paintActiveRow(final int r, int col, MarketingActionTarget marketingActionTarget) {
 		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
 		col++;
 		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getComments()));
+		Label comments = new Label(marketingActionTarget.getComments());
+		comments.setTitle(marketingActionTarget.getComments());
+		comments.getElement().getStyle().setProperty("max-width", "29rem");
+		comments.getElement().getStyle().setProperty("white-space", "nowrap");
+		comments.getElement().getStyle().setProperty("overflow", "hidden");
+		comments.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+		tab.setWidget(r, col, comments);
 		col++;
 		
 		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));

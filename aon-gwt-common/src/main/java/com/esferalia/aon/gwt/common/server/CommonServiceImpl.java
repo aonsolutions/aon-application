@@ -429,4 +429,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return taskHolders;
 	}
 	
+	@Override
+	public List<User> getAviableServiceUsers(String domainName, int domainId, String user) throws AonCoreException {
+		List<User> usersList = AON.getDomainUserStream(domainName, domainId, user, f -> f.getTypeProperty().eq((byte)3)).collect(Collectors.toList());
+		return usersList;
+	}
+	
 }

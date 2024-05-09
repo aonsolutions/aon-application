@@ -454,4 +454,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getAviableTaskHolders(domainName, domain, user, workgroup, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getAviableServiceUsers(String domainName, int domain, String user, AsyncCallback<List<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableServiceUsers(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
 }
