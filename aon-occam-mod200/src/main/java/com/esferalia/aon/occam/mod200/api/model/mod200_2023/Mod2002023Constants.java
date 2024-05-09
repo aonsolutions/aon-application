@@ -309,7 +309,7 @@ public class Mod2002023Constants {
 		
 		// Entidades que forman parte de grupos de consolidación fiscal
 		Mod2002023Key.LQ1029,
-		Mod2002023Key.LQ814,
+		// Mod2002023Key.LQ814, - ESTA CASILLA NO ESTA EN EL FICHERO
 		Mod2002023Key.LQ1030,
 		Mod2002023Key.LQ1031,
 		
@@ -629,6 +629,13 @@ public class Mod2002023Constants {
 		,{Mod2002023Key.UT3314 ,Mod2002023Key.UT3315}
 	};
 	
+	public static Mod2002023Key[] FILM_PRODUCTIONS = new Mod2002023Key[] {
+			 Mod2002023Key.IPCRG01 
+			,Mod2002023Key.IPCRG02 
+			,Mod2002023Key.IPCRG03 
+			,Mod2002023Key.IPCRC01 
+			,Mod2002023Key.IPCRC02 
+			,Mod2002023Key.IPCRC03
+	};	
+	
 }
-
-

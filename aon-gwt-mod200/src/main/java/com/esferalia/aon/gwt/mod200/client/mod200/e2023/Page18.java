@@ -92,6 +92,8 @@ public class Page18 extends PageAbs {
 //		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
 		row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
+		
+		// FALTA - VER SI AL FINAL EN EL MODELO ESTE APARTADO B8 ESTA DIVIDIDO EN DOS O APARECE JUNTO 
 		row = paintTable(table1, row, UTE_KEYS_B81, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
 		row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
 		
@@ -100,17 +102,24 @@ public class Page18 extends PageAbs {
 		paintKey(table1, Mod2002023Key.UT070, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		paintKey(table1, Mod2002023Key.UT072, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
+//		// FALTA - LA RELACION DE SOCIOS IRIA AHORA EN UN APARTADO APARTE (NO SERIA EL APARTADO B.11), SERIA EL APARTADO C. VER SI AL FINAL SE QUEDA ASI.
+//		// Relación de Socios
+//		paintDescription(table1, AON.MSG.ute6(), row++, 0, true);
+//		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
+//		panelB11 = new FlowPanel();
+//		paintB11Panel();
+//		table1.setWidget(row, 0, panelB11);
+		
+		paintFooterNote(basePanel, FOOTER);
+		
 		// FALTA - LA RELACION DE SOCIOS IRIA AHORA EN UN APARTADO APARTE (NO SERIA EL APARTADO B.11), SERIA EL APARTADO C. VER SI AL FINAL SE QUEDA ASI.
-		// Relación de Socios
-		paintDescription(table1, AON.MSG.ute6(), row++, 0, true);
-		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
+		// Relación de Partícipes
 		panelB11 = new FlowPanel();
 		paintB11Panel();
-		table1.setWidget(row, 0, panelB11);
+		addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(row, 0, panelB11);
 		
 		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES
 		
-		paintFooterNote(basePanel, FOOTER);
 		
 	}
 	
@@ -147,6 +156,7 @@ public class Page18 extends PageAbs {
 		
 		tabB6.addRow()
 			.addCell( new Label(AON.MSG.deductionBaseAbbrv()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+			.addCell( new Label("Importe de la deducci\u00F3n"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
 			.addCell( new Label("% Participaci\u00F3n"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
@@ -160,6 +170,14 @@ public class Page18 extends PageAbs {
 				callback.markAsDirty();
 			});
 			otherInputs.add(base);
+			
+			AonDoubleBox amount = new AonDoubleBox();
+			amount.setValue(callback.getMod200Object().getMod200().getUteBases().get(idx).getAmount());
+			amount.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteBases().get(idx).setAmount(amount.getValue());
+				callback.markAsDirty();
+			});
+			otherInputs.add(amount);
 			
 			AonDoubleBox percent = new AonDoubleBox();
 			percent.setMaxLength(6);

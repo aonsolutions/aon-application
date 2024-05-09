@@ -7,7 +7,6 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Cha
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.NOT_SUPPORTED_CHARACTERS;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -544,8 +543,9 @@ public class Page00 extends PageAbs {
 		opeVol = new ListBox();
 		opeVol.addItem("0 - No consta");
 		opeVol.addItem("1 - Inferior a 20 millones de euros");
-		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-		opeVol.addItem("3 - Al menos 60 millones de euros");
+//		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
+//		opeVol.addItem("3 - Al menos 60 millones de euros");
+		opeVol.addItem("2 - Al menos 20 millones de euros");
 		opeVol.addChangeHandler( event -> {
 			DoubleVariableEx bv = new DoubleVariableEx(Mod2002023Key.VOLOPE);
 			bv.setValue((double)opeVol.getSelectedIndex());

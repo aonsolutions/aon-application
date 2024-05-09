@@ -32,7 +32,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,C0004	,C0021  ,C0066
 	,C0005	,C0023  ,C0078
 	,C0011	,C0024  ,C0056
-	,C0085	,C0025	,C0083			
+	,C0085	,C0025				
 			,C0031	  
 		
 	// Regímenes aplicables
@@ -52,13 +52,16 @@ public enum Mod2002023Key implements IMod200Key {
 	,C0082	,C0063  ,C0073
 	,C0026  ,C0071  ,C0037 		
 	,C0027  ,C0088  ,C0044
+		    ,C0083
 	,C0030  ,C0070	,C0074
 					,C0089
 
+	// FALTA - QUITAN LA OPCION 3 Y LA OPCION 2 PASA A SER: 2 - INCN de al menos 20 millones de euros
+	// Además de las modificaciones en las pantallas o calculos, tambien habrá que modificar el traspaso del ejercicio anterior, para que si esta marcado 3, se marque 2
 	// Importe neto de la cifra de negocios (INCN) de los doce meses anteriores a la fecha de inicio del período impositivo
 	// 1 - INCN inferior a 20 millones de euros					
 	// 2 - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros					
-	// 3 - INCN de al menos 60 millones de euros					
+	// 3 - INCN de al menos 60 millones de euros 					
 	,VOLOPE
 	
 	// ESTADOS DE CUENTAS
@@ -532,7 +535,7 @@ public enum Mod2002023Key implements IMod200Key {
 	
 	// Entidades que forman parte de grupos de consolidación fiscal	
 	,LQ1029
-	,LQ814
+	//,LQ814 - ESTA CASILLA NO ESTA EN EL FICHERO
 	,LQ1030
 	,LQ1031
 	
@@ -736,7 +739,9 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ1889 		,LQ1891
 	,LQ216 	,LQ243 	,LQ265
 	,LQ266 			,LQ267
-	,LQ290 	,LQ2465	,LQ344
+	// FALTA ESTA CASILLA NO ESTA EN EL FICHERO
+	//,LQ290 	,LQ2465	,LQ344 
+	,LQ290 			,LQ344
 	
 // --------------- PAGINA 15 BIS --------------- //
 	
@@ -1017,7 +1022,8 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN1900 ,BN1901 ,BN1902
 	,BN1903 ,BN1904 ,BN1976
 	,BN1987 ,BN1995 ,BN1996
-	,BN1997 ,BN1998 ,BN1999
+	//,BN1997 ,BN1998 ,BN1999
+	,BN1907 ,BN1908 ,BN1999
 	,BN2000 ,BN2024 ,BN2025
 	,BN2026 ,BN2027 ,BN2028
 	,BN2029 ,BN2030 ,BN2031
@@ -1192,6 +1198,10 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN2759 ,BN2760 ,BN2762 ,BN2763 ,BN2763R	
 	,BN517	,BN081	        ,BN1234A
 	
+	,BN814
+	,BN1935
+	,BN130	
+	
 // --------------- PAGINA 20 --------------- //	
 
 	// LIMITACION EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS. Art. 16 LIS
@@ -1302,7 +1312,8 @@ public enum Mod2002023Key implements IMod200Key {
 	,LM2418	,LM2419	,LM2420	,LM2421	,LM2422	,LM1116	,LM2423	,LM2424	,LM2425	,LM2426
 	,LM1117	,LM1118	,LM1119	,LM1120	,LM1121	,LM1413	,LM1122	,LM1131	,LM1132	,LM1133
 	,LM1414 ,LM1415 ,LM1416 ,LM1417 ,LM1418 ,LM2785	,LM1419 ,LM1420 ,LM1421	,LM1422
-	,LM2786 ,LM2787 ,LM2788 ,LM2789 ,LM2890 		,LM2792 ,LM2793 ,LM2794	,LM2795
+	//,LM2786 ,LM2787 ,LM2788 ,LM2789 ,LM2890 		,LM2792 ,LM2793 ,LM2794	,LM2795
+	,LM2786 ,LM2787 ,LM2788 ,LM2789 ,LM2790 		,LM2792 ,LM2793 ,LM2794	,LM2795
 	,LM1561, LM1562	,LM1563	,LM1564	,LM1565	,LM1566	,LM1567	,LM1568	,LM1569	,LM1570
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
@@ -1370,21 +1381,28 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ631
 	,LQ632
 	
-	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO
+	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO (Num 5)
 	// Inversiones en producciones cinematográficas o series audiovisuales
-	,INV01 // Producciones cinematográficas (excepto series audiovisuales) 
-	,INV02 // Series audiovisuales 
-	,INV03 // Número de capítulos	
+//	,INV01 // Producciones cinematográficas (excepto series audiovisuales) 
+//	,INV02 // Series audiovisuales 
+//	,INV03 // Número de capítulos	
+	
+	,IPCRG01 // Régimen general: Producciones cinematográficas (excepto series audiovisuales)
+	,IPCRG02 // Régimen general: Series audiovisuales
+	,IPCRG03 // Régimen general: Número de episodios
+	,IPCRC01 // Régimen fiscal Canarias: Producciones cinematográficas (excepto series audiovisuales)
+	,IPCRC02 // Régimen fiscal Canarias: Series audiovisuales
+	,IPCRC03 // Régimen fiscal Canarias: Número de episodios
 	
 // --------------- PAGINA 22 --------------- //
 	
 	// Desglose I0403, D0404 - Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) 
-	,RC524	,RC525	,RC526	,RC2439	
-	,RC922	,RC923	,RC924	,RC2440	,RC925
-	,RC1165	,RC928	,RC938	,RC2441	,RC996
-	,RC1744	,RC1168	,RC1172	,RC1174	,RC1175
-	,RC2807	,RC1745 ,RC1746 ,RC1820 ,RC1821
-			,RC2808 ,RC2809 ,RC2810 ,RC2822
+	,RC524	,RC525	,RC526	,RC2439	,RC1936
+	,RC922	,RC923	,RC924	,RC2440	,RC1963 ,RC925
+	,RC1165	,RC928	,RC938	,RC2441	,RC1985 ,RC996
+	,RC1744	,RC1168	,RC1172	,RC1174	,RC1986 ,RC1175
+	,RC2807	,RC1745 ,RC1746 ,RC1820 ,RC2430 ,RC1821
+			,RC2808 ,RC2809 ,RC2810         ,RC2822
 	
 	,RC927
 						
@@ -1462,15 +1480,17 @@ public enum Mod2002023Key implements IMod200Key {
 // --------------- PAGINA 23 --------------- //	
 // No soportada en AON
 	
-// --------------- PAGINA 24 --------------- //	
+// --------------- PAGINA 24 Y 24 BIS--------------- //	
 
 	// Agrupaciones de interés económico y UTES (régimen especial)
-	,UT060
-	,UT500
-	,UT1227
-	,UT1228
-	,UT552
-	,UT1330
+	
+	,UT060   // A) Porcentaje de imputación de bases imponibles
+	
+	,UT500   // B) Datos económicos - 1.- Resultado cuenta de pérdidas y ganancias                
+	,UT1227  // B) Datos económicos - 2.- Gastos financieros netos no deducidos por la entidad  
+	,UT1228  // B) Datos económicos - 3.- Reserva capitaliz. no aplicada por la entidad          
+	,UT552   // B) Datos económicos - 4.- Base imponible                                          
+	,UT1330  // B) Datos económicos - 5.- Base imponible minorada o incrementada                  
 	
 	// FALTA - AQUI CREAN UN MONTON DE NUEVAS CASILLAS DESGLOSANDO LOS APARTADOS 7 Y 8 
 //	,UTC01 // Base de las bonificaciones
@@ -1479,7 +1499,12 @@ public enum Mod2002023Key implements IMod200Key {
 //	,UT062 // Retenciones e ingresos a cuenta
 //	,UTC04 // Dividendos y participaciones en beneficios distribuidos con cargo a reservas - De ejercicios en los que la sociedad no haya tributado en el régimen especia
 //	,UTC05 // Dividendos y participaciones en beneficios distribuidos con cargo a reservas - De ejercicios en los que la sociedad haya tributado en el régimen especial
-	// 7.- Bonificaciones
+	
+	// FALTA - ESTAS DOS CASILLAS DEL APARTADO B.6, VER SI LAS PONEMOS TAMBIEN EN LA PANTALLA O NO HACE FALTA, A VER COMO SE QUEDA AL FINAL EN EL MODELO
+	,UT1277  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Base de la deducción
+	,UT1278  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Importe de la deducción
+	
+	// B) Datos económicos - 7.- Bonificaciones
 	,UT2942 ,UT2943
 	,UT2944 ,UT2945
 	,UT2946 ,UT2947
@@ -1487,7 +1512,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,UT2950 ,UT2961
 	,UT2962 ,UT2963
 	
-	// 8.- Deducciones generadas en el periodo impositivo
+	// B) Datos económicos - 8.- Deducciones generadas en el periodo impositivo
 	,UT2964 ,UT2965
 	,UT2967 ,UT2968
 	,UT2969 ,UT2970
@@ -1508,19 +1533,41 @@ public enum Mod2002023Key implements IMod200Key {
 	,UT3283 ,UT3284
 	,UT3355 ,UT3356
 	,UT3359 ,UT3360
-	
-	// Información adicional para el cálculo de límites de deducciones
 	,UT3285 ,UT3287
 	,UT3288 ,UT3289
 	,UT3290 ,UT3311
 	,UT3314 ,UT3315
 	
-	// 9.- Retenciones e ingresos a cuenta
+	// B) Datos económicos - 9.- Retenciones e ingresos a cuenta
 	,UT062 
 	
-	// 10.- Dividendos y participaciones en beneficios distribuidos con cargo a reservas
+	// B) Datos económicos - 10.- Dividendos y participaciones en beneficios distribuidos con cargo a reservas
 	,UT070  
 	,UT072 	
+	
+	// Partícipes de agrupaciones de interés económico y UTES
+	
+	,UT1279  // Total - Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo 
+	,UT1455  // Total - Datos relativos a la participación: Valoración de la participación al final del período impositivo
+	,UT1456  // Total - Datos relativos a la participación: Ingresos financieros de la participación
+	,UT1458  // Total - Importes imputados: Importe del resultado contable imputado
+	,UT1459  // Total - Importes imputados: Gastos financieros netos imputados
+	,UT1460  // Total - Importes imputados: Reserva de capitalización que no haya sido aplicada imputada
+	,UT1461  // Total - Importes imputados: Base imponible imputada
+	,UT1467  // Total - Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas
+	,UT1468  // Total - Importes imputados: Importe bonificación generada de las bases de bonificación imputadas
+	,UT1523  // Total - Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas
+	,UT1601  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas
+	,UT1638  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas
+	,UT1639  // Total - Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas
+	,UT1640  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas
+	,UT1743  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas
+	,UT1909  // Total - Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas
+	,UT1910  // Total - Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente
+	,UT1911  // Total - Importes imputados: Retenciones e ingresos a cuenta imputados
+	,UT1912  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación
+	,UT1934  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación
+
 	
 // --------------- PAGINA 25 --------------- //	
 // No soportada en AON

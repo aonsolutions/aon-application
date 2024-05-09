@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.mod200.api.model.MinorEntity;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.Secretary;
+import com.esferalia.aon.occam.mod200.api.model.TitularReal;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
@@ -132,6 +133,7 @@ public class Mod2002023DAO  {
 			(mod,reg) -> mod.getUteBases().add(new UteBase()
 				.setPercent(reg.getPercent())
 				.setBase(reg.getNominalValue())))
+				// FALTA - AÑADIR EL IMPORTE DE LA DEDUCCION QUE TENGO QUE VER EN QUE CAMPO LO PONGO 
 		,GROUP_ENTITIES(
 			(mod,reg) -> mod.getGroupEntities().add(new GroupEntitie()				
 					.setDocument(reg.getDocument())					
@@ -148,6 +150,11 @@ public class Mod2002023DAO  {
 			(mod,reg) -> mod.getSicav1().add(reg.getDocument()))
 		,SICAV_2( 
 			(mod,reg) -> mod.getSicav2().add(reg.getDocument()))
+		,TITULAR_REAL(
+				(mod,reg) -> mod.getTitularReal().add(new TitularReal()				
+						.setDocument(reg.getDocument())					
+						.setName( reg.getName())))
+         		// FALTA - RESTO DE CAMPOS DEL TITULAR REAL, A VER DONDE LOS GRABO EN LA TABLA  
 		;
 		
 		private IPopulater populater;
@@ -458,6 +465,7 @@ public class Mod2002023DAO  {
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002023RegistryType.UTE_BASE.byteValue());
 				detail.setNominalValue(ute.getBase());
+				// FALTA - IMPORTE DE LA DEDUCCIO QUE NO SE A QUE CAMPO LO LLEVARE
 				detail.setPercent(ute.getPercent());
 				list.add(detail);
 			}
@@ -530,7 +538,21 @@ public class Mod2002023DAO  {
 					list.add(detail);
 				}
 			}
-		}				
+		}
+		
+		// F. Identificación del titular real de la entidad
+		if (mod200.getTitularReal() != null) {
+			for ( TitularReal tr : mod200.getTitularReal() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002023RegistryType.TITULAR_REAL.byteValue());
+				detail.setDocument(tr.getDocument());
+				detail.setName(tr.getName());
+				// FALTA - RESTO DE CAMPOS DEL TITULAR REAL
+				list.add(detail);
+			}
+		}
 		
 		if (!list.isEmpty()) {
 			ctx.getDslContext().batchStore(list).execute();

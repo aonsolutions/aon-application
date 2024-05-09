@@ -334,9 +334,11 @@ public class Page02 extends PageAbs {
 		otherInputs.add(addButton4);
 		basePanel.add(addButton4);
 		
-		// D. INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
+		//// D. INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
+		// D. INFORMACIÓN DE DETALLE DE EP QUE OPERE EN EL EXTRANJERO
 		
-		basePanel.add(getTitle(AON.MSG.utefor()));
+		//basePanel.add(getTitle(AON.MSG.utefor()));
+		basePanel.add(getTitle("Informaci\u00F3n de detalle de EP que opere en el extranjero"));
 		
 		AonDisplayTable tabForeign = addRegistryTable();
 		

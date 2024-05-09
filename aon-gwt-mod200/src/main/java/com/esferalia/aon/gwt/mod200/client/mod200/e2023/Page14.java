@@ -1,4 +1,5 @@
 // APLICACION DE RESULTADOS, PRESENTACION DE DOCUMENTOS
+// FALTA - INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -153,6 +154,11 @@ public class Page14 extends PageAbs {
 		
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);
+		
+		// INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES 
+		
+		basePanel.add(getTitle("Inversiones en producciones cinematogr\u00E1ficas o series audiovisuales"));
+		addTable("", Mod2002023Constants.FILM_PRODUCTIONS);
 		
 	}
 

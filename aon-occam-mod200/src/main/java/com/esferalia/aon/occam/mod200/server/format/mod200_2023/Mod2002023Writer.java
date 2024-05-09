@@ -1331,7 +1331,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ578)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ579)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1029)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ814)  // Base imponible negativa pendiente de integración en periodos siguientes (DA 19ª LIS)
+				// NO ESTA EN EL FICHERO - ,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ814)  // Base imponible negativa pendiente de integración en periodos siguientes (DA 19ª LIS)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1030)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1031)
 				

@@ -39,6 +39,9 @@ public enum Mod2002023BN082Key implements Serializable, IMod200KeysProvider {
 	 ,C21(new Mod2002023Key[]{Mod2002023Key.BN2709,Mod2002023Key.BN2710,Mod2002023Key.BN2757,Mod2002023Key.BN2758,Mod2002023Key.BN2758R },"2023(*): Investigaci\u00F3n y desarrollo (CTE)")
 	 ,C22(new Mod2002023Key[]{Mod2002023Key.BN2759,Mod2002023Key.BN2760,Mod2002023Key.BN2762,Mod2002023Key.BN2763,Mod2002023Key.BN2763R },"2023(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
  	 ,C23(new Mod2002023Key[]{Mod2002023Key.BN517 ,Mod2002023Key.BN081 ,Mod2002023Key.BN082 ,Mod2002023Key.BN1234A,null                 },"Total")
+ 	 ,C24(new Mod2002023Key[]{Mod2002023Key.BN814 ,null                ,null                ,null                 ,null                 },"Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones - Gastos de investigaci\u00F3n y desarrollo del per\u00EDodo impositivo") 
+ 	 ,C25(new Mod2002023Key[]{Mod2002023Key.BN1935,null                ,null                ,null                 ,null                 },"Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones - Grupo mercantil - Importe anual de la deducci\u00F3n por gastos de investigaci\u00F3n y desarrollo aplicada o abonada por el resto del grupo")
+ 	 ,C26(new Mod2002023Key[]{Mod2002023Key.BN130 ,null                ,null                ,null                 ,null                 },"Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones - Grupo mercantil - Importe anual de la deducci\u00F3n por gastos en actividades de innovaci\u00F3n tecnol\u00F3gica aplicada o abonada por el resto del grupo")
 	;
 	 
     private String description;    

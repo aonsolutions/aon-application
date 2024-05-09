@@ -648,7 +648,7 @@ public class Model2002023 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones, Cuota L\u00EDquida"));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
 		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
-		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados, Documentaci\u00F3n previa"));
+		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados, Documentaci\u00F3n previa, Inversiones en producciones cinematogr\u00E1ficas"));
 		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.page17()));
 		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));

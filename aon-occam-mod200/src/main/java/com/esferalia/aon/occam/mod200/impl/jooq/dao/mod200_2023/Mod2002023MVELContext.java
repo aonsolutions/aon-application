@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
+import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
@@ -943,6 +944,33 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		else return 0.0;
 	}
 	
+	// FALTA - NUEVAS CASILLAS DE TOTALES DEL APARTADO B.6 DE UTES
+	public double computeUT1277() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
+		{
+			double x = 0;
+			for (UteBase b : mod200.getUteBases()) {				
+				x = x + b.getBase();				  						
+			}					 
+			return round(x);
+		}
+		else return 0.0;
+	}
+	
+	public double computeUT1278() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
+		{
+			double x = 0;
+			for (UteBase b : mod200.getUteBases()) {				
+				x = x + b.getAmount();				  						
+			}					 
+			return round(x);
+		}
+		else return 0.0;
+	}
+	
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
@@ -1030,7 +1058,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		// - Contribuyentes que marquen los supuestos 2 (INCN de al menos 20 millones de euros pero inferior a 60) o 3 (INCN de al menos 60 millones de euros) del apartado de importe neto de la cifra de negocios de la página 1 de la declaración (excepto supuestos excluidos).
 		// - Contribuyentes que marquen el caracter 00079 de la página 1 de la declaración (excepto supuestos excluidos).
 		int volope = getValue(Mod2002023Key.VOLOPE).intValue();
-		if (volope == 2 || volope == 3 || isChecked(C0079)) {
+		if (volope == 2 || volope == 3 || isChecked(C0079)) { // FALTA - VOLOPE AHORA SOLO PUEDE SER 0, 1 o 2
 
 			// CALCULO DE LA TRIBUTACION MINIMA
 

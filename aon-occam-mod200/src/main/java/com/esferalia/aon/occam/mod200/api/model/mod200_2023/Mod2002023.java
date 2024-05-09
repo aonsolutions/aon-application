@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.Secretary;
+import com.esferalia.aon.occam.mod200.api.model.TitularReal;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
@@ -55,19 +56,20 @@ public class Mod2002023 extends Mod200 {
 	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
 	                                                  // FALTA - LA FECHA IRNR NO ESTA EN EL MODELO
 	
-	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();                 // Representantes legales de la entidad
-	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
-	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();                                   // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
-	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();                                        // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
-	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();                              // UTES - Deducción para evitar la doble imposición
-	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();   // UTES - Relación de socios
-	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();               // Grupos de Sociedades- NIF de las entidades del grupo 
-	private LinkedList<String> establishments = new LinkedList<String>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
-	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo
-	private LinkedList<String> sicav1 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
-	private LinkedList<String> sicav2 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
+	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
+	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<>();                    // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<UteForeign> uteForeign = new LinkedList<>();                        // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
+	private LinkedList<UteBase> uteBases = new LinkedList<>();                             // UTES - Deducción para evitar la doble imposición
+	private LinkedList<UteParticipation> uteParticipations = new LinkedList<>();           // UTES - Relación de partícipes
+	private LinkedList<GroupEntitie> groupEntities = new LinkedList<>();                   // Grupos de Sociedades- NIF de las entidades del grupo 
+	private LinkedList<String> establishments = new LinkedList<>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
+	private LinkedList<String> filmProductions = new LinkedList<>();                       // Información adicional producciones cinematográficas españolas y espectáculos en vivo
+	private LinkedList<String> sicav1 = new LinkedList<>();                                // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
+	private LinkedList<String> sicav2 = new LinkedList<>();                                // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
+	private LinkedList<TitularReal> titularReal = new LinkedList<>();                      // F. Identificación del titular real de la entidad
 	
 	// FALTA - NUEVO APARTADO EN UTES - Partícipes de agrupaciones de interés económico y UTES
 	
@@ -84,7 +86,7 @@ public class Mod2002023 extends Mod200 {
 	private String justActivos;
 	// FALTA - NUEVAS CASILLAS PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPOS EN fs_model200
 	// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-	// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+	// ESTA CASILLA NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
@@ -260,6 +262,12 @@ public class Mod2002023 extends Mod200 {
 	}
 	public void setSicav2(LinkedList<String> sicav2) {
 		this.sicav2 = sicav2;		
+	}
+	public LinkedList<TitularReal> getTitularReal() {
+		return titularReal;
+	}
+	public void setTitularReal(LinkedList<TitularReal> titularReal) {
+		this.titularReal = titularReal;		
 	}
 	public String getDevType() {
 		return devType;

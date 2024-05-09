@@ -158,8 +158,8 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0074, mod200old.getDoubleValue(Mod2002022Key.C0074))
 			
 			// IMPORTE NETO DE LA CIFRA DE NEGOCIOS
-			
-			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002023Key.VOLOPE, mod200old.getDoubleValue(Mod2002022Key.VOLOPE))
+			// FALTA - ESTE AÑO SOLO HAY VALORES, 0,1 Y 2 LUEGO SI TENIA UN 3 SE PONE COMO 2
+			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002023Key.VOLOPE, mod200old.getDoubleValue(Mod2002022Key.VOLOPE) == 3.0 ? 2.0 : mod200old.getDoubleValue(Mod2002022Key.VOLOPE) )
 			
 			// GRUPOS FISCALES 
 			

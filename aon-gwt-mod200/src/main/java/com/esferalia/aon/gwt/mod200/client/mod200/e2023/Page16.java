@@ -40,6 +40,7 @@ public class Page16 extends PageAbs {
 					"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
 					"Inversiones previstas letras B bis, C y D, art. 27.4 Ley 19/1994",
 					"Inversiones anticipadas consideradas materializaci\u00F3n de la RIC en esta liquidaci\u00F3n",
+					"Integrado en BI por incumplimiento de requisitos",
 					"Pendiente de materializar RIC al final de per\u00EDodo" );
 			
 			// Importe de la dotación RIC con cargo a beneficios de 2023 (Casilla 927)

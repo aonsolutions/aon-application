@@ -15,7 +15,8 @@ public class Mod2002023Description {
 	// ª --> \u00AA  º --> \u00BA
 	// ¿ --> \u00BF
 		
-	public static HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<IMod200Key,String>();
+	//public static HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<IMod200Key,String>();
+	protected static final HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<>();
 
 	static {		
 		DESCRIPTION_MAP.put(Mod2002023Key.X0000, "Tipo de ejercicio");
@@ -48,7 +49,6 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0066,"Entidad patrimonial");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0056,"Entidad en r\u00E9gimen de atribuci\u00F3n de rentas con tributaci\u00F3n por el Impuesto sobre Sociedades");		
-		DESCRIPTION_MAP.put(Mod2002023Key.C0083,"Empresa emergente"); 
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
@@ -86,7 +86,8 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0087,"Inversiones anticipadas-reserva inversiones en Illes Balears (DA 70\u00AA.Cuatro.10 Ley 31/2022)");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0088,"Tipo gravamen reducido para entidades con INCN periodo anterior inferior a 1 mill\u00F3n euros (art. 29.1 LIS)");		
+		DESCRIPTION_MAP.put(Mod2002023Key.C0088,"Tipo gravamen reducido para entidades con INCN periodo anterior inferior a 1 mill\u00F3n euros (art. 29.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0083,"Tipo gravamen reducido para empresa emergente");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0070,"Compensaci\u00F3n bases imponibles negativas para entidades de nueva creaci\u00F3n (art. 26.3 LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0059,"Opciones arts. 39.2 y 39.3 LIS");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
@@ -96,7 +97,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0037,"Opci\u00F3n de fraccionamiento art. 19.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0044,"Contribuyente que aplica deducciones del art. 36.1 y 36.3 LIS con financiaci\u00F3n realizada por otros contribuyentes");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0074,"Contribuyente que financia producciones con derecho a la deducci\u00F3n del art. 36.1 y 36.3 LIS");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0089,"Socio de agrupaci\u00F3n de inter\u00E9s econ\u00F3mico o de uni\u00F3n temporal de empresas");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0089,"Part\u00EDcipe de agrupaci\u00F3n de inter\u00E9s econ\u00F3mico o de uni\u00F3n temporal de empresas");
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0050,"Balance. Normal");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0051,"Balance. Abreviado");
@@ -429,7 +430,7 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ632, "Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores (a compensar \u00FAnicamente con la casilla 631)");
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1029,"Base imponible individual a integrar por las entidades que forman parte del grupo");
-		DESCRIPTION_MAP.put(Mod2002023Key.LQ814 ,"Base imponible negativa pendiente de integraci\u00F3n en periodos siguientes (DA 19\u00AA LIS)");
+		// DESCRIPTION_MAP.put(Mod2002023Key.LQ814 ,"Base imponible negativa pendiente de integraci\u00F3n en periodos siguientes (DA 19\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1030,"Eliminaciones e incorporaciones correspondientes a la entidad");
 		DESCRIPTION_MAP.put(Mod2002023Key.LQ1031,"Integraci\u00F3n individual de las dotaciones del art. 11.12 LIS");
 		
@@ -724,6 +725,16 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.TR1666, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
 		DESCRIPTION_MAP.put(Mod2002023Key.TR1670, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
 		
+	}
+	
+	static {
+		// Inversiones en producciones cinematográficas o series audiovisuales		
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRG01, "R\u00E9gimen general: Producciones cinematogr\u00E1ficas (excepto series audiovisuales)");
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRG02, "R\u00E9gimen general: Series audiovisuales");
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRG03, "R\u00E9gimen general: N\u00FAmero de episodios");
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRC01, "R\u00E9gimen fiscal Canarias: Producciones cinematogr\u00E1ficas (excepto series audiovisuales)");
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRC02, "R\u00E9gimen fiscal Canarias: Series audiovisuales");
+		DESCRIPTION_MAP.put(Mod2002023Key.IPCRC03, "R\u00E9gimen fiscal Canarias: N\u00FAmero de episodios");		
 	}
 	
 }
