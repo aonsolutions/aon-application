@@ -180,4 +180,6 @@ public interface CommonService extends RemoteService {
 	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException;
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
 
+	List<User> getAviableServiceUsers(String domainName, int domain, String user) throws AonCoreException;
+
 }
