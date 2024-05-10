@@ -82,7 +82,6 @@ public class Rawdoc2AccountingInvoice {
 		AccountingInvoice ai = new AccountingInvoice();
 
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
-		
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 		String category = ti.optString("category");
@@ -128,7 +127,8 @@ public class Rawdoc2AccountingInvoice {
 					: ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), category);
 				if (expAccount == null) {
 					expAccount = new Account().setCode(category)
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE TEDI INVOICE)").setAlias("SIN DESCRIPCIÓN")
+						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE TEDI INVOICE)")
+						.setAlias("SIN DESCRIPCIÓN")
 						.setDomain(domain.getId()).setActive(true);
 					checkNivelInferior(domain, user, category);
 					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
@@ -137,11 +137,16 @@ public class Rawdoc2AccountingInvoice {
 		
 			InvoiceTax detailTax = detail.getInvoiceTaxes().stream().filter(f -> f.getTaxType().equals(TaxType.VAT)).findFirst().orElse(new InvoiceTax());
 			
+			double base = detail.isPrepayment()? detail.getTaxableBase() : detailTax.getBase();
+			if (ai.isUndeductible()) {
+				base = detailTax.getBase() + detailTax.getQuota();
+				detail.setPrepayment( false );
+			}
 			InvoiceVAT vat = new InvoiceVAT()
 					.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(detailTax.getBase())
+					.setBase(base)
 					.setPercentage(detailTax.getPercentage())
 					.setQuota(detailTax.getQuota())
 					.setSurcharge(detailTax.getSurcharge())
@@ -149,7 +154,7 @@ public class Rawdoc2AccountingInvoice {
 					// .setInvestAsset(ivs.get(j).getInvestAsset())
 					.setDeductiblePercent(detailTax.getDeductiblePercent())
 					.setDeductibleQuota(detailTax.getDeductibleQuota())
-					.setWithholding(detailTax.isWithholding())
+					.setWithholding(invoice.isWithholding() && !detail.isPrepayment())
 					
 					.setExpAccountId(expAccount.getId())
 					.setExpAccountCode(expAccount.getCode())
@@ -164,10 +169,10 @@ public class Rawdoc2AccountingInvoice {
 					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode() : null)
 					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription() : null)
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
-
+			ai.setPrepayments( ai.hasPrepayments() ||  vat.isPrepayment() );
 			ai.addVat(vat);
 		}
-
+		
 		ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
 
 		return ai;
@@ -220,7 +225,7 @@ public class Rawdoc2AccountingInvoice {
 	}
 	
 	private static void checkRegistryAccounts(Domain domain, User user) {
-		checkAccount(domain, user, "4", "ACREEDORES Y DEUDEROS POR OPERACIONES COMERCIALES", null);
+		checkAccount(domain, user, "4", "ACREEDORES Y DEUDORES POR OPERACIONES COMERCIALES", null);
 		
 		checkAccount(domain, user, "40", "PROVEEDORES", null);
 		checkAccount(domain, user, "400", "Proveedores", null);

@@ -546,7 +546,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		
 		table.setWidget(9, 0, new InlineLabel("Formulario Web"));
 		table.getCellFormatter().setStyleName(9, 0, AON.CSS.aonTableLabel());
-		Label webForm = new Label("Pinche aqu\u00ed para ver un ejemplo del formulario web (API)");
+		Label webForm = new Label("Ejemplo del formulario web (API)");
 		webForm.addStyleName(AON.CSS.aonItemFlex());
 		webForm.getElement().getStyle().setProperty("cursor", "pointer");
 		addInputStyle(webForm.getElement());

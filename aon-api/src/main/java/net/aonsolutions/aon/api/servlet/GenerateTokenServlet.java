@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,12 +30,37 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API DOWNLOAD INVOICE PDF AK");
-		try {
-			JSONObject json = new JSONObject(decode(req.getParameter("json").getBytes()));
-			JSONObject data = buildTokenJSON(json);
-			responseFile(resp, "serviceAccount", data.toString().getBytes(), MimeType.JSON, "attachment");
-		} catch (IOException e) {
-			error(req, resp, e);
+		System.out.println("GenerateTokenServlet Path : " + req.getPathInfo());
+		if(AonStringUtils.isBlank(req.getPathInfo())) {
+			try {
+				JSONObject json = new JSONObject(decode(req.getParameter("json").getBytes()));
+				JSONObject data = buildTokenJSON(json);
+				responseFile(resp, "serviceAccount", data.toString().getBytes(), MimeType.JSON, "attachment");
+			} catch (IOException e) {
+				error(req, resp, e);
+			}
+		} else if(AonStringUtils.equalsIgnoreCase(req.getPathInfo(), "/json/")) {
+			try {
+				Integer domainId = Integer.parseInt(req.getHeader(IJsonNames.DOMAIN_ID));
+				String domainName = req.getHeader(IJsonNames.DOMAIN_NAME);
+				String login = req.getHeader(IJsonNames.DOMAIN_LOGIN);
+				Integer id = Integer.parseInt(req.getHeader(IJsonNames.ID)); 
+				Integer time = Integer.parseInt(req.getHeader("time"));
+				
+				User user = AON.getUser(new Domain().setId(domainId).setName(domainName), login, f -> 
+					f.getDomainProperty().eq(domainId)
+					.and(f.getIdProperty().eq(id)));
+				Date expireDate = getExpireDate(time); 
+				JSONObject userTokenInfo = new JSONObject()
+					.put("domain_name", domainName)
+					.put("domain_id", domainId)
+					.put("domain_login", user.getLogin())
+					.put("session_id", AonToken.build(user, expireDate, domainName));
+				
+				response(req, resp, userTokenInfo);
+			} catch (Exception e) {
+				error(req, resp, e);
+			}
 		}
 	}
 
