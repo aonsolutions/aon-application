@@ -109,14 +109,6 @@ export class AonHome extends AonElement {
 			rightPanel.open();
 		}
 
-		if(LS.isTopMenu()){
-			aonMenu.showTopNav();
-		}
-
-		if(LS.isLeftMenu()){
-			aonMenu.showSideNav();
-		} 
-
 		let headerConfig = this.getElement('aonHeaderConfig');
 		if (headerConfig) {
 			headerConfig.addEventListener(EVENT.CLICK, () => {
@@ -153,6 +145,7 @@ export class AonHome extends AonElement {
 				if(rightPanel.isClose()) {
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);
+					
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				} else  {
 					rightPanel.close();

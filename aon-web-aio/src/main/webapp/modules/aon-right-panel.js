@@ -40,7 +40,6 @@ export class AonRightPanel extends AonElement {
     build(){
         let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
 		rightPanel.style.width = '320px';
-		rightPanel.style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
 		rightPanel.style.backgroundColor = '#faf9f8';
 		rightPanel.style.visibility = "hidden";
         this.appendChild(rightPanel);
@@ -52,7 +51,15 @@ export class AonRightPanel extends AonElement {
 		rightPanelCloseButton.style.position = "fixed";
 		rightPanelCloseButton.style.right = '10px';
 		rightPanel.appendChild(rightPanelCloseButton);
-
+/*
+        let rightPanelEditButton = new AonIconButton(); 
+		rightPanelCloseButton.id = "rightPanelEditButton";
+		rightPanelCloseButton.icon ='edit';
+		rightPanelCloseButton.style.cursor = "pointer";
+		rightPanelCloseButton.style.position = "fixed";
+		rightPanelCloseButton.style.right = '10px';
+		rightPanel.appendChild(rightPanelCloseButton);
+*/
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
 			this.close();
 		});

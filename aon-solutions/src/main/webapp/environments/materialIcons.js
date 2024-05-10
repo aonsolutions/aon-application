@@ -157,6 +157,7 @@ export const GROUP = 'group';
 export const GROUPS = 'groups';
 
 // ----- H
+export const HANDSHAKE = 'handshake';
 export const HIGHLIGHT_OFF = 'highlight_off';
 export const HDR_AUTO = 'hdr_auto';
 export const HOME = 'home';
@@ -193,8 +194,10 @@ export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';
+export const MONITORING = 'monitoring';
 
 export const NOTES = 'speaker_notes';
+export const NOTE_STACK = 'note_stack';
 
 export const NOTIFICATIONS = "notifications";
 export const NOTIFICATION_ADD = "notification_add";
