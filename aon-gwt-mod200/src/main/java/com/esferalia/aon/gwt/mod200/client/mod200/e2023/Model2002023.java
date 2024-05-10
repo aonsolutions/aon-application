@@ -43,7 +43,7 @@ public class Model2002023 extends DockLayoutPanel {
 		public Mod2002023Object getMod200Object();
 	}
 	
-	private PageAbs[] PAGES = new PageAbs[22];
+	private PageAbs[] pages = new PageAbs[22];
 	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002023Object mod200Object;
@@ -159,8 +159,8 @@ public class Model2002023 extends DockLayoutPanel {
 		styleStatusLabel();
 		
 		// Pagina Agencia Tributaria
-		if (PAGES[PAGES.length-1] != null)
-			PAGES[PAGES.length-1].setEnabled();
+		if (pages[pages.length-1] != null)
+			pages[pages.length-1].setEnabled();
 		
 	}
 	
@@ -222,7 +222,7 @@ public class Model2002023 extends DockLayoutPanel {
 	}
 
 	private PageAbs getPage( int i) {
-		return PAGES[i];
+		return pages[i];
 	}
 	
 	private PageAbs ensurePage(int i) {
@@ -303,6 +303,7 @@ public class Model2002023 extends DockLayoutPanel {
 
 							@Override
 							public void onFailure(Throwable caught) {
+								// do nothing
 							}
 						});				
 			}
@@ -341,29 +342,29 @@ public class Model2002023 extends DockLayoutPanel {
 
 		};		
 		
-		if (PAGES[i] == null) {
-			if (i ==  0) PAGES[i] = new Page00(cbk); 
-			if (i ==  1) PAGES[i] = new Page01(cbk); 
-			if (i ==  2) PAGES[i] = new Page02(cbk); 
-			if (i ==  3) PAGES[i] = new Page03(cbk); 
-			if (i ==  4) PAGES[i] = new Page04(cbk); 
-			if (i ==  5) PAGES[i] = new Page05(cbk); 
-			if (i ==  6) PAGES[i] = new Page06(cbk); 
-			if (i ==  7) PAGES[i] = new Page07(cbk); 
-			if (i ==  8) PAGES[i] = new Page08(cbk); 
-			if (i ==  9) PAGES[i] = new Page09(cbk); 
-			if (i == 10) PAGES[i] = new Page10(cbk); 
-			if (i == 11) PAGES[i] = new Page11(cbk);
-			if (i == 12) PAGES[i] = new Page12(cbk); 
-			if (i == 13) PAGES[i] = new Page13(cbk);
-			if (i == 14) PAGES[i] = new Page14(cbk); 
-			if (i == 15) PAGES[i] = new Page15(cbk); 
-			if (i == 16) PAGES[i] = new Page16(cbk);
-			if (i == 17) PAGES[i] = new Page17(cbk); 
-			if (i == 18) PAGES[i] = new Page18(cbk); 
-			if (i == 19) PAGES[i] = new Page19(cbk); 
-			if (i == 20) PAGES[i] = new Page20(cbk);
-			if (i == 21) PAGES[i] = new PageAEAT(cbk);
+		if (pages[i] == null) {
+			if (i ==  0) pages[i] = new Page00(cbk); 
+			if (i ==  1) pages[i] = new Page01(cbk); 
+			if (i ==  2) pages[i] = new Page02(cbk); 
+			if (i ==  3) pages[i] = new Page03(cbk); 
+			if (i ==  4) pages[i] = new Page04(cbk); 
+			if (i ==  5) pages[i] = new Page05(cbk); 
+			if (i ==  6) pages[i] = new Page06(cbk); 
+			if (i ==  7) pages[i] = new Page07(cbk); 
+			if (i ==  8) pages[i] = new Page08(cbk); 
+			if (i ==  9) pages[i] = new Page09(cbk); 
+			if (i == 10) pages[i] = new Page10(cbk); 
+			if (i == 11) pages[i] = new Page11(cbk);
+			if (i == 12) pages[i] = new Page12(cbk); 
+			if (i == 13) pages[i] = new Page13(cbk);
+			if (i == 14) pages[i] = new Page14(cbk); 
+			if (i == 15) pages[i] = new Page15(cbk); 
+			if (i == 16) pages[i] = new Page16(cbk);
+			if (i == 17) pages[i] = new Page17(cbk); 
+			if (i == 18) pages[i] = new Page18(cbk); 
+			if (i == 19) pages[i] = new Page19(cbk); 
+			if (i == 20) pages[i] = new Page20(cbk);
+			if (i == 21) pages[i] = new PageAEAT(cbk);
 		}
 		return getPage(i);
 	}
@@ -428,7 +429,7 @@ public class Model2002023 extends DockLayoutPanel {
 					super.onSuccess(result);
 					setDirty(false);					
 					// Quitar style aonChanged de los DoubleBox
-					for (PageAbs page : PAGES) 						
+					for (PageAbs page : pages) 						
 						if (page != null) 
 							page.removeAonChanged();
 					refreshButtonsVisibility();
@@ -464,6 +465,7 @@ public class Model2002023 extends DockLayoutPanel {
 
 				@Override
 				public void onCancel() {
+					// DO NOTHING
 				}
 
 				@Override
@@ -504,6 +506,7 @@ public class Model2002023 extends DockLayoutPanel {
 
 				@Override
 				public void onCancel() {
+					// DO NOTHING
 				}
 
 				@Override
@@ -557,7 +560,7 @@ public class Model2002023 extends DockLayoutPanel {
 		aeatButton = new AonToolbarButton("Agencia Tributaria", AON.CSS.aonIconAeat());
 		aeatButton.addClickHandler(event -> {
 			mod200Callback.cleanErrorPanel();
-			westFocusPanelAEAT.checkAndShowPage(PAGES.length-1);  // La página de la Agencia Tributaria, es la última			
+			westFocusPanelAEAT.checkAndShowPage(pages.length-1);  // La página de la Agencia Tributaria, es la última			
 		});
 		toolbarPanel.add(aeatButton);
 		
@@ -635,8 +638,8 @@ public class Model2002023 extends DockLayoutPanel {
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
 		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Cifra de negocios, Caracteres"));
-		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes y Administradores"));
-		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP y UTE, Socios SICAV"));
+		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes, Administradores, Titular Real"));
+		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP, Socios SICAV"));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()));
 		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()));
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg()));
@@ -648,9 +651,9 @@ public class Model2002023 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones, Cuota L\u00EDquida"));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
 		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
-		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados, Documentaci\u00F3n previa, Inversiones en producciones cinematogr\u00E1ficas"));
+		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n resultados, Documentaci\u00F3n previa, Inversiones producciones cinematogr\u00E1ficas"));
 		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
-		linkContainer.add(new WestFocusPanel(17,AON.MSG.page17()));
+		linkContainer.add(new WestFocusPanel(17,"R\u00E9gimen especial Canarias, R\u00E9gimen especial Illes Balears"));
 		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
 		linkContainer.add(new WestFocusPanel(19,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
 		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
@@ -731,7 +734,7 @@ public class Model2002023 extends DockLayoutPanel {
 			saveButton.click();			
 		} finally {
 			refreshButtonsVisibility();
-			for (PageAbs page : PAGES) 						
+			for (PageAbs page : pages) 						
 				if (page != null) {
 					page.setEnabled();
 				}			
@@ -752,8 +755,8 @@ public class Model2002023 extends DockLayoutPanel {
 	
 	protected void cleanAEATViewers() {
 		// Pagina Agencia Tributaria
-		if (PAGES[PAGES.length-1] != null)
-			((PageAEAT)PAGES[PAGES.length-1]).cleanViewers();
+		if (pages[pages.length-1] != null)
+			((PageAEAT)pages[pages.length-1]).cleanViewers();
 	}
 
 }

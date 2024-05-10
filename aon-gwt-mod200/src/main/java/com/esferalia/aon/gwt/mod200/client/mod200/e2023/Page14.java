@@ -1,5 +1,4 @@
-// APLICACION DE RESULTADOS, PRESENTACION DE DOCUMENTOS
-// FALTA - INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES
+// APLICACION DE RESULTADOS, PRESENTACION DE DOCUMENTOS, INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -12,10 +11,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page14 extends PageAbs {
 
-	// FALTA - NUEVOS CAMPOS 
-	// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-	// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
-	
 	private AonTextBox nrsAnexoIII;
 	private AonTextBox justCanarias;
 	private AonTextBox nrsAnexoIV;
@@ -111,7 +106,7 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(justCanarias);
 		
-		// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+		// FALTA - ESTE NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 
 		justActivos = new AonTextBox();
 		justActivos.setVisibleLength(22);
@@ -150,7 +145,7 @@ public class Page14 extends PageAbs {
 		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
 		table2.setWidget(row, 1, justCanarias);
 		
-		// FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+		// FALTA - ESTE NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 		
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);

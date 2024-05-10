@@ -38,10 +38,8 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
 	
-	// FALTA - MUEVO TAMBIEN ESTO A Mod2002023Character PARA QUE ESTE TODOS JUNTOS
 //	public static final HashSet<Mod2002023Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002023Key>();
 //	static {
-//		// FALTA - REVISAR CON EL PADIS SI ALGUNO DE LOS NUEVOS CARACTERES NO ESTAN SOPORTADOS POR AON
 //		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0003);
 //		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0008); 
 //		NOT_SUPPORTED_CHARACTERS.add(Mod2002023Key.C0004);
@@ -253,7 +251,6 @@ public class Page00 extends PageAbs {
 			check.setEnabled(enabled);
 		}	
 		if (enabled)
-			// FALTA 
 			for (Mod2002023Key[] block : CHARACTERS_KEYS)
 			  for (Mod2002023Key key : block) {
 				if (inputsCheckBox.containsKey( key ) && inputsCheckBox.get( key ).getValue()) {
@@ -567,10 +564,6 @@ public class Page00 extends PageAbs {
 		FlexTable charactersTable1 = new FlexTable();
 		FlexTable charactersTable2 = new FlexTable();
 		FlexTable charactersTable3 = new FlexTable();
-		// FALTA 
-//		initializeCharactersTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
-//		initializeCharactersTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
-//		initializeCharactersTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
 		initializeCharactersTable(charactersTable1, CHARACTERS_KEYS[0]);
 		initializeCharactersTable(charactersTable2, CHARACTERS_KEYS[1]);
 		initializeCharactersTable(charactersTable3, CHARACTERS_KEYS[2]);

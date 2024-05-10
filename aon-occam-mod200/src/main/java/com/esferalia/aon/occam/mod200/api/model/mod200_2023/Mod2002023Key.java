@@ -1381,7 +1381,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ631
 	,LQ632
 	
-	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO (Num 5)
+	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO - ES Num 5
 	// Inversiones en producciones cinematográficas o series audiovisuales
 //	,INV01 // Producciones cinematográficas (excepto series audiovisuales) 
 //	,INV02 // Series audiovisuales 
@@ -1620,11 +1620,9 @@ public enum Mod2002023Key implements IMod200Key {
 	,TR1666 ,TR1667 ,TR1668 ,TR1669 ,TR2491
 	,TR1670 ,TR1671 ,TR1672 ,TR1673 ,TR2494
 	
-	// FALTA - YA ESTAN REVISADAS TODAS LAS CASILLAS DE ESTE ENUMERADO, FALTAN SOLO LAS CASILLAS DEL DESGLOSE DE LAS CORRECCIONES AL RESULTADO CONTABLE
-	
 	// Detalle de las correcciones al resultado contable (todas las casillas llevan 5 casillas de detalle)
 	// SE PONEN EN OTRO ENUMERADO (Mod2002023KeyDC) PORQUE SI LOS AÑADIMOS AQUI TENEMOS ERROR DE CODE TOO LARGE
-	// FALTA - REVISAR ESTE OTRO ENUMERADO DE LAS CORRECCIONES QUE AUN NO LO HE REVISADO
+
 	;
 	
 	public String getCode() {

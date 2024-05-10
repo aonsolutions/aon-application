@@ -1,4 +1,4 @@
-// SECRETARIO, GRUPO FISCAL O MERCANTIL, REPRESENTANTES, ADMINISTRADORES.
+// SECRETARIO, GRUPO FISCAL O MERCANTIL, REPRESENTANTES, ADMINISTRADORES, TITULAR REAL
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -25,7 +25,7 @@ public class Page01 extends PageAbs {
 
 //	private AonDocumentTextBox secretaryDocument;
 //	private AonTextBox secretaryName;
-////	private AonDateBox irnr; // FALTA - ESTE DATO NO APARECE EN EL PROYECTO DE ORDEN
+////	private AonDateBox irnr; 
 //	private AonTextBox fiscalGroup;
 //	private AonDocumentTextBox dominantDocument;
 //	private AonTextBox dominantIdentificationNumber;
@@ -74,8 +74,8 @@ public class Page01 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(secretaryName);
-// FALTA 		
-//		irnr = new AonDateBox();
+// FALTA - ESTE DATO NO APARECE EN EL PROYECTO DE ORDEN - TAMPOCO EN EL FICHERO NI EN EL PADIS 		
+//		AonDateBox irnr = new AonDateBox();
 //		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
 //		irnr.addValueChangeHandler(event -> {
 //			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
@@ -84,9 +84,9 @@ public class Page01 extends PageAbs {
 //		otherInputs.add(irnr);
 		
 		tab1.addLabelWidgetRow(AON.MSG.document(), secretaryDocument)
-//		    .addLabelWidgetRow(AON.MSG.name(), secretaryName); // FALTA - PONER "Apellidos y Nombre" en AON.MSG que no existe como tal
-	        .addLabelWidgetRow("Apellidos y Nombre", secretaryName); // FALTA - PONER "Apellidos y Nombre" en AON.MSG que no existe como tal
-// FALTA		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
+//		    .addLabelWidgetRow(AON.MSG.name(), secretaryName); // FALTA - SE CAMBIA A "Apellidos y Nombre" ANTES SOLO PONIA Nombre
+	        .addLabelWidgetRow("Apellidos y Nombre", secretaryName); 
+// 		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
 		
 		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
 		
@@ -368,21 +368,16 @@ public class Page01 extends PageAbs {
 		otherInputs.add(addButton2);
 		basePanel.add(addButton2);
 		
-		// FALTA - NUEVO APARTADO IDENTIFICACION DEL TITULAR REAL 
-		// SI AL FINAL PONEN ESTE NUEVO APARTADO IGUAL ES MEJOR PONERLO EN ESTA PAGINA, PUES LA SIGUIENTE ESTA MAS LLENA
-		// ES UN APARTADO QUE TIENE TRES LINEAS CON TRES CAMPOS (APELLIDOS Y NOMBRE, PAIS, NIF), NO SE SI SERA COMO LOS 
-		// REPRESENTANTES LEGALES (MAXIMO 3) O COMO LOS ADMINISTRADORES (ADMITIRA PAGINAS COMPLEMENTARIAS)
-		
 		// IDENTIFICACION DEL TITULAR REAL
 		
 		basePanel.add(getTitle("Identificaci\u00F3n del titular real de la entidad"));
 		
-		AonDisplayTable tab6 = addRegistryTable("Tipo Documento", "NIF/c\u00F3digo de identificaci\u00F3n extranjero", "Apellidos y nombre", "Pa\u00EDs de expedici\u00F3n del documento de identificaci\u00F3n", "Fecha de nacimiento", "Pa\u00EDs de residencia", "Nacionalidad");
+		AonDisplayTable tab6 = addRegistryTable("Tipo Documento", "Documento", "Apellidos y nombre", "Pa\u00EDs de expedici\u00F3n del documento de identificaci\u00F3n", "Fecha de nacimiento", "Pa\u00EDs de residencia", "Nacionalidad");
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getTitularReal().size(); i++) {
 			final int idx = i;
 			
-			// FALTA - Tipo documento identificativo (0-No es aplicable, 1-DNI, NIF o NIE, 2-TIN, 3-Pasaporte, 4-Otro)
+			// Tipo documento identificativo (0-No es aplicable, 1-DNI, NIF o NIE, 2-TIN, 3-Pasaporte, 4-Otro)
 			ListBox documentType = new ListBox();
 			documentType.addItem("0-No es aplicable");
 			documentType.addItem("1-DNI, NIF o NIE");
@@ -410,16 +405,16 @@ public class Page01 extends PageAbs {
 			AonTextBox name = new AonTextBox();
 			name.setMaxLength(40);  
 			name.setVisibleLength(45);	
-			name.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).getName());
+			name.setValue(callback.getMod200Object().getMod200().getTitularReal().get(idx).getName());
 			name.addValueChangeHandler( event -> {
-				callback.getMod200Object().getMod200().getAdministrators().get(idx).setName(name.getValue());
+				callback.getMod200Object().getMod200().getTitularReal().get(idx).setName(name.getValue());
 				callback.markAsDirty();
 			});
 			otherInputs.add(name);			
 			
-			// FALTA - País de expedición del documento de identificación
+			// País de expedición del documento de identificación
 			CountryListBox documentCountry = new CountryListBox();
-			documentCountry.setWidth("240px");
+			documentCountry.setWidth("150px");
 			documentCountry.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getTitularReal().get(idx).getDocumentCountry()));
 			documentCountry.addChangeHandler( event -> {
 				callback.getMod200Object().getMod200().getTitularReal().get(idx).setDocumentCountry(Country.safeIso2(documentCountry.getValue()));
@@ -427,7 +422,7 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(documentCountry);
 			
-			// FALTA - Fecha de nacimiento
+			// Fecha de nacimiento
 			AonDateBox birthDate = new AonDateBox();
 			birthDate.setValue(callback.getMod200Object().getMod200().getTitularReal().get(idx).getBirthDate());
 			birthDate.addValueChangeHandler(event -> {
@@ -436,9 +431,9 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(birthDate);
 			
-			// FALTA - País de residencia
+			// País de residencia
 			CountryListBox residenceCountry = new CountryListBox();
-			residenceCountry.setWidth("240px");
+			residenceCountry.setWidth("150px");
 			residenceCountry.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getTitularReal().get(idx).getResidenceCountry()));
 			residenceCountry.addChangeHandler( event -> {
 				callback.getMod200Object().getMod200().getTitularReal().get(idx).setResidenceCountry(Country.safeIso2(residenceCountry.getValue()));
@@ -446,9 +441,9 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(residenceCountry);			
 			
-			// FALTA - Nacionalidad
+			// Nacionalidad
 			CountryListBox nationality = new CountryListBox();
-			nationality.setWidth("240px");
+			nationality.setWidth("150px");
 			nationality.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getTitularReal().get(idx).getNationality()));
 			nationality.addChangeHandler( event -> {
 				callback.getMod200Object().getMod200().getTitularReal().get(idx).setNationality(Country.safeIso2(nationality.getValue()));
@@ -486,8 +481,7 @@ public class Page01 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(addButton3);
-		basePanel.add(addButton3);
-		
+		basePanel.add(addButton3);		
 		
 	}
 	

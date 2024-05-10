@@ -279,7 +279,7 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ578, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ579, new Boolean[]{FALSE,TRUE});
 		
-		// FALTA - Entidades que forman parte de grupos de consolidación fiscal
+		// FALTA - ESTA CASILLA NO ESTA EN EL FICHERO - Entidades que forman parte de grupos de consolidación fiscal
 		// NUEVA CASILLA 00814 NO SE SI SERA AUTOMATICA DE ALGUNA FORMA
 		
         // Base Imponible	
@@ -309,7 +309,6 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ562, new Boolean[]{TRUE,TRUE});
 		
 		// Bonificaciones y deducciones. Cuota intega ajustada positiva
-		// FALTA - NUEVA CASILLA 00815 NO SE SI SERA DESGLOSE DE ALGUNA OTRA, PARECE QUE NO
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN570,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN1344,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.BN1280,new Boolean[]{FALSE,TRUE});

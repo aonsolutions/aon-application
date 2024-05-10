@@ -678,6 +678,10 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3283,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3355,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT3359,"Otras deducciones");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3285,"Deducci\u00F3n por investigaci\u00F3n y desarrollo en Canarias"); 
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3288,"Deducci\u00F3n por innovaci\u00F3n tecnol\u00F3gica en Canarias");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3290,"Productor: deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT3314,"Productor: deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias");
 		DESCRIPTION_MAP.put(Mod2002023Key.UT062 ,"9.- Retenciones e ingresos a cuenta");		
 		DESCRIPTION_MAP.put(Mod2002023Key.UT070 ,"a) De ejercicios en los que la sociedad no haya tributado en el r\u00E9gimen especial");
         DESCRIPTION_MAP.put(Mod2002023Key.UT072 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");		

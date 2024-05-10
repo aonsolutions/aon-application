@@ -75,6 +75,12 @@ public class Mod2002023Code {
 //		CODE_MAP.put(Mod2002023Key.UTC05, "");
 		CODE_MAP.put(Mod2002023Key.BN1039M, "");
 		CODE_MAP.put(Mod2002023Key.BN2314M, "");
+		CODE_MAP.put(Mod2002023Key.IPCRG01, ""); // Régimen general: Producciones cinematográficas (excepto series audiovisuales)
+		CODE_MAP.put(Mod2002023Key.IPCRG02, ""); // Régimen general: Series audiovisuales
+		CODE_MAP.put(Mod2002023Key.IPCRG03, ""); // Régimen general: Número de episodios
+		CODE_MAP.put(Mod2002023Key.IPCRC01, ""); // Régimen fiscal Canarias: Producciones cinematográficas (excepto series audiovisuales)
+		CODE_MAP.put(Mod2002023Key.IPCRC02, ""); // Régimen fiscal Canarias: Series audiovisuales
+		CODE_MAP.put(Mod2002023Key.IPCRC03, ""); // Régimen fiscal Canarias: Número de episodios
 		
 	}
 	

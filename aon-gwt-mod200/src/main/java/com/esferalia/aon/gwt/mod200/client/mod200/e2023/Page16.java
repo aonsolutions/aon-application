@@ -1,6 +1,4 @@
-// REGIMEN ESPECIAL DE LA RESERVA PARA INVERSIONES EN CANARIAS
-// FALTA - SE PUEDE UTILIZAR TAMBIEN PARA PONER EL NUEVO APARTADO Régimen especial de la reserva para inversiones en las Illes Balears (PAGINA 22 BIS DEL MODELO)
-// SI LO HACEMOS ASI, PONERLO TAMBIEN EN LA DESCRIPCION DE LA PESTAÑA DE LA IZQUIERDA
+// RIC, RIIB
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -28,11 +26,11 @@ public class Page16 extends PageAbs {
 			
 			// RIC
 		
-			FlexTable table1 = addTable(AON.MSG.canariasRegime(), 5, "150px");
+			FlexTable table1 = addTable(AON.MSG.canariasRegime(), 6, "150px");
 			
 			int row = 0;
 			addHeaderCell(table1, row, 2, "Aplicado/materializado en esta liquidaci\u00F3n");
-			table1.getFlexCellFormatter().setColSpan(row, 2, 3);
+			table1.getFlexCellFormatter().setColSpan(row, 2, 4);
 			row++;
 			paintKeysProvider(Mod2002023RIC_1Key.values(), table1, row, false, 
 					"",
@@ -63,13 +61,12 @@ public class Page16 extends PageAbs {
 					"Pendiente de dotar RIC al final de per\u00EDodo");
 		}
 		
-		// Régimen especial de la reserva para inversiones en las Illes Balears (RIIB)
-		// FALTA - COMPROBAR QUE ESTE APARTADO SOLO TIENE QUE SALIR CON ESTE CARACTER 00086
+		// Régimen especial de la reserva para inversiones en las Illes Balears 
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0086)) {
 		
 			// RIIB 
 			
-			FlexTable table1 = addTable(AON.MSG.canariasRegime(), 5, "150px");
+			FlexTable table1 = addTable("R\u00E9gimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)", 5, "150px");
 			
 			int row = 0;
 			addHeaderCell(table1, row, 2, "Aplicado/materializado en esta liquidaci\u00F3n");

@@ -137,23 +137,10 @@ public class Page09 extends PageAbs {
 					row++;
 					margin = true;
 				}
-				// FALTA - LO PONGO ARRIBA HAY DOS CASILLAS MAS QUE TIENEN LA MISMA DESCRIPCION DE APARTADO
-//				if (key == Mod2002023Key.LQ1576) {
-//					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row, 0, true);
-//					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
-//					row++;
-//					margin = true;
-//				}
-				// FALTA - LO PONGO ARRIBA HAY MAS CASILLAS MAS QUE TIENEN LA MISMA DESCRIPCION DE APARTADO
-//				if (key == Mod2002023Key.LQ560) {
-//					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
-//					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
-//					row++;
-//					margin = true;
-//				}	
 				
 				// Casillas que se ponen mas a la derecha
-				if (key == Mod2002023Key.LQ547 || key == Mod2002023Key.LQ550 || key == Mod2002023Key.LQ552 || key == Mod2002023Key.LQ558 || key == Mod2002023Key.LQ562 || key == Mod2002023Key.LQ1032 || key == Mod2002023Key.LQ1330) {
+				if (key == Mod2002023Key.LQ547 || key == Mod2002023Key.LQ550 || key == Mod2002023Key.LQ552 || key == Mod2002023Key.LQ558 || 
+					key == Mod2002023Key.LQ562 || key == Mod2002023Key.LQ1032 || key == Mod2002023Key.LQ1330) {
 					margin = false;
 				}
 								

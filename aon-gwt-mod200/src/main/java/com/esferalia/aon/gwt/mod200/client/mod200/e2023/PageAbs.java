@@ -41,7 +41,7 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 //	protected HashMap<IMod200Key, HashSet<AonDoubleBox>> inputs = new HashMap<>();  // FALTA - IGUAL ASI SE PODRIA HACER TENER VARIOS BOX UNIDOS A UNA MISMA CLAVE PARA ACTUALIZARLOS CUANDO CORRESPONDA, AUNQUE HAY QUE TENER EN CUENTA, QUE CUANDO SE VAN REPINTANDO LAS PAGINAS, SE VAN CREANDO NUEVOS BOX Y AHI APARECERIAN BOX QUE YA NO SON VISIBLES NI NADA, AUNQUE AL HACER EL CLEAR EN CADA PAGINA SUPONGO QUE SE BORRARIAN Y SE QUEDARIA SOLO UN ELEMENTO NULL
-	protected ArrayList<Widget> otherInputs = new ArrayList<Widget>();
+	protected ArrayList<Widget> otherInputs = new ArrayList<>();
 	protected FlowPanel basePanel;
 	protected Model2002023PageCallback callback = null;
 	
@@ -91,7 +91,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
     // Indica si la página está disponible en el modelo, para su cumplimentacion
-	protected boolean isAvailable() {
+	protected boolean isAvailable() {	
 		return true;
 	}
 
@@ -100,7 +100,7 @@ public abstract class PageAbs extends ResizeComposite {
 		return (behaviour != null && behaviour[0]); 
 	}
 	
-	protected boolean isDisabled(IMod200Key k) {
+	protected boolean isDisabled(IMod200Key k) {	
 		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k);
 		return behaviour != null && behaviour[1];
 	}
@@ -308,9 +308,15 @@ public abstract class PageAbs extends ResizeComposite {
 				// casillas, si ambas casillas son la misma
 				if (k != null && k != breakdownKey && k != Mod2002023Key.LQ1890) {  // Caso especial desglose CASILLA 243, lleva dos subtotales
 					if (paintDesc) {
-						// Casilla [2287] comienza bloque de información adicional, dentro del desglose de la [590]
-						if (k == Mod2002023Key.BN2287) {							
-							addHeaderCell(tableDetail, r++, 0, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
+						// Casillas [02287] y [00814] comienzan bloque de información adicional, dentro del desglose de la [590] y [082] respectivamente
+						if (k == Mod2002023Key.BN2287 || k == Mod2002023Key.BN814) {							
+							addHeaderCell(tableDetail, r, 0, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
+							addHeaderCell(tableDetail, r++, 1, "Importe");
+						}
+						// Casilla [1935] comienza bloque de información adicional, grupo mercantil, dentro del desglose de la [082]
+						if (k == Mod2002023Key.BN1935) {							
+							addHeaderCell(tableDetail, r, 0, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones - Grupo mercantil");
+							addHeaderCell(tableDetail, r++, 1, "Importe");
 						}
 						Label desc = new Label(key.getDescription());			
 						tableDetail.setWidget(r, 0, desc);

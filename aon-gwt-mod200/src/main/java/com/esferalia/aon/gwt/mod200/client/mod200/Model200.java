@@ -274,14 +274,7 @@ public class Model200 extends MainEntryPoint {
 		}
 
 		public void reset(Mod200 mod200) {
-			// FALTA
 			// El botón inicializar, se utiliza a partir del 2020
-//			if (mod200.getYear() == 2020)
-//				changeView2020((Mod2002020) mod200);
-//			else if (mod200.getYear() == 2021)
-//				changeView2021((Mod2002021) mod200);
-//			else if (mod200.getYear() == 2022)
-//				changeView2022((Mod2002022) mod200);			
 			switch (mod200.getYear()) {
 				case 2020:
 					changeView2020((Mod2002020) mod200);

@@ -1,5 +1,4 @@
 // AIE Y UTES
-// FALTA - ESTA PAGINA TIENE MUCHAS CASILLAS NUEVAS Y UN APARTADO NUEVO CON LOS PARTICIPES, SI AL FINAL DEJAN TODOS VER SI SE METE EN UNA PAGINA O ES NECESARIO HACER MAS DE UNA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants.UTE_KEYS_B7;
@@ -47,7 +46,8 @@ public class Page18 extends PageAbs {
 	@Override
 	protected boolean isAvailable() {
 		return super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0013) || 
+  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0013) ||
+  			  callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0085) ||  
   			  callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0014));
 	}
 	
@@ -57,7 +57,7 @@ public class Page18 extends PageAbs {
 		
 		// A) Porcentaje de imputación de bases imponibles y demás conceptos liquidatorios
 		
-		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0013)) {
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0013) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0085)) {
 			paintKey(addTable(AON.MSG.ute1()), Mod2002023Key.UT060, 0);
 		}
 
@@ -112,11 +112,10 @@ public class Page18 extends PageAbs {
 		
 		paintFooterNote(basePanel, FOOTER);
 		
-		// FALTA - LA RELACION DE SOCIOS IRIA AHORA EN UN APARTADO APARTE (NO SERIA EL APARTADO B.11), SERIA EL APARTADO C. VER SI AL FINAL SE QUEDA ASI.
 		// Relación de Partícipes
 		panelB11 = new FlowPanel();
 		paintB11Panel();
-		addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(row, 0, panelB11);
+		addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(0, 0, panelB11);
 		
 		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES
 		
@@ -125,8 +124,8 @@ public class Page18 extends PageAbs {
 	
 	private int paintTable(FlexTable table1, int row, Mod2002023Key[][] keys, String title, String... headers) {
 		
-		paintDescription(table1, title, row, 0, true); // FALTA - ME PONDRA UNA LINEA DEBAJO A VER COMO QUEDA, SI NO PONER SIMPLEMENTE UN LABEL
-		int col = 0;
+		paintDescription(table1, title, row, 0, true); 
+		int col = 1;
 		for (String header : headers) {
 			addHeaderCell(table1, row, col++, header, true);	
 		}		
@@ -134,7 +133,7 @@ public class Page18 extends PageAbs {
 		
 		for (Mod2002023Key[] key : keys) {
 			paintKeyDescription(table1, key[0], row, 0);			
-			table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left()); // FALTA - LA DESCRIPCION CON EL DOBLE DE SANGRIA
+			table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left()); 
 			paintKeyField(table1, key[0], row, 1);
 			paintKeyField(table1, key[1], row, 2);
 			row++;
@@ -200,6 +199,7 @@ public class Page18 extends PageAbs {
 
 			tabB6.addRow()
 				.addCell(base)
+				.addCell(amount)
 				.addCell(percent)
 				.addCell(deleteButton);
 			
