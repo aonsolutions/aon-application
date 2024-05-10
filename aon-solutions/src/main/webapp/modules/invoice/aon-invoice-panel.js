@@ -258,33 +258,33 @@ export class AonInvoicePanel extends AonElement {
 			this.counterActive = !this.getDur().isInvofox();
 			if(r.invoice && r.invoice.emitida && r.invoice.emitida > 0){
 				addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
-				this.updateCounterSpan(OPTION.INVOICE_ISSUED);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_ISSUED);
 
 			if(r.invoice && r.invoice.recibida && r.invoice.recibida > 0){
 				addCounter(OPTION.INVOICE_RECEIVED, r.invoice.recibida);
-				this.updateCounterSpan(OPTION.INVOICE_RECEIVED);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_RECEIVED);
 
 			if(r.invoice && r.invoice.ticket && r.invoice.ticket > 0){
 				addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
-				this.updateCounterSpan(OPTION.INVOICE_TICKET);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_TICKET);
 
 			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0){
 				addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
-				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
 			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0){
 				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.rawdoc.inbox.OUTPUT);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
 
 			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0){
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.rawdoc.inbox.INPUT);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
 
 			// if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0){
 			// 	addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
@@ -292,13 +292,13 @@ export class AonInvoicePanel extends AonElement {
 
 			if(r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0){
 				addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
-				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_REJECT);
 
 			if(r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0){
 				addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
-				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
 			this.updateCounterHome();
 		});
 	}
@@ -312,10 +312,9 @@ export class AonInvoicePanel extends AonElement {
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
 				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
-
-				this.updateCounterHome();
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+			this.updateCounterHome();
 		});
 
 
@@ -327,10 +326,9 @@ export class AonInvoicePanel extends AonElement {
 				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
-
-				this.updateCounterHome();
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+			this.updateCounterHome();
 		});
 
 
@@ -342,41 +340,39 @@ export class AonInvoicePanel extends AonElement {
 				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
 
 				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
-
-				this.updateCounterHome();
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
+			this.updateCounterHome();
 		});
 
 
-		let rejectedFilter = {publicStatus:['pendingDecission'], type: ['invoice', 'ticket']};	
+		let rejectedFilter = {publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']};	
 		getInvofoxCount(rejectedFilter).then(r => {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_REJECT);
-
-				this.updateCounterHome();
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_REJECT);
+			this.updateCounterHome();
 		});
 
-		let trashFilter = {publicStatus:['discarded', 'error' ]};	
+		let trashFilter = {publicStatus:['error']};	
 		getInvofoxCount(trashFilter).then(r => {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.RAWDOC_DRAFT, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
-				this.updateCounterHome();
 			}
+			this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+			this.updateCounterHome();
 		});
 	}
 
 	updateCounterSpan(option) {	
 		let span = document.getElementById("aonMenuItemSpan" + option.id);
-		if(span){
+		if(span) {
 			let count = getCounter()[option.id];
-			span.innerHTML = option.name + " (" + count + ")";
-			span.style.fontWeight = "bold";
+			span.innerHTML = count > 0 ? option.name + " (" + count + ")" : option.name;
+			span.style.fontWeight = count > 0 ? "bold" : "normal";
 		} else setTimeout(this.updateCounterSpan, 100, option);
 	}
 
@@ -814,13 +810,13 @@ export class AonInvoicePanel extends AonElement {
 				case OPTION.RAWDOC_REJECT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.REJECTED},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']}
 					);
 					break;
 				case OPTION.RAWDOC_DRAFT.id:
 					this.aonInvoiceList(
 						{status: CONSTANT.DRAFT},
-						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'error' ]}
+						{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['error' ]}
 					);
 					break;
 				case OPTION.INVOICE_ISSUED.id:
