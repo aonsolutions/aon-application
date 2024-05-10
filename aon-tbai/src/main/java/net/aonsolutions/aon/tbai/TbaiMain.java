@@ -74,7 +74,7 @@ import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 public class TbaiMain {
 	
 	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
-		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
+		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId(), invoice.getType());
 		if (!lroe.getChapter1().isAccepted()) {
 			TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 			byte[] xml = tbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
