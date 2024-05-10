@@ -61,11 +61,9 @@ export class AonModule extends AonElement {
 
 	async load() {
 		await this.checkLogin();
-		if(getToken()){
-			LS.removeDomain();
+		if(LS.getToken()){
 			this.buildHome();
 		} else {
-//			this.buildHome();
 			this.buildLogin();
 		}
 	}
