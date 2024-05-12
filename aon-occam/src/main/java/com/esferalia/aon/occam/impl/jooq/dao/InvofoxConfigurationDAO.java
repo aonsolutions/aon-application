@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
