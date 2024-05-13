@@ -28,7 +28,8 @@ module.exports = {
 	},
 	resolve: {
     	alias: {
-      		aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/')
+      		aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
+          aoncalendar: path.resolve(__dirname, '../google-calendar-clone-vanilla-main/src/')
     	}
   	}
 };

@@ -26,6 +26,7 @@ import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
+import { AonCalendar } from 'aonsolutions/modules/calendar/aon-calendar.js';
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 
@@ -161,11 +162,11 @@ export class AonNewMenu extends AonElement {
 			case Apps.MARKETING.app:
 				this.rootPanel(new AonMarketing());
 				break;
-			// case Apps.CALENDAR.app:
-			// 	this.rootPanel(new AonCalendar());
-			// 	break;
+			 case Apps.CALENDAR.app:
+			 	this.rootPanel(new AonCalendar());
+			 	break;
 			default/*Apps.HOME*/ :
-				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+		   		this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
 		}
 	}
