@@ -2119,7 +2119,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
-		return LroeData.get(domain, user, getInvoice().getId());		
+		return LroeData.get(domain, user, getInvoice().getId(), com.esferalia.aon.occam.api.model.type.InvoiceType.safeValueOf(getInvoice().getType().ordinal()));		
 	}
 	
 	public TBAIInformation getTbaiInfo() {
