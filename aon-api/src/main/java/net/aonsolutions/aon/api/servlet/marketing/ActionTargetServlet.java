@@ -10,7 +10,9 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -62,6 +64,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		
 		// Marketing Action Target
 		Integer actionId = Integer.parseInt(marketingActionJson.getString("id"));
+		Integer sellerId = AonStringUtils.isBlank(marketingActionJson.getString("seller")) ? null : Integer.parseInt(marketingActionJson.getString("seller"));
 		MarketingAction marketingAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionId);
 		
 		// Target
@@ -172,6 +175,33 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				;
 		
 		AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
+		
+		// Create Operacion Comercial
+		if(null != sellerId) {
+			ProjectCommercial projectCommercial = new ProjectCommercial()
+					.copy(new Project()
+						.setDomain(target.getDomain())
+						.setRegistry(target.get())
+						.setName(marketingAction.getDescription())
+						.setDate(new Date())
+						.setTas(false)
+						.setCommercial(true)
+						.setReservation(false)
+						.setActive(true)
+					)
+					.setTarget(target.getId())
+					.setSeller(sellerId)
+					.setComments(comments)
+					.setSource((byte)3)
+					.setStatus((byte)0)
+					.setStatusDate(new Date())
+					.setProbability(0);
+			
+			AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), projectCommercial);
+			
+			mkActionTarget.setActionTargetStatus((byte)6); // Enviado
+			AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
+		}
 		
 		return api.getData();
 	}
