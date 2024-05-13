@@ -170,7 +170,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
 						.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 						.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
-						.map(invoice -> fillCategory(aonContext, invoice)).map(invoice -> fillActivity(aonContext, invoice))
+						.map(invoice -> fillCategory(aonContext, invoice))
+						.map(invoice -> fillActivity(aonContext, invoice))
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
