@@ -79,6 +79,7 @@ export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
 export const COMMERCE = 'Merkataritza';
+export const COMMERCIAL = 'Komertziala';
 export const COMMUNICATION = 'Komunikazioa';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
@@ -176,8 +177,10 @@ export const FILE_DATA = 'Fitxategiaren Datuak';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
+export const FISCAL = 'Fiskal';
 export const FOOTER = 'Oina';
 export const FROM = 'Noiztik';
+export const FRENCH = 'Frantsesa';
 
 // ----- G
 
@@ -188,6 +191,7 @@ export const GET_INVOICES = 'Fakturak Lortu';
 export const GROUP_DATA = 'Taldeko Datuak';
 export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';
+export const GROUPWARE = 'Txosten';
 export const GROUPS = 'Taldeak';
 
 // ----- H
@@ -250,6 +254,7 @@ export const LOCATION = 'Kokapena';
 
 // ----- M
 
+export const MARKETING = 'Marketin';
 export const MARK_ENTRY = 'Sarrera Markatu';
 export const MARK_EXIT = 'Irteera Markatu';
 export const MANAGEMENT = 'Kudeaketa';
@@ -307,7 +312,7 @@ export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
-export const PAYROLL = "Nómina";
+export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nomina';
 export const PAYSHEETS = 'Nominak';
 export const PENDING = 'Zain';
@@ -433,6 +438,7 @@ export const TOTAL = 'Guztira';
 export const TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
 export const TRANSACTION_TYPE = 'Transakzio Mota';
 export const TRASH = 'Paperontzia';
+export const TREASURY = 'Diruzaintza';
 export const TYPE = 'Mota';
 export const TYPES = 'Motak';
 
