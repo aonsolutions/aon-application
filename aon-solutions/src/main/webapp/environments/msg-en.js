@@ -79,6 +79,7 @@ export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const COMMERCE = 'Commerce';
+export const COMMERCIAL = 'Commercial';
 export const COMMUNICATION = 'Communication';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -177,8 +178,10 @@ export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Find linked domains";
+export const FISCAL = 'Fiscal';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
+export const FRENCH = 'French';
 
 // ----- G
 
@@ -189,6 +192,7 @@ export const GET_INVOICES = 'Get Invoices';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
+export const GROUPWARE = 'Groupware';
 export const GROUPS = 'Groups';
 
 // ----- H
@@ -252,6 +256,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Mark Entry';
 export const MARK_EXIT = 'Mark Exit';
 export const MANAGEMENT = 'Management';
@@ -437,6 +442,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
 export const TRANSACTION_TYPE = 'Transaction Type';
 export const TRASH = 'Trash';
+export const TREASURY = 'Treasury';
 export const TYPE = 'Type';
 export const TYPES = 'Types';
 

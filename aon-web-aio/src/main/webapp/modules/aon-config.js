@@ -26,7 +26,7 @@ export class AonConfig extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || 'AonConfig';
+		this.id = this.id || 'aonConfig';
 		this.TOP_SWITCH = this.id + 'SwitchTop';
 		this.LEFT_SWITCH = this.id + 'SwitchLeft';
 		this.LANG_CARD = this.id + 'HelpLangCard';
@@ -82,30 +82,12 @@ export class AonConfig extends AonElement {
 		let divGenerall = this.createDiv();
 		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
 		divGenerall.appendChild(this.buildLanguageData(MSG.ENGLISH , Language.ENGLISH));
+		divGenerall.appendChild(this.buildLanguageData(MSG.FRENCH , Language.FRENCH));
 		divGenerall.appendChild(this.buildLanguageData(MSG.DEUTSCH , Language.DEUTSCH));
 		divGenerall.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
 		divGenerall.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
 		divGenerall.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
 		rightPanelLangCard.setContent(divGenerall);
-
-		let rightPanelTypeCard = new AonCard();
-		rightPanelTypeCard.id = this.TYPE_CARD;
-		rightPanelTypeCard.title = MSG.SELECT_COMPANY_TYPE;
-		rightPanelTypeCard.style.width = "90%";
-		rightPanelTypeCard.style.height = "fit-content";
-		rightPanelTypeCard.style.marginLeft = "10px";
-		this.appendChild(rightPanelTypeCard);
-
-		let cardDivvv = this.getElement(rightPanelTypeCard.CARD);
-		cardDivvv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDivvv.style.borderRadius = '2px';
-
-		let divGeneralll = this.createDiv();
-		divGeneralll.appendChild(this.buildTypeData(MSG.OFFICE,"business_center"));
-		divGeneralll.appendChild(this.buildTypeData(MSG.WORKSHOPS,"car_repair"));
-		divGeneralll.appendChild(this.buildTypeData(MSG.COMMERCE,"point_of_sale"));
-		divGeneralll.appendChild(this.buildTypeData(MSG.ACADEMIES,"dictionary"));
-		rightPanelTypeCard.setContent(divGeneralll);
 
 		rightPanelSwitchTopButton.addEventListener(EVENT.CHANGE, () => {
 			LS.setTopMenu(rightPanelSwitchTopButton.checked);
@@ -158,26 +140,6 @@ export class AonConfig extends AonElement {
 			LS.setLanguage(language);
 		})
 	
-		return div;		
-	}
-
-	buildTypeData(value,icon,type) {
-		let div = this.createDiv();
-		div.style.marginTop = '5px';
-		div.style.title = "Idioma";
-		div.style.cursor = "pointer";
-
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.innerHTML = icon;
-		i.style.verticalAlign = "middle";
-		div.appendChild(i);
-		
-		let span = this.createElement(TAG.SPAN);
-		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value;
-		div.appendChild(span);
 		return div;		
 	}
 

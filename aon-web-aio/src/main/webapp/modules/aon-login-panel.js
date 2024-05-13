@@ -1,18 +1,13 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
-import { AonCard } from 'aonsolutions/components/aon-card.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
-import {  getManifest} from "aonsolutions/services/service.js";
-import { AonSwitch } from "aonsolutions/components/aon-switch.js";
-import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
+import {closeSession, getAuth} from  'aonsolutions/services/service.js';
 
 export class AonLoginPanel extends AonElement {
 
 	CARD;
     NAME;
 	LOGOUT;
+	EDITBUTTON;
 	CHANGEPASSWORD;
 
 	get id() {
@@ -29,11 +24,12 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || 'AonLoginPanel';
+		this.id = this.id || 'aonLoginPanel';
 		this.NAME = this.id + 'Name';
 		this.CARD = this.id + 'Card';
 		this.LOGOUT = this.id + 'Logout';
 		this.CHANGEPASSWORD = this.id+ 'ChangePassword';
+		this.EDITBUTTON = this.id+ 'EditButton';
 	}
 
 	build() {

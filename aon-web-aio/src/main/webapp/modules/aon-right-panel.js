@@ -51,15 +51,7 @@ export class AonRightPanel extends AonElement {
 		rightPanelCloseButton.style.position = "fixed";
 		rightPanelCloseButton.style.right = '10px';
 		rightPanel.appendChild(rightPanelCloseButton);
-/*
-        let rightPanelEditButton = new AonIconButton(); 
-		rightPanelCloseButton.id = "rightPanelEditButton";
-		rightPanelCloseButton.icon ='edit';
-		rightPanelCloseButton.style.cursor = "pointer";
-		rightPanelCloseButton.style.position = "fixed";
-		rightPanelCloseButton.style.right = '10px';
-		rightPanel.appendChild(rightPanelCloseButton);
-*/
+
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
 			this.close();
 		});
@@ -89,6 +81,11 @@ export class AonRightPanel extends AonElement {
 
     setContent(content){
        this.getElement(this.CONTENT).appendChild(content);
+    }
+
+    clear(){
+        this.clearElement(this.getContent());
+        this.clearElement(this.getTitle());
     }
 
     open(height,marginTop,boxShadow){
@@ -132,6 +129,10 @@ export class AonRightPanel extends AonElement {
 
     getContent(){
         return this.getElement(this.CONTENT);
+    }
+
+    getTitle(){
+        return this.getElement(this.TITLE);
     }
 }
 if (!window.customElements.get(TAG.AON_RIGHT_PANEL)) {

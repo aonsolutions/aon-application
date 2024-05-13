@@ -452,14 +452,15 @@ export class AonNewMenu extends AonElement {
 		}
 
 		if (app.title) {
-			let titles = app.title.match(/\b\w+\b/g);
-			for (let i = 0; i < 2; i++) {
+			// let titles = app.title.match(/\b\w+\b/g);
+			// for (let i = 0; i < 2; i++) {
 				let span = this.createElement(TAG.SPAN);
-				span.id = `aonMenuListAppTitle-${app.app}-${i}`;
+				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
-				span.innerHTML = titles.length > i ? titles[i] : '&nbsp;';
+				span.style.minHeight = '26px';
+				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
-			}
+			// }
 		}
 
 		a.appendChild(div);

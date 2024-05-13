@@ -25,7 +25,7 @@ export class AonHelp extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || 'AonHelp';
+		this.id = this.id || 'aonHelp';
 		this.SUPPORT_SWITCH = this.id + 'SwitchSupport';
 		this.ABOUT_CONTACT_CARD = this.id + 'AboutContactCard';
 		this.SCHEDULE_CONTACT_CARD = this.id + 'ScheduleContactCard';
