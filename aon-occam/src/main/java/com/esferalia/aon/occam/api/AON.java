@@ -8369,4 +8369,12 @@ public class AON {
 		}
 	}
 	
+	// ---------------- Project Commercial
+
+	public static ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getProject().saveProjectCommercial(ctx, projectCommercial);
+		}
+	}
+	
 }

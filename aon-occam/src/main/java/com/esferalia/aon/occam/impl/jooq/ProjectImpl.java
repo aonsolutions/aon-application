@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProject;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
@@ -201,5 +202,12 @@ public class ProjectImpl implements IProject{
 	@Override
 	public ProjectActivity saveProjectActivity(AONContext ctx, ProjectActivity projectActivity) {
 		return ctx.getDslContext().transactionResult(configuration -> ProjectActivityDAO.save(ctx, projectActivity));
+	}
+	
+	// --------- PROJECT COMMERCIAL
+
+	@Override
+	public ProjectCommercial saveProjectCommercial(CloseableAONContext ctx, ProjectCommercial projectCommercial) {
+		return  ctx.getDslContext().transactionResult(configuration -> ProjectDAO.saveProjectCommercial(ctx, projectCommercial));
 	}
 }
