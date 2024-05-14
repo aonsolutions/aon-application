@@ -334,6 +334,10 @@ export class AonParent extends AonElement {
 	companySelection(company, onlyOne) {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
+		localStorage.setItem("aon_domain_id", company.id);
+		localStorage.setItem("aon_domain_name", company.domain);
+		localStorage.setItem("aon_domain_document", company.document);
+		localStorage.setItem("onlyOne", onlyOne);
 
 		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
 			let aonShowMenu = this.getElement('aonShowMenu');
@@ -364,10 +368,6 @@ export class AonParent extends AonElement {
 			aonHeaderCompany.style.right = '180px';
 		}
 		
-		localStorage.setItem("aon_domain_id", company.id);
-		localStorage.setItem("aon_domain_name", company.domain);
-		localStorage.setItem("aon_domain_document", company.document);
-
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init();

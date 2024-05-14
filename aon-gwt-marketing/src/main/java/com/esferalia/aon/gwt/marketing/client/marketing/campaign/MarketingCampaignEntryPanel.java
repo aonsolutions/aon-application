@@ -339,7 +339,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 			}	
 		});
 		
-		table.setWidget(3,0,new InlineLabel("Grupo trabajo"));
+		table.setWidget(3,0,new InlineLabel("Grupo gesti\u00f3n"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
 		table.setWidget(3,1,workgroup);
 		

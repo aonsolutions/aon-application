@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
@@ -472,10 +470,10 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_SOURCE = ocr -> 
-		ocr.getDetail().setSource( InvoiceSource.DIRECT_INVOICE );
+		ocr.getDetail().setSource( InvoiceSource.TEDI );
 		
 	public static final void fillDetailSource(InvoiceDetail detail) {
-	    detail.setSource( InvoiceSource.DIRECT_INVOICE );
+	    detail.setSource( InvoiceSource.TEDI );
 	}
 	
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
@@ -663,7 +661,6 @@ public class OCRInvoiceBuilder {
 			.forEach( ocrBreakdown ->
         			{
         			   InvoiceDetail detail = new InvoiceDetail();
-        			   
         			   fillDetailFromBreakdownDescription(ocrBreakdown, detail);
         			   fillDetailSource(detail);
         			   fillDetailAmountsFromBreakdown(ocrBreakdown, detail);

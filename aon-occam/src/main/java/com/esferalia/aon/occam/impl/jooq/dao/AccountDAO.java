@@ -18,12 +18,15 @@ import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountProperties;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.AonError;
@@ -32,6 +35,31 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountDAO {
+	
+	private static final String ACREEDORES_POR_PRESTACIONES_DE_SERVICIOS = "Acreedores por prestaciones de servicios";
+	private static final String HACIENDA_PUBLICA_IVA_SOPORTADO = "Hacienda Pública, IVA soportado";
+	private static final String HACIENDA_PUBLICA_IVA_REPERCUTIDO = "Hacienda Pública, IVA repercutido";
+	
+	private static final Account ACC_4  	= new Account().setCode("4").setDescription("ACREEDORES Y DEUDORES POR OPERACIONES COMERCIALES");
+	private static final Account ACC_40  	= new Account().setCode("40").setDescription("PROVEEDORES");
+	private static final Account ACC_400  	= new Account().setCode("400").setDescription("Proveedores");
+	private static final Account ACC_4000  	= new Account().setCode("4000").setDescription("Proveedores");
+	private static final Account ACC_41  	= new Account().setCode("41").setDescription("ACREEDORES VARIOS");
+	private static final Account ACC_410  	= new Account().setCode("410").setDescription(ACREEDORES_POR_PRESTACIONES_DE_SERVICIOS);
+	private static final Account ACC_4100  	= new Account().setCode("4100").setDescription(ACREEDORES_POR_PRESTACIONES_DE_SERVICIOS);
+	private static final Account ACC_43  	= new Account().setCode("43").setDescription("CLIENTES");
+	private static final Account ACC_430  	= new Account().setCode("430").setDescription("Clientes");
+	private static final Account ACC_4300  	= new Account().setCode("4300").setDescription("Clientes");
+	private static final Account ACC_47  	= new Account().setCode("47").setDescription("ADMINISTRACIONES PÚBLICAS");
+	private static final Account ACC_472  	= new Account().setCode("472").setDescription(HACIENDA_PUBLICA_IVA_SOPORTADO);
+	private static final Account ACC_4720  	= new Account().setCode("4720").setDescription(HACIENDA_PUBLICA_IVA_SOPORTADO);
+	private static final Account ACC_473  	= new Account().setCode("473").setDescription("Hacienda Pública, retenciones y pagos a cuenta");
+	private static final Account ACC_4730  	= new Account().setCode("4730").setDescription("Hacienda Pública, retenciones y pagos a cuenta");
+	private static final Account ACC_475  	= new Account().setCode("475").setDescription("Hacienda Pública acreedora por conceptos fiscales");
+	private static final Account ACC_4751  	= new Account().setCode("4751").setDescription("Hacienda Pública, acreedora por retenciones practicadas.");
+	private static final Account ACC_477  	= new Account().setCode("477").setDescription(HACIENDA_PUBLICA_IVA_REPERCUTIDO);
+	private static final Account ACC_4770  	= new Account().setCode("4770").setDescription(HACIENDA_PUBLICA_IVA_REPERCUTIDO);
+
 	
 	private AccountDAO() {
 	}
@@ -109,18 +137,16 @@ public class AccountDAO {
 			.stream()
 			.map(new FullAccountFiller());			
 	}
+	
 	public static List<Account> getAccountsList(AONContext ctx, AccountParams params) {
 		ctx.checkRead();
 		Condition condition = getFilter( params );
 		Integer[] domains = SecurityDAO.getInheritanceDomainIds(ctx);
-		List<Account> accounts = ctx.getDslContext() 
+		return ctx.getDslContext() 
 			.select().from(ACCOUNT)
-			.leftJoin(CUSTOMER)
-			.on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT).and(CUSTOMER.DOMAIN.in(domains)))
-			.leftJoin(SUPPLIER)
-			.on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT).and(SUPPLIER.DOMAIN.in(domains)))
-			.leftJoin(CREDITOR)
-			.on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT).and(CREDITOR.DOMAIN.in(domains)))
+			.leftJoin(CUSTOMER).on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT).and(CUSTOMER.DOMAIN.in(domains)))
+			.leftJoin(SUPPLIER).on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT).and(SUPPLIER.DOMAIN.in(domains)))
+			.leftJoin(CREDITOR).on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT).and(CREDITOR.DOMAIN.in(domains)))
 			.where(condition)
 			.and(ACCOUNT.DOMAIN.in(domains))
 			.orderBy(ACCOUNT.CODE)
@@ -130,8 +156,6 @@ public class AccountDAO {
 			.stream()
 			.map(new FullAccountFiller())
 			.collect(Collectors.toList());
-		
-		return accounts;
 	}
 	
 	public static Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
@@ -375,6 +399,124 @@ public class AccountDAO {
 			c = c==null?a:c.and(a);
 		}
 		return c!=null?c:DSL.trueCondition();
+	}
+
+	public static Account ensureInputVATAccount(AONContext ctx, Integer domain) {
+		ensureAccount(ctx, domain, ACC_4);
+		ensureAccount(ctx, domain, ACC_47);
+		ensureAccount(ctx, domain, ACC_472);
+		ensureAccount(ctx, domain, ACC_4720);
+		String code = "472000000";
+		Account account = get(ctx, code);
+		if(account == null || account.getId() == null) {
+			account = new Account()
+				.setCode(code)
+				.setDomain(domain)
+				.setDescription(HACIENDA_PUBLICA_IVA_SOPORTADO)
+				.setAlias("IVA Sop.")
+				.setActive(true);
+			account = save(ctx, account);
+			AppParamDAO.insertApplicationParameter(ctx, new ApplicationParameter()
+				.setDomain(ctx.getDomainId())
+				.setName(AppParam.ACC_DEFAULT_PAID_VAT_ACC.name()))
+				.setValue(account.getId().toString());
+		}
+		return account;
+	}
+
+	public static Account ensureOutputVATAccount(AONContext ctx, Integer domain) {
+		ensureAccount(ctx, domain, ACC_4);
+		ensureAccount(ctx, domain, ACC_47);
+		ensureAccount(ctx, domain, ACC_477);
+		ensureAccount(ctx, domain, ACC_4770);
+		String code = "477000000";
+		Account account = get(ctx, code);
+		if(account == null || account.getId() == null) {
+			account = new Account()
+				.setCode(code)
+				.setDomain(domain)
+				.setDescription(HACIENDA_PUBLICA_IVA_REPERCUTIDO)
+				.setAlias("IVA Rep.")
+				.setActive(true);
+			account = save(ctx, account);
+			AppParamDAO.insertApplicationParameter(ctx, new ApplicationParameter()
+					.setDomain(ctx.getDomainId())
+					.setName(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC.name()))
+					.setValue(account.getId().toString());
+		}
+		return account;
+	}
+
+	public static Account ensurePaidRetentionAccount(AONContext ctx, Integer domain) {
+		ensureAccount(ctx, domain, ACC_4);
+		ensureAccount(ctx, domain, ACC_47);
+		ensureAccount(ctx, domain, ACC_473);
+		ensureAccount(ctx, domain, ACC_4730);
+		String code = "473000000";
+		Account account = get(ctx, code);
+		if(account == null || account.getId() == null) {
+			account = new Account()
+				.setCode(code)
+				.setDomain(domain)
+				.setDescription("Hacienda Pública, retenciones y pagos a cuenta.")
+				.setAlias(null)
+				.setActive(true);
+			account = save(ctx, account);
+			AppParamDAO.insertApplicationParameter(ctx, new ApplicationParameter()
+				.setDomain(ctx.getDomainId())
+				.setName(AppParam.ACC_DEFAULT_PAID_RET_ACC.name()))
+				.setValue(account.getId().toString());
+		}
+		return account;
+	}
+
+	public static Account ensureChargedRetentionAccount(AONContext ctx, Integer domain) {
+		ensureAccount(ctx, domain, ACC_4);
+		ensureAccount(ctx, domain, ACC_47);
+		ensureAccount(ctx, domain, ACC_475);
+		ensureAccount(ctx, domain, ACC_4751);
+		String code = "475100000";
+		Account account = get(ctx, code);
+		if (account == null || account.getId() == null) {
+			account = new Account()
+				.setCode(code)
+				.setDomain(domain)
+				.setDescription("Hacienda Pública, acreedora por retenciones practicadas.")
+				.setAlias(null)
+				.setActive(true);
+			account = save(ctx, account);
+			AON.insertApplicationParameter(ctx, new ApplicationParameter()
+					.setDomain(ctx.getDomainId())
+					.setName(AppParam.ACC_DEFAULT_CHARGED_RET_ACC.name()))
+					.setValue(account.getId().toString());
+		}
+		return account;
+	}
+	
+	public static void ensureRegistryAccounts(AONContext ctx, Integer domain) {
+		ensureAccount(ctx, domain, ACC_4);
+		ensureAccount(ctx, domain, ACC_40);
+		ensureAccount(ctx, domain, ACC_400);
+		ensureAccount(ctx, domain, ACC_4000);
+		ensureAccount(ctx, domain, ACC_41);
+		ensureAccount(ctx, domain, ACC_410);
+		ensureAccount(ctx, domain, ACC_4100);
+		ensureAccount(ctx, domain, ACC_43);
+		ensureAccount(ctx, domain, ACC_430);
+		ensureAccount(ctx, domain, ACC_4300);
+	}
+
+	public static Account ensureAccount(AONContext ctx, Integer domain, Account acc) {
+		Account account = get(ctx, acc.getCode());
+		if(account == null || account.getId() == null)
+			account = new Account()
+				.setCode(acc.getCode())
+				.setDomain(domain)
+				.setDescription(acc.getDescription())
+				.setAlias(acc.getAlias())
+				.setActive(true);
+			account = save(ctx, account);
+		return account;
 	}
 
 	// *************************************************

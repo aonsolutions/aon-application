@@ -13,6 +13,7 @@ export class AonLoginPanel extends AonElement {
 	CARD;
     NAME;
 	LOGOUT;
+	EDITBUTTON;
 	CHANGEPASSWORD;
 
 	get id() {
@@ -29,11 +30,12 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	initialize() {
-		this.id = this.id || 'AonLoginPanel';
+		this.id = this.id || 'aonLoginPanel';
 		this.NAME = this.id + 'Name';
 		this.CARD = this.id + 'Card';
 		this.LOGOUT = this.id + 'Logout';
 		this.CHANGEPASSWORD = this.id+ 'ChangePassword';
+		this.EDITBUTTON = this.id+ 'EditButton';
 	}
 
 	build() {

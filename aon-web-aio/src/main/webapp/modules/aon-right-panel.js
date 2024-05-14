@@ -8,6 +8,7 @@ export class AonRightPanel extends AonElement {
     CLOSE_BUTTON;
     CONTENT;
     TITLE;
+    EDIT_BUTTON;
     
     get id () {
         return this.getAttribute(CONSTANT.ID);
@@ -35,15 +36,25 @@ export class AonRightPanel extends AonElement {
         this.CLOSE_BUTTON = this.RIGHT_PANEL+'CloseButton';
         this.CONTENT = this.RIGHT_PANEL+'Content';
         this.TITLE = this.RIGHT_PANEL+'Title';
+        this.EDIT_BUTTON = this.RIGHT_PANEL+ 'EditButton';
     }
 
     build(){
         let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
 		rightPanel.style.width = '320px';
-		rightPanel.style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
 		rightPanel.style.backgroundColor = '#faf9f8';
 		rightPanel.style.visibility = "hidden";
         this.appendChild(rightPanel);
+
+        let rightPanelEditButton = new AonIconButton(); 
+		rightPanelEditButton.id = this.EDIT_BUTTON;
+		rightPanelEditButton.icon ='manage_accounts';
+		rightPanelEditButton.style.cursor = "pointer";
+		rightPanelEditButton.style.position = "fixed";
+        rightPanelEditButton.style.visibility = 'hidden';
+        rightPanelEditButton.style.right = '280px';
+        rightPanelEditButton.style.top = '60px';
+		rightPanel.appendChild(rightPanelEditButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
 		rightPanelCloseButton.id = this.CLOSE_BUTTON;
@@ -84,6 +95,11 @@ export class AonRightPanel extends AonElement {
        this.getElement(this.CONTENT).appendChild(content);
     }
 
+    clear(){
+        this.clearElement(this.getContent());
+        this.clearElement(this.getTitle());
+    }
+
     open(height,marginTop,boxShadow){
         this.getRightPanel().style.visibility = "visible";
         if(height) this.getRightPanel().style.height = height;
@@ -103,6 +119,7 @@ export class AonRightPanel extends AonElement {
     close(){
         this.getRightPanel().style.visibility = "hidden";
         this.getRightPanel().style.visibility = "hidden";
+        this.getEditButton().style.visibility = "hidden";
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
     }
@@ -125,6 +142,14 @@ export class AonRightPanel extends AonElement {
 
     getContent(){
         return this.getElement(this.CONTENT);
+    }
+
+    getEditButton(){
+        return this.getElement(this.EDIT_BUTTON);
+    }
+
+    getTitle(){
+        return this.getElement(this.TITLE);
     }
 }
 if (!window.customElements.get(TAG.AON_RIGHT_PANEL)) {

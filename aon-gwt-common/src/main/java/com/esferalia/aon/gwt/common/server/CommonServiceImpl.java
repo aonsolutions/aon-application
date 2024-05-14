@@ -39,11 +39,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -427,6 +429,33 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
 		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
 		return taskHolders;
+	}
+	
+	@Override
+	public List<User> getAviableServiceUsers(String domainName, int domainId, String user) throws AonCoreException {
+		List<User> usersList = AON.getDomainUserStream(domainName, domainId, user, f -> f.getTypeProperty().eq((byte)3)).collect(Collectors.toList());
+		return usersList;
+	}
+	
+	// **************************************************
+	// ***************************** [PROJECT COMMERCIAL]
+	// **************************************************
+
+	@Override
+	public Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolderId) throws AonCoreException {
+		TaskHolder taskHolder = AON.getTaskHolder(domainName, domain, user, f -> f.getIdProperty().eq(taskHolderId));
+		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getDocumentProperty().eq(taskHolder.getDocument()));
+		return seller;
+	}
+	
+	@Override
+	public ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) throws AonCoreException {
+		return AON.saveProjectCommercial(domainName, domain, user, projectCommercial);
+	}
+	
+	@Override
+	public void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial) throws AonCoreException {
+		AON.deleteProject(new Domain().setName(domainName).setId(domain), new User().setLogin(user), projectCommercial);
 	}
 	
 }
