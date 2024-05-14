@@ -98,6 +98,8 @@ export class AonHome extends AonElement {
 
 		this.appendChild(rightPanel);
 
+		let editButton = this.getElement('aonRightPanelEditButton');
+		let title = this.getElement('aonRightPanelTitle')
 		if(LS.isRightPanel()) {
 			LS.removeRightPanel();
 			rootPanel.style.marginRight = '321px';
@@ -113,10 +115,14 @@ export class AonHome extends AonElement {
 				let config = this.getElement('aonConfig');
 				if (!rightPanel.isClose() && config) {
 					rootPanel.style.marginRight = '0px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
 					rightPanel.close();
 				} else {
 					rootPanel.style.marginRight = '321px';
 					rightPanel.clear();
+					editButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
 					rightPanel.open();
@@ -129,10 +135,14 @@ export class AonHome extends AonElement {
 			headerHelp.addEventListener(EVENT.CLICK, () => {
 				let help = this.getElement('aonHelp');
 				if(!rightPanel.isClose() && help) {
+					editButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
 					rootPanel.style.marginRight = '0px';
 					rightPanel.close();
 				} else {
 					rootPanel.style.marginRight = '321px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
@@ -140,18 +150,22 @@ export class AonHome extends AonElement {
 				}
 			});
 		}
-
+		
 		let headerUser = this.getElement('aonHeaderUser');
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {
 				let user = this.getElement('aonLoginPanel');
 				if(!rightPanel.isClose() && user) {
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
 					rightPanel.close();
 				} else  {
 					rightPanel.clear();
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);
 					rootPanel.style.marginRight = '0px';
+					editButton.style.visibility = 'visible';
+					title.style.marginLeft = '39px';
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				}
 			});
