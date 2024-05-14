@@ -33,9 +33,9 @@ public class ElaborationsServlet extends AonApiHttpServlet {
 	public static final String ELABORATIONS = "/";
 	public static final String ELABORATION = "/:id";
 	public static final String DETAILS = "/:id/details";
-	public static final String DETAIL = "/:id/details/:id";
+	public static final String DETAIL = "/:id/details/:detail";
 	public static final String PACKAGES = "/:id/packages";
-	public static final String PACKAGE = "/:id/packages/:id";
+	public static final String PACKAGE = "/packages/:package";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
