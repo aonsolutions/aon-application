@@ -54,6 +54,12 @@ export class AonCalendar extends AonElement {
 	}
 
     build() {
+      if (!document.getElementsByName("color-scheme")[0]) {
+        let colorScheme = this.createElement("meta");
+        colorScheme.setAttribute("name","color-scheme");
+        colorScheme.setAttribute("content","light");
+        document.getElementsByTagName("head")[0].appendChild(colorScheme);
+      }
         let calBody = `<header class="header">
         <div class="h__container">
     
@@ -66,7 +72,7 @@ export class AonCalendar extends AonElement {
                 <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
               </svg>
             </button>
-    
+          <div class="aonAlwaysHidden">
             <div class="logo" data-current-day-of-month="4">
               <svg height="36" viewBox="0 0 36 36" width="36" xmlns="http://www.w3.org/2000/svg">
                 <g fill="none" fill-rule="evenodd">
@@ -87,6 +93,20 @@ export class AonCalendar extends AonElement {
             </div>
     
             <h3 class="header-title">Calendar</h3>
+            </div>
+
+            <!-- floating toggle form button visible when sidebar is closed -->
+            <aside class="toggle-form">
+              <span class="toggle-form-btn" role="button" aria-label="open form">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <path fill="#34A853" d="M16 16v14h4V20z"></path>
+                  <path fill="#4285F4" d="M30 16H20l-4 4h14z"></path>
+                  <path fill="#FBBC05" d="M6 16v4h10l4-4z"></path>
+                  <path fill="#EA4335" d="M20 16V6h-4v14z"></path>
+                  <path fill="none" d="M0 0h36v36H0z"></path>
+                </svg>
+              </span>
+            </aside>
     
             <button class="btn-root btn-today" style="cursor:pointer;" aria-label="button" role="button">Today</button>
     
@@ -698,18 +718,7 @@ export class AonCalendar extends AonElement {
         </div>
       </aside>
     
-      <!-- floating toggle form button visible when sidebar is closed -->
-      <aside class="toggle-form">
-        <span class="toggle-form-btn" role="button" aria-label="open form">
-          <svg width="36" height="36" viewBox="0 0 36 36">
-            <path fill="#34A853" d="M16 16v14h4V20z"></path>
-            <path fill="#4285F4" d="M30 16H20l-4 4h14z"></path>
-            <path fill="#FBBC05" d="M6 16v4h10l4-4z"></path>
-            <path fill="#EA4335" d="M20 16V6h-4v14z"></path>
-            <path fill="none" d="M0 0h36v36H0z"></path>
-          </svg>
-        </span>
-      </aside>
+      
     
       <!-- create new category form -->
       <aside class="category__form hide-ctg-form">
@@ -861,7 +870,7 @@ export class AonCalendar extends AonElement {
                 </div>
               </div>
             </div>
-    
+            <div class="aonAlwaysHidden">
             <!-- row two -->
             <div class="sub-menu--item smi-theme-actions">
               <div class="sub-menu--item__title">Configure Application Theme</div>
@@ -882,6 +891,7 @@ export class AonCalendar extends AonElement {
                   <span>High Contrast</span>
                 </div>
               </div>
+            </div>
             </div>
     
             <!-- row three -->

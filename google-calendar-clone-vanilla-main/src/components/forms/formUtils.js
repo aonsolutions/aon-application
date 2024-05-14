@@ -3,6 +3,10 @@ import { placePopup } from "../../utilities/helpers";
 class FormConfig {
   constructor () {
     this.monthNames = locales.labels.monthsShort;
+    this.initialize();
+  }
+
+  initialize() {
     this.headerOffset = document.querySelector(".header");
     this.form = document.querySelector(".entries__form");
     this.formBody = document.querySelector(".entries__form--body");
@@ -24,6 +28,7 @@ class FormConfig {
    * @param {number} centerOffset (optional) offset from the center of the element
    */
   setFormStyle(eX, eY, shouldCenter, centerOffset) {
+    this.initialize();
     if (!shouldCenter) {
       shouldCenter = false;
     }
@@ -44,6 +49,7 @@ class FormConfig {
   }
 
   setFormSubmitType(type, id) {
+    this.initialize();
     this.formsubmitbtn.setAttribute("data-form-action", type);
     this.formsubmitbtn.setAttribute(
       "data-form-entry-id",
@@ -52,6 +58,7 @@ class FormConfig {
   }
 
   configFormTitleDescriptionInput(title, description) {
+    this.initialize();
     this.formTitleDescription.forEach((input, idx) => {
       input.firstElementChild.value = [title, description][idx];
     });
@@ -69,6 +76,7 @@ class FormConfig {
    * Format date/time for display
    */
   setFormDateInput(input, date, minutes, dateFormatted) {
+    this.initialize();
     const [dateinput, timeinput] = [
       input.firstElementChild,
       input.lastElementChild
@@ -88,6 +96,7 @@ class FormConfig {
   }
 
   setFormDatepickerDate(context, datepickerContext, start) {
+    this.initialize();
     start = new Date(start);
     context.setDateSelected(start.getDate());
     datepickerContext.setDate(
@@ -112,6 +121,7 @@ class FormConfig {
    * 
    */
   configFormDateInputs(dates) {
+    this.initialize();
     for (let i = 0; i < 2; i++) {
       this.setFormDateInput(
         this.formStartEndCtg[i].lastElementChild,
@@ -123,15 +133,17 @@ class FormConfig {
   }
 
   configFormCategoryInput(categoryData) {
+    this.initialize();
     const [title, color] = categoryData;
     this.formCategoryWrapper.setAttribute("data-form-category", title);
     this.formCategorySelect.style.backgroundColor = color;
     this.formCategoryWrapperIcon.style.backgroundColor = color;
-    this.formCatgoryIcon.firstChild.setAttribute("fill", color);
+    this.formCatgoryIcon.setAttribute("fill", color);
     this.formCategoryTitle.textContent = title;
   }
 
   getConfig(data) {
+    this.initialize();
     this.setFormSubmitType(
       data.submission.type,
       data.submission.id

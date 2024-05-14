@@ -105,9 +105,11 @@ const listviewBody = document.querySelector(".listview__body");
 
     const currentScheme = context.getColorScheme();
     if (currentScheme === "light") {
-      setdark();
+      // setdark();
+      setlight();
     } else if (currentScheme === "dark") {
-      setcontrast();
+      // setcontrast();
+      setlight();
     } else {
       setlight();
     }

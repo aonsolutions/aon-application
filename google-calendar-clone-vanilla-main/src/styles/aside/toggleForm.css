@@ -1,6 +1,6 @@
 .toggle-form {
   z-index: 198;
-  position: fixed;
+  /* position: fixed; */
   display: flex;
   left: 9px;
   top: 68px;

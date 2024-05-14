@@ -119,27 +119,28 @@
     rgba(0, 0, 0, .3) 4px 6px 6px 0;
 }
 
-*,
+/* *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-}
-
+} */
+/* 
 html {
   font-size: 14px;
-}
+} */
 
 .body {
   font-family: var(--primaryFont);
   font-weight: 400;
   background: var(--black1);
   color: var(--white1);
-  height: 100vh;
+  height: 85vh;
   overflow: hidden;
   position: relative;
+  margin-top: 40px;
 }
 
 .preload * {
