@@ -14,7 +14,7 @@ import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
-import '../../css/aon.css';
+import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 
 export class AonTimecontrol extends AonElement {

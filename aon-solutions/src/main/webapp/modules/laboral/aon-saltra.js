@@ -3,7 +3,7 @@ import { MSG } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
-import '../../css/aon.css';
+import 'aoncss';
 
 export class AonSaltra extends AonComunicaUtils {
 
