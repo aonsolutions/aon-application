@@ -67,6 +67,7 @@ public interface IAccounting {
 	// ********************************* [ACCOUNT PERIOD]
 	// **************************************************
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx);
+	public AccountPeriod ensurePeriod(AONContext ctx, Integer domain, Date date);
 	public AccountPeriod getPeriod(AONContext ctx,Date date);
 	public AccountPeriod getPeriod(AONContext ctx,Integer id);
 	public AccountPeriod getPeriodByYear(AONContext ctx,int year);
@@ -169,6 +170,7 @@ public interface IAccounting {
 	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;
 	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException;
 	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
+	
 	
 	
 }
