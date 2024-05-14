@@ -195,7 +195,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
 		aonMenuTopnav.style.height = '0px';
-		this.getRootPanel().style.marginTop = '49px'; //'69px';
+		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 	}
 
@@ -226,6 +226,7 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
+		ul.style.marginTop = '8px';
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {
@@ -291,15 +292,15 @@ export class AonNewMenu extends AonElement {
 		let rightPanel = this.getElement("aonRightPanel");
 
 		topnav.style.height = '68px';
-		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 68}px`;
+		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
+			rightPanel.style.height = `calc(100vh - 62px)`;
 		
 		}
 		
-		rootPanel.style.marginTop = topnav.offsetHeight;
-		rootPanel.style.height = `calc(100vh - ${49 + topnav.offsetHeight}px)`;
+		rootPanel.style.marginTop = "69px";
+		rootPanel.style.height = `calc(100vh - 62px)`;
 	}
 
 	hideTopNav() {
@@ -308,11 +309,11 @@ export class AonNewMenu extends AonElement {
 		let rightPanel = this.getElement("aonRightPanel");
 		topnav.style.height = '0px';
 		if(rightPanel){
-			rightPanel.style.marginTop = topnav.offsetHeight;
+			rightPanel.style.marginTop = "1px";
 			rightPanel.style.height = `calc(100vh - 49px)`;
 		}
-		rootPanel.style.marginTop = topnav.offsetHeight;
-		rootPanel.style.height = `calc(100vh - 49px)`;
+		rootPanel.style.marginTop = "1px";
+		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
 	showSideNav() {
@@ -334,7 +335,6 @@ export class AonNewMenu extends AonElement {
 		icon.style.visibility = "visible";
 
 		rootPanel.style.marginLeft = '69px';
-
 	}
 
 	hideSideNav(){
@@ -346,10 +346,10 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.width = '0px';
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
-		icon.style.visibility = "hidden";
-		aonlogo.style.left = '0px';
+		//icon.style.visibility = "hidden";
+		aonlogo.style.left = '50px';
 		rootPanel.style.marginLeft = '0px';
-		menulist.style.visibility = "hidden";
+		//menulist.style.visibility = "hidden";
 	}
 
 	showMenuButton() {

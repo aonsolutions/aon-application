@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  'aonsolutions/services/service.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
 import { AonCard } from 'aonsolutions/components/aon-card.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import {  getManifest} from "aonsolutions/services/service.js";
@@ -37,6 +37,11 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	build() {
+		getAuth().then( auth => this.create(auth));
+	}
+
+	create( auth ) {
+	
 		let rightPanel = this.getElement("aonRightPanel");
 		rightPanel.style.boxShadow="0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		rightPanel.style.marginTop = '0px';
@@ -53,10 +58,15 @@ export class AonLoginPanel extends AonElement {
 		divUserInfo.style.marginLeft = "27px";
 		divUserInfo.style.marginTop = "-22px";
 		divUserInfo.style.maxWidth = "205px";
-		divUserInfo.appendChild(this.buildName("Alejandro Millán Molinero"));
-		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,"alejandromillanmolinero@gmail.com"));
-		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,"633143977"));
-		divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,"53980921J"))
+		divUserInfo.style.marginBottom = "12px";
+		//if(auth.name!="")
+			divUserInfo.appendChild(this.buildName(auth.name));
+		//if(auth.email!="")
+			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,auth.email));
+		//if(auth.phone!="")
+			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,auth.phone));
+		//if(auth.document!="")
+			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,auth.document))
 		divGeneral.appendChild(divUserInfo);
 		this.appendChild(divGeneral);
 
@@ -67,7 +77,6 @@ export class AonLoginPanel extends AonElement {
 		divLogout.style.backgroundColor= "rgba(0,0,0,.04)";
 		divLogout.style.height = "43px";
 		divLogout.style.width = "100%";
-		divLogout.style.marginTop = "12px";
 		divLogout.style.cursor = "pointer";
 		divLogout.style.transition = "background-color 0.1s"; 
 		divLogout.style.backgroundColor = "rgba(0,0,0,.04)";
