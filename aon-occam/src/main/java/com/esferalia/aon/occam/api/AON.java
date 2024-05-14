@@ -2690,6 +2690,14 @@ public class AON {
 		return getSalary().saveSalaries(ctx, domainId, salaries);
 	}
 
+
+	public static Collection<Salary> saveSalaries(String domainName, String login, 
+			Integer domainId, Collection<Salary> salaries) {
+		try ( CloseableAONContext ctx = AONContext.getAONContext(domainName, login) ){
+			return getSalary().saveSalaries(ctx, domainId, salaries);
+		}
+	}
+
 	public static Stream<Salary> getSalaryData(AONContext ctx, 
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);

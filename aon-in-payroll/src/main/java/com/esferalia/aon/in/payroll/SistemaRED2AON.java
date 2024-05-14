@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +42,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
@@ -101,7 +103,6 @@ public class SistemaRED2AON {
 				put((byte)7,"0163");
 			}
 		};
-	
 	
 		Option helpOption = Option.builder()
 		.longOpt("help")
@@ -197,11 +198,12 @@ public class SistemaRED2AON {
 			String nafs [] = Optional.ofNullable(commandLine.getOptionValues(nafsOption.getLongOpt())).orElse(new String[0]);
 			
 			for( String schema : commandLine.getOptionValues(databasesOption.getLongOpt()) ) {
-				System.out.println(schema);;
+				List<Record> domains = Collections.emptyList();
+				
 				try (Connection connection = AonDataSource.getInstance().getDatabaseConnection(schema)) {
 					AONContext aonContext = new AONContext(connection);
 					DSLContext dslContext = aonContext.getDslContext();
-					
+					domains = 
 					dslContext
 					.select()
 					.from(DOMAIN)
@@ -212,86 +214,92 @@ public class SistemaRED2AON {
 					.groupBy(ENTERPRISE_CCC.CCC)
 					.orderBy(USER.ID)
 					.fetchStream()
-					.forEach( domain -> {
-						Integer userId = domain.get(USER.ID);
-						String login = domain.get(USER.LOGIN);
-						Integer domainId = domain.get(DOMAIN.ID);
-						String domainName = domain.get(DOMAIN.NAME);
-						
-						String ccc = domain.get(ENTERPRISE_CCC.CCC);
-						String regimen = regimeMap.getOrDefault(domain.get(ENTERPRISE_CCC.TYPE), "0111");
-						
-						Certificate certificate = AON.getCertificate(domainName, domainId, login, userId, "TGSS");	
-						
-						String certificateType = MimeType.PKCS12.name();
-						byte [] certificateData=  certificate.getData();
-						String certificatePassword =  certificate.getPassword();
-						
-						
-						try {
-							if ( calcs ) {
-								addCalcs(aonContext, 
-										login, 
-										domainName, 
-										domainId, 
-										certificateData, 
-										certificatePassword, 
-										certificateType, 
-										regimen, 
-										ccc, 
-										startDate, 
-										//endDate,
-										LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
-										nafs);
-								
-								Integer enterpriseId = domain.get(ENTERPRISE_ACTIVITY.ENTERPRISE);
-
-								JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
-									new FileOutputStream("/tmp/costs.pdf"), 
-									domainName, 
-									domainId, 
-									login, 
-									startDate, 
-									endDate, 
-									enterpriseId, 
-									null, 
-									SalaryType.values());
-							}
-							if ( idc )
-								syncWithIdcs(
-										login, 
-										userId, 
-										domainName, 
-										domainId, 
-										certificateData, 
-										certificatePassword, 
-										certificateType, 
-										regimen, 
-										ccc, 
-										startDate, 
-										endDate,
-										nafs);
-							
-//							SistemaRED.getCosts(certificateData, certificatePassword, certificateType, regime, ccc, startDate, endDate);
-							
-//							System.out.printf("SUCCES: %s-%s %d [%s]\r\n", regime, ccc, added, login );
-						}
-//						catch (NotAllowedContributionAccount e) {
-//							System.err.printf("ERROR: %s-%s %s [%s]\r\n", regime, ccc, e.getMessage(), login);
-//						}
-//						catch (InvalidDataException e) {
-//							System.err.printf("ERROR: %s-%s %s\r\n", regime, ccc, e.getMessage());
-//						}
-//						catch (InvalidCertificateException e) {
-//							System.err.printf("ERROR: %s-%s %s [%s]\r\n]", regime, ccc, "Invalid Certificate", login);
-//						}
-						catch (Exception e) {
-							e.printStackTrace();
-							System.out.printf("ERROR: %s-%s %s \r\n", regimen, ccc, e.getMessage());
-						}
-					});
+					.collect(Collectors.toList());
 					
 				}
+				
+				domains.forEach( domain -> {
+					Integer userId = domain.get(USER.ID);
+					String login = domain.get(USER.LOGIN);
+					Integer domainId = domain.get(DOMAIN.ID);
+					String domainName = domain.get(DOMAIN.NAME);
+					
+					String ccc = domain.get(ENTERPRISE_CCC.CCC);
+					String regimen = regimeMap.getOrDefault(domain.get(ENTERPRISE_CCC.TYPE), "0111");
+					
+					Certificate certificate = AON.getCertificate(domainName, domainId, login, userId, "TGSS");	
+					
+					String certificateType = MimeType.PKCS12.name();
+					byte [] certificateData=  certificate.getData();
+					String certificatePassword =  certificate.getPassword();
+					
+					
+					try {
+						if ( calcs ) {
+							addCalcs(login, 
+									domainName, 
+									domainId, 
+									certificateData, 
+									certificatePassword, 
+									certificateType, 
+									regimen, 
+									ccc, 
+									startDate, 
+									endDate,
+									//LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
+									nafs,
+									salary -> {
+										AON.saveSalaries(domainName, login, domainId, Collections.singleton(salary));
+										System.out.println(salary.getEmployeeSSNumber() + " : " + salary.getCommonContingenciesBase() );
+									});
+							
+							Integer enterpriseId = domain.get(ENTERPRISE_ACTIVITY.ENTERPRISE);
+
+							JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
+								new FileOutputStream("/tmp/costs.pdf"), 
+								domainName, 
+								domainId, 
+								login, 
+								startDate, 
+								endDate, 
+								enterpriseId, 
+								null, 
+								SalaryType.values());
+						}
+						if ( idc )
+							syncWithIdcs(
+									login, 
+									userId, 
+									domainName, 
+									domainId, 
+									certificateData, 
+									certificatePassword, 
+									certificateType, 
+									regimen, 
+									ccc, 
+									startDate, 
+									endDate,
+									nafs);
+						
+//						SistemaRED.getCosts(certificateData, certificatePassword, certificateType, regime, ccc, startDate, endDate);
+						
+//						System.out.printf("SUCCES: %s-%s %d [%s]\r\n", regime, ccc, added, login );
+					}
+//					catch (NotAllowedContributionAccount e) {
+//						System.err.printf("ERROR: %s-%s %s [%s]\r\n", regime, ccc, e.getMessage(), login);
+//					}
+//					catch (InvalidDataException e) {
+//						System.err.printf("ERROR: %s-%s %s\r\n", regime, ccc, e.getMessage());
+//					}
+//					catch (InvalidCertificateException e) {
+//						System.err.printf("ERROR: %s-%s %s [%s]\r\n]", regime, ccc, "Invalid Certificate", login);
+//					}
+					catch (Exception e) {
+						e.printStackTrace();
+						System.out.printf("ERROR: %s-%s %s \r\n", regimen, ccc, e.getMessage());
+					}
+				});
+				
 			}
 			
 	
@@ -309,8 +317,34 @@ public class SistemaRED2AON {
 	
 	// ------------------------------------------------------------------------
 
-	public static void addCalcs( 
-		AONContext aonContext,
+	public static void addCalcs(
+			String login,
+			String domainName, 
+			Integer domainId,
+			byte [] certificateData,
+			String certificatePassword, 
+			String certificateType, 
+			String regimen, 
+			String ccc, 
+			java.sql.Date month,
+			LiquidationType liquidationType,
+			Consumer<Salary> callback) {
+		addCalcs(
+		login, 
+		domainName, 
+		domainId, 
+		certificateData, 
+		certificatePassword, 
+		certificateType, 
+		regimen, 
+		ccc, 
+		month, 
+		liquidationType, 
+		new String[0], 
+		callback);
+	}
+
+	public static void addCalcs(
 		String login,
 		String domainName, 
 		Integer domainId,
@@ -321,7 +355,8 @@ public class SistemaRED2AON {
 		String ccc, 
 		java.sql.Date month,
 		LiquidationType liquidationType,
-		String ...nafs) {
+		String[] nafs,
+		Consumer<Salary> callback) {
 	    
 	    java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(month);
 	    
@@ -340,7 +375,7 @@ public class SistemaRED2AON {
 		    continue;
 		
 		try {
-        		addCalcs(aonContext, 
+        		addCalcs(
         			login, 
         			domainName, 
         			domainId, 
@@ -348,7 +383,9 @@ public class SistemaRED2AON {
         			certificatePassword, 
         			certificateType, 
         			liquidation,
-        			nafs);
+        			nafs,
+    			    callback
+        			);
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		    // TODO:
@@ -357,7 +394,67 @@ public class SistemaRED2AON {
 	}
 
 	public static void addCalcs( 
-		AONContext aonContext,
+			String login,
+			String domainName, 
+			Integer domainId,
+			byte [] certificateData,
+			String certificatePassword, 
+			String certificateType, 
+			String regimen, 
+			String ccc, 
+			java.sql.Date startDate, 
+			java.sql.Date endDate ,
+			String[] nafs,
+			Consumer<Salary> callback ) throws SegSocialException {
+		    	
+		    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
+			addCalcs(login, 
+				    domainName, 
+				    domainId, 
+				    certificateData, 
+				    certificatePassword, 
+				    certificateType, 
+				    regimen, 
+				    ccc, 
+				    startDate, 
+				    endDate, 
+				    LiquidationType.TODAS, 
+				    nafs,
+				    callback
+				    );
+		}
+
+	public static void addCalcs( 
+			String login,
+			String domainName, 
+			Integer domainId,
+			byte [] certificateData,
+			String certificatePassword, 
+			String certificateType, 
+			String regimen, 
+			String ccc, 
+			java.sql.Date startDate, 
+			java.sql.Date endDate ,
+			Consumer<Salary> callback ) throws SegSocialException {
+		    	
+		    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
+			addCalcs(login, 
+				    domainName, 
+				    domainId, 
+				    certificateData, 
+				    certificatePassword, 
+				    certificateType, 
+				    regimen, 
+				    ccc, 
+				    startDate, 
+				    endDate, 
+				    LiquidationType.TODAS, 
+				    new String[0],
+				    callback
+				    );
+		}
+
+	public static void addCalcs( 
 		String login,
 		String domainName, 
 		Integer domainId,
@@ -371,8 +468,7 @@ public class SistemaRED2AON {
 		String ...nafs) throws SegSocialException {
 	    	
 	    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
-		addCalcs(aonContext, 
-			    login, 
+		addCalcs(login, 
 			    domainName, 
 			    domainId, 
 			    certificateData, 
@@ -383,11 +479,12 @@ public class SistemaRED2AON {
 			    startDate, 
 			    endDate, 
 			    LiquidationType.TODAS, 
-			    nafs);
+			    nafs,
+			    salary -> AON.saveSalaries(domainName, login, domainId, Collections.singleton(salary))
+			    );
 	}
 
-	public static void addCalcs( 
-			AONContext aonContext,
+	public static void addCalcs(
 			String login,
 			String domainName, 
 			Integer domainId,
@@ -399,7 +496,9 @@ public class SistemaRED2AON {
 			java.sql.Date startDate, 
 			java.sql.Date endDate ,
 			LiquidationType liquidationType,
-			String ...nafs) throws SegSocialException {
+			String[] nafs,
+			Consumer<Salary> callback
+			) throws SegSocialException {
 		
 		String authorized = getAuthorized(login, domainId, domainName, ccc);
 		
@@ -407,7 +506,6 @@ public class SistemaRED2AON {
 		
 		nafs = employees.keySet().toArray(new String[employees.size()]);
 		
-		Map<String, Map<String, Map<Period, Map<String, Calc>>>> allCalcs = 
 		SistemaRED.getCalcByNAF(
 				certificateData, 
 				certificatePassword, 
@@ -419,58 +517,49 @@ public class SistemaRED2AON {
 				liquidationType, 
 				LiquidationOrigin.TODAS, 
 				authorized,
-				nafs
-				);
-		
-		
-		
-		allCalcs.forEach((liq, liqCalcs) -> liqCalcs.forEach(( naf, nafCalcs ) -> {
-				
-				employees.get(naf).forEach(employee -> {
-					try {
-						Period period = new Period(employee.getStartDate(), 
-								employee.getEndDate().orElse(null));
-						
-						
-						Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
-						salary.setEmployeeDocument(employee.getDni());
-						
-						
-						Date l13startDate = null;
-						if ( salary.getSalaryType() == SalaryType.L13 ) {
-							l13startDate = salary.getStartDate();
-							salary.setStartDate(employee.getStartDate());
-							salary.setIssueDate(min(salary.getEndDate(), endDate));
-						}
-						
-						employee.getName().ifPresent(salary::setEmployeeName);
-						
+				nafs,
+				(liquidation, naf, calcs) ->
+					employees.get(naf).forEach(employee -> {
 						try {
-							AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
-						} catch ( Exception e ) {
-							java.sql.Date settleEndDate = addDays(l13startDate, -1);
-							Map<String,List<Employee>> oldEmployees = 
-									getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
-							oldEmployees.get(naf).forEach(oldEmployee -> {
-								salary.setStartDate(oldEmployee.getStartDate());
+							Period period = new Period(employee.getStartDate(), 
+									employee.getEndDate().orElse(null));
+							
+							
+							Salary salary = SLDSalaries.getSalary(liquidation, ccc, naf, calcs, period);
+							salary.setEmployeeDocument(employee.getDni());
+							
+							
+							Date l13startDate = null;
+							if ( salary.getSalaryType() == SalaryType.L13 ) {
+								l13startDate = salary.getStartDate();
+								salary.setStartDate(employee.getStartDate());
 								salary.setIssueDate(min(salary.getEndDate(), endDate));
-								AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
-							} );
+							}
+							
+							employee.getName().ifPresent(salary::setEmployeeName);
+							
+							try {
+								callback.accept(salary);
+							} catch ( Exception e ) {
+								java.sql.Date settleEndDate = addDays(l13startDate, -1);
+								Map<String,List<Employee>> oldEmployees = 
+										getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
+								oldEmployees.get(naf).forEach(oldEmployee -> {
+									salary.setStartDate(oldEmployee.getStartDate());
+									salary.setIssueDate(min(salary.getEndDate(), endDate));
+									callback.accept(salary);
+								} );
+							}
+							
+						} catch ( Exception e ) {
+							e.printStackTrace();
+							System.err.println(e.getMessage());
 						}
-						
-					} catch ( Exception e ) {
-						e.printStackTrace();
-						System.err.println(e.getMessage());
-					}
-				});
-		
-		}));
-		
-		
+					})
+				);
 	}
 	
 	public static void addCalcs( 
-		AONContext aonContext,
 		String login,
 		String domainName, 
 		Integer domainId,
@@ -478,88 +567,84 @@ public class SistemaRED2AON {
 		String certificatePassword, 
 		String certificateType, 
 		Liquidacion liquidacion,
-		String ...nafs) throws SegSocialException {
+		String[] nafs,
+		Consumer<Salary> callback
+		) throws SegSocialException {
 	
 	
 	
-	java.sql.Date endDate = toSqlDate(liquidacion.getPeriodoHasta());
-	java.sql.Date startDate = toSqlDate(liquidacion.getPeriodoDesde());
-	java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
+		java.sql.Date endDate = toSqlDate(liquidacion.getPeriodoHasta());
+		java.sql.Date startDate = toSqlDate(liquidacion.getPeriodoDesde());
+		java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
+		
+		String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();
+		
+		String numLiquidation = liquidacion.getNumeroLiquidacion();
 	
-	String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();
+		String authorized = getAuthorized(login, domainId, domainName, ccc);
 	
-	String numLiquidation = liquidacion.getNumeroLiquidacion();
-
-	String authorized = getAuthorized(login, domainId, domainName, ccc);
-
-	Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
+		Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
+		
+		nafs = employees.keySet().toArray(new String[employees.size()]);
 	
-	nafs = employees.keySet().toArray(new String[employees.size()]);
-
-	
-	Map<String, Map<String, Map<Period, Map<String, Calc>>>> allCalcs = 
-	SistemaRED.getCalcByNAF(
-			certificateData, 
-			certificatePassword, 
-			certificateType, 
-			//ccc, 
-			//Regime.fromValue(regimen), 
-			//startDate, 
-			//endDate, 
-			//liquidationType, 
-			//LiquidationOrigin.TODAS,
-			numLiquidation,
-			authorized,
-			nafs
-			);
-	
-	
-	
-	allCalcs.forEach((liq, liqCalcs) -> liqCalcs.forEach(( naf, nafCalcs ) -> {
-			
-			employees.get(naf).forEach(employee -> {
-				try {
-					Period period = new Period(employee.getStartDate(), 
-							employee.getEndDate().orElse(null));
+		
+		SistemaRED.getCalcByNAF(
+				certificateData, 
+				certificatePassword, 
+				certificateType, 
+				//ccc, 
+				//Regime.fromValue(regimen), 
+				//startDate, 
+				//endDate, 
+				//liquidationType, 
+				//LiquidationOrigin.TODAS,
+				numLiquidation,
+				authorized,
+				nafs,
+				(liquidation, naf, calcs) ->
 					
-					
-					Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
-					salary.setIssueDate(ctrlDate);
-					salary.setEmployeeDocument(employee.getDni());
-					
-					
-					Date l13startDate = null;
-					if ( salary.getSalaryType() == SalaryType.L13 ) {
-						l13startDate = salary.getStartDate();
-						salary.setStartDate(employee.getStartDate());
-						salary.setIssueDate(min(salary.getEndDate(), endDate));
-					}
-					
-					employee.getName().ifPresent(salary::setEmployeeName);
-					
-					try {
-						AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
-					} catch ( Exception e ) {
-						java.sql.Date settleEndDate = addDays(l13startDate, -1);
-						Map<String,List<Employee>> oldEmployees = 
-								getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
-						oldEmployees.get(naf).forEach(oldEmployee -> {
-							salary.setStartDate(oldEmployee.getStartDate());
-							salary.setIssueDate(min(salary.getEndDate(), endDate));
-							AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
-						} );
-					}
-					
-				} catch ( Exception e ) {
-					e.printStackTrace();
-					System.err.println(e.getMessage());
-				}
-			});
+					employees.get(naf).forEach(employee -> {
+						try {
+							Period period = new Period(employee.getStartDate(), 
+									employee.getEndDate().orElse(null));
+							
+							
+							Salary salary = SLDSalaries.getSalary(liquidation, ccc, naf, calcs, period);
+							salary.setIssueDate(ctrlDate);
+							salary.setEmployeeDocument(employee.getDni());
+							
+							
+							Date l13startDate = null;
+							if ( salary.getSalaryType() == SalaryType.L13 ) {
+								l13startDate = salary.getStartDate();
+								salary.setStartDate(employee.getStartDate());
+								salary.setIssueDate(min(salary.getEndDate(), endDate));
+							}
+							
+							employee.getName().ifPresent(salary::setEmployeeName);
+							
+							try {
+								callback.accept(salary);
+							} catch ( Exception e ) {
+								java.sql.Date settleEndDate = addDays(l13startDate, -1);
+								Map<String,List<Employee>> oldEmployees = 
+										getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
+								oldEmployees.get(naf).forEach(oldEmployee -> {
+									salary.setStartDate(oldEmployee.getStartDate());
+									salary.setIssueDate(min(salary.getEndDate(), endDate));
+									callback.accept(salary);
+								} );
+							}
+							
+						} catch ( Exception e ) {
+							e.printStackTrace();
+							System.err.println(e.getMessage());
+						}
+					})
+				
+				);
 	
-	}));
-	
-	
-}
+	}
 
 
 	private static java.sql.Date addDays( java.util.Date date, int days ) {
@@ -1102,6 +1187,7 @@ public class SistemaRED2AON {
             )
         );
 	}
+	
 
 	private static String toString(Object obj) {
 		if ( obj == null )

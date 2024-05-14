@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -180,52 +181,61 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(month).getTime());
 		java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(month).getTime() );
 		
-		try ( Connection connection = getConnection(req);
-			OutputStream os = resp.getOutputStream();
-			Writer writer = new OutputStreamWriter(os)){
-				AONContext aonContext = new AONContext(connection);								
-				Integer domainId = AonServletUtils.getDomainID(domainName);
-				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-				
-				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
-					
-					try {
-						Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-						
-						SistemaRED2AON.addCalcs(aonContext, 
-							userLogin, 
-							domainName, 
-							domainId, 
-							certificate.getData(), 
-							certificate.getPassword(), 
-							certificate.getType(), 
-							ccc.getRegime(), 
-							ccc.getCode(), 
-							startDate, 
-							endDate);
-						
-						SistemaRED2AON.addCalcs(aonContext, 
-							userLogin, 
-							domainName, 
-							domainId, 
-							certificate.getData(), 
-							certificate.getPassword(), 
-							certificate.getType(), 
-							ccc.getRegime(), 
-							ccc.getCode(), 
-							startDate, 
-							LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV);
+		List<CCC> cccs = Collections.emptyList();
 
-						writer.write(ccc.getCode());
-						writer.flush();
-					} catch ( Exception e ) {
-					}
+		Certificate certificate = null;
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+		
+		try ( Connection connection = getConnection(req)){
+				cccs = JooqEnterprise.getCCCs(connection, domainId);
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
+		}
+		
+		try ( OutputStream os = resp.getOutputStream();
+			Writer writer = new OutputStreamWriter(os)){
+			for ( CCC ccc: cccs ) {
+				
+				try {
 					
+					SistemaRED2AON.addCalcs(userLogin, 
+						domainName, 
+						domainId, 
+						certificate.getData(), 
+						certificate.getPassword(), 
+						certificate.getType(), 
+						ccc.getRegime(), 
+						ccc.getCode(), 
+						startDate, 
+						endDate,
+						salary -> AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary))
+					);
+					
+					SistemaRED2AON.addCalcs(
+						userLogin, 
+						domainName, 
+						domainId, 
+						certificate.getData(), 
+						certificate.getPassword(), 
+						certificate.getType(), 
+						ccc.getRegime(), 
+						ccc.getCode(), 
+						startDate, 
+						LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
+						salary -> AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary))
+						);
+	
+	
+					writer.write(ccc.getCode());
+					writer.flush();
+				} catch ( Exception e ) {
 				}
-				resp.setStatus(HttpServletResponse.SC_OK);
 				
 			}
+		}
+		resp.setStatus(HttpServletResponse.SC_OK);
+		
 	}
 	
 	private void doUp2DateReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
