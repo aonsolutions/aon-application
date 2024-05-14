@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationPackageDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
@@ -417,6 +418,11 @@ public class WarehouseImpl implements IWarehouse {
 			ElaborationDAO.getNextNumber(ctx, series));
 	}
 	
+	@Override
+	public ElaborationDetail deleteElaborationPackage(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationPackageDAO.delete(ctx, id));
+	}
 	
 	
 	// -------------------------- INCOME
