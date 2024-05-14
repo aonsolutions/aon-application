@@ -240,6 +240,7 @@ export class AonNewMenu extends AonElement {
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
 				li.style.backgroundColor = 'transparent';
+				li.style.cursor = 'pointer';
 				li.appendChild(this.buildApp(app,undefined,true));
 
 				ul.appendChild(li);
