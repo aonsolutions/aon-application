@@ -292,6 +292,16 @@ export class AonNewMenu extends AonElement {
 		appDiv.style.cursor = 'pointer';
 		appDiv.style.backgroundColor = 'transparent';
 		appDiv.appendChild(this.buildApp(app,undefined,false));
+	
+		appDiv.style.transition = 'background-color 0.2s';
+		appDiv.style.backgroundColor = 'transparent';
+		appDiv.addEventListener('mouseover', () => {
+			appDiv.style.backgroundColor = 'white';
+		});
+		appDiv.addEventListener('mouseout', () => {
+			appDiv.style.backgroundColor = 'transparent';
+		});
+	
 		return appDiv;
 	}
 /*
@@ -424,6 +434,14 @@ export class AonNewMenu extends AonElement {
 		div.style.justifyContent = 'center';
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
+		div.style.transition = 'background-color 0.2s';
+		div.style.backgroundColor = 'transparent';
+		div.addEventListener('mouseover', () => {
+			div.style.backgroundColor = 'white';
+		});
+		div.addEventListener('mouseout', () => {
+			div.style.backgroundColor = 'transparent';
+		});
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
