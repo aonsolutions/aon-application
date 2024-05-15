@@ -1,10 +1,8 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-
 import { AonHeader } from 'aonsolutions/modules/aon-header.js';
-
-import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js'; 
-
+import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import * as LS from 'aonsolutions/services/localStorageService.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -99,33 +97,34 @@ export class AonHome extends AonElement {
 
 		this.appendChild(rightPanel);
 
+		let editButton = this.getElement('aonRightPanelEditButton');
+		let title = this.getElement('aonRightPanelTitle')
 		if(LS.isRightPanel()) {
 			LS.removeRightPanel();
 			rootPanel.style.marginRight = '321px';
+			rightPanel.clear();
 			rightPanel.setContent(new AonConfig());
 			rightPanel.setTitle(MSG.CONFIGURATION);
 			rightPanel.open();
 		}
 
-		if(LS.isTopMenu()){
-			aonMenu.showTopNav();
-		}
-
-		if(LS.isLeftMenu()){
-			aonMenu.showSideNav();
-		} 
-
 		let headerConfig = this.getElement('aonHeaderConfig');
 		if (headerConfig) {
 			headerConfig.addEventListener(EVENT.CLICK, () => {
-				if (rightPanel.isClose()) {
+				let config = this.getElement('aonConfig');
+				if (!rightPanel.isClose() && config) {
+					rootPanel.style.marginRight = '0px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
+					rightPanel.close();
+				} else {
 					rootPanel.style.marginRight = '321px';
+					rightPanel.clear();
+					editButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
 					rightPanel.open();
-				} else {
-					rootPanel.style.marginRight = '0px';
-					rightPanel.close();
 				}
 			});
 		}
@@ -133,27 +132,40 @@ export class AonHome extends AonElement {
 		let headerHelp = this.getElement('aonHeaderHelp');
 		if (headerHelp) {
 			headerHelp.addEventListener(EVENT.CLICK, () => {
-				if (rightPanel.isClose()) {
+				let help = this.getElement('aonHelp');
+				if(!rightPanel.isClose() && help) {
+					editButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
+					rootPanel.style.marginRight = '0px';
+					rightPanel.close();
+				} else {
 					rootPanel.style.marginRight = '321px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
+					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
 					rightPanel.open();
-				} else {
-					rootPanel.style.marginRight = '0px';
-					rightPanel.close();
 				}
 			});
 		}
-		
+
 		let headerUser = this.getElement('aonHeaderUser');
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {
-				if(rightPanel.isClose()) {
+				let user = this.getElement('aonLoginPanel');
+				if(!rightPanel.isClose() && user) {
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
+					rightPanel.close();
+				} else  {
+					rightPanel.clear();
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);
+					rootPanel.style.marginRight = '0px';
+					editButton.style.visibility = 'visible';
+					title.style.marginLeft = '39px';
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
-				} else  {
-					rightPanel.close();
 				}
 			});
 		}
@@ -173,5 +185,6 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
 	}
+	
 }
 window.customElements.define('aon-home', AonHome);

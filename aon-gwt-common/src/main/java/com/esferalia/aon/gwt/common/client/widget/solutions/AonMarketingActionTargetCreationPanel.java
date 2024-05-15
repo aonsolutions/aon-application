@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.json.JsonGWTUtils;
 import com.esferalia.aon.gwt.common.shared.DocumentValidator;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -92,13 +93,15 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 	private String domainName;
 	private Integer domainId;
 	private String user;
+	private Seller seller;
 	
-	public AonMarketingActionTargetCreationPanel(final String domainName,final int domain, final String user, LinkedList<Scope> aviableScopes, LinkedList<GeoZone> aviableGeozones, final MarketingAction marketingAction, final AonMarketingActionTargetCreationPanelCallback aonMarketingActionTargetCreationPanelCallback) {
+	public AonMarketingActionTargetCreationPanel(final String domainName,final int domain, final String user, LinkedList<Scope> aviableScopes, LinkedList<GeoZone> aviableGeozones, final MarketingAction marketingAction, Seller seller, final AonMarketingActionTargetCreationPanelCallback aonMarketingActionTargetCreationPanelCallback) {
 		this.aviableGeozones = aviableGeozones;
 		this.marketingAction = marketingAction;
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
+		this.seller = seller;
 		initializeCommonService();
 		show(aonMarketingActionTargetCreationPanelCallback);
 	}
@@ -707,6 +710,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		+ "<br>"
 		+ "      &ensp; &ensp;\"id\":\"" + marketingAction.getId() + "\",\n"
 		+ "<br>"
+		+ "      &ensp; &ensp;\"seller\":\"" + (null == seller ? "" : seller.getId()) + "\",\n"
+		+ "<br>"
 		+ "   &ensp;},\n"
 		+ "\n"
 		+ "   &ensp;\"target\":{\n"
@@ -797,6 +802,7 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 		JSONObject action = new JSONObject();
 		action.put("id", new JSONString(marketingAction.getId().toString()));
+		action.put("seller", new JSONString(null == seller ? "" : seller.getId().toString()));
 		actionTarget.put("marketingAction", action);
 		
 		JSONObject target = new JSONObject();

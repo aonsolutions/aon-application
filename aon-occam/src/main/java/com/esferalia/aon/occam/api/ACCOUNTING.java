@@ -129,8 +129,7 @@ public class ACCOUNTING {
 		}
 	}
 	
-	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName,
-			int domain, String user) {
+	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName, int domain, String user) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
 			return getAccounting().getDomainPeriods(ctx);
 		}
@@ -138,6 +137,15 @@ public class ACCOUNTING {
 
 	public static AccountPeriod getPeriod(AONContext ctx, Date date) {
 		return getAccounting().getPeriod(ctx, date);
+	}
+
+	public static AccountPeriod ensurePeriod(Occam occam, Integer domain, Date date) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().ensurePeriod(ctx, domain, date);
+		}
+	}
+	public static AccountPeriod ensurePeriod(AONContext ctx, Integer domain, Date date) {
+		return getAccounting().ensurePeriod(ctx, domain, date);
 	}
 
 	public static AccountPeriod getPeriodByYear(AONContext ctx, int year) {
@@ -424,10 +432,13 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static Account save(AONContext ctx, Account account) {
+		return getAccounting().save(ctx, account);
+	}
 
 	public static Account save(String domainName, int domain, String user, Account account) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getAccounting().save(ctx, account);
+			return save(ctx, account);
 		}
 	}
 

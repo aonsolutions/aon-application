@@ -4,6 +4,7 @@ import * as MSG_CAT from './msg-cat.js';
 import * as MSG_ES from './msg-es.js';
 import * as MSG_GAL from './msg-gal.js';
 import * as MSG_DE from './msg-de.js';
+import * as MSG_FR from './msg-fr.js';
 import { Language } from '../models/Language.js';
 
 let language = localStorage.getItem('aon_language') || Language.SPANISH;
@@ -20,7 +21,9 @@ if(Language.ENGLISH === language) {
   MSG = MSG_GAL;
 } else if(Language.DEUTSCH == language){
   MSG = MSG_DE;
-} else {
+} else if(Language.FRENCH == language){
+  MSG = MSG_FR;
+}else {
   MSG = MSG_ES;
 }
 
@@ -132,7 +135,7 @@ export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
 export const COMMERCE = MSG.COMMERCE;
-export const COMMERCIAL = 'Comercial'; // TODO
+export const COMMERCIAL = MSG.COMMERCIAL;
 export const COMMERCIAL_NAME = 'Nombre Comercial'; // TODO
 export const COMMERCIAL_PRODUCT = 'Producto Comercial'; // TODO
 export const COMMUNICATE = "Comunicar";// TODO
@@ -267,12 +270,13 @@ export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";//TODO
 export const FILTERS = "Filtros";//TODO
 export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
-export const FISCAL = 'Fiscal';//TODO
+export const FISCAL = MSG.FISCAL;
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 export const FROM = MSG.FROM;
+export const FRENCH = MSG.FRENCH;
 
 // ----- G
 
@@ -285,6 +289,7 @@ export const GROUP_DATA = MSG.GROUP_DATA;
 export const GROUP_MANAGEMENT = MSG.GROUP_MANAGEMENT;
 export const GROUP = MSG.GROUP;
 export const GROUPS = MSG.GROUPS;
+export const GROUPWARE = MSG.GROUPWARE;
 export const GROUPED = "Agrupadas";//TODO
 
 // ----- H
@@ -393,7 +398,7 @@ export const LOADING = MSG.LOADING;
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
 export const MARK_EXIT = MSG.MARK_EXIT;
-export const MARKETING = 'Marketing'; // TODO
+export const MARKETING = MSG.MARKETING;
 export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
@@ -468,7 +473,7 @@ export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
-export const PAYROLL = "Laboral";//TODO
+export const PAYROLL = MSG.PAYROLL;
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;
 export const PENDING = MSG.PENDING;
@@ -647,7 +652,7 @@ export const TOTAL = MSG.TOTAL;
 export const TOTAL_SUPPLIED = MSG.TOTAL_SUPPLIED;
 export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
-export const TREASURY = 'Tesoreria'; // TODO
+export const TREASURY = MSG.TREASURY; 
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
 export const TASK_TRAY = "Bandeja Tareas";//TODO

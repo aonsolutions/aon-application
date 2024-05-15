@@ -26,6 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -51,7 +52,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private static enum COLS {
 		DES("Cliente Potencial"						,"auto"  ,null)
-		, COM(AON.MSG.comments()					,"30rem" ,null)
+		, COM(AON.MSG.comments()					,"37rem" ,null)
 		, STA(AON.MSG.status()						,"150px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
@@ -213,13 +214,28 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
 		col++;
 		
+		HTMLPanel commentsPanel = new HTMLPanel("");
+		commentsPanel.setStyleName(AON.CSS.aonItemFlex());
+		commentsPanel.getElement().getStyle().setProperty("justify-content", "space-between");
+		
 		Label comments = new Label(marketingActionTarget.getComments());
 		comments.setTitle(marketingActionTarget.getComments());
-		comments.getElement().getStyle().setProperty("max-width", "29rem");
+		comments.getElement().getStyle().setProperty("max-width", "35rem");
 		comments.getElement().getStyle().setProperty("white-space", "nowrap");
 		comments.getElement().getStyle().setProperty("overflow", "hidden");
 		comments.getElement().getStyle().setProperty("text-overflow", "ellipsis");
-		tab.setWidget(r, col, comments);
+		commentsPanel.add(comments);
+		
+		if(AonStringUtils.isNotBlank(marketingActionTarget.getComments())) {
+			AonTableButton showFullComment = new AonTableButton("Ver comentario completo", AON.CSS.aonIconVisibility());
+			showFullComment.addClickHandler(e -> {
+        		AonDialog dialog = new AonDialog(marketingActionTarget.getName() + " (Comentarios)", new Label(marketingActionTarget.getComments()));
+    			dialog.info();
+			});
+			commentsPanel.add(showFullComment);
+		}
+		
+		tab.setWidget(r, col, commentsPanel);
 		col++;
 		
 		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));
@@ -228,6 +244,34 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		
+		if(marketingActionTarget.hasProjectCommercial()) {
+			AonTableButton deleteProjectCommercial;
+			deleteProjectCommercial = new AonTableButton("Eliminar Operaci\u00f3n Comercial", AON.CSS.aonIconWorkOff());
+			deleteProjectCommercial.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					deleteProjectCommercial.setEnabled(false);
+					AonDialog dialog = new AonDialog("Eliminaci\u00f3n Operaci\u00f3n Comercial",
+							new HTML("Se va a proceder a eliminar la operaci\u00f3n comercial del cliente potencial <b>" + marketingActionTarget.getName() + "</b> de la acci\u00f3n <b>" + marketingActionTarget.getMarketingAction().getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+					
+					dialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							deleteProjectCommercial.setEnabled(true);
+						}
+	
+						@Override
+						public void onAccept() {
+							deleteProjectCommercial(marketingActionTarget);
+						}
+					});
+				}
+			});
+			buttonContainer.add(deleteProjectCommercial);
+		}
+		
 		AonTableButton button;
 		button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 		button.addClickHandler( new ClickHandler() {
@@ -235,7 +279,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				button.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Acci\u00f3n",
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cliente Potencial",
 						new HTML("Se va a proceder a eliminar al cliente potencial <b>" + marketingActionTarget.getName() + "</b> de la acci\u00f3n <b>" + marketingActionTarget.getMarketingAction().getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 				
 				dialog.confirm(new AonAcceptDialogCallback() {
@@ -252,7 +296,6 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 				});
 			}
 		});
-		
 		
 		buttonContainer.add(button);
 		
@@ -303,6 +346,35 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			public void onSuccess(Void result) {
 				resetSearchOffset();
 				reloadMarketingAction();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error borrado: " + caught.getMessage());
+			}
+		});
+	}
+
+	private void deleteProjectCommercial(MarketingActionTarget marketingActionTarget) {
+		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProjectCommercial(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				
+				marketingActionTarget.setActionTargetStatus((byte)0); // Pendiente
+				COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
+					
+					@Override
+					public void onSuccess(MarketingActionTarget marketingActionTarget) {	
+						resetSearchOffset();
+						reloadMarketingAction();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						onShowErrorMessage("Error saveMarketingActionTarget(): " + caught.getMessage());
+					}
+				});
 			}
 			
 			@Override

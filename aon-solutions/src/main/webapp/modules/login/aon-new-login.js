@@ -368,6 +368,8 @@ export class AonNewLogin extends AonElement {
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
+        LS.setLeftMenu(true);
+        LS.setTopMenu(true);
         getCompanies().then(companies => {
           this.getModule().stopLoading();
           
@@ -429,6 +431,7 @@ export class AonNewLogin extends AonElement {
     if (event.keyCode === 13) {
       event.preventDefault();
       this.getElement("aonLoginSignin").click();
+
     }
   }
   

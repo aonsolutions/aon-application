@@ -78,6 +78,7 @@ export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
 export const COMMERCE = 'Comerç'
+export const COMMERCIAL = 'Comercial';
 export const COMMUNICATION = 'Comunicació';
 export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
@@ -175,8 +176,10 @@ export const FILE_DATA = `Dades de l'Fitxer`;
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
+export const FISCAL = 'Fiscal';
 export const FOOTER = 'Peu';
 export const FROM = 'Des'
+export const FRENCH = 'Francès';
 // ----- G
 
 export const GALICIAN = 'Gallec';
@@ -186,6 +189,7 @@ export const GET_INVOICES = 'Obtenir Factures';
 export const GROUP_DATA = 'Dades de el Grup';
 export const GROUP_MANAGEMENT = `Gestió d'Grups`;
 export const GROUP = 'Grup';
+export const GROUPWARE = 'Expedients';
 export const GROUPS = 'Grups';
 
 // ----- H
@@ -248,6 +252,7 @@ export const LOCATION = 'Ubicació';
 
 // ----- M
 
+export const MARKETING = 'Màrqueting';
 export const MARK_ENTRY = 'Marcar Entrada';
 export const MARK_EXIT = 'Marcar Sortida';
 export const MANAGEMENT = 'Gestió';
@@ -306,7 +311,7 @@ export const PARENT_APPS = "Aplicacions del pare";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contrasenya';
 export const PAYMETHOD = 'Forma de Pagament';
-export const PAYROLL = "Nómina";
+export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nòmina';
 export const PAYSHEETS = 'Nòminas';
 export const PENDING = 'Pendent';
@@ -432,6 +437,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Bestretes';
 export const TRANSACTION_TYPE = 'Tipus de Transacció';
 export const TRASH = 'Paperera';
+export const TREASURY = 'Tresoreria';
 export const TYPE = 'Tipus';
 export const TYPES = 'Tipues';
 

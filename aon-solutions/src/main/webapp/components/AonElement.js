@@ -148,7 +148,7 @@ export class AonElement extends HTMLElement{
     return new Promise((resolve, reject) => {
       getDomainUserRoles({}).then(r => {
         this.dur = new DomainUserRoles(r);
-        resolve(this.dur);
+        resolve(this.dur);  
       }).catch(e => reject(e));
     });
   }

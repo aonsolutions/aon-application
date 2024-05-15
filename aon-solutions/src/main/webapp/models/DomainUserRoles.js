@@ -693,4 +693,21 @@ export class DomainUserRoles {
   isDomainPayer() {
     return this.domainPayer;
   }
+
+
+  isOffice() {
+    return this.getDomain().getDomainType() == 'OFFICE';
+  }
+
+  isGarage(){
+    return this.getDomain().getDomainType() == 'GARAGE';
+  }
+
+  isAcademy(){
+    return this.getDomain().getDomainType() == 'ACADEMY';
+  }
+
+  isCommerce(){
+    return this.getDomain().getDomainType() == 'COMMERCE';
+  }
 }

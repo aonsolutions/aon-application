@@ -79,6 +79,7 @@ export const CODE = 'Code';
 export const COMMENT = 'Kommentar';
 export const COMMENTS = 'Kommentare';
 export const COMMERCE = 'Handel';
+export const COMMERCIAL = 'Kommerziell';
 export const COMMUNICATION = 'Kommunikation';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -176,8 +177,10 @@ export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Finden Sie verknüpfte Domains";
+export const FISCAL = 'Finanzielle';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
+export const FRENCH = 'Französisch';
 
 // ----- G
 
@@ -188,6 +191,7 @@ export const GET_INVOICES = 'Rechnungen Bekommen';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
+export const GROUPWARE = 'Dateien';
 export const GROUPS = 'Groups';
 
 // ----- H
@@ -250,6 +254,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Eintrag markieren';
 export const MARK_EXIT = 'Ausgang markieren';
 export const MANAGEMENT = 'Verwaltung';
@@ -308,7 +313,7 @@ export const PARENT_APPS = 'Vater-Apps';
 export const PAUSE = 'Pause';
 export const PASSWORD = 'Passwort';
 export const PAYMETHOD = 'Payment Method';
-export const PAYROLL = 'Payroll';
+export const PAYROLL = 'Arbeit';
 export const PAYSHEET = 'Paysheet';
 export const PAYSHEETS = 'Paysheets';
 export const PENDING = 'Ausstehend';
@@ -434,6 +439,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
 export const TRANSACTION_TYPE = 'Transaction Type';
 export const TRASH = 'Trash';
+export const TREASURY = 'Finanzministerium';
 export const TYPE = 'Type';
 export const TYPES = 'Types';
 
