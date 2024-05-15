@@ -289,7 +289,11 @@ public class ContextFunctions {
 				})
 		{
 			for ( ITimedVariable<Object> variable : context.getVariables(name) ) {
-				if ( variable.getPeriod().contains(sectionDate)) {
+				if ( variable.getPeriod().contains(sectionDate)  ) {
+					
+					if ( variable.getPeriod().getEnd().equals(sectionDate) ) { 
+						continue;
+					}
 					
 					Period varPeriod = variable.getPeriod();
 					Double varValue = 0.00;

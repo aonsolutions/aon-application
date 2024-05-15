@@ -144,6 +144,25 @@ public class OCRInvoice implements Serializable {
 		this.recipientAddressDetails = recipientAddressDetails;
 		return this;
 	}
+	public Optional<String> getReferenceCode() {
+		StringBuilder reference = null;
+		Optional<String> optSeries = getSeriesCode().flatMap( o -> o.getValue() );
+		if (optSeries.isPresent()) {
+			reference = new StringBuilder();
+			reference.append( optSeries.get() );
+		}
+		Optional<String> optDocument = getDocumentNumber().flatMap( o -> o.getValue() );
+		if (optDocument.isPresent()) {
+			if (reference == null) {
+				reference = new StringBuilder();
+			} else {
+				reference.append("/");
+			}
+			reference.append(optDocument.get());
+		}
+		return (reference == null)?Optional.ofNullable(null): Optional.ofNullable(reference.toString()); 
+	}
+	
 	public Optional<OCRString> getDocumentNumber() {
 		return Optional.ofNullable(documentNumber);
 	}

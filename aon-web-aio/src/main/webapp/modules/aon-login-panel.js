@@ -1,7 +1,13 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { closeSession, getAuth } from  'aonsolutions/services/service.js';
+import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
+import { AonCard } from 'aonsolutions/components/aon-card.js';
+import * as LS from 'aonsolutions/services/localStorageService.js';
+import {  getManifest} from "aonsolutions/services/service.js";
+import { AonSwitch } from "aonsolutions/components/aon-switch.js";
+import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
 
 export class AonLoginPanel extends AonElement {
 

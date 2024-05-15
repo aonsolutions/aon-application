@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
@@ -385,18 +383,18 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContext> INVOICE_REFERENCE_CODE = ocr -> {
 	    
 	    try {
-		fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
+	    	fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
 	    } catch (OCRZeroValueException e) {
-		ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+	    	ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
 	    } catch (OCRBlankValueException e) {
-		ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
+	    	ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
 	    }
 	};
 	
 	public static void fillReferenceCode(OCRInvoice ocrInvoice, Invoice invoice) throws OCRZeroValueException, OCRBlankValueException {
-		Optional<String> optDocument = ocrInvoice.getDocumentNumber().flatMap( o -> o.getValue() );
-		if (optDocument.isPresent()) {
-			String reference = optDocument.orElse(null);
+		Optional<String> optReference = ocrInvoice.getReferenceCode();
+		if (optReference.isPresent()) {
+			String reference = optReference.orElse(null);
 			if (!invoice.isSales()) {
 				invoice.setReferenceCode(reference);		
 			} 
@@ -472,10 +470,10 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_SOURCE = ocr -> 
-		ocr.getDetail().setSource( InvoiceSource.DIRECT_INVOICE );
+		ocr.getDetail().setSource( InvoiceSource.TEDI );
 		
 	public static final void fillDetailSource(InvoiceDetail detail) {
-	    detail.setSource( InvoiceSource.DIRECT_INVOICE );
+	    detail.setSource( InvoiceSource.TEDI );
 	}
 	
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
@@ -663,7 +661,6 @@ public class OCRInvoiceBuilder {
 			.forEach( ocrBreakdown ->
         			{
         			   InvoiceDetail detail = new InvoiceDetail();
-        			   
         			   fillDetailFromBreakdownDescription(ocrBreakdown, detail);
         			   fillDetailSource(detail);
         			   fillDetailAmountsFromBreakdown(ocrBreakdown, detail);

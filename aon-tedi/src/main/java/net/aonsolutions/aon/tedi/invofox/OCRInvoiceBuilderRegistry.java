@@ -131,7 +131,7 @@ class OCRInvoiceBuilderRegistry {
 				
 				if(invoice.getAddress() == null || invoice.getAddress().isEmpty()) {
 					RegistryAddress address = RegistryAddressDAO.getMain(aonCtx, ar.getId());
-					if(!address.isEmpty()) {
+					if(address != null && !address.isEmpty()) {
 						invoice.setAddress(address);
 						invoice.setRegistryAddress(address.getId());
 					}

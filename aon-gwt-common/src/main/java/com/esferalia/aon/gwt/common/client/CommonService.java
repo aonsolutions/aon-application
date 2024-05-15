@@ -31,11 +31,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -179,5 +181,15 @@ public interface CommonService extends RemoteService {
 	
 	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException;
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
+
+	List<User> getAviableServiceUsers(String domainName, int domain, String user) throws AonCoreException;
+	
+	// **************************************************
+	// ***************************** [PROJECT COMMERCIAL]
+	// **************************************************
+	
+	Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolder) throws AonCoreException;
+	ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) throws AonCoreException;
+	void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial) throws AonCoreException;
 
 }

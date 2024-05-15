@@ -9,7 +9,7 @@ import {AonUserList} from '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import { MSG } from '../../environments/environments.js';
 import { AonUser } from '../user/aon-user.js';
-import '../../css/aon.css';
+import 'aoncss';
 
 export class AonUserPanel extends AonElement {
 

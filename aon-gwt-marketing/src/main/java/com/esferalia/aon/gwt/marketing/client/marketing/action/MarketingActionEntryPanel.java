@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.action;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +23,21 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTa
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetPanel.AonMarketingActionTargetPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -99,6 +105,8 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	private SuggestBox newsletterSuggestBox = new SuggestBox();
 	private List<Newsletter> newsletter = new ArrayList<>();
 	
+	private Integer projectCommercialIndx = 0;
+	
 	
 	// MarketingAction Search
 	private FlowPanel searchPanel;
@@ -164,11 +172,31 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	}
 
 	private void importActionTarget() {
+		if(AonStringUtils.isBlank(taskHolder.getSelectedValue()))
+			importActionTarget(null);
+		else {
+			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
+				
+				@Override
+				public void onSuccess(Seller seller) {
+					importActionTarget(seller);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error getSellerByTaskHolder(): " + caught.getMessage());
+				}
+				
+			});
+		}
+	}
+	
+	private void importActionTarget(Seller seller) {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption( "Ejemplo formulario web (API)" );
 		dialog.showCloseButton(true);
 		
-		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), this.marketingAction, new AonMarketingActionTargetCreationPanelCallback() {
+		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), marketingAction, seller, new AonMarketingActionTargetCreationPanelCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -435,6 +463,11 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		endDate.setValue(marketingAction.getEndDate());
 		table.setWidget(4, 3, endDate);
 		
+		// Accion Comercial
+		AonTableButton projectCommercialBtn = new AonTableButton("Crear operaci\u00f3n comercial", AON.CSS.aonIconWork());
+		projectCommercialBtn.setEnabled(false);	
+		projectCommercialBtn.addClickHandler(e -> createProjectCommercial());
+		
 		workgroup = new ListBox();
 		addSelectStyle(workgroup.getElement());
 		workgroup.addItem("-", "");
@@ -443,6 +476,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				taskHolder.setSelectedIndex(0);
 				taskHolder.setVisible(false);
 				taskHolderLabel.setVisible(false);
+				projectCommercialBtn.setEnabled(false);	
 			} else {
 				taskHolder.setVisible(true);
 				taskHolderLabel.setVisible(true);
@@ -457,33 +491,39 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		taskHolder = new ListBox();
 		addSelectStyle(taskHolder.getElement());
 		taskHolder.addItem("-", "");
+		taskHolder.addChangeHandler(e -> {
+			projectCommercialBtn.setEnabled(AonStringUtils.isNotBlank(taskHolder.getSelectedValue()));	
+		});
 		
 		getAviableWorkgroups(workgroups -> {
 			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
 			setSelectedValueLB(workgroup, null != marketingAction.getWorkgroup() ? marketingAction.getWorkgroup().getId().toString() : null);
 			
-			if(null != marketingAction.getWorkgroup()) {
+			if(null != marketingAction.getWorkgroup()) {	
 				getAviableTaskHolders(marketingAction.getWorkgroup().getId(), taskHolders -> {
 					taskHolder.clear();
 					taskHolder.addItem("-", ""); 
 					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
 					setSelectedValueLB(taskHolder, null != marketingAction.getTaskHolder() ? marketingAction.getTaskHolder().getRegistry().toString() : null);
 					taskHolderLabel.setVisible(true);
+					projectCommercialBtn.setEnabled(null != marketingAction.getTaskHolder());	
 				});
 			} else {
 				taskHolder.setVisible(false);
 				taskHolderLabel.setVisible(false);
+				projectCommercialBtn.setEnabled(false);	
 			}	
 		});
 		
-		table.setWidget(5, 0, new InlineLabel("Grupo trabajo"));
+		table.setWidget(5, 0, new InlineLabel("Grupo comercial"));
 		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
 		table.setWidget(5, 1, workgroup);
 		
 		table.setWidget(5, 2, taskHolderLabel);
 		table.getCellFormatter().setStyleName(5, 2, AON.CSS.aonTableLabel());
 		table.setWidget(5, 3, taskHolder);
-
+		table.setWidget(5, 4, projectCommercialBtn);
+		
 		table.setWidget(6, 0,new InlineLabel("Noticia"));
 		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
 		newsSuggestBox.setStyleName(AON.CSS.aonInputText());
@@ -546,7 +586,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		
 		table.setWidget(9, 0, new InlineLabel("Formulario Web"));
 		table.getCellFormatter().setStyleName(9, 0, AON.CSS.aonTableLabel());
-		Label webForm = new Label("Pinche aqu\u00ed para ver un ejemplo del formulario web (API)");
+		Label webForm = new Label("Ejemplo del formulario web (API)");
 		webForm.addStyleName(AON.CSS.aonItemFlex());
 		webForm.getElement().getStyle().setProperty("cursor", "pointer");
 		addInputStyle(webForm.getElement());
@@ -794,6 +834,106 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	// Project Comercial
+	private void createProjectCommercial() {
+		if(AonStringUtils.isBlank(taskHolder.getSelectedValue()))
+			AonMessagePanel.showError(messagePanel, "No se ha seleccionado ningun task holder. Esto es requerido para poder crear una acci\u00f3n comercial");
+		else {
+			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
+				
+				@Override
+				public void onSuccess(Seller seller) {
+					if(seller == null)
+						AonMessagePanel.showError(messagePanel, "El task holder seleccionado no tiene un comercial asociado. Pruebe con otro task holder");
+					else
+						createProjectCommercial(seller);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error getSellerByTaskHolder(): " + caught.getMessage());
+				}
+				
+			});
+			
+		}
+	}
+	
+	private void createProjectCommercial(Seller seller) {
+		AonMessagePanel.showLoading(messagePanel, "Creando operaciones comerciales para cada lead de la acción " + marketingAction.getDescription() + " ...");
+		projectCommercialIndx = 0;
+		createProjectCommercial(seller, projectCommercialIndx);
+		
+	}
+	
+	private void createProjectCommercial(Seller seller, Integer indx) {
+		MarketingActionTarget target = marketingAction.getTargets().get(indx);
+		
+		if(target.getActionTargetStatus() == (byte)0) { // Pendiente
+		
+			AonMessagePanel.showLoading(messagePanel, "Creando operaci\u00f3n comercial para el lead '" + target.getName() + "' ...");
+			
+			ProjectCommercial projectCommercial = new ProjectCommercial()
+					.copy(new Project()
+						.setDomain(target.getDomain())
+						.setRegistry(target.get())
+						.setName(marketingAction.getDescription())
+						.setDate(new Date())
+						.setTas(false)
+						.setCommercial(true)
+						.setReservation(false)
+						.setActive(true)
+					)
+					.setTarget(target.getId())
+					.setSeller(seller.getId())
+					.setComments(target.getComments())
+					.setSource((byte)3)
+					.setStatus((byte)0)
+					.setStatusDate(new Date())
+					.setProbability(0);
+			
+			commonService.saveProjectCommercial(options.getDomainName(), options.getDomain(), options.getUser(), projectCommercial, new AsyncCallback<ProjectCommercial>() {
+				
+				@Override
+				public void onSuccess(ProjectCommercial projectCommercial) {
+					target.setActionTargetStatus((byte)6); // Enviado
+					commonService.saveMarketingActionTarget(options.getDomainName(), options.getDomain(), options.getUser(), target, new AsyncCallback<MarketingActionTarget>() {
+						
+						@Override
+						public void onSuccess(MarketingActionTarget marketingActionTarget) {
+							if(indx == (marketingAction.getTargets().size() - 1)) {
+								AonMessagePanel.showSuccess(messagePanel, "Operaciones comerciales creadas correctamente");
+								marketingActionPanel.resetSearchOffset();
+								setMarketingAction(marketingAction);
+							} else {
+								createProjectCommercial(seller, projectCommercialIndx++);
+							}
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error saveMarketingActionTarget(): " + caught.getMessage());
+						}
+					});
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error saveProjectCommercial(): " + caught.getMessage());
+				}
+				
+			} );
+		
+		} else {
+			if(indx == (marketingAction.getTargets().size() - 1)) {
+				AonMessagePanel.showSuccess(messagePanel, "Operaciones comerciales creadas correctamente");
+				marketingActionPanel.resetSearchOffset();
+				setMarketingAction(marketingAction);
+			} else createProjectCommercial(seller, projectCommercialIndx++);
+		}
+		
 	}
 	
 	private void getNewsSuggestion(Consumer<Void> success) {

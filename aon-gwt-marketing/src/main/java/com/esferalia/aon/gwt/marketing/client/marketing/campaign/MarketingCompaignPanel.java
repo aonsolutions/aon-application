@@ -273,7 +273,7 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		tab.setWidget(row, col, budget);
 		col++;
 		
-		Label budgetAcumulate = new Label(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		Label budgetAcumulate = new Label(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
 		budgetAcumulate.addStyleName(AON.CSS.aonTextRight());
 		tab.setWidget(row, col, budgetAcumulate);
 		col++;
@@ -283,7 +283,7 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		tab.setWidget(row, col, expense);
 		col++;
 		
-		Label expenseAcumulate = new Label(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		Label expenseAcumulate = new Label(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
 		expenseAcumulate.addStyleName(AON.CSS.aonTextRight());
 		tab.setWidget(row, col, expenseAcumulate);
 		col++;

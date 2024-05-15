@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
@@ -285,9 +287,10 @@ public class ProjectDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ProjectHolderDAO.delete(ctx, f -> f.getProjectProperty().eq(id));
 		ProjectActivityDAO.delete(ctx, f -> f.getProjectProperty().eq(id));
+		deleteProjectCommercial(ctx, id);
 		delete(ctx, f -> f.getIdProperty().eq(id));
 	}
-	
+
 	private static void delete(AONContext ctx, ProjectFilter filter) {
 		ctx.getDslContext().delete(PROJECT)
 		.where(PROJECT_PROPERTIES.getConditions(filter))
@@ -308,12 +311,48 @@ public class ProjectDAO {
 				.returning(PROJECT.ID).fetchOne().getId();
 	}
 	
+	public static ProjectCommercial saveProjectCommercial(CloseableAONContext ctx, ProjectCommercial projectCommercial) {
+		Optional<ProjectCommercial> existingProjectCommercial = getProjectCommercialStream(ctx, 
+				f -> f.getNameProperty().eq(projectCommercial.getName())
+					.and(f.getDateProperty().eq(AonDateUtils.toSql(projectCommercial.getDate())))
+					.and(f.getSellerProperty().eq(projectCommercial.getSeller()))
+					.and(f.getTargetProperty().eq(projectCommercial.getTarget()))).findFirst();
+		
+		if(!existingProjectCommercial.isPresent()) {
+			
+			if(projectCommercial.getId() == null) {
+				save(ctx, projectCommercial);
+				insertProjectCommercial(ctx, projectCommercial);
+			} else {
+				updateProjectCommercial(ctx, projectCommercial);
+			}
+			
+		}
+		
+		return projectCommercial;
+	}
+	
 	public static Integer insertProjectCommercial(AONContext ctx, ProjectCommercial pc){
 		ctx.getDslContext().insertInto(PROJECT_COMMERCIAL, PROJECT_COMMERCIAL.PROJECT, PROJECT_COMMERCIAL.DOMAIN, PROJECT_COMMERCIAL.TARGET, PROJECT_COMMERCIAL.SELLER,
 				PROJECT_COMMERCIAL.SOURCE, PROJECT_COMMERCIAL.COMMENTS, PROJECT_COMMERCIAL.STATUS, PROJECT_COMMERCIAL.STATUS_DATE)
 				.values(pc.getId(), ctx.getDomainId(), pc.getTarget(), pc.getSeller(), pc.getSource(), pc.getComments(), pc.getStatus(), AonDateUtils.toSql(pc.getStatusDate())).execute();
 		
 		return pc.getId();
+	}
+	
+	public static Integer updateProjectCommercial(AONContext ctx, ProjectCommercial pc){
+		ctx.getDslContext().update(PROJECT_COMMERCIAL)
+			.set(PROJECT_COMMERCIAL.SOURCE, pc.getSource())
+			.set(PROJECT_COMMERCIAL.COMMENTS, pc.getComments())
+			.set(PROJECT_COMMERCIAL.STATUS, pc.getStatus())
+			.set(PROJECT_COMMERCIAL.STATUS_DATE, AonDateUtils.toSql(pc.getStatusDate()))
+			.execute();
+		
+		return pc.getId();
+	}
+	
+	private static void deleteProjectCommercial(AONContext ctx, Integer id) {
+		ctx.getDslContext().delete(PROJECT_COMMERCIAL).where(PROJECT_COMMERCIAL.PROJECT.eq(id)).execute();
 	}
 	
 	private static class FullProjectReservationFiller implements Function<ProjectReservationRecord, ProjectReservation> {
@@ -468,4 +507,5 @@ public class ProjectDAO {
 			}
 		});
 	}
+	
 }

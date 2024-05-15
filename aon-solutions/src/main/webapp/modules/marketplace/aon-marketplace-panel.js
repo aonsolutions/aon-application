@@ -2,7 +2,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 import './aon-booking.js';
-import '../../css/aon.css'
+import 'aoncss'
 // CONSTANTS
 import { CONSTANT, MSG } from '../../environments/environments.js'; 
 

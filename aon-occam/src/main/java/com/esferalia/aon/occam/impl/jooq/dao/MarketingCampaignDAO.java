@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.MkAction.MK_ACTION;
 import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
 import static com.esferalia.aon.jooq.tables.MkCampaign.MK_CAMPAIGN;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
@@ -388,8 +390,14 @@ public class MarketingCampaignDAO {
 		List<MarketingActionTarget> marketingActionTargets = ctx.getDslContext().select().from(MK_ACTION_TARGET)
 				.join(TARGET)
 				.on(TARGET.REGISTRY.eq(MK_ACTION_TARGET.TARGET))
+				.join(TargetDAO.TARGET_ALIAS).on(TargetDAO.TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
 				.leftOuterJoin(USER)
 				.on(USER.ID.eq(MK_ACTION_TARGET.USER))
+				.leftOuterJoin(PROJECT_COMMERCIAL)
+				.on(PROJECT_COMMERCIAL.TARGET.eq(TARGET.REGISTRY))
+				.leftOuterJoin(PROJECT)
+				.on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT).and(PROJECT.NAME.eq(marketingAction.getDescription())))
 				.where(MK_ACTION_TARGET.DOMAIN.eq(marketingAction.getDomain()))
 				.and(MK_ACTION_TARGET.ACTION.eq(marketingAction.getId()))
 				.fetch()
@@ -410,6 +418,10 @@ public class MarketingCampaignDAO {
 				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
 				.leftOuterJoin(USER)
 				.on(USER.ID.eq(MK_ACTION_TARGET.USER))
+				.leftOuterJoin(PROJECT_COMMERCIAL)
+				.on(PROJECT_COMMERCIAL.TARGET.eq(TARGET.REGISTRY))
+				.leftOuterJoin(PROJECT)
+				.on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT).and(PROJECT.NAME.eq(params.getMarketingAction().getDescription())))
 				.where(condition)
 				.orderBy(TargetDAO.TARGET_ALIAS.NAME)
 				.limit(params.getOffset(), params.getLimit())
@@ -569,6 +581,8 @@ public class MarketingCampaignDAO {
 					.setSurveyResponse(r.getValue(MK_ACTION_TARGET.SURVEY_RESPONSE))
 					.setComments(r.getValue(MK_ACTION_TARGET.COMMENTS))
 					.setUser(null == r.getValue(USER.ID) ? null : UserFiller.build(r))
+					.setHasProjectCommercial(null != r.getValue(PROJECT_COMMERCIAL.PROJECT))
+					.setProjectCommercial(r.getValue(PROJECT_COMMERCIAL.PROJECT))
 				;
 		}
 	}
