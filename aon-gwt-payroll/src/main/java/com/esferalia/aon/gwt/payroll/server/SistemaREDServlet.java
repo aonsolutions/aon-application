@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.SistemaRED2AON.CalcsCallback;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
@@ -193,47 +195,85 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 		}
 		
-		try ( OutputStream os = resp.getOutputStream();
-			Writer writer = new OutputStreamWriter(os)){
-			for ( CCC ccc: cccs ) {
-				
+		
+		CalcsCallback calcsCallback = new CalcsCallback() {
+			int cccEmployees = 0;
+			int saveEmployees = 0;
+
+			void progress(Salary salary) {
 				try {
-					
-					SistemaRED2AON.addCalcs(userLogin, 
-						domainName, 
-						domainId, 
-						certificate.getData(), 
-						certificate.getPassword(), 
-						certificate.getType(), 
-						ccc.getRegime(), 
-						ccc.getCode(), 
-						startDate, 
-						endDate,
-						salary -> AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary))
-					);
-					
-					SistemaRED2AON.addCalcs(
-						userLogin, 
-						domainName, 
-						domainId, 
-						certificate.getData(), 
-						certificate.getPassword(), 
-						certificate.getType(), 
-						ccc.getRegime(), 
-						ccc.getCode(), 
-						startDate, 
-						LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
-						salary -> AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary))
-						);
-	
-	
-					writer.write(ccc.getCode());
-					writer.flush();
-				} catch ( Exception e ) {
+					if ( saveEmployees > 1) {
+						resp.getWriter().print(',');
+					}
+					resp.getWriter().printf(
+							"{"
+							+ "'progress': %d, "
+							+ "'total': %d, "
+							+ "'employeeName': '%s'"
+							+ "}", 
+							saveEmployees,
+							cccEmployees,
+							salary.getEmployeeName()
+							);
+					resp.getWriter().flush();
+				} catch (IOException e) {
 				}
-				
 			}
+			
+			@Override
+			public void accept(Salary salary) {
+				AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary));
+				this.saveEmployees += 1;
+				progress(salary);
+			}
+			
+			@Override
+			public void start(int cccEmployees) {
+				this.cccEmployees += cccEmployees;
+			}
+		};
+		
+		resp.getWriter().print("[");
+		for ( CCC ccc: cccs ) {
+			
+			try {
+				
+				SistemaRED2AON.addCalcs(userLogin, 
+					domainName, 
+					domainId, 
+					certificate.getData(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					ccc.getRegime(), 
+					ccc.getCode(), 
+					startDate, 
+					endDate,
+					calcsCallback
+				);
+				
+				SistemaRED2AON.addCalcs(
+					userLogin, 
+					domainName, 
+					domainId, 
+					certificate.getData(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					ccc.getRegime(), 
+					ccc.getCode(), 
+					startDate, 
+					LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
+					calcsCallback
+					);
+
+				
+			} catch ( Exception e ) {
+			}
+			
 		}
+		
+		resp.getWriter().print("]");
+		resp.getWriter().flush();
+
 		resp.setStatus(HttpServletResponse.SC_OK);
 		
 	}

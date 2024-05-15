@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEES;
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.SISTEMA_RED_URL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +23,8 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDProgess;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.CostExcelService;
 import com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
@@ -29,6 +33,8 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
@@ -61,6 +67,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
@@ -80,6 +88,7 @@ public class Cost extends ResizeComposite {
 	static interface Listener {
 		void onStartSLD();
 		void onFinishSLD();
+		void onProgressSLD(String message, double progress);
 		void onPublish(CostDocuments documents, String type);
 		void onNoSex(String naf, String name);
 		void onGeneratingDocument();
@@ -476,6 +485,12 @@ public class Cost extends ResizeComposite {
 			listener.onFinishSLD();
 	}
 
+	void onProgressSLD(String message, double progress) {
+		for (Listener listener : listeners)
+			listener.onProgressSLD(message, progress);
+	}
+
+
 	void onPublish(CostDocuments documents, String type) {
 		for (Listener listener : listeners)
 			listener.onPublish(documents, type);
@@ -820,7 +835,7 @@ public class Cost extends ResizeComposite {
 		formPanel.submit();
 	}
 	
-	public void syncCalcs () {
+	public void __syncCalcs () {
 		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
@@ -860,6 +875,78 @@ public class Cost extends ResizeComposite {
 		formPanel.submit();
 		
 		onStartSLD();
+		
+	}
+
+	public void syncCalcs () {
+		
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
+		
+		StringBuilder requestDataBuilder = new StringBuilder();
+		
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser());
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL());
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.DATE.name() + "=" + "01" + "/" + AonStringUtils.leftPad(Integer.toString(cost.getMonth()+1), 2 , "0") + "/" +cost.getYear());
+
+		// Send request to server and catch any errors.
+		
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDServlet.CALCS);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+		
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				
+				if (state == XMLHttpRequest.DONE) {
+					onFinishSLD();
+					costDocuments.addType(Salary.Type.L00);
+					setCheckedStyle(seeMenu.getL00(), true);
+					costDocuments.addType(Salary.Type.L13);
+					setCheckedStyle(seeMenu.getL13(), true);
+					costDocuments.addType(Salary.Type.L03);
+					setCheckedStyle(seeMenu.getL03(), true);
+					getAsHTML();
+				} else if ( state == XMLHttpRequest.LOADING ) {
+					try {
+						JsArray<JsSistemaREDProgess> jsSistemaREDProgesses = eval("("+ xhr.getResponseText() +"])");
+						int last = jsSistemaREDProgesses.length() -1 ;
+						JsSistemaREDProgess jsSistemaREDProgess = jsSistemaREDProgesses.get(last);
+						onProgressSLD(
+								"Sincronizado "
+								+ " " + jsSistemaREDProgess.getEmployeeName() 
+								+ " ( " + jsSistemaREDProgess.getProgress() 
+								+ " de " + jsSistemaREDProgess.getTotal()
+								+ " )"
+								, jsSistemaREDProgess.getProgress() / jsSistemaREDProgess.getTotal()
+								);
+						if (jsSistemaREDProgess.getProgress() >=  jsSistemaREDProgess.getTotal() ) {
+							onFinishSLD();
+							costDocuments.addType(Salary.Type.L00);
+							setCheckedStyle(seeMenu.getL00(), true);
+							costDocuments.addType(Salary.Type.L13);
+							setCheckedStyle(seeMenu.getL13(), true);
+							costDocuments.addType(Salary.Type.L03);
+							setCheckedStyle(seeMenu.getL03(), true);
+							getAsHTML();
+						}
+					} catch ( Exception e ) {
+						
+					}
+				} 
+	
+			}
+		});
+		
+		xhr.send(requestDataBuilder.toString());		
+		onStartSLD();
+		
+		
 		
 	}
 
@@ -988,4 +1075,8 @@ public class Cost extends ResizeComposite {
 		syncCalcs();
 	}
 	
+	private static native <T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+		return eval(javascript);
+	}-*/;
 }
