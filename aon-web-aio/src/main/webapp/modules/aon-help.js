@@ -1,7 +1,6 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
 import { AonCard } from 'aonsolutions/components/aon-card.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
 import {  getManifest} from "aonsolutions/services/service.js";
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
 import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
@@ -32,9 +31,6 @@ export class AonHelp extends AonElement {
 	}
 
 	build() {
-		LS.setToken('AONd95770f269e711eb94390242ac130002')
-
-		let rightPanel = this.getElement("aonRightPanel");
 
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;

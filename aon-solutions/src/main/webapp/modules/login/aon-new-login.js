@@ -15,12 +15,10 @@ import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
-import { AonButton } from "../../components/aon-button.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
-import * as COLORS from "../../environments/colors.js";
 import { AonEmail } from "../../components/aon-email.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 
@@ -368,6 +366,7 @@ export class AonNewLogin extends AonElement {
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
+        LS.setLanguage(Language.SPANISH);
         LS.setLeftMenu(true);
         LS.setTopMenu(true);
         getCompanies().then(companies => {

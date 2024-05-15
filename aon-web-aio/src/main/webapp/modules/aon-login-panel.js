@@ -1,6 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
+import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import {closeSession, getAuth} from  'aonsolutions/services/service.js';
+import { closeSession, getAuth } from  'aonsolutions/services/service.js';
 
 export class AonLoginPanel extends AonElement {
 
@@ -44,14 +45,15 @@ export class AonLoginPanel extends AonElement {
 		rightPanel.style.height = '200px';
 
 		let divGeneral = this.createDiv();
-		divGeneral.style.display = "flex";;
-
-		let divImagen = this.createDiv();
-		divImagen.appendChild(this.buildImage("AM"));
-		divGeneral.appendChild(divImagen);
+		divGeneral.style.display = "flex";
+		
+		let avatar = new AonAvatar();
+		avatar.setAuth(auth);
+		avatar.setScale("1.8","23px");
+		this.appendChild(avatar);
 
 		let divUserInfo = this.createDiv();
-		divUserInfo.style.marginLeft = "27px";
+		divUserInfo.style.marginLeft = "34px";
 		divUserInfo.style.marginTop = "-22px";
 		divUserInfo.style.maxWidth = "205px";
 		divUserInfo.style.marginBottom = "12px";
@@ -166,9 +168,6 @@ export class AonLoginPanel extends AonElement {
 	
 		return div;
 	}
-
-	
-
 
 }
 if(!window.customElements.get(TAG.AON_LOGIN_PANEL)){

@@ -1,11 +1,8 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import { getDomainUserRoles } from 'aonsolutions/services/service.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
-import { AonDocumentalAyudat } from 'aonsolutions/modules/documental/ayudat/aon-documental-ayudat.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
@@ -16,11 +13,9 @@ import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
 import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
-import { AonSaltra } from 'aonsolutions/modules/laboral/aon-saltra.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
 import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
-import { AonBooking } from 'aonsolutions/modules/marketplace/aon-booking.js';
 import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
@@ -217,6 +212,7 @@ export class AonNewMenu extends AonElement {
 		appDiv.id = `aonMenuLeftop-${app.app}`;
 		appDiv.style.width = '68px';
 		appDiv.style.backgroundColor = 'transparent';
+		appDiv.style.cursor = "pointer";
 		appDiv.appendChild(this.buildApp(app, {height:'48px'}));
 		div.appendChild(appDiv);
 
@@ -230,7 +226,7 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-		ul.style.marginTop = '8px';
+		ul.style.marginTop = '11px';
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {
