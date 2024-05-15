@@ -1,13 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-<<<<<<< HEAD
-import { CONSTANT, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js';
-=======
 import { getDomainUserRoles } from 'aonsolutions/services/service.js';
 import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
->>>>>>> master
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
@@ -232,11 +228,8 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-<<<<<<< HEAD
 		ul.style.marginTop = '11px';
-=======
-		ul.style.marginTop = '8px';
->>>>>>> master
+
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {

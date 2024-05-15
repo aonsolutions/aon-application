@@ -54,10 +54,7 @@ export const HomeApps = {
 	APPLICATIONS
 };
 
-<<<<<<< HEAD
 
-=======
->>>>>>> master
 export const COMERCIAL_MENU = {
 	app: "comercial",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
