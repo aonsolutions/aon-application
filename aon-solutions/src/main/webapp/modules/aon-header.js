@@ -20,11 +20,15 @@ import * as LS from '../services/localStorageService.js';
 import { Language } from '../models/Language.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonDialog } from '../components/aon-dialog.js';
+import { AonSearchBox } from '../components/aon-search-box.js';
+import { AonIconButton } from '../components/aon-icon-button.js';
+import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 
 export class AonHeader extends AonElement {
 
 	BASE_ID;
 	activeTimecontrol;
+	newTheme;
 
 	get id() {
 		return this.getAttribute('id');
@@ -71,6 +75,8 @@ export class AonHeader extends AonElement {
 		this.AON_HEADER_COMPANY_NAME = this.AON_HEADER_COMPANY + 'Name';
 		this.AON_HEADER_DIALOG_HELP_OPTION = this.BASE_ID + 'DialogHelpOption';
 		this.AON_HEADER_DIALOG_USER_OPTION = this.BASE_ID + 'DialogUserOption';
+		this.AON_HEADER_CONFIG = this.BASE_ID + 'Config';
+		this.AON_HEADER_CONFIG_BUTTON = this.BASE_ID + 'ConfigButton';
 	}
 
 	build() {
@@ -91,88 +97,116 @@ export class AonHeader extends AonElement {
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
 
-		if(LS.isNewTheme()){ // Change logo size
-			div.innerHTML = /*html*/`
-				<img id="aonLogo" class="aonNewLogo"/>
+		let aonLogo = this.createElement(TAG.IMG);
+		aonLogo.id = "aonLogo";
+		aonLogo.style.paddingLeft = '0px';
+		aonLogo.style.width = '123px';
+		aonLogo.className = LS.isNewTheme() ? "aonNewLogo" : "aonLogo";
+		div.appendChild(aonLogo);
 
-				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
-					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
-				</span>
+        let aonHeaderApp = this.createElement(TAG.DIV);
+		aonHeaderApp.id = "aonHeaderApp";
+		aonHeaderApp.className = "aonHeaderApp";
+		aonHeaderApp.style.display = "none";
+		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
+		div.appendChild(aonHeaderApp);
 
-				<div class="aonHeaderButtons">
+		let aonHeaderSearch = this.createElement(TAG.SPAN);
+		aonHeaderSearch.id = this.AON_HEADER_SEARCH;
+		aonHeaderSearch.style.display = "flex";
+		aonHeaderSearch.style.alignItems = "center";
+		aonHeaderSearch.style.width = "100%";
+		aonHeaderSearch.style.minWidth = '150px';
+		aonHeaderSearch.style.maxWidth = '500px';
+		
+		let aonHeaderSearchBox = new AonSearchBox();
+		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
+		aonHeaderSearch.appendChild(aonHeaderSearchBox);
 
-					<span id="aonHeaderCompany" style="display:none;">
-						<span id="aonHeaderCompanyName"> </span>
-					</span>	
+		div.appendChild(aonHeaderSearch);
 
-					<span id="aonHeaderHome" style="display:none;">
-						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
-					</span>
- 
-					<span id="aonHeaderCompanyList" style="display:none;">
-						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
-					</span>
+		let aonHeaderButtons = this.createElement(TAG.DIV);
+		aonHeaderButtons.id = 'aonHeaderButtons';
+		aonHeaderButtons.className = "aonHeaderButtons";
+		if (!LS.isNewTheme()){
+			aonHeaderButtons.style.display = "flex";
+			aonHeaderButtons.style.alignItems = "center";		
+		}
+		
+		let aonHeaderCompany = this.createElement(TAG.SPAN);
+		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
+		aonHeaderCompany.style.display = "none";
+		aonHeaderCompany.style.height = "14px";
 
-					<span id="aonHeaderCalendar">
-						<aon-icon-button id="aonHeaderCalendarButton" icon="event"></aon-icon-button>
-					</span>
+		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
+		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
+		aonHeaderCompany.appendChild(aonHeaderCompanyName);
 
-					<span id="aonHeaderHelp">
-						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
-					</span>
+		aonHeaderButtons.appendChild(aonHeaderCompany);
 
-					<span id="aonHeaderNotiication" >
-						<aon-notification-icon></aon-notification-icon>
-					</span>
+		let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+		aonHeaderHome.style.display = "none";
 
-					<span id="aonHeaderUser" >
-						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
-					</span>
-				
-				</div>
-			`;
-		} else {
-			div.innerHTML = /*html*/`
-				<img id="aonLogo" class="aonLogo"  />
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHomeButton.outlined = true;
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
 
-				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
-					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
-				</span>
+		aonHeaderButtons.appendChild(aonHeaderHome);
 
-				<div id="aonHeaderButtons" style="display: flex; align-items: center;">
+		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
+		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
+		aonHeaderCompanyList.style.display = "none";
 
-					<span id="aonHeaderCompany" style="display:none;">
-						<span id="aonHeaderCompanyName"> </span>
-					</span>	
+		let aonHeaderHomeCompanyListButton = new AonIconButton();
+		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
+		aonHeaderHomeCompanyListButton.icon = "business";
+		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
-					<span id="aonHeaderHome" style="display:none;">
-						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
-					</span>
- 
-					<span id="aonHeaderCompanyList" style="display:none;">
-						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
-					</span>
+		aonHeaderButtons.appendChild(aonHeaderCompanyList);
 
-					<span id="aonHeaderCalendar">
-						<aon-icon-button id="aonHeaderCalendarButton" icon="event"></aon-icon-button>
-					</span>
+		let aonHeaderHelp = this.createElement(TAG.SPAN);
+		aonHeaderHelp.id = this.AON_HEADER_HELP;
 
-					<span id="aonHeaderHelp">
-						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
-					</span>
+		let aonHeaderHelpButton = new AonIconButton();
+		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
+		aonHeaderHelpButton.icon = "help_outline";
+		aonHeaderHelp.appendChild(aonHeaderHelpButton);
 
-					<span id="aonHeaderNotiication" >
-						<aon-notification-icon></aon-notification-icon>
-					</span>
+		aonHeaderButtons.appendChild(aonHeaderHelp);
 
-					<span id="aonHeaderUser" >
-						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
-					</span>
-				
-				</div>
-			`;
+		if(this.newTheme){
+			let aonHeaderConfig = this.createElement(TAG.SPAN);
+			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+
+			let aonHeaderConfigButton = new AonIconButton();
+			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
+			aonHeaderConfigButton.icon = "settings"
+			aonHeaderConfig.appendChild(aonHeaderConfigButton);
+
+			aonHeaderButtons.appendChild(aonHeaderConfig);
 		}
 
+		let aonHeaderNotiication = this.createElement(TAG.SPAN);
+		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
+		aonHeaderNotiication.appendChild(new AonNotificationIcon());
+
+		aonHeaderButtons.appendChild(aonHeaderNotiication);
+
+		let aonHeaderUser = this.createElement(TAG.SPAN)
+		aonHeaderUser.id = this.AON_HEADER_USER;
+		
+		let aonHeaderUserButton = new AonIconButton();
+		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
+		aonHeaderUserButton.icon = "account_circle";
+		aonHeaderUser.appendChild(aonHeaderUserButton);
+		
+		aonHeaderButtons.appendChild(aonHeaderUser);
+
+		div.appendChild(aonHeaderButtons);
+		
 		this.buildLogo();
 
 		if(!this.isMobile()) {
@@ -183,7 +217,7 @@ export class AonHeader extends AonElement {
  		 		aonHeaderButtons.style.top = '10px';
 
 				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-				aonHeaderSearch2.style.marginLeft = '33px';
+				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
@@ -202,7 +236,8 @@ export class AonHeader extends AonElement {
 				console.log("calendar click");
 			});
 
-			let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
+			if(!this.newTheme){
+				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
 				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
 				const left = aonHeaderHelpButton.getBoundingClientRect().left;
@@ -304,7 +339,10 @@ export class AonHeader extends AonElement {
 					d.open();
 				});
 			});
+			}
+
 		}
+			
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
@@ -341,72 +379,74 @@ export class AonHeader extends AonElement {
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
-		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
-		aonHeaderUserButton.addEventListener('click', () => {
-			const top  = aonHeaderUserButton.getBoundingClientRect().top;
-			const left = aonHeaderUserButton.getBoundingClientRect().left;
-			if(this.activeTimecontrol) {
-				getTimeControl().then(r => {
-					this.timeControlStatus(r);
-
-					let d = this.getElement('aonHeaderDialogUserOption');
-					
-					let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
-					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
-					let options = [{
-							name: fichajeText,
-							icon: 'alarm',
-							id: 'dialogAlarm',
-							fn: () => this.aonFichar(signin)
-						}, {
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogLanguage',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => {
-								this.activeTimecontrol= false;
-								closeSession();
-							}
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					}).catch(e => {
+		if(!this.newTheme){
+			aonHeaderUserButton.addEventListener('click', () => {
+				const top  = aonHeaderUserButton.getBoundingClientRect().top;
+				const left = aonHeaderUserButton.getBoundingClientRect().left;
+				if(this.activeTimecontrol) {
+					getTimeControl().then(r => {
+						this.timeControlStatus(r);
+	
+						let d = this.getElement('aonHeaderDialogUserOption');
+						
+						let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
+						let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
+						let options = [{
+								name: fichajeText,
+								icon: 'alarm',
+								id: 'dialogAlarm',
+								fn: () => this.aonFichar(signin)
+							}, {
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogLanguage',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => {
+									this.activeTimecontrol= false;
+									closeSession();
+								}
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						}).catch(e => {
+							let d = this.getElement('aonHeaderDialogUserOption');
+							let options = [{
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						});
+					} else {
 						let d = this.getElement('aonHeaderDialogUserOption');
 						let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					});
-				} else {
-					let d = this.getElement('aonHeaderDialogUserOption');
-					let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-				}
-		});
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+					}
+			});
+		}
+		
 	}
 
 	timeControlStatus(signin) {
@@ -440,7 +480,6 @@ export class AonHeader extends AonElement {
 				if(aonSign) {
 					aonSign.buildSignin(r);
 				}
-
 				this.timeControlStatus(r);
 			});
 		});
@@ -566,6 +605,74 @@ export class AonHeader extends AonElement {
 		aboutContent.appendChild(divInfo);
 		return aboutContent;
 	}
+	
+	
+	setColor(color) {
+		let buttons = [
+			this.getElement('aonHeaderHelpButton'),
+			this.getElement('aonHeaderHomeButton'),
+			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderNotificationButton'),
+			this.getElement('aonHeaderCompanyListButton')
+		];
+		let texts = [ 
+			this.getElement('aonHeaderApp'),
+			this.getElement('aonHeaderCompanyName'),
+			this.getElement('aonMenuListAppImg-applications')
+		];
+		let imgs = [ 
+			this.getElement('aonLogo')
+		];
+		
+		//
+		if ( color ) {
+			texts.forEach( (text) => text.style.color = color );
+			buttons.forEach( (button) => button.getButton().style.color = color );
+			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
+		} else {
+			imgs.forEach( (img) => img.style.removeProperty ('filter') );
+			texts.forEach( (text) => text.style.removeProperty('color') );
+			buttons.forEach( (button) => button.getButton().style.removeProperty('color'));
+		}
+	}
+
+	setBackgroundColor(backgroundColor) {
+		if ( backgroundColor ) {
+			this.getElement(this.AON_HEADER_WEB).style.backgroundColor = backgroundColor;
+		} else {
+			this.getElement(this.AON_HEADER_WEB).style.removeProperty('background-color');
+		}
+	}
+	
+	setApp(el) {
+		let headerApp = this.getElement('aonHeaderApp');
+		headerApp.replaceChild(el, headerApp.firstChild);
+	}
+	
+	setVisibleApp(visible) {
+		this.setVisibleElement('aonHeaderApp', visible)
+	}
+
+	setVisibleLogo(visible) {
+		this.setVisibleElement('aonLogo', visible)
+	}
+
+	setVisibleHomeButton(visible) {
+		this.setVisibleElement('aonHeaderHomeButton', visible)
+	}
+
+	setVisibleCompanyListButton(visible) {
+		this.setVisibleElement('aonHeaderCompanyListButton', visible)
+	}
+	
+	setVisibleElement(elementId, visible) {
+		if ( visible )
+			this.getElement(elementId).style.removeProperty('display');
+		else 
+			this.getElement(elementId).style.display = 'none';
+	}
+	
+
 }
 
 window.customElements.define('aon-header', AonHeader);

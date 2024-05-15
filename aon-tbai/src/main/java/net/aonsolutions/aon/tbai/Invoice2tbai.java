@@ -480,7 +480,7 @@ public class Invoice2tbai {
 					.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
 			NoSujetaType noSujeta = new NoSujetaType();
 			DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
-			detalleNoSujeta.setCausa(CausaNoSujetaType.OT);
+			detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
 			detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
 			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
 			

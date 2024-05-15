@@ -83,7 +83,6 @@ export class AonCard extends AonElement {
     	div.className = 'aonCard';
 		if(LS.isNewTheme()) {
 			div.style.boxShadow = "none";
-			div.classList.add('aonCardHover');
 		} 
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);

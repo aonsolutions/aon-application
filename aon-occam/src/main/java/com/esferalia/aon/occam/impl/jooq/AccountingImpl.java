@@ -131,6 +131,11 @@ public class AccountingImpl implements IAccounting {
 		return AccountPeriodDAO.getDomainPeriods(ctx);
 	}
 	@Override
+	public AccountPeriod ensurePeriod(AONContext ctx, Integer domain, Date date) {
+		return AccountPeriodDAO.ensurePeriod(ctx, domain, date);
+	}
+	
+	@Override
 	public AccountPeriod getPeriod(AONContext ctx, Date date) {
 		return AccountPeriodDAO.getPeriod(ctx, date);
 	}

@@ -222,7 +222,11 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
-@url iconWeb aonIconWeb;
+@url iconWork aonIconWork;
+.aon_icon_work { background-image: iconWork;}
+@url iconWorkOff aonIconWorkOff;
+.aon_icon_work_off { background-image: iconWorkOff;}
+@url iconWork aonIconWork;
 .aon_icon_web { background-image: iconWeb;}
 @url iconMoveRight aonIconMoveRight;
 .aon_icon_move_right { background-image: iconMoveRight;}

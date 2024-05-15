@@ -1,16 +1,21 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -41,10 +46,14 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		}
 	}
-
+	
 	private TextBox description = new TextBox();
 	private AonDoubleBox budget = new AonDoubleBox(15, 2);
+	private AonDoubleBox expense = new AonDoubleBox(15, 2);
 	private ListBox scope = new ListBox();
+	private ListBox workgroup = new ListBox();
+	private InlineLabel taskHolderLabel = new InlineLabel("Asignado a");
+	private ListBox taskHolder = new ListBox();
 	private Button active = new Button();
 	
 	public AonMarketingCampaignPanel(final String domainName,final int domain, final String user, final LinkedList<Scope> aviableScopes, final AonMarketingCampaignPanelCallback callback) {
@@ -53,7 +62,6 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 	}
 	
 	public void show(final String domainName, final int domain, final String user, final LinkedList<Scope> aviableScopes, final MarketingCampaign marketingCampaign, final AonMarketingCampaignPanelCallback callback) {
-		setWidth("650px");
 		getElement().getStyle().setProperty("padding", "1rem 0");
 		
 		FlowPanel rootPanel = new FlowPanel();
@@ -77,37 +85,80 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
-		table.addStyleName(AON.CSS.aonWidthAll());
+		table.getElement().getStyle().setProperty("width", "30rem");
 		
 		table.setWidget(0, 0, new InlineLabel("Descripci\u00f3n"));
 		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(0, 0).setPropertyString("min-width", "135px");
 		description.setMaxLength(64);
 		description.setStyleName(AON.CSS.aonInputText());
-		description.addStyleName(AON.CSS.aonWidthAll());
+		addInputStyle(description.getElement());
 
 		table.setWidget(0,1,description);
-		table.getCellFormatter().setStyleName(0, 1, AON.CSS.aonWidthAll());
 		table.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
 		table.setWidget(1,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		budget.setValue(marketingCampaign.getBudget());
+		addInputStyle(budget.getElement());
 		table.setWidget(1,1,budget);
 		
-		table.setWidget(2,0,new InlineLabel(AON.MSG.scope()));
-		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(2, 0).setPropertyString("min-width", "135px");
+		table.setWidget(1,2,new InlineLabel("Gastos"));
+		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
+		addInputStyle(expense.getElement());
+		table.setWidget(1,3,expense);
+		
+		workgroup = new ListBox();
+		addSelectStyle(workgroup.getElement());
+		workgroup.addItem("-", "");
+		workgroup.addChangeHandler(e -> {
+			if(workgroup.getSelectedIndex() == 0) {
+				taskHolder.setSelectedIndex(0);
+				taskHolder.setVisible(false);
+				taskHolderLabel.setVisible(false);
+			} else {
+				taskHolder.setVisible(true);
+				taskHolderLabel.setVisible(true);
+				getAviableTaskHolders(domainName, domain, user, Integer.parseInt(workgroup.getSelectedValue()), taskHolders -> { 
+					taskHolder.clear();
+					taskHolder.addItem("-", "");
+					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
+				});
+			}
+		});
+		
+		taskHolder = new ListBox();
+		addSelectStyle(taskHolder.getElement());
+		taskHolder.addItem("-", "");
+		
+		getAviableWorkgroups(domainName, domain, user, workgroups -> {
+			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
+			taskHolder.setVisible(false);
+			taskHolderLabel.setVisible(false);
+		});
+		
+		table.setWidget(3,0,new InlineLabel("Grupo trabajo"));
+		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
+		table.setWidget(3,1,workgroup);
+		
+		table.setWidget(3,2,taskHolderLabel);
+		table.getCellFormatter().setStyleName(3, 2, AON.CSS.aonTableLabel());
+		table.setWidget(3,3,taskHolder);
+		
+		table.setWidget(4,0,new InlineLabel(AON.MSG.scope()));
+		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
+		scope.clear();
+		addSelectStyle(scope.getElement());
 		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
 		scope.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(2,1,scope);
+		table.setWidget(4,1,scope);
 		
-		table.setWidget(3,0,new InlineLabel("Activo"));
-		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(3, 0).setPropertyString("min-width", "135px");
+		active = new Button();
+		table.setWidget(5,0,new InlineLabel("Activo"));
+		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
 		getEnableDisableButton(active, true);
 		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
-		table.setWidget(3,1,active);
+		table.setWidget(5,1,active);
+		
+		table.getColumnFormatter().getElement(0).getStyle().setProperty("width", "3rem");
 		
 		tablePanel.add( table );
 		
@@ -132,6 +183,9 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 				marketingCampaign.setDescription(description.getValue());
 				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scope.getSelectedValue())));
 				marketingCampaign.setBudget(budget.getValue());
+				marketingCampaign.setExpense(expense.getValue());
+				marketingCampaign.setWorkgroup(0 == workgroup.getSelectedIndex() ? null : new Workgroup().setId(Integer.parseInt(workgroup.getSelectedValue())));
+				marketingCampaign.setTaskHolder(0 == taskHolder.getSelectedIndex() ? null : new TaskHolder().setRegistry(Integer.parseInt(taskHolder.getSelectedValue())));
 				
 				commonService.saveMarketingCampaign(domainName, domain, user, marketingCampaign, new AsyncCallback<MarketingCampaign>() {
 
@@ -188,6 +242,48 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 	
 	private boolean isActiveToggleButton(Button button) {
 		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	}
+	
+	private void addInputStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.1rem");
+	}
+	
+	private void addSelectStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.2rem");
+	}
+	
+	private void getAviableWorkgroups(final String domainName,final int domain, final String user, Consumer<List<Workgroup>> success) {
+		commonService.getAviableWorkgroups(domainName, domain, user, new AsyncCallback<List<Workgroup>>() {
+			
+			@Override
+			public void onSuccess(List<Workgroup> workgroups) {
+				success.accept(workgroups);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+//				errorPanel.showError(caught.getMessage());
+			}
+		});
+	}
+	
+	private void getAviableTaskHolders(final String domainName,final int domain, final String user, Integer workgroup, Consumer<List<TaskHolder>> success) {
+		commonService.getAviableTaskHolders(domainName, domain, user, workgroup, new AsyncCallback<List<TaskHolder>>() {
+			
+			@Override
+			public void onSuccess(List<TaskHolder> taskHolders) {
+				success.accept(taskHolders);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+//				errorPanel.showError(caught.getMessage());
+			}
+		});
 	}
 
 	protected abstract void onResize();

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.action;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -22,20 +23,26 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTa
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetPanel.AonMarketingActionTargetPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
+import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.Request;
@@ -86,7 +93,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	private AonDateBox startDate = new AonDateBox();
 	private AonDateBox endDate = new AonDateBox();
 	private ListBox workgroup = new ListBox();
-	private InlineLabel taskHolderLabel = new InlineLabel("Entidad");
+	private InlineLabel taskHolderLabel = new InlineLabel("Asignado a");
 	private ListBox taskHolder = new ListBox();
 	
 	private SuggestBox newsSuggestBox = new SuggestBox();
@@ -97,6 +104,8 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	
 	private SuggestBox newsletterSuggestBox = new SuggestBox();
 	private List<Newsletter> newsletter = new ArrayList<>();
+	
+	private Integer projectCommercialIndx = 0;
 	
 	
 	// MarketingAction Search
@@ -159,24 +168,35 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		newActionTargetButton.addClickHandler(e -> showMarketingActionTargetDialog());
 		toolbar.add(newActionTargetButton);
 		
-		AonToolbarButton importActionTargetButton = new AonToolbarButton("Simulaci\u00f3n formulario Web", AON.CSS.aonIconWeb());
-		importActionTargetButton.addClickHandler(e -> importActionTarget());
-		toolbar.add(importActionTargetButton);
-		
 		addNorth(toolbar, 50);
 	}
 
 	private void importActionTarget() {
+		if(AonStringUtils.isBlank(taskHolder.getSelectedValue()))
+			importActionTarget(null);
+		else {
+			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
+				
+				@Override
+				public void onSuccess(Seller seller) {
+					importActionTarget(seller);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error getSellerByTaskHolder(): " + caught.getMessage());
+				}
+				
+			});
+		}
+	}
+	
+	private void importActionTarget(Seller seller) {
 		final AonCustomDialog dialog = new AonCustomDialog();
-//		dialog.setCaption( "Cliente Potencial" );
+		dialog.setCaption( "Ejemplo formulario web (API)" );
 		dialog.showCloseButton(true);
-		dialog.getCloseButton().addClickHandler(e -> {
-			dialog.hide();
-			marketingActionPanel.resetSearchOffset();
-			setMarketingAction(marketingAction);
-		});
 		
-		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), this.marketingAction, new AonMarketingActionTargetCreationPanelCallback() {
+		final AonMarketingActionTargetCreationPanel aonMarketingActionPanel = new AonMarketingActionTargetCreationPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(),  options.getConfiguration().getGeozones(), marketingAction, seller, new AonMarketingActionTargetCreationPanelCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -266,6 +286,9 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				surveySuggestBox.setValue("");
 				break;
 			default:
+				newsSuggestBox.setValue("");
+				newsletterSuggestBox.setValue("");
+				surveySuggestBox.setValue("");
 				break;
 		}
 		
@@ -370,20 +393,29 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
+		table.getElement().getStyle().setProperty("width", "30rem");
 		
-		table.setWidget(0, 0, new InlineLabel("C\u00f3digo"));
+		table.setWidget(0, 0, new InlineLabel("Campa\u00f1a"));
 		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		table.setWidget(0,1,new Label(marketingAction.getId().toString()));
+		Label campaignLabel = new Label(marketingAction.getMarketingCampaign().getDescription());
+		campaignLabel.addStyleName(AON.CSS.aonItemFlex());
+		addInputStyle(campaignLabel.getElement());
+		table.setWidget(0, 1, campaignLabel);
+		table.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
-		table.setWidget(0, 2, new InlineLabel("Descripci\u00f3n"));
-		table.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
+		table.setWidget(1, 0, new InlineLabel("Acci\u00f3n"));
+		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
+		
 		description.setValue(marketingAction.getDescription());
 		description.setMaxLength(64);
 		description.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(0,3,description);
+		addInputStyle(description.getElement());
+		table.setWidget(1, 1, description);
+		table.getFlexCellFormatter().setColSpan(1, 1, 3);
 		
-		table.setWidget(1,0,new InlineLabel("Canal"));
-		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
+		table.setWidget(2, 0, new InlineLabel("Canal"));
+		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
+		addSelectStyle(typeListBox.getElement());
 		typeListBox.clear();
 		for(int i=0; i<MarketingActionMediaType.values().length; i++) {
 			MarketingActionMediaType marketingActionMediaType = MarketingActionMediaType.values()[i];
@@ -394,49 +426,57 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			MarketingActionMediaType marketingActionMediaType = MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue()));
 			showMarketingActionMediaOptions(table, marketingActionMediaType);
 		});
-		typeListBox.getElement().getStyle().setProperty("width", "-moz-available");
 		setSelectedValueLB(typeListBox, marketingAction.getMediaType().getValue().toString());
-		table.setWidget(1,1,typeListBox);
+		addSelectStyle(workgroup.getElement());
+		table.setWidget(2, 1, typeListBox);
 
-		table.setWidget(1, 2, new InlineLabel("Tipo"));
-		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
-		actionType.setText(getActivonType(marketingAction.getMediaType().getValue()));
-		table.setWidget(1,3,actionType);
-
-		table.setWidget(2,0,new InlineLabel("Presupuesto"));
-		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		budget.setValue(marketingAction.getBudget());
-		budget.getElement().getStyle().setProperty("width", "-moz-available");
-		table.setWidget(2,1,budget);
-		
-		table.setWidget(2,2,new InlineLabel("Gastos"));
+		table.setWidget(2, 2, new InlineLabel("Tipo"));
 		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
-		expense.setValue(marketingAction.getExpense());
-		expense.getElement().getStyle().setProperty("width", "-moz-available");
-		table.setWidget(2,3,expense);
+		actionType.setText(getActivonType(marketingAction.getMediaType().getValue()));
+		table.setWidget(2, 3, actionType);
 
-		table.setWidget(3,0,new InlineLabel("F. Inicio"));
+		table.setWidget(3, 0, new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
-		startDate.setStyleName(AON.CSS.aonInputText());
-		startDate.getElement().getStyle().setProperty("width", "-moz-available");
-		startDate.setValue(marketingAction.getStartDate());
-		table.setWidget(3,1,startDate);
-
-		table.setWidget(3,2,new InlineLabel("F. Fin"));
+		budget.setValue(marketingAction.getBudget());
+		addInputStyle(budget.getElement());
+		table.setWidget(3, 1, budget);
+		
+		table.setWidget(3, 2, new InlineLabel("Gastos"));
 		table.getCellFormatter().setStyleName(3, 2, AON.CSS.aonTableLabel());
+		expense.setValue(marketingAction.getExpense());
+		addInputStyle(expense.getElement());
+		table.setWidget(3, 3, expense);
+
+		table.setWidget(4, 0, new InlineLabel("F. Inicio"));
+		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
+		startDate.setStyleName(AON.CSS.aonInputText());
+		startDate.addStyleName(AON.CSS.aonTextCenter());
+		addInputStyle(startDate.getElement());
+		startDate.setValue(marketingAction.getStartDate());
+		table.setWidget(4, 1, startDate);
+
+		table.setWidget(4, 2, new InlineLabel("F. Fin"));
+		table.getCellFormatter().setStyleName(4, 2, AON.CSS.aonTableLabel());
 		endDate.setStyleName(AON.CSS.aonInputText());
-		endDate.getElement().getStyle().setProperty("width", "-moz-available");
+		endDate.addStyleName(AON.CSS.aonTextCenter());
+		addInputStyle(endDate.getElement());
 		endDate.setValue(marketingAction.getEndDate());
-		table.setWidget(3,3,endDate);
+		table.setWidget(4, 3, endDate);
+		
+		// Accion Comercial
+		AonTableButton projectCommercialBtn = new AonTableButton("Crear operaci\u00f3n comercial", AON.CSS.aonIconWork());
+		projectCommercialBtn.setEnabled(false);	
+		projectCommercialBtn.addClickHandler(e -> createProjectCommercial());
 		
 		workgroup = new ListBox();
-		workgroup.getElement().getStyle().setProperty("width", "-moz-available");
+		addSelectStyle(workgroup.getElement());
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
 			if(workgroup.getSelectedIndex() == 0) {
 				taskHolder.setSelectedIndex(0);
 				taskHolder.setVisible(false);
 				taskHolderLabel.setVisible(false);
+				projectCommercialBtn.setEnabled(false);	
 			} else {
 				taskHolder.setVisible(true);
 				taskHolderLabel.setVisible(true);
@@ -449,37 +489,45 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		});
 		
 		taskHolder = new ListBox();
+		addSelectStyle(taskHolder.getElement());
 		taskHolder.addItem("-", "");
+		taskHolder.addChangeHandler(e -> {
+			projectCommercialBtn.setEnabled(AonStringUtils.isNotBlank(taskHolder.getSelectedValue()));	
+		});
 		
 		getAviableWorkgroups(workgroups -> {
 			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
 			setSelectedValueLB(workgroup, null != marketingAction.getWorkgroup() ? marketingAction.getWorkgroup().getId().toString() : null);
 			
-			if(null != marketingAction.getWorkgroup()) {
+			if(null != marketingAction.getWorkgroup()) {	
 				getAviableTaskHolders(marketingAction.getWorkgroup().getId(), taskHolders -> {
 					taskHolder.clear();
 					taskHolder.addItem("-", ""); 
 					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
 					setSelectedValueLB(taskHolder, null != marketingAction.getTaskHolder() ? marketingAction.getTaskHolder().getRegistry().toString() : null);
+					taskHolderLabel.setVisible(true);
+					projectCommercialBtn.setEnabled(null != marketingAction.getTaskHolder());	
 				});
 			} else {
 				taskHolder.setVisible(false);
 				taskHolderLabel.setVisible(false);
+				projectCommercialBtn.setEnabled(false);	
 			}	
 		});
 		
-		table.setWidget(4,0,new InlineLabel("Grupo trabajo"));
-		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
-		table.setWidget(4,1,workgroup);
-		
-		table.setWidget(4,2,taskHolderLabel);
-		table.getCellFormatter().setStyleName(4, 2, AON.CSS.aonTableLabel());
-		table.setWidget(4,3,taskHolder);
-
-		table.setWidget(5,0,new InlineLabel("Noticia"));
+		table.setWidget(5, 0, new InlineLabel("Grupo comercial"));
 		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
+		table.setWidget(5, 1, workgroup);
+		
+		table.setWidget(5, 2, taskHolderLabel);
+		table.getCellFormatter().setStyleName(5, 2, AON.CSS.aonTableLabel());
+		table.setWidget(5, 3, taskHolder);
+		table.setWidget(5, 4, projectCommercialBtn);
+		
+		table.setWidget(6, 0,new InlineLabel("Noticia"));
+		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
 		newsSuggestBox.setStyleName(AON.CSS.aonInputText());
-		newsSuggestBox.getElement().getStyle().setProperty("width", "-moz-available");
+		addInputStyle(newsSuggestBox.getElement());
 		newsSuggestBox.setAutoSelectEnabled(false);
 		newsSuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
 		newsSuggestBox.addKeyUpHandler(e -> {
@@ -493,13 +541,13 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				newsSuggestBox.setValue(newOpt.isPresent() ? "[" + newOpt.get().getId() + "] " + newOpt.get().getTitle() : "");
 			} else newsSuggestBox.setValue(null);
 		});
-		table.setWidget(5,1,newsSuggestBox);
-		table.getFlexCellFormatter().setColSpan(5, 1, 3);
+		table.setWidget(6,1,newsSuggestBox);
+		table.getFlexCellFormatter().setColSpan(6, 1, 3);
 		
-		table.setWidget(6,0,new InlineLabel("Boletin"));
-		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
+		table.setWidget(7, 0, new InlineLabel("Boletin"));
+		table.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTableLabel());
 		newsletterSuggestBox.setStyleName(AON.CSS.aonInputText());
-		newsletterSuggestBox.getElement().getStyle().setProperty("width", "-moz-available");
+		addInputStyle(newsletterSuggestBox.getElement());
 		newsletterSuggestBox.setAutoSelectEnabled(false);
 		newsletterSuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
 		newsletterSuggestBox.addKeyUpHandler(e -> {
@@ -513,13 +561,13 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				newsletterSuggestBox.setValue(newletterOpt.isPresent() ? "[" + newletterOpt.get().getId() + "] " + newletterOpt.get().getName() : "");
 			} else newsletterSuggestBox.setValue(null);
 		});
-		table.setWidget(6,1,newsletterSuggestBox);
-		table.getFlexCellFormatter().setColSpan(6, 1, 3);
+		table.setWidget(7, 1, newsletterSuggestBox);
+		table.getFlexCellFormatter().setColSpan(7, 1, 3);
 		
-		table.setWidget(7,0,new InlineLabel("Cuestionario"));
-		table.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTableLabel());
+		table.setWidget(8, 0, new InlineLabel("Cuestionario"));
+		table.getCellFormatter().setStyleName(8, 0, AON.CSS.aonTableLabel());
 		surveySuggestBox.setStyleName(AON.CSS.aonInputText());
-		surveySuggestBox.getElement().getStyle().setProperty("width", "-moz-available");
+		addInputStyle(surveySuggestBox.getElement());
 		surveySuggestBox.setAutoSelectEnabled(false);
 		surveySuggestBox.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
 		surveySuggestBox.addKeyUpHandler(e -> {
@@ -533,8 +581,18 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				surveySuggestBox.setValue(surveyOpt.isPresent() ? "[" + surveyOpt.get().getId() + "] " + surveyOpt.get().getDescription() : "");
 			} else surveySuggestBox.setValue(null);
 		});
-		table.setWidget(7,1,surveySuggestBox);
-		table.getFlexCellFormatter().setColSpan(7, 1, 3);
+		table.setWidget(8, 1, surveySuggestBox);
+		table.getFlexCellFormatter().setColSpan(8, 1, 3);
+		
+		table.setWidget(9, 0, new InlineLabel("Formulario Web"));
+		table.getCellFormatter().setStyleName(9, 0, AON.CSS.aonTableLabel());
+		Label webForm = new Label("Ejemplo del formulario web (API)");
+		webForm.addStyleName(AON.CSS.aonItemFlex());
+		webForm.getElement().getStyle().setProperty("cursor", "pointer");
+		addInputStyle(webForm.getElement());
+		webForm.addClickHandler(e -> importActionTarget());
+		table.setWidget(9, 1, webForm);
+		table.getFlexCellFormatter().setColSpan(9, 1, 3);
 		
 		showMarketingActionMediaOptions(table, marketingAction.getMediaType());
 		
@@ -545,6 +603,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		tableActionTargetStatus.getElement().getStyle().setProperty("border", "1px solid #ebebeb");
 		tableActionTargetStatus.getElement().getStyle().setProperty("border-radius", "5px");
 		tableActionTargetStatus.getElement().getStyle().setProperty("min-width", "140px");
+		tableActionTargetStatus.getElement().getStyle().setProperty("margin-right", "4rem");
 		
 		InlineLabel status = new InlineLabel("ESTADOS");
 		status.addStyleName(AON.CSS.aonToolbarSmallTitle());
@@ -620,29 +679,34 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	private void showMarketingActionMediaOptions(FlexTable table, MarketingActionMediaType marketingActionMediaType) {
 		switch (marketingActionMediaType) {
 			case PHONE:
-				table.getRowFormatter().getElement(5).getStyle().clearDisplay();
-				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
-				table.getRowFormatter().getElement(7).getStyle().clearDisplay();
+				table.getRowFormatter().getElement(6).getStyle().clearDisplay();
+				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(8).getStyle().clearDisplay();
+				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
 				break;
 			case EMAIL:
-				table.getRowFormatter().getElement(5).getStyle().clearDisplay();
-				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(6).getStyle().clearDisplay();
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
 				break;
 			case MAIL:
-				table.getRowFormatter().getElement(5).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
 				break;
 			case BULLETIN:
-				table.getRowFormatter().getElement(5).getStyle().setDisplay(Display.NONE);
-				table.getRowFormatter().getElement(6).getStyle().clearDisplay();
-				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(7).getStyle().clearDisplay();
+				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
 				break;
 			default:
-				table.getRowFormatter().getElement(5).getStyle().clearDisplay();
-				table.getRowFormatter().getElement(6).getStyle().clearDisplay();
-				table.getRowFormatter().getElement(7).getStyle().clearDisplay();
+				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
+				table.getRowFormatter().getElement(9).getStyle().clearDisplay();
 				break;
 		}
 		
@@ -747,6 +811,18 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			.setStatus(targetStatus.getSelectedIndex() == 0 ? null : Byte.parseByte(targetStatus.getSelectedValue()))
 			;
 	}
+	
+	private void addInputStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.1rem");
+	}
+	
+	private void addSelectStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.2rem");
+	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -758,6 +834,106 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	// Project Comercial
+	private void createProjectCommercial() {
+		if(AonStringUtils.isBlank(taskHolder.getSelectedValue()))
+			AonMessagePanel.showError(messagePanel, "No se ha seleccionado ningun task holder. Esto es requerido para poder crear una acci\u00f3n comercial");
+		else {
+			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
+				
+				@Override
+				public void onSuccess(Seller seller) {
+					if(seller == null)
+						AonMessagePanel.showError(messagePanel, "El task holder seleccionado no tiene un comercial asociado. Pruebe con otro task holder");
+					else
+						createProjectCommercial(seller);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error getSellerByTaskHolder(): " + caught.getMessage());
+				}
+				
+			});
+			
+		}
+	}
+	
+	private void createProjectCommercial(Seller seller) {
+		AonMessagePanel.showLoading(messagePanel, "Creando operaciones comerciales para cada lead de la acción " + marketingAction.getDescription() + " ...");
+		projectCommercialIndx = 0;
+		createProjectCommercial(seller, projectCommercialIndx);
+		
+	}
+	
+	private void createProjectCommercial(Seller seller, Integer indx) {
+		MarketingActionTarget target = marketingAction.getTargets().get(indx);
+		
+		if(target.getActionTargetStatus() == (byte)0) { // Pendiente
+		
+			AonMessagePanel.showLoading(messagePanel, "Creando operaci\u00f3n comercial para el lead '" + target.getName() + "' ...");
+			
+			ProjectCommercial projectCommercial = new ProjectCommercial()
+					.copy(new Project()
+						.setDomain(target.getDomain())
+						.setRegistry(target.get())
+						.setName(marketingAction.getDescription())
+						.setDate(new Date())
+						.setTas(false)
+						.setCommercial(true)
+						.setReservation(false)
+						.setActive(true)
+					)
+					.setTarget(target.getId())
+					.setSeller(seller.getId())
+					.setComments(target.getComments())
+					.setSource((byte)3)
+					.setStatus((byte)0)
+					.setStatusDate(new Date())
+					.setProbability(0);
+			
+			commonService.saveProjectCommercial(options.getDomainName(), options.getDomain(), options.getUser(), projectCommercial, new AsyncCallback<ProjectCommercial>() {
+				
+				@Override
+				public void onSuccess(ProjectCommercial projectCommercial) {
+					target.setActionTargetStatus((byte)6); // Enviado
+					commonService.saveMarketingActionTarget(options.getDomainName(), options.getDomain(), options.getUser(), target, new AsyncCallback<MarketingActionTarget>() {
+						
+						@Override
+						public void onSuccess(MarketingActionTarget marketingActionTarget) {
+							if(indx == (marketingAction.getTargets().size() - 1)) {
+								AonMessagePanel.showSuccess(messagePanel, "Operaciones comerciales creadas correctamente");
+								marketingActionPanel.resetSearchOffset();
+								setMarketingAction(marketingAction);
+							} else {
+								createProjectCommercial(seller, projectCommercialIndx++);
+							}
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error saveMarketingActionTarget(): " + caught.getMessage());
+						}
+					});
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error saveProjectCommercial(): " + caught.getMessage());
+				}
+				
+			} );
+		
+		} else {
+			if(indx == (marketingAction.getTargets().size() - 1)) {
+				AonMessagePanel.showSuccess(messagePanel, "Operaciones comerciales creadas correctamente");
+				marketingActionPanel.resetSearchOffset();
+				setMarketingAction(marketingAction);
+			} else createProjectCommercial(seller, projectCommercialIndx++);
+		}
+		
 	}
 	
 	private void getNewsSuggestion(Consumer<Void> success) {

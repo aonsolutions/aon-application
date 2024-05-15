@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
+import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
@@ -56,6 +57,7 @@ public class InvoiceJSON {
 				.setType(type)
 				.setSeries(json.optString(IJsonNames.SERIE))
 				.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
+				.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
 				.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
 				.setReferenceCode(InvoiceType.SALES.equals(type) ? null : json.optString(IJsonNames.REFERENCE))
 				.setIssueDate(date) //JsonUtils.getDate(json, IJsonNames.DATE))
@@ -142,7 +144,8 @@ public class InvoiceJSON {
 			.put(IJsonNames.TAXES, InvoiceBreakdownJSON.toJSON(invoice.getBreakdown()))
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
-			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()));
+			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
 		
 		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());

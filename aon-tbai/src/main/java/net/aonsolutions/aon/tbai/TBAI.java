@@ -27,7 +27,7 @@ import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.emision.TicketBai;
-import ticketbai.emision.TicketBaiResponse;
+import ticketbai.respuesta.TicketBaiResponse;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
 public class TBAI {

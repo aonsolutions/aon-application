@@ -77,9 +77,8 @@ export class AonNewDesktop extends AonElement {
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
 
-		this.appendChild(desktopDiv);			
+		this.appendChild(desktopDiv);		
 	}
-	
 	
 	buildApp(app) {
 		
@@ -326,7 +325,7 @@ export class AonNewDesktop extends AonElement {
 						optionsDiv.style.left = position.left + 15;
 					}
 					if (position.top + 150 >= window.screen.height) {
-						optionsDiv.style.top = position.top - 80;
+						optionsDiv.style.top = position.top - 100;
 					} else {
 						optionsDiv.style.top = position.top + 15;
 					}
@@ -427,7 +426,7 @@ export class AonNewDesktop extends AonElement {
 
 		cardDiv.appendChild(appA);
 
-		if (app.price != "-") {
+		if (app.price != " ") {
 			cardDiv.style.paddingRight = '32px';
 
 			let priceDiv = this.createElement(TAG.DIV);
@@ -454,6 +453,7 @@ export class AonNewDesktop extends AonElement {
 	}
 	
 }
+
 
 if(!window.customElements.get('aon-new-desktop')){
 	window.customElements.define('aon-new-desktop', AonNewDesktop);

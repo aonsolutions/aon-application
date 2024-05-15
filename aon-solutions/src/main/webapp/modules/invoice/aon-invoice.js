@@ -369,7 +369,7 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.ERROR, CONSTANT.DISCARDED )
+		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION, CONSTANT.ERROR )
 			&& !this.getInvoice().isDraft()){
 			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
 				e.preventDefault();
@@ -467,10 +467,10 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION )) {
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.DISCARDED)) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.ERROR )) {
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.ERROR )) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
@@ -3087,7 +3087,7 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		if(this.isInvofoxInvoice()) {
-			this.setInvofoxState(CONSTANT.DISCARDED);
+			this.setInvofoxState(CONSTANT.ERROR);
 		} else {
 			this.getInvoice().status = CONSTANT.DRAFT;
 			this.save(MSG.MOVED_TO_TRASH);

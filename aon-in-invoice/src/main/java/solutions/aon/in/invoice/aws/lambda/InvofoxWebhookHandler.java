@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.AonTask;
+import net.aonsolutions.aon.api.AonInvofox;
 
 public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 
@@ -293,6 +294,9 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 	taskWorkflow.setCreationUser(userLogin);
 	
 	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
+
+	if(publicState != null && State.approved.equals(valueOf(publicState, State.unknown)))
+		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
 	
 	return taskWorkflowJSON.toString(1);
     }
