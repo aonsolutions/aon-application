@@ -40,8 +40,8 @@ import locales from "../../locales/en";
 
 export default function setMonthView(context, store, datepickerContext) {
   const resizeoverlay = document.querySelector(".resize-overlay");
-const sidebar = document.querySelector(".sidebar");
-const monthWrapper = document.querySelector(".monthview--calendar");
+  const sidebar = document.querySelector(".sidebar");
+  const monthWrapper = document.querySelector(".monthview--calendar");
 
   const boxquery = new MonthBoxQuery(
     window.innerWidth <= 530 || window.innerHeight <= 470
