@@ -212,10 +212,13 @@ export class AonNewMenu extends AonElement {
 			let targetId = e.target?.id;
 			if (this.aonAppLauncher.style.display == 'none' && (targetId == 'aonMenuListAppImg-applications' || targetId == 'aonMenuListAppDivImg-applications')) {
 				document.getElementById('aonAppLauncher').style.display = 'block';
+				document.getElementById('aonMenuListAppDivImg-applications').style.backgroundColor = 'white';
 			} else if (targetId != 'aonAppLauncherSearchButton'  && targetId != 'aonAppLauncherSearchButtonIcon' && targetId != 'aonAppLauncherSearchBox') {
 				document.getElementById('aonAppLauncher').style.display = 'none';
+				document.getElementById('aonMenuListAppDivImg-applications').style.backgroundColor = 'transparent';
 			} else {
 				document.getElementById('aonAppLauncher').style.display = 'block';
+				document.getElementById('aonMenuListAppDivImg-applications').style.backgroundColor = 'white';
 				e.stopPropagation();
 			}
 		});
@@ -421,14 +424,14 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildAppLauncher() {
-		let position = this.getElement('aonMenuBar-applications').getBoundingClientRect();
+		let position = this.getElement('aonMenuListAppDivImg-applications').getBoundingClientRect();
 		this.aonAppLauncherTyping = false;
 
 		this.aonAppLauncher = this.createElement(TAG.DIV);
 		this.aonAppLauncher.id = 'aonAppLauncher';
 		this.aonAppLauncher.style.display = 'none';
 		this.aonAppLauncher.classList.add('aonAppLauncher');
-		this.aonAppLauncher.style.top = position.top + 75;
+		this.aonAppLauncher.style.top = position.top + 48;
 		this.aonAppLauncher.style.left = position.left;
 
 		let searchContainer = this.createElement(TAG.DIV);
@@ -457,33 +460,6 @@ export class AonNewMenu extends AonElement {
 			searchButton.style.backgroundColor = 'rgba(0,0,0,0.05)';
 			searchButton.style.cursor = 'pointer';
 		});
-		a.classList.add('aonMenuApp');
-
-		let hoverDiv = this.createElement(TAG.DIV);
-		hoverDiv.innerHTML = app.title;
-		if (!app.title) {
-			hoverDiv.classList.add('aonMenuAppHoverHidden');
-		}
-		hoverDiv.style.display = 'none';
-		hoverDiv.classList.add('aonMenuAppHover');
-
-		a.addEventListener(EVENT.MOUSEOVER, () => {
-			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
-				hoverDiv.style.position = 'fixed';
-				let position = a.getBoundingClientRect();
-				hoverDiv.style.top = position.top + (position.height / 2);
-				hoverDiv.style.left = position.left + position.width + 10;
-				hoverDiv.style.display = 'block';
-				let hoverDivPosition = hoverDiv.getBoundingClientRect();
-				hoverDiv.style.top = position.top + (position.height / 2) - (hoverDivPosition.height / 2);
-			}
-		});
-
-		a.addEventListener(EVENT.MOUSELEAVE, () => {
-			hoverDiv.style.display = 'none';
-		});
-
-		a.appendChild(hoverDiv);
 
 		searchButton.addEventListener(EVENT.MOUSELEAVE, () => {
 			searchButton.style.backgroundColor = 'transparent';
@@ -632,7 +608,7 @@ export class AonNewMenu extends AonElement {
 		return element.id == this.AON_MENU_TOPNAV;
 	}
 
-	buildApp(app) {  
+	buildApp(app, style, sidenav) {  
 
 
 		let a = this.createElement(TAG.A);

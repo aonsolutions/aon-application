@@ -177,6 +177,16 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderHelp);
 
+		let aonHeaderCalendar = this.createElement(TAG.SPAN);
+		aonHeaderCalendar.id = 'aonHeaderCalendar';
+
+		let aonHeaderCalendarButton = new AonIconButton();
+		aonHeaderCalendarButton.id = 'aonHeaderCalendarButton';
+		aonHeaderCalendarButton.icon = "event";
+		aonHeaderCalendar.appendChild(aonHeaderCalendarButton);
+
+		aonHeaderButtons.appendChild(aonHeaderCalendar);
+
 		if(this.newTheme){
 			let aonHeaderConfig = this.createElement(TAG.SPAN);
 			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
