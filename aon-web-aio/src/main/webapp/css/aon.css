@@ -110,6 +110,7 @@
   font-size: 14px !important;
   line-height: normal !important;
   height: 100%;
+  overflow: hidden;
   color: rgb(66, 66, 66);
   text-rendering: optimizeLegibility;
   
