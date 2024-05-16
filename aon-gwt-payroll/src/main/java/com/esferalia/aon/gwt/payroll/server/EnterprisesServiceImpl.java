@@ -754,12 +754,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Employee> getCCCEmployees(String domain, java.util.Date month, List<Integer> cccIds) {
+	public List<Employee> getCCCEmployees(String domain, java.util.Date startMonth, java.util.Date endMonth,  List<Integer> cccIds) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
 
-			return getCCCEmployees(connection, new java.sql.Date(month.getTime()), cccIds);
+			return getCCCEmployees(connection, new java.sql.Date(startMonth.getTime()), new java.sql.Date(endMonth.getTime()), cccIds);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1628,7 +1628,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static List<Employee> getCCCEmployees(Connection connection,
-			Date month,List<Integer> cccIds) throws SQLException {
+			Date startMonth, Date endMonth, List<Integer> cccIds) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -1653,8 +1653,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt = connection.prepareStatement(sql);
 			int parameterIndex = 1;
-			stmt.setDate(parameterIndex++, toSqlDate(getMonthLastDay(month)));
-			stmt.setDate(parameterIndex++, toSqlDate(getMonthFirstDay(month)));
+			stmt.setDate(parameterIndex++, toSqlDate(getMonthLastDay(endMonth)));
+			stmt.setDate(parameterIndex++, toSqlDate(getMonthFirstDay(startMonth)));
 
 			for (Integer cccId : cccIds) {
 				stmt.setInt(parameterIndex++, cccId);
@@ -2428,7 +2428,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
 			Date today = new Date(System.currentTimeMillis()); //TODO:  TimeoOne ????
-			List<Employee> aonEmployees = getCCCEmployees(connection, today, cccIds);
+			List<Employee> aonEmployees = getCCCEmployees(connection, today, today, cccIds);
 			aonEmployees.forEach(e -> System.out.println(e.getName() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
 
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
