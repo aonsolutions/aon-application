@@ -18,6 +18,7 @@ import { Language } from '../models/Language.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonSearchBox } from '../components/aon-search-box.js';
+import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 
@@ -628,6 +629,62 @@ export class AonHeader extends AonElement {
 			this.getElement(this.AON_HEADER_WEB).style.removeProperty('background-color');
 		}
 	}
+
+	buildApp(app, sidenav){	
+		let a = this.createElement(TAG.A);
+		a.classList.add('aonMenuApp');
+
+		let div = this.createElement(TAG.DIV);
+		div.style.padding = '1px';
+		div.style.display = 'flex';
+		div.style.alignItems = 'center';
+		div.style.justifyContent = 'center';
+		div.style.height =  '32px';
+		div.style.flexDirection =  'row';
+		div.style.backgroundColor = 'transparent';
+
+		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.id = `aonMenuListAppImg-${app.app}`;
+			icon.innerHTML = app.symbol;
+			if(app.color) icon.style.color = "white";
+			icon.style.padding = "4px";
+			icon.style.fontSize = "24px";
+			div.appendChild(icon);
+		} else if (app.icon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.icon;
+			aonIcon.color = "white";
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.logo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImg-${app.app}`;
+			img.style.width = '24px';
+			img.src = app.logo;
+			img.title = app.title;
+			div.appendChild(img);
+		}
+
+		if (app.title) {
+			// let titles = app.title.match(/\b\w+\b/g);
+			// for (let i = 0; i < 2; i++) {
+				let span = this.createElement(TAG.SPAN);
+				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+				span.style.textAlign = 'center';
+				span.style.minHeight = '21px';
+				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
+				div.appendChild(span);
+			// }
+		}
+
+		a.appendChild(div);
+		let headerApp = this.getElement('aonHeaderApp');
+		headerApp.replaceChild(a, headerApp.firstChild);
+	}
+
 	
 	setApp(el) {
 		let headerApp = this.getElement('aonHeaderApp');
