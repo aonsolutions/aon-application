@@ -676,7 +676,11 @@ export class AonNewMenu extends AonElement {
 			div.style.backgroundColor = 'white';
 		});
 		div.addEventListener('mouseout', () => {
-			div.style.backgroundColor = 'transparent';
+			if (!app.title && this.aonAppLauncher.style.display == 'none') {
+				div.style.backgroundColor = 'transparent';
+			} else if (app.title) {
+				div.style.backgroundColor = 'transparent';
+			}
 		});
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {

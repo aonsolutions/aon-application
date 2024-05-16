@@ -118,7 +118,7 @@ export class AonHeader extends AonElement {
 		aonHeaderSearch.style.width = "100%";
 		aonHeaderSearch.style.minWidth = '150px';
 		aonHeaderSearch.style.maxWidth = '500px';
-		
+
 		let aonHeaderSearchBox = new AonSearchBox();
 		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
@@ -130,9 +130,9 @@ export class AonHeader extends AonElement {
 		aonHeaderButtons.className = "aonHeaderButtons";
 		if (!LS.isNewTheme()){
 			aonHeaderButtons.style.display = "flex";
-			aonHeaderButtons.style.alignItems = "center";		
+			aonHeaderButtons.style.alignItems = "center";
 		}
-		
+
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.style.display = "none";
@@ -207,16 +207,16 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
 		aonHeaderUser.id = this.AON_HEADER_USER;
-		
+
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
 		aonHeaderUserButton.icon = "account_circle";
 		aonHeaderUser.appendChild(aonHeaderUserButton);
-		
+
 		aonHeaderButtons.appendChild(aonHeaderUser);
 
 		div.appendChild(aonHeaderButtons);
-		
+
 		this.buildLogo();
 
 		if(!this.isMobile()) {
@@ -243,7 +243,7 @@ export class AonHeader extends AonElement {
 			aonHeaderCalendarButton.addEventListener('click', () => {
 				const top = aonHeaderCalendarButton.getBoundingClientRect().top;
 				const left = aonHeaderCalendarButton.getBoundingClientRect().left;
-				console.log("calendar click");
+				console.log(" click");
 			});
 
 			if(!this.newTheme){
@@ -265,7 +265,7 @@ export class AonHeader extends AonElement {
 					// 		this.rootPanel(aonMessenger);
 					// 	}
 					// };
-					
+
 					let language = {
 						id: CONSTANT.LANGUAGE,
 						name: MSG.LANGUAGE,
@@ -306,7 +306,7 @@ export class AonHeader extends AonElement {
 					// 		iframe.width = "100%";
 					// 		iframe.src = "https://faqs.aonsolutions.es";
 					// 		this.rootPanel(iframe);
-					// 	} 
+					// 	}
 					// };
 
 					// if(LS.getDomainId())
@@ -321,7 +321,7 @@ export class AonHeader extends AonElement {
 							icon: MATERIAL_ICONS.EXTENSION,
 							fn: () => this.rootPanel(new AonComponentsDoc())
 						});
-						
+
 
 					}
 
@@ -352,7 +352,7 @@ export class AonHeader extends AonElement {
 			}
 
 		}
-			
+
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
@@ -396,9 +396,9 @@ export class AonHeader extends AonElement {
 				if(this.activeTimecontrol) {
 					getTimeControl().then(r => {
 						this.timeControlStatus(r);
-	
+
 						let d = this.getElement('aonHeaderDialogUserOption');
-						
+
 						let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
 						let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
 						let options = [{
@@ -456,7 +456,7 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		
+
 	}
 
 	timeControlStatus(signin) {
@@ -591,7 +591,7 @@ export class AonHeader extends AonElement {
 				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· administración@aonSolutions.es / Facturación, cobros y pagos</span>
 				</div>
 				<div id="aonContent:j_id36:j_id59">
-	
+
 				<span class="aon-outputText" style="font-size: 11px; color: #666;">Horario:</span>
 				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Lunes a jueves de 8:00 a 15:00</span>
 				<span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Viernes de 8:00 a 14:00</span>
@@ -615,8 +615,8 @@ export class AonHeader extends AonElement {
 		aboutContent.appendChild(divInfo);
 		return aboutContent;
 	}
-	
-	
+
+
 	setColor(color) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
@@ -625,15 +625,15 @@ export class AonHeader extends AonElement {
 			this.getElement('aonHeaderNotificationButton'),
 			this.getElement('aonHeaderCompanyListButton')
 		];
-		let texts = [ 
+		let texts = [
 			this.getElement('aonHeaderApp'),
 			this.getElement('aonHeaderCompanyName'),
 			this.getElement('aonMenuListAppImg-applications')
 		];
-		let imgs = [ 
+		let imgs = [
 			this.getElement('aonLogo')
 		];
-		
+
 		//
 		if ( color ) {
 			texts.forEach( (text) => text.style.color = color );
@@ -653,12 +653,12 @@ export class AonHeader extends AonElement {
 			this.getElement(this.AON_HEADER_WEB).style.removeProperty('background-color');
 		}
 	}
-	
+
 	setApp(el) {
 		let headerApp = this.getElement('aonHeaderApp');
 		headerApp.replaceChild(el, headerApp.firstChild);
 	}
-	
+
 	setVisibleApp(visible) {
 		this.setVisibleElement('aonHeaderApp', visible)
 	}
@@ -674,14 +674,14 @@ export class AonHeader extends AonElement {
 	setVisibleCompanyListButton(visible) {
 		this.setVisibleElement('aonHeaderCompanyListButton', visible)
 	}
-	
+
 	setVisibleElement(elementId, visible) {
 		if ( visible )
 			this.getElement(elementId).style.removeProperty('display');
-		else 
+		else
 			this.getElement(elementId).style.display = 'none';
 	}
-	
+
 
 }
 

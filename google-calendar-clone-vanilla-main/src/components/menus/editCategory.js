@@ -25,15 +25,20 @@ class CatFormHelper {
   getOriginalColor() { return this.originalColor; }
 }
 
-const ctgform = document.querySelector(".category__form");
-const ctgformoverlay = document.querySelector(".category__form-overlay");
-const ctgformInput = document.querySelector(".category__form-input");
-const colorPickerTitle = document.querySelector(".color-picker__title");
-const colorPickerOptions = document.querySelector(".color-picker__options");
-const ctgErrMsg = document.querySelector(".ctg-input--err");
+// const ctgform = document.querySelector(".category__form");
+// const ctgformoverlay = document.querySelector(".category__form-overlay");
+// const ctgformInput = document.querySelector(".category__form-input");
+// const colorPickerTitle = document.querySelector(".color-picker__title");
+// const colorPickerOptions = document.querySelector(".color-picker__options");
+// const ctgErrMsg = document.querySelector(".ctg-input--err");
 
 export default function createCategoryForm(store, selectedCategory, editing, resetParent) {
-
+  const ctgform = document.querySelector(".category__form");
+  const ctgformoverlay = document.querySelector(".category__form-overlay");
+  const ctgformInput = document.querySelector(".category__form-input");
+  const colorPickerTitle = document.querySelector(".color-picker__title");
+  const colorPickerOptions = document.querySelector(".color-picker__options");
+  const ctgErrMsg = document.querySelector(".ctg-input--err");
   const formhelper = new CatFormHelper(
     selectedCategory.name,
     selectedCategory.color

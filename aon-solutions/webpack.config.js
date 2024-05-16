@@ -29,7 +29,8 @@ module.exports = {
 	},
 	resolve: {
     	alias: {
-      		aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css')
+      		aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
+          aonwebaio: path.resolve(__dirname, '../aon-web-aio/src/main/webapp/'),
     	}
   	}
 	

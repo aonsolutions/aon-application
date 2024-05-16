@@ -1,5 +1,5 @@
 .toggle-form {
-  z-index: 198;
+  /* z-index: 198; */
   /* position: fixed; */
   display: flex;
   left: 9px;
@@ -10,7 +10,7 @@
   border-radius: 50%;
   justify-content: center;
   align-items: center;
-  z-index: 902;
+  /* z-index: 2; */
   cursor: pointer;
   box-shadow:
     rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,

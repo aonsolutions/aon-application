@@ -6,6 +6,7 @@ import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeCont
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
+import { AonCalendar } from 'aonsolutions/modules/calendar/aon-calendar.js';
 import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 
@@ -145,6 +146,28 @@ export class AonHome extends AonElement {
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
+					rightPanel.open();
+				}
+			});
+		}
+		
+		let headerCalendar = this.getElement('aonHeaderCalendar');
+		if (headerCalendar) {
+			headerCalendar.addEventListener(EVENT.CLICK, () => {
+				let calendar = this.getElement('aonCalendar');
+				if(!rightPanel.isClose() && calendar) {
+					editButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
+					rootPanel.style.marginRight = '0px';
+					rightPanel.close();
+				} else {
+					rootPanel.style.marginRight = '321px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
+					rightPanel.clear();
+					let calendar = new AonCalendar();
+					rightPanel.setContent(calendar);
+					rightPanel.setTitle("Calendario");
 					rightPanel.open();
 				}
 			});
