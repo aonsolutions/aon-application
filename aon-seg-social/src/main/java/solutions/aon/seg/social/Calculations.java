@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -14,14 +13,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.TextPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
@@ -35,7 +35,6 @@ import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.util.WebConnectionWrapper;
 
-import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -50,16 +49,55 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class Calculations {
 	
-    	@FunctionalInterface
-    	private static interface LiquidationPageFill {
+    @FunctionalInterface
+    static interface LiquidationPageFill {
 	    HtmlPage fill(HtmlPage htmlPage) throws IOException, SegSocialException;
 	}
 
+    @FunctionalInterface
+    static interface CalcCallback {
+	    void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs);
+	}
+    
+    private static void trace(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs) {
+    	
+    }
 
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc,
-			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
 			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
+		return workersCalculationQueryByCCC(
+				certificateInputStream, 
+				certificatePassword, 
+				certificateType, 
+				ccc, 
+				regime, 
+				dateFrom, 
+				dateTo, 
+				liqType, 
+				liqOrigin, 
+				Calculations::trace
+				);
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin,
+			final CalcCallback callback) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);
@@ -74,7 +112,7 @@ class Calculations {
 			try {
 				SistemaREDI.checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
-				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret= new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
+				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret=  new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
 				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
 				DomNodeList<DomNode> trowList = htmlPage.querySelectorAll("table>tbody>tr:not(.cabecera)");
@@ -180,6 +218,7 @@ class Calculations {
 							});
 							
 							periods.put(period, calcs);
+							callback.accept(liquidationType, naf, periods);
 							
 							htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
 							radios = htmlPage.getElementsByName("TRAMO");
@@ -239,8 +278,35 @@ class Calculations {
 	}
 	
 	
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-		final String certificatePassword, final String certificateType, String numLiquidation, String authorized, String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			String numLiquidation, 
+			String authorized, 
+			String[] nafs
+			) throws SegSocialException{
+		
+		return workersCalculationByCCCandNAFS(
+			    certificateInputStream, 
+			    certificatePassword, 
+			    certificateType,
+			    numLiquidation,
+			    authorized,
+			    nafs,
+			    Calculations::trace
+				);
+		
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+		final InputStream certificateInputStream,
+		final String certificatePassword, 
+		final String certificateType, 
+		String numLiquidation, 
+		String authorized, 
+		String[] nafs,
+		final CalcCallback callback) throws SegSocialException{
 	    
 	    Object[] arrFields = { numLiquidation };
 	    Toolkit.verifyData(arrFields);
@@ -251,13 +317,50 @@ class Calculations {
 		    certificateType, 
 		    authorized, 
 		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, numLiquidation), 
-		    nafs);
+		    nafs,
+		    callback);
 	}
 
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-		final String certificatePassword, final String certificateType, final String ccc,
-		final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-		final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin, 
+			String authorized, 
+			String[] nafs) throws SegSocialException{
+		return workersCalculationByCCCandNAFS(
+				certificateInputStream, 
+				certificatePassword, 
+				certificateType, 
+				ccc, 
+				regime, 
+				dateFrom, 
+				dateTo, 
+				liqType, 
+				liqOrigin, 
+				authorized, 
+				nafs,
+				Calculations::trace);
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+		final InputStream certificateInputStream,
+		final String certificatePassword, 
+		final String certificateType, 
+		final String ccc,
+		final SistemaRED.Regime regime, 
+		final Date dateFrom, 
+		final Date dateTo, 
+		final SistemaRED.LiquidationType liqType,
+		final SistemaRED.LiquidationOrigin liqOrigin, 
+		String authorized, 
+		String[] nafs,
+		final CalcCallback callback) throws SegSocialException{
 	    
 	    Object[] arrFields = { ccc, regime, dateFrom, dateTo, liqType, liqOrigin };
 	    Toolkit.verifyData(arrFields);
@@ -268,11 +371,18 @@ class Calculations {
 		    certificateType, 
 		    authorized, 
 		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin), 
-		    nafs);
+		    nafs,
+		    callback);
 	}
 	
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String authorized,LiquidationPageFill liquidationPageFill,  String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			String authorized,
+			LiquidationPageFill liquidationPageFill,  
+			String[] nafs,
+			final CalcCallback callback) throws SegSocialException{
 		
 		byte [] certificateData = null;
 		try {
@@ -323,7 +433,6 @@ class Calculations {
 					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
 					
 					for(String naf : nafs) {
-						System.out.println("Try NAF:" + naf);
 						DomNodeList<DomNode> rowNodes = htmlPage.querySelectorAll("tbody tr:not([class='cabecera'])");
 						if(!rowNodes.isEmpty()) {
 							Optional<DomNode> row = rowNodes.stream().filter(node -> (Toolkit.removeWeirdCharacters(((HtmlTableRow)node).getCell(1).getVisibleText()).equalsIgnoreCase(naf))).findFirst();
@@ -465,15 +574,21 @@ class Calculations {
 								radios = htmlPage.getElementsByName("TRAMO");
 							}
 							nafMap.put(naf, periods);
+							callback.accept(liquidationType, naf, periods);
 							
-							htmlPage = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+							Page page = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+							if ( page.isHtmlPage() ) {
+								htmlPage = (HtmlPage ) page;
+							}
 							
-							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							page = htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							if ( page.isHtmlPage() ) { 
+								htmlPage = (HtmlPage ) page;
+							}
+							 
 							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 						}
 						
-						System.out.println(naf +"...SUCCESS" );
-
 					}
 					
 					ret.put(liquidationType, nafMap);

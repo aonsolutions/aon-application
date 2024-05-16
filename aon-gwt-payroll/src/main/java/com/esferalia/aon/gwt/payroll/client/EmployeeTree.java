@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.TimeTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -2556,6 +2557,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private FileEditor fileEditor;
 
+	private TimeTask sldTask;
 	private ResultsPanel resultsPanel;
 	private ProgressPanel progressPanel;
 	private FlowPanel costsProblemsPanel;
@@ -2721,9 +2723,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
 		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages.
-			Task syncTask = new Task();
-			syncTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
-			progressPanel.showTask(syncTask);
+			sldTask = new TimeTask();
+			sldTask.startTime();
+			sldTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
+			progressPanel.showTask(sldTask);
 			handlerRegistration[0].removeHandler();
 		});
 		showProgressPanel();
@@ -2732,7 +2735,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	@Override
 	public void onFinishSLD() {
+		sldTask.endTime();
 		hideProgressPanel();
+	}
+	
+	@Override
+	public void onProgressSLD(String message, double progress ) {
+		sldTask.endTime();
+		sldTask.progressChanged(progress);
+		sldTask.messageChanged(message + " " + sldTask.getTimeSeconds() + " secs");
+		//progressPanel.showTask(syncTask);
 	}
 	
 	@Override

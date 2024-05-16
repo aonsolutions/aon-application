@@ -14,6 +14,9 @@ public class MarketingCompaignParams implements Serializable{
 	private Integer scope;
 	private Byte active;
 	
+	private Double budget;
+	private Double expense;
+	
 	private int limit;
 	private int offset;
 	
@@ -58,6 +61,20 @@ public class MarketingCompaignParams implements Serializable{
 	}
 	public MarketingCompaignParams setActive(Byte active) {
 		this.active = active;
+		return this;
+	}
+	public Double getBudget() {
+		return budget;
+	}
+	public MarketingCompaignParams setBudget(Double budget) {
+		this.budget = budget;
+		return this;
+	}
+	public Double getExpense() {
+		return expense;
+	}
+	public MarketingCompaignParams setExpense(Double expense) {
+		this.expense = expense;
 		return this;
 	}
 	public int getLimit() {

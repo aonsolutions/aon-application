@@ -16,6 +16,9 @@ public class MarketingActionParams implements Serializable{
 	
 	private Date startDate;
 	private Date endDate;
+
+	private Double budget;
+	private Double expense;
 	
 	private MarketingCampaign marketingCampaign;
 	
@@ -70,6 +73,20 @@ public class MarketingActionParams implements Serializable{
 	}
 	public MarketingActionParams setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
+	}
+	public Double getBudget() {
+		return budget;
+	}
+	public MarketingActionParams setBudget(Double budget) {
+		this.budget = budget;
+		return this;
+	}
+	public Double getExpense() {
+		return expense;
+	}
+	public MarketingActionParams setExpense(Double expense) {
+		this.expense = expense;
 		return this;
 	}
 	public MarketingCampaign getMarketingCampaign() {

@@ -875,7 +875,7 @@ public class AccountingInvoiceDAO {
 					InputStream in = null;
 					try {
 						Rawdoc rawdoc = RawdocDAO.getFull(ctx, accInvoice.getAttach().getId());
-						attach.setData( rawdoc.getData() );
+						if(rawdoc != null) attach.setData( rawdoc.getData() );
 					} finally {
 						AonIOUtils.closeQuietly(in);
 					}
@@ -1588,28 +1588,24 @@ public class AccountingInvoiceDAO {
 		
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
-			System.out.println("visitCustomer");
 			ai.getInvoice().setType( InvoiceType.SALES );			
 			super.visitCustomer( reg );
 		}
 
 		@Override
 		public void visitSupplier(AccountingRegistry reg) {
-			System.out.println("visitSupplier");
 			ai.getInvoice().setType( InvoiceType.PURCHASE);
 			super.visitSupplier( reg );
 		}
 
 		@Override
 		public void visitCreditor(AccountingRegistry reg) {
-			System.out.println("visitCreditor");
 			ai.getInvoice().setType( InvoiceType.EXPENSES);
 			super.visitCreditor( reg );
 		}
 		
 		@Override
 		public void visitUndedCreditor(AccountingRegistry reg) {
-			System.out.println("visitUndedCreditor");
 			ai.getInvoice().setType( InvoiceType.UNDEDUCTIBLE);
 			super.visitUndedCreditor( reg );
 		}

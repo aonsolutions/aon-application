@@ -36,6 +36,10 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 public class AccountPeriodDAO {
 	
+	private AccountPeriodDAO() {
+		
+	}
+	
 	private static final AccountPeriodPropertiesDAO ACCOUNT_PERIOD_PROPERTIES = new AccountPeriodPropertiesDAO();
 	private static class AccountPeriodPropertiesDAO implements AccountPeriodProperties {
 
@@ -47,11 +51,11 @@ public class AccountPeriodDAO {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.DOMAIN);}
 		@Override public Property<Date> getInitiationDateProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);}
 		@Override public Property<Date> getDeadlineProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_PERIOD.STATUS);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.STATUS);}
 	}
 	public static SelectConditionStep<Record10<Integer,Integer,String,java.sql.Date,java.sql.Date,Byte,String,Timestamp,String,Timestamp>> select(AONContext ctx, AccountPeriodFilter filter) {
 		return ctx.getDslContext()
@@ -70,13 +74,14 @@ public class AccountPeriodDAO {
 			.fetch()
 			.stream()
 			.map(new FullAccountPeriodFiller())
-			.peek( period -> {
+			.map( period -> {
 				if (ap != null) {
 					period.setDefaultPeriod( AonUtils.equals( AonNumberUtils.toInteger( ap.getValue() ),period.getId()));	
 				}
+				return period;
 			});
-		
 	}
+	
 	public static AccountPeriod getPeriod(AONContext ctx, Date entryDate) {
 		ctx.checkRead();
 		return getPeriods(ctx,
@@ -86,6 +91,19 @@ public class AccountPeriodDAO {
 						)
 				.findFirst()
 				.orElse(null);
+	}
+	
+	public static AccountPeriod ensurePeriod(AONContext ctx, Integer domain, Date entryDate) {
+		AccountPeriod period = getPeriod(ctx,entryDate);
+		if (period == null || period.getId() == null) {
+			period = new AccountPeriod()
+				.setDomain(domain)
+				.setName(Integer.toString(AonDateUtils.getYear(entryDate)))
+				.setInitiationDate(AonDateUtils.getYearFirstDay(entryDate))
+				.setDeadline(AonDateUtils.getYearLastDay(entryDate));
+			period = AccountPeriodDAO.save(ctx, period);
+		}
+		return period;
 	}
 	
 	public static AccountPeriod getPeriodByYear(AONContext ctx, int year) {
@@ -114,6 +132,7 @@ public class AccountPeriodDAO {
 				.findFirst()
 				.orElse(null);
 	}
+	
 	public static LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx) {
 		ctx.checkRead();
 		return getPeriods(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId()))
@@ -168,27 +187,26 @@ public class AccountPeriodDAO {
 	public static void delete(AONContext ctx, AccountPeriod ap) {
 		ctx.checkWrite();
 		AccountPeriodValidation.validateDeletion(ctx, ap);
-		ctx.getDslContext().transaction(configuration -> {
+		ctx.getDslContext().transaction(configuration -> 
 			ctx.getDslContext()
 				.delete(ACCOUNT_PERIOD)
-				.where(ACCOUNT_PERIOD.ID.equal(ap.getId())).execute();
-		});
+				.where(ACCOUNT_PERIOD.ID.equal(ap.getId())).execute());
 	}
 
 	private static class FullAccountPeriodFiller  implements Function<Record,AccountPeriod> {
 		@Override
-		public AccountPeriod apply(Record record) {
+		public AccountPeriod apply(Record rec) {
 			return new AccountPeriod()
-				.setId( record.getValue(ACCOUNT_PERIOD.ID) )
-				.setDomain(record.getValue(ACCOUNT_PERIOD.DOMAIN) )
-				.setName(record.getValue(ACCOUNT_PERIOD.NAME) )
-				.setInitiationDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE) )
-				.setDeadline(record.getValue(ACCOUNT_PERIOD.DEADLINE) )
-				.setStatus(AccountPeriodStatus.safeValueOf(record.getValue(ACCOUNT_PERIOD.STATUS)))
-				.setCreationUser(record.getValue(ACCOUNT_PERIOD.CREATION_USER) )
-				.setCreationDate(record.getValue(ACCOUNT_PERIOD.CREATION_DATE) )
-				.setModificationUser(record.getValue(ACCOUNT_PERIOD.MODIFICATION_USER) )
-				.setModificationDate(record.getValue(ACCOUNT_PERIOD.MODIFICATION_DATE) )
+				.setId( rec.getValue(ACCOUNT_PERIOD.ID) )
+				.setDomain(rec.getValue(ACCOUNT_PERIOD.DOMAIN) )
+				.setName(rec.getValue(ACCOUNT_PERIOD.NAME) )
+				.setInitiationDate(rec.getValue(ACCOUNT_PERIOD.INITIATION_DATE) )
+				.setDeadline(rec.getValue(ACCOUNT_PERIOD.DEADLINE) )
+				.setStatus(AccountPeriodStatus.safeValueOf(rec.getValue(ACCOUNT_PERIOD.STATUS)))
+				.setCreationUser(rec.getValue(ACCOUNT_PERIOD.CREATION_USER) )
+				.setCreationDate(rec.getValue(ACCOUNT_PERIOD.CREATION_DATE) )
+				.setModificationUser(rec.getValue(ACCOUNT_PERIOD.MODIFICATION_USER) )
+				.setModificationDate(rec.getValue(ACCOUNT_PERIOD.MODIFICATION_DATE) )
 				;
 		}
 	}
@@ -258,7 +276,7 @@ public class AccountPeriodDAO {
 		/**
 		 * El dominio no puede estar vacio
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> EMPTY_DOMAIN = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> EMPTY_DOMAIN = (ap,ctx) -> {
 			if (ap.getDomain() == null) 
 				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		};
@@ -266,7 +284,7 @@ public class AccountPeriodDAO {
 		/**
 		 * La fecha inicial no puede estar vacia
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> EMPTY_INITIATION_DATE_VALIDATION = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> EMPTY_INITIATION_DATE_VALIDATION = (ap,ctx) -> {
 			if (ap.getInitiationDate() == null) 
 				throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_INITIATION_DATE.getMessage());
 		};
@@ -274,7 +292,7 @@ public class AccountPeriodDAO {
 		/**
 		 * La fecha final debe ser posterior a la fecha inicial.
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> EMPTY_DEADLINE = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> EMPTY_DEADLINE = (ap,ctx) -> {
 			if (ap.getDeadline() == null)
 				throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_DEADLINE.getMessage());
 		};
@@ -282,7 +300,7 @@ public class AccountPeriodDAO {
 		/**
 		 * La fecha final debe ser posterior a la fecha inicial.
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> WRONG_RANGE = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> WRONG_RANGE = (ap,ctx) -> {
 			if (ap.getInitiationDate().after(ap.getDeadline()))
 				throw new AonCoreException(AonError.ACCOUNT_PERIOD_WRONG_RANGE.getMessage());
 		};
@@ -290,7 +308,7 @@ public class AccountPeriodDAO {
 		/**
 		 * El status del periodo no puede estar vacio.
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> EMPTY_STATUS = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> EMPTY_STATUS = (ap,ctx) -> {
 			if (ap.getStatus() == null)
 				throw new AonCoreException(AonError.EMPTY_STATUS.getMessage());
 		};
@@ -298,7 +316,7 @@ public class AccountPeriodDAO {
 		/**
 		 * No debe haber solapes entre las fechas de los diferentes periodos definidos.
 		 */
-		private static BiConsumer<AccountPeriod,AONContext> OVERLAP = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> OVERLAP = (ap,ctx) -> {
 			SelectConditionStep<Record3<String, java.sql.Date, java.sql.Date>> select = 
 					ctx.getDslContext()
 					.select(ACCOUNT_PERIOD.NAME, ACCOUNT_PERIOD.INITIATION_DATE,
@@ -310,25 +328,25 @@ public class AccountPeriodDAO {
 			}
 			Result<Record3<String, java.sql.Date, java.sql.Date>> result = select
 					.fetch();
-			for (Record3<String, java.sql.Date, java.sql.Date> record : result) {
-				Date pFrom = record.getValue(ACCOUNT_PERIOD.INITIATION_DATE);
-				Date pTo = record.getValue(ACCOUNT_PERIOD.DEADLINE);
+			for (Record3<String, java.sql.Date, java.sql.Date> rec : result) {
+				Date pFrom = rec.getValue(ACCOUNT_PERIOD.INITIATION_DATE);
+				Date pTo = rec.getValue(ACCOUNT_PERIOD.DEADLINE);
 				if (ap.getInitiationDate().compareTo(pFrom) >= 0 
 					&& ap.getInitiationDate().compareTo(pTo) <= 0) {
 					throw new AonCoreException(
 							AonError.ACCOUNT_PERIOD_START_OVERLAP.format(
-							record.getValue(ACCOUNT_PERIOD.NAME)));
+							rec.getValue(ACCOUNT_PERIOD.NAME)));
 				}
 				if (ap.getDeadline().compareTo(pFrom) >= 0 
 					&& ap.getDeadline().compareTo(pTo) <= 0) {
 					throw new AonCoreException(
 							AonError.ACCOUNT_PERIOD_END_OVERLAP.format(
-							record.getValue(ACCOUNT_PERIOD.NAME)));
+							rec.getValue(ACCOUNT_PERIOD.NAME)));
 				}
 			}
 		};
 		
-		private static BiConsumer<AccountPeriod,AONContext> HAS_ENTRIES_CHECK = (ap,ctx) -> {
+		private static final BiConsumer<AccountPeriod,AONContext> HAS_ENTRIES_CHECK = (ap,ctx) -> {
 			Integer count = ctx.getDslContext().select( DSL.count(ACCOUNT_ENTRY.ID) )
 				.from(ACCOUNT_ENTRY)
 				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))

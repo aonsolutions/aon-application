@@ -175,26 +175,26 @@ public class PrintInvoiceConfigurationDAO {
 			} else AttachmentDAO.insertDataAttach(ctx, pic.getBackground());
 		}
 		
-		if(!AonStringUtils.isBlank(pic.getLegal())) {
-			Attach legalAttach = AttachmentDAO.getRegistryAttachStream(ctx, f -> 
-				f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getTypeProperty().eq(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value())),
-				false).findFirst().orElse(new Attach());
+		Attach legalAttach = AttachmentDAO.getRegistryAttachStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getTypeProperty().eq(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value())),
+			false).findFirst().orElse(new Attach());
 
-			legalAttach.setDescription("Texto en pie de F.Venta");
-			legalAttach.setData(pic.getLegal().getBytes());
-			if(legalAttach.getId() != null)
-				AttachmentDAO.updateRegistryAttach(ctx, legalAttach);
-			else {
-				Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-				legalAttach.setAttachModule(company.getId());
-				legalAttach.setDate(new Date());
-				legalAttach.setDomain(new Domain().setId(ctx.getDomainId()));
-				legalAttach.setType(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value());
-				legalAttach.setMimeType(MimeType.TXT);
-				AttachmentDAO.insertRegistryAttach(ctx, legalAttach);
-			}
+		legalAttach.setDescription("Texto en pie de F.Venta");
+		legalAttach.setData(!AonStringUtils.isBlank(pic.getLegal()) 
+				? pic.getLegal().getBytes() : "".getBytes());
+		if(legalAttach.getId() != null)
+			AttachmentDAO.updateRegistryAttach(ctx, legalAttach);
+		else {
+			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+			legalAttach.setAttachModule(company.getId());
+			legalAttach.setDate(new Date());
+			legalAttach.setDomain(new Domain().setId(ctx.getDomainId()));
+			legalAttach.setType(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value());
+			legalAttach.setMimeType(MimeType.TXT);
+			AttachmentDAO.insertRegistryAttach(ctx, legalAttach);
 		}
+		
 		return pic;
 	}
 	
