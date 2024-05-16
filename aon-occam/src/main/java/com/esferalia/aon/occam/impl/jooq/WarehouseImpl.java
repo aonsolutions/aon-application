@@ -52,6 +52,8 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDetailCompositionDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationPackageDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
@@ -290,6 +292,13 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	// ------------------ ELABORATION
+	
+	@Override
+	public Integer getElaborationNextNumber(AONContext ctx, String series) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getNextNumber(ctx, series));
+	}
+	
 	@Override
 	public Elaboration getElaboration(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
@@ -300,17 +309,6 @@ public class WarehouseImpl implements IWarehouse {
 	public Elaboration getElaboration(AONContext ctx, ElaborationFilter filter, Options...options){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.get(ctx, filter, options));
-	}
-	
-	@Override
-	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getElaborationDetail(ctx, id));
-	}
-	@Override
-	public ElaborationDetailComposition getElaborationDetailComposition(AONContext ctx, Integer id) {
-		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationDetailComposition(ctx, id));
 	}
 
 	@Override
@@ -324,27 +322,6 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getList(ctx, filter, options));
 	}
-
-	@Override
-	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getElaborationDetailList(ctx, id));
-	}
-	@Override
-	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, ElaborationDetailFilter filter){
-		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationDetailList(ctx, filter));
-	}
-	@Override
-	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
-		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
-	}
-	@Override
-	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter){
-		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationDetailCompositionList(ctx, filter));
-	}
 	
 	@Override
 	public Elaboration saveElaboration(AONContext ctx, Elaboration elaboration) {
@@ -357,66 +334,99 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.insertElaboration(ctx, elaboration));
 	}
-	
-	@Override
-	public Integer insertElaborationDetail(AONContext ctx,
-			ElaborationDetail detail) {
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.insertElaborationDetail(ctx, detail));
-	}
-	@Override
-	public Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition) {
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.insertElaborationDetailComposition(ctx, composition));
-	}
-	
-	
+
 	@Override
 	public Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
-		return (Elaboration) ctx.getDslContext().transactionResult(configuration ->
+		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.updateElaboration(ctx, elaboration));
 	}
-	@Override
-	public ElaborationDetail updateElaborationDetail(AONContext ctx,
-			ElaborationDetail detail) {
-		return (ElaborationDetail) ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.updateElaborationDetail(ctx, detail));
-	}
-	@Override
-	public ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx,
-			ElaborationDetailComposition composition) {
-		return (ElaborationDetailComposition) ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.updateElaborationDetailComposition(ctx, composition));
-	}
-
 	
 	@Override
 	public Elaboration deleteElaboration(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.deleteElaboration(ctx, id));
 	}
+	
+	// ---------- ELABORATION DETAIL
+	
+	@Override
+	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaborationDetail(ctx, id));
+	}
+	
+	@Override
+	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaborationDetailList(ctx, id));
+	}
+	@Override
+	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, ElaborationDetailFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationDetailList(ctx, filter));
+	}
+	
+	@Override
+	public Integer insertElaborationDetail(AONContext ctx, ElaborationDetail detail) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.insertElaborationDetail(ctx, detail));
+	}
+	
+	@Override
+	public ElaborationDetail updateElaborationDetail(AONContext ctx, ElaborationDetail detail) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.updateElaborationDetail(ctx, detail));
+	}
+	
 	@Override
 	public ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.deleteElaborationDetail(ctx, id));
+			ElaborationDetailDAO.delete(ctx, id));
 	}
 	@Override
 	public ElaborationDetail deleteElaborationDetail(AONContext ctx, ElaborationDetailFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.deleteElaborationDetail(ctx, filter));
+			ElaborationDetailDAO.delete(ctx, filter));
 	}
+
+	// ---------- ELABORATION DETAIL COMPOSITION
+	
 	@Override
-	public ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx,
-			ElaborationDetailCompositionFilter filter) {
+	public ElaborationDetailComposition getElaborationDetailComposition(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.deleteElaborationDetailComposition(ctx, filter));
+		ElaborationDetailCompositionDAO.getElaborationDetailComposition(ctx, id));
 	}
 	
 	@Override
-	public Integer getElaborationNextNumber(AONContext ctx, String series) {
+	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getNextNumber(ctx, series));
+		ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, id));
 	}
+	@Override
+	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDetailCompositionDAO.getElaborationDetailCompositionList(ctx, filter));
+	}
+	
+	@Override
+	public Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, composition));
+	}
+	
+	@Override
+	public ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDetailCompositionDAO.updateElaborationDetailComposition(ctx, composition));
+	}
+
+	@Override
+	public ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, ElaborationDetailCompositionFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDetailCompositionDAO.deleteElaborationDetailComposition(ctx, filter));
+	}
+	
+	// ---------- ELABORATION PACKAGE
 	
 	@Override
 	public ElaborationDetail deleteElaborationPackage(AONContext ctx, Integer id) {

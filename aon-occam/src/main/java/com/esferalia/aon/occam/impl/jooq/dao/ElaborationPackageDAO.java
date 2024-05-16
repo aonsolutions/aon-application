@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.impl.jooq.validation.ElaborationPackageValidation;
@@ -11,6 +12,28 @@ public class ElaborationPackageDAO {
 	private ElaborationPackageDAO() {
 	
 	}
+	
+//	public static ElaborationDetail update(AONContext ctx, ElaborationDetail elaborationPackage) {
+//		ElaborationDetail savedElaborationPackage = ElaborationDetailDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
+//		ElaborationPackageValidation.validatePackageDeletion(ctx, savedElaborationPackage);
+//		// TODO UPDATE ELABORATION DETAIL..
+//		
+//		// UPDATE ELABORATION DETAIL COMPOSITION
+//		elaborationPackage.getComposition().forEach(composition -> {
+//			ElaborationDetailComposition savedComposition = savedElaborationPackage.getComposition().stream().filter(f -> f.getId().equals(r.getId())).findFirst().orElse(new ElaborationDetailComposition());
+//			if(!savedComposition.equals(composition)) {
+//				// UPDATE ELABORATION DETAIL COMPOSITION
+//				ElaborationDetailCompositionDAO.updateElaborationDetailComposition(ctx, composition);
+//				// UPDATE ITEM COMPOSITION
+//				ItemCompositionDAO.update(ctx, null);
+//				// UPDATE STOCK
+//				
+//				// UPDATE ELABORATION DETAIL
+//			}
+//		});
+//		
+//	}
+	
 	
 	public static ElaborationDetail delete(AONContext ctx, Integer id) {
 		ElaborationDetail elaborationPackage = ElaborationDetailDAO.getFull(ctx, f -> f.getIdProperty().eq(id));

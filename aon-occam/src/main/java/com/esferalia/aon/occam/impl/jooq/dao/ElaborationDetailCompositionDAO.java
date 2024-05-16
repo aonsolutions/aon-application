@@ -185,12 +185,12 @@ public class ElaborationDetailCompositionDAO {
 				.returning().fetch().stream().map(new ElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
 		
-	private static class ElaborationDetailCompositionFiller extends Filler implements Function<Record, ElaborationDetailComposition> {
+	public static class ElaborationDetailCompositionFiller extends Filler implements Function<Record, ElaborationDetailComposition> {
 		@Override
 		public ElaborationDetailComposition apply(Record r) {
 			return new ElaborationDetailComposition()
-				.setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ID))
-				.setDomain(r.getValue(ELABORATION_DETAIL_COMPOSITION.DOMAIN))
+				.setId(getValue(r, ELABORATION_DETAIL_COMPOSITION.ID))
+				.setDomain(getValue(r, ELABORATION_DETAIL_COMPOSITION.DOMAIN))
 				.setElaborationDetail(new ElaborationDetail().setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.build(r)

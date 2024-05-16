@@ -205,7 +205,7 @@ public class ElaborationDetailDAO {
 		return delete(ctx, f -> f.getIdProperty().eq(id));
 	}
 
-	private static class ElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {
+	public static class ElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {
 		@Override
 		public ElaborationDetail apply(Record r) {
 			return new ElaborationDetail()

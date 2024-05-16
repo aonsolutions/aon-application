@@ -25,10 +25,7 @@ public class ElaborationDetailComposition implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
-	
-	
-	
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -52,6 +49,9 @@ public class ElaborationDetailComposition implements Serializable {
 		return this;
 	}
 	public Item getItem() {
+		if(item == null) {
+			item = new Item();
+		}
 		return item;
 	}
 	public ElaborationDetailComposition setItem(Item item) {
