@@ -2,6 +2,7 @@ import { AonElement } from "../../components/AonElement.js";
 import { EVENT, TAG } from "../../environments/environments.js";
 import { AonCard } from "../../components/aon-card.js";
 import { AonSwitch } from "../../components/aon-switch.js";
+import { AonSelect } from "../../components/aon-select.js";
 
 export class AonOcrConfiguration extends AonElement {
     
@@ -15,8 +16,9 @@ export class AonOcrConfiguration extends AonElement {
     initialize() {
         this.id = this.id || 'aonInvoiceConfigurationCommunication';
         this.DIV = this.id + 'Div';
-        this.TEST = this.id + 'Test';
-        this.AUTO_ACCEPT = this.id + 'AutoAccept';
+        this.PERSONALIZED = this.id + 'Personalized';
+        this.ENVIRONMENT = this.id + 'Environment';
+        // this.AUTO_ACCEPT = this.id + 'AutoAccept';
         this.AUTO_RECORD = this.id + 'AutoRecord';
         this.CARD = this.id + 'Card';
         this.CARD_DIV = this.CARD + 'Div';
@@ -40,26 +42,44 @@ export class AonOcrConfiguration extends AonElement {
         
         let content = this.createDiv(this.CARD_DIV);
 		card.setContent(content);
-    
+
+        if(this.isConsole()) {
+            let div0 = this.createDiv();
+            div0.style.marginBottom = '10px';
+            content.appendChild(div0)
+            let personalized = new AonSwitch()
+            personalized.id = this.AUTO_RECORD;
+            personalized.title = 'Personalizado';
+            div0.appendChild(personalized);
+            personalized.checked = this.configuration.personalized;
+            personalized.addEventListener(EVENT.CHANGE, () => this.configuration.personalized = personalized.checked);
+        }
+
         let div1 = this.createDiv();
         div1.style.marginBottom = '10px';
-        content.appendChild(div1)
-        let test = new AonSwitch()
-        test.id = this.TEST;
-        test.title = 'Entorno de Pruebas';
-        div1.appendChild(test);
-        test.checked = this.configuration.test;
-        test.addEventListener(EVENT.CHANGE, () => this.configuration.test = test.checked);
+        content.appendChild(div1);
+        let env = new AonSelect();
+        env.id = this.ENVIRONMENT;
+        env.title = "Entorno"; 
+        // env.disabled = !this.configuration.personalized || !this.isConsole();
+        env.value = this.configuration.environment;
+        env.setAlias('id', 'name');
+		env.setOptions(this.configuration.environments);
+        env.addEventListener(EVENT.SELECT,(e) => {
+			this.configuration.environment = e.detail.id;
+            this.configuration.apiKey = e.detail.apiKey;
+		});
+        div1.appendChild(env)
 
-        let div2 = this.createDiv();
-        div2.style.marginBottom = '10px';
-        content.appendChild(div2)
-        let autoAccept = new AonSwitch()
-        autoAccept.id = this.AUTO_ACCEPT;
-        autoAccept.title = 'Aceptar Facturas Automáticamente';
-        div2.appendChild(autoAccept);
-        autoAccept.checked = this.configuration.autoAccept;
-        autoAccept.addEventListener(EVENT.CHANGE, () => this.configuration.autoAccept = autoAccept.checked);
+        // let div2 = this.createDiv();
+        // div2.style.marginBottom = '10px';
+        // content.appendChild(div2)
+        // let autoAccept = new AonSwitch()
+        // autoAccept.id = this.AUTO_ACCEPT;
+        // autoAccept.title = 'Aceptar Facturas Automáticamente';
+        // div2.appendChild(autoAccept);
+        // autoAccept.checked = this.configuration.autoAccept;
+        // autoAccept.addEventListener(EVENT.CHANGE, () => this.configuration.autoAccept = autoAccept.checked);
 
         let div3 = this.createDiv();
         div3.style.marginBottom = '10px';

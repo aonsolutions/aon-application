@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -504,6 +505,13 @@ public class InvoiceAutoComplete {
 			inv.setDetails(invoiceDetails);
 		}
 		inv.getDetails().stream().forEach(detail -> {
+			
+			if(detail.getId() != null) {
+				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
+					detail.setId(null);
+				}
+			}
 
 			detail.setDomain(inv.getDomain());
 			

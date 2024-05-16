@@ -23,16 +23,22 @@ public class InvofoxConfigurationDAO {
 			.and(f.getNameProperty().like("INVOFOX_%")))
 		.sorted((r1,r2) -> AonNumberUtils.compare(r1.getDomain(), r2.getDomain()))
 		.forEach(r -> {
-			if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_TEST.toString())) {
-				invofoxConfiguration.setTest(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
+			if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_USER.toString())) {
+				invofoxConfiguration.setUser(r.getValue());
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_PASS.toString())) {
+				invofoxConfiguration.setPass(r.getValue());
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_API_KEY.toString())) {
 				invofoxConfiguration.setApiKey(r.getValue());
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_API_URL.toString())) {
 				invofoxConfiguration.setApiUrl(r.getValue());
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_ENVIRONMENT.toString())) {
+				invofoxConfiguration.setEnvironment(r.getValue());
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_AUTO_ACCEPT.toString())) {
 				invofoxConfiguration.setAutoAccept(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
 			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_AUTO_RECORD.toString())) {
 				invofoxConfiguration.setAutoRecord(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
+			} else if(r.getName().equalsIgnoreCase(AppParam.INVOFOX_PERSONALIZED.toString())) {
+				invofoxConfiguration.setPersonalized(r.getValue() != null && ("true".equalsIgnoreCase(r.getValue()) || "1".equals(r.getValue())));
 			}
 		});
 
@@ -43,8 +49,24 @@ public class InvofoxConfigurationDAO {
 		ctx.checkWrite();	
 		
 		AppParamDAO.insertApplicationParameter(ctx,
-				AppParam.INVOFOX_TEST.toString(),
-				Boolean.toString(invofoxConfiguration.isTest()));
+				AppParam.INVOFOX_USER.toString(),
+				invofoxConfiguration.getUser());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_PASS.toString(),
+				invofoxConfiguration.getPass());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_API_URL.toString(),
+				invofoxConfiguration.getApiUrl());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_API_KEY.toString(),
+				invofoxConfiguration.getApiKey());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_ENVIRONMENT.toString(),
+				invofoxConfiguration.getEnvironment());
 		
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOFOX_AUTO_ACCEPT.toString(),
@@ -53,6 +75,10 @@ public class InvofoxConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOFOX_AUTO_RECORD.toString(),
 				Boolean.toString(invofoxConfiguration.isAutoRecord()));
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOFOX_PERSONALIZED.toString(),
+				Boolean.toString(invofoxConfiguration.isPersonalized()));
 		
 		return invofoxConfiguration;
 	}

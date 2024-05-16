@@ -14,7 +14,9 @@ public class InvofoxConfigurationJSON {
 	
 	public static InvofoxConfiguration fromJSON(JSONObject json) {
 		return new InvofoxConfiguration()
-			.setTest(JsonUtils.getboolean(json, IJsonNames.TEST))
+			.setPersonalized(JsonUtils.getboolean(json, IJsonNames.PERSONALIZED))
+			.setApiKey(JsonUtils.getString(json, IJsonNames.API_KEY))
+			.setEnvironment(JsonUtils.getString(json, IJsonNames.ENVIRONMENT))
 			.setAutoAccept(JsonUtils.getboolean(json, IJsonNames.AUTO_ACCEPT))
 			.setAutoRecord(JsonUtils.getboolean(json, IJsonNames.AUTO_RECORD))
 			;
@@ -23,7 +25,9 @@ public class InvofoxConfigurationJSON {
 	
 	public static JSONObject toJSON(InvofoxConfiguration config) {
 		return new JSONObject()
-			.put(IJsonNames.TEST, config.isTest())
+			.put(IJsonNames.PERSONALIZED, config.isPersonalized())
+			.put(IJsonNames.API_KEY, config.getApiKey())
+			.put(IJsonNames.ENVIRONMENT, config.getEnvironment())
 			.put(IJsonNames.AUTO_ACCEPT, config.isAutoAccept())
 			.put(IJsonNames.AUTO_RECORD, config.isAutoRecord());
 	}
