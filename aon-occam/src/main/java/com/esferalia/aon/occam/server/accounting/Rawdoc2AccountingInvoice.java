@@ -160,8 +160,9 @@ public class Rawdoc2AccountingInvoice {
 	private static AccountingInvoice fillAttach(AONContext ctx, AccountingInvoice ai,  JSONObject ti) {
 		JSONObject file = ti.optJSONObject("file");
 		if (file != null) {
+			String s3Key = file.optString("s3Key");
 			String url = file.optString("url");
-			if (AonStringUtils.isNotBlank(url)) {
+			if (AonStringUtils.isNotBlank(url) && AonStringUtils.isNotBlank(s3Key)) {
 				Attach attach = new Attach()
 					.setAttachType(AttachType.INVOICE)
 					.setAttachURL( url );
