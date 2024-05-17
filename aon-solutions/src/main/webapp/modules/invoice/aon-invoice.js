@@ -2701,13 +2701,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if((this.getDur().hasAccounting() || this.getDur().hasParentAccounting())
-			&& !this.invoice.category) {
-			this.showError({
-				type: CONSTANT.ERROR,
-				message: "Para Aceptar es necesaria la categoría."
-			});
-		} else {
+		// if((this.getDur().hasAccounting() || this.getDur().hasParentAccounting())
+		// 	&& !this.invoice.category) {
+		// 	this.showError({
+		// 		type: CONSTANT.ERROR,
+		// 		message: "Para Aceptar es necesaria la categoría."
+		// 	});
+		// } else {
 			if(this.invoice.isEmitida() && this.configuration.tbai.active) {
 				let d = this.getApplication().getDialog();
 				d.clear();
@@ -2756,7 +2756,7 @@ export class AonInvoice extends AonElement {
 					this.showError(e)
 				});
 			}
-		}
+		// }
 	}
 	
 	setInvofoxState(publicState) {

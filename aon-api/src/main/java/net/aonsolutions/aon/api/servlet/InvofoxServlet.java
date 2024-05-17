@@ -187,7 +187,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
-				if (inv != null && !AonStringUtils.isBlank(inv.getTediCategory()) && publicState != null && OCRSeverity.approved.equals(publicState)) {
+				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)) {
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, null);
 					if (inv != null && inv.getId() != null) {
