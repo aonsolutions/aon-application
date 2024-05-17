@@ -4,8 +4,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -16,15 +19,20 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.SellerValidation;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SellerDAO {
     
@@ -54,6 +62,7 @@ public class SellerDAO {
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SELLER.STATUS);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.SCOPE);}
 		@Override public Property<Integer> getCommissionTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.COMMISSION_TYPE);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(SELLER.TASK_HOLDER);}
 
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.ID);}
 		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(SELLER_ALIAS.DOCUMENT);}
@@ -71,6 +80,8 @@ public class SellerDAO {
 				.from(SELLER)
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
 	}
 
@@ -84,6 +95,45 @@ public class SellerDAO {
 		return get(ctx, f -> f.getRegistryProperty().eq(id));
 	}
 	
+	public static List<Seller>  getList(CloseableAONContext ctx, SellerParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		List<Seller> sellers = ctx.getDslContext().select()
+				.from(SELLER)
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.where(condition)
+				.limit(params.getOffset(), params.getLimit())
+				.fetch()
+				.stream()
+				.map(new SellerFiller())
+				.collect(Collectors.toList());
+			
+		return sellers;
+	}
+	
+	private static Condition paramsToCondition(CloseableAONContext ctx, SellerParams params) {
+		Condition condition = SELLER.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription())) {
+			condition = condition.and(
+					SELLER_ALIAS.NAME.like("%" + params.getDescription() + "%")
+					.or(SELLER_ALIAS.DOCUMENT.like("%" + params.getDescription() + "%"))
+					.or(SELLER_ALIAS.ALIAS.like("%" + params.getDescription() + "%"))
+			);
+		}
+
+		if(null != params.getScope())
+			condition = condition.and(SELLER.SCOPE.eq(params.getScope()));
+		
+		if(null != params.getActive())
+			condition = condition.and(SELLER.STATUS.eq(params.getActive()));
+		
+		return condition;
+	}
+
 	public static Stream<Seller> getStream(AONContext ctx, SellerFilter filter){
 		return select(ctx, filter)
 			.orderBy(SELLER_ALIAS.NAME)
@@ -100,7 +150,7 @@ public class SellerDAO {
 	
 	public static Seller save(AONContext ctx, Seller seller) {
 		ctx.checkWrite();
-		// TODO AUTOCOMPLETE && VALIDATION
+		SellerValidation.validate(ctx, seller);
 		boolean nullId = (seller.getId() == null); 
 		seller.copy(RegistryDAO.save(ctx, seller));
 		return nullId || get(ctx, seller.getId()).isEmpty()
@@ -114,6 +164,7 @@ public class SellerDAO {
 			.set(SELLER.COMMISSION_TYPE, seller.getCommissionType().getId())
 			.set(SELLER.SCOPE, seller.getScope().getId())
 			.set(SELLER.STATUS, seller.getStatus().value())
+			.set(SELLER.TASK_HOLDER, null == seller.getTaskHolder() ? null : seller.getTaskHolder().getRegistry())
 			.execute();
 		return seller;
 	}
@@ -125,6 +176,7 @@ public class SellerDAO {
 			.set(SELLER.COMMISSION_TYPE, seller.getCommissionType().getId())
 			.set(SELLER.SCOPE, seller.getScope().getId())
 			.set(SELLER.STATUS, seller.getStatus().value())
+			.set(SELLER.TASK_HOLDER, null == seller.getTaskHolder() ? null : seller.getTaskHolder().getRegistry())
 			.where(SELLER.REGISTRY.eq(seller.getId()))
 			.execute();
 		ctx.log().info("UPDATE SUPPLIER id: " + seller.getId() + ". (" + count + " rows)");		
@@ -162,7 +214,9 @@ public class SellerDAO {
 				.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
 				.setScope(checkField(r, SCOPE.ID)
 					? ScopeFiller.buildScope(r)
-					: new Scope().setId(r.getValue(SELLER.SCOPE)));
+					: new Scope().setId(r.getValue(SELLER.SCOPE)))
+				.setTaskHolder(null == r.getValue(TASK_HOLDER.REGISTRY) ? null : TaskHolderFiller.build(r, REGISTRY))
+				;
 		}
 
 	}
