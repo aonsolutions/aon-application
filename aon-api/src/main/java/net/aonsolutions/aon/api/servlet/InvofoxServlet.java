@@ -74,6 +74,7 @@ import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCREndpoint;
+import net.aonsolutions.invofox.model.OCREnvironment;
 import net.aonsolutions.invofox.model.OCREnvironmentResponse;
 import net.aonsolutions.invofox.model.OCRError;
 import net.aonsolutions.invofox.model.OCREvent;
@@ -97,6 +98,7 @@ import solutions.aon.aws.s3.S3;
 public class InvofoxServlet extends AonApiHttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(InvofoxServlet.class.getName());
+	private static final String WEBHOOK_URL = "https://7ocqe3muv7hdurqizaxljwsc4e0xcvgl.lambda-url.eu-west-1.on.aws";
 
 	public static final String DOCUMENTS = "/";
 	public static final String DOCUMENT = "/document";
@@ -104,6 +106,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static final String TEXT_CONTENT = "/text_content";
 	public static final String CONFIGURATION = "/configuration";
 	public static final String ACCEPT = "/accept";
+	public static final String LOGIN = "/login";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -145,6 +148,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 
 			Object object = new AonRouting(api)
+					.addRoute(LOGIN, InvofoxServlet::invofoxLogin)
 					.addRoute(DOCUMENT, InvofoxServlet::updateDocument)
 					.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
 					.addRoute(ACCEPT, InvofoxServlet::acceptDocument).apply();
@@ -350,38 +354,87 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return json;
 	}
 
-	public static JSONObject getConfiguration(AonApiData api) {
-		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
-		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
+	public static JSONObject invofoxLogin(AonApiData api) {
+		String user = JsonUtils.getString(api.getData(), IJsonNames.USER);
+		String password = JsonUtils.getString(api.getData(), IJsonNames.PASSWORD);
 		OCRLogin ocrLogin = OCRInvofox
-				.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
-				.orElse(new OCRLogin());
-		
+			.getLogin(user, password, InvofoxConfiguration.DEFAULT_API_URL).getLogin()
+			.orElse(new OCRLogin());		
+
 		String token = ocrLogin.getToken().orElse(null);
 		String account = ocrLogin.getUser().orElse(new OCRUser()).getAccount().orElse(null);
 		
 		if(token != null && account != null) {
-			JSONArray environments = new JSONArray();
-			
-			OCRInvofox.getEnvironments(token, account).getEnvironments().stream().forEach(env-> {
-				OCRApiKey apikey = env.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
+			List<OCREnvironment> environments = OCRInvofox.getEnvironments(token, account).getEnvironments();
+			if(!environments.isEmpty()) {
+				OCREnvironment environment = environments.getFirst();
+				
+				OCRApiKey apikey = environment.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
 				if(AonStringUtils.isBlank(apikey.getKey())) {
-					OCRApiKeyResponse resp = OCRInvofox.createApikey(token, env.getId());
+					OCRApiKeyResponse resp = OCRInvofox.createApikey(token, environment.getId());
 					apikey = resp.getApikey().orElse(new OCRApiKey());
 				}
-				JSONObject envJSON = new JSONObject();
-				envJSON.put(IJsonNames.ID, env.getId());
-				envJSON.put(IJsonNames.NAME, env.getName());
-				envJSON.put(IJsonNames.API_KEY, apikey.getKey());
-				environments.put(envJSON);
-			});
-			invofoxConfigurationJSON.put("environments", environments);
+
+				OCRWebhook webhook = environment.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
+				if(webhook == null) {
+					webhook = new OCRWebhook()
+						.setEndpoint(new OCREndpoint()
+							.setHeaders(new LinkedList<>())
+							.setMethod("POST")
+							.setUrl(WEBHOOK_URL))
+						.setEvents(OCREvent.getValues())
+						.setSecurity(new OCRSecurity()
+								.setAlgorithm("sha256")
+								.setSecret(""))
+						.setActive(true);
+						
+					OCRInvofox.createWebhook(token, environment.getId(), webhook);
+				}
+				
+				InvofoxConfiguration invofoxConfiguration = new InvofoxConfiguration()
+						.setPersonalized(true)
+						.setUser(user)
+						.setPass(password)
+						.setApiKey(apikey.getKey())
+						.setEnvironment(environment.getId());
+				invofoxConfiguration = AON.saveInvofoxConfiguration(api.getDomain(), api.getUser().getLogin(), invofoxConfiguration);
+				return InvofoxConfigurationJSON.toJSON(invofoxConfiguration);	
+			} else throw new AonApiException("No se ha encontrado ningún entorno en Invofox");
+		} else throw new AonApiException("Error al iniciar sesión en Invofox");
+	}
+	
+	public static JSONObject getConfiguration(AonApiData api) {
+		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
+		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
+		if(!invofoxConfiguration.isLoginRequired()) {
+			OCRLogin ocrLogin = OCRInvofox
+					.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
+					.orElse(new OCRLogin());
+			
+			String token = ocrLogin.getToken().orElse(null);
+			String account = ocrLogin.getUser().orElse(new OCRUser()).getAccount().orElse(null);
+			
+			if(token != null && account != null) {
+				JSONArray environments = new JSONArray();
+				
+				OCRInvofox.getEnvironments(token, account).getEnvironments().stream().forEach(env-> {
+					OCRApiKey apikey = env.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
+					if(AonStringUtils.isBlank(apikey.getKey())) {
+						OCRApiKeyResponse resp = OCRInvofox.createApikey(token, env.getId());
+						apikey = resp.getApikey().orElse(new OCRApiKey());
+					}
+					JSONObject envJSON = new JSONObject();
+					envJSON.put(IJsonNames.ID, env.getId());
+					envJSON.put(IJsonNames.NAME, env.getName());
+					envJSON.put(IJsonNames.API_KEY, apikey.getKey());
+					environments.put(envJSON);
+				});
+				invofoxConfigurationJSON.put("environments", environments);
+			}
 		}
-		
+
 		return invofoxConfigurationJSON;
 	}
-
-	private static final String WEBHOOK_URL = "https://7ocqe3muv7hdurqizaxljwsc4e0xcvgl.lambda-url.eu-west-1.on.aws";
 	
 	public static JSONObject saveConfiguration(AonApiData api) {
 		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationJSON.fromJSON(api.getData());

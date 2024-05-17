@@ -29,7 +29,8 @@ public class InvofoxConfigurationJSON {
 			.put(IJsonNames.API_KEY, config.getApiKey())
 			.put(IJsonNames.ENVIRONMENT, config.getEnvironment())
 			.put(IJsonNames.AUTO_ACCEPT, config.isAutoAccept())
-			.put(IJsonNames.AUTO_RECORD, config.isAutoRecord());
+			.put(IJsonNames.AUTO_RECORD, config.isAutoRecord())
+			.put(IJsonNames.LOGIN_REQUIRED, config.isLoginRequired());
 	}
 	
 }

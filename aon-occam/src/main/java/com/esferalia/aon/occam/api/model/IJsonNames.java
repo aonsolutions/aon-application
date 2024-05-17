@@ -330,6 +330,7 @@ public final class IJsonNames {
 	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
 	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
+	public static final String LOGIN_REQUIRED = "loginRequired";
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
 	public static final String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";

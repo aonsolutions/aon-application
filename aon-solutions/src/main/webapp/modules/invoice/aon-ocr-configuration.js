@@ -1,8 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
-import { EVENT, TAG } from "../../environments/environments.js";
+import { CSS, EVENT, TAG, MSG, CONSTANT } from "../../environments/environments.js";
 import { AonCard } from "../../components/aon-card.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { AonSelect } from "../../components/aon-select.js";
+import { AonEmail } from "../../components/aon-email.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
+import { invofoxLogin } from "../../services/invofoxService.js";
+import { AonIcon } from "../../components/aon-icon.js";
 
 export class AonOcrConfiguration extends AonElement {
     
@@ -22,6 +26,10 @@ export class AonOcrConfiguration extends AonElement {
         this.AUTO_RECORD = this.id + 'AutoRecord';
         this.CARD = this.id + 'Card';
         this.CARD_DIV = this.CARD + 'Div';
+
+        this.USER = this.id + 'User';
+        this.PASSWORD = this.id + 'Password';
+        this.SIGN_IN = this.id + 'SignIn';
     }
 
     build() {
@@ -43,6 +51,57 @@ export class AonOcrConfiguration extends AonElement {
         let content = this.createDiv(this.CARD_DIV);
 		card.setContent(content);
 
+        if(this.configuration.loginRequired) {
+            this.buildInvofoxLogin(content);
+        } else this.buildInvofoxConfiguration(content);
+    }
+
+    reload(content, configuration) {
+        this.configuration = configuration;
+        this.clearElement(content);
+        
+        if(this.configuration.loginRequired) {
+            this.buildInvofoxLogin(content);
+        } else this.buildInvofoxConfiguration(content);
+    }
+
+    buildInvofoxLogin(content) {
+        let aonIcon = new AonIcon();
+        aonIcon.icon = "invofox";
+        aonIcon.size = "100px"
+        aonIcon.style.marginLeft = '40%';
+        content.appendChild(aonIcon);
+
+        let userInput = this.createAonElement( new AonEmail(),this.USER, MSG.USER);
+        userInput.setRequired(true);
+        content.appendChild(userInput);
+    
+        let passwordInput = this.createAonElement(new AonNewInput(), this.PASSWORD, MSG.PASSWORD);
+        passwordInput.setRequired(true);
+        passwordInput.type = 'password';
+        content.appendChild(passwordInput);
+    
+        // Buttons
+        let signIn = this.createElement(TAG.BUTTON);
+        signIn.id = this.SIGN_IN;
+        signIn.className = CSS.AON_LOGIN_BUTTON;
+        signIn.title = MSG.SIGN_IN;
+        signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
+        signIn.addEventListener(EVENT.CLICK, () => {
+            let data = {
+                user: userInput.value,
+                password: passwordInput.value
+            }
+            invofoxLogin(data).then(r => {
+                this.reload(content, r);
+            }).catch(e => {
+
+            });
+        });
+        content.appendChild(signIn);
+    }
+
+    buildInvofoxConfiguration(content) {
         if(this.isConsole()) {
             let div0 = this.createDiv();
             div0.style.marginBottom = '10px';
@@ -61,7 +120,8 @@ export class AonOcrConfiguration extends AonElement {
         let env = new AonSelect();
         env.id = this.ENVIRONMENT;
         env.title = "Entorno"; 
-        env.disabled = !this.configuration.personalized || !this.isConsole() || !this.isBeta();
+        let enabled = this.configuration.personalized || this.isConsole() || this.isBeta();
+        if(!enabled) env.disabled = CONSTANT.DISABLED;
         env.value = this.configuration.environment;
         env.setAlias('id', 'name');
 		env.setOptions(this.configuration.environments);

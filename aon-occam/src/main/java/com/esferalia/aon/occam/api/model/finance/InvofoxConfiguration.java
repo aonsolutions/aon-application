@@ -18,7 +18,7 @@ public class InvofoxConfiguration implements Serializable{
 	
 	private static final String DEFAULT_USER = "app@aonsolutions.es";	
 	private static final String DEFAULT_PASS = "U%4LjF~ai$5ZW[Z";	
-	private static final String DEFAULT_API_URL = "https://api.invofox.com";
+	public static final String DEFAULT_API_URL = "https://api.invofox.com";
 	private static final String DEFAULT_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
 	private static final String DEFAULT_ENVIRONMENT = "64804a43d883e2000ac0423a";
 
@@ -103,5 +103,9 @@ public class InvofoxConfiguration implements Serializable{
 	public InvofoxConfiguration setAutoRecord(boolean autoRecord) {
 		this.autoRecord = autoRecord;
 		return this;
+	}
+	
+	public boolean isLoginRequired() {
+		return isPersonalized() && getUser().equalsIgnoreCase(DEFAULT_USER);
 	}
 }
