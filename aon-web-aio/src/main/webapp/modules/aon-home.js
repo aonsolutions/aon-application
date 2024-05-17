@@ -2,6 +2,7 @@ import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonHeader } from 'aonsolutions/modules/aon-header.js';
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import * as LS from 'aonsolutions/services/localStorageService.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -37,7 +38,6 @@ export class AonHome extends AonElement {
 		if(LS.isNewTheme()){
 			
 		}
-
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		this.appendChild(gradiantHeader);
@@ -149,7 +149,7 @@ export class AonHome extends AonElement {
 				}
 			});
 		}
-		
+
 		let headerUser = this.getElement('aonHeaderUser');
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {

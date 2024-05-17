@@ -780,6 +780,7 @@
 }
 
 .aonMenuSidenav {
+  z-index: 2;
   height: 100%;
   width: 60px;
   position: fixed;
@@ -850,7 +851,7 @@
   height: 60px;
   position: fixed;
   top: 48px;
-  left: 0;
+  left: 0px;
   overflow-x: hidden;
 
   font-size: 10px;
