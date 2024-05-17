@@ -61,7 +61,7 @@ export class AonOcrConfiguration extends AonElement {
         let env = new AonSelect();
         env.id = this.ENVIRONMENT;
         env.title = "Entorno"; 
-        // env.disabled = !this.configuration.personalized || !this.isConsole();
+        env.disabled = !this.configuration.personalized || !this.isConsole() || !this.isBeta();
         env.value = this.configuration.environment;
         env.setAlias('id', 'name');
 		env.setOptions(this.configuration.environments);
