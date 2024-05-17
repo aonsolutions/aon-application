@@ -8,6 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.DOC;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -15,19 +25,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-
-import org.json.JSONObject;
-
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.DOC;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.IConstants;
@@ -35,7 +32,7 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @MultipartConfig
 @SuppressWarnings("serial")
-@WebServlet(name = "ATTACH", urlPatterns = { "/aon_gwt_payroll/attach/*" })
+@WebServlet(name = "ATTACH", urlPatterns = { "/aon_gwt_payroll/attach/*", "/aon_gwt_aio/attach/*" })
 public class UploadAttachServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(UploadAttachServlet.class.getName());
@@ -209,6 +206,8 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		// Get currentUser
 		Integer attachId = Integer.parseInt(req.getParameter("attachId"));
 		
+		String attachType = req.getParameter("attachType");
+		
 		try {
 			DOC.getContratDoc(domainName, login, p -> p.getIdProperty().eq(attachId))
 			.ifPresent( doc -> {
@@ -226,8 +225,10 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		}
 		
 		
+		
+		
 		try {
-			Attach attach = AON.getAttach(domainName, domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
+			Attach attach = AON.getAttach(domainName, domain.getId(), login, f -> f.getIdProperty().eq(attachId), AonStringUtils.isBlank(attachType) ? AttachType.CONTRACT : AttachType.safeValueOf(attachType));
 			responseFile(resp, attach);
 		} catch (IOException e) {
 			throw new AonApiException(e.getMessage());

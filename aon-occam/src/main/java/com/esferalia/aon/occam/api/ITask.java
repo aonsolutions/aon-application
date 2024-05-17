@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -79,6 +81,7 @@ public interface ITask {
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	
-	Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
+	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx);
 
 }
