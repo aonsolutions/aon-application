@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
@@ -63,8 +64,10 @@ public class InvoiceApiDAO {
 			.select(INVOICE.TYPE)
 			.select(INVOICE.STATUS)
 			.select(INVOICE_ATTACH.MIMETYPE)
+			.select(INVOICE_INFO.fields())
 			.from(INVOICE)
 			.leftJoin(INVOICE_ATTACH).on(INVOICE.ID.eq(INVOICE_ATTACH.INVOICE))
+			.leftJoin(INVOICE_INFO).on(INVOICE.ID.eq(INVOICE_INFO.INVOICE).and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.EMAIL.value())))
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.groupBy(INVOICE.ID)
 			.orderBy(INVOICE.ISSUE_DATE.desc())
@@ -139,7 +142,8 @@ public class InvoiceApiDAO {
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )
 				.setNumber(r.getValue(INVOICE.NUMBER))
 				.setSeries(r.getValue(INVOICE.SERIES))
-				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)));
+				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)))
+				.setInvoiceInfo(InvoiceInfoFiller.build(r));
 		}
 	}
 

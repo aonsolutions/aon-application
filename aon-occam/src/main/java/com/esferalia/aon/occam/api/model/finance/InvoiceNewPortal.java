@@ -72,4 +72,10 @@ public class InvoiceNewPortal extends Invoice {
 		return this;
 	}
 	
+	@Override
+	public InvoiceNewPortal setInvoiceInfo(InvoiceInfo invoiceInfo) {
+		super.setInvoiceInfo(invoiceInfo);
+		return this;
+	}
+	
 }

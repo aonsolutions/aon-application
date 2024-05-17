@@ -26,6 +26,9 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -66,11 +69,41 @@ public class SendMailServlet extends AonApiHttpServlet{
 			if("invoice".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Facturas";
 				body = invoiceContent(api, api.getData().optJSONArray("invoices"));
+				JSONArray inv = api.getData().optJSONArray("invoices");
+				for(int i = 0; i < inv.length(); i++) {
+					Integer id = JsonUtils.optInteger(inv.getJSONObject(i), IJsonNames.ID);
+					if(id != null) {
+						InvoiceInfo info = new InvoiceInfo()
+								.setDomain(api.getDomain().getId())
+								.setInvoice(id)
+								.setCreationDate(new Date())
+								.setCreationUser(api.getUser().getLogin())
+								.setModificationDate(new Date())
+								.setModificationUser(api.getUser().getLogin())
+								.setType(InvoiceCommunicationType.EMAIL)
+								.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+						AON.saveInvoiceInfo(api.getDomain(), api.getUser(), info);
+					}
+				}
 			}
 			
 			if("invoice2".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Factura";
 				body = invoice2Content(api, cp);
+				JSONObject inv = JsonUtils.getJSONObject(api.getData(), "invoice");
+				Integer id = JsonUtils.optInteger(inv, IJsonNames.ID);
+				if(id != null) {
+					InvoiceInfo info = new InvoiceInfo()
+							.setDomain(api.getDomain().getId())
+							.setInvoice(id)
+							.setCreationDate(new Date())
+							.setCreationUser(api.getUser().getLogin())
+							.setModificationDate(new Date())
+							.setModificationUser(api.getUser().getLogin())
+							.setType(InvoiceCommunicationType.EMAIL)
+							.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+					AON.saveInvoiceInfo(api.getDomain(), api.getUser(), info);
+				}
 			}
 			
 			if("document".equalsIgnoreCase(pathInfo[1])) {

@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
@@ -42,6 +41,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
@@ -933,6 +933,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				: InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
+		json.put(IJsonNames.EMAIL, 
+				invoice.getInvoiceInfo().getType() == InvoiceCommunicationType.EMAIL 
+				&& 
+				invoice.getInvoiceInfo().getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				? true : false);
 		if(invoice.getMimeType() != null) {
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
