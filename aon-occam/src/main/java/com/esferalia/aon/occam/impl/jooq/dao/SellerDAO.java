@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.util.List;
 import java.util.function.Function;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
@@ -81,7 +83,7 @@ public class SellerDAO {
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
 	}
 
@@ -103,7 +105,7 @@ public class SellerDAO {
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(condition)
 				.limit(params.getOffset(), params.getLimit())
 				.fetch()
@@ -164,7 +166,7 @@ public class SellerDAO {
 			.set(SELLER.COMMISSION_TYPE, seller.getCommissionType().getId())
 			.set(SELLER.SCOPE, seller.getScope().getId())
 			.set(SELLER.STATUS, seller.getStatus().value())
-			.set(SELLER.TASK_HOLDER, null == seller.getTaskHolder() ? null : seller.getTaskHolder().getRegistry())
+			.set(SELLER.TASK_HOLDER, seller.getTaskHolder().getRegistry())
 			.execute();
 		return seller;
 	}
@@ -176,7 +178,7 @@ public class SellerDAO {
 			.set(SELLER.COMMISSION_TYPE, seller.getCommissionType().getId())
 			.set(SELLER.SCOPE, seller.getScope().getId())
 			.set(SELLER.STATUS, seller.getStatus().value())
-			.set(SELLER.TASK_HOLDER, null == seller.getTaskHolder() ? null : seller.getTaskHolder().getRegistry())
+			.set(SELLER.TASK_HOLDER, seller.getTaskHolder().getRegistry())
 			.where(SELLER.REGISTRY.eq(seller.getId()))
 			.execute();
 		ctx.log().info("UPDATE SUPPLIER id: " + seller.getId() + ". (" + count + " rows)");		
@@ -208,14 +210,16 @@ public class SellerDAO {
 		public static Seller build(Record r, Registry registry) {
 			return  new Seller()
 				.copy(RegistryFiller.build(r, registry))
-				.setId(r.getValue(SELLER.REGISTRY))
-				.setDomain(r.getValue(SELLER.DOMAIN))
-				.setStatus(SellerStatus.safeValueOf(r.getValue(SELLER.STATUS)))
-				.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
+				.setId(getValue(r, SELLER.REGISTRY))
+				.setDomain(getValue(r, SELLER.DOMAIN))
+				.setStatus(SellerStatus.safeValueOf(getValue(r, SELLER.STATUS)))
+				.setCommissionType(new CommissionType().setId(getValue(r, SELLER.COMMISSION_TYPE)))
 				.setScope(checkField(r, SCOPE.ID)
 					? ScopeFiller.buildScope(r)
-					: new Scope().setId(r.getValue(SELLER.SCOPE)))
-				.setTaskHolder(null == r.getValue(TASK_HOLDER.REGISTRY) ? null : TaskHolderFiller.build(r, REGISTRY))
+					: new Scope().setId(getValue(r, SELLER.SCOPE)))
+				.setTaskHolder(checkField(r, TASK_HOLDER.REGISTRY) 
+					? TaskHolderFiller.build(r, TASK_HOLDER_ALIAS)
+					: new TaskHolder().setRegistry(getValue(r, SELLER.TASK_HOLDER)))
 				;
 		}
 

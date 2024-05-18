@@ -321,7 +321,7 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			}
 		});
 		getAviableSellerTaskHolders(success -> {
-			if(seller.getTaskHolder() != null) {
+			if(!seller.getTaskHolder().isEmpty()) {
 				taskHolder.setValue("[" + seller.getTaskHolder().getRegistry() + "] " + seller.getTaskHolder().getName());
 			} else taskHolder.setValue(null);
 		});

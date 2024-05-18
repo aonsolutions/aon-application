@@ -33,7 +33,7 @@ public class TaskHolderDAO {
 	private TaskHolderDAO() {
 	
 	}
-	
+    public static final com.esferalia.aon.jooq.tables.Registry TASK_HOLDER_ALIAS = REGISTRY.as("registry_task_holder");
 	private static final TaskHolderPropertiesDAO TASK_HOLDER_PROPERTIES = new TaskHolderPropertiesDAO();
 	public static class TaskHolderPropertiesDAO extends RegistryPropertiesDAO implements TaskHolderProperties {
 		
