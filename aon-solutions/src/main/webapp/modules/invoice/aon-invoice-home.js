@@ -82,7 +82,7 @@ export class AonInvoiceHome extends AonElement {
         upload.appendChild(uploadInv);
     }
 
-	uploadInvoiceHome(input, files){
+	uploadInvoiceHome(input, files) {
 		if(this.getDur().isInvofox()) {
 			getInvofoxConfiguration().then(r => {
 				let uploadToast = this.getElement('aonUploadToast');
@@ -450,7 +450,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingRevision.addEventListener(EVENT.MOUSELEAVE, () => pendingRevision.style.backgroundColor = 'transparent');
 		pendingRevision.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.REJECTED},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']}
 		));
 		rejtrash.appendChild(pendingRevision);
 
