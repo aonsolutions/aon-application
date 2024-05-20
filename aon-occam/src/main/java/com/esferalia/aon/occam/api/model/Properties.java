@@ -902,6 +902,7 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getCommissionTypeProperty();
+		Property<Integer> getTaskHolderProperty();
 		Property<Byte> getStatusProperty();
 		Property<Integer> getScopeProperty();
 	}

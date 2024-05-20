@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -80,7 +81,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private Object getWorkgroups(AonApiData api) {
+	private JSONArray getWorkgroups(AonApiData api) {
 		Domain domain = api.getDomain();
 		Integer taskHolder = api.getData().optInt(IJsonNames.TASK_HOLDER);
 		

@@ -5491,14 +5491,21 @@ CREATE TABLE `mk_action_target` (
   `survey_response` int DEFAULT NULL COMMENT 'Identificador de la Respuesta de Cuestionario',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios',
   `user` int DEFAULT NULL COMMENT 'Identificador del Usuario',
+  `project` int(11) DEFAULT NULL COMMENT 'Expediente asociado al cliente potencial de la accion',
+  `creation_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_ACTION_TARGET_USER` (`user`),
   KEY `IDX_MK_ACTION_TARGET_SURVEY_RESPONSE` (`survey_response`),
   KEY `IDX_MK_ACTION_TARGET_MK_ACTION` (`action`),
   KEY `IDX_MK_ACTION_TARGET_TARGET` (`target`),
   KEY `IDX_MK_ACTION_TARGET_DOMAIN` (`domain`),
+  KEY `IDX_MK_ACTION_TARGET_PROJECT` (`project`),
   CONSTRAINT `FK_MK_ACTION_TARGET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_MK_ACTION` FOREIGN KEY (`action`) REFERENCES `mk_action` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TARGET_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_SURVEY_RESPONSE` FOREIGN KEY (`survey_response`) REFERENCES `survey_response` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_MK_ACTION_TARGET_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
@@ -8022,14 +8029,17 @@ CREATE TABLE `seller` (
   `commission_type` int DEFAULT NULL COMMENT 'Identificador del Tipo de Comision',
   `status` tinyint DEFAULT '0' COMMENT 'Estado del Agente Comercial',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
+  `task_holder` int(11) DEFAULT NULL COMMENT 'Operario asociado al agente comercial',
   PRIMARY KEY (`registry`),
   KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
   KEY `IDX_SELLER_DOMAIN` (`domain`),
   KEY `IDX_SELLER_SCOPE` (`scope`),
+  KEY `IDX_SELLER_TASK_HOLDER` (`task_holder`),
   CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
   CONSTRAINT `FK_SELLER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SELLER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_SELLER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_SELLER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_SELLER_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #

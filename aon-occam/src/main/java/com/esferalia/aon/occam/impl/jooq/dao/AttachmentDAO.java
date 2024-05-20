@@ -570,23 +570,42 @@ public class AttachmentDAO {
 	}
 
 	public static void updateRegistryAttach(AONContext ctx, Attach attach){
-		ctx.getDslContext().update(RATTACH)
-			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
-			.set(RATTACH.CATEGORY,attach.getCategory())
-			.set(RATTACH.DATA, attach.getData())
-			.set(RATTACH.DESCRIPTION, attach.getDescription())
-			.set(RATTACH.DOMAIN, attach.getDomain().getId())
-			.set(RATTACH.DPARENT_ID, attach.getDparentId())
-			.set(RATTACH.DRIVE_ID, attach.getDriveId())
-			.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
-			.set(RATTACH.REGISTRY, attach.getAttachModule())
-			.set(RATTACH.SCOPE, attach.getScope())
-			.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
-			.set(RATTACH.TYPE, (byte) attach.getType())
-			.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
-			.set(RATTACH.MODIFICATION_USER, ctx.getUser())
-		.where(RATTACH.ID.eq(attach.getId()))
-		.execute();
+		if(null == attach.getData()) {
+			ctx.getDslContext().update(RATTACH)
+				.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
+				.set(RATTACH.CATEGORY,attach.getCategory())
+				.set(RATTACH.DESCRIPTION, attach.getDescription())
+				.set(RATTACH.DOMAIN, attach.getDomain().getId())
+				.set(RATTACH.DPARENT_ID, attach.getDparentId())
+				.set(RATTACH.DRIVE_ID, attach.getDriveId())
+				.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(RATTACH.REGISTRY, attach.getAttachModule())
+				.set(RATTACH.SCOPE, attach.getScope())
+				.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
+				.set(RATTACH.TYPE, (byte) attach.getType())
+				.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(RATTACH.MODIFICATION_USER, ctx.getUser())
+			.where(RATTACH.ID.eq(attach.getId()))
+			.execute();
+		} else {
+			ctx.getDslContext().update(RATTACH)
+				.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
+				.set(RATTACH.CATEGORY,attach.getCategory())
+				.set(RATTACH.DATA, attach.getData())
+				.set(RATTACH.DESCRIPTION, attach.getDescription())
+				.set(RATTACH.DOMAIN, attach.getDomain().getId())
+				.set(RATTACH.DPARENT_ID, attach.getDparentId())
+				.set(RATTACH.DRIVE_ID, attach.getDriveId())
+				.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(RATTACH.REGISTRY, attach.getAttachModule())
+				.set(RATTACH.SCOPE, attach.getScope())
+				.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
+				.set(RATTACH.TYPE, (byte) attach.getType())
+				.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(RATTACH.MODIFICATION_USER, ctx.getUser())
+			.where(RATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
 	}
 
 	public static void updateSepeAttach(AONContext ctx, Attach attach){
