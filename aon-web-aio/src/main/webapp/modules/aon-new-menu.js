@@ -436,6 +436,11 @@ export class AonNewMenu extends AonElement {
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
+
+		if (MenuApps.TIMECONTROL.app === app.app) {
+			div.style.marginBottom = '10px';
+		}
+
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
