@@ -434,11 +434,6 @@ export class AonNewMenu extends AonElement {
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
-
-		if (MenuApps.TIMECONTROL.app === app.app) {
-			div.style.marginBottom = '10px';
-		}
-
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
@@ -481,7 +476,11 @@ export class AonNewMenu extends AonElement {
 				let span = this.createElement(TAG.SPAN);
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
-				span.style.minHeight = '26px';
+				if (MenuApps.TIMECONTROL.app === app.app) {
+					span.style.minHeight = '36px';
+				}else{
+					span.style.minHeight = '26px';
+				}
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }
