@@ -1346,10 +1346,23 @@ public interface Properties {
 		Property<String> getPersonFullNameProperty();
 	}
 	
+	public interface DocProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Date> getDateProperty();
+		Property<Byte> getTypeProperty();		
+		Property<Byte> getMimeTypeProperty();
+	}
+
 	public interface ContractDocProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getContractProperty();
+	}
+	
+	public interface InvoiceDocProperties extends DocProperties {
+		Property<Integer> getInvoiceProperty();
 	}
 
 	public interface ContractDataProperties{
