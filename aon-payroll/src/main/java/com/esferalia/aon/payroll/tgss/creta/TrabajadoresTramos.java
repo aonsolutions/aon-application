@@ -185,6 +185,20 @@ public class TrabajadoresTramos {
 
 	}
 
+	public static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos generate(Connection conn, String autorizado, String desdeMes, String desdeAnho,
+			String hastaMes, String hastaAnho, String ctrlMes, String ctrlAnho,  String tipo, String[] cccs) throws JAXBException {
+
+		int authorized = Integer.parseInt(autorizado);
+		Month fromMonth = Month.of(Integer.parseInt(desdeMes));
+		int fromYear = Integer.parseInt(desdeAnho);
+		Month toMonth = Month.of(Integer.parseInt(hastaMes));
+		int toYear = Integer.parseInt(hastaAnho);
+		Month ctrlMonth = Month.of(Integer.parseInt(ctrlMes));
+		int ctrlYear = Integer.parseInt(ctrlAnho);
+
+		return generate(conn, authorized, fromMonth, fromYear, toMonth, toYear, ctrlMonth, ctrlYear, tipo, cccs);
+	}
+
 	public static void generate(Connection conn, String autorizado, String desdeMes, String desdeAnho,
 			String hastaMes, String hastaAnho, String ctrlMes, String ctrlAnho,  String tipo, String cccs[], OutputStream os) throws JAXBException {
 
