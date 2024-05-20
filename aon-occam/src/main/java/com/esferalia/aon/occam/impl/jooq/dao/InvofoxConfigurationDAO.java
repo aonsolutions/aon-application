@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -18,6 +19,20 @@ public class InvofoxConfigurationDAO {
 		Integer contextDomain = ctx.getDomainId();		
 		
 		InvofoxConfiguration invofoxConfiguration = new InvofoxConfiguration();
+		
+		// ----- BORRAR ----- es para tener en cuenta la anterior configuración de entorno de pruebas.
+		ApplicationParameter appParam = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().in(new Integer[] {adminDomain,parentDomain, contextDomain})
+			.and(f.getNameProperty().eq("INVOFOX_TEST"))).findFirst().orElse(null);
+		if(appParam != null) {
+			boolean test = appParam.getValue() != null && ("true".equalsIgnoreCase(appParam.getValue()) || "1".equals(appParam.getValue()));
+			if(test) {
+				invofoxConfiguration.setTest(test);
+			}
+			AppParamDAO.deleteApplicationParameter(ctx, f -> f.getIdProperty().eq(appParam.getId()));
+		}
+		//-------------------
+		
 		AppParamDAO.getApplicationParameterStream(ctx, f -> 
 			f.getDomainProperty().in(new Integer[] {adminDomain,parentDomain, contextDomain})
 			.and(f.getNameProperty().like("INVOFOX_%")))

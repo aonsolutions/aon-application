@@ -16,6 +16,9 @@ public class InvofoxConfiguration implements Serializable{
 //	TEST4("$2b$10$JaQnO9lMslqdADJFr2T6o.LX7i0FllAzg6RnR.zSpA9z5/n08Qs8e", "6641fc74e44a57ce1d83a366"),
 //	TEST5("$2b$10$B2lr9JkZTWz.hA10XIau/OvxnEsNKDGIHE0P5qdFbHdBj4oE0beHe", "6641fcd385c047bd8b6df0da");
 	
+	private static final String DEMO_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+	private static final String DEMO_ENVIRONMENT = "65491eee49f881000dd14c72";
+	
 	private static final String DEFAULT_USER = "app@aonsolutions.es";	
 	private static final String DEFAULT_PASS = "U%4LjF~ai$5ZW[Z";	
 	public static final String DEFAULT_API_URL = "https://api.invofox.com";
@@ -107,5 +110,14 @@ public class InvofoxConfiguration implements Serializable{
 	
 	public boolean isLoginRequired() {
 		return isPersonalized() && getUser().equalsIgnoreCase(DEFAULT_USER);
+	}
+	
+	@Deprecated
+	public InvofoxConfiguration setTest(boolean test) {
+		if(test) {
+			setApiKey(DEMO_API_KEY);
+			setEnvironment(DEMO_ENVIRONMENT);
+		}
+		return this;
 	}
 }
