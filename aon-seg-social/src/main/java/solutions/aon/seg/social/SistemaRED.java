@@ -665,7 +665,7 @@ public class SistemaRED {
 			final String contributionAccount, final String docNum,
 			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
 			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException {
+			throws SegSocialException, IOException {
 		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber,
 				regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 	}
@@ -681,6 +681,7 @@ public class SistemaRED {
 					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo,
 					baseCC, baseCP, days);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new SegSocialException(e);
 		}
 	}
