@@ -19,12 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionExpense;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTaskHolder;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionWorkgroup;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignExpense;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignTaskHolder;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignWorkgroup;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetAudit;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetProject;
+import net.aonsolutions.db.up2date.registry.AddColumnSellerTaskHolder;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 
 public class Up2Date {
@@ -447,12 +444,17 @@ public class Up2Date {
 		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
 
 		MEIFellows2024Remove.MEIFELLOWSREMOVE,
-        AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
-        AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
-        AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
-        AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
-        AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
-        AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER
+        
+		//AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
+        //AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
+        //AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
+        //AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
+        //AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
+        //AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER,
+        
+        AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
+        AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
+        AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
 	};
 
     // ------------------------------------------------------------------------

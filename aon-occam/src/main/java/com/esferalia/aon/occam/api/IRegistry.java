@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -144,6 +145,10 @@ public interface IRegistry {
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
+
+	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params);
+	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
+	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
@@ -224,7 +229,8 @@ public interface IRegistry {
 	public RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
-
+	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo);
+	
 	// ------------------- RDIRSTAFF
 	
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter);

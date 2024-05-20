@@ -516,6 +516,11 @@ public interface Filter extends Serializable{
 	public interface ContractDocFilter{
 		Filter filter(ContractDocProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvoiceDocFilter{
+		Filter filter(InvoiceDocProperties properties);
+	}
 
 	@FunctionalInterface
 	public interface ContractDataFilter{

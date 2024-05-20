@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -20,8 +21,8 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
 
 public class TaskImpl implements ITask {
 	
@@ -295,5 +296,11 @@ public class TaskImpl implements ITask {
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskOldDAO.getTaskHolderStream(ctx, auth));
+	}
+
+	@Override
+	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.getAviableSellerTaskHolders(ctx));	
 	}
 }

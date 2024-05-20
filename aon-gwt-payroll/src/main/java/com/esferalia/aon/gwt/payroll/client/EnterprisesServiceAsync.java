@@ -90,7 +90,7 @@ public interface EnterprisesServiceAsync {
 	void getEnterprises(String domain, String user, String condition, int offset, int limit, AsyncCallback<List<Enterprise>> callback);
 	void getEnterprisesCosts(String domain, List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
 	void getBonusConcepts(String domain, int offset , int limit, AsyncCallback<List<Bonus>> callback);
-	void getCCCEmployees(String domain, Date month, List<Integer> cccIds, AsyncCallback<List<Employee>> callback ); 
+	void getCCCEmployees(String domain, Date startMonth, Date endMonth, List<Integer> cccIds, AsyncCallback<List<Employee>> callback ); 
 	void getPaymentConcepts(String domain, int offset , int limit, AsyncCallback<List<Payment>> callback);
 	void getDeductionConcepts(String domain, int offset , int limit, AsyncCallback<List<Deduction>> callback);
 	void moveAgreement2Parent(String domain, Agreement agreement, AsyncCallback<Void> callback);

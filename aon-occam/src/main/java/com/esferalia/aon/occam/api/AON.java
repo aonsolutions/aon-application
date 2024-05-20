@@ -176,6 +176,7 @@ import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -1723,6 +1724,12 @@ public class AON {
 		}
 	}
 	
+	public static RegistryAddInfo save(Domain domain, User user, RegistryAddInfo registryAddInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRegistry().saveRegistryAddInfo(ctx, registryAddInfo);
+		}
+	}
+	
 	// ------------------------------------ BRAND
 	
 	public static Brand getBrand(String domainName, Integer domainId, String login, Integer id){
@@ -3197,6 +3204,17 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+
+	public static Attach save(Domain domain, User user, Attach attach) {
+		if(null == attach.getId()) {
+			Integer insertId = insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			attach.setId(insertId);
+		} else 
+			updateAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			
+		return attach;
 	}
 	
 	@Deprecated
@@ -5034,6 +5052,24 @@ public class AON {
 	}
 	
 	// ********************************************
+	// ********************* ELABORATION PACKAGE **
+	// ********************************************
+	
+	public static void deleteElaborationPackage(Domain domain, User user, Integer id) {
+		deleteElaboration(domain.getName(), domain.getId(), user.getLogin(), id);
+	}
+	
+	public static void deleteElaborationPackage(Domain domain, String login, Integer id) {
+		deleteElaboration(domain.getName(), domain.getId(), login, id);
+	}
+	
+	public static void deleteElaborationPackage(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deleteElaborationPackage(ctx, id);
+		}
+	}
+	
+	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
 	
@@ -5173,6 +5209,24 @@ public class AON {
 	
 	public static Seller getSeller(String domainName, Integer domainId, String login, Integer registry){
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
+	}
+	
+	public static List<Seller> getSellerList(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerList(ctx, params);
+		}
+	}
+
+	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveSeller(ctx, seller);
+		}
+	}
+
+	public static void deleteSeller(String domainName, int domain, String user, Integer sellerId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteSeller(ctx, sellerId);
+		}
 	}
 	
 	// ------------------- RSELLER
@@ -5845,6 +5899,10 @@ public class AON {
 	}
 	
 	public static Stream<RegistryAddress> getStream(Domain domain, User user, RegistryAddressFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<RegistryAddress> getRegistryAddressStream(Domain domain, User user, RegistryAddressFilter filter) {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
@@ -6619,6 +6677,12 @@ public class AON {
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
+		}
+	}
+	
+	public static List<TaskHolder> getAviableSellerTaskHolders(String domainName, Integer domainId, String login){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getTask().getAviableSellerTaskHolders(ctx);
 		}
 	}
 	
@@ -8480,5 +8544,6 @@ public class AON {
 			return getProject().saveProjectCommercial(ctx, projectCommercial);
 		}
 	}
+
 	
 }

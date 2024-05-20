@@ -87,6 +87,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -834,9 +835,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			super(file, detailPanel);
 			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
 				@Override
+				void onMonthChanged(ChangeEvent e) {
+				}
+				
+				@Override
+				void onMonthsChanged(ChangeEvent e) {
+				}
+
+				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
 				}
+				
 			};
 			setUpDialog(file, dialog);
 		}
@@ -844,6 +854,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public CreateRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
 			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
+				
+				@Override
+				void onMonthChanged(ChangeEvent e) {
+				}
+				
+				@Override
+				void onMonthsChanged(ChangeEvent e) {
+				}
+
 				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
@@ -1371,24 +1390,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public BasesCCCCretaRequestCommand(File file) {
 			super(file, EmployeeTree.this.employeeDetail);
 		}
-
-		@Override
-		protected void onMonthChanged(Date month) {
-
-			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(month,
-					Collections.singletonList(getCCC().getId()), new AsyncCallback<List<Employee>>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-
-						@Override
-						public void onSuccess(List<Employee> result) {
-							setData(result);
-						}
-					});
-		}
-		
+				
 		@Override
 		protected void setupDialog(CretaRequestDialog<Employee> dialog) {
 			super.setupDialog(dialog);

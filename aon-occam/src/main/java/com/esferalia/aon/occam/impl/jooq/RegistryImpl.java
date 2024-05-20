@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -391,6 +392,23 @@ public class RegistryImpl implements IRegistry{
 				configuration -> SellerDAO.getStream(ctx, filter, offset, limit));
 	}
 	
+	@Override
+	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getList(ctx, params));
+	}
+
+	@Override
+	public Seller saveSeller(CloseableAONContext ctx, Seller seller) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.save(ctx, seller));
+	}
+
+	@Override
+	public void deleteSeller(CloseableAONContext ctx, Integer sellerId) {
+		ctx.getDslContext().transaction(configuration -> SellerDAO.delete(ctx, sellerId));
+	}
+	
 	// -------------------- RSELLER
 	
 	@Override
@@ -686,6 +704,14 @@ public class RegistryImpl implements IRegistry{
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId) {
 		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, raddinfoId));
 	}
+	
+
+	@Override
+	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.saveRegistryAddInfo(ctx, registryAddInfo));
+	}
+
 
 	
 	// -------------------- RDIRSTAFF
@@ -981,4 +1007,5 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> GeoZoneDAO.getStream(ctx, filter));
 	}
+
 }

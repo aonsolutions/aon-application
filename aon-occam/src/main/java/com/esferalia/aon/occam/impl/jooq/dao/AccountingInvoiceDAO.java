@@ -813,6 +813,10 @@ public class AccountingInvoiceDAO {
 				InvoiceDAO.insert(ctx, config, accInvoice.getInvoice());
 				saveFinances(ctx, accInvoice);
 			} else {
+				Invoice i = InvoiceDAO.getInvoice(ctx, accInvoice.getInvoice().getId());
+				if (i.isRecorded()) {
+					throw new AonCoreException("La factura ya ha sido contabilizada");
+				}
 				InvoiceDAO.save(ctx, accInvoice.getInvoice().setRecorded(true));
 			}
 			

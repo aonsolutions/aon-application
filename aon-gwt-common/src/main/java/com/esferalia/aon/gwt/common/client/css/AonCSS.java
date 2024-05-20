@@ -613,6 +613,15 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-commandButton")
 	String aonIconCommandButton();
+	
+	@ClassName("aon-cmdButton")
+	String aonCmdButton();
+	
+	@ClassName("aon-circle-green")
+	String aonCircleGreen();
+	
+	@ClassName("aon-circle-red")
+	String aonCircleRed();
 
 	@ClassName("aon-page-header")
 	String aonPageHeader();
