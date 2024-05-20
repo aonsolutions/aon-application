@@ -1,7 +1,11 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Fecha;
@@ -80,26 +84,59 @@ public class Respuesta {
 				} catch ( NoSuchLiquidacionMes e ) {
 				}
 			}
+			
+			for ( LiquidacionMes resLiquidacionMes : getLiquidacionMesNoTratados(resLiquidacion) ) {
+				try {
+					net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes tytLiquidacionMes = 
+					getLiquidacionMes(tyt.getLiquidacion(), resLiquidacionMes).orElseThrow(NoSuchLiquidacionMes::new);
+					
+					for ( Trabajador resTrabajador : resLiquidacionMes.getTrabajadores().getTrabajador()){
+						try {
+							net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador tytTrabajador = 
+							getTrabajador(tytLiquidacionMes, resTrabajador).orElseThrow(NoSuchTrabajador::new);
+							for ( Tramo resTramo : resTrabajador.getTramos().getTramo() ) {
+								if ( isError(resTramo, "R9503")) { 
+									// Tramo inexistente en Afiliación para ese trabajador
+									getTramo(tytTrabajador, resTramo)
+									.ifPresent(tytTramo -> tytTrabajador.getTramos().getTramo().remove(tytTramo));
+								}
+							}
+						} catch ( NoSuchTrabajador e ) {
+						}
+					}
+				} catch ( NoSuchLiquidacionMes e ) {
+				}
+			}
+			
 		}
 		
 		return tyt;
 	}
-	
-	
+
+
+
+
+	public static List<LiquidacionMes> getLiquidacionMesNoTratados(Liquidacion resLiquidacion) {
+		return resLiquidacion.getDatosNoTratados() == null ?
+				Collections.emptyList()
+				: resLiquidacion.getDatosNoTratados().getContent().stream().filter(LiquidacionMes.class::isInstance ).map( d -> (LiquidacionMes) d ).toList();
+	}
 	
 	
 	public static boolean isError( Dato dato, String codigo ) {
-		return dato.getErrores().getError().stream().anyMatch(err -> err.getCodigoErr().equalsIgnoreCase(codigo));
+			return dato.getErrores() != null && 
+				dato.getErrores().getError().stream().anyMatch(err -> AonStringUtils.equalsIgnoreCase(err.getCodigoErr(),codigo));
 	}
 
 	public static boolean isError( Tramo tramo, String codigo ) {
-		return tramo.getErrores().getError().stream().anyMatch(err -> err.getCodigoErr().equalsIgnoreCase(codigo));
+			return tramo.getErrores() != null 
+					&& tramo.getErrores().getError().stream().anyMatch(err -> AonStringUtils.equalsIgnoreCase(err.getCodigoErr(),codigo));
 	}
 	
 	public static Optional<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado> getDatoSolicitado( net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo tramo, Dato dato){
 		return tramo.getDatosTramo().getDatoSolicitado().stream()
-				.filter( d -> d.getTipoDato().equalsIgnoreCase(dato.getTipoDato()))
-				.filter( d -> d.getCodigo().equalsIgnoreCase(dato.getCodigo()))
+				.filter( d -> AonStringUtils.equalsIgnoreCase(d.getTipoDato(),dato.getTipoDato()))
+				.filter( d -> AonStringUtils.equalsIgnoreCase(d.getCodigo(),dato.getCodigo()))
 				.findFirst();
 	}
 
@@ -120,15 +157,15 @@ public class Respuesta {
 	
 	private  static boolean equals (net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Periodo p1,  Periodo p2) {
 		return
-		p1.getAnho().equals(p2.getAnho())
-		&& p1.getMes().equals(p2.getMes());
+		AonStringUtils.equals(p1.getAnho(),p2.getAnho())
+		&& AonStringUtils.equals(p1.getMes(),p2.getMes());
 	}
 
 	private static boolean equals (net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Fecha f1,  Fecha f2) {
 		return
-		f1.getAnho().equals(f2.getAnho())
-		&& f1.getMes().equals(f2.getMes())
-		&& f1.getDia().equals(f2.getDia());
+		AonStringUtils.equals(f1.getAnho(),f2.getAnho())
+		&& AonStringUtils.equals(f1.getMes(),f2.getMes())
+		&& AonStringUtils.equals(f1.getDia(),f2.getDia());
 	}
 	
 

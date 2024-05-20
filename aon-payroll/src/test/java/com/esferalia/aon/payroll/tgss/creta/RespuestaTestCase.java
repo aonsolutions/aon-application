@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.tgss.creta.Respuesta.isError;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
@@ -50,6 +51,7 @@ public class RespuestaTestCase {
 		tyt = com.esferalia.aon.payroll.tgss.creta.Respuesta.fixTrabajadoresTramos(tyt, res);
 		
 		for (Liquidacion resLiquidacion : res.getLiquidacion()) {
+			
 			for (LiquidacionMes resLiquidacionMes : resLiquidacion.getLiquidacionMes()) {
 				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes tytLiquidacionMes = getLiquidacionMes(tyt.getLiquidacion(), resLiquidacionMes).orElseThrow();
 				for ( Trabajador resTrabajador : resLiquidacionMes.getTrabajadores().getTrabajador()){
@@ -69,8 +71,22 @@ public class RespuestaTestCase {
 					}
 				}
 			}
+			
+			for ( LiquidacionMes resLiquidacionMes : com.esferalia.aon.payroll.tgss.creta.Respuesta.getLiquidacionMesNoTratados(resLiquidacion) ) {
+				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes tytLiquidacionMes = getLiquidacionMes(tyt.getLiquidacion(), resLiquidacionMes).orElseThrow();
+				for ( Trabajador resTrabajador : resLiquidacionMes.getTrabajadores().getTrabajador()){
+					net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador tytTrabajador = getTrabajador(tytLiquidacionMes, resTrabajador).orElseThrow(() -> new NoSuchElementException(resTrabajador.getNaf()));
+					for ( Tramo resTramo : resTrabajador.getTramos().getTramo() ) {
+						if ( isError(resTramo, "R9503")) { 
+							// Tramo inexistente en Afiliación para ese trabajador
+							getTramo(tytTrabajador, resTramo).ifPresent(t -> Assert.fail("Tramo inexistente en Afiliación para ese trabajador"));
+						}
+					}
+				}
+			
+			}
 		}
+		
 	}
-	
 
 }
