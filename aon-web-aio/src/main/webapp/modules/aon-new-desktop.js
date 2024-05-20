@@ -149,15 +149,16 @@ export class AonNewDesktop extends AonElement {
 
 		optionsDiv.append(optionsList);
 
-		window.addEventListener(EVENT.CLICK, function(e) {
+		window.addEventListener(EVENT.CLICK, (e) => {
 			if (cardButton.contains(e.target)) {
 				if (optionsDiv.style.display == 'block') {
 					optionsDiv.style.display = 'none';
 				} else {
+					const rootPanelPosition = this.getElement('rootPanel').getBoundingClientRect();
 					optionsDiv.style.position = 'fixed';
 					optionsDiv.style.zIndex = 8;
 					let position = cardButton.getBoundingClientRect();
-					if (position.left + 200 >= window.screen.width) {
+					if (position.left + 200 >= rootPanelPosition.width) {
 						optionsDiv.style.left = position.left - 150;
 					} else {
 						optionsDiv.style.left = position.left + 15;
@@ -311,15 +312,16 @@ export class AonNewDesktop extends AonElement {
 
 		optionsDiv.append(optionsList);
 
-		window.addEventListener(EVENT.CLICK, function(e) {
+		window.addEventListener(EVENT.CLICK, (e) => {
 			if (cardButton.contains(e.target)) {
 				if (optionsDiv.style.display == 'block') {
 					optionsDiv.style.display = 'none';
 				} else {
+					const rootPanelPosition = this.getElement('rootPanel').getBoundingClientRect();
 					optionsDiv.style.position = 'fixed';
 					optionsDiv.style.zIndex = 8;
 					let position = cardButton.getBoundingClientRect();
-					if (position.left + 200 >= window.screen.width) {
+					if (position.left + 200 >= rootPanelPosition.width) {
 						optionsDiv.style.left = position.left - 150;
 					} else {
 						optionsDiv.style.left = position.left + 15;

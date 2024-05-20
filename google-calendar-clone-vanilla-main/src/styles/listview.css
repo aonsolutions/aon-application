@@ -10,6 +10,8 @@
   transition-duration: 0.3s;
   transition-property: margin-left, width;
   transition-timing-function: cubic-bezier(.4,0,.2,1);
+  container-name: listBodyView;
+  container-type: inline-size;
 }
 
 .listview__rowgroup {
@@ -144,6 +146,25 @@
 }
 
 /* queries */
+
+@container listBodyView (max-width: 300px) {
+  .body {
+    margin-top: 0px !important;
+  }
+
+  .listview__body {
+    margin-left: 0px !important;
+  }
+
+  .rowgroup-header {
+    height: 50px;
+  }
+
+  .rowgroup--cell {
+    height: 50px;
+    display: block;
+  }
+}
 
 @media screen and (max-width: 840px) {
   .listview__body {

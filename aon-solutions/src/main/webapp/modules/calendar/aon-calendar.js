@@ -3,6 +3,7 @@ import context, { datepickerContext } from "aoncalendar/context/appContext";
 import store from "aoncalendar/context/store";
 import setAppDefaults from "aoncalendar/config/appDefaults";
 import renderViews from "aoncalendar/config/renderViews";
+import setViews from "aoncalendar/config/setViews";
 
 /*!*************************************!*\
 // (CSS) 
@@ -49,23 +50,31 @@ import "aoncalendar/styles/aside/shortcuts.css";
 
 export class AonCalendar extends AonElement {
 
-    constructor() {
-		super();
-	}
+  constructor() {
+    super();
+  }
 
-    build() {
-      if (!document.getElementsByName("color-scheme")[0]) {
-        let colorScheme = this.createElement("meta");
-        colorScheme.setAttribute("name","color-scheme");
-        colorScheme.setAttribute("content","light");
-        document.getElementsByTagName("head")[0].appendChild(colorScheme);
-      }
-        let calBody = `<header class="header">
+  setListView() {
+    setViews("list", context, store, datepickerContext);
+    this.getElement("aonCalendarMainMenu").classList.add('aonAlwaysHidden');
+    this.getElement("aonCalendarHeaderEndButtons").classList.add('aonAlwaysHidden');
+    document.getElementsByClassName("body")[0].style.marginTop = '0px';
+    document.getElementsByClassName("listview__body")[0].style.marginLeft = '0px'
+  }
+
+  build() {
+    if (!document.getElementsByName("color-scheme")[0]) {
+      let colorScheme = this.createElement("meta");
+      colorScheme.setAttribute("name", "color-scheme");
+      colorScheme.setAttribute("content", "light");
+      document.getElementsByTagName("head")[0].appendChild(colorScheme);
+    }
+    let calBody = `<header class="header">
         <div class="h__container">
     
           <div class="h-col-1">
     
-            <button class="menu" data-tooltip="Main menu" aria-label="button" role="button">
+            <button id="aonCalendarMainMenu" class="menu" data-tooltip="Main menu" aria-label="button" role="button">
               <svg focusable="false" style="pointer-events:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 width="24px" height="24px" fill="var(--white2)">
                 <path d="M0 0h24v24H0z" fill="none" />
@@ -141,7 +150,7 @@ export class AonCalendar extends AonElement {
               </div>
             </div>
     
-            <div class="h-col-3">
+            <div id="aonCalendarHeaderEndButtons" class="h-col-3">
     
               <button class="h-search" data-tooltip="search" aria-label="button" role="button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="var(--white3)">
@@ -1090,18 +1099,18 @@ export class AonCalendar extends AonElement {
     
       <!-- popup that appears after event edit/creation -->
       <aside class="toast"></aside>`;
-        this.innerHTML = ` <div class='body preload'>${calBody}</div>
+    this.innerHTML = ` <div class='body preload'>${calBody}</div>
         `;
-        const collapsebtn = document.querySelector(".collapse-view");
-        setAppDefaults(context, store, this);
-        renderViews(context, datepickerContext, store, this, collapsebtn);
-    }
+    const collapsebtn = document.querySelector(".collapse-view");
+    setAppDefaults(context, store, this);
+    renderViews(context, datepickerContext, store, this, collapsebtn);
+  }
 
-    connectedCallback () {
-        this.build();
-    }
+  connectedCallback() {
+    this.build();
+  }
 }
 
-if(!window.customElements.get('aon-calendar')){
-	window.customElements.define('aon-calendar', AonCalendar);
+if (!window.customElements.get('aon-calendar')) {
+  window.customElements.define('aon-calendar', AonCalendar);
 }

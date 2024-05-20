@@ -22,13 +22,20 @@ import locales from "../../locales/en";
 
 export default function setListView(context, store, datepickerContext) {
 
-const dateTimeTitle = document.querySelector(".datetime-content--title");
-const listview = document.querySelector('.listview');
-const listviewBody = document.querySelector('.listview__body');
+  var dateTimeTitle = document.querySelector(".datetime-content--title");
+  var listview = document.querySelector('.listview');
+  var listviewBody = document.querySelector('.listview__body');
 
   let monthNames = locales.labels.monthsShort.map(x => x.toUpperCase());
   let weekDayNames = locales.labels.weekdaysShort.map(x => x.toUpperCase());
   let [todayYear, todayMonth, todayDay] = getdatearray(new Date());
+
+  function initValues() {
+    dateTimeTitle = document.querySelector(".datetime-content--title");
+    listview = document.querySelector('.listview');
+    listviewBody = document.querySelector('.listview__body');
+  }
+
   /*************************************** */
 
   /**
@@ -38,6 +45,7 @@ const listviewBody = document.querySelector('.listview__body');
    * The entries object uses the date as the key and the value as an array of entries for that specific date.
    */
   function createRowGroups(entries) {
+    initValues();
     // use count to check for first rowgroup
     let count = 1;
     for (let [key, value] of Object.entries(entries)) {
@@ -92,6 +100,7 @@ const listviewBody = document.querySelector('.listview__body');
    * @param {boolean} settop true/false : is this the first rowgroup?
    */
   function createRowGroupHeader(weekname, monthname, day, date, settop) {
+    initValues();
     const rgHeader = document.createElement('div');
     rgHeader.classList.add('rowgroup-header');
     const rgHeaderDateNumber = document.createElement('div');
@@ -113,6 +122,7 @@ const listviewBody = document.querySelector('.listview__body');
   }
 
   function createRowGroupCell(entry) {
+    initValues();
     const color = store.getCtgColor(entry.category);
     const [start, end] = [new Date(entry.start), new Date(entry.end)];
     let datetitle;
@@ -133,16 +143,19 @@ const listviewBody = document.querySelector('.listview__body');
     const rgCell = document.createElement('div');
     rgCell.classList.add('rowgroup--cell');
     rgCell.setAttribute('data-rgcell-id', entry.id);
+    const rgCellFlex = document.createElement("div");
+    rgCellFlex.style.display = 'flex';
     const rgCellColor = document.createElement("div");
     rgCellColor.classList.add("rowgroup--cell__color");
     rgCellColor.style.backgroundColor = color;
     const rgCellTime = document.createElement("div");
     rgCellTime.classList.add("rowgroup--cell__time");
     rgCellTime.textContent = datetitle;
+    rgCellFlex.append(rgCellColor, rgCellTime);
     const rgCellTitle = document.createElement("div");
     rgCellTitle.classList.add("rowgroup--cell__title");
     rgCellTitle.textContent = entry.title;
-    rgCell.append(rgCellColor, rgCellTime, rgCellTitle);
+    rgCell.append(rgCellFlex, rgCellTitle);
     return rgCell;
   }
   /*************************************** */
@@ -152,6 +165,7 @@ const listviewBody = document.querySelector('.listview__body');
    * @desc remove active class & inline style from clicked cell
    */
   function resetCellActive() {
+    initValues();
     const activeCell = document?.querySelector(".rowgroup--cell-active");
     if (activeCell) {
       activeCell.classList.remove("rowgroup--cell-active");
@@ -164,6 +178,7 @@ const listviewBody = document.querySelector('.listview__body');
    * @param {HTMLElement} cell element that was clicked
    */
   function getRgContextMenu(cell) {
+    initValues();
     console.log(cell);
     const id = cell.getAttribute("data-rgcell-id");
     cell.classList.add("rowgroup--cell-active");
@@ -201,7 +216,8 @@ const listviewBody = document.querySelector('.listview__body');
     getEntryOptionModal(context, store, entry, datepickerContext, finishSetup);
     const modal = document.querySelector(".entry__options");
     modal.style.top = y + "px";
-    modal.style.left = x + "px";
+    // modal.style.left = x + "px";
+    modal.style.left = 0 + "px";
   }
 
   /**
@@ -210,6 +226,7 @@ const listviewBody = document.querySelector('.listview__body');
    * @desc switch to day view and set date to clicked day
    */
   function setDayViewLV(target) {
+    initValues();
     let [year, month, day] = getDateFromAttribute(target, 'data-rgheader-date', "month");
     context.setDate(year, month, day);
     context.setDateSelected(day);
@@ -222,6 +239,7 @@ const listviewBody = document.querySelector('.listview__body');
   }
 
   function delegateListview(e) {
+    initValues();
     const headerNum = getClosest(e, ".rowgroup--header__datenumber");
     const rgCell = getClosest(e, ".rowgroup--cell");
 
@@ -237,6 +255,7 @@ const listviewBody = document.querySelector('.listview__body');
   }
 
   function resetListview() {
+    initValues();
     listviewBody.innerText = "";
     listview.onclick = null;
     monthNames = null;
@@ -244,6 +263,7 @@ const listviewBody = document.querySelector('.listview__body');
   }
 
   const initListView = () => {
+    initValues();
     listviewBody.innerText = "";
     store.setResetPreviousViewCallback(resetListview);
 

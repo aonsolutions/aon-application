@@ -4,7 +4,6 @@ import setMonthView from "../components/views/monthview";
 import setWeekView from "../components/views/weekview";
 import setDayView from "../components/views/dayview";
 import setListView from "../components/views/listview";
-// import setListView from "../components/views/listview"
 
 // const yearComponent = document.querySelector(".yearview");
 // const monthComponent = document.querySelector(".monthview");
@@ -14,22 +13,37 @@ import setListView from "../components/views/listview";
 
 let [prev1, prev2] = [null, null];
 export default function setViews(component, context, store, datepickerContext) {
-
-const yearComponent = document.querySelector(".yearview");
-const monthComponent = document.querySelector(".monthview");
-const weekComponent = document.querySelector(".weekview");
-const dayComponent = document.querySelector(".dayview");
-const listComponent = document.querySelector(".listview");
   prev1 = prev2;
   prev2 = component;
+  var yearComponent = document.querySelector(".yearview");
+  var monthComponent = document.querySelector(".monthview");
+  var weekComponent = document.querySelector(".weekview");
+  var dayComponent = document.querySelector(".dayview");
+  var listComponent = document.querySelector(".listview");
+
+  function initValues() {
+    yearComponent = document.querySelector(".yearview");
+    monthComponent = document.querySelector(".monthview");
+    weekComponent = document.querySelector(".weekview");
+    dayComponent = document.querySelector(".dayview");
+    listComponent = document.querySelector(".listview");
+  }
 
   function hideViews() {
+    initValues();
+    // const views = [
+    //   yearComponent,
+    //   monthComponent,
+    //   weekComponent,
+    //   dayComponent,
+    //   listComponent
+    // ];
     const views = [
-      yearComponent,
-      monthComponent,
-      weekComponent,
-      dayComponent,
-      listComponent
+      document.querySelector(".yearview"),
+      document.querySelector(".monthview"),
+      document.querySelector(".weekview"),
+      document.querySelector(".dayview"),
+      document.querySelector(".listview")
     ];
 
     // reset previous view after switching to a new view
@@ -50,6 +64,7 @@ const listComponent = document.querySelector(".listview");
   // window.removeEventListener("resize", store.getResizeHandle("month"));
 
   function initView(component) {
+    initValues();
     switch (component) {
       case "day":
         context.setComponent(component);

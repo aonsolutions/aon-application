@@ -169,6 +169,7 @@ export class AonHome extends AonElement {
 					rightPanel.setContent(calendar);
 					rightPanel.setTitle("Calendario");
 					rightPanel.open();
+					calendar.setListView();
 				}
 			});
 		}
