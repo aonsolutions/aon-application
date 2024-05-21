@@ -1772,7 +1772,7 @@ public class Mod2002023Writer {
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023RIIB_1Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - RIIB
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.RB2818)		    // Importe de la dotación RIIB con cargo a beneficios de 2023		
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.RB2918)		    // Importe de la dotación RIIB con cargo a beneficios de 2023		
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023RIIB_2Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - Inversiones anticipadas
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)

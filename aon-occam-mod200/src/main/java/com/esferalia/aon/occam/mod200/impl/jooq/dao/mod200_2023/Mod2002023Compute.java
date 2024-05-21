@@ -397,7 +397,8 @@ public class Mod2002023Compute {
 	static { 
 		
 		// Entidades que forman parte de grupos de consolidación fiscal
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ1029,"(C0009 || C0010)?(LQ501+LQ1230-LQ1231+I0417-D0418):(0.0)");
+		// FALTA - EN EL PADIS ESTA BORRADO LA CUMPLIMENTACION AUTOMATICA DE ESTA CASILLA
+		// COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ1029,"(C0009 || C0010)?(LQ501+LQ1230-LQ1231+I0417-D0418):(0.0)");
 		// FALTA - NUEVA CASILLA 00814 NO SE SI TENDRA ALGUN CALCULO ESPECIAL, O INFLUYE EN ALGUNA OTRA CASILLA - ESTA CASILLA NO ESTA EN EL FICHERO
 		
 		// Base imponible
@@ -778,7 +779,7 @@ public class Mod2002023Compute {
 		
 		// FALTA - VER SI ESTE APARTADO SIGUE LOS MISMOS CALCULOS QUE LAS RIC
 		// Régimen especial de la reserva para inversiones en las Illes Balears. La última columna no sigue la regla estandar y no tiene fila de totales
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RB2917,"RB2818-RB2916");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RB2917,"RB2918-RB2916");
 				
 	}
 

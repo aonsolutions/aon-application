@@ -80,7 +80,7 @@ public class Page16 extends PageAbs {
 					"Inversiones anticipadas consideradas materializaci\u00F3n de la RIIB en esta liquidaci\u00F3n",
 					"Pendiente de materializar RIIB al final de per\u00EDodo" );
 			
-			// Importe de la dotación RIIB con cargo a beneficios de 2023 (Casilla 02818)
+			// Importe de la dotación RIIB con cargo a beneficios de 2023 (Casilla 02918)
 			FlexTable table2 = new FlexTable();
 			basePanel.add(table2);
 			
@@ -88,7 +88,7 @@ public class Page16 extends PageAbs {
 			table2.getColumnFormatter().setWidth(0, "400px");
 			table2.getColumnFormatter().setWidth(1, "200px");
 			row = 0;
-			paintKey(table2, Mod2002023Key.RB2818, row);
+			paintKey(table2, Mod2002023Key.RB2918, row);
 			
 			// RIIB - Inversiones anticipadas
 	

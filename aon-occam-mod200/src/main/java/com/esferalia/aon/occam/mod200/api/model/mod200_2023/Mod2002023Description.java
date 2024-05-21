@@ -637,7 +637,7 @@ public class Mod2002023Description {
 		
 		DESCRIPTION_MAP.put(Mod2002023Key.RC927,"Importe de la dotaci\u00F3n RIC con cargo a beneficios de 2023");
 		
-		DESCRIPTION_MAP.put(Mod2002023Key.RB2818,"Importe de la dotaci\u00F3n RIIB con cargo a beneficios de 2023");
+		DESCRIPTION_MAP.put(Mod2002023Key.RB2918,"Importe de la dotaci\u00F3n RIIB con cargo a beneficios de 2023");
 	}
 	
 	static {

@@ -117,7 +117,7 @@ public class Page18 extends PageAbs {
 		paintB11Panel();
 		addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(0, 0, panelB11);
 		
-		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES
+		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES (solo si caracter 00089 marcado)
 		
 		
 	}

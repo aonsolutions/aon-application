@@ -1474,8 +1474,11 @@ public enum Mod2002023Key implements IMod200Key {
 	// FALTA - NUEVO APARTADO - SERA UN DESGLOSE DE LA RESERVA EN LAS ILLES BALEARS
 	// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)
 	,RB2914 ,RB2915 ,RB2916 ,RB2917
-	,RB2818
-	,RB2819 ,RB2920 ,RB2941
+	// FALTA - ESTAS CASILLAS EN EL FICHERO PONE 2918 Y 2919
+	//,RB2818
+	,RB2918
+	//,RB2819 ,RB2920 ,RB2941
+	,RB2919 ,RB2920 ,RB2941
 	
 // --------------- PAGINA 23 --------------- //	
 // No soportada en AON

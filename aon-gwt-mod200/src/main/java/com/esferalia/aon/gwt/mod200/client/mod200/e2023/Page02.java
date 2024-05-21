@@ -1,4 +1,4 @@
-// PARTICIPACIONES, ENTIDADES MENORES, EP O UTE, SOCIOS DE SICAV 
+// PARTICIPACIONES, ENTIDADES MENORES, EP, SOCIOS DE SICAV 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -334,7 +334,6 @@ public class Page02 extends PageAbs {
 		otherInputs.add(addButton4);
 		basePanel.add(addButton4);
 		
-		//// D. INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
 		// D. INFORMACIÓN DE DETALLE DE EP QUE OPERE EN EL EXTRANJERO
 		
 		//basePanel.add(getTitle(AON.MSG.utefor()));

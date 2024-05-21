@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 // Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022) - Inversiones anticipadas
 public enum Mod2002023RIIB_2Key implements Serializable, IMod200KeysProvider {
 
-	C01(new Mod2002023Key[]{null,Mod2002023Key.RB2819,Mod2002023Key.RB2920,Mod2002023Key.RB2941},"Inversiones anticipadas 2023")
+	C01(new Mod2002023Key[]{null,Mod2002023Key.RB2919,Mod2002023Key.RB2920,Mod2002023Key.RB2941},"Inversiones anticipadas 2023")
 	;
 	 
     private String description;

@@ -922,7 +922,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 	}
 	
 	public double computeUT1330() throws AonCoreException {
-		
+		// FALTA - CREO QUE TAMBIEN HAY QUE COMPROBAR SI ESTA MARCADO LA 0085 ADEMAS DE LA 0013, REVISARLO BIEN EN EL DOCUMENTO PADIS
 		// La clave UT1330 será igual a la LQ1330 
 		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
 		{
