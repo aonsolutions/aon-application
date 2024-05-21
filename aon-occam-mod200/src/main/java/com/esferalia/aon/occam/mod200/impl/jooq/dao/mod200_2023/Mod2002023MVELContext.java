@@ -53,6 +53,8 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ559;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ560;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ562;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0088;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0085;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -453,10 +455,15 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		}
 		return d;
 	}
-	
-	public Boolean isChecked(Mod2002023Key key) {
-		return (Boolean) get(key.toString());
-	}
+
+// FALTA 	
+//	public Boolean isChecked(Mod2002023Key key) {
+//		return (Boolean) get(key.toString());
+//	}
+	public boolean isChecked(Mod2002023Key key) {
+		//return (boolean) get(key.toString());
+		return (boolean) get(key.toString());
+	}	
 	public Boolean isCooperativa() {
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
 	}
@@ -535,9 +542,18 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			 isChecked(C0084) )
 			return roundKey(LQ558);
 		
+		if ( isChecked(C0088) ) return 23.0;
 		if ( isChecked(C0083) ) return 15.0;
 		if ( isChecked(C0063) ) return 15.0;
 		if ( isChecked(C0066) ) return 25.0;
+		
+		// En caso de combinaciones de caracteres 00017 o 00018 con 00024, prevalecerá el tipo de gravamen más favorable
+		if ( (isChecked(C0017) || isChecked(C0018)) && isChecked(C0024) ) {
+			if (roundKey(LQ558) <= 30.0)
+				return roundKey(LQ558);
+			else return 30.0;			
+		}
+		
 		if ( isChecked(C0071) ) return 15.0;
 		if ( isChecked(C0024) ) return 30.0;	
 		
@@ -556,7 +572,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if ( isChecked(C0017) ) return roundKey(LQ558);
 		if ( isChecked(C0018) ) return roundKey(LQ558);
 		
-		if ( isChecked(C0013) && (getValue(Mod2002023Key.UT060) == 100.0) ) return 0.0;
+		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002023Key.UT060) == 100.0) ) return 0.0;
 		
 		if ( isChecked(C0006) && isChecked(C0034)) return 30.0;
 		if ( isChecked(C0057) && isChecked(C0006) && isChecked(C0034)) return 30.0;
@@ -613,7 +629,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if (isChecked(C0071)) {
 			return round(lq1330 * lq558 / 100);
 		}
-		if (isChecked(C0022) &&  (isChecked(C0006) ||isChecked(C0013) || isChecked(C0063))) {
+		if (isChecked(C0022) && (isChecked(C0006) || isChecked(C0013) || isChecked(C0085) || isChecked(C0063) || isChecked(C0071) || isChecked(C0083) || isChecked(C0088))) {
 			return getValue(LQ562);
 		}
 		if (isChecked(C0006) && isChecked(C0034)) {
@@ -648,11 +664,14 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			if (lq520>0) return round(lq520 * lq558 /100);
 			return 0;
 		}
-
+        // FALTA - PROBAR ESTE CASO 0057 Y 0006, CON IMPORTE EN CASILLA 521 A VER COMO LO CALCULA EL PADIS, SERIA VER EXACTAMENTE EL PARRAFO SIGUIENTE:
+//		Si marca la casilla 00057 y Siempre que la (01330 - 00521) > 0:
+//		Cuando esté combinada con la clave 00006 (empresa de reducida dimensión), o clave 00063 (aplicable el tipo de gravamen reducido para entidades 
+//		de nueva creación), o clave 00071, o clave 00083, o clave 00088 => sustituir todas las referencias a la 01330 por (01330- 00521)
 		if (isChecked(C0057)) {
 			double lq521 = roundKey(LQ521);
 			if (round(lq1330-lq521) > 0) {
-				return round((lq1330 -lq521)* lq558 /100);
+				return round((lq1330 - lq521) * lq558 /100);
 			}
 			return 0;
 		}
@@ -725,23 +744,29 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
-			if (isChecked(C0071) || isChecked(C0083)) {
-				return round(lq552*15/100);
+//			if (isChecked(C0071) || isChecked(C0083)) {
+//				return round(lq552*15/100);
+//			}
+//			if (isChecked(C0057) && !isChecked(C0063)) {
+//				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100) + (lq521 * 0));		
+//			}
+			if (isChecked(C0057)) {
+				return round((lq553 * lq558 / 100) + ((lq554-lq521) * 25 / 100) + (lq521 * 0));		
 			}
-			if (isChecked(C0057) && !isChecked(C0063)) {
-				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100) + (lq521 * 0));		
-			}
-			if (isChecked(C0063)) {
-				if (lq552<=getLimit(LIM_1)){
-					return round( lq552*15/100);			
-				} else {
-					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
-				}
-			}
+//			if (isChecked(C0063)) {
+//				if (lq552<=getLimit(LIM_1)){
+//					return round( lq552*15/100);			
+//				} else {
+//					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
+//				}
+//			}
 			if (lq558 == 20 || lq558 == 25) {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
 		} else if (isChecked(C0019) ) {
+			if (isChecked(C0088)) {
+				return round(lq552*23/100);
+			}
 			if (isChecked(C0071) || isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
@@ -975,6 +1000,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002023Key.LQ552);
+		double lq1962 = getValue(Mod2002023Key.LQ1962);
 		
 		if (lq552>=0) {
 			// Base imponible [552] positiva o cero, [col2] = 0 
@@ -983,8 +1009,8 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			// Base imponible [552] negativa, [col2] = [col1] - [col3] con el limite de la [552]
 			double col2 = col1-col3;
 			double total = suma + col2;			
-			if (total > Math.abs(lq552)) {
-				col2 = col2 - (total - Math.abs(lq552));
+			if (total > (Math.abs(lq552)+lq1962)) {
+				col2 = col2 - (total - (Math.abs(lq552)+lq1962));
 			}
 			return col2;		
 		}		
@@ -1055,34 +1081,47 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		}
 		
 		// La tributación mínima es aplicable en los siguientes casos:
-		// - Contribuyentes que marquen los supuestos 2 (INCN de al menos 20 millones de euros pero inferior a 60) o 3 (INCN de al menos 60 millones de euros) del apartado de importe neto de la cifra de negocios de la página 1 de la declaración (excepto supuestos excluidos).
+		// - Contribuyentes que marquen el supuesto 2 (INCN de al menos 20 millones de euros)
 		// - Contribuyentes que marquen el caracter 00079 de la página 1 de la declaración (excepto supuestos excluidos).
 		int volope = getValue(Mod2002023Key.VOLOPE).intValue();
-		if (volope == 2 || volope == 3 || isChecked(C0079)) { // FALTA - VOLOPE AHORA SOLO PUEDE SER 0, 1 o 2
+		if (volope == 2 || isChecked(C0079)) { 
 
 			// CALCULO DE LA TRIBUTACION MINIMA
 
-			double lq1330 = roundKey(Mod2002023Key.LQ1330);
-			double lq562 = roundKey(Mod2002023Key.LQ562);
-			double lq1038 = roundKey(Mod2002023Key.LQ1038);
-			double lq559 = roundKey(Mod2002023Key.LQ559);
+			double c01330 = roundKey(Mod2002023Key.LQ1330);
+			double c00778 = roundKey(Mod2002023Key.I0778);
+			double c00813 = roundKey(Mod2002023Key.D0813);
+			double c00562 = roundKey(Mod2002023Key.LQ562);
+			double c01038 = roundKey(Mod2002023Key.LQ1038);
+			double c00559 = roundKey(Mod2002023Key.LQ559);
+			double c00558 = roundKey(Mod2002023Key.LQ558);
+			double c00012 = roundKey(Mod2002023Key.CP0012);
+			double c00016 = roundKey(Mod2002023Key.CP0016);
+			
+			// FALTA - NO TENGO CLARO COMO SON LAS FORMULAS, PORQUE NO SE SI EN EL DOC PADIS FALTA ALGUN PARENTESIS O CORCHETE O ALGO
 
-			double m1 = lq1330 * 0.15;
+			double m1 = (c01330-c00778+c00813) * 0.15;
 
 			if (isChecked(C0071))
-				m1 = lq1330 * 0.10;
+				m1 = (c01330-c00778+c00813) * 0.10;
 
 			if (isChecked(C0024) || isChecked(C0034))
-				m1 = lq1330 * 0.18;
+				m1 = (c01330-c00778+c00813) * 0.18;			
+			
+			// FALTA - ADEMAS ESTAS ESPECIFICACIONES EN LA PAGINA 181 DEL DOC PADIS NO COINCIDEN CON LO QUE PONE EN LAS PAGINAS DE MAS ARRIBA DEL DOC PADIS
+			// M1 = clave 00562 - [ 00558 / 100 * (00012 + 00016) x 0,60
+			if (isChecked(C0019))
+			    m1 = (c00562 - (c00558 / 100 * (c00012 + c00016))) * 0.60;
 
-			if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019))
-				m1 = (lq562 + lq1038) * 0.60;
+			// FALTA - M1 = clave 00562 - [(00558 / 100 * 00012) + 25 / 100 *00016) ] x 0,60
+			if (isChecked(C0017) || isChecked(C0018))
+				m1 = (c00562 - ((c00558 / 100 * c00012) + (25.0 / 100 * c00016))) * 0.60;
 
 			if (isChecked(C0015) || isChecked(C0079)) {
 				if (isChecked(C0024))
-					m1 = (lq1330 - lq559) * 0.18;
+					m1 = (c01330-c00778+c00813-c00559) * 0.18;
 				else
-					m1 = (lq1330 - lq559) * 0.15;
+					m1 = (c01330-c00778+c00813-c00559) * 0.15;
 			}
 			
 			double tramo1 = computeSection(TRAMO_1); 
@@ -1090,7 +1129,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			double tramo3 = computeSection(TRAMO_3); 
 			double tramo4 = computeSection(TRAMO_4); 
 			
-			double m2 = lq562 + lq1038 - tramo1; 
+			double m2 = c00562 + c01038 - tramo1; 
 			double m3 = m2 - tramo3;			
 			if (m3<m1)
 				tramo2 = 0;
@@ -1128,6 +1167,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN567,
 			Mod2002023Key.BN568,
 			Mod2002023Key.BN563,
+			Mod2002023Key.BN815,			
 			Mod2002023Key.BN566,
 			Mod2002023Key.BN576,
 			Mod2002023Key.BN569,
@@ -1136,8 +1176,11 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1290,
 			Mod2002023Key.BN1293,
 			Mod2002023Key.BN1296,
+			Mod2002023Key.BN2313,
 			Mod2002023Key.BN575,
 			Mod2002023Key.BN577,
+			Mod2002023Key.BN165,
+			Mod2002023Key.BN169,
 			Mod2002023Key.BN847,
 			Mod2002023Key.BN638,
 			Mod2002023Key.BN283,
@@ -1169,21 +1212,19 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN438,
 			Mod2002023Key.BN128,
 			Mod2002023Key.BN2204,
+			Mod2002023Key.BN1318,
 			Mod2002023Key.BN2327,
 			Mod2002023Key.BN212,
 			Mod2002023Key.BN493,
-			Mod2002023Key.BN165,
-			Mod2002023Key.BN169
+			Mod2002023Key.BN1472
 	};
 	
 	// TRAMO 2 DEDUCCIONES
 	private static final Mod2002023Key[] TRAMO_2 = new Mod2002023Key[] {			
 			Mod2002023Key.BN583,
-//			Mod2002023Key.BN289,
 			Mod2002023Key.BN467,
 			Mod2002023Key.BN498,
 			Mod2002023Key.BN473,
-//			Mod2002023Key.BN005,
 			Mod2002023Key.BN181,
 			Mod2002023Key.BN032,
 			Mod2002023Key.BN532,
@@ -1210,31 +1251,36 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1621,
 			Mod2002023Key.BN2298,
 			Mod2002023Key.BN708,
-			Mod2002023Key.BN750,
 			Mod2002023Key.BN1851,
 			Mod2002023Key.BN1854,
 			Mod2002023Key.BN2500,
 			Mod2002023Key.BN1354,
-			Mod2002023Key.BN753,
+			Mod2002023Key.BN750,			
 			Mod2002023Key.BN2222,
 			Mod2002023Key.BN2225,
 			Mod2002023Key.BN2092,
 			Mod2002023Key.BN1776,
-			Mod2002023Key.BN756,
+			Mod2002023Key.BN753,			
 			Mod2002023Key.BN2357,
 			Mod2002023Key.BN2360,
 			Mod2002023Key.BN2095,
 			Mod2002023Key.BN1839,
-			Mod2002023Key.BN759,
+			Mod2002023Key.BN756,			
 			Mod2002023Key.BN229,
 			Mod2002023Key.BN235,
 			Mod2002023Key.BN2098,
 			Mod2002023Key.BN2207,
 			Mod2002023Key.BN762,
+			Mod2002023Key.BN759,			
 			Mod2002023Key.BN781,
 			Mod2002023Key.BN787,
 			Mod2002023Key.BN2146,
-			Mod2002023Key.BN2330,
+			Mod2002023Key.BN2330,			
+			Mod2002023Key.BN762,
+			Mod2002023Key.BN1875,
+			Mod2002023Key.BN1895,
+			Mod2002023Key.BN1849,
+			Mod2002023Key.BN252,
 			Mod2002023Key.BN745,
 			Mod2002023Key.BN783,
 			Mod2002023Key.BN2450,
@@ -1251,23 +1297,16 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN2456,
 			Mod2002023Key.BN1370,
 			Mod2002023Key.BN1627,
-//			Mod2002023Key.BN1639,
 			Mod2002023Key.BN1708,
-//			Mod2002023Key.BN1908,
-//			Mod2002023Key.BN1911,
-//			Mod2002023Key.BN1935,
 			Mod2002023Key.BN2363,
 			Mod2002023Key.BN2366,
-//			Mod2002023Key.BN2369,
 			Mod2002023Key.BN2372,
 			Mod2002023Key.BN2375,
 			Mod2002023Key.BN2378,
-//			Mod2002023Key.BN255,
 			Mod2002023Key.BN260,
 			Mod2002023Key.BN263,
 			Mod2002023Key.BN269,
 			Mod2002023Key.BN273,
-//			Mod2002023Key.BN292,
 			Mod2002023Key.BN295,
 			Mod2002023Key.BN298,
 			Mod2002023Key.BN316,
@@ -1275,7 +1314,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN353,
 			Mod2002023Key.BN367,
 			Mod2002023Key.BN401,
-//			Mod2002023Key.BN407,
 			Mod2002023Key.BN423,
 			Mod2002023Key.BN428,
 			Mod2002023Key.BN431,
@@ -1288,8 +1326,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN502,
 			Mod2002023Key.BN511,
 			Mod2002023Key.BN523,
-//			Mod2002023Key.BN542,
-//			Mod2002023Key.BN801,
 			Mod2002023Key.BN816,
 			Mod2002023Key.BN2459,
 			Mod2002023Key.BN875,
@@ -1313,14 +1349,28 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1265,
 			Mod2002023Key.BN1268,
 			Mod2002023Key.BN1273,
-//			Mod2002023Key.BN1278,
 			Mod2002023Key.BN1282,
+			Mod2002023Key.BN1884,
+			Mod2002023Key.BN1901,
+			Mod2002023Key.BN1904,
+			Mod2002023Key.BN1995,
+			Mod2002023Key.BN1908,
+			Mod2002023Key.BN2024,
+			Mod2002023Key.BN2027,
+			Mod2002023Key.BN2030,
+			Mod2002023Key.BN2033,
+			Mod2002023Key.BN2036,
+			Mod2002023Key.BN2039,
+			Mod2002023Key.BN2042,
+			Mod2002023Key.BN2053,
+			Mod2002023Key.BN2058,
+			Mod2002023Key.BN2285,
+			Mod2002023Key.BN089,
 			Mod2002023Key.BN1684,
 			Mod2002023Key.BN829,
 			Mod2002023Key.BN252,
 			Mod2002023Key.BN697,
-//			Mod2002023Key.BN905,
-//			Mod2002023Key.BN901,
+			Mod2002023Key.BN1522,
 			Mod2002023Key.BN991,
 			Mod2002023Key.BN917,
 			Mod2002023Key.BN998,
@@ -1361,6 +1411,10 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1327,
 			Mod2002023Key.BN1372,
 			Mod2002023Key.BN1375,
+			Mod2002023Key.BN2576,
+			Mod2002023Key.BN2692,
+			Mod2002023Key.BN2695,
+			Mod2002023Key.BN2698,
 			Mod2002023Key.BN1437,
 			Mod2002023Key.BN1440,
 			Mod2002023Key.BN1444,
@@ -1370,6 +1424,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN2385,
 			Mod2002023Key.BN1084,
 			Mod2002023Key.BN1379,
+			Mod2002023Key.BN2703,
 			Mod2002023Key.BN1446,
 			Mod2002023Key.BN1449,
 			Mod2002023Key.BN1453,
@@ -1378,7 +1433,8 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN2236,
 			Mod2002023Key.BN2389,
 			Mod2002023Key.BN2478,
-			Mod2002023Key.BN1383
+			Mod2002023Key.BN1383,
+			Mod2002023Key.BN2707
 	};
 
 	// TRAMO 3 DE DEDUCCIONES 
@@ -1390,9 +1446,10 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1920,
 			Mod2002023Key.BN1923,
 			Mod2002023Key.BN1926,
+			Mod2002023Key.BN1898,
 			Mod2002023Key.BN1929,
 			Mod2002023Key.BN2191,
-//			Mod2002023Key.BN881,
+//			Mod2002023Key.BN881,  // FALTA - EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
 			Mod2002023Key.BN867,
 			Mod2002023Key.BN940,
 			Mod2002023Key.BN192,
@@ -1438,6 +1495,10 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1913,
 			Mod2002023Key.BN768,
 			Mod2002023Key.BN771,
+			Mod2002023Key.BN1615,
+			Mod2002023Key.BN1800,
+			Mod2002023Key.BN1803,
+			Mod2002023Key.BN1806			
 	};
 	
 	// TRAMO 4 DEDUCCIONES
@@ -1460,6 +1521,8 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1310,
 			Mod2002023Key.BN2141,
 			Mod2002023Key.BN1314,
+			Mod2002023Key.BN2355,
+			Mod2002023Key.BN2466,
 			Mod2002023Key.BN574,
 			Mod2002023Key.BN977,
 			Mod2002023Key.BN824,
@@ -1479,7 +1542,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1092,
 			Mod2002023Key.BN1096,
 			Mod2002023Key.BN1387,
-			Mod2002023Key.BN1391	
+			Mod2002023Key.BN1391,
+			Mod2002023Key.BN2757,
+			Mod2002023Key.BN2762
 	};	
 			
 }

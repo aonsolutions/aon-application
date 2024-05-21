@@ -1,6 +1,15 @@
 // LIQUIDACION (II): BASE IMPONIBLE, TIPO DE GRAVAMEN, CUOTA INTEGRA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0006;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0013;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0022;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0063;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0071;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0083;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0085;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0088;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Model2002023.Model2002023PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
@@ -281,11 +290,16 @@ public class Page09 extends PageAbs {
 				|| callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0047))) {
 			return false;
 		}
+		// Si marca la casilla 00022 combinada con la clave 00006, 00013, 00085, 00063, 00071, 00083 y/ó 00088 de caracteres, la casilla 00562 quedará abierta (en blanco) para su cumplimentación manual
+		if (isChecked(C0022) && (isChecked(C0006) || isChecked(C0013) || isChecked(C0085) || isChecked(C0063) || isChecked(C0071) || isChecked(C0083) || isChecked(C0088))) {
+			return false;
+		}
+		
 		if ((key == Mod2002023Key.LQ520 || key == Mod2002023Key.LQ521) && 
 			(callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0064))) {
 			return true;
 		}
 		return super.isDisabled(key);
 	}
-	
+
 }

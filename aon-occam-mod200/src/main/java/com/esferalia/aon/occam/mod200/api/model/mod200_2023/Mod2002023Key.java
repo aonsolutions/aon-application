@@ -1381,7 +1381,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ631
 	,LQ632
 	
-	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO - ES Num 5
+	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO - ES Num 5 (5 enteros)
 	// Inversiones en producciones cinematográficas o series audiovisuales
 //	,INV01 // Producciones cinematográficas (excepto series audiovisuales) 
 //	,INV02 // Series audiovisuales 
