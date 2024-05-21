@@ -284,7 +284,6 @@ export class AonInvoiceHome extends AonElement {
 		// PENDING OUTPUT
 		let pendingIssued = this.createDiv();
 		pendingIssued.id = 'pendingIssued';
-		pendingIssued.style.border = '1px solid #ebebeb';
 		pendingIssued.style.display = 'flex';
 		pendingIssued.style.flexDirection = 'column';
 		pendingIssued.style.justifyContent = 'center';
@@ -328,7 +327,6 @@ export class AonInvoiceHome extends AonElement {
 		// PENDING RECEIVED
 		let pendingReceived = this.createDiv();
 		pendingReceived.id = 'pendingReceived';
-		pendingReceived.style.border = '1px solid #ebebeb';
 		pendingReceived.style.display = 'flex';
 		pendingReceived.style.flexDirection = 'column';
 		pendingReceived.style.justifyContent = 'center';
@@ -371,7 +369,6 @@ export class AonInvoiceHome extends AonElement {
 		// PENDING TICKETS
 		let pendingTicket = this.createDiv();
 		pendingTicket.id = 'pendingTicket';
-		pendingTicket.style.border = '1px solid #ebebeb';
 		pendingTicket.style.display = 'flex';
 		pendingTicket.style.flexDirection = 'column';
 		pendingTicket.style.justifyContent = 'center';
@@ -413,38 +410,21 @@ export class AonInvoiceHome extends AonElement {
 
 
 		// REJECTED / TRASH
-		let rejtrash = this.createDiv();
-		rejtrash.id = 'rejtrash';
-		rejtrash.style.border = '1px solid #ebebeb';
-		rejtrash.style.flexDirection = 'row';
-		rejtrash.style.justifyContent = 'center';
-		rejtrash.style.gap = '3px';
-		rejtrash.style.textAlign = 'center';
-		rejtrash.style.padding = '8px';
-		rejtrash.style.display = 'flex';
-		rejtrash.style.borderRadius = '5px';
-		rejtrash.overflow = 'hidden';
-		rejtrash.style.marginBottom ='3px';
-		rejtrash.style.gridColumn = '1 / -1';
-		div.appendChild(rejtrash);
 
-
-		// PENDING REVISION
 		let pendingRevision = this.createDiv();
 		pendingRevision.id = 'pendingRevision';
 		pendingRevision.style.border = '1px solid #ebebeb';
 		pendingRevision.style.display = 'flex';
 		pendingRevision.style.flexDirection = 'column';
 		pendingRevision.style.justifyContent = 'center';
-		pendingRevision.style.gap = '8px';
+		pendingRevision.style.gap = '3px';
 		pendingRevision.style.textAlign = 'center';
 		pendingRevision.style.padding = '8px';
 		pendingRevision.style.flex = '1';
 		pendingRevision.style.borderRadius = '5px';
 		pendingRevision.overflow = 'hidden';
 		pendingRevision.style.cursor = 'pointer';
-		pendingRevision.style.marginBottom ='5px';
-		pendingRevision.style.flexBasis = '50%';
+		pendingRevision.style.marginBottom ='3px';
 
 		pendingRevision.addEventListener(EVENT.MOUSEOVER, () => pendingRevision.style.backgroundColor = '#f1f1f1');
 		pendingRevision.addEventListener(EVENT.MOUSELEAVE, () => pendingRevision.style.backgroundColor = 'transparent');
@@ -452,7 +432,9 @@ export class AonInvoiceHome extends AonElement {
 			{status: CONSTANT.REJECTED},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']}
 		));
-		rejtrash.appendChild(pendingRevision);
+
+
+		div.appendChild(pendingRevision);
 
 		let pendingRevisionNumber = this.createDiv();
 		pendingRevisionNumber.id = 'pendingRevisionNumber';
@@ -473,20 +455,19 @@ export class AonInvoiceHome extends AonElement {
 
 		// TRASH
 		let trash = this.createDiv();
-		trash.id = 'trash';
+		trash.id = 'pendingRevision';
 		trash.style.border = '1px solid #ebebeb';
 		trash.style.display = 'flex';
 		trash.style.flexDirection = 'column';
 		trash.style.justifyContent = 'center';
-		trash.style.gap = '8px';
+		trash.style.gap = '3px';
 		trash.style.textAlign = 'center';
 		trash.style.padding = '8px';
 		trash.style.flex = '1';
 		trash.style.borderRadius = '5px';
 		trash.overflow = 'hidden';
 		trash.style.cursor = 'pointer';
-		trash.style.marginBottom ='5px';
-		trash.style.flexBasis = '50%';
+		trash.style.marginBottom ='3px';
 
 		trash.addEventListener(EVENT.MOUSEOVER, () => trash.style.backgroundColor = '#f1f1f1');
 		trash.addEventListener(EVENT.MOUSELEAVE, () => trash.style.backgroundColor = 'transparent');
@@ -495,7 +476,7 @@ export class AonInvoiceHome extends AonElement {
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error']}
 		));
 
-		rejtrash.appendChild(trash);
+		div.appendChild(trash);
 
 		let trashNumber = this.createDiv();
 		trashNumber.id = 'trashNumber';

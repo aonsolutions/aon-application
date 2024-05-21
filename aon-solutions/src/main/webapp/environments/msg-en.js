@@ -75,6 +75,7 @@ export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
 export const CLOSE = 'Close';
 export const CLOSE_SESSION = 'Logout';
+export const CLOSED = 'Closed'
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';

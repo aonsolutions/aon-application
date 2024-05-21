@@ -74,6 +74,7 @@ export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
 export const CLASSIC_VIEW = 'Vista Clàssica';
 export const CLOSE = 'Tancar';
 export const CLOSE_SESSION = 'Tancar Sessió';
+export const CLOSED = 'Tancat';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
