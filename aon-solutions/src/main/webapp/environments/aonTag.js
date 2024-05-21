@@ -80,6 +80,7 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
+export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
 export const AON_UPLOAD_TOAST = 'aon-upload-toast';

@@ -183,9 +183,16 @@ export class AonHeader extends AonElement {
 			aonHeaderButtons.appendChild(aonHeaderConfig);
 		}
 
+
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
-		aonHeaderNotiication.appendChild(new AonNotificationIcon());
+		if(this.newTheme){
+			let aonHeaderNotificationButton = new AonIconButton();
+			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+			aonHeaderNotificationButton.icon = "notifications";
+			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		}else
+			aonHeaderNotiication.appendChild(new AonNotificationIcon());
 
 		aonHeaderButtons.appendChild(aonHeaderNotiication);
 

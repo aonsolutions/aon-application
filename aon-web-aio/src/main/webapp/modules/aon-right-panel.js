@@ -9,6 +9,9 @@ export class AonRightPanel extends AonElement {
     CONTENT;
     TITLE;
     EDIT_BUTTON;
+    CONFIG_BUTTON;
+    HELP_BUTTON;
+    NOTIFICATION_BUTTON;
     
     get id () {
         return this.getAttribute(CONSTANT.ID);
@@ -37,6 +40,9 @@ export class AonRightPanel extends AonElement {
         this.CONTENT = this.RIGHT_PANEL+'Content';
         this.TITLE = this.RIGHT_PANEL+'Title';
         this.EDIT_BUTTON = this.RIGHT_PANEL+ 'EditButton';
+        this.CONFIG_BUTTON = this.RIGHT_PANEL + 'ConfigButton';
+        this.HELP_BUTTON = this.RIGHT_PANEL + 'HelpButton';
+        this.NOTIFICATION_BUTTON = this.RIGHT_PANEL + 'NotificationButton';
     }
 
     build(){
@@ -55,6 +61,36 @@ export class AonRightPanel extends AonElement {
         rightPanelEditButton.style.right = '280px';
         rightPanelEditButton.style.top = '60px';
 		rightPanel.appendChild(rightPanelEditButton);
+
+        let rightPanelConfigButton = new AonIconButton(); 
+		rightPanelConfigButton.id = 'aonRightPanelConfigButton';
+		rightPanelConfigButton.icon ='settings';
+		rightPanelConfigButton.style.cursor = "pointer";
+		rightPanelConfigButton.style.position = "fixed";
+        rightPanelConfigButton.style.visibility = 'hidden';
+        rightPanelConfigButton.style.right = '280px';
+        rightPanelConfigButton.style.top = '128px';
+		rightPanel.appendChild(rightPanelConfigButton);
+
+        let rightPanelHelpButton = new AonIconButton(); 
+		rightPanelHelpButton.id = 'aonRightPanelHelpButton';
+		rightPanelHelpButton.icon ='help_outline';
+		rightPanelHelpButton.style.cursor = "pointer";
+		rightPanelHelpButton.style.position = "fixed";
+        rightPanelHelpButton.style.visibility = 'hidden';
+        rightPanelHelpButton.style.right = '280px';
+        rightPanelHelpButton.style.top = '128px';
+		rightPanel.appendChild(rightPanelHelpButton);
+
+        let rightPanelNotificationButton = new AonIconButton(); 
+		rightPanelNotificationButton.id = 'aonRightPanelNotificationButton';
+		rightPanelNotificationButton.icon ='notifications';
+		rightPanelNotificationButton.style.cursor = "pointer";
+		rightPanelNotificationButton.style.position = "fixed";
+        rightPanelNotificationButton.style.visibility = 'hidden';
+        rightPanelNotificationButton.style.right = '280px';
+        rightPanelNotificationButton.style.top = '128px';
+		rightPanel.appendChild(rightPanelNotificationButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
 		rightPanelCloseButton.id = this.CLOSE_BUTTON;
@@ -120,6 +156,9 @@ export class AonRightPanel extends AonElement {
         this.getRightPanel().style.visibility = "hidden";
         this.getRightPanel().style.visibility = "hidden";
         this.getEditButton().style.visibility = "hidden";
+        this.getConfigButton().style.visibility = "hidden";
+        this.getHelpButton().style.visibility = "hidden";
+        this.getNotificationButton().style.visibility = "hidden";
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
     }
@@ -146,6 +185,18 @@ export class AonRightPanel extends AonElement {
 
     getEditButton(){
         return this.getElement(this.EDIT_BUTTON);
+    }
+
+    getConfigButton(){
+        return this.getElement(this.CONFIG_BUTTON);
+    }
+
+    getHelpButton(){
+        return this.getElement(this.HELP_BUTTON);
+    }
+
+    getNotificationButton(){
+        return this.getElement(this.NOTIFICATION_BUTTON);
     }
 
     getTitle(){

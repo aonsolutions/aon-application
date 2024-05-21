@@ -52,12 +52,14 @@ export class AonAvatar extends AonElement {
             divImagen.appendChild(this.buildImage(this.getName(this.auth)));
             this.appendChild(divImagen);
         }else{
+            
             let img = this.createElement(TAG.IMG);
             img.id  = this.IMAGE;
             img.src = this.src && this.src != 'undefined' && this.src != 'null' 
                 ? this.src  : 'assets/img/profile.png';
             img.className = CSS.AON_IMG_AVATAR;
             img.style.objectFit = "cover";
+            
         }
         
         if(this.scale){
@@ -65,7 +67,8 @@ export class AonAvatar extends AonElement {
             img.style.marginLeft = this.marginLeft;
         }
         
-        this.appendChild(img);
+        //this.appendChild(img);
+        
     }
 
     setScale(scale,marginLeft) {
