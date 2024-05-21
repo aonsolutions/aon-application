@@ -12,3 +12,4 @@ target
 *.min.css
 *.min.js
 
+aon-web-aio/src/main/webapp/dist/
