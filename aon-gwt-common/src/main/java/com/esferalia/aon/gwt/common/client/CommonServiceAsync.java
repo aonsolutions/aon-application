@@ -23,7 +23,11 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -31,15 +35,21 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -174,5 +184,52 @@ public interface CommonServiceAsync {
 	void saveMarketingActionTarget(String domainName, int domain, String user,MarketingActionTarget marketingActionTarget, AsyncCallback<MarketingActionTarget> asyncCallback) throws AonCoreException;
 	
 	void getTargetSuggestion(String domainName, int domain, String user, AsyncCallback<List<Target>> asyncCallback) throws AonCoreException;
+	
+	void getAviableWorkgroups(String domainName, int domain, String user, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
+	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 
+	void getAviableServiceUsers(String domainName, int domain, String user, AsyncCallback<List<User>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ***************************** [PROJECT COMMERCIAL]
+	// **************************************************
+	
+	void getSellerByTaskHolder(String domainName, int domain, String user, int taskHolder, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
+	void saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial, AsyncCallback<ProjectCommercial> asyncCallback) throws AonCoreException;
+	void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+
+	// **************************************************
+	// ***************************************** [SELLER]
+	// **************************************************
+	
+	void getSellers(SellerParams params, AsyncCallback<List<Seller>> asyncCallback) throws AonCoreException;
+	void getSeller(String domainName, int domain, String user, Integer id, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
+	void saveSeller(String domainName, int domain, String user, Seller seller, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
+	void deleteSeller(String domainName, int domain, String user, Integer sellerId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+
+	void getAviableCommisionTypes(String domainName, int domain, String user, AsyncCallback<List<CommissionType>> asyncCallback) throws AonCoreException;
+	void getAviableSellerTaskHolders(String domainName, int domain, String user, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+	void getTaskHolderWorkgroups(String domainName, int domain, String user, Integer taskHolderId, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
+	void getTaskHolderUser(String domainName, int domain, String user, Integer userId, AsyncCallback<User> asyncCallback) throws AonCoreException;
+	
+	void getRegistryAddresses(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RegistryAddress>> asyncCallback) throws AonCoreException;
+	void getRegistryAddress(String domainName, Integer domain, String user, Integer id, AsyncCallback<RegistryAddress> asyncCallback) throws AonCoreException;
+	void saveRegistryAddress(String domainName, Integer domain, String user, RegistryAddress registryAddress, AsyncCallback<RegistryAddress> asyncCallback) throws AonCoreException;
+	void deleteRegistryAddress(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getRegistryMedias(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RegistryMedia>> asyncCallback) throws AonCoreException;
+	void getRegistryMedia(String domainName, Integer domain, String user, Integer id, AsyncCallback<RegistryMedia> asyncCallback) throws AonCoreException;
+	void saveRegistryMedia(String domainName, Integer domain, String user, RegistryMedia registryMedia, AsyncCallback<RegistryMedia> asyncCallback) throws AonCoreException;
+	void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getRegistryAddInfos(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RegistryAddInfo>> asyncCallback) throws AonCoreException;
+	void getRegistryAddInfo(String domainName, Integer domain, String user, Integer id, AsyncCallback<RegistryAddInfo> asyncCallback) throws AonCoreException;
+	void saveRegistryAddInfo(String domainName, Integer domain, String user, RegistryAddInfo registryAddInfo, AsyncCallback<RegistryAddInfo> asyncCallback) throws AonCoreException;
+	void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getRegistryAttaches(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<Attach>> asyncCallback) throws AonCoreException;
+	void getRegistryAttach(String domainName, Integer domain, String user, Integer id, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
+	void saveRegistryAttach(String domainName, Integer domain, String user, Attach attach, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
+	void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
 }

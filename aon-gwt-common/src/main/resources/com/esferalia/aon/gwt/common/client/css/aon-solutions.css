@@ -39,6 +39,10 @@
 .aon_icon_data_settings { background-image: iconDataSettings;}
 @url iconFilter aonIconFilter;
 .aon_icon_filter { background-image: iconFilter;}
+@url iconFilterList aonIconFilterList;
+.aon_icon_filter_list { background-image: iconFilterList;}
+@url iconFilterListOff aonIconFilterListOff;
+.aon_icon_filter_list_off { background-image: iconFilterListOff;}
 @url iconDropDown aonIconDropDown;
 .aon_icon_drop_down { background-image: iconDropDown;}
 @url iconZoomIn aonIconZoomIn;
@@ -77,6 +81,10 @@
 .aon_icon_image { background-image: iconImage;}
 @url iconExcel aonIconExcel;
 .aon_icon_excel { background-image: iconExcel;}
+@url iconCircleGreen aonIconCircleGreen ;
+.aon_icon_circle_green { background-image: iconCircleGreen ;}
+@url iconCircleRed aonIconCircleRed;
+.aon_icon_circle_red { background-image: iconCircleRed;}
 @url iconWord aonIconWord;
 .aon_icon_word { background-image: iconWord;}
 @url iconComments aonIconComments;
@@ -222,6 +230,16 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconWork aonIconWork;
+.aon_icon_work { background-image: iconWork;}
+@url iconWorkOff aonIconWorkOff;
+.aon_icon_work_off { background-image: iconWorkOff;}
+@url iconWorkAdd aonIconWorkAdd;
+.aon_icon_work_add { background-image: iconWorkAdd;}
+@url iconComment aonIconComment;
+.aon_icon_comment { background-image: iconComment;}
+@url iconWork aonIconWork;
+.aon_icon_web { background-image: iconWeb;}
 @url iconMoveRight aonIconMoveRight;
 .aon_icon_move_right { background-image: iconMoveRight;}
 @url iconMoveRightAll aonIconMoveRightAll;
@@ -1014,6 +1032,95 @@
 	display: flex;
 	align-items: center;
 	gap: .5rem
+}
+
+.aon_utility_option{
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	cursor: pointer;
+	padding: .5rem;
+	border: 1px solid #ddd;
+}
+
+.aon_custom_card{
+	padding: 1rem !important;
+	border: 1px solid rgb(235, 235, 235);
+	border-radius: 0.5rem;
+}
+
+.aon_custom_card:hover .aon_custom_card_button{
+	visibility: visible;
+}
+
+.aon_custom_row{
+	cursor: pointer;
+	border-bottom: 1px solid #ddd;
+	min-height: 2.5rem;
+	padding: 0 1rem;
+}
+
+.aon_custom_row:hover{
+	background-color: #eaf1fb;
+}
+
+.aon_custom_row_button, .aon_custom_card_button{
+	visibility: hidden;
+}
+
+.aon_custom_row:hover .aon_custom_row_button{
+	visibility: visible;
+}
+
+.aon_custom_text_box{
+	gap: 0;
+	width: 100%;
+	height: 2.5rem;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
+}
+
+.aon_utility_option:hover, .aon_custom_text_box:hover{
+	background-color: #eaf1fb;
+}
+
+.aon_custom_text_box_title{
+	width: 100%;
+	font-size: 0.8rem;
+	color: #5f6368;
+}
+
+.aon_custom_text_box_input{
+	text-overflow: ellipsis;
+	font-size: 13px;
+	background: transparent;
+	border: none;
+	width: -moz-available;
+	width: -webkit-fill-available;
+	height: 1.5rem;
+	padding: .2rem;
+	border-bottom: 1px solid #b9b8b8;	
+}
+
+.aon_custom_text_box_input_no_border{
+	text-overflow: ellipsis;
+	font-size: 13px;
+	background: transparent;
+	border: none;
+	width: -moz-available;
+	width: -webkit-fill-available;
+	height: 1.5rem;
+	padding: .2rem;
+}
+
+.aon_custom_text_box_input:focus{
+	border: none!important;
+	border-bottom: 1px solid #b9b8b8 !important;
+  	box-shadow: none !important;
+}
+
+.aon_custom_text_box:hover > .aon_custom_text_box_title{
+	color: #2152a5;
 }
 
 .aon_flex_block_inline {

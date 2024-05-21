@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
@@ -42,6 +41,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
@@ -933,6 +933,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				: InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
+		json.put(IJsonNames.EMAIL, 
+				invoice.getInvoiceInfo().getType() == InvoiceCommunicationType.EMAIL 
+				&& 
+				invoice.getInvoiceInfo().getStatus() == InvoiceCommunicationStatus.ACCEPTED
+				? true : false);
 		if(invoice.getMimeType() != null) {
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
@@ -994,11 +999,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(!fileJSON.isEmpty()) {
 			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
-			try {
-				byte[] data = S3.download("aon-upload-post", s3Key);
-				if(data != null) {
-					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-					Attach attach = new Attach()
+			if(s3Key != null) {
+				try {
+					byte[] data = S3.download("aon-upload-post", s3Key);
+					if(data != null) {
+						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+						Attach attach = new Attach()
 							.setDate(new Date())
 							.setDomain(new Domain().setId(invoice.getDomain()))
 							.setAttachModule(invoice.getId())
@@ -1007,10 +1013,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 							.setType(InvoiceAttachmentType.INVOICE.value())
 							.setData(data);
 
-					AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -1229,8 +1236,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
 		
 		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
-				InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), 
-						InvofoxConfigurationJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), "invofox")))) 
+				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), "invofox"))) 
 				: new JSONObject();
 		
 		return new JSONObject()

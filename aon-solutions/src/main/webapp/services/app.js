@@ -1,4 +1,4 @@
-import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
+import { MSG, CONSTANT, AON_ICONS, COLORS, MATERIAL_ICONS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
 import * as LS from  "./localStorageService.js";
@@ -29,7 +29,7 @@ export const TIMECONTROL = {
       name: "Empleado",
     },
   ],
-  price: " ", //  '-',
+  price: " ", 
   disabled: false,
   options: {
     menu: false,
@@ -46,6 +46,7 @@ export const ACCOUNTING = {
   description: MSG.ACCOUNTING,
   tag: MSG_ES.ACCOUNTING,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
+  symbol: MATERIAL_ICONS.CALCULATE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonAccountingHover',
@@ -59,7 +60,7 @@ export const ACCOUNTING = {
       name: "Empresa",
     },
   ],
-  price: " ", // '60€/mes',
+  price: " ", 
   options: {
     menu: true,
     add: false,
@@ -75,6 +76,7 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
+  symbol: MATERIAL_ICONS.EURO_SYMBOL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
   backgroundColor: '#fef3e7',
   hover: 'aonFiscalHover',
@@ -88,7 +90,7 @@ export const FISCAL = {
       name: "Empresa",
     },
   ],
-  price: " ", // '60€/mes',
+  price: " ", 
   options: {
     menu: true,
     add: false,
@@ -104,6 +106,7 @@ export const PAYROLL = {
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
+  symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
@@ -121,7 +124,7 @@ export const PAYROLL = {
       name: "Empleado",
     },
   ],
-  price: " ", // '90€/mes',
+  price: " ",
   options: {
     menu: true,
     add: false,
@@ -137,10 +140,11 @@ export const TREASURY = {
   description: MSG.TREASURY,
   tag: MSG.TREASURY,
   icon: AON_ICONS.AON_TREASURY,
+  symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: " ",
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -152,10 +156,11 @@ export const MARKETING = {
   description: MSG.MARKETING,
   tag: MSG.MARKETING,
   icon: AON_ICONS.AON_MARKETING,
+  symbol: MATERIAL_ICONS.CAMPAIGN,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: " ", 
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -169,7 +174,7 @@ export const SERES = {
   color: "#0000ff",
   backgroundColor: "rgba(0, 0, 255, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: " ",
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -182,10 +187,11 @@ export const COMMERCIAL = {
   description: MSG.COMMERCIAL,
   tag: MSG.COMMERCIAL,
   icon: AON_ICONS.AON_COMMERCIAL,
+  symbol: MATERIAL_ICONS.LOCAL_MALL,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: " ",
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -199,7 +205,7 @@ export const GROUPWARE = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '90€/mes',
+  price: " ", 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -227,7 +233,7 @@ export const COMUNICA = {
     },
   ],
 // apps: [TIMECONTROL],
-  price: " ", // '60€/mes'
+  price: " ", 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -254,7 +260,7 @@ export const DOCUMENTAL = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: " ",
   disabled: false,
   options: {
     menu: false,
@@ -271,10 +277,11 @@ export const WAREHOUSE = {
   description: MSG.WAREHOUSE,
   tag: MSG_ES.WAREHOUSE,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
+  symbol: MATERIAL_ICONS.INVENTORY_2,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-',
+  price: " ", 
   disabled: false,
   options: {
     menu: false,
@@ -309,7 +316,7 @@ export const INVOICE = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: " ",
   disabled: false,
   options: {
     menu: false,
@@ -354,7 +361,7 @@ export const MESSENGER = {
       name: "Empleado",
     },
   ],
-  price: " ", // '-',
+  price: " ",
   disabled: false,
   options: {
     menu: false,
@@ -372,7 +379,7 @@ export const TOOLS = {
   color: "#535353",
   backgroundColor: "rgba(83, 83, 83, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: " ", 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -383,19 +390,19 @@ export const NOTES = {
   color: "#ffc000",
   backgroundColor: "rgba(255, 192, 0, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: " ", 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const AON_SOLUTIONS = {
   app: "aio",
   title: "aonSolutions",
-  description: "aonSolutions.",
+  description: "El único software fiscal, laboral y contable 100% en la nube.",
 
   icon: AON_ICONS.AON_APP,
   color: "var(--aonBlue)", 
   logo: "../assets/aon.png",
-  price: " ", //  '-'
+  price: " ", 
 };
 
 export const BIDOQ = {
@@ -403,7 +410,7 @@ export const BIDOQ = {
   title: "Bidoq",
   description: "Bidoq.",
   logo: "../assets/apps/bidoq.png",
-  price: " ", // '-'
+  price: " ", 
 };
 
 export const SELFCONTA = {
@@ -411,7 +418,7 @@ export const SELFCONTA = {
   title: "Selfconta",
   description: "Selfconta.",
   logo: "../assets/apps/selfconta.png",
-  price: " ", // '-'
+  price: " ", 
 };
 
 export const AON_SALTRA = {
@@ -437,7 +444,7 @@ export const AON_SALTRA = {
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // '-'
+  price: " ", 
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
@@ -457,7 +464,7 @@ export const OCR = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: " ",
 };
 
 
@@ -470,7 +477,7 @@ export const INVOFOX = {
   color: "#35A86C",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: " ", 
 };
 
 export const CONVENIOS = {
@@ -481,7 +488,7 @@ export const CONVENIOS = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: " ", 
 };
 
 export const BANK = {
@@ -492,7 +499,7 @@ export const BANK = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: " ", 
 };
 
 export const CONSOLE = {
@@ -507,6 +514,7 @@ export const CONSOLE = {
 export const OFFICE = {
   app: "office",
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
+  symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: "Despacho",
   color: "black",
   backgroundColor: "rgba(0, 0, 0, .2)",
@@ -523,7 +531,7 @@ export const API_SERVICE = {
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
-  price: " ", // 'Desde 45€/mes'
+  price: " ", 
 };
 
 export const AULA = {
@@ -535,7 +543,7 @@ export const AULA = {
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'aonSidenavHover',
   moreInfo: "https://faqs.aonsolutions.es/",
-  price: " ", // '-',
+  price: " ", 
   disabled: false,
 };
 
@@ -737,6 +745,7 @@ export const ENTERPRISE = {
 export const ACADEMY = {
   app: "academy",
   icon: AON_ICONS.AON_ACADEMY,
+  symbol: MATERIAL_ICONS.DICTIONARY,
   title: "Academia",
   color: "black",
   domainType: true,
@@ -745,6 +754,7 @@ export const ACADEMY = {
 export const GARAGE = {
   app: "garage",
   icon: AON_ICONS.AON_GTA,
+  symbol: MATERIAL_ICONS.CAR_REPAIR,
   title: "Taller",
   color: "black",
   domainType: true,
@@ -753,6 +763,7 @@ export const GARAGE = {
 export const COMMERCE = {
   app: CONSTANT.COMMERCE,
   icon: AON_ICONS.AON_COMMERCE,
+  symbol: MATERIAL_ICONS.POINT_OF_SALE,
   title: "Comercio",
   color: "black",
   domainType: true,
@@ -778,7 +789,7 @@ export const PACK_PORTAL = {
     Apps.INVOICE,
     Apps.MESSENGER
   ],
-  price: " ", // '120€/mes'
+  price: " ", 
 };
 
 export const PACK_PAYROLL = {
@@ -788,7 +799,7 @@ export const PACK_PAYROLL = {
   subtitle: " Laboral | Comunic@",
   color: "#002469",
   apps: [Apps.PAYROLL, Apps.COMUNICA],
-  price: " ", // '120€/mes'
+  price: " ", 
 };
 
 export const PACK_FISCAL_ACCOUNTING = {
@@ -798,7 +809,7 @@ export const PACK_FISCAL_ACCOUNTING = {
   subtitle: " Fiscal | Contabilidad",
   color: "#002469",
   apps: [Apps.FISCAL, Apps.ACCOUNTING],
-  price: " ", // '120€/mes'
+  price: " ", 
 };
 
 export const PACK_SUITE = {
@@ -820,7 +831,7 @@ export const PACK_SUITE = {
     PACK_PAYROLL,
     PACK_PORTAL
   ],
-  price: " ", // '295€/mes'
+  price: " ", 
 };
 
 export const Packs = {

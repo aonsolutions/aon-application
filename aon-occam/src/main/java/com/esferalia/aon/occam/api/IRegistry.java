@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.NewsletterFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -142,6 +145,10 @@ public interface IRegistry {
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
+
+	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params);
+	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
+	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
@@ -222,7 +229,8 @@ public interface IRegistry {
 	public RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
-
+	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo);
+	
 	// ------------------- RDIRSTAFF
 	
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter);
@@ -294,5 +302,6 @@ public interface IRegistry {
 	public void deleteMarketingActionTarget(CloseableAONContext ctx, Integer id);
 	public MarketingActionTarget saveMarketingActionTarget(CloseableAONContext ctx, MarketingActionTarget marketingActionTarget);
 	
+	public Stream<GeoZone> geozoneStream(CloseableAONContext ctx, GeoZoneFilter filter);
 
 }

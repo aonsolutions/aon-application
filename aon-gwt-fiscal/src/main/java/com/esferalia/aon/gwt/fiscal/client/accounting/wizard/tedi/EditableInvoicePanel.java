@@ -656,17 +656,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		
 		if ( invoiceCallback.getInvoice().getInvoice().getId() != null		 // Factura ya grabada 
-			&& (invoiceCallback.getInvoice().getInvoice().isDUAAllowed()	 // Factura DUA
-			 || invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() // Factura con DUA asociada
+			&& (invoiceCallback.getInvoice().isDuaLinked()	 				 // Factura DUA
 			 || invoiceCallback.getInvoice().getInvoice().isRectified()		 // Factura Rectificada
 			 || invoiceCallback.getInvoice().getInvoice().isRectifier())	 // Factura Rectificativa
 			) {
 			String msg = "";
-			if (invoiceCallback.getInvoice().getInvoice().isDUAAllowed()) {
+			if (invoiceCallback.getInvoice().isDuaLinked()) {
 				msg = "No se permite el cambio de titular en una factura DUA";	
-			}
-			if (invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed()) {
-				msg = "No se permite el cambio de titular en una factura vinculada a un DUA";	
 			}
 			if (invoiceCallback.getInvoice().getInvoice().isRectified()) {
 				msg = "No se permite el cambio de titular en una factura rectificada";
@@ -720,6 +716,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				account.setDescription(ar.getAccountDescription());
 				invoiceCallback.paintEntry();
 				LOGGER.info("initializeInvoice ready To edit!");
+				registryBox.setValue(invoiceCallback.getInvoice().getRegistry(),false);
 				invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
 			}
 			

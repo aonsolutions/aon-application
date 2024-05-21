@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.marketing.client.marketing.campaign;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingCampaignPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingCampaignPanel.AonMarketingCampaignPanelCallback;
@@ -36,6 +37,9 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 	private TextBox description;
 	private ListBox scope;
 	private ListBox active;
+	
+	private AonDoubleBox budget;
+	private AonDoubleBox expense;
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
@@ -82,6 +86,11 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 		active.setStyleName(AON.CSS.aonInputText());
 		active.addChangeHandler(event -> onSearch( options ));
 		
+		budget = new AonDoubleBox(15, 2);
+		budget.addValueChangeHandler(e -> onSearch( options ));
+		expense = new AonDoubleBox(15, 2);
+		expense.addValueChangeHandler(e -> onSearch( options ));
+		
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
@@ -100,6 +109,16 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 		filterPanel.add(scope);
 
 		filterPanel.add(active);
+		
+		Label budgetLabel = new Label("Presupuesto");
+		budgetLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
+		filterPanel.add(budgetLabel);
+		filterPanel.add(budget);
+		
+		Label expenseLabel = new Label("Gastos");
+		expenseLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
+		filterPanel.add(expenseLabel);
+		filterPanel.add(expense);
 
 		searchPanel.add(filterPanel);
 		
@@ -108,6 +127,8 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 			description.setValue(null,false);
 			scope.setSelectedIndex(0);
 			active.setSelectedIndex(0);
+			budget.setValue(null);
+			expense.setValue(null);
 			
 			marketingCompaignPanel.resetSearchOffset();
 			
@@ -173,7 +194,7 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 
 	public void onSearch( MarketingModuleOptions options ) {
 		MarketingCompaignParams params = getWidgetParams( options );
-		marketingCompaignPanel = new MarketingCompaignPanel(params, options) {
+		marketingCompaignPanel = new MarketingCompaignPanel(params) {
 
 			@Override
 			protected void onMarketingCampaignOpen(MarketingCampaign marketingCampaign) {
@@ -198,6 +219,8 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 			.setDescription(description.getValue())
 			.setScope(scope.getSelectedIndex() == 0 ? null : Integer.parseInt(scope.getSelectedValue()))
 			.setActive(active.getSelectedIndex() == 0 ? null : Byte.parseByte(active.getSelectedValue()))
+			.setBudget(budget.getValue())
+			.setExpense(expense.getValue())
 			;
 	}
 	

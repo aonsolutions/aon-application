@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.payroll.client.CretaDetail.setCheckedStyle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -321,6 +323,9 @@ public class Enterprises extends ResizeComposite implements
 	    enterprisesService.getEnterprises(offset, limit, condition, callback );
 	}
 
+	public void getCCCEmployees(Date startDate, Date endDate, CCC ccc, AsyncCallback<List<Employee>> callback) {
+	    enterprisesService.getCCCEmployees(startDate, endDate, Collections.singletonList(ccc.getId()), callback);
+	}
 
 	protected void filterEnterprises() {
 		filter(toolbar.getSearchTextBox().getValue());

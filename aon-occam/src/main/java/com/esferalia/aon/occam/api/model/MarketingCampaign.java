@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class MarketingCampaign implements Serializable {
 
@@ -15,6 +17,9 @@ public class MarketingCampaign implements Serializable {
 	private String description;
 	private Scope scope;
 	private Double budget;
+	private Double expense;
+	private Workgroup workgroup;
+	private TaskHolder taskHolder;
 	
 	private List<MarketingAction> actions;
 	
@@ -72,6 +77,33 @@ public class MarketingCampaign implements Serializable {
 		return this;
 	}
 
+	public Double getExpense() {
+		return expense == null ? 0.00 : expense;
+	}
+
+	public MarketingCampaign setExpense(Double expense) {
+		this.expense = expense;
+		return this;
+	}
+
+	public Workgroup getWorkgroup() {
+		return workgroup;
+	}
+
+	public MarketingCampaign setWorkgroup(Workgroup workgroup) {
+		this.workgroup = workgroup;
+		return this;
+	}
+
+	public TaskHolder getTaskHolder() {
+		return taskHolder;
+	}
+
+	public MarketingCampaign setTaskHolder(TaskHolder taskHolder) {
+		this.taskHolder = taskHolder;
+		return this;
+	}
+
 	public void addAction(MarketingAction action) {
 		actions.add(action);
 	}
@@ -82,6 +114,25 @@ public class MarketingCampaign implements Serializable {
 	
 	public List<MarketingAction> getActions() {
 		return actions;
+	}
+
+	public Date getStartDate() {
+		if(null == actions || actions.isEmpty()) return null;
+		Date date = actions.stream().map(action -> action.getStartDate()).sorted().findFirst().orElse(null);
+		return date;
+		
+	}
+
+	public Date getEndDate() {
+		if(null == actions || actions.isEmpty()) return null;
+		
+		for (MarketingAction action : actions) {
+			if(action.getEndDate() == null) return null;
+		};
+		
+		Date date = actions.stream().map(action -> action.getEndDate()).sorted().reduce((first, second) -> second).orElse(null);
+		return date;
+		
 	}
 	
 }

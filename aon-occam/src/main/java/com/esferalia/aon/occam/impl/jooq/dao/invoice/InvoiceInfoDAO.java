@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
+import java.sql.Timestamp;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -78,6 +79,8 @@ public class InvoiceInfoDAO {
 		.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
 		.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
 		.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
+		.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
+		.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 		.where(INVOICE_INFO.ID.eq(invoiceInfo.getId()))
 		.execute();
 		return invoiceInfo;
@@ -89,6 +92,10 @@ public class InvoiceInfoDAO {
 				.set(INVOICE_INFO.INVOICE, invoiceInfo.getInvoice())
 				.set(INVOICE_INFO.TYPE, invoiceInfo.getType().value())
 				.set(INVOICE_INFO.STATUS, invoiceInfo.getStatus().value())
+				.set(INVOICE_INFO.CREATION_USER ,ctx.getUser())
+				.set(INVOICE_INFO.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(INVOICE_INFO.MODIFICATION_USER ,ctx.getUser())
+				.set(INVOICE_INFO.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE_INFO.ID).fetchOne().getId();
 		return invoiceInfo.setId(id);
 	}	
@@ -116,7 +123,11 @@ public class InvoiceInfoDAO {
 				.setDomain(r.getValue(INVOICE_INFO.DOMAIN))
 				.setInvoice(r.getValue(INVOICE_INFO.INVOICE))
 				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_INFO.TYPE)))
-				.setStatus(InvoiceCommunicationStatus.safeValueOf(r.getValue(INVOICE_INFO.STATUS)));
+				.setStatus(InvoiceCommunicationStatus.safeValueOf(r.getValue(INVOICE_INFO.STATUS)))
+				.setCreationUser(getValue(r, INVOICE_INFO.CREATION_USER))
+				.setCreationDate(getValue(r, INVOICE_INFO.CREATION_DATE))
+				.setModificationUser(getValue(r, INVOICE_INFO.MODIFICATION_USER))
+				.setModificationDate(getValue(r, INVOICE_INFO.MODIFICATION_DATE));
 		}
 	}
 	

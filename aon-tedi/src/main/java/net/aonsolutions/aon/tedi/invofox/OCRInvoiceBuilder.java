@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
@@ -385,18 +383,18 @@ public class OCRInvoiceBuilder {
 	private static final Consumer<OCRContext> INVOICE_REFERENCE_CODE = ocr -> {
 	    
 	    try {
-		fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
+	    	fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
 	    } catch (OCRZeroValueException e) {
-		ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+	    	ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
 	    } catch (OCRBlankValueException e) {
-		ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
+	    	ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
 	    }
 	};
 	
 	public static void fillReferenceCode(OCRInvoice ocrInvoice, Invoice invoice) throws OCRZeroValueException, OCRBlankValueException {
-		Optional<String> optDocument = ocrInvoice.getDocumentNumber().flatMap( o -> o.getValue() );
-		if (optDocument.isPresent()) {
-			String reference = optDocument.orElse(null);
+		Optional<String> optReference = ocrInvoice.getReferenceCode();
+		if (optReference.isPresent()) {
+			String reference = optReference.orElse(null);
 			if (!invoice.isSales()) {
 				invoice.setReferenceCode(reference);		
 			} 
@@ -472,10 +470,10 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_SOURCE = ocr -> 
-		ocr.getDetail().setSource( InvoiceSource.DIRECT_INVOICE );
+		ocr.getDetail().setSource( InvoiceSource.TEDI );
 		
 	public static final void fillDetailSource(InvoiceDetail detail) {
-	    detail.setSource( InvoiceSource.DIRECT_INVOICE );
+	    detail.setSource( InvoiceSource.TEDI );
 	}
 	
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
@@ -663,7 +661,6 @@ public class OCRInvoiceBuilder {
 			.forEach( ocrBreakdown ->
         			{
         			   InvoiceDetail detail = new InvoiceDetail();
-        			   
         			   fillDetailFromBreakdownDescription(ocrBreakdown, detail);
         			   fillDetailSource(detail);
         			   fillDetailAmountsFromBreakdown(ocrBreakdown, detail);
@@ -673,6 +670,26 @@ public class OCRInvoiceBuilder {
         			   invoice.getDetails().add(detail); 
         			}
 			);
+			
+			ocrInvoice.getReimbursableExpensesAmount().ifPresent(r -> {
+				BigDecimal value = r.getValue().orElse(null);
+				double prep = AonNumberUtils.zeroIfNull(value);
+				if(prep != 0.0) {
+					Integer size = invoice.getDetails().size();
+	     			InvoiceDetail detail = new InvoiceDetail()
+	     				.setDomain(invoice.getDomain())
+     					.setDescription("Suplido")
+     					.setQuantity(1.0)
+     					.setPrice(prep)
+     					.setPrepayment(true)
+    				   	.setDiscount(0.0)
+    				   	.setInvoice(invoice)
+    				   	.setTaxableBase(prep)
+    				   	.setLine(size.shortValue());
+	     			fillDetailSource(detail);
+	     			invoice.addDetail(detail);
+				}
+			});
 		} else {
 			Stream.of( ocrInvoice.getLines() )
 			.filter( Optional::isPresent )
@@ -999,7 +1016,7 @@ public class OCRInvoiceBuilder {
 				.setBase( AonNumberUtils.zeroIfNull(irpfBase) )
 				.setPercentage( AonNumberUtils.zeroIfNull(irpfPercentage) )
 				.setQuota( AonNumberUtils.zeroIfNull(irpfQuota) )
-				.setWithholdingType( guessWitholdingType( invoice ) )
+				.setWithholdingType( guessWitholdingType( invoice, AonNumberUtils.zeroIfNull(irpfPercentage) ) )
 				;
 			invoice.getBreakdown().add(ib);
 		}
@@ -1134,8 +1151,13 @@ public class OCRInvoiceBuilder {
 		}
 	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
-	private static WithholdingType guessWitholdingType(Invoice invoice) {
-		return WithholdingType.PROFESSIONAL;
+	private static WithholdingType guessWitholdingType(Invoice invoice, double percentage) {
+		if(percentage == 19.0) return WithholdingType.RENTING;
+		else if(percentage == 2.0) return WithholdingType.FARMER;
+		else if(percentage == 1.0) return WithholdingType.TRANSPORT_OPERATOR;
+		else if(percentage == 7.0) return WithholdingType.M190_G_02;
+		else if(percentage == 24.0) return WithholdingType.M190_I_01;
+		else return WithholdingType.PROFESSIONAL;
 	}
 	// ****************************************************************************
 	// ****************************************************************************

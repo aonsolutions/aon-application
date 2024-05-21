@@ -176,6 +176,7 @@ import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -975,14 +976,13 @@ public class AON {
 		}
 	}
 	
+	public static ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter) {
+		return getCommon().insertApplicationParameter(ctx, applicationParameter);
+	}
+
 	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameter applicationParameter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().insertApplicationParameter(ctx, applicationParameter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return insertApplicationParameter(ctx, applicationParameter);
 		}
 	}
 	
@@ -1721,6 +1721,12 @@ public class AON {
 	public static void deleteRegistryAddInfo(Domain domain, String login, Integer raddinfoId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
 			getRegistry().deleteRegistryAddInfo(ctx, raddinfoId);
+		}
+	}
+	
+	public static RegistryAddInfo save(Domain domain, User user, RegistryAddInfo registryAddInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRegistry().saveRegistryAddInfo(ctx, registryAddInfo);
 		}
 	}
 	
@@ -2691,6 +2697,14 @@ public class AON {
 		return getSalary().saveSalaries(ctx, domainId, salaries);
 	}
 
+
+	public static Collection<Salary> saveSalaries(String domainName, String login, 
+			Integer domainId, Collection<Salary> salaries) {
+		try ( CloseableAONContext ctx = AONContext.getAONContext(domainName, login) ){
+			return getSalary().saveSalaries(ctx, domainId, salaries);
+		}
+	}
+
 	public static Stream<Salary> getSalaryData(AONContext ctx, 
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
@@ -3190,6 +3204,17 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+
+	public static Attach save(Domain domain, User user, Attach attach) {
+		if(null == attach.getId()) {
+			Integer insertId = insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			attach.setId(insertId);
+		} else 
+			updateAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			
+		return attach;
 	}
 	
 	@Deprecated
@@ -4408,9 +4433,13 @@ public class AON {
 
 	// ------------------ SUPPLIER 
 	
+	public static Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter) {
+		return getRegistry().getSupplierStream(ctx, filter);
+	}
+
 	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getSupplierStream(ctx, filter);
+			return getSupplierStream(ctx, filter);
 		}
 	}
 	
@@ -4425,6 +4454,10 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Optional<Supplier> getSupplier(AONContext ctx, SupplierFilter filter) {
+		return getSupplierStream(ctx, filter)
+				.findFirst();
+	}
 	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, SupplierFilter filter) {
 		return getSupplierStream(domainName, domainId, login, filter)
 				.findFirst();
@@ -5019,6 +5052,24 @@ public class AON {
 	}
 	
 	// ********************************************
+	// ********************* ELABORATION PACKAGE **
+	// ********************************************
+	
+	public static void deleteElaborationPackage(Domain domain, User user, Integer id) {
+		deleteElaboration(domain.getName(), domain.getId(), user.getLogin(), id);
+	}
+	
+	public static void deleteElaborationPackage(Domain domain, String login, Integer id) {
+		deleteElaboration(domain.getName(), domain.getId(), login, id);
+	}
+	
+	public static void deleteElaborationPackage(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getWarehouse().deleteElaborationPackage(ctx, id);
+		}
+	}
+	
+	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
 	
@@ -5068,9 +5119,13 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
+		return getRegistry().getCustomerStream(ctx, filter);
+	}
+	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getRegistry().getCustomerStream(ctx, filter);
+			return getCustomerStream(ctx, filter);
 		}
 	}
 	
@@ -5089,6 +5144,11 @@ public class AON {
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Customer getCustomer(AONContext ctx, CustomerFilter filter) {
+		return getCustomerStream(ctx, filter)
+				.findFirst().orElse(new Customer());
 	}
 	
 	public static Customer getCustomer(String domainName, Integer domainId, String login, CustomerFilter filter){
@@ -5149,6 +5209,24 @@ public class AON {
 	
 	public static Seller getSeller(String domainName, Integer domainId, String login, Integer registry){
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
+	}
+	
+	public static List<Seller> getSellerList(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerList(ctx, params);
+		}
+	}
+
+	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveSeller(ctx, seller);
+		}
+	}
+
+	public static void deleteSeller(String domainName, int domain, String user, Integer sellerId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteSeller(ctx, sellerId);
+		}
 	}
 	
 	// ------------------- RSELLER
@@ -5824,6 +5902,10 @@ public class AON {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
+	public static Stream<RegistryAddress> getRegistryAddressStream(Domain domain, User user, RegistryAddressFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
 	public static Stream<RegistryAddress> getStream(Domain domain, String login, RegistryAddressFilter filter) {
 		return getStream(domain.getName(), domain.getId(), login, filter);
 	}
@@ -5878,9 +5960,12 @@ public class AON {
 	// ******************************** CREDITOR **
 	// ********************************************
 
+	public static Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter) {
+		return getRegistry().getCreditorStream(ctx, filter);
+	}
 	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getCreditorStream(ctx, filter);
+			return getCreditorStream(ctx, filter);
 		}
 	}
 	
@@ -5907,6 +5992,10 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Optional<Creditor> getCreditor(AONContext ctx, CreditorFilter filter) {
+		return getCreditorStream(ctx, filter)
+				.findFirst();
+	}
 	public static Optional<Creditor> getCreditor(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		return getCreditorStream(domainName, domainId, login, filter)
 				.findFirst();
@@ -6588,6 +6677,12 @@ public class AON {
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
+		}
+	}
+	
+	public static List<TaskHolder> getAviableSellerTaskHolders(String domainName, Integer domainId, String login){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getTask().getAviableSellerTaskHolders(ctx);
 		}
 	}
 	
@@ -8435,5 +8530,20 @@ public class AON {
 			return getRegistry().getTargetStream(ctx, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 		}
 	}
+
+	public static Stream<GeoZone> geozoneStream(String domainName, Integer domain, String user, GeoZoneFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().geozoneStream(ctx, filter);
+		}
+	}
+	
+	// ---------------- Project Commercial
+
+	public static ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getProject().saveProjectCommercial(ctx, projectCommercial);
+		}
+	}
+
 	
 }

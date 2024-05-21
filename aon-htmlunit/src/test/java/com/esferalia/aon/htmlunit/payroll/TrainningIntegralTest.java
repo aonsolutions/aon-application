@@ -151,6 +151,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", "1.323,00");
 		assertText("common_contingency", "10,69");
 		assertText("job_training", "0,26");
+		assertNotElement("mei");
 		click("costsCheck-input");
 		wait4Id("it_cost");
 		assertText("common_contingency_cost", "53,61");
@@ -158,6 +159,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", "4,07");
 		assertText("it_cost", "3,82");
 		assertText("ims_cost", "3,56");
+		assertNotElement("mei_cost");
 		click("costsCheck-input");
 
 		draft("FORMACION Y APRENDIZAJE, IT");

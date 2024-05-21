@@ -5,5 +5,6 @@ export const Language = {
 	DEUTSCH: 'de',
 	ENGLISH: 'en',
 	GALICIAN: 'gl',
-	SPANISH: 'es'
+	SPANISH: 'es',
+	FRENCH: 'fr'
 }

@@ -321,7 +321,8 @@ public class CretaServlet extends HttpServlet
 						}else if (file == CretaService.File.RESPUESTA) {
 							try {
 								// Try with IDC first
-								trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req, part));
+								//trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req, part));
+								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 							} catch ( Throwable t ) {
 								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
 							}
@@ -335,7 +336,9 @@ public class CretaServlet extends HttpServlet
 				//if this request is not of type multipart/form-data
 				try {
 					// Try with IDC first
-					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+					// trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+					
+					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				} catch ( Throwable t ) {
 					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				}
@@ -345,7 +348,8 @@ public class CretaServlet extends HttpServlet
 			if ( trabajadoresYTramosIss.isEmpty() ) {
 				try {
 					// Try with IDC first
-					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+					//trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				} catch ( Throwable t ) {
 				}
 			}

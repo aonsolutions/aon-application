@@ -18,7 +18,7 @@ import './aon-document.js';
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 import '../../css/aon-mobile.css';
-import '../../css/aon.css';
+import 'aoncss';
 import { uploadOption } from './DocumentalUtils.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 

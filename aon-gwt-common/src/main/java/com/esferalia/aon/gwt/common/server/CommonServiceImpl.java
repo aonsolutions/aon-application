@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -29,7 +30,12 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -37,15 +43,21 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -398,17 +410,186 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) throws AonCoreException {
 		return AON.getMarketingActionTargets(params);
 	}
+	
 	@Override
 	public void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deleteMarketingActionTarget(domainName, domain, user, id);
 	}
+	
 	@Override
 	public MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user, MarketingActionTarget marketingActionTarget) throws AonCoreException {
 		return AON.saveMarketingActionTarget(domainName, domain, user, marketingActionTarget);
 	}
+	
 	@Override
 	public List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getTargetSuggestion(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException {
+		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		return workgroups;
+	}
+	
+	@Override
+	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
+		return taskHolders;
+	}
+	
+	@Override
+	public List<User> getAviableServiceUsers(String domainName, int domainId, String user) throws AonCoreException {
+		List<User> usersList = AON.getDomainUserStream(domainName, domainId, user, f -> f.getTypeProperty().eq((byte)3)).collect(Collectors.toList());
+		return usersList;
+	}
+	
+	// **************************************************
+	// ***************************** [PROJECT COMMERCIAL]
+	// **************************************************
+
+	@Override
+	public Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolderId) throws AonCoreException {
+		TaskHolder taskHolder = AON.getTaskHolder(domainName, domain, user, f -> f.getIdProperty().eq(taskHolderId));
+		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getDocumentProperty().eq(taskHolder.getDocument()));
+		return seller;
+	}
+	
+	@Override
+	public ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) throws AonCoreException {
+		return AON.saveProjectCommercial(domainName, domain, user, projectCommercial);
+	}
+	
+	@Override
+	public void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial) throws AonCoreException {
+		AON.deleteProject(new Domain().setName(domainName).setId(domain), new User().setLogin(user), projectCommercial);
+	}
+	
+	// **************************************************
+	// ***************************************** [SELLER]
+	// **************************************************
+
+	@Override
+	public List<Seller> getSellers(SellerParams params) throws AonCoreException {
+		List<Seller> sellers =  AON.getSellerList(params);
+		return sellers;
+	}
+	
+	@Override
+	public Seller getSeller(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		Seller seller = AON.getSeller(domainName, domain, user, id);
+		return seller;
+	}
+	
+	@Override
+	public Seller saveSeller(String domainName, int domain, String user, Seller seller) throws AonCoreException {
+		return AON.saveSeller(domainName, domain, user, seller);
+	}
+	
+	@Override
+	public void deleteSeller(String domainName, int domain, String user, Integer sellerId) throws AonCoreException {
+		AON.deleteSeller(domainName, domain, user, sellerId);
+	}
+	
+	@Override
+	public List<CommissionType> getAviableCommisionTypes(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getCommissionTypeStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<TaskHolder> getAviableSellerTaskHolders(String domainName, int domain, String user) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getAviableSellerTaskHolders(domainName, domain, user);
+		return taskHolders;
+	}
+	
+	@Override
+	public List<Workgroup> getTaskHolderWorkgroups(String domainName, int domain, String user, Integer taskHolderId) throws AonCoreException {
+		return AON.getWorkgroupByTaskHolderStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain), taskHolderId).collect(Collectors.toList());
+	}
+	
+	@Override
+	public User getTaskHolderUser(String domainName, int domain, String user, Integer userId) throws AonCoreException {
+		return AON.getUser(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getIdProperty().eq(userId));
+	}
+	
+	@Override
+	public List<RegistryAddress> getRegistryAddresses(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRegistryAddressStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getRegistryProperty().eq(registry)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public RegistryAddress getRegistryAddress(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getRegistryAddress(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getIdProperty().eq(id));
+	}
+	
+	@Override
+	public RegistryAddress saveRegistryAddress(String domainName, Integer domain, String user, RegistryAddress registryAddress) throws AonCoreException {
+		return AON.save(new Domain().setName(domainName).setId(domain), new User().setLogin(user), registryAddress);
+	}
+	 
+	@Override
+	public void deleteRegistryAddress(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRegistryAddress(domainName, domain, user, id);
+	}
+	
+	@Override
+	public List<RegistryMedia> getRegistryMedias(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRegistryMediaStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getRegistryProperty().eq(registry)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public RegistryMedia getRegistryMedia(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getRegistryMedia(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getIdProperty().eq(id));
+	}
+	
+	@Override
+	public RegistryMedia saveRegistryMedia(String domainName, Integer domain, String user, RegistryMedia registryMedia) throws AonCoreException {
+		return AON.save(new Domain().setName(domainName).setId(domain), new User().setLogin(user), registryMedia);
+	}
+	
+	@Override
+	public void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRMedia(domainName, domain, user, id);
+	}
+	
+	@Override
+	public List<RegistryAddInfo> getRegistryAddInfos(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRegistryAddInfoStream(domainName, domain, user, f -> f.getRegistryProperty().eq(registry)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public RegistryAddInfo getRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getRegistryAddInfo(domainName, domain, user, f -> f.getIdProperty().eq(id)).get();
+	}
+	
+	@Override
+	public RegistryAddInfo saveRegistryAddInfo(String domainName, Integer domain, String user, RegistryAddInfo registryAddInfo) throws AonCoreException {
+		return AON.save(new Domain().setName(domainName).setId(domain), new User().setLogin(user), registryAddInfo);
+	}
+	
+	@Override
+	public void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRegistryAddInfo(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public List<Attach> getRegistryAttaches(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getAttachStream(domainName, domain, user, f -> f.getAttachModuleProperty().eq(registry), AttachType.REGISTRY, false).collect(Collectors.toList());
+	}
+	
+	@Override
+	public Attach getRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getAttach(domainName, domain, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+	}
+	
+	@Override
+	public Attach saveRegistryAttach(String domainName, Integer domain, String user, Attach attach) throws AonCoreException {
+		return AON.save(new Domain().setName(domainName).setId(domain), new User().setLogin(user), attach);
+	}
+	
+	@Override
+	public void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
 	}
 	
 }

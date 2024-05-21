@@ -50,6 +50,7 @@ export const AON_NEW_DATE = 'aon-new-date';
 export const AON_DIALOG_MENU = 'aon-dialog-menu';
 export const AON_DIALOG = 'aon-dialog';
 export const AON_DOMAIN_CUSTOMER = 'aon-domain-customer';
+export const AON_DOMAINS = 'aon-domains';
 export const AON_EMAIL = 'aon-email';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
@@ -57,6 +58,7 @@ export const AON_INPUT = 'aon-input';
 export const AON_NEW_INPUT = 'aon-new-input';
 export const AON_LOADER = 'aon-loader';
 export const AON_LOGIN = 'aon-login';
+export const AON_LOGIN_PANEL = 'aon-login-panel';
 export const AON_NEW_LOGIN = 'aon-new-login';
 export const AON_NEW_MENU = 'aon-new-menu';
 export const AON_NOTES = 'aon-notes';
@@ -197,3 +199,9 @@ export const AON_QUANTITY = 'aon-quantity';
 export const AON_OCR_CONFIGURATION = 'aon-ocr-configuration';
 
 export const AON_MARKETING = 'aon-marketing';
+
+export const AON_HELP = 'aon-help';
+
+export const AON_CONFIG = 'aon-config';
+
+export const AON_RIGHT_PANEL = 'aon-right-panel';

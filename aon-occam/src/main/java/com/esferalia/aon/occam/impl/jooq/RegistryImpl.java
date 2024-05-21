@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.NewsletterFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -48,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -82,6 +85,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorSupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MarketingCampaignDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NewsletterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
@@ -388,6 +392,23 @@ public class RegistryImpl implements IRegistry{
 				configuration -> SellerDAO.getStream(ctx, filter, offset, limit));
 	}
 	
+	@Override
+	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getList(ctx, params));
+	}
+
+	@Override
+	public Seller saveSeller(CloseableAONContext ctx, Seller seller) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.save(ctx, seller));
+	}
+
+	@Override
+	public void deleteSeller(CloseableAONContext ctx, Integer sellerId) {
+		ctx.getDslContext().transaction(configuration -> SellerDAO.delete(ctx, sellerId));
+	}
+	
 	// -------------------- RSELLER
 	
 	@Override
@@ -683,6 +704,14 @@ public class RegistryImpl implements IRegistry{
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId) {
 		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, raddinfoId));
 	}
+	
+
+	@Override
+	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.saveRegistryAddInfo(ctx, registryAddInfo));
+	}
+
 
 	
 	// -------------------- RDIRSTAFF
@@ -972,4 +1001,11 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> MarketingCampaignDAO.saveActionTarget(ctx, marketingActionTarget));
 	}
+
+	@Override
+	public Stream<GeoZone> geozoneStream(CloseableAONContext ctx, GeoZoneFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> GeoZoneDAO.getStream(ctx, filter));
+	}
+
 }

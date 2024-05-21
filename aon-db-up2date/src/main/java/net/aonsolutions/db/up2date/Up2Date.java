@@ -19,13 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.InvoiceDuplicateFix;
-import net.aonsolutions.db.up2date.payroll.PPEUpdate;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionBudget;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingCampaignBudget;
-import net.aonsolutions.db.up2date.registry.AlterRitemEdiSalesCode;
-import net.aonsolutions.db.up2date.security.UdpateDomainApp;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2024Update;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetAudit;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetProject;
+import net.aonsolutions.db.up2date.registry.AddColumnSellerTaskHolder;
+import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 
 public class Up2Date {
 
@@ -437,13 +434,27 @@ public class Up2Date {
 		// FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
 		// RefreshMod131Result.REFRESH_MOD131_RESULT
     		
-    	AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
-		  InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
-        UdpateDomainApp.UPDATE_DOMAIN_APP,
-        AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
-        PPEUpdate.PPE_UPDATE,
-        AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
-        AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET
+    	//AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
+		//InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+        //UdpateDomainApp.UPDATE_DOMAIN_APP,
+        //AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
+        //PPEUpdate.PPE_UPDATE,
+		//InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT
+		//AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
+		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
+
+		MEIFellows2024Remove.MEIFELLOWSREMOVE,
+        
+		//AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
+        //AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
+        //AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
+        //AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
+        //AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
+        //AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER,
+        
+        AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
+        AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
+        AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
 	};
 
     // ------------------------------------------------------------------------

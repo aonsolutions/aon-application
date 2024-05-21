@@ -111,7 +111,7 @@ public class DomainJSON {
 	
 	public static JSONArray toJSON(Stream<Domain> domains) {
 		JSONArray array = new JSONArray();
-		domains.forEach(task -> array.put(toJSON(task)));
+		domains.forEach(domain -> array.put(toJSON(domain)));
 		return array;
 	}
 	

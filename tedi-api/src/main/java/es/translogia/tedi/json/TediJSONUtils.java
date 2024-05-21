@@ -11,6 +11,7 @@ public class TediJSONUtils {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	private static final SimpleDateFormat DATE_TIME_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
 	
 	private TediJSONUtils() {
 		
@@ -41,7 +42,21 @@ public class TediJSONUtils {
 		return parseDate(date, DATE_TIME_FORMAT);
 	}
 	public static Date parseDate(String date) {
-		return parseDate(date, DATE_FORMAT);
+		try {
+			return (date == null || "".equals(date.trim())) ? null : DATE_FORMAT.parse(date);
+		} catch (ParseException e0) {
+			try {
+				return (date == null || "".equals(date.trim())) ? null : DATE_TIME_FORMAT.parse(date);
+			} catch (ParseException e1) {
+				try {
+					return (date == null || "".equals(date.trim())) ? null : DATE_TIME_FORMAT2.parse(date);
+				} catch (ParseException e) {
+					System.err.printf( "ERROR: UNABLE to parse '"+date+"' date.\n");
+					Arrays.stream(e.getStackTrace()).skip(2).limit(30).forEach( t -> System.err.println("\tat " + t ));
+					return null;
+				}
+			}
+		}
 	}
 
 	private static Date parseDate(String date, SimpleDateFormat format) {

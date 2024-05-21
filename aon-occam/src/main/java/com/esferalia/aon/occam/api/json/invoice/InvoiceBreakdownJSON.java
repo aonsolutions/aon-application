@@ -53,6 +53,7 @@ public class InvoiceBreakdownJSON {
 				.put(IJsonNames.QUOTA, breakdown.getQuota())
 				.put(IJsonNames.SURCHARGE, breakdown.getSurcharge())
 				.put(IJsonNames.SURCHARGE_QUOTA, breakdown.getSurchargeQuota())
-				.put(IJsonNames.WITHHOLDING_TYPE, breakdown.getWithholdingType());
+				.put(IJsonNames.WITHHOLDING_TYPE, breakdown.getWithholdingType() != null 
+					? breakdown.getWithholdingType().name() : null);
 	}
 }

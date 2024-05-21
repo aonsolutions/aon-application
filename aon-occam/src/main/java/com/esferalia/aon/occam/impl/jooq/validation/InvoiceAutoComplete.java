@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -504,6 +505,13 @@ public class InvoiceAutoComplete {
 			inv.setDetails(invoiceDetails);
 		}
 		inv.getDetails().stream().forEach(detail -> {
+			
+			if(detail.getId() != null) {
+				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
+					detail.setId(null);
+				}
+			}
 
 			detail.setDomain(inv.getDomain());
 			
@@ -645,6 +653,19 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el ambito de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
+		if((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
+			if(inv.isSales()) {
+				Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(customer.getScope());
+			} else if(inv.isPurchase()) {
+				Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(supplier.getScope());				
+			} else if(inv.isExpenses() || inv.isUndeductible()){
+				Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(creditor.getScope());
+			}
+		}
+
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
 			List<Scope> scopes = SecurityDAO.getScopeStream(ctx.getContext(),  f -> f.getDomainProperty().eq(inv.getDomain())).toList();
 			if(scopes.isEmpty()) {

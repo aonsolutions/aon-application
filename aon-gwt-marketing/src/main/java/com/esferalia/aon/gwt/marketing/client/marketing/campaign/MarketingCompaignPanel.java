@@ -9,15 +9,11 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.mutable.MutableInt;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -27,6 +23,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,7 +33,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -49,6 +45,8 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	private static final Logger LOGGER = Logger.getLogger(MarketingCompaignPanel.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private final int limit = 100;
 	private final MutableInt row = new MutableInt(0);
 	private final MutableInt offset = new MutableInt(0);
@@ -59,15 +57,18 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	private int lastScrollPos = 0;
 	
 	private MarketingCompaignParams params;
-	private MarketingModuleOptions options;
 	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, DES(AON.MSG.description()					,"auto"  ,null)
-		, BUD("Presupuesto"							,"150px" ,null)
-		, BDA("Presu. Acumulado"					,"150px" ,null)
-		, TYP(AON.MSG.scope()						,"150px" ,null)
+		, BUD("Presupuesto"							,"120px" ,null)
+		, BDA("P. Acumulado"						,"120px" ,null)
+		, EXP("Gastos"								,"120px" ,null)
+		, EXA("G. Acumulados"						,"120px" ,null)
+		, STD("F. Inicio"							,"100px" ,null)
+		, END("F. Fin"								,"100px" ,null)
+		, TYP(AON.MSG.scope()						,"120px" ,null)
 		, ACT("Activa"								,"50px"  ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
@@ -96,7 +97,7 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		}
 	}
 
-	public MarketingCompaignPanel(MarketingCompaignParams params, MarketingModuleOptions options) {
+	public MarketingCompaignPanel(MarketingCompaignParams params) {
 		
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonPaddingBottom());
@@ -105,7 +106,6 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
-		this.options = options;
 
 		container = new SimplePanel();
 		setWidget(container);
@@ -216,58 +216,16 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	}
 	
 	private void paintRow(MarketingCampaign marketingCampaign) {
-		final int r = row.getValue();
-		paintRow(r, marketingCampaign); 
+		int r = row.getValue();
+		int col = 0;
+		paintRow(r, col, marketingCampaign); 
 		row.increment();
 	}
 	
-	private void paintRow(final int r, MarketingCampaign marketingCampaign) {
-		int col = 0;
-		boolean myMarketingCampaign =  marketingCampaign == null || AonNumberUtils.equals(marketingCampaign.getDomain() , params.getDomain()); 
-		if (myMarketingCampaign) {
-			paintActiveRow(r,col,marketingCampaign);
-		} else {
-			paintInactiveRow(r,col,marketingCampaign);
-		}
-	}
-
-	private void paintInactiveRow(final int r, int col,  MarketingCampaign marketingCampaign) {
-		Label msg = new Label("");
-		msg.setStyleName(AON.CSS.aonTabIcon());
-		msg.addStyleName(AON.CSS.aonIconLevelTop());
-		tab.setWidget(r, col, msg);
-		col++;
-		
-		Label sel = new Label("");
-		tab.setWidget(r, col, sel);
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingCampaign.getDescription()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingCampaign.getBudget().toString()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum() + ""));
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingCampaign.getScope() == null ? "" : marketingCampaign.getScope().getDescription()));
-		col++;
-		
-		Button activeBtn = new Button();
-		getEnableDisableButton(activeBtn, marketingCampaign.isActive());
-		activeBtn.setEnabled(false);
-		tab.setWidget(r, col, activeBtn);
-		col++;
-
-	}
-
-	private void paintActiveRow(final int r, int col,  MarketingCampaign marketingCampaign) {
+	private void paintRow(int row, int col,  MarketingCampaign marketingCampaign) {
 		AonTableButton msg = new AonTableButton("");
 		AonTableButton sel = new AonTableButton("", AON.CSS.aonIconRight());
 		TextBox descriptionBox = new TextBox();
-		AonDoubleBox budget = new AonDoubleBox(15, 2);
-		ListBox scopeListBox = new ListBox();
 		Button activeBtn = new Button();
 		
 		ValueChangeHandler<String> valueChangeHandlerString = new ValueChangeHandler<String>() {
@@ -275,24 +233,8 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				marketingCampaign.setDescription(descriptionBox.getValue());
-				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
 				boolean currentActive = isActiveToggleButton(activeBtn);
 				marketingCampaign.setActive(currentActive);
-				marketingCampaign.setBudget(budget.getValue());
-				
-				save(marketingCampaign, msg);
-			}
-		};
-		
-		ValueChangeHandler<Double> valueChangeHandlerDouble = new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				marketingCampaign.setDescription(descriptionBox.getValue());
-				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
-				boolean currentActive = isActiveToggleButton(activeBtn);
-				marketingCampaign.setActive(currentActive);
-				marketingCampaign.setBudget(budget.getValue());
 				
 				save(marketingCampaign, msg);
 			}
@@ -303,60 +245,64 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		});
 		
 		descriptionBox.addValueChangeHandler(valueChangeHandlerString);
-		budget.addValueChangeHandler(valueChangeHandlerDouble);
-		scopeListBox.addChangeHandler(e -> {
-			marketingCampaign.setDescription(descriptionBox.getValue());
-			marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
-			boolean currentActive = isActiveToggleButton(activeBtn);
-			marketingCampaign.setActive(currentActive);
-			marketingCampaign.setBudget(budget.getValue());
-			
-			save(marketingCampaign, msg);
-		});
-		
 		activeBtn.addClickHandler(e -> {
 			getEnableDisableButton(activeBtn, !isActiveToggleButton(activeBtn));
 			
 			marketingCampaign.setDescription(descriptionBox.getValue());
-			marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scopeListBox.getSelectedValue())));
 			boolean currentActive = isActiveToggleButton(activeBtn);
 			marketingCampaign.setActive(currentActive);
-			marketingCampaign.setBudget(budget.getValue());
 			
 			save(marketingCampaign, msg);
 		});
 		
-		tab.setWidget(r, col, msg);
+		tab.setWidget(row, col, msg);
 		col++;
 		
-		tab.setWidget(r, col, sel);
+		tab.setWidget(row, col, sel);
 		col++;
 		
 		descriptionBox.setStyleName(AON.CSS.aonBorderNone());
 		descriptionBox.addStyleName(AON.CSS.aonWidthAll());
 		descriptionBox.setMaxLength(128);
 		descriptionBox.setValue(marketingCampaign.getDescription());
-		tab.setWidget(r, col, descriptionBox);
+		tab.setWidget(row, col, descriptionBox);
 		col++;
 		
-		budget.setStyleName(AON.CSS.aonBorderNone());
-		budget.addStyleName(AON.CSS.aonWidthAll());
-		budget.setValue(marketingCampaign.getBudget());
-		tab.setWidget(r, col, budget);
+		Label budget = new Label(AON.FMT.format(marketingCampaign.getBudget()) + " \u20ac");
+		budget.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(row, col, budget);
 		col++;
 		
-		tab.setWidget(r, col, new Label(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum() + ""));
+		Label budgetAcumulate = new Label(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		budgetAcumulate.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(row, col, budgetAcumulate);
 		col++;
 		
-		scopeListBox.setStyleName(AON.CSS.aonBorderNone());
-		scopeListBox.addStyleName(AON.CSS.aonWidthAll());
-		options.getConfiguration().getAvailableScopes().forEach(sc -> scopeListBox.addItem(sc.getDescription(), sc.getId() + ""));
-		setSelectedValueLB(scopeListBox, marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getId().toString());
-		tab.setWidget(r, col, scopeListBox);
+		Label expense = new Label(AON.FMT.format(marketingCampaign.getExpense()) + " \u20ac");
+		expense.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(row, col, expense);
+		col++;
+		
+		Label expenseAcumulate = new Label(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		expenseAcumulate.addStyleName(AON.CSS.aonTextRight());
+		tab.setWidget(row, col, expenseAcumulate);
+		col++;
+		
+		Label startDate = new Label(marketingCampaign.getStartDate() == null ? "" : formatDate.format(marketingCampaign.getStartDate()));
+		startDate.addStyleName(AON.CSS.aonTextCenter());
+		tab.setWidget(row, col, startDate);
+		col++;
+		
+		Label endDate = new Label(marketingCampaign.getEndDate() == null ? "" : formatDate.format(marketingCampaign.getEndDate()));
+		endDate.addStyleName(AON.CSS.aonTextCenter());
+		tab.setWidget(row, col, endDate);
+		col++;
+		
+		tab.setWidget(row, col, new Label(marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getDescription()));
 		col++;
 
 		getEnableDisableButton(activeBtn, marketingCampaign.isActive());
-		tab.setWidget(r, col, activeBtn);
+		tab.setWidget(row, col, activeBtn);
 		col++;
 		
 		FlowPanel buttonContainer = new FlowPanel();
@@ -390,20 +336,8 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		
 		buttonContainer.add(button);
 		
-		tab.setWidget(r, col, buttonContainer);
+		tab.setWidget(row, col, buttonContainer);
 		col++;
-	}
-	
-	private void setSelectedValueLB(ListBox lBox, String str) {
-		String text = str;
-		int indexToFind = 0;
-		for (int i = 0; i < lBox.getItemCount(); i++) {
-			if (lBox.getValue(i).equals(text)) {
-				indexToFind = i;
-				break;
-			}
-		}
-		lBox.setSelectedIndex(indexToFind);
 	}
 	
 	private void getEnableDisableButton(Button button, boolean disabled) {

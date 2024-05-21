@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -42,7 +43,7 @@ public class LroeData {
 	
 	}
 	
-	public static LROEInformation get(Domain domain, User user, Integer invoice) {
+	public static LROEInformation get(Domain domain, User user, Integer invoice, InvoiceType type) {
 		LROEInformation lroe = new LROEInformation();
 		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
 			DataResponseSource.LROE, f -> 
@@ -92,24 +93,28 @@ public class LroeData {
 				responseData.put("attach_type", AttachType.DATA.getName());
 				String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
 				request.setResponseUrl("ms/api/file/" +  responseResult);
-				
-				if("1".equals(request.getInfo().getCapitulo())) {
+
+				if(InvoiceType.SALES.equals(type)) {
 					lroe.getChapter1().addRequest(request);
-				} else if("2".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter2().addRequest(request);
-				} else if("3".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter3().addRequest(request);
-				} else if("4".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter4().addRequest(request);
-				} else if("5".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter5().addRequest(request);
-				} else if("6".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter6().addRequest(request);
-				} else if("7".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter7().addRequest(request);
-				} else if("8".equals(request.getInfo().getCapitulo())) {
-					lroe.getChapter8().addRequest(request);
-				}
+				} else lroe.getChapter2().addRequest(request);
+				
+//				if("1".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter1().addRequest(request);
+//				} else if("2".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter2().addRequest(request);
+//				} else if("3".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter3().addRequest(request);
+//				} else if("4".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter4().addRequest(request);
+//				} else if("5".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter5().addRequest(request);
+//				} else if("6".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter6().addRequest(request);
+//				} else if("7".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter7().addRequest(request);
+//				} else if("8".equals(request.getInfo().getCapitulo())) {
+//					lroe.getChapter8().addRequest(request);
+//				}
 			});
 		return lroe;
 	}
