@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetAudit;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetProject;
+import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
 import net.aonsolutions.db.up2date.registry.AddColumnSellerTaskHolder;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 
@@ -452,9 +453,11 @@ public class Up2Date {
         //AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
         //AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER,
         
-        AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
-        AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
-        AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
+        //AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
+        //AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
+        //AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
+		
+        CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
 	};
 
     // ------------------------------------------------------------------------
