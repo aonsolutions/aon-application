@@ -167,16 +167,6 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
 
-		let aonHeaderHelp = this.createElement(TAG.SPAN);
-		aonHeaderHelp.id = this.AON_HEADER_HELP;
-
-		let aonHeaderHelpButton = new AonIconButton();
-		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
-		aonHeaderHelpButton.icon = "help_outline";
-		aonHeaderHelp.appendChild(aonHeaderHelpButton);
-
-		aonHeaderButtons.appendChild(aonHeaderHelp);
-
 		let aonHeaderCalendar = this.createElement(TAG.SPAN);
 		aonHeaderCalendar.id = 'aonHeaderCalendar';
 
@@ -186,6 +176,16 @@ export class AonHeader extends AonElement {
 		aonHeaderCalendar.appendChild(aonHeaderCalendarButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCalendar);
+
+		let aonHeaderHelp = this.createElement(TAG.SPAN);
+		aonHeaderHelp.id = this.AON_HEADER_HELP;
+
+		let aonHeaderHelpButton = new AonIconButton();
+		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
+		aonHeaderHelpButton.icon = "help_outline";
+		aonHeaderHelp.appendChild(aonHeaderHelpButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHelp);
 
 		if(this.newTheme){
 			let aonHeaderConfig = this.createElement(TAG.SPAN);
@@ -243,7 +243,6 @@ export class AonHeader extends AonElement {
 			aonHeaderCalendarButton.addEventListener('click', () => {
 				const top = aonHeaderCalendarButton.getBoundingClientRect().top;
 				const left = aonHeaderCalendarButton.getBoundingClientRect().left;
-				console.log(" click");
 			});
 
 			if(!this.newTheme){

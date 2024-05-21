@@ -360,7 +360,7 @@ class Context {
 
   getWeek() {
     let tempdate = this.getDate();
-    tempdate.setDate(tempdate.getDate() - tempdate.getDay());
+    tempdate.setDate(tempdate.getDate() - tempdate.getDay() + 1);
     return tempdate;
   }
 
@@ -411,7 +411,7 @@ class Context {
   }
 
   getMonthArrayStartDay() {
-    return new Date(this.getYear(), this.getMonth(), 1).getDay();
+    return new Date(this.getYear(), this.getMonth(), 1).getDay() - 1;
   }
 
   getMonthArrayStart() {
@@ -424,7 +424,7 @@ class Context {
   }
 
   getMonthArrayEndDay() {
-    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay();
+    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1;
   }
 
   getMonthArrayEnd(handleFourWeeks) {
@@ -655,7 +655,7 @@ class DatepickerContext {
   }
 
   getMonthArrayStartDay() {
-    return new Date(this.getYear(), this.getMonth(), 1).getDay();
+    return new Date(this.getYear(), this.getMonth(), 1).getDay() -1;
   }
 
   getMonthArrayStart() {
@@ -668,7 +668,7 @@ class DatepickerContext {
   }
 
   getMonthArrayEndDay() {
-    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay();
+    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1;
   }
 
   getMonthArrayEnd() {

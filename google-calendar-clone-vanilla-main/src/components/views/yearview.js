@@ -48,7 +48,7 @@ const sidebar = document.querySelector(".sidebar");
     const nextmonth = new Date(year, month + 2, 0);
     const currentMonth = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDayOfMonth = currentMonth.getDay();
+    const firstDayOfMonth = currentMonth.getDay() - 1;
 
     const cellWrapper = document.createElement("div");
     cellWrapper.classList.add("yv-monthcell");

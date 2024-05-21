@@ -60,6 +60,7 @@ export class AonCalendar extends AonElement {
     this.getElement("aonCalendarHeaderEndButtons").classList.add('aonAlwaysHidden');
     document.getElementsByClassName("body")[0].style.marginTop = '0px';
     document.getElementsByClassName("listview__body")[0].style.marginLeft = '0px'
+    this.getElement("calendarSidebar").style.display = 'none';
   }
 
   build() {
@@ -73,7 +74,7 @@ export class AonCalendar extends AonElement {
         <div class="h__container">
     
           <div class="h-col-1">
-    
+      
             <button id="aonCalendarMainMenu" class="menu" data-tooltip="Main menu" aria-label="button" role="button">
               <svg focusable="false" style="pointer-events:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 width="24px" height="24px" fill="var(--white2)">
@@ -183,7 +184,7 @@ export class AonCalendar extends AonElement {
     
       <main class="main">
         <!-- hide-sidebar -->
-        <aside class="sidebar sidebar-transition hide-sidebar">
+        <aside id="calendarSidebar" class="sidebar sidebar-transition">
     
           <!-- sidebar header -->
           <div class="sidebar-content--header">
@@ -243,12 +244,12 @@ export class AonCalendar extends AonElement {
                   <!-- create a 7x7 table -->
     
                   <div class="sbdatepicker__body--header">
-                    <div class="sbdatepicker__body--header-cell">S</div>
                     <div class="sbdatepicker__body--header-cell">M</div>
                     <div class="sbdatepicker__body--header-cell">T</div>
                     <div class="sbdatepicker__body--header-cell">W</div>
                     <div class="sbdatepicker__body--header-cell">T</div>
                     <div class="sbdatepicker__body--header-cell">F</div>
+                    <div class="sbdatepicker__body--header-cell">S</div>
                     <div class="sbdatepicker__body--header-cell">S</div>
                   </div>
     
@@ -393,13 +394,13 @@ export class AonCalendar extends AonElement {
           <!-- monthview -->
           <div class="monthview hide-view">
             <div class="monthview__top">
-              <div class="monthview__top-weekname">SUN</div>
               <div class="monthview__top-weekname">MON</div>
               <div class="monthview__top-weekname">TUE</div>
               <div class="monthview__top-weekname">WED</div>
               <div class="monthview__top-weekname">THU</div>
               <div class="monthview__top-weekname">FRI</div>
               <div class="monthview__top-weekname">SAT</div>
+              <div class="monthview__top-weekname">SUN</div>
             </div>
             <div class="monthview--calendar"></div>
           </div>
@@ -409,10 +410,6 @@ export class AonCalendar extends AonElement {
             <div class="weekview__top">
               <div></div>
               <div class="weekview--header">
-                <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">SUN</span>
-                  <button class="weekview--header-day__number">1</button>
-                </div>
                 <div class="weekview--header-day">
                   <span class="weekview--header-day__title">MON</span>
                   <button class="weekview--header-day__number">2</button>
@@ -436,6 +433,10 @@ export class AonCalendar extends AonElement {
                 <div class="weekview--header-day">
                   <span class="weekview--header-day__title">SAT</span>
                   <button class="weekview--header-day__number">7</button>
+                </div>
+                <div class="weekview--header-day">
+                  <span class="weekview--header-day__title">SUN</span>
+                  <button class="weekview--header-day__number">1</button>
                 </div>
               </div>
               <div class="wv-gmt"></div>
@@ -554,12 +555,12 @@ export class AonCalendar extends AonElement {
     
         <div class="datepicker__body">
           <div class="datepicker__body--header">
-            <div class="datepicker__body--header-cell">S</div>
             <div class="datepicker__body--header-cell">M</div>
             <div class="datepicker__body--header-cell">T</div>
             <div class="datepicker__body--header-cell">W</div>
             <div class="datepicker__body--header-cell">T</div>
             <div class="datepicker__body--header-cell">F</div>
+            <div class="datepicker__body--header-cell">S</div>
             <div class="datepicker__body--header-cell">S</div>
           </div>
           <div class="datepicker__body--dates"></div>
@@ -1104,6 +1105,7 @@ export class AonCalendar extends AonElement {
     const collapsebtn = document.querySelector(".collapse-view");
     setAppDefaults(context, store, this);
     renderViews(context, datepickerContext, store, this, collapsebtn);
+    // this.getElement("calendarSidebar").style.display = 'none';
   }
 
   connectedCallback() {

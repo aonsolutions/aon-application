@@ -1212,6 +1212,10 @@
   color: var(--dark-color);
 }
 
+.aonCard:hover {
+  cursor: pointer;
+}
+
 .aonCard:hover .aonCardTotal{
   /*transform: translateY(0);
   opacity: 1;*/

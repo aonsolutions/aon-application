@@ -22,17 +22,17 @@ import setViews from "../../config/setViews";
 
 export default function setDatepicker(context, store, datepickerContext, type) {
   const datepicker = document.querySelector(".datepicker");
-const datepickeroverlay = document.querySelector(".datepicker-overlay");
-const datepickerBody = document.querySelector(".datepicker__body--dates");
-const datepickerTitle = document.querySelector(".datepicker-title");
-const datepickerChangeDate = document.querySelector(".datepicker-change-date");
+  const datepickeroverlay = document.querySelector(".datepicker-overlay");
+  const datepickerBody = document.querySelector(".datepicker__body--dates");
+  const datepickerTitle = document.querySelector(".datepicker-title");
+  const datepickerChangeDate = document.querySelector(".datepicker-change-date");
 
-// prev and next buttons aside from main app header datewrapper
-const headerPrevBtn = document.querySelector(".prev");
-const headerNextBtn = document.querySelector(".next");
+  // prev and next buttons aside from main app header datewrapper
+  const headerPrevBtn = document.querySelector(".prev");
+  const headerNextBtn = document.querySelector(".next");
 
-const yearpickerTitle = document.querySelector(".yearpicker-title");
-const monthpickerMonths = document.querySelectorAll(".monthpicker__month");
+  const yearpickerTitle = document.querySelector(".yearpicker-title");
+  const monthpickerMonths = document.querySelectorAll(".monthpicker__month");
   let montharray = datepickerContext.getMonthArray();
   let count = 0;
   let hasweek;

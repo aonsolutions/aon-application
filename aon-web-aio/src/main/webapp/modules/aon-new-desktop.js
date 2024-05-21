@@ -1,5 +1,33 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
+import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
+import { getDomainUserRoles } from 'aonsolutions/services/service.js';
+import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
+import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
+import { AonDocumentalAyudat } from 'aonsolutions/modules/documental/ayudat/aon-documental-ayudat.js';
+import 'aonsolutions/modules/project/aon-project-panel.js';
+import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
+import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
+import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
+import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
+import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
+import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
+import { AonSaltra } from 'aonsolutions/modules/laboral/aon-saltra.js';
+import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
+import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
+import { AonBooking } from 'aonsolutions/modules/marketplace/aon-booking.js';
+import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
+import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
+import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
+import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
+import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
+import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
+import { AonCalendar } from 'aonsolutions/modules/calendar/aon-calendar.js';
 
+import { AonParent } from './aon-parent.js';
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 
@@ -24,6 +52,65 @@ export class AonNewDesktop extends AonElement {
 	
 	init() {
 		this.AON_DESKTOP = 'aonDesktop';
+	}
+
+	appSelection(app) {
+		
+		switch (app.app) {
+			case Apps.CONSOLE.app:
+				this.rootPanel(new AonConsole());
+				break;
+			case Apps.DOCUMENTAL.app:
+				this.rootPanel(new AonDocumental());
+				break;
+			case Apps.ACCOUNTING.app:
+				this.rootPanel(new AonAccounting());
+				break;
+			case Apps.FISCAL.app:
+				this.rootPanel(new AonFiscal());
+				break;
+			case Apps.PAYROLL.app:
+				this.rootPanel(new AonLaboral());
+				break;
+			case Apps.COMUNICA.app:
+				this.rootPanel(new AonComunica());
+				break;
+			case Apps.INVOICE.app:
+				this.rootPanel(new AonInvoicePanel());
+				break;
+			case Apps.TIMECONTROL.app:
+				this.rootPanel(new AonTimecontrol());
+				break;
+			case Apps.MESSENGER.app:
+				this.rootPanel(new AonMessenger());
+				break;
+			case AuxApps.TOOLS.app:
+				this.buildAppMenu(AuxApps.TOOLS);
+				break;
+			case Apps.NOTES.app:
+				this.rootPanel(new AonNotes());
+				break;
+			case Apps.OFFICE.app:
+				this.rootPanel(new AonOfficePanel());
+				break;
+			case Apps.WAREHOUSE.app:
+				this.rootPanel(new AonWarehouse());
+				break;
+			case Apps.MARKETING.app:
+				this.rootPanel(new AonMarketing());
+				break;
+			 case Apps.CALENDAR.app:
+			 	this.rootPanel(new AonCalendar());
+			 	break;
+			case HomeApps.HOME.app:
+				this.rootPanel(new AonParent());
+				break;
+			default/*Apps.HOME*/ :
+		   		this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+				break;
+		}
+		
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: app } ));
 	}
 
 	build() {

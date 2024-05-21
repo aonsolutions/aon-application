@@ -99,6 +99,7 @@ export class AonHome extends AonElement {
 		this.appendChild(rightPanel);
 
 		let editButton = this.getElement('aonRightPanelEditButton');
+		let redirectButton = this.getElement('aonRightPanelRedirectButton');
 		let title = this.getElement('aonRightPanelTitle')
 		if(LS.isRightPanel()) {
 			LS.removeRightPanel();
@@ -117,15 +118,48 @@ export class AonHome extends AonElement {
 					rootPanel.style.marginRight = '0px';
 					title.style.marginLeft = '10px';
 					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
 					rightPanel.close();
 				} else {
 					rootPanel.style.marginRight = '321px';
 					rightPanel.clear();
 					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
 					title.style.marginLeft = '10px';
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
 					rightPanel.open();
+				}
+			});
+		}
+
+		let headerCalendar = this.getElement('aonHeaderCalendar');
+		if (headerCalendar) {
+			headerCalendar.addEventListener(EVENT.CLICK, () => {
+				let calendar = this.getElement('aonCalendar');
+				if(!rightPanel.isClose() && calendar) {
+					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
+					title.style.marginLeft = '10px';
+					rootPanel.style.marginRight = '0px';
+					rightPanel.close();
+				} else {
+					rootPanel.style.marginRight = '321px';
+					title.style.marginLeft = '10px';
+					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='visible';
+					redirectButton.addEventListener(EVENT.CLICK, () => {
+						rightPanel.close();
+						editButton.style.visibility='hidden';
+						redirectButton.style.visibility='hidden';
+						this.rootPanel(new AonCalendar());
+					});
+					rightPanel.clear();
+					let calendar = new AonCalendar();
+					rightPanel.setContent(calendar);
+					rightPanel.setTitle("Calendario");
+					rightPanel.open();
+					calendar.setListView();
 				}
 			});
 		}
@@ -136,6 +170,7 @@ export class AonHome extends AonElement {
 				let help = this.getElement('aonHelp');
 				if(!rightPanel.isClose() && help) {
 					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
 					title.style.marginLeft = '10px';
 					rootPanel.style.marginRight = '0px';
 					rightPanel.close();
@@ -143,33 +178,11 @@ export class AonHome extends AonElement {
 					rootPanel.style.marginRight = '321px';
 					title.style.marginLeft = '10px';
 					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
 					rightPanel.open();
-				}
-			});
-		}
-		
-		let headerCalendar = this.getElement('aonHeaderCalendar');
-		if (headerCalendar) {
-			headerCalendar.addEventListener(EVENT.CLICK, () => {
-				let calendar = this.getElement('aonCalendar');
-				if(!rightPanel.isClose() && calendar) {
-					editButton.style.visibility='hidden';
-					title.style.marginLeft = '10px';
-					rootPanel.style.marginRight = '0px';
-					rightPanel.close();
-				} else {
-					rootPanel.style.marginRight = '321px';
-					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					rightPanel.clear();
-					let calendar = new AonCalendar();
-					rightPanel.setContent(calendar);
-					rightPanel.setTitle("Calendario");
-					rightPanel.open();
-					calendar.setListView();
 				}
 			});
 		}
@@ -181,6 +194,7 @@ export class AonHome extends AonElement {
 				if(!rightPanel.isClose() && user) {
 					title.style.marginLeft = '10px';
 					editButton.style.visibility='hidden';
+					redirectButton.style.visibility='hidden';
 					rightPanel.close();
 				} else  {
 					rightPanel.clear();
@@ -188,6 +202,7 @@ export class AonHome extends AonElement {
 					rightPanel.setTitle(MSG.USER);
 					rootPanel.style.marginRight = '0px';
 					editButton.style.visibility = 'visible';
+					redirectButton.style.visibility='hidden';
 					title.style.marginLeft = '39px';
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				}

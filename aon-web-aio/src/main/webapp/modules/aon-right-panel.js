@@ -9,6 +9,7 @@ export class AonRightPanel extends AonElement {
     CONTENT;
     TITLE;
     EDIT_BUTTON;
+    REDIRECT_BUTTON;
     
     get id () {
         return this.getAttribute(CONSTANT.ID);
@@ -37,6 +38,7 @@ export class AonRightPanel extends AonElement {
         this.CONTENT = this.RIGHT_PANEL+'Content';
         this.TITLE = this.RIGHT_PANEL+'Title';
         this.EDIT_BUTTON = this.RIGHT_PANEL+ 'EditButton';
+        this.REDIRECT_BUTTON = this.RIGHT_PANEL+ 'RedirectButton';
     }
 
     build(){
@@ -55,6 +57,14 @@ export class AonRightPanel extends AonElement {
         rightPanelEditButton.style.right = '280px';
         rightPanelEditButton.style.top = '60px';
 		rightPanel.appendChild(rightPanelEditButton);
+
+        let rightPanelRedirectButton = new AonIconButton(); 
+		rightPanelRedirectButton.id = this.REDIRECT_BUTTON;
+		rightPanelRedirectButton.icon ='open_in_new';
+		rightPanelRedirectButton.style.cursor = "pointer";
+		rightPanelRedirectButton.style.position = "fixed";
+		rightPanelRedirectButton.style.right = '50px';
+		rightPanel.appendChild(rightPanelRedirectButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
 		rightPanelCloseButton.id = this.CLOSE_BUTTON;
@@ -120,6 +130,7 @@ export class AonRightPanel extends AonElement {
         this.getRightPanel().style.visibility = "hidden";
         this.getRightPanel().style.visibility = "hidden";
         this.getEditButton().style.visibility = "hidden";
+        this.getRedirectButton().style.visibility = "hidden";
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
     }
@@ -146,6 +157,10 @@ export class AonRightPanel extends AonElement {
 
     getEditButton(){
         return this.getElement(this.EDIT_BUTTON);
+    }
+
+    getRedirectButton(){
+        return this.getElement(this.REDIRECT_BUTTON);
     }
 
     getTitle(){

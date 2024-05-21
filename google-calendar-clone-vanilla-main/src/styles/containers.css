@@ -104,10 +104,10 @@
   display: none;
 }
 
-.container__calendars-sb-active {
+/* .container__calendars-sb-active {
   width: calc(100% - 248px);
   margin-left: 248px;
-}
+} */
 
 .hide-view {
   display: none !important;
