@@ -402,10 +402,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCCCEmployees(String domain, Date month, List<Integer> cccIds,
+	public void getCCCEmployees(String domain, Date startMonth, Date endMonth, List<Integer> cccIds,
 			AsyncCallback<List<Employee>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getCCCEmployees(domain, month, cccIds, new AsyncCallbackWrapper<List<Employee>>(callback));
+		enterprisesServiceAsync.getCCCEmployees(domain, startMonth, endMonth, cccIds, new AsyncCallbackWrapper<List<Employee>>(callback));
 		
 	}
 

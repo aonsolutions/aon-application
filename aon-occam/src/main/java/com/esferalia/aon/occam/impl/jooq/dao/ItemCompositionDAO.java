@@ -103,6 +103,15 @@ public class ItemCompositionDAO {
 		return itemComposition;
 	}
 
+	public static void delete(AONContext ctx, ItemCompositionFilter filter) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.delete(ITEM_COMPOSITION)
+			.where(ITEM_COMPOSITION_PROPERTIES.getConditions(filter))
+			.and(ITEM_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
+			.execute();
+	}
+	
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.getDslContext().delete(ITEM_COMPOSITION).where(ITEM_COMPOSITION.ID.eq(id)).execute();
 		ctx.log().debug("DELETE ITEM COMPOSITION id:" + id);

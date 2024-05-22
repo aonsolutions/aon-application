@@ -3,10 +3,6 @@ package net.aonsolutions.aon.api.servlet;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -21,6 +17,9 @@ import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -153,7 +152,17 @@ public class ElaborationServlet extends AonApiHttpServlet {
 		
 		Date to = JsonUtils.getDate(api.getData(), IJsonNames.TO);
 		if(to != null) {
-			filter = filter.and(f.getDateProperty().ge(AonDateUtils.toTimestamp(to)));
+			filter = filter.and(f.getDateProperty().le(AonDateUtils.toTimestamp(to)));
+		}
+		
+		String value = JsonUtils.getString(api.getData(), IJsonNames.VALUE);
+		if(AonStringUtils.isNotBlank(value)) {
+			filter = filter.and(f.getDescriptionProperty().like("%" + value + "%"));
+		}
+		
+		Integer warehouse = JsonUtils.getInteger(api.getData(), IJsonNames.WAREHOUSE);
+		if(warehouse != null) {
+			filter = filter.and(f.getWarehouseProperty().eq(warehouse));
 		}
 			
 		return filter;

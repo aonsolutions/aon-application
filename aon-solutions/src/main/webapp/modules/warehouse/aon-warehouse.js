@@ -18,6 +18,7 @@ import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
 import * as LS from '../../services/localStorageService.js';
+import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -192,7 +193,11 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().getToolbar().option = MSG.ELABORATION;
 		this.getApplication().removeFloatOption();
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
-		this.getApplication().setContent(new AonMobileElaborationList());
+		this.getApplication().setContent(new AonMobileElaborationList()
+			// this.isMobile()
+			// ? new AonMobileElaborationList()
+			// : new AonElaborationList()
+		);
 	}
 	
 	addElaboration(){

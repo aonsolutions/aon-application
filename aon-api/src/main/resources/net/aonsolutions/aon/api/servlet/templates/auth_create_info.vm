@@ -66,8 +66,8 @@
     					</div>
     					<div class="documentText">
 							<div>Se ha creado una nueva cuenta de acceso para <a href="aon.solutions">aon.solutions </a><div>
-							<div><b>Usuario: </b>$email <div>
-							<div><b>Contraseña: </b>$password <div>
+							<div><b>Usuario: </b>$email<div>
+							<div><b>Contraseña: </b>$password<div>
 						</div> 					
     				</td>
 				</tr>

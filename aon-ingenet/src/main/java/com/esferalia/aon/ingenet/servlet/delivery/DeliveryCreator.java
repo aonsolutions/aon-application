@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDetailCompositionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 
 @Deprecated
@@ -174,7 +175,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 
 				compositionList.forEach(c -> {
 					c.setElaborationDetail(elaborationDetail);
-					ElaborationDAO.insertElaborationDetailComposition(ctx, c);
+					ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, c);
 				});
 
 				elaboration.setStatus(ElaborationStatus.CLOSED);

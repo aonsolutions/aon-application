@@ -141,6 +141,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconFilter();
 	
+	@Source("icons/aon-icon-filter-list.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFilterList();
+	
+	@Source("icons/aon-icon-filter-list-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFilterListOff();
+	
 	@Source("icons/aon-icon-drop-down.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDropDown();
@@ -184,6 +192,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-work-off.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconWorkOff();
+	
+	@Source("icons/aon-icon-work-add.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconWorkAdd();
+	
+	@Source("icons/aon-icon-comment.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconComment();
 	
 	@Source("icons/aon-icon-web.svg")
 	@MimeType("image/svg+xml")
@@ -391,6 +407,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-excel.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconExcel();
+	
+	@Source("icons/aon-icon-circle-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCircleGreen();
+	
+	@Source("icons/aon-icon-circle-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCircleRed();
 	
 	@Source("icons/aon-icon-word.svg")
 	@MimeType("image/svg+xml")

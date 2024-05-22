@@ -1,5 +1,5 @@
 import * as APP from  "aonsolutions/services/app.js";
-import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS, COLORS } from "aonsolutions/environments/environments.js";
+import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "aonsolutions/environments/environments.js";
 
 
 export const HOME = {

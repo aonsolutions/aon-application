@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDetailCompositionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -649,7 +650,7 @@ public class DeliveryCreator implements Serializable {
 
 				compositionList.forEach(c -> {
 					c.setElaborationDetail(elaborationDetail);
-					ElaborationDAO.insertElaborationDetailComposition(ctx, c);
+					ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, c);
 				});
 
 				elaboration.setStatus(ElaborationStatus.CLOSED);

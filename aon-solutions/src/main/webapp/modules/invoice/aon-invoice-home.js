@@ -82,7 +82,7 @@ export class AonInvoiceHome extends AonElement {
         upload.appendChild(uploadInv);
     }
 
-	uploadInvoiceHome(input, files){
+	uploadInvoiceHome(input, files) {
 		if(this.getDur().isInvofox()) {
 			getInvofoxConfiguration().then(r => {
 				let uploadToast = this.getElement('aonUploadToast');
@@ -203,14 +203,14 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecords.style.display = 'flex';
 		pendingRecords.style.flexDirection = 'column';
 		pendingRecords.style.justifyContent = 'center';
-		pendingRecords.style.gap = '8px';
+		pendingRecords.style.gap = '3px';
 		pendingRecords.style.textAlign = 'center';
 		pendingRecords.style.padding = '8px';
 		pendingRecords.style.flex = '1';
 		pendingRecords.style.borderRadius = '5px';
 		pendingRecords.overflow = 'hidden';
 		pendingRecords.style.cursor = 'pointer';
-		pendingRecords.style.marginBottom ='5px';
+		pendingRecords.style.marginBottom ='3px';
 		pendingRecords.style.gridColumn = '1 / -1';
 
 		pendingRecords.addEventListener(EVENT.MOUSEOVER, () => pendingRecords.style.backgroundColor = '#f1f1f1');
@@ -243,65 +243,197 @@ export class AonInvoiceHome extends AonElement {
 		let pending = this.createDiv();
 		pending.id = 'pending';
 		pending.style.border = '1px solid #ebebeb';
-		pending.style.display = 'flex';
 		pending.style.flexDirection = 'column';
 		pending.style.justifyContent = 'center';
-		pending.style.gap = '8px';
+		pending.style.gap = '3px';
 		pending.style.textAlign = 'center';
 		pending.style.padding = '8px';
-		pending.style.flex = '1';
+		pending.style.display = 'flex';
 		pending.style.borderRadius = '5px';
 		pending.overflow = 'hidden';
-		pending.style.cursor = 'pointer';
-		pending.style.marginBottom ='5px';
-
-		pending.addEventListener(EVENT.MOUSEOVER, () => pending.style.backgroundColor = '#f1f1f1');
-		pending.addEventListener(EVENT.MOUSELEAVE, () => pending.style.backgroundColor = 'transparent');
-		pending.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
-		));
+		pending.style.marginBottom ='3px';
+		pending.style.gridColumn = '1 / -1';
 		div.appendChild(pending);
 
-		let pendingNumber = this.createDiv();
-		pendingNumber.id = 'pendingNumber';
-		pendingNumber.innerHTML = '0';
-		pendingNumber.style.fontWeight = 'bold';
-		pendingNumber.style.fontSize = '36px';
-		pendingNumber.style.lineHeight = '47px';
-
-		pending.appendChild(pendingNumber);
+		let pendingNameRow = this.createDiv();
+		pendingNameRow.style.display = "flex";
+		pendingNameRow.style.flexDirection = "row";
+		pendingNameRow.style.justifyContent = "center";
+		pendingNameRow.style.alignItems = "left";
+		pending.appendChild(pendingNameRow);
+	
 
 		let pendingName = this.createDiv();
 		pendingName.id = 'pendingName';
-		pendingName.innerHTML = 'Documentos Pendientes';
+		pendingName.innerHTML = 'Documentos Pendientes ';
 		pendingName.style.fontWeight = 'normal';
 		pendingName.style.color = 'gray';
 		pendingName.style.lineHeight = '21px';
-		pending.appendChild(pendingName);
+		pendingName.style.flexWrap = 'wrap';
+		pendingName.style.flexBasis = '33.33%';
+		pendingName.style.flexGrow = '3';
+		pendingNameRow.appendChild(pendingName);
 
-		// PENDING REVISION
+		let pendingCounterRow = this.createDiv();
+		pendingCounterRow.style.display = "flex";
+		pendingCounterRow.style.flexDirection = "row";
+		pendingCounterRow.style.justifyContent = "center";
+		pendingCounterRow.style.alignItems = "left";
+		pending.appendChild(pendingCounterRow);
+
+		// PENDING OUTPUT
+		let pendingIssued = this.createDiv();
+		pendingIssued.id = 'pendingIssued';
+		pendingIssued.style.display = 'flex';
+		pendingIssued.style.flexDirection = 'column';
+		pendingIssued.style.justifyContent = 'center';
+		pendingIssued.style.gap = '8px';
+		pendingIssued.style.textAlign = 'center';
+		pendingIssued.style.padding = '8px';
+		pendingIssued.style.flexWrap = 'wrap';
+		pendingIssued.style.flexBasis = '33%';
+		pendingIssued.style.flexGrow = '1';
+		pendingIssued.style.borderRadius = '5px';
+		pendingIssued.overflow = 'hidden';
+		pendingIssued.style.cursor = 'pointer';
+		pendingIssued.style.marginBottom ='3px';
+		pendingCounterRow.appendChild(pendingIssued);
+
+		pendingIssued.addEventListener(EVENT.MOUSEOVER, () => pendingIssued.style.backgroundColor = '#f1f1f1');
+		pendingIssued.addEventListener(EVENT.MOUSELEAVE, () => pendingIssued.style.backgroundColor = 'transparent');
+		pendingIssued.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+		));
+
+		let pendingIssuedNumber = this.createDiv();
+		pendingIssuedNumber.id = 'pendingIssuedNumber';
+		pendingIssuedNumber.innerHTML = '0';
+		pendingIssuedNumber.style.fontWeight = 'bold';
+		pendingIssuedNumber.style.fontSize = '36px';
+		pendingIssuedNumber.style.lineHeight = '47px';
+		pendingIssued.appendChild(pendingIssuedNumber);
+
+
+		let pendingIssuedName = this.createDiv();
+		pendingIssuedName.id = 'pendingIssuedName';
+		pendingIssuedName.innerHTML = 'Emitidos ';
+		pendingIssuedName.style.fontWeight = 'normal';
+		pendingIssuedName.style.color = 'gray';
+		pendingIssuedName.style.lineHeight = '21px';
+		pendingIssued.appendChild(pendingIssuedName);
+
+
+		// PENDING RECEIVED
+		let pendingReceived = this.createDiv();
+		pendingReceived.id = 'pendingReceived';
+		pendingReceived.style.display = 'flex';
+		pendingReceived.style.flexDirection = 'column';
+		pendingReceived.style.justifyContent = 'center';
+		pendingReceived.style.gap = '8px';
+		pendingReceived.style.textAlign = 'center';
+		pendingReceived.style.padding = '8px';
+		pendingReceived.style.flexWrap = 'wrap';
+		pendingReceived.style.flexBasis = '33%';
+		pendingReceived.style.flexGrow = '1';
+		pendingReceived.style.borderRadius = '5px';
+		pendingReceived.overflow = 'hidden';
+		pendingReceived.style.cursor = 'pointer';
+		pendingReceived.style.marginBottom ='3px';
+		pendingReceived.style.marginLeft ='3px';
+		pendingCounterRow.appendChild(pendingReceived);
+
+		pendingReceived.addEventListener(EVENT.MOUSEOVER, () => pendingReceived.style.backgroundColor = '#f1f1f1');
+		pendingReceived.addEventListener(EVENT.MOUSELEAVE, () => pendingReceived.style.backgroundColor = 'transparent');
+		pendingReceived.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+		));
+
+		let pendingReceivedNumber = this.createDiv();
+		pendingReceivedNumber.id = 'pendingReceivedNumber';
+		pendingReceivedNumber.innerHTML = '0';
+		pendingReceivedNumber.style.fontWeight = 'bold';
+		pendingReceivedNumber.style.fontSize = '36px';
+		pendingReceivedNumber.style.lineHeight = '47px';
+		pendingReceived.appendChild(pendingReceivedNumber);
+
+		let pendingReceivedName = this.createDiv();
+		pendingReceivedName.id = 'pendingReceivedName';
+		pendingReceivedName.innerHTML = 'Recibidos';
+		pendingReceivedName.style.fontWeight = 'normal';
+		pendingReceivedName.style.color = 'gray';
+		pendingReceivedName.style.lineHeight = '21px';
+		pendingReceived.appendChild(pendingReceivedName);
+
+		// PENDING TICKETS
+		let pendingTicket = this.createDiv();
+		pendingTicket.id = 'pendingTicket';
+		pendingTicket.style.display = 'flex';
+		pendingTicket.style.flexDirection = 'column';
+		pendingTicket.style.justifyContent = 'center';
+		pendingTicket.style.gap = '8px';
+		pendingTicket.style.textAlign = 'center';
+		pendingTicket.style.padding = '8px';
+		pendingTicket.style.flexWrap = 'wrap';
+		pendingTicket.style.flexBasis = '33%';
+		pendingTicket.style.flexGrow = '1';
+		pendingTicket.style.borderRadius = '5px';
+		pendingTicket.overflow = 'hidden';
+		pendingTicket.style.cursor = 'pointer';
+		pendingTicket.style.marginBottom ='3px';
+		pendingTicket.style.marginLeft ='3px';
+		pendingCounterRow.appendChild(pendingTicket);
+
+		pendingTicket.addEventListener(EVENT.MOUSEOVER, () => pendingTicket.style.backgroundColor = '#f1f1f1');
+		pendingTicket.addEventListener(EVENT.MOUSELEAVE, () => pendingTicket.style.backgroundColor = 'transparent');
+		pendingTicket.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+		));
+
+		let pendingTicketNumber = this.createDiv();
+		pendingTicketNumber.id = 'pendingTicketNumber';
+		pendingTicketNumber.innerHTML = '0';
+		pendingTicketNumber.style.fontWeight = 'bold';
+		pendingTicketNumber.style.fontSize = '36px';
+		pendingTicketNumber.style.lineHeight = '47px';
+		pendingTicket.appendChild(pendingTicketNumber);
+
+		let pendingTicketName = this.createDiv();
+		pendingTicketName.id = 'pendingTicketName';
+		pendingTicketName.innerHTML = 'Tickets';
+		pendingTicketName.style.fontWeight = 'normal';
+		pendingTicketName.style.color = 'gray';
+		pendingTicketName.style.lineHeight = '21px';
+		pendingTicket.appendChild(pendingTicketName);
+
+
+		// REJECTED / TRASH
+
 		let pendingRevision = this.createDiv();
 		pendingRevision.id = 'pendingRevision';
 		pendingRevision.style.border = '1px solid #ebebeb';
 		pendingRevision.style.display = 'flex';
 		pendingRevision.style.flexDirection = 'column';
 		pendingRevision.style.justifyContent = 'center';
-		pendingRevision.style.gap = '8px';
+		pendingRevision.style.gap = '3px';
 		pendingRevision.style.textAlign = 'center';
 		pendingRevision.style.padding = '8px';
 		pendingRevision.style.flex = '1';
 		pendingRevision.style.borderRadius = '5px';
 		pendingRevision.overflow = 'hidden';
 		pendingRevision.style.cursor = 'pointer';
-		pendingRevision.style.marginBottom ='5px';
+		pendingRevision.style.marginBottom ='3px';
 
 		pendingRevision.addEventListener(EVENT.MOUSEOVER, () => pendingRevision.style.backgroundColor = '#f1f1f1');
 		pendingRevision.addEventListener(EVENT.MOUSELEAVE, () => pendingRevision.style.backgroundColor = 'transparent');
 		pendingRevision.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.REJECTED},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission'], type: ['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']}
 		));
+
+
 		div.appendChild(pendingRevision);
 
 		let pendingRevisionNumber = this.createDiv();
@@ -315,7 +447,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingRevisionName = this.createDiv();
 		pendingRevisionName.id = 'pendingRevisionName';
-		pendingRevisionName.innerHTML = 'Documentos Rechazados';
+		pendingRevisionName.innerHTML = 'Rechazados';
 		pendingRevisionName.style.fontWeight = 'normal';
 		pendingRevisionName.style.color = 'gray';
 		pendingRevisionName.style.lineHeight = '21px';
@@ -323,20 +455,19 @@ export class AonInvoiceHome extends AonElement {
 
 		// TRASH
 		let trash = this.createDiv();
-		trash.id = 'trash';
+		trash.id = 'pendingRevision';
 		trash.style.border = '1px solid #ebebeb';
 		trash.style.display = 'flex';
 		trash.style.flexDirection = 'column';
 		trash.style.justifyContent = 'center';
-		trash.style.gap = '8px';
+		trash.style.gap = '3px';
 		trash.style.textAlign = 'center';
 		trash.style.padding = '8px';
 		trash.style.flex = '1';
 		trash.style.borderRadius = '5px';
 		trash.overflow = 'hidden';
 		trash.style.cursor = 'pointer';
-		trash.style.marginBottom ='5px';
-		trash.style.gridColumn = '1 / -1';
+		trash.style.marginBottom ='3px';
 
 		trash.addEventListener(EVENT.MOUSEOVER, () => trash.style.backgroundColor = '#f1f1f1');
 		trash.addEventListener(EVENT.MOUSELEAVE, () => trash.style.backgroundColor = 'transparent');
@@ -375,10 +506,22 @@ export class AonInvoiceHome extends AonElement {
 		let pendingRecordNumber = this.getElement('pendingRecordNumber');
 		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
 
-		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
-		let pendingNumber = this.getElement('pendingNumber');
-		if(pendingNumber) pendingNumber.innerHTML = pending;
+		// let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
+		//let pendingNumber = this.getElement('pendingNumber');
+		//if(pendingNumber) pendingNumber.innerHTML = pending;
 
+		let pendingIssuedCounter = getCounter()[OPTION.RAWDOC_INBOX_ISSUED.id] || 0;
+		let pendingIssuedNumber = this.getElement('pendingIssuedNumber');
+		if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
+
+		let pendingReceivedCounter = getCounter()[OPTION.RAWDOC_INBOX_RECEIVED.id] || 0;
+		let pendingReceivedNumber = this.getElement('pendingReceivedNumber');
+		if(pendingReceivedNumber) pendingReceivedNumber.innerHTML = pendingReceivedCounter;
+		
+		let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET.id] || 0;
+		let pendingTicketNumber = this.getElement('pendingTicketNumber');
+		if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
+		
 		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
 		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
 		if(pendingRevisionNumber) pendingRevisionNumber.innerHTML = pendingRevision;

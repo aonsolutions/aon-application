@@ -1,0 +1,2824 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TrabajadoresTramos xmlns="http://www.seg-social.es/creta/esquemas/V110/TrabajadoresTramos">
+    <Autorizado>00316930</Autorizado>
+    <ReferenciaExterna>e6757931</ReferenciaExterna>
+    <Liquidacion>
+        <Ccc>
+            <Regimen>0111</Regimen>
+            <Provincia>18</Provincia>
+            <Numero>108522600</Numero>
+        </Ccc>
+        <PeriodoDesde>
+            <Mes>01</Mes>
+            <Anho>2022</Anho>
+        </PeriodoDesde>
+        <PeriodoHasta>
+            <Mes>12</Mes>
+            <Anho>2022</Anho>
+        </PeriodoHasta>
+        <Tipo>L03</Tipo>
+        <FechaControl>
+            <Mes>12</Mes>
+            <Anho>2022</Anho>
+        </FechaControl>
+        <FechaHoraRecaudacion>
+            <FechaRecaudacion>
+                <Dia>20</Dia>
+                <Mes>05</Mes>
+                <Anho>2024</Anho>
+            </FechaRecaudacion>
+            <HoraRecaudacion>172833</HoraRecaudacion>
+        </FechaHoraRecaudacion>
+        <DatosLiquidacion>
+            <DatoSolicitado>
+                <TipoDato>C</TipoDato>
+                <Codigo>763</Codigo>
+                <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+            </DatoSolicitado>
+        </DatosLiquidacion>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>01</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>01</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>02</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>28</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>28</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>28</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>28</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>28</Dia>
+<Mes>02</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>28</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>03</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>03</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>04</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>04</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>05</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>05</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>06</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>06</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>07</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>29</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>3</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>07</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>08</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>08</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>09</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>09</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>10</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>10</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>11</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>30</Dia>
+<Mes>11</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>30</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+        <LiquidacionMes>
+            <MesLiquidativo>
+                <Mes>12</Mes>
+                <Anho>2022</Anho>
+            </MesLiquidativo>
+            <Trabajadores>
+                <Trabajador>
+                    <Naf>180057224249</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24204808E</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>180064342534</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>24239518W</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181008002175</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74654772S</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>08</GrupoCotizacion>
+<TipoContrato>100</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+                <Trabajador>
+                    <Naf>181012620486</Naf>
+                    <Ipf>
+                        <TipoIpf>1</TipoIpf>
+                        <NumeroIpf>74730824Y</NumeroIpf>
+                    </Ipf>
+                    <Caf></Caf>
+                    <Tramos>
+                        <Tramo>
+                            <FechaDesde>
+<Dia>01</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaDesde>
+                            <FechaHasta>
+<Dia>31</Dia>
+<Mes>12</Mes>
+<Anho>2022</Anho>
+                            </FechaHasta>
+                            <DiasCotizados>31</DiasCotizados>
+                            <InformacionAfiliacion>
+<GrupoCotizacion>10</GrupoCotizacion>
+<TipoContrato>189</TipoContrato>
+                            </InformacionAfiliacion>
+                            <DatosTramo>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>54</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>500</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>501</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>502</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>601</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>I</TipoDato>
+    <Codigo>51</Codigo>
+    <IndicadorObligatoriedad>P</IndicadorObligatoriedad>
+</DatoSolicitado>
+<DatoSolicitado>
+    <TipoDato>C</TipoDato>
+    <Codigo>301</Codigo>
+    <IndicadorObligatoriedad>B</IndicadorObligatoriedad>
+</DatoSolicitado>
+                            </DatosTramo>
+                        </Tramo>
+                    </Tramos>
+                </Trabajador>
+            </Trabajadores>
+        </LiquidacionMes>
+    </Liquidacion>
+</TrabajadoresTramos>

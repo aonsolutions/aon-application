@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.TimeTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -86,6 +87,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -833,9 +835,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			super(file, detailPanel);
 			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
 				@Override
+				void onMonthChanged(ChangeEvent e) {
+				}
+				
+				@Override
+				void onMonthsChanged(ChangeEvent e) {
+				}
+
+				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
 				}
+				
 			};
 			setUpDialog(file, dialog);
 		}
@@ -843,6 +854,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public CreateRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
 			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
+				
+				@Override
+				void onMonthChanged(ChangeEvent e) {
+				}
+				
+				@Override
+				void onMonthsChanged(ChangeEvent e) {
+				}
+
 				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
@@ -1370,24 +1390,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public BasesCCCCretaRequestCommand(File file) {
 			super(file, EmployeeTree.this.employeeDetail);
 		}
-
-		@Override
-		protected void onMonthChanged(Date month) {
-
-			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(month,
-					Collections.singletonList(getCCC().getId()), new AsyncCallback<List<Employee>>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-
-						@Override
-						public void onSuccess(List<Employee> result) {
-							setData(result);
-						}
-					});
-		}
-		
+				
 		@Override
 		protected void setupDialog(CretaRequestDialog<Employee> dialog) {
 			super.setupDialog(dialog);
@@ -2556,6 +2559,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private FileEditor fileEditor;
 
+	private TimeTask sldTask;
 	private ResultsPanel resultsPanel;
 	private ProgressPanel progressPanel;
 	private FlowPanel costsProblemsPanel;
@@ -2721,9 +2725,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
 		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages.
-			Task syncTask = new Task();
-			syncTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
-			progressPanel.showTask(syncTask);
+			sldTask = new TimeTask();
+			sldTask.startTime();
+			sldTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
+			progressPanel.showTask(sldTask);
 			handlerRegistration[0].removeHandler();
 		});
 		showProgressPanel();
@@ -2732,7 +2737,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	@Override
 	public void onFinishSLD() {
+		sldTask.endTime();
 		hideProgressPanel();
+	}
+	
+	@Override
+	public void onProgressSLD(String message, double progress ) {
+		sldTask.endTime();
+		sldTask.progressChanged(progress);
+		sldTask.messageChanged(message + " " + sldTask.getTimeSeconds() + " secs");
+		//progressPanel.showTask(syncTask);
 	}
 	
 	@Override
