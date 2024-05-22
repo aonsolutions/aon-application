@@ -112,6 +112,9 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/email":
 				response(req, resp, sendAuthInfoMail(api));
 				break;
+			case "/check-permission":
+				response(req, resp, getPermission(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -982,6 +985,19 @@ public class UserServlet extends AonApiHttpServlet {
 					.findFirst().orElse(null);
 		}
 		return s;
+	}
+	
+	private JSONObject getPermission(AonApiData api) {
+		Domain domain = api.getDomain();
+		Integer userId = api.getUser().getId();
+		String permission = api.getData().optString(IJsonNames.ROLES);
+		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", 
+				f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().eq(AonRole.safeValueOf(permission).value())))
+				.collect(Collectors.toCollection(LinkedList::new));
+		if(roles.size() > 0)
+			return new JSONObject().put(IJsonNames.RESULT, true);
+		else
+			return new JSONObject().put(IJsonNames.RESULT, false);
 	}
 	
 }
