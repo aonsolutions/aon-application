@@ -168,15 +168,15 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
 
-		let aonHeaderCalendar = this.createElement(TAG.SPAN);
-		aonHeaderCalendar.id = 'aonHeaderCalendar';
+		// let aonHeaderCalendar = this.createElement(TAG.SPAN);
+		// aonHeaderCalendar.id = 'aonHeaderCalendar';
 
-		let aonHeaderCalendarButton = new AonIconButton();
-		aonHeaderCalendarButton.id = 'aonHeaderCalendarButton';
-		aonHeaderCalendarButton.icon = "event";
-		aonHeaderCalendar.appendChild(aonHeaderCalendarButton);
+		// let aonHeaderCalendarButton = new AonIconButton();
+		// aonHeaderCalendarButton.id = 'aonHeaderCalendarButton';
+		// aonHeaderCalendarButton.icon = "event";
+		// aonHeaderCalendar.appendChild(aonHeaderCalendarButton);
 
-		aonHeaderButtons.appendChild(aonHeaderCalendar);
+		// aonHeaderButtons.appendChild(aonHeaderCalendar);
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
@@ -240,11 +240,11 @@ export class AonHeader extends AonElement {
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			});
 
-			let aonHeaderCalendarButton = this.getElement(this.BASE_ID + 'CalendarButton');
-			aonHeaderCalendarButton.addEventListener('click', () => {
-				const top = aonHeaderCalendarButton.getBoundingClientRect().top;
-				const left = aonHeaderCalendarButton.getBoundingClientRect().left;
-			});
+			// let aonHeaderCalendarButton = this.getElement(this.BASE_ID + 'CalendarButton');
+			// aonHeaderCalendarButton.addEventListener('click', () => {
+			// 	const top = aonHeaderCalendarButton.getBoundingClientRect().top;
+			// 	const left = aonHeaderCalendarButton.getBoundingClientRect().left;
+			// });
 
 			if(!this.newTheme){
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');

@@ -31,6 +31,7 @@ import { AonCalendar } from 'aonsolutions/modules/calendar/aon-calendar.js';
 
 import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonRightPanel } from './aon-right-panel.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -533,9 +534,48 @@ export class AonNewMenu extends AonElement {
 
 					let a = this.createElement(TAG.A);
 					a.addEventListener(EVENT.CLICK, (e) => {
-						this.appSelection(app);
+						if (app.app != "calendar") {
+							this.appSelection(app);
+						} else {
+							// CREAR EL RIGHTPANEL AQUI
+							let rightPanel = this.getElement('aonRightPanel');
+							let calendar = this.getElement('aonCalendar');
+							if (!rightPanel.isClose() && calendar) {
+								editButton.style.visibility = 'hidden';
+								redirectButton.style.visibility = 'hidden';
+								title.style.marginLeft = '10px';
+								rootPanel.style.marginRight = '0px';
+								rightPanel.close();
+							} else {
+								rootPanel.style.marginRight = '321px';
+								title.style.marginLeft = '10px';
+								editButton.style.visibility = 'hidden';
+								redirectButton.style.visibility = 'visible';
+								redirectButton.addEventListener(EVENT.CLICK, () => {
+									rightPanel.close();
+									editButton.style.visibility = 'hidden';
+									redirectButton.style.visibility = 'hidden';
+									this.rootPanel(new AonCalendar());
+								});
+								rightPanel.clear();
+								let calendar = new AonCalendar();
+								rightPanel.setContent(calendar);
+								rightPanel.setTitle("Calendario");
+								rightPanel.open();
+								calendar.setListView();
+							}
+						}
+						if (this.selectedApp) {
+							this.selectedApp = document.getElementsByClassName("aonMenuAppSideSelected")[0];
+							this.selectedApp.classList.remove('aonMenuAppSideSelected');
+							this.selectedApp.classList.remove('aonMenuAppTopSelected');
+						}
+						const appA = document.querySelector(`#aonMenuList-${app.app}>a`);
+						this.selectedApp = appA;
+						this.applySelectionClass();
 						e.stopPropagation();
 						this.aonAppLauncher.style.display = 'none';
+						document.getElementById('aonMenuListAppDivImg-applications').style.backgroundColor = 'transparent';
 					});
 					a.style.display = 'flex';
 					a.style.flexDirection = 'column';
@@ -625,6 +665,7 @@ export class AonNewMenu extends AonElement {
 			a.addEventListener(EVENT.CLICK, () => {
 				this.appSelection(app, sidenav);
 				if (this.selectedApp) {
+					this.selectedApp = document.getElementsByClassName("aonMenuAppSideSelected")[0];
 					this.selectedApp.classList.remove('aonMenuAppSideSelected');
 					this.selectedApp.classList.remove('aonMenuAppTopSelected');
 				}

@@ -64,6 +64,7 @@ export class AonCalendar extends AonElement {
   }
 
   build() {
+    this.id = this.id || 'aonCalendar';
     if (!document.getElementsByName("color-scheme")[0]) {
       let colorScheme = this.createElement("meta");
       colorScheme.setAttribute("name", "color-scheme");
@@ -1105,7 +1106,7 @@ export class AonCalendar extends AonElement {
     const collapsebtn = document.querySelector(".collapse-view");
     setAppDefaults(context, store, this);
     renderViews(context, datepickerContext, store, this, collapsebtn);
-    // this.getElement("calendarSidebar").style.display = 'none';
+    // setViews("month", context, store, datepickerContext);
   }
 
   connectedCallback() {

@@ -13,6 +13,7 @@ import { getClosest } from "../../utilities/helpers";
 
 export default function handleSidebarFooter(store) {
   const sidebarFooter = document.querySelector(".sb__info");
+  sidebarFooter.classList.add('aonAlwaysHidden');
 
   // popup containing : project notes, privacy policy, & terms of use
   const sbInfoPopup = document.querySelector(".sb__info-popup");

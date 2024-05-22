@@ -490,7 +490,7 @@ class Store {
       const [y, m, d] = [
         entryDate.getFullYear(),
         entryDate.getMonth(),
-        entryDate.getDate(),
+        entryDate.getDate() - 1,
       ];
       let key = `${y}-${m}-${d}`;
       if (!grouped[key]) {

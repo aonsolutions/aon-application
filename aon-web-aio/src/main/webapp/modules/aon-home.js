@@ -1,8 +1,8 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonHeader } from 'aonsolutions/modules/aon-header.js';
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getAuth ,getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
+import { closeSession, getCompanies, getUserNotice, getUser, getAuth, getTimeControl, getCompaniesBySchemas } from 'aonsolutions/services/service.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -17,11 +17,11 @@ export class AonHome extends AonElement {
 	ROOT_PANEL;
 	RIGHT_PANEL;
 
-	constructor () {
+	constructor() {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.clear();
 		this.initialize();
 		this.build();
@@ -36,8 +36,8 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		if(LS.isNewTheme()){
-			
+		if (LS.isNewTheme()) {
+
 		}
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
@@ -58,22 +58,22 @@ export class AonHome extends AonElement {
 		this.appendChild(aonHeader);
 		aonHeader.setVisibleHomeButton(false);
 		aonHeader.setVisibleCompanyListButton(false);
-		
+
 		let aonMenu = new AonNewMenu();
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
 		aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
 			let app = e.detail.app;
-			let sidenav = e.detail.sidenav; 
+			let sidenav = e.detail.sidenav;
 			console.log(JSON.stringify(e.detail));
-			if ( !app.home ){
-				let appEl = aonMenu.buildApp(app, 
-				{
-					height: '32px',
-					color: '#ffffff',
-					flexDirection: 'row'
-				}, sidenav);
-				aonHeader.buildApp(app,sidenav);
+			if (!app.home) {
+				let appEl = aonMenu.buildApp(app,
+					{
+						height: '32px',
+						color: '#ffffff',
+						flexDirection: 'row'
+					}, sidenav);
+				aonHeader.buildApp(app, sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
 			} else {
@@ -101,7 +101,7 @@ export class AonHome extends AonElement {
 		let editButton = this.getElement('aonRightPanelEditButton');
 		let redirectButton = this.getElement('aonRightPanelRedirectButton');
 		let title = this.getElement('aonRightPanelTitle')
-		if(LS.isRightPanel()) {
+		if (LS.isRightPanel()) {
 			LS.removeRightPanel();
 			rootPanel.style.marginRight = '321px';
 			rightPanel.clear();
@@ -117,14 +117,14 @@ export class AonHome extends AonElement {
 				if (!rightPanel.isClose() && config) {
 					rootPanel.style.marginRight = '0px';
 					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
+					editButton.style.visibility = 'hidden';
+					redirectButton.style.visibility = 'hidden';
 					rightPanel.close();
 				} else {
 					rootPanel.style.marginRight = '321px';
 					rightPanel.clear();
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
+					editButton.style.visibility = 'hidden';
+					redirectButton.style.visibility = 'hidden';
 					title.style.marginLeft = '10px';
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
@@ -133,52 +133,54 @@ export class AonHome extends AonElement {
 			});
 		}
 
-		let headerCalendar = this.getElement('aonHeaderCalendar');
-		if (headerCalendar) {
-			headerCalendar.addEventListener(EVENT.CLICK, () => {
-				let calendar = this.getElement('aonCalendar');
-				if(!rightPanel.isClose() && calendar) {
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
-					title.style.marginLeft = '10px';
-					rootPanel.style.marginRight = '0px';
-					rightPanel.close();
-				} else {
-					rootPanel.style.marginRight = '321px';
-					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='visible';
-					redirectButton.addEventListener(EVENT.CLICK, () => {
-						rightPanel.close();
-						editButton.style.visibility='hidden';
-						redirectButton.style.visibility='hidden';
-						this.rootPanel(new AonCalendar());
-					});
-					rightPanel.clear();
-					let calendar = new AonCalendar();
-					rightPanel.setContent(calendar);
-					rightPanel.setTitle("Calendario");
-					rightPanel.open();
-					calendar.setListView();
-				}
-			});
-		}
-		
+		// let headerCalendar = document.querySelector('#aonLauncherApp-calendar>a');
+		// console.log(headerCalendar);
+		// if (headerCalendar) {
+		// 	console.log("hello");
+		// 	headerCalendar.addEventListener(EVENT.CLICK, () => {
+		// 		let calendar = this.getElement('aonCalendar');
+		// 		if (!rightPanel.isClose() && calendar) {
+		// 			editButton.style.visibility = 'hidden';
+		// 			redirectButton.style.visibility = 'hidden';
+		// 			title.style.marginLeft = '10px';
+		// 			rootPanel.style.marginRight = '0px';
+		// 			rightPanel.close();
+		// 		} else {
+		// 			rootPanel.style.marginRight = '321px';
+		// 			title.style.marginLeft = '10px';
+		// 			editButton.style.visibility = 'hidden';
+		// 			redirectButton.style.visibility = 'visible';
+		// 			redirectButton.addEventListener(EVENT.CLICK, () => {
+		// 				rightPanel.close();
+		// 				editButton.style.visibility = 'hidden';
+		// 				redirectButton.style.visibility = 'hidden';
+		// 				this.rootPanel(new AonCalendar());
+		// 			});
+		// 			rightPanel.clear();
+		// 			let calendar = new AonCalendar();
+		// 			rightPanel.setContent(calendar);
+		// 			rightPanel.setTitle("Calendario");
+		// 			rightPanel.open();
+		// 			calendar.setListView();
+		// 		}
+		// 	});
+		// }
+
 		let headerHelp = this.getElement('aonHeaderHelp');
 		if (headerHelp) {
 			headerHelp.addEventListener(EVENT.CLICK, () => {
 				let help = this.getElement('aonHelp');
-				if(!rightPanel.isClose() && help) {
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
+				if (!rightPanel.isClose() && help) {
+					editButton.style.visibility = 'hidden';
+					redirectButton.style.visibility = 'hidden';
 					title.style.marginLeft = '10px';
 					rootPanel.style.marginRight = '0px';
 					rightPanel.close();
 				} else {
 					rootPanel.style.marginRight = '321px';
 					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
+					editButton.style.visibility = 'hidden';
+					redirectButton.style.visibility = 'hidden';
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
@@ -191,30 +193,30 @@ export class AonHome extends AonElement {
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {
 				let user = this.getElement('aonLoginPanel');
-				if(!rightPanel.isClose() && user) {
+				if (!rightPanel.isClose() && user) {
 					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					redirectButton.style.visibility='hidden';
+					editButton.style.visibility = 'hidden';
+					redirectButton.style.visibility = 'hidden';
 					rightPanel.close();
-				} else  {
+				} else {
 					rightPanel.clear();
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);
 					rootPanel.style.marginRight = '0px';
 					editButton.style.visibility = 'visible';
-					redirectButton.style.visibility='hidden';
+					redirectButton.style.visibility = 'hidden';
 					title.style.marginLeft = '39px';
-					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
+					rightPanel.open("200px", "0px", "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				}
 			});
 		}
 	}
-	
+
 	showMenu(bool) {
 		// Only for compatibility
 	}
 
-	customize(){
+	customize() {
 		let aonHeader = this.getElement(this.AON_HEADER);
 		let aonSearchDiv = aonHeader.getElement("aon-search-div");
 		aonSearchDiv.style.height = '32px';
@@ -224,6 +226,6 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
 	}
-	
+
 }
 window.customElements.define('aon-home', AonHome);

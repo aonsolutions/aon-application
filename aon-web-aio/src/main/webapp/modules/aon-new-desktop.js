@@ -284,6 +284,12 @@ export class AonNewDesktop extends AonElement {
 		let appA = this.createElement(TAG.A);
 		appA.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
+			if (document.getElementsByClassName("aonMenuAppSideSelected")[0]) {
+				document.getElementsByClassName("aonMenuAppSideSelected")[0].classList.remove("aonMenuAppSideSelected");
+			}
+			const appA = document.querySelector(`#aonMenuList-${app.app}>a`);
+			appA.classList.add('aonMenuAppSideSelected');
+			e.stopPropagation();
 		});
 
 		let appDiv = this.createElement(TAG.DIV);
