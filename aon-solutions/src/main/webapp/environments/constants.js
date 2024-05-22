@@ -226,9 +226,11 @@ export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
+export const OTHER = 'other';
 
 // ----- P
 
+export const PACKAGE = 'package';
 export const PACKAGING = 'packaging';
 export const PASSWORD = 'password';
 export const PATTERN = 'pattern';

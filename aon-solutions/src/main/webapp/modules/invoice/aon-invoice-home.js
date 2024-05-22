@@ -11,8 +11,6 @@ import { AonMobileInvoice } from "./aon-mobile-invoice.js";
 import { getCounter } from './InvoiceCounter.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
-import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
-import { AonInvoiceList } from "./aon-invoice-list.js";
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
 import { getInvofoxConfiguration } from "../../services/invoiceService.js";
 
@@ -219,7 +217,6 @@ export class AonInvoiceHome extends AonElement {
 			{status:'accounting', recorded: 'PENDING', page:1, per_page: 50}
 		));
 
-
 		div.appendChild(pendingRecords);
 
 		let pendingRecordNumber = this.createDiv();
@@ -228,12 +225,13 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecordNumber.style.fontWeight = 'bold';
 		pendingRecordNumber.style.fontSize = '36px';
 		pendingRecordNumber.style.lineHeight = '47px';
+		pendingRecordNumber.style.color = 'var(--aonGreen)';
 
 		pendingRecords.appendChild(pendingRecordNumber);
 
 		let pendingRecordName = this.createDiv();
 		pendingRecordName.id = 'pendingRecordName';
-		pendingRecordName.innerHTML = 'Pendientes de Contabilizar';
+		pendingRecordName.innerHTML = "Pendientes de Contabilizar";
 		pendingRecordName.style.fontWeight = 'normal';
 		pendingRecordName.style.color = 'gray';
 		pendingRecordName.style.lineHeight = '21px';
@@ -265,7 +263,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingName = this.createDiv();
 		pendingName.id = 'pendingName';
-		pendingName.innerHTML = 'Documentos Pendientes ';
+		pendingName.innerHTML = MSG.PENDING_DOCUMENTS;
 		pendingName.style.fontWeight = 'normal';
 		pendingName.style.color = 'gray';
 		pendingName.style.lineHeight = '21px';
@@ -312,17 +310,17 @@ export class AonInvoiceHome extends AonElement {
 		pendingIssuedNumber.style.fontWeight = 'bold';
 		pendingIssuedNumber.style.fontSize = '36px';
 		pendingIssuedNumber.style.lineHeight = '47px';
+		pendingIssuedNumber.style.color = 'var(--aonOrange)';
 		pendingIssued.appendChild(pendingIssuedNumber);
 
 
 		let pendingIssuedName = this.createDiv();
 		pendingIssuedName.id = 'pendingIssuedName';
-		pendingIssuedName.innerHTML = 'Emitidos ';
+		pendingIssuedName.innerHTML = MSG.ISSUEDS;
 		pendingIssuedName.style.fontWeight = 'normal';
 		pendingIssuedName.style.color = 'gray';
 		pendingIssuedName.style.lineHeight = '21px';
 		pendingIssued.appendChild(pendingIssuedName);
-
 
 		// PENDING RECEIVED
 		let pendingReceived = this.createDiv();
@@ -356,11 +354,12 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceivedNumber.style.fontWeight = 'bold';
 		pendingReceivedNumber.style.fontSize = '36px';
 		pendingReceivedNumber.style.lineHeight = '47px';
+		pendingReceivedNumber.style.color = 'var(--aonOrange)';
 		pendingReceived.appendChild(pendingReceivedNumber);
 
 		let pendingReceivedName = this.createDiv();
 		pendingReceivedName.id = 'pendingReceivedName';
-		pendingReceivedName.innerHTML = 'Recibidos';
+		pendingReceivedName.innerHTML = MSG.RECEIVEDS;
 		pendingReceivedName.style.fontWeight = 'normal';
 		pendingReceivedName.style.color = 'gray';
 		pendingReceivedName.style.lineHeight = '21px';
@@ -398,16 +397,16 @@ export class AonInvoiceHome extends AonElement {
 		pendingTicketNumber.style.fontWeight = 'bold';
 		pendingTicketNumber.style.fontSize = '36px';
 		pendingTicketNumber.style.lineHeight = '47px';
+		pendingTicketNumber.style.color = 'var(--aonOrange)';
 		pendingTicket.appendChild(pendingTicketNumber);
 
 		let pendingTicketName = this.createDiv();
 		pendingTicketName.id = 'pendingTicketName';
-		pendingTicketName.innerHTML = 'Tickets';
+		pendingTicketName.innerHTML = MSG.TICKETS;
 		pendingTicketName.style.fontWeight = 'normal';
 		pendingTicketName.style.color = 'gray';
 		pendingTicketName.style.lineHeight = '21px';
 		pendingTicket.appendChild(pendingTicketName);
-
 
 		// REJECTED / TRASH
 
@@ -442,12 +441,12 @@ export class AonInvoiceHome extends AonElement {
 		pendingRevisionNumber.style.fontWeight = 'bold';
 		pendingRevisionNumber.style.fontSize = '36px';
 		pendingRevisionNumber.style.lineHeight = '47px';
-
+		pendingRevisionNumber.style.color = 'var(--aonRed)';
 		pendingRevision.appendChild(pendingRevisionNumber);
 
 		let pendingRevisionName = this.createDiv();
 		pendingRevisionName.id = 'pendingRevisionName';
-		pendingRevisionName.innerHTML = 'Rechazados';
+		pendingRevisionName.innerHTML = MSG.REJECTEDS;
 		pendingRevisionName.style.fontWeight = 'normal';
 		pendingRevisionName.style.color = 'gray';
 		pendingRevisionName.style.lineHeight = '21px';
@@ -455,7 +454,7 @@ export class AonInvoiceHome extends AonElement {
 
 		// TRASH
 		let trash = this.createDiv();
-		trash.id = 'pendingRevision';
+		trash.id = 'trash';
 		trash.style.border = '1px solid #ebebeb';
 		trash.style.display = 'flex';
 		trash.style.flexDirection = 'column';
@@ -484,17 +483,17 @@ export class AonInvoiceHome extends AonElement {
 		trashNumber.style.fontWeight = 'bold';
 		trashNumber.style.fontSize = '36px';
 		trashNumber.style.lineHeight = '47px';
-
+		trashNumber.style.color = 'var(--aonGray)';
 		trash.appendChild(trashNumber);
 
 		let trashName = this.createDiv();
 		trashName.id = 'trashName';
-		trashName.innerHTML = 'En Papelera';
+		trashName.innerHTML = MSG.IN_TRASH;
 		trashName.style.fontWeight = 'normal';
 		trashName.style.color = 'gray';
 		trashName.style.lineHeight = '21px';
 		trash.appendChild(trashName);
-
+		
 		return div;
 	}
 
