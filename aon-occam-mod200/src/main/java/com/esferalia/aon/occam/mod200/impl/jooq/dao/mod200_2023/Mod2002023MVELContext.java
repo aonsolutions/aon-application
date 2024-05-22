@@ -1098,8 +1098,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			double c00012 = roundKey(Mod2002023Key.CP0012);
 			double c00016 = roundKey(Mod2002023Key.CP0016);
 			
-			// FALTA - NO TENGO CLARO COMO SON LAS FORMULAS, PORQUE NO SE SI EN EL DOC PADIS FALTA ALGUN PARENTESIS O CORCHETE O ALGO
-
 			double m1 = (c01330-c00778+c00813) * 0.15;
 
 			if (isChecked(C0071))
@@ -1109,14 +1107,13 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 				m1 = (c01330-c00778+c00813) * 0.18;			
 			
 			// FALTA - ADEMAS ESTAS ESPECIFICACIONES EN LA PAGINA 181 DEL DOC PADIS NO COINCIDEN CON LO QUE PONE EN LAS PAGINAS DE MAS ARRIBA DEL DOC PADIS
-			// M1 = clave 00562 - [ 00558 / 100 * (00012 + 00016) x 0,60
+			
 			if (isChecked(C0019))
-			    m1 = (c00562 - (c00558 / 100 * (c00012 + c00016))) * 0.60;
+			    m1 = (c00562 - (c00558 / 100 * (c00012 + c00016))) * 0.60;			         
 
-			// FALTA - M1 = clave 00562 - [(00558 / 100 * 00012) + 25 / 100 *00016) ] x 0,60
 			if (isChecked(C0017) || isChecked(C0018))
 				m1 = (c00562 - ((c00558 / 100 * c00012) + (25.0 / 100 * c00016))) * 0.60;
-
+			         
 			if (isChecked(C0015) || isChecked(C0079)) {
 				if (isChecked(C0024))
 					m1 = (c01330-c00778+c00813-c00559) * 0.18;
