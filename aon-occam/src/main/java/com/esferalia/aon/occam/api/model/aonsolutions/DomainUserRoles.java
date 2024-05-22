@@ -503,7 +503,7 @@ public class DomainUserRoles implements Serializable {
 			&& (isAdmin() || hasRole(AonRole.OCR));
 	}
 	
-	// OCR
+	// OCR INVOFOX
 	
 	public boolean hasInvofox() {
 		return hasApp(AonApp.INVOFOX);
@@ -516,6 +516,21 @@ public class DomainUserRoles implements Serializable {
 	public boolean isInvofox() {
 		return (hasInvofox() || ((isParentUser() || isEnterpriseChild()) && hasParentInvofox()))
 			&& (isAdmin() || hasRole(AonRole.INVOFOX));
+	}
+	
+	// FACTURAE
+	
+	public boolean hasFacturae() {
+		return hasApp(AonApp.FACTURAE);
+	}
+	
+	public boolean hasParentFacturae() {
+		return hasParentApp(AonApp.FACTURAE);
+	}
+	
+	public boolean isFacturae() {
+		return (hasFacturae() || ((isParentUser() || isEnterpriseChild()) && hasParentFacturae()))
+			&& (isAdmin() || hasRole(AonRole.FACTURAE));
 	}
 	
 	// SERES
