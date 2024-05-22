@@ -166,6 +166,7 @@ export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
+export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Errors';
 
 // ----- F
@@ -282,6 +283,7 @@ export const NEW_TICKET = 'Nou Tiquet';
 export const NEW_WAREHOUSE = 'Nou Magatzem';
 export const NEXT = 'Següent';
 export const NIF = 'NIF';
+export const NO_DATA = 'No hi ha dades';
 export const NOT_LINKED = 'No vinculat';
 export const NOT_LINKED1 = 'No vinculats';
 export const NOTIFICATION = 'Notificació';
