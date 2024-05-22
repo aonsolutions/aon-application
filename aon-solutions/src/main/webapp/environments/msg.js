@@ -314,6 +314,7 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
 export const IN_PROGRESS = "En Progreso"; // TODO
+export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
@@ -468,9 +469,10 @@ export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = MSG.OPTIONAL;
 export const OR_ACCESS = MSG.OR_ACCESS;
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
+export const OTHERS = "Otros";
 
 // ----- P
-
+export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
