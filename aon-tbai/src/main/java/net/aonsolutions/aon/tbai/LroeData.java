@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -199,11 +199,11 @@ public class LroeData {
 					? InvoiceCommunicationStatus.ACCEPTED
 					: InvoiceCommunicationStatus.WRONG);
 		
-			InvoiceTracking invoiceTracking = new InvoiceTracking()
+			InvoiceCommunicationTracking invoiceCommunicationTracking = new InvoiceCommunicationTracking()
 				.setInvoiceBatch(invoiceBatch)
 				.setInvoiceBatchDetail(invoiceBatchDetail);
 		
-			AON.saveInvoiceTracking(domain, user, invoiceTracking);
+			AON.saveInvoiceCommunicationTracking(domain, user, invoiceCommunicationTracking);
 		
 			InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
 				.and(f.getTypeProperty().eq(info.getCommunicationType().value())));
