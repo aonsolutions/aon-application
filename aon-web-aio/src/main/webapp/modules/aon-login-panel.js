@@ -58,26 +58,26 @@ export class AonLoginPanel extends AonElement {
 		divUserInfo.style.maxWidth = "205px";
 		divUserInfo.style.marginBottom = "12px";
 		if(!auth.name && !auth.email && !auth.document && !auth.phone){
-			divUserInfo.appendChild(this.buildName("Sesion expirada"));
+			divUserInfo.appendChild(this.buildName(MSG.EXPIRED_SESSION));
 			divUserInfo.style.marginBottom = "58px";
 			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ERROR,"Cierra sesion para reconectar"));
 		}else{
 			if(auth.name)
 				divUserInfo.appendChild(this.buildName(auth.name));
 			else
-				divUserInfo.appendChild(this.buildName("No hay informacion"))
+				divUserInfo.appendChild(this.buildName(MSG.NO_DATA))
 			if(auth.email)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,auth.email));
 			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,"no hay informacion"))
+				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,MSG.NO_DATA))
 			if(auth.phone)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,auth.phone));
 			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,"no hay informacion"));
+				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,MSG.NO_DATA));
 			if(auth.document)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,auth.document))
 			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,"no hay informacion"));
+				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,MSG.NO_DATA));
 		}
 		
 	

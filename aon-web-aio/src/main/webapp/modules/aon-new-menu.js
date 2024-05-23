@@ -1,8 +1,6 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import { getDomainUserRoles } from 'aonsolutions/services/service.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -158,6 +156,9 @@ export class AonNewMenu extends AonElement {
 			case HomeApps.HOME.app:
 				this.rootPanel(new AonParent());
 				break;
+			/*case TOP_MENU_APPS.ACCOUNTING_MENU.app:
+				this.rootPanel(new AonAccountingMenu());
+			*/	break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;

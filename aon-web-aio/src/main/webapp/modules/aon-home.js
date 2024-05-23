@@ -209,7 +209,7 @@ export class AonHome extends AonElement {
 				} else  {
 					rightPanel.clear();
 					rightPanel.setContent(new AonNotificationPanel());
-					rightPanel.setTitle(MSG.NOTIFICATION);
+					rightPanel.setTitle(MSG.NOTIFICATIONS);
 					rootPanel.style.marginRight = '321px';
 					editButton.style.visibility = 'hidden';
 					helpButton.style.visibility = 'hidden';

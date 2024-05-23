@@ -69,7 +69,7 @@ export class AonRightPanel extends AonElement {
 		rightPanelConfigButton.style.position = "fixed";
         rightPanelConfigButton.style.visibility = 'hidden';
         rightPanelConfigButton.style.right = '280px';
-        rightPanelConfigButton.style.top = '128px';
+        rightPanelConfigButton.style.marginTop = '8px';
 		rightPanel.appendChild(rightPanelConfigButton);
 
         let rightPanelHelpButton = new AonIconButton(); 
@@ -79,7 +79,7 @@ export class AonRightPanel extends AonElement {
 		rightPanelHelpButton.style.position = "fixed";
         rightPanelHelpButton.style.visibility = 'hidden';
         rightPanelHelpButton.style.right = '280px';
-        rightPanelHelpButton.style.top = '128px';
+        rightPanelHelpButton.style.marginTop = '8px';
 		rightPanel.appendChild(rightPanelHelpButton);
 
         let rightPanelNotificationButton = new AonIconButton(); 
@@ -89,7 +89,7 @@ export class AonRightPanel extends AonElement {
 		rightPanelNotificationButton.style.position = "fixed";
         rightPanelNotificationButton.style.visibility = 'hidden';
         rightPanelNotificationButton.style.right = '280px';
-        rightPanelNotificationButton.style.top = '128px';
+        rightPanelNotificationButton.style.marginTop = '8px';
 		rightPanel.appendChild(rightPanelNotificationButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
@@ -98,6 +98,7 @@ export class AonRightPanel extends AonElement {
 		rightPanelCloseButton.style.cursor = "pointer";
 		rightPanelCloseButton.style.position = "fixed";
 		rightPanelCloseButton.style.right = '10px';
+        rightPanelCloseButton.style.marginTop = '8px';
 		rightPanel.appendChild(rightPanelCloseButton);
 
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {

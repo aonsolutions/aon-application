@@ -2,16 +2,19 @@ import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNotification } from 'aonsolutions/modules/notification/aon-notification.js';
 import { CreateComponent } from 'aonsolutions/components/CreateComponent.js';
-import { CONSTANT, EVENT, MSG, TAG } from 'aonsolutions/environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS } from 'aonsolutions/environments/environments.js';
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
-import { createSpan } from 'aonsolutions/services/utilsComponents.js';
-import { AonDateUtils } from 'aonsolutions/modules/utils/AonDateUtils.js';
+import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
+import { AonApplication } from "aonsolutions/components/aon-application.js";
 
+
+export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export class AonNotificationPanel extends AonElement {
 
-	AON_NOTIFICATION_ICON
+	DIV_GENERAL;
+    AON_NOTIFICATION_PANEL;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -28,7 +31,7 @@ export class AonNotificationPanel extends AonElement {
     }
 
 	connectedCallback () {
-		this.initialize();
+        this.initialize();
         this.build();   
 	}
 
@@ -42,150 +45,141 @@ export class AonNotificationPanel extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'aonNotificationPanel';
-		this.AON_NOTIFICATION_ICON = 'aonNotificationIconPanel';
+		this.DIV_GENERAL = this.id+'DivGeneral';
+        this.AON_NOTIFICATION_PANEL = this.id + 'Application';
 	}
 
 	build() {
-		let div = this.createDiv();
-		div.innerHTML = 'VER TODAS';
-		div.addEventListener(EVENT.CLICK, () => this.goAonNotification());
-		this.appendChild(div);
-		this.append(this.buildView());
+		let divGeneral = this.createDiv();
+        divGeneral.id = this.DIV_GENERAL;
+        divGeneral.style.marginTop = "-40px";
 
+        let divTodas = this.createDiv();
+        divTodas.innerHTML = 'VER TODAS';
+        divTodas.style.cursor = 'pointer';
+        divTodas.style.position = 'relative';
+        divTodas.style.padding = '9px';
+        divTodas.style.width = '97px';
+        divTodas.style.top = '-20px';
+        divTodas.style.left = '172px';
+
+        divTodas.addEventListener(EVENT.MOUSEOVER, () => {
+			divTodas.style.backgroundColor = 'rgba(225, 225, 227, 1)';
+		});
+        divTodas.addEventListener(EVENT.MOUSELEAVE, () => {
+			divTodas.style.backgroundColor = 'transparent';
+		});
+
+        divGeneral.appendChild(divTodas);
+		divTodas.addEventListener(EVENT.CLICK, () => this.goAonNotification());
+
+        this.loadMore(true);
+        
+		this.appendChild(divGeneral);
 	}
 
-	buildRow(parent, data) {
+    buildRow(res){
+        let divPrincipal = this.createDiv();
 
-        const title = data.title;
-        const body = (data.body || "").replace(/<[^>]+>|&nbsp;|\n/g, " ");
-        const source = data.source;
+        let divGeneral = this.createDiv();
+        divGeneral.style.className = 'aonAppLi';
+        divGeneral.style.margin = "0.3rem 0.6rem";
+        divGeneral.style.display = "flex";
+        divGeneral.style.justifyContent = "space-between";
+        divGeneral.style.cursor = "pointer";
+        divGeneral.style.borderBottom = "1px solid rgba(225, 225, 227, 1)";
 
-        const notification  = document.createElement(TAG.DIV);
-        notification.className = 'aonAppLi';
-        notification.style = `
-            padding: 0.3em 0.6em;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor:pointer;
-        `;
+        let icon = new AonIcon();
+        icon.icon = "aon_new_messenger";
+        icon.color = "#1fd8b9";
+        icon.title = "Solicitudes";
+        icon.size = "50px";
+        icon.style.marginTop = "5px";
+        
+        divGeneral.appendChild(icon);
 
-        notification.addEventListener(EVENT.CLICK, ()=>{
-            this.markReadNotification(data);
-            this.goNotification(data);
-        })
+        let div = this.createDiv();
+        div.style.width = "70%";
+        div.style.fontSize = "0.8rem";
+        div.style.display = "flex";
+        div.style.flexDirection = "column";
+        div.style.rowGap = "4px";
 
-        parent.appendChild(notification);
+        let subDiv1 = this.createDiv();
+        subDiv1.style.fontWeight = '700';
+        subDiv1.title = res.title;
+        subDiv1.innerHTML = res.title;
+        div.appendChild(subDiv1);
 
-        let aonApp = { icon:'aon_app', color: '#002469', title:"" };
+        let subDiv2 = this.createDiv();
+        subDiv2.style.overflow = "hidden";
+        subDiv2.style.whiteSpace = "nowrap";
+        subDiv2.style.textOverflow = "ellipsis";
+        subDiv2.title = res.body;
+        subDiv2.innerHTML = res.body;
+        div.appendChild(subDiv2);
 
-        try{
-            const isComunica = (title || "").toLowerCase().includes("comunic");
-            const app = isComunica ? "COMUNICA" : source;
+        let subDiv3 = this.createDiv();
+        subDiv3.style.fontSize = "0.8rem";
+        subDiv3.style.color = "rgba (0,0,0,0.61)";
+        subDiv3.innerHTML = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
+        div.appendChild(subDiv3);
+
+        divGeneral.appendChild(div);
+
+        let span = this.createElement(TAG.SPAN);
+        span.className = "material-icons";
+        span.style.fontSize = "20px";
+        span.style.cursor = "pointer";
+        span.style.position = "relative";
+        span.style.top = "18px";
+        span.innerHTML = "delete";
+
+        divGeneral.appendChild(span);
+
+        divPrincipal.appendChild(divGeneral);
+
+        divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
+			divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
+		});
+
+        divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
+			divPrincipal.style.backgroundColor = 'transparent';
+		});
+
+        return divPrincipal;
+    }
+
+    async loadMore(reload) {
     
-            if(app){
-                const appTmp = getApp(app);
-                if(appTmp){
-                    aonApp = appTmp;
-                }
-            }
-        } catch(err){
-            console.error(err);
-        }
-     
-        const aonIcon = new AonIcon();
-        aonIcon.icon = aonApp.icon;
-        aonIcon.color = aonApp.color;
-        aonIcon.title = aonApp.title;
-        notification.appendChild(aonIcon);
-
-        const text = document.createElement(TAG.DIV);
-        text.style = `
-         width:70%;
-         font-size: 0.8em;
-         display: flex;
-         flex-direction: column;
-         row-gap: 4px;
-        `;
-        notification.appendChild(text);
-   
-        const titleText = document.createElement(TAG.DIV);
-        titleText.style = `font-weight: 700;`;
-        titleText.innerHTML = title;
-        titleText.title = title;
-        text.appendChild(titleText);
-
-        const contentText = document.createElement(TAG.DIV);
-        contentText.style = `
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;`;
-        contentText.innerHTML = body;
-        contentText.title = body;
-        text.appendChild(contentText);
-
-        const time = document.createElement(TAG.DIV);
-        time.style = `
-        font-size: 0.8em;
-        color: rgba(0, 0, 0, 0.61);`;
-        time.innerHTML = AonDateUtils.setDateTimestampDay(new Date(data.date));
-        text.appendChild(time);
-
-
-        const icon = document.createElement(TAG.SPAN);
-        icon.className = "material-icons";
-        icon.textContent = "clear";
-        icon.style = `
-            font-size: 11px;
-            cursor: pointer;
-        `;
-        icon.addEventListener(EVENT.CLICK, (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.markReadNotification(data);
-            notification.remove();
-        })
-        notification.appendChild(icon);
-    }
-
-	getInfo(){
-		this.getData()
-        .then(notifications=>{
-            content.innerHTML = "";
-            if(notifications.length > 0){
-                notifications
-                .forEach(notification=>
-                    this.buildRow(content, notification)
-                )
-            } else {
-                this.buildRowEmpty(content);
-            }
+       // let application = this.getApplication();
+    
+      // application.startLoader();
+        
+        const datos = await this.getData();
+    /*
+        if (reload){
+        this.DIV_GENERAL.innerHTML ="";
+        } 
+    */
+        datos.forEach((res) => {
+          this.getElement(this.DIV_GENERAL).appendChild(
+            this.buildRow(res)
+          );
         });
-	}
-
-	buildRowEmpty(parent) {
-        const notification  = document.createElement(TAG.DIV);
-        notification.style = `padding: 0.5em 0.6em;`;
-        notification.innerHTML = "No existen notificaciones pendientes.";
-        parent.appendChild(notification);
+    
+        //application.stopLoader();
     }
 
-	buildView(){
-        const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON}).element;
-        CreateComponent.createAonIconButton({
-            attributes:{
-                id:  "aonHeaderNotificationButton",
-                icon: "notifications",
-                noHover: true,
-                color: this.color || '#5f6368'
-            }
-        }, notificationSpan);
-        return notificationSpan;
-    }
-
+ 
 	getData() {
-        return getNotification({page:1, perPage:10, status:"unread"});
+        return getNotification({page:1, perPage:10, status:"read"});
     }
+
+    getApplication() {
+        return document.querySelector(TAG.AON_APPLICATION);
+      }
+    
 
 
 }
