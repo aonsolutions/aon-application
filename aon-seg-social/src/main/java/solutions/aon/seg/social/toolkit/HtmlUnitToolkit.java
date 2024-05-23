@@ -652,22 +652,31 @@ public class HtmlUnitToolkit {
 			Map<URI,String> cache = new HashMap<>();
 			@Override
 			public WebResponse getResponse(WebRequest request) throws IOException {
-				WebResponse response = super.getResponse(request);
-				
-				response = hacker.apply(request, response);
-				
-				if ("text/xml".equals(response.getContentType()) && hasXslStylesheet(response) ){
-					try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
-						xmlClient.getOptions().setCssEnabled(false);
-						xmlClient.getOptions().setDownloadImages(false);
-						xmlClient.getOptions().setJavaScriptEnabled(false);
+
+				for ( int i = 0; i < 2 ; i++ ) {
+					try {
+						WebResponse response = super.getResponse(request);
+						response = hacker.apply(request, response);
 						
-						response = transformXmlPage(xmlClient, response, variables, cache);
-					} catch (Exception e) {
+						if ("text/xml".equals(response.getContentType()) && hasXslStylesheet(response) ){
+							try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
+								xmlClient.getOptions().setCssEnabled(false);
+								xmlClient.getOptions().setDownloadImages(false);
+								xmlClient.getOptions().setJavaScriptEnabled(false);
+								
+								response = transformXmlPage(xmlClient, response, variables, cache);
+							} 
+						} 
+						
+						return response;
+
+					} catch ( Exception e ) {
+						
 					}
-				} 
+				}
 				
-				return response;
+				throw new IOException(request.getUrl().toExternalForm());
+				
 			}
 		};
 	}

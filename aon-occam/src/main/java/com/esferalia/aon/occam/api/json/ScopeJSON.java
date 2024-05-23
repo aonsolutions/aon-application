@@ -43,6 +43,7 @@ public class ScopeJSON {
 	
 	
 	public static JSONObject toJSON(Scope object) {
+		if(object == null) return null;
 		return new JSONObject()
 				.put(IJsonNames.ID, object.getId())
 				.put(IJsonNames.DOMAIN, object.getDomain())

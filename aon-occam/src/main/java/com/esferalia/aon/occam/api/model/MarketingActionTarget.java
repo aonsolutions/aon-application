@@ -18,6 +18,9 @@ public class MarketingActionTarget extends Target implements Serializable {
 	private String comments;
 	private User user;
 	
+	private boolean projectCommercial = false;
+	private Integer projectCommercialId;
+	
 	private boolean deleted = false;
 	
 	public MarketingActionTarget copy(Target target) {
@@ -94,6 +97,24 @@ public class MarketingActionTarget extends Target implements Serializable {
 	public MarketingActionTarget setDeleted(boolean deleted) {
 		this.deleted = deleted;
 		return this;
-	}	
+	}
+
+	public MarketingActionTarget setHasProjectCommercial(boolean projectCommercial) {
+		this.projectCommercial = projectCommercial;
+		return this;
+	}
+	
+	public Boolean hasProjectCommercial() {
+		return projectCommercial;
+	}
+	
+	public MarketingActionTarget setProjectCommercial(Integer projectCommercialId) {
+		this.projectCommercialId = projectCommercialId;
+		return this;
+	}
+	
+	public Integer getProjectCommercial() {
+		return projectCommercialId;
+	}
 	
 }

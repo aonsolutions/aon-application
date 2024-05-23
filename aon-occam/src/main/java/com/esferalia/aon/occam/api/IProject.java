@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectActivityFilter;
@@ -64,4 +65,7 @@ public interface IProject {
 	public Stream<ProjectActivity> getProjectActivityStream(AONContext ctx, ProjectActivityFilter filter);
 	public ProjectActivity saveProjectActivity(AONContext ctx, ProjectActivity projectActivity);
 	public void deleteProjectActivity(AONContext ctx, Integer id);
+	
+	// ---------- PROJECT COMMERCIAL
+	public ProjectCommercial saveProjectCommercial(CloseableAONContext ctx, ProjectCommercial projectCommercial);
 }

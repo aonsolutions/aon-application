@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialog<T> {
 	
 	
-	public static class CretaCCCRequestDialog extends CretaRequestDialog<CCC> {
+	public abstract static class CretaCCCRequestDialog extends CretaRequestDialog<CCC> {
 
 		public CretaCCCRequestDialog(Callback callback) {
 			super(callback);
@@ -58,7 +58,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 	}
 	
-	public static class CretaEmployeeRequestDialog extends CretaRequestDialog<Employee> {
+	public abstract static class CretaEmployeeRequestDialog extends CretaRequestDialog<Employee> {
 
 		public CretaEmployeeRequestDialog(Callback callback) {
 			super(callback);
@@ -290,6 +290,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			public Void visitL00() {
 				setVisibleMonth(true);
 				setVisibleToFromCtrlMonth(false);
+				onMonthChanged(null);
 				return null;
 			}
 
@@ -297,6 +298,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			public Void visitL03() {
 				setVisibleToFromCtrlMonth(true);
 				setVisibleMonth(false);
+				onMonthsChanged(null);
 				return null;
 			}
 
@@ -304,6 +306,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			public Void visitL13() {
 				setVisibleMonth(true);
 				setVisibleToFromCtrlMonth(false);
+				onMonthChanged(null);
 				return null;
 			}
 
@@ -311,6 +314,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			public Void visitL90() {
 				setVisibleMonth(true);
 				setVisibleToFromCtrlMonth(false);
+				onMonthChanged(null);
 				return null;
 			}
 
@@ -318,6 +322,7 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 			public Void visitL91() {
 				setVisibleMonth(true);
 				setVisibleToFromCtrlMonth(false);
+				onMonthChanged(null);
 				return null;
 			}
 		});
@@ -325,11 +330,12 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	}
 	
 	@UiHandler("monthListBox")
-	void onMonthChanged( ChangeEvent e ){
-		
-	}
+	abstract void onMonthChanged( ChangeEvent e );
 	
+	@UiHandler({"fromMonthListBox", "toMonthListBox"})
+	abstract void onMonthsChanged( ChangeEvent e );
 	
+
 	// ------------------------------------------------------------------------
 	
 	public String getType(){

@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import org.htmlunit.FailingHttpStatusCodeException;
 
+import solutions.aon.seg.social.Calculations.CalcCallback;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -226,6 +227,11 @@ public class SistemaRED {
 		}
 	}
 
+    @FunctionalInterface
+    public static interface CalcsCallback {
+	    void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs);
+	}
+	
 	public SistemaRED() {
 	}
 
@@ -479,6 +485,17 @@ public class SistemaRED {
 	}
 
 	public static Map<String, Map<String, Map<Period, Map<String, Calc>>>> getCalcByNAF(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String numLiquidation, String authorized,
+			String[] nafs, CalcsCallback callback) throws SegSocialException {
+	        	try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+	        		return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword,
+	        				certificateType, numLiquidation, authorized, nafs, callback::accept);
+	        	} catch (IOException e) {
+	        		throw new SegSocialException(e);
+	        	}
+		}
+
+	public static Map<String, Map<String, Map<Period, Map<String, Calc>>>> getCalcByNAF(final byte[] certificateData,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo,
 			final SistemaRED.LiquidationType liqType, final SistemaRED.LiquidationOrigin liqOrigin, String authorized,
@@ -486,6 +503,19 @@ public class SistemaRED {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword,
 					certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+
+	public static Map<String, Map<String, Map<Period, Map<String, Calc>>>> getCalcByNAF(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo,
+			final SistemaRED.LiquidationType liqType, final SistemaRED.LiquidationOrigin liqOrigin, String authorized,
+			String[] nafs, CalcsCallback callback) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword,
+					certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs, callback::accept);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -635,7 +665,7 @@ public class SistemaRED {
 			final String contributionAccount, final String docNum,
 			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
 			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException {
+			throws SegSocialException, IOException {
 		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber,
 				regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 	}
@@ -651,6 +681,7 @@ public class SistemaRED {
 					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo,
 					baseCC, baseCP, days);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new SegSocialException(e);
 		}
 	}

@@ -125,19 +125,18 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		Map<String, String> attachesNames = new HashMap<>();
 		Map<String, String> base64 = new HashMap<>();
 		String html = "";
-		String subject = "";
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
 		String subjectArray[] = mimeMessage.getHeader("Subject");
-		if(subjectArray[0].contains("Fwd")) subject = subjectArray[0].replace("Fwd", "Asunto de la tarea");
-		else subject =  "Asunto de la tarea: " + subjectArray[0];
+		String subject = subjectArray[0].replace("Fwd", "Asunto de la tarea");
 		System.out.println(subject);
 		Multipart multipart = (Multipart) mimeMessage.getContent();
 		for (int i = 0; i < multipart.getCount(); i++) {
 			 //System.out.println(multipart.getContentType());
 			BodyPart bodyPart = multipart.getBodyPart(i);
-			System.out.println(multipart.getBodyPart(i).getContentType());
+			System.out.println(multipart.getBodyPart(i).getFileName());
 			if(multipart.getBodyPart(i).getFileName() != null ) fileNames.add(multipart.getBodyPart(i).getFileName());
+
 			attachIdList = getAttachIds(bodyPart, attachIdList, attachesNames, base64);
 			if(bodyPart.getContentType().startsWith("multipart/related")) {
 				Multipart m = (Multipart) bodyPart.getContent();
@@ -150,6 +149,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 				attachIdList = getAttachIds(bAttach, attachIdList, attachesNames, base64);
 				
 			}
+
 			if (bodyPart.getContentType().startsWith("multipart/alternative")) {
 				Multipart m = (Multipart) bodyPart.getContent();
 				html = m.getBodyPart(1).getContent().toString();
@@ -157,7 +157,9 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 			}
 		}
 		
-		
+		for (int i = 0; i < attachIdList.size(); i++) {
+			attachesNames.put(attachIdList.get(i), fileNames.get(i));
+		}
 		
 		StringBuilder newHtml = new StringBuilder(html);
 		System.out.println(attachIdList);
@@ -201,7 +203,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 							.setCreationDate(new Date())
 							.setCreationUser(user.getLogin())
 							.setDomain(company.getDomain())
-							.setTitle(subject.replace("Asunto de la tarea:", ""))
+							.setTitle("Testing the creation of a task")
 							.setTaskHolder(user.getTaskHolders().get(0))
 							.setSender(user.getTaskHolders().get(0))
 							.setRegistry(user.getRegistry())
@@ -263,6 +265,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		}
 	
 	}
+
 
 	private static List<String> getAttachIds(BodyPart bodyPart, List<String> attachIds, Map<String, String> attachesNames, Map<String, String> base64) throws MessagingException, IOException, NoSuchAlgorithmException {
 

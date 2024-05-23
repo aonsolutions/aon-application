@@ -747,7 +747,7 @@ public class AccountingInvoiceBuilder {
 					AccountingRegistry ar = registries.get(0);
 					AccountingInvoice ai = result.getAccountingInvoice();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
 					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
@@ -819,7 +819,7 @@ public class AccountingInvoiceBuilder {
 					Invoice invoice = result.getInvoice();
 					TediInvoice tedi = result.getTedi();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId(), ar.getType().getInvoiceType()));
 					invoice
 						.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());

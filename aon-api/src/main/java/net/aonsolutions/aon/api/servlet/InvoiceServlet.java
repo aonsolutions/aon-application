@@ -702,11 +702,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(!fileJSON.isEmpty()) {
 			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
-			try {
-				byte[] data = S3.download("aon-upload-post", s3Key);
-				if(data != null) {
-					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-					Attach attach = new Attach()
+			if(s3Key != null) {
+				try {
+					byte[] data = S3.download("aon-upload-post", s3Key);
+					if(data != null) {
+						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+						Attach attach = new Attach()
 							.setDate(new Date())
 							.setDomain(new Domain().setId(invoice.getDomain()))
 							.setAttachModule(invoice.getId())
@@ -715,10 +716,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 							.setType(InvoiceAttachmentType.INVOICE.value())
 							.setData(data);
 
-					AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -937,8 +939,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
 		
 		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
-				InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), 
-						InvofoxConfigurationJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), "invofox")))) 
+				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), "invofox"))) 
 				: new JSONObject();
 		
 		return new JSONObject()

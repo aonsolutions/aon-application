@@ -475,17 +475,17 @@ public class TediParser {
 			invoice.setRegistryName(result.getTedi().getRegistry().getName());
 			invoice.setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
 		}
-		if (ctx.getAONContext() != null) {
+		if (ctx.getAONContext() != null && AonStringUtils.isNotEmpty( invoice.getRegistryDocument() )) {
 			LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
 					.getAccountingRegistries(ctx.getAONContext(), f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 					.filter(filterExpression)
 					.collect(Collectors.toCollection(LinkedList::new));
 			if (registries != null && registries.size() > 0) {
-				if (registries.size() == 1) {
+				if (registries.size() == 	1) {
 					AccountingRegistry ar = registries.get(0);
 					AccountingInvoice ai = result.getAccountingInvoice();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 					.setTransaction(ar.getTransaction());
 					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), ctx.getAonConfiguration()));

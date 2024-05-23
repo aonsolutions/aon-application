@@ -80,6 +80,7 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
 	return matcher.group(param);
     }
     
+
     private static InputStream getAttachContent(MimeMultipart mimeMultipart, String attachId) throws MessagingException, IOException, NoSuchAlgorithmException {
     	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
     		BodyPart part = mimeMultipart.getBodyPart(i);
@@ -109,10 +110,10 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
     	}
     	throw new IOException();
     }
+
     
     private static InputStream getAttachContent(MimeMessage mimeMessage, String attachId ) throws IOException, MessagingException, NoSuchAlgorithmException {
 	MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-	
 	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
 	    BodyPart  part = mimeMultipart.getBodyPart(i);
 	    if ( part instanceof MimeBodyPart mimeBodyPart 
@@ -126,19 +127,6 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
 	    	return part.getInputStream();
 	    }
 	}
-	
-	for ( int i = 0 ; i < mimeMultipart.getCount(); i++ ) {
-		BodyPart part = mimeMultipart.getBodyPart(i);
-		Object bodyContent = part.getContent();
-		if ( bodyContent instanceof MimeMultipart ) {
-			try {
-				return getAttachContent((MimeMultipart) bodyContent, attachId);
-			} catch ( IOException e)  {
-				System.out.println("Element not found");
-			}
-		}    		
-	}
-	
 	throw new IOException("");
     }
     
@@ -163,7 +151,9 @@ public class S3AttachRequestHandler implements RequestStreamHandler {
     }
 
     public static void main(String[] args) throws IOException {
+
 	ByteArrayInputStream input = new ByteArrayInputStream("\"path\": \"/soporte/oroa7bn6t5fvqmd4ou99eq87a6o07ga83o195b01/D64D1B96F355A7AC39DBA5CC934649D1\"".getBytes());
+
 	new S3AttachRequestHandler().handleRequest(input, System.out, null);
     }
 

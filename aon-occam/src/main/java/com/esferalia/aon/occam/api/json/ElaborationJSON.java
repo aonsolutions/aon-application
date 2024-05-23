@@ -64,6 +64,7 @@ public class ElaborationJSON {
 			.put(IJsonNames.SERIES, object.getSeries())
 			.put(IJsonNames.NUMBER, object.getNumber())
 			.put(IJsonNames.REFERENCE, object.getReferenceCode())
+			.put(IJsonNames.DATE, object.getDate())
 			.put(IJsonNames.ITEM, ItemJSON.toJSON(object.getItem()))
 			.put(IJsonNames.DESCRIPTION, object.getDescription())
 			.put(IJsonNames.WAREHOUSE, WarehouseJSON.toJSON(object.getWarehouse()))

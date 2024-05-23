@@ -295,6 +295,11 @@ public enum AonError implements Serializable{
 	,NULL_MARKETING_ACTION_TARGET("Debe existir seleccionar un cliente potencial.")
 	,NULL_MARKETING_CAMPAIGN_ACTION_TARGET("El cliente potencial no esta vinculado a una acci\u00f3n.")
 	,REPEATED_ACTION_TARGET("No puede haber dos veces el mismo cliente potencial para la misma acci\u00f3n")
+	
+	// --------------------------------------------- SELLER
+	,SELLER_NULL("El valor del agente comercial es nulo.")
+	,NULL_SELLER_NAME("El Nombre / Raz\u00f3n Social del agente comercial es nulo.")
+	
 	;
 	
 	

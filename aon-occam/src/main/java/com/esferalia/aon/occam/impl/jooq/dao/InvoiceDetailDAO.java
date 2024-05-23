@@ -260,7 +260,7 @@ public class InvoiceDetailDAO {
 					.setDomain(getValue(r, INVOICE_DETAIL.DOMAIN))
 					.setInvoice(checkField(r, INVOICE.ID)
 						? InvoiceFiller.buildInvoice(r)
-						: new Invoice().setId(r.getValue(INVOICE_DETAIL.ID)))
+						: new Invoice().setId(r.getValue(INVOICE_DETAIL.INVOICE)))
 					.setProject(getValue(r, INVOICE_DETAIL.PROJECT))
 					.setProjectName(getValue(r, PROJECT.NAME))
 					.setLine(getValue(r, INVOICE_DETAIL.LINE))

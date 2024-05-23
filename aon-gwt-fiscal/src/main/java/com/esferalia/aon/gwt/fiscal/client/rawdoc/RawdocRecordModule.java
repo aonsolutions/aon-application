@@ -25,8 +25,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class RawdocRecordModule  extends MainEntryPoint  {
 	
-	private static RawdocServiceAsync RAWDOC_SERVICE;
-	private static CommonServiceAsync COMMON_SERVICE;
+	private static final RawdocServiceAsync RAWDOC_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		RawdocServiceAsync rawdocServiceRaw = GWT.create(RawdocService.class);
+		RAWDOC_SERVICE = new RawdocServiceAsyncDecorator(rawdocServiceRaw);
+		
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -36,12 +43,6 @@ public class RawdocRecordModule  extends MainEntryPoint  {
 		panel.getElement().getStyle().setDisplay(Display.NONE);
 		root.add(panel);
 
-		RawdocServiceAsync rawdocServiceRaw = GWT.create(RawdocService.class);
-		RAWDOC_SERVICE = new RawdocServiceAsyncDecorator(rawdocServiceRaw);
-
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
 		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),new AsyncCallback<AonConfiguration>() {
 			@Override
 			public void onSuccess(AonConfiguration result) {
@@ -50,14 +51,9 @@ public class RawdocRecordModule  extends MainEntryPoint  {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-
+				// Nothing
 			}
 		});
-		
-
-//		root.add(panel);
-
-		
 	}
 	
 	public void recordInvoice(AonConfiguration configuration) {

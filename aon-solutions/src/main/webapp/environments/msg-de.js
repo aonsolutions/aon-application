@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Um'
+export const ACADEMIES = 'Akademien';
 export const ACCEPT = 'Akzeptieren';
 export const ACCESS = "Zugang";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'zugriff auf ihr AON-konto';
@@ -67,15 +68,19 @@ export const CERTIFICATE = 'Zertifikat';
 export const CERTIFICATES = 'Zertifikate';
 export const CHANGE_TYPE = 'Typ ändern';
 export const CHARGES_AND_PAYMENTS = 'Gebühren und Zahlungen';
+export const CHANGE_PASSWORD = 'Kennwort ändern';
 export const CHOOSE_A_DOMAIN = 'Bitte wählen Sie eine Domain aus';
 export const CITY = 'Stadt';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
 export const CLOSE = 'nah dran';
 export const CLOSE_SESSION = 'Ausloggen';
+export const CLOSED = 'Geschlossen';
 export const CODE = 'Code';
 export const COMMENT = 'Kommentar';
 export const COMMENTS = 'Kommentare';
+export const COMMERCE = 'Handel';
+export const COMMERCIAL = 'Kommerziell';
 export const COMMUNICATION = 'Kommunikation';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -89,6 +94,7 @@ export const CONFIDENTIAL = 'Confidential';
 export const CONFIGURATION = 'Einstellung';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
+export const CONTACT_DATA2 = "Kontaktinformationen";
 export const CONTACTS = 'Contacts';
 export const CONTAINER = 'Container';
 export const CONTRACT = 'Contract';
@@ -172,8 +178,10 @@ export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Finden Sie verknüpfte Domains";
+export const FISCAL = 'Finanzielle';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
+export const FRENCH = 'Französisch';
 
 // ----- G
 
@@ -184,6 +192,7 @@ export const GET_INVOICES = 'Rechnungen Bekommen';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
+export const GROUPWARE = 'Dateien';
 export const GROUPS = 'Groups';
 
 // ----- H
@@ -246,6 +255,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Eintrag markieren';
 export const MARK_EXIT = 'Ausgang markieren';
 export const MANAGEMENT = 'Verwaltung';
@@ -286,7 +296,7 @@ export const NUMBER_OF_USERS = 'Anzahl der Nutzer';
 
 // ----- O
 export const OBSERVATION = 'Observation';
-export const OFFICE = 'Office';
+export const OFFICE = 'Versenden';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Nur Domains ohne verknüpften Kunden";
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
@@ -304,7 +314,7 @@ export const PARENT_APPS = 'Vater-Apps';
 export const PAUSE = 'Pause';
 export const PASSWORD = 'Passwort';
 export const PAYMETHOD = 'Payment Method';
-export const PAYROLL = 'Payroll';
+export const PAYROLL = 'Arbeit';
 export const PAYSHEET = 'Paysheet';
 export const PAYSHEETS = 'Paysheets';
 export const PENDING = 'Ausstehend';
@@ -371,6 +381,7 @@ export const REVIEW = 'Rezension';
 export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
+export const SCHEDULE = "Zeitplan";
 export const SEARCH = 'Suchen Nach';
 export const SEE_ALL = 'Alles Sehen';
 export const SEND = 'Send';
@@ -385,6 +396,7 @@ export const SERVICES = 'Services';
 export const SETTING = 'Einstellung';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIDE_MENU = 'Seitliches Menü';
 export const SIGN_IN = 'Einloggen';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
 export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';
@@ -402,6 +414,8 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
+export const SELECT_LANGUAGE = "Sprache auswählen";
+export const SELECT_COMPANY_TYPE = "Wählen Sie den Unternehmenstyp aus";
 
 // ----- T
 
@@ -426,6 +440,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
 export const TRANSACTION_TYPE = 'Transaction Type';
 export const TRASH = 'Trash';
+export const TREASURY = 'Finanzministerium';
 export const TYPE = 'Type';
 export const TYPES = 'Types';
 
@@ -444,6 +459,7 @@ export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
 export const UTILITIES = 'Dienstprogramme';
+export const UPPER_MENU = "Kopfzeilenmenü";
 
 // ----- V
 
@@ -459,10 +475,13 @@ export const WAREHOUSES = 'Lagerhaus';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';
+export const WORKSHOPS = 'Werkstätten';
 export const WRITE_YOUR_TITLE = "Write your title here";
 export const WRITE_A_COMMENT =  "Write a comment";
 export const WRITE_A_DESCRIPTION = "Write a description";
 export const WRITE_A_NOTE =  "Write a note";
+export const WEEK_SCHEDULE = "Montag bis Donnerstag von 8:00 bis 15:00 Uhr";
+export const WEEK_FRIDAY_SCHEDULE = "Freitag von 8:00 bis 14:00 Uhr";
 
 // ----- X
 

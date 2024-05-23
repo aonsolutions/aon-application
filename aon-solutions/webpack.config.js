@@ -26,5 +26,11 @@ module.exports = {
         minimizer: [
           new CssMinimizerPlugin(), '...'
         ]
-      }
+	},
+	resolve: {
+    	alias: {
+      		aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css')
+    	}
+  	}
+	
 };

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -77,7 +78,7 @@ public class MarketingCampaign implements Serializable {
 	}
 
 	public Double getExpense() {
-		return expense;
+		return expense == null ? 0.00 : expense;
 	}
 
 	public MarketingCampaign setExpense(Double expense) {
@@ -113,6 +114,25 @@ public class MarketingCampaign implements Serializable {
 	
 	public List<MarketingAction> getActions() {
 		return actions;
+	}
+
+	public Date getStartDate() {
+		if(null == actions || actions.isEmpty()) return null;
+		Date date = actions.stream().map(action -> action.getStartDate()).sorted().findFirst().orElse(null);
+		return date;
+		
+	}
+
+	public Date getEndDate() {
+		if(null == actions || actions.isEmpty()) return null;
+		
+		for (MarketingAction action : actions) {
+			if(action.getEndDate() == null) return null;
+		};
+		
+		Date date = actions.stream().map(action -> action.getEndDate()).sorted().reduce((first, second) -> second).orElse(null);
+		return date;
+		
 	}
 	
 }

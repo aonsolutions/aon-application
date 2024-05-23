@@ -1921,8 +1921,15 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				
 				@Override
 				void onMonthChanged( ChangeEvent e ){
-					AbstractCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
+					AbstractCCCCretaRequestCommand.this.onMonthsChanged(monthListBox.getSelected(), monthListBox.getSelected());
 				}
+				
+				
+				@Override
+				void onMonthsChanged(ChangeEvent e) {
+					AbstractCCCCretaRequestCommand.this.onMonthsChanged(fromMonthListBox.getSelected(), toMonthListBox.getSelected());
+				}
+				
 				
 			};
 			dialog.setVisibleReftificationMark(true);
@@ -1935,7 +1942,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
-			onMonthChanged(dialog.getFromMonth());
+			onMonthsChanged(dialog.getFromMonth(), dialog.getToMonth());
 		}
 	
 		// ------------------------------- CretaRequestDialog.Callback<Employee>
@@ -2006,21 +2013,23 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			dialog.setData(employees);
 		}
 	
-		protected void onMonthChanged( Date month ){
-			Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(month);
-			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(month);
-			Set<String> ss = new HashSet<String>();
-			List<Employee> employees = new LinkedList<Employee>();
-			for ( Employee e: ccc.getEmployees() ) {
-				if ( lastDayOfMonth.before(e.getStartDate()))
-					continue;
-				if ( firstDayOfMonth.after(e.getEndDate()))
-					continue;
-				
-				if ( ss.add(e.getSocialSecurity()))
-					employees.add(e);
-			}
-			dialog.setData(employees);
+		protected void onMonthsChanged( Date startMonth, Date endMonth ){
+			Date startDate = DateUtils.getFirstDayOfMonth(startMonth);
+			Date endDate = DateUtils.getLastDayOfMonth(endMonth);
+			
+			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(startDate, endDate,
+					Collections.singletonList(getCCC().getId()), new AsyncCallback<List<Employee>>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+	
+						@Override
+						public void onSuccess(List<Employee> employees) {
+							dialog.setData(employees);
+						}
+					});
+
 		}
 		
 		protected void setupDialog(CretaRequestDialog<Employee> dialog) {

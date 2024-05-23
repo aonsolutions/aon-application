@@ -233,7 +233,7 @@ public class GenericPackagingTagTemplate implements AutoCloseable  {
 		this.y -= 8f;
 
 		String customerName = (detail.getCustomer() != null && detail.getCustomer().getRegistry() !=null && !AonStringUtils.isBlank(detail.getCustomer().getRegistry().getName())) 
-				? detail.getCarrier().getName() : "";
+				? detail.getCustomer().getRegistry().getName() : "";
 		
 		float width = (this.getPageWidth(page) - 2 * this.nameMargin) * 0.5f;
 		PDFToolkit.drawTextCenter(

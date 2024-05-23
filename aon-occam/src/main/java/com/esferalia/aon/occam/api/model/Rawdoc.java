@@ -14,7 +14,8 @@ import es.translogia.tedi.ewok.TediInvoice;
 public class Rawdoc implements Serializable {
 
 	private static final long serialVersionUID = -3954007129622239737L;
-	
+	private static final String BUCKET = "aon-rawdoc";
+
 	private Integer id;
 	private Integer domain;
 	private RawdocNature nature;
@@ -27,7 +28,8 @@ public class Rawdoc implements Serializable {
 	private String log;
 	private MimeType mimeType;
 	private byte[] data;
-
+	private String s3Key;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -132,6 +134,19 @@ public class Rawdoc implements Serializable {
 	
 	public Rawdoc setData(byte[] data) {
 		this.data = data;
+		return this;
+	}
+	
+	public String getS3Bucket() {
+		return BUCKET;
+	}
+	
+	public String getS3Key() {
+		return s3Key;
+	}
+	
+	public Rawdoc setS3Key(String s3Key) {
+		this.s3Key = s3Key;
 		return this;
 	}
 	

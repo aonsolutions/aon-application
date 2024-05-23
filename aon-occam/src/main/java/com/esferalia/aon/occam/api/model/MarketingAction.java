@@ -148,7 +148,7 @@ public class MarketingAction implements Serializable {
 		return this;
 	}
 	public Double getExpense() {
-		return expense;
+		return expense == null ? 0.00 : expense;
 	}
 	public MarketingAction setExpense(Double expense) {
 		this.expense = expense;

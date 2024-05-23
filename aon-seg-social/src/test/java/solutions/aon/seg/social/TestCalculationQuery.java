@@ -733,7 +733,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsOk() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111008520536"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"111008520536"}));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (StatusCodeException e) {
@@ -752,7 +752,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsOk() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354").toString());
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"111016467058", "111008520536", "gwt354"}).toString());
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (StatusCodeException e) {
@@ -771,7 +771,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongDate() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-"+(Calendar.getInstance().get(Calendar.YEAR)+2));
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"111016467058", "111008520536", "gwt354"}));
 		} catch (InvalidDateException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
@@ -792,7 +792,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsDateWithNoData() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2006");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{ "111016467058", "111008520536", "gwt354"}));
 		} catch (DataDoesNotExist e) {
 			System.out.println("entra");
 		} catch (OutOfServiceException e) {
@@ -814,7 +814,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongRegime() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.ESPECIAL_MAR_ASIMILADOS_GRUPO_1, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.ESPECIAL_MAR_ASIMILADOS_GRUPO_1, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"111016467058", "111008520536", "gwt354"}));
 		} catch (WrongRegimeException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
@@ -835,7 +835,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11177534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11177534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"111016467058", "111008520536", "gwt354"}));
 		} catch (InvalidCccException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
@@ -857,7 +857,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsOriginalCert() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "010019805355", "011001022503", "011005185924"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, null, new String[]{"010019805355", "011001022503", "011005185924"}));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (StatusCodeException e) {

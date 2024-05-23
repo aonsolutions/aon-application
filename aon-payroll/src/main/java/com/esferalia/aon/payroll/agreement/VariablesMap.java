@@ -1022,6 +1022,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_52_HORAS", "H_E_ANTIGUEDAD_52_H");
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_59_HORAS", "H_E_ANTIGUEDAD_59_H");
 		
+		variablesMap.put("HORA_EXTRA_ANUAL", "H_E_ANUAL");
 		variablesMap.put("HORA_EXTRA_DIARIO", "H_E_DIARIO");
 		variablesMap.put("HORA_EXTRA_MENSUAL", "H_E_MENSUAL");
 		variablesMap.put("HORA_EXTRA_DOMINGOS_Y_FESTIVOS_HORAS", "H_E_FESTIVOS");
@@ -1365,6 +1366,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DISTANCIA_DIARIO", "PLUS_DISTANCIA_D");
 		variablesMap.put("PLUS_DISTANCIA_HORAS", "PLUS_DISTANCIA_H");
 		variablesMap.put("PLUS_DISTANCIA_MENSUAL", "PLUS_DISTANCIA_M");
+		variablesMap.put("PLUS_DISTANCIA_COLECTIVO_HORAS", "DISTANCIA_COLECTIVO_H");
 		variablesMap.put("PLUS_DISTANCIA_HASTA_5_KM_MENSUAL", "P_DISTANCIA_5KM_M");
 		variablesMap.put("PLUS_DISTANCIA_HASTA_10_KM_MENSUAL", "P_DISTANCIA_10KM_M");
 		variablesMap.put("PLUS_DISTANCIA_EVENTUALES_HORAS", "PLUS_DISTANCIA_EVENTUALES");

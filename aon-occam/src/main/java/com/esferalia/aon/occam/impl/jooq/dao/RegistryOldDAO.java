@@ -1055,6 +1055,13 @@ public class RegistryOldDAO {
 		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
 	}
 	
+	public static RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo){
+		if(registryAddInfo.getId() == null)
+			return insertRegistryAddInfo(ctx, registryAddInfo);
+		else
+			return updateRegistryAddInfo(ctx, registryAddInfo);
+	}
+	
 	// ------------------- RDIRSTAFF
 	
 //	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){

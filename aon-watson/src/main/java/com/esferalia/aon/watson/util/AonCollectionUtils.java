@@ -57,6 +57,16 @@ public class AonCollectionUtils {
 		return list.stream();
 	}
 
+	public static <K,V> Stream<K> keysStream( Map<K,V> map) {
+		if (map == null) return Stream.empty();
+		return map.keySet().stream();
+	}
+
+	public static <K,V> Stream<V> valuesStream( Map<K,V> map) {
+		if (map == null) return Stream.empty();
+		return map.values().stream();
+	}
+
 	public static <T> Stream<T> stream( T[] array) {
 		if (array == null) return Stream.empty();
 		return Arrays.stream(array);
