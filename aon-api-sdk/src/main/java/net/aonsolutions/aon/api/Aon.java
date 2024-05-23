@@ -24,19 +24,21 @@ class Aon {
     static final String SESSION_ID = "session_id";
     static final String DOMAIN_NAME = "domain_name";
     static final String DOMAIN_LOGIN = "domain_login";
-   /*
-    static final String AON_API_URL = "https://%s/%s"; 
-   */
+ 
     
-   
+    static final String AON_API_URL = "https://%s/%s"; 
+
+    
+   /*
      private static final String AON_API_URL = "http://%s:8080/aon-aio/%s";
-     
+     */
     
     
 
     static final String PREDEFINED_TOKEN = "AONd95770f269e711eb94390242ac130002";  
 
     static String get(String domainName, String userLogin, String token, String path,  Map<String, ?> params) throws URISyntaxException, IOException, InterruptedException {
+    	
     	Map<String, Object> requestParams = new HashMap<>();
     	requestParams.putAll(params);
     	requestParams.put(IJsonNames.USER, userLogin);
@@ -45,7 +47,8 @@ class Aon {
     	String query = requestParams.entrySet().stream()
     	.map(e -> String.format("%s=%s", e.getKey() , URLEncoder.encode(e.getValue().toString(), Charset.defaultCharset() ) ))
     	.collect(Collectors.joining("&")) ;
-    	  
+    	
+    	System.out.println(String.format(AON_API_URL + "?%s", domainName, path, query));
     	HttpRequest httpRequest = HttpRequest
     	.newBuilder(new URI(String.format(AON_API_URL + "?%s", domainName, path, query)))
     	.setHeader(DOMAIN_NAME, domainName)
