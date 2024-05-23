@@ -87,9 +87,9 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -201,12 +201,12 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -8059,33 +8059,33 @@ public class AON {
 		}
 	}	
 	
-	public static Stream<InvoiceTracking> getInvoiceTrackingStream(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingStream(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
 		}
 	}
 	
-	public static List<InvoiceTracking> getInvoiceTrackingList(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingList(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking getInvoiceTracking(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static InvoiceCommunicationTracking getInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTracking(ctx, filter);
+			return getFinance().getInvoiceCommunicationTracking(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
+	public static InvoiceCommunicationTracking saveInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+			return getFinance().saveInvoiceCommunicationTracking(ctx, invoiceCommunicationTracking);
 		}
 	}
 	
-	public static void deleteInvoiceTracking(String schema, Integer invoiceId) {
+	public static void deleteInvoiceCommunicationTracking(String schema, Integer invoiceId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
-			getFinance().deleteInvoiceTracking(ctx, invoiceId);
+			getFinance().deleteInvoiceCommunicationTracking(ctx, invoiceId);
 		}
 	}	
 

@@ -32,7 +32,7 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -146,10 +146,10 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void info(Integer invoice, String reference) {
-				SII_SERVICE.getInvoiceTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceTracking>>() {
+				SII_SERVICE.getInvoiceCommunicationTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceCommunicationTracking>>() {
 					
 					@Override
-					public void onSuccess(List<InvoiceTracking> result) {
+					public void onSuccess(List<InvoiceCommunicationTracking> result) {
 						FlexTable table = new FlexTable();
 						table.setWidth("100%");
 						if(result.isEmpty()) {
