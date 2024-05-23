@@ -61,6 +61,15 @@ export class AonCalendar extends AonElement {
     document.getElementsByClassName("body")[0].style.marginTop = '0px';
     document.getElementsByClassName("listview__body")[0].style.marginLeft = '0px'
     this.getElement("calendarSidebar").style.display = 'none';
+    document.getElementsByClassName("datetime-wrapper")[0].style.display = 'none';
+    if (document.querySelector("rowgroup--header__datenumber")) {
+      let el = document.querySelector("rowgroup--header__datenumber");
+      let elClone = el.cloneNode(true);
+      el.parentElement.replaceChild(elClone, el);
+      // document.querySelector("rowgroup--header__datenumber").addEventListener(EVENT.CLICK, (e) => {
+      //   e.stopImmediatePropagation();
+      // });
+    }
   }
 
   build() {
@@ -245,13 +254,13 @@ export class AonCalendar extends AonElement {
                   <!-- create a 7x7 table -->
     
                   <div class="sbdatepicker__body--header">
+                    <div class="sbdatepicker__body--header-cell">L</div>
                     <div class="sbdatepicker__body--header-cell">M</div>
-                    <div class="sbdatepicker__body--header-cell">T</div>
-                    <div class="sbdatepicker__body--header-cell">W</div>
-                    <div class="sbdatepicker__body--header-cell">T</div>
-                    <div class="sbdatepicker__body--header-cell">F</div>
+                    <div class="sbdatepicker__body--header-cell">X</div>
+                    <div class="sbdatepicker__body--header-cell">J</div>
+                    <div class="sbdatepicker__body--header-cell">V</div>
                     <div class="sbdatepicker__body--header-cell">S</div>
-                    <div class="sbdatepicker__body--header-cell">S</div>
+                    <div class="sbdatepicker__body--header-cell">D</div>
                   </div>
     
                   <div class="sbdatepicker__body--dates"></div>
@@ -286,18 +295,18 @@ export class AonCalendar extends AonElement {
                     </div>
                   </div>
                   <div class="sb-monthpicker">
-                    <div class="sb-monthpicker__month" data-sbdp-month="0">January</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="1">February</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="2">March</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="3">April</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="4">May</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="5">June</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="6">July</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="7">August</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="8">September</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="9">October</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="10">November</div>
-                    <div class="sb-monthpicker__month" data-sbdp-month="11">December</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="0">Enero</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="1">Febrero</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="2">Marzo</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="3">Abril</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="4">Mayo</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="5">Junio</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="6">Julio</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="7">Agosto</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="8">Septiembre</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="9">Octubre</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="10">Noviembre</div>
+                    <div class="sb-monthpicker__month" data-sbdp-month="11">Diciembre</div>
                   </div>
                 </aside>
               </div>
@@ -395,13 +404,13 @@ export class AonCalendar extends AonElement {
           <!-- monthview -->
           <div class="monthview hide-view">
             <div class="monthview__top">
-              <div class="monthview__top-weekname">MON</div>
-              <div class="monthview__top-weekname">TUE</div>
-              <div class="monthview__top-weekname">WED</div>
-              <div class="monthview__top-weekname">THU</div>
-              <div class="monthview__top-weekname">FRI</div>
-              <div class="monthview__top-weekname">SAT</div>
-              <div class="monthview__top-weekname">SUN</div>
+              <div class="monthview__top-weekname">LUN</div>
+              <div class="monthview__top-weekname">MAR</div>
+              <div class="monthview__top-weekname">MIE</div>
+              <div class="monthview__top-weekname">JUE</div>
+              <div class="monthview__top-weekname">VIE</div>
+              <div class="monthview__top-weekname">SAB</div>
+              <div class="monthview__top-weekname">DOM</div>
             </div>
             <div class="monthview--calendar"></div>
           </div>
@@ -412,31 +421,31 @@ export class AonCalendar extends AonElement {
               <div></div>
               <div class="weekview--header">
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">MON</span>
+                  <span class="weekview--header-day__title">LUN</span>
                   <button class="weekview--header-day__number">2</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">TUE</span>
+                  <span class="weekview--header-day__title">MAR</span>
                   <button class="weekview--header-day__number">3</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">WED</span>
+                  <span class="weekview--header-day__title">MIE</span>
                   <button class="weekview--header-day__number">4</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">THU</span>
+                  <span class="weekview--header-day__title">JUE</span>
                   <button class="weekview--header-day__number">5</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">FRI</span>
+                  <span class="weekview--header-day__title">VIE</span>
                   <button class="weekview--header-day__number">6</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">SAT</span>
+                  <span class="weekview--header-day__title">SAB</span>
                   <button class="weekview--header-day__number">7</button>
                 </div>
                 <div class="weekview--header-day">
-                  <span class="weekview--header-day__title">SUN</span>
+                  <span class="weekview--header-day__title">DOM</span>
                   <button class="weekview--header-day__number">1</button>
                 </div>
               </div>
@@ -556,13 +565,13 @@ export class AonCalendar extends AonElement {
     
         <div class="datepicker__body">
           <div class="datepicker__body--header">
+            <div class="datepicker__body--header-cell">L</div>
             <div class="datepicker__body--header-cell">M</div>
-            <div class="datepicker__body--header-cell">T</div>
-            <div class="datepicker__body--header-cell">W</div>
-            <div class="datepicker__body--header-cell">T</div>
-            <div class="datepicker__body--header-cell">F</div>
+            <div class="datepicker__body--header-cell">X</div>
+            <div class="datepicker__body--header-cell">J</div>
+            <div class="datepicker__body--header-cell">V</div>
             <div class="datepicker__body--header-cell">S</div>
-            <div class="datepicker__body--header-cell">S</div>
+            <div class="datepicker__body--header-cell">D</div>
           </div>
           <div class="datepicker__body--dates"></div>
         </div>

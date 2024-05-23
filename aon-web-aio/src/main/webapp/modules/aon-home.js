@@ -91,36 +91,53 @@ export class AonHome extends AonElement {
 
 		this.appendChild(aonMenu);
 
-		let rightPanel = new AonRightPanel();
-		rightPanel.addEventListener(EVENT.CLOSE, () => {
-			rootPanel.style.marginRight = '0px';
-		});
+		// let rightPanel = new AonRightPanel();
+		// rightPanel.addEventListener(EVENT.CLOSE, () => {
+		// 	rootPanel.style.marginRight = '0px';
+		// });
 
-		this.appendChild(rightPanel);
+		// this.appendChild(rightPanel);
 
-		let editButton = this.getElement('aonRightPanelEditButton');
-		let redirectButton = this.getElement('aonRightPanelRedirectButton');
-		let title = this.getElement('aonRightPanelTitle')
-		if (LS.isRightPanel()) {
-			LS.removeRightPanel();
-			rootPanel.style.marginRight = '321px';
-			rightPanel.clear();
-			rightPanel.setContent(new AonConfig());
-			rightPanel.setTitle(MSG.CONFIGURATION);
-			rightPanel.open();
-		}
+		// let editButton = this.getElement('aonRightPanelEditButton');
+		// let redirectButton = this.getElement('aonRightPanelRedirectButton');
+		// let title = this.getElement('aonRightPanelTitle')
+		// if (LS.isRightPanel()) {
+		// 	LS.removeRightPanel();
+		// 	rootPanel.style.marginRight = '321px';
+		// 	rightPanel.clear();
+		// 	rightPanel.setContent(new AonConfig());
+		// 	rightPanel.setTitle(MSG.CONFIGURATION);
+		// 	rightPanel.open();
+		// }
 
 		let headerConfig = this.getElement('aonHeaderConfig');
 		if (headerConfig) {
 			headerConfig.addEventListener(EVENT.CLICK, () => {
+				let rightPanel = this.getElement('aonRightPanel');
 				let config = this.getElement('aonConfig');
-				if (!rightPanel.isClose() && config) {
+				if (config) {
 					rootPanel.style.marginRight = '0px';
-					title.style.marginLeft = '10px';
-					editButton.style.visibility = 'hidden';
-					redirectButton.style.visibility = 'hidden';
-					rightPanel.close();
+					rightPanel.remove();
 				} else {
+					if (rightPanel) {
+						rightPanel.remove();
+					}
+					rightPanel = new AonRightPanel();
+					rightPanel.addEventListener(EVENT.CLOSE, () => {
+						rootPanel.style.marginRight = '0px';
+					});
+					this.appendChild(rightPanel);
+					let editButton = this.getElement('aonRightPanelEditButton');
+					let redirectButton = this.getElement('aonRightPanelRedirectButton');
+					let title = this.getElement('aonRightPanelTitle');
+					if (LS.isRightPanel()) {
+						LS.removeRightPanel();
+						rootPanel.style.marginRight = '321px';
+						rightPanel.clear();
+						rightPanel.setContent(new AonConfig());
+						rightPanel.setTitle(MSG.CONFIGURATION);
+						rightPanel.open();
+					}
 					rootPanel.style.marginRight = '321px';
 					rightPanel.clear();
 					editButton.style.visibility = 'hidden';
@@ -133,50 +150,34 @@ export class AonHome extends AonElement {
 			});
 		}
 
-		// let headerCalendar = document.querySelector('#aonLauncherApp-calendar>a');
-		// console.log(headerCalendar);
-		// if (headerCalendar) {
-		// 	console.log("hello");
-		// 	headerCalendar.addEventListener(EVENT.CLICK, () => {
-		// 		let calendar = this.getElement('aonCalendar');
-		// 		if (!rightPanel.isClose() && calendar) {
-		// 			editButton.style.visibility = 'hidden';
-		// 			redirectButton.style.visibility = 'hidden';
-		// 			title.style.marginLeft = '10px';
-		// 			rootPanel.style.marginRight = '0px';
-		// 			rightPanel.close();
-		// 		} else {
-		// 			rootPanel.style.marginRight = '321px';
-		// 			title.style.marginLeft = '10px';
-		// 			editButton.style.visibility = 'hidden';
-		// 			redirectButton.style.visibility = 'visible';
-		// 			redirectButton.addEventListener(EVENT.CLICK, () => {
-		// 				rightPanel.close();
-		// 				editButton.style.visibility = 'hidden';
-		// 				redirectButton.style.visibility = 'hidden';
-		// 				this.rootPanel(new AonCalendar());
-		// 			});
-		// 			rightPanel.clear();
-		// 			let calendar = new AonCalendar();
-		// 			rightPanel.setContent(calendar);
-		// 			rightPanel.setTitle("Calendario");
-		// 			rightPanel.open();
-		// 			calendar.setListView();
-		// 		}
-		// 	});
-		// }
-
 		let headerHelp = this.getElement('aonHeaderHelp');
 		if (headerHelp) {
 			headerHelp.addEventListener(EVENT.CLICK, () => {
+				let rightPanel = this.getElement('aonRightPanel');
 				let help = this.getElement('aonHelp');
-				if (!rightPanel.isClose() && help) {
-					editButton.style.visibility = 'hidden';
-					redirectButton.style.visibility = 'hidden';
-					title.style.marginLeft = '10px';
+				if (help) {
 					rootPanel.style.marginRight = '0px';
-					rightPanel.close();
+					rightPanel.remove();
 				} else {
+					if (rightPanel) {
+						rightPanel.remove();
+					}
+					rightPanel = new AonRightPanel();
+					rightPanel.addEventListener(EVENT.CLOSE, () => {
+						rootPanel.style.marginRight = '0px';
+					});
+					this.appendChild(rightPanel);
+					let editButton = this.getElement('aonRightPanelEditButton');
+					let redirectButton = this.getElement('aonRightPanelRedirectButton');
+					let title = this.getElement('aonRightPanelTitle');
+					if (LS.isRightPanel()) {
+						LS.removeRightPanel();
+						rootPanel.style.marginRight = '321px';
+						rightPanel.clear();
+						rightPanel.setContent(new AonConfig());
+						rightPanel.setTitle(MSG.CONFIGURATION);
+						rightPanel.open();
+					}
 					rootPanel.style.marginRight = '321px';
 					title.style.marginLeft = '10px';
 					editButton.style.visibility = 'hidden';
@@ -192,13 +193,31 @@ export class AonHome extends AonElement {
 		let headerUser = this.getElement('aonHeaderUser');
 		if (headerUser) {
 			headerUser.addEventListener(EVENT.CLICK, () => {
+				let rightPanel = this.getElement('aonRightPanel');
 				let user = this.getElement('aonLoginPanel');
-				if (!rightPanel.isClose() && user) {
-					title.style.marginLeft = '10px';
-					editButton.style.visibility = 'hidden';
-					redirectButton.style.visibility = 'hidden';
-					rightPanel.close();
+				if (user) {
+					rootPanel.style.marginRight = '0px';
+					rightPanel.remove();
 				} else {
+					if (rightPanel) {
+						rightPanel.remove();
+					}
+					rightPanel = new AonRightPanel();
+					rightPanel.addEventListener(EVENT.CLOSE, () => {
+						rootPanel.style.marginRight = '0px';
+					});
+					this.appendChild(rightPanel);
+					let editButton = this.getElement('aonRightPanelEditButton');
+					let redirectButton = this.getElement('aonRightPanelRedirectButton');
+					let title = this.getElement('aonRightPanelTitle');
+					if (LS.isRightPanel()) {
+						LS.removeRightPanel();
+						rootPanel.style.marginRight = '321px';
+						rightPanel.clear();
+						rightPanel.setContent(new AonConfig());
+						rightPanel.setTitle(MSG.CONFIGURATION);
+						rightPanel.open();
+					}
 					rightPanel.clear();
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);

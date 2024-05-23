@@ -204,6 +204,12 @@
   width: 70px;
 }
 
+@container listBodyView (max-width: 400px) {
+  .datetime-wrapper {
+    display: none;
+  }
+}
+
 .datetime-wrapper {
   justify-content: flex-start;
   margin: 0 8px 0 0;

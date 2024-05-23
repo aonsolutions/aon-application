@@ -1,5 +1,5 @@
 import { formatTime, formatStartEndTimes } from "./timeutils";
-import locales from "../locales/en";
+import locales from "../locales/es";
 const labels = locales.labels;
 const monthNames = labels.monthsShort;
 

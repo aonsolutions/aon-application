@@ -537,16 +537,31 @@ export class AonNewMenu extends AonElement {
 						if (app.app != "calendar") {
 							this.appSelection(app);
 						} else {
-							// CREAR EL RIGHTPANEL AQUI
 							let rightPanel = this.getElement('aonRightPanel');
 							let calendar = this.getElement('aonCalendar');
-							if (!rightPanel.isClose() && calendar) {
-								editButton.style.visibility = 'hidden';
-								redirectButton.style.visibility = 'hidden';
-								title.style.marginLeft = '10px';
+							if (calendar) {
 								rootPanel.style.marginRight = '0px';
-								rightPanel.close();
+								rightPanel.remove();
 							} else {
+								if (rightPanel) {
+									rightPanel.remove();
+								}
+								rightPanel = new AonRightPanel();
+								rightPanel.addEventListener(EVENT.CLOSE, () => {
+									rootPanel.style.marginRight = '0px';
+								});
+								this.appendChild(rightPanel);
+								let editButton = this.getElement('aonRightPanelEditButton');
+								let redirectButton = this.getElement('aonRightPanelRedirectButton');
+								let title = this.getElement('aonRightPanelTitle');
+								if (LS.isRightPanel()) {
+									LS.removeRightPanel();
+									rootPanel.style.marginRight = '321px';
+									rightPanel.clear();
+									rightPanel.setContent(new AonConfig());
+									rightPanel.setTitle(MSG.CONFIGURATION);
+									rightPanel.open();
+								}
 								rootPanel.style.marginRight = '321px';
 								title.style.marginLeft = '10px';
 								editButton.style.visibility = 'hidden';
@@ -644,10 +659,14 @@ export class AonNewMenu extends AonElement {
 
 	isTopNav(a) {
 		let element = a;
-		do {
-			element = element.parentElement;
-		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
-		return element.id == this.AON_MENU_TOPNAV;
+		try {
+			do {
+				element = element.parentElement;
+			} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+			return element.id == this.AON_MENU_TOPNAV;
+		} catch (e) {
+			return false;
+		}
 	}
 
 	buildApp(app, style, sidenav) {  
@@ -1089,14 +1108,6 @@ export class AonNewMenu extends AonElement {
 
 		}
 	}
-	
-	isTopNav(a) {
-		let element = a;
-		do {
-			element = element.parentElement;
-		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
-		return element.id == this.AON_MENU_TOPNAV;
-	}	
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

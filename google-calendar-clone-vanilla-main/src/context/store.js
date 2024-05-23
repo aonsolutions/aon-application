@@ -1,7 +1,7 @@
 import Entry from "../factory/entries";
 import localStoreKeyNames from "./constants";
 import { testDate, compareDates } from "../utilities/dateutils";
-import locales from "../locales/en";
+import locales from "../locales/es";
 import defautlKeyboardShortcuts from "../locales/kbDefault";
 const colors = locales.colors;
 /*
@@ -490,7 +490,7 @@ class Store {
       const [y, m, d] = [
         entryDate.getFullYear(),
         entryDate.getMonth(),
-        entryDate.getDate() - 1,
+        entryDate.getDate() - 1, // EDIT OF DATE
       ];
       let key = `${y}-${m}-${d}`;
       if (!grouped[key]) {

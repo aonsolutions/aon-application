@@ -29,8 +29,8 @@ module.exports = {
 	resolve: {
     	alias: {
       		aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
-     		aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
-          aoncalendar: path.resolve(__dirname, '../google-calendar-clone-vanilla-main/src/')
+     		  aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
+          aoncalendar: path.resolve(__dirname, '../google-calendar-clone-vanilla-main/src/'),
     	}
   	}
 };

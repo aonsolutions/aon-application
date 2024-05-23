@@ -1,5 +1,5 @@
 import { compareDates } from "../utilities/dateutils";
-import locales from "../locales/en";
+import locales from "../locales/es";
 const labels = locales.labels;
 
 
@@ -411,7 +411,7 @@ class Context {
   }
 
   getMonthArrayStartDay() {
-    return new Date(this.getYear(), this.getMonth(), 1).getDay() - 1;
+    return new Date(this.getYear(), this.getMonth(), 1).getDay() - 1; // EDIT OF DATE
   }
 
   getMonthArrayStart() {
@@ -424,7 +424,7 @@ class Context {
   }
 
   getMonthArrayEndDay() {
-    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1;
+    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1; // EDIT OF DATE
   }
 
   getMonthArrayEnd(handleFourWeeks) {
@@ -655,7 +655,7 @@ class DatepickerContext {
   }
 
   getMonthArrayStartDay() {
-    return new Date(this.getYear(), this.getMonth(), 1).getDay() -1;
+    return new Date(this.getYear(), this.getMonth(), 1).getDay() -1; // EDIT OF DATE
   }
 
   getMonthArrayStart() {
@@ -668,7 +668,7 @@ class DatepickerContext {
   }
 
   getMonthArrayEndDay() {
-    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1;
+    return new Date(this.getYear(), this.getMonth() + 1, 0).getDay() - 1; // EDIT OF DATE
   }
 
   getMonthArrayEnd() {
