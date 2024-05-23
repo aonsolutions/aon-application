@@ -438,6 +438,7 @@ export class AonInvoicePanel extends AonElement {
 		let invoiceList = this.getElement('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
+			invoiceList.invofoxFilter = this.invofoxFilter;
 			invoiceList.init();
 		} else {
 			let table = this.isMobile() 
