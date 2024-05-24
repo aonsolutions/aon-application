@@ -27,6 +27,7 @@ public class AonCustomToogleButton extends HTMLPanel {
 
 	private void createToogleButton() {
 		toogleButton = new Button();
+		setValue(false);
 		toogleButton.addClickHandler(e -> setValue(!getValue()));
 		add(toogleButton);
 	}

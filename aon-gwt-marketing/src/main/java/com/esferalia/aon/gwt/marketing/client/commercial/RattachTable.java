@@ -140,7 +140,7 @@ public abstract class RattachTable extends ScrollPanel {
 		moreData.setValue(0);
 	}
 	
-	private void onSearch() {
+	public void onSearch() {
 		enableMoreData();
 		search();
 	}
