@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,7 +37,7 @@ public interface InvoiceCommunicationServiceAsync {
 
 	void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback);
 	
-	void getInvoiceTrackingList(String domainName, int domainId, String login, Integer invoice, AsyncCallback<List<InvoiceTracking>> callback);
+	void getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice, AsyncCallback<List<InvoiceCommunicationTracking>> callback);
 	void getRequestUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback);
 	void getResponseUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback);
 

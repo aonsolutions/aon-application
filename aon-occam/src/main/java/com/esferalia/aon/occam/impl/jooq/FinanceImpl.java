@@ -17,8 +17,8 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -38,12 +38,12 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -79,8 +79,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceTrackingDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -762,15 +762,15 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking) {
+	public InvoiceCommunicationTracking saveInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.save(ctx, invoiceTracking));				
+				configuration -> InvoiceCommunicationTrackingDAO.save(ctx, invoiceCommunicationTracking));				
 	}
 	
 	@Override
-	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId) {
+	public void deleteInvoiceCommunicationTracking(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(
-				configuration -> InvoiceTrackingDAO.delete(ctx, invoiceId));
+				configuration -> InvoiceCommunicationTrackingDAO.delete(ctx, invoiceId));
 	}
 
 	@Override
@@ -792,21 +792,21 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceTracking> getInvoiceTrackingStream(AONContext ctx, InvoiceTrackingFilter filter) {
+	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.getStream(ctx, filter));				
+				configuration -> InvoiceCommunicationTrackingDAO.getStream(ctx, filter));				
 	}
 
 	@Override
-	public List<InvoiceTracking> getInvoiceTrackingList(AONContext ctx, InvoiceTrackingFilter filter) {
+	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.getList(ctx, filter));		
+				configuration -> InvoiceCommunicationTrackingDAO.getList(ctx, filter));		
 	}
 
 	@Override
-	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter) {
+	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.get(ctx, filter));		
+				configuration -> InvoiceCommunicationTrackingDAO.get(ctx, filter));		
 	}
 	
 	// ---------- BOOKING CHECK
