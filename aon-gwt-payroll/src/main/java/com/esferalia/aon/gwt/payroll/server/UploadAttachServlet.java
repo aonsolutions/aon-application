@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.ui.Hidden;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -139,8 +140,12 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		String domainName = req.getParameter("domain");
 		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 		
-		// Get contractId
-		Integer contractId = Integer.parseInt(req.getParameter("contractId"));
+		// AttachType
+		String attachTypeParam = req.getParameter("attachType");
+		AttachType attachType = AonStringUtils.isBlank(attachTypeParam) ? AttachType.CONTRACT : AttachType.safeValueOf(attachTypeParam);
+		
+		// Get attachModule (id of registry, contract..)
+		Integer attachModule = Integer.parseInt(req.getParameter("attachModule"));
 		
 		// Get description
 		String description = req.getParameter("description");
@@ -156,7 +161,7 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		try {
 			date = AonStringUtils.isNotBlank(req.getParameter("date")) ? dateFormat.parse(req.getParameter("date")) : new Date();
 		} catch (ParseException e) {
-			throw new AonApiException(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		// Get scope
@@ -164,6 +169,8 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		
 		// Get scope
 		MimeType mimeType = AonStringUtils.isNotBlank(req.getParameter("mimeType")) ? MimeType.valueOf(req.getParameter("mimeType").toUpperCase()) : null;
+		
+		Integer category = AonStringUtils.isNotBlank(req.getParameter("category")) ? Integer.parseInt(req.getParameter("category")) : null;
 		
 		// Get FilePart
 		try {
@@ -175,16 +182,17 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 			}
 			
 			Attach attach = new Attach()
-					.setAttachType(AttachType.CONTRACT)
+					.setAttachType(attachType)
 					.setDomain(domain)
-					.setAttachModule(contractId)
+					.setAttachModule(attachModule)
 					.setDescription(description)
 					.setData(data)
 					.setType(type)
 					.setConfidential(confidential)
 					.setDate(date)
 					.setScope(scope)
-					.setMimeType(mimeType);
+					.setMimeType(mimeType)
+					.setCategory(category);
 			
 			AON.insertAttach(domainName, domain.getId(), login, attach);
 			
@@ -223,9 +231,6 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
-		
-		
-		
 		
 		try {
 			Attach attach = AON.getAttach(domainName, domain.getId(), login, f -> f.getIdProperty().eq(attachId), AonStringUtils.isBlank(attachType) ? AttachType.CONTRACT : AttachType.safeValueOf(attachType));

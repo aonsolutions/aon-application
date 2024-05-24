@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -227,10 +228,12 @@ public interface CommonService extends RemoteService {
 	RegistryAddInfo getRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	RegistryAddInfo saveRegistryAddInfo(String domainName, Integer domain, String user, RegistryAddInfo registryAddInfo) throws AonCoreException;
 	void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String user) throws AonCoreException;
 	
 	List<Attach> getRegistryAttaches(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
 	Attach getRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Attach saveRegistryAttach(String domainName, Integer domain, String user, Attach attach) throws AonCoreException;
 	void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<Category> getAviableCategories(String domainName, Integer domainId, String user) throws AonCoreException;
 
 }

@@ -66,37 +66,57 @@ public class SellerModule extends MainEntryPoint {
 		
 		deckLayoutPanel = new DeckLayoutPanel();
 		
+		sellerModulePanel = new SellerModulePanel(options) {
+
+			@Override
+			protected void onSellerSelect(Seller seller) {
+				showSelectedSeller(seller);
+			}
+
+			@Override
+			protected void onSellerCreate(Seller seller) {
+				showCreatedSeller(seller);
+			}
+		
+		};
+		
 		sellerEntryPanel = new SellerEntryPanel(options) {
 
 			@Override
 			protected void onBackClick() {
 				showSellerList();
+				sellerModulePanel.getSearchTextBox().setValue(null, false);
 			}
 			
 			@Override
 			protected void onSellerDeleteClick(Integer sellerId) {
 				deleteSeller(sellerId);
 			}
-		};
-		
-		sellerModulePanel = new SellerModulePanel(options) {
 
 			@Override
-			protected void onSellerSelect(Seller seller) {
-				COMMON_SERVICE.getSeller(options.getDomainName(), options.getDomain(), options.getUser(), seller.getId(), new AsyncCallback<Seller>() {
-					
-					@Override
-					public void onSuccess(Seller seller) {
-						showSelectedSeller(seller);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("Error obteniendo campaña: " + caught.getMessage());
-					}
-				});
+			protected Integer getSellerListPosition(Integer sellerId) {
+				return sellerModulePanel.getSellerListPosition(sellerId);
 			}
-		
+
+			@Override
+			protected Integer getSellerListCount() {
+				return sellerModulePanel.getSellerListCount();
+			}
+
+			@Override
+			protected Seller getPreviusSeller(Integer sellerId) {
+				return sellerModulePanel.getPreviusSeller(sellerId);
+			}
+
+			@Override
+			protected Seller getNextSeller(Integer sellerId) {
+				return sellerModulePanel.getNextSeller(sellerId);
+			}
+
+			@Override
+			protected void onSellerSelectionChange(Seller seller) {
+				showSelectedSeller(seller);
+			}
 		};
 			
 		deckLayoutPanel.add(sellerModulePanel);
@@ -115,7 +135,12 @@ public class SellerModule extends MainEntryPoint {
 	
 	private void showSelectedSeller(Seller seller) {
 		deckLayoutPanel.showWidget(sellerEntryPanel);
-		sellerEntryPanel.setSeller(seller);
+		sellerEntryPanel.setSeller(seller, true);
+	}
+	
+	private void showCreatedSeller(Seller seller) {
+		deckLayoutPanel.showWidget(sellerEntryPanel);
+		sellerEntryPanel.setSeller(seller, false);
 	}
 	
 	private void deleteSeller(Integer sellerId) {
