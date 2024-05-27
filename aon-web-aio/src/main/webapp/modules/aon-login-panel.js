@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import {closeSession, getAuth } from  'aonsolutions/services/service.js';
+import {closeSession, getAuth, getUser } from  'aonsolutions/services/service.js';
 
 export class AonLoginPanel extends AonElement {
 
@@ -34,7 +34,9 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	build() {
-		getAuth().then( auth => this.create(auth));
+		getAuth().then( auth => {
+			this.create(auth);
+		});
 	}
 
 	create( auth ) {

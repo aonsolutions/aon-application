@@ -605,6 +605,7 @@ export class AonHeader extends AonElement {
 			this.getElement('aonHeaderHelpButton'),
 			this.getElement('aonHeaderHomeButton'),
 			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderConfigButton'),
 			this.getElement('aonHeaderNotificationButton'),
 			this.getElement('aonHeaderCompanyListButton')
 		];

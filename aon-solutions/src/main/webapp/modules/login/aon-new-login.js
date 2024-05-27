@@ -363,10 +363,12 @@ export class AonNewLogin extends AonElement {
       .then(() => {
         document.body.style.background = 'transparent';
         loader.stop();
+
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
-        LS.setLanguage(Language.SPANISH);
+        // LS.setLanguage(Language.SPANISH);
+
         LS.setLeftMenu(true);
         LS.setTopMenu(true);
         getCompanies().then(companies => {

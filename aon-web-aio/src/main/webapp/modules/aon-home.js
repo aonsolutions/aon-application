@@ -36,7 +36,6 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		clearAuth();
 		if(LS.isNewTheme()){
 			
 		}

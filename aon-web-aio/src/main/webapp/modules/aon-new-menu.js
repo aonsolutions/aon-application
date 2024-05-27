@@ -362,7 +362,7 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -383,7 +383,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		//icon.style.visibility = "hidden";
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
 	}

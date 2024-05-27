@@ -168,18 +168,21 @@ export class AonIconButton extends AonElement {
       this.style.width = "0px";
       this.style.display = "none";
     }
-
+    let header = this.getElement("aonHeaderWeb");
     if (!this.getAttribute("noHover")) {
       this.getButton().addEventListener("mouseover", () => {
         this.getButton().style.backgroundColor = "#f1f1f1";
         this.getButton().style.color = "black";
       });
-
+      
       this.getButton().addEventListener("mouseleave", () => {
         this.getButton().style.backgroundColor = background;
-        this.getButton().style.color = this.getAttribute("color")
-          ? this.getAttribute("color")
-          : "#5f6368";
+        if((!header.style.backgroundColor)&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"))
+          this.getButton().style.color = "#5f6368";
+        else if(header.style.backgroundColor&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"))
+          this.getButton().style.color = "white";
+        else 
+          this.getButton().style.color = "#5f6368";
       });
 
       this.addEventListener("click", () => {
@@ -248,6 +251,7 @@ export class AonIconButton extends AonElement {
     this.BUTTON_ELEMENT.id  = this.BUTTON;
     return this.BUTTON_ELEMENT;
   }
+
 }
 if(!window.customElements.get('aon-icon-button')){
   window.customElements.define("aon-icon-button", AonIconButton);
