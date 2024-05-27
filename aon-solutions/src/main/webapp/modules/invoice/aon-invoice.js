@@ -5,7 +5,7 @@ import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInv
 	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount, 
 	getInvofoxDocument} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
-	 import { Invoice } from './Invoice.js';
+	 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
 
@@ -1062,7 +1062,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildGeneralCard(parent) {
-		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, MSG.INVOICE_DATA);
+		let dn = "";
+		if (!this.isInvofoxInvoice() && !this.invoice.isRawdoc() ) {
+			dn = MSG.INVOICE_DATA + " (" + getDocumentNumber(this.invoice) + ")";
+		} else {
+			dn = MSG.DOCUMENT_DATA;
+		}
+		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, dn);
 		card.style.width = '50%';
 		parent.appendChild(card);
 

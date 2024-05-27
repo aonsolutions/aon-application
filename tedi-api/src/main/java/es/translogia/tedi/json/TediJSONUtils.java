@@ -12,7 +12,15 @@ public class TediJSONUtils {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private static final SimpleDateFormat DATE_TIME_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
-	
+	private static final SimpleDateFormat DATE_TIME_FORMAT3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+																						
+	private static final SimpleDateFormat[] FORMATS = new SimpleDateFormat[] {
+		 DATE_FORMAT
+		,DATE_TIME_FORMAT
+		,DATE_TIME_FORMAT2
+		,DATE_TIME_FORMAT3
+	};
+
 	private TediJSONUtils() {
 		
 	}
@@ -41,22 +49,24 @@ public class TediJSONUtils {
 	public static Date parseDateTime(String date) {
 		return parseDate(date, DATE_TIME_FORMAT);
 	}
+	
 	public static Date parseDate(String date) {
-		try {
-			return (date == null || "".equals(date.trim())) ? null : DATE_FORMAT.parse(date);
-		} catch (ParseException e0) {
+		if (date == null || "".equals(date.trim())) return null;
+		date = date.replace('"',' ');
+		date = date.trim();
+		ParseException ex = null;
+		for ( SimpleDateFormat format : FORMATS) {
 			try {
-				return (date == null || "".equals(date.trim())) ? null : DATE_TIME_FORMAT.parse(date);
-			} catch (ParseException e1) {
-				try {
-					return (date == null || "".equals(date.trim())) ? null : DATE_TIME_FORMAT2.parse(date);
-				} catch (ParseException e) {
-					System.err.printf( "ERROR: UNABLE to parse '"+date+"' date.\n");
-					Arrays.stream(e.getStackTrace()).skip(2).limit(30).forEach( t -> System.err.println("\tat " + t ));
-					return null;
-				}
+				return format.parse(date);
+			} catch (ParseException e) {
+				ex = e;
 			}
 		}
+		if ( ex != null) {
+			System.err.printf( "ERROR: UNABLE to parse '"+date+"' date.\n");
+			Arrays.stream(ex .getStackTrace()).skip(2).limit(30).forEach( t -> System.err.println("\tat " + t ));
+		}
+		return null;
 	}
 
 	private static Date parseDate(String date, SimpleDateFormat format) {
@@ -77,4 +87,12 @@ public class TediJSONUtils {
 		return (date == null) ? null : format.format(date);
 	}
 	
+public static void main(String[] args) throws ParseException {
+		String d = "2024-04-09T08:09:51Z";
+		System.out.println( d );
+		System.out.println( DATE_TIME_FORMAT3.parse( d ) );
+		
 }
+
+}
+
