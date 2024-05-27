@@ -1,4 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -6,6 +8,7 @@ import java.util.logging.Logger;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.ewok.IConstants;
 
 import org.json.JSONObject;
 
@@ -31,6 +34,13 @@ public class LoginServlet extends AonApiHttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 		String username = json.optString("username");
 		String password = json.optString("password");
+		boolean isTokenExpirable = json.optBoolean("isTokenExpirable");
+		Date expirationDate = new Date();
+		if(isTokenExpirable) {
+			 Calendar calendar = Calendar.getInstance();
+		     calendar.add(Calendar.MINUTE, 25);
+		     expirationDate = calendar.getTime();
+		}		
 		String login = "";
 		if(username.contains("=")) {
 			String[] strs = username.split("=");
@@ -94,7 +104,7 @@ public class LoginServlet extends AonApiHttpServlet{
 	    		}
 	    	}
 	    	
-	    	if(!auth.isEmpty()) token = AonToken.build(auth, null);
+	    	if(!auth.isEmpty()) token = AonToken.build(auth, isTokenExpirable ? expirationDate : null);
 		} else {
 			String domainName = req.getServerName();
 			if(AonStringUtils.isNotBlank(domainName) && !"aonsolutions.org".equals(domainName) 
@@ -110,8 +120,8 @@ public class LoginServlet extends AonApiHttpServlet{
 				
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
-				} else token = AonToken.build(user, null, domain.getName());
+					token = AonToken.build(auth,isTokenExpirable ? expirationDate :  null);
+				} else token = AonToken.build(user,isTokenExpirable ? expirationDate :null, domain.getName());
 			}
 		}
     	JSONObject object = new JSONObject();

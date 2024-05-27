@@ -45,6 +45,19 @@ public class SECURITY {
 		return aonToken;
 	}
 	
+	public static AonToken isAonTokenAndIsNotExpired(String token) {
+	    try {      
+	      JSONObject json = SECURITY.decodeJWT(token);
+	      AonToken aonToken = AonToken.parse(json);
+	      if(!AonStringUtils.isBlank(aonToken.getUuid())) {
+	        aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
+	      }
+	      return aonToken;
+	    }catch(Exception e) {
+	      return null;
+	    }
+	  }
+	
 	public static byte[] hexStringToByteArray(String hex) {
 	    int l = hex.length();
 	    byte[] data = new byte[l / 2];
