@@ -4,7 +4,7 @@ import fullFormConfig from "../forms/formUtils";
 import FormSetup from "../forms/setForm";
 import getEntryOptionModal from "../menus/entryOptions";
 import { Week } from "../../factory/entries";
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 import calcTime, { formatTime } from "../../utilities/timeutils";
 
 import {

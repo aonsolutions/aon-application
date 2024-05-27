@@ -33,7 +33,7 @@ import handleOverlap, {
 
 import { getClosest, placePopup } from "../../utilities/helpers";
 
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 
 // // day view header (row 1)
 // const dvHeaderDayNumber = document.querySelector(".dayview--header-day__title");

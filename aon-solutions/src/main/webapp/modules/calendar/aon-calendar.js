@@ -317,7 +317,7 @@ export class AonCalendar extends AonElement {
               <div class="sb__categories--header" style="background-color:var(--black1);">
     
                 <div class="sbch-col__one">
-                  <div class="sbch-title">My Calendars</div>
+                  <div class="sbch-title">Mis Calendarios</div>
                   <div class="sbch-caret sbch-caret--open">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="var(--white2)">
                       <path d="m12 15.375-6-6 1.4-1.4 4.6 4.6 4.6-4.6 1.4 1.4Z" />
@@ -601,18 +601,18 @@ export class AonCalendar extends AonElement {
             </button>
           </div>
           <div class="monthpicker">
-            <div class="monthpicker__month" data-dp-month="0">January</div>
-            <div class="monthpicker__month" data-dp-month="1">February</div>
-            <div class="monthpicker__month" data-dp-month="2">March</div>
-            <div class="monthpicker__month" data-dp-month="3">April</div>
-            <div class="monthpicker__month" data-dp-month="4">May</div>
-            <div class="monthpicker__month" data-dp-month="5">June</div>
-            <div class="monthpicker__month" data-dp-month="6">July</div>
-            <div class="monthpicker__month" data-dp-month="7">August</div>
-            <div class="monthpicker__month" data-dp-month="8">September</div>
-            <div class="monthpicker__month" data-dp-month="9">October</div>
-            <div class="monthpicker__month" data-dp-month="10">November</div>
-            <div class="monthpicker__month" data-dp-month="11">December</div>
+            <div class="monthpicker__month" data-dp-month="0">Enero</div>
+            <div class="monthpicker__month" data-dp-month="1">Febrero</div>
+            <div class="monthpicker__month" data-dp-month="2">Marzo</div>
+            <div class="monthpicker__month" data-dp-month="3">Abril</div>
+            <div class="monthpicker__month" data-dp-month="4">Mayo</div>
+            <div class="monthpicker__month" data-dp-month="5">Junio</div>
+            <div class="monthpicker__month" data-dp-month="6">Julio</div>
+            <div class="monthpicker__month" data-dp-month="7">Agosto</div>
+            <div class="monthpicker__month" data-dp-month="8">Septiembre</div>
+            <div class="monthpicker__month" data-dp-month="9">Octubre</div>
+            <div class="monthpicker__month" data-dp-month="10">Noviembre</div>
+            <div class="monthpicker__month" data-dp-month="11">Diciembre</div>
           </div>
         </aside>
       </aside>

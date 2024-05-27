@@ -1,4 +1,4 @@
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 
 export default function setHeader(context, component, store) {
   let temp = new Date();

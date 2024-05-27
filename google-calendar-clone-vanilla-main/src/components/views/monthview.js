@@ -32,7 +32,7 @@ import {
 import { setStylingForEvent } from "../../utilities/dragutils";
 
 // naming
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 
 // const resizeoverlay = document.querySelector(".resize-overlay");
 // const sidebar = document.querySelector(".sidebar");

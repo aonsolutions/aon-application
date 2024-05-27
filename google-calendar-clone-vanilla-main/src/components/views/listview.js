@@ -14,7 +14,7 @@ import {
   formatStartEndDate
 } from "../../utilities/dateutils";
 import { formatStartEndTimes } from "../../utilities/timeutils";
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 
 // const dateTimeTitle = document.querySelector(".datetime-content--title");
 // const listview = document.querySelector('.listview');

@@ -1,4 +1,4 @@
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 import setViews from "../../config/setViews";
 import setSidebarDatepicker from "../menus/sidebarDatepicker";
 // const monthsArray = locales.labels.monthsShortLower;

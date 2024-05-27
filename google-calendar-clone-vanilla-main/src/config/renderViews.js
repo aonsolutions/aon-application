@@ -45,42 +45,42 @@ import createCategoryForm from "../components/menus/editCategory";
 // const monthwrapper = document.querySelector(".monthview");
 // const listviewBody = document.querySelector(".listview__body");
 
-//const collapsebtn = document.querySelector(".collapse-view");
+// const collapsebtn = document.querySelector(".collapse-view");
 
 export default function renderViews(context, datepickerContext, store, appBody, collapsebtn) {
   const colorSchemeMeta = document.getElementsByName("color-scheme")[0];
 
-const header = document.querySelector(".h__container");
-const headerLogo = document.querySelector(".logo");
+  const header = document.querySelector(".h__container");
+  const headerLogo = document.querySelector(".logo");
 
-const toggleForm = document.querySelector(".toggle-form");
-const sbToggleForm = document.querySelector(".sb-toggle-form-btn");
-const sbToggleSubBtn = document.querySelector(".sb-data-btn");
-const formOverlay = document.querySelector(".form-overlay");
-const form = document.querySelector(".entries__form");
+  const toggleForm = document.querySelector(".toggle-form");
+  const sbToggleForm = document.querySelector(".sb-toggle-form-btn");
+  const sbToggleSubBtn = document.querySelector(".sb-data-btn");
+  const formOverlay = document.querySelector(".form-overlay");
+  const form = document.querySelector(".entries__form");
 
-const datepicker = document.querySelector(".datepicker");
-const datepickeroverlay = document.querySelector(".datepicker-overlay");
-const dateTimeWrapper = document.querySelector(".datetime-wrapper");
-const dateTimeBtn = document.querySelector(".datetime-content");
+  const datepicker = document.querySelector(".datepicker");
+  const datepickeroverlay = document.querySelector(".datepicker-overlay");
+  const dateTimeWrapper = document.querySelector(".datetime-wrapper");
+  const dateTimeBtn = document.querySelector(".datetime-content");
 
-const sbDatepicker = document.querySelector(".datepicker-sidebar");
-const sbDatepickerBody = document.querySelector(".sbdatepicker__body--dates");
-const sbCategoriesWrapper = document.querySelector(".sb__categories--body-form");
+  const sbDatepicker = document.querySelector(".datepicker-sidebar");
+  const sbDatepickerBody = document.querySelector(".sbdatepicker__body--dates");
+  const sbCategoriesWrapper = document.querySelector(".sb__categories--body-form");
 
-const selectElement = document.querySelector(".select__modal");
-const selectOverlay = document.querySelector(".change-view--overlay");
-const optionswrapper = document.querySelector(".change-view--wrapper");
-const options = document.querySelectorAll(".view-option");
+  const selectElement = document.querySelector(".select__modal");
+  const selectOverlay = document.querySelector(".change-view--overlay");
+  const optionswrapper = document.querySelector(".change-view--wrapper");
+  const options = document.querySelectorAll(".view-option");
 
-const sidebar = document.querySelector(".sidebar");
-const sbFooter = document.querySelector(".sb__info");
-const sbCategories = document.querySelector(".sb__categories");
+  const sidebar = document.querySelector(".sidebar");
+  const sbFooter = document.querySelector(".sb__info");
+  const sbCategories = document.querySelector(".sb__categories");
 
-const viewsContainer = document.querySelector(".container__calendars");
-const yearwrapper = document.querySelector(".yearview");
-const monthwrapper = document.querySelector(".monthview");
-const listviewBody = document.querySelector(".listview__body");
+  const viewsContainer = document.querySelector(".container__calendars");
+  const yearwrapper = document.querySelector(".yearview");
+  const monthwrapper = document.querySelector(".monthview");
+  const listviewBody = document.querySelector(".listview__body");
   function setColorScheme() {
     const setlight = () => {
       context.setColorScheme("light");

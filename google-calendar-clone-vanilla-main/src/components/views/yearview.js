@@ -1,5 +1,5 @@
 import setViews from "../../config/setViews";
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 import { getClosest } from "../../utilities/helpers";
 import { getDateFromAttribute } from "../../utilities/dateutils";
 import setSidebarDatepicker from "../../components/menus/sidebarDatepicker";

@@ -1,4 +1,4 @@
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 import { placePopup } from "../../utilities/helpers";
 class FormConfig {
   constructor () {

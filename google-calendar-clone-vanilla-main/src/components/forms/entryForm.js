@@ -2,7 +2,7 @@
 import setViews from "../../config/setViews";
 import setDatepicker from "../menus/datepicker";
 import setSidebarDatepicker from "../menus/sidebarDatepicker";
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 
 // svgs
 import { createCheckIcon } from "../../utilities/svgs";

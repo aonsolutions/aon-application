@@ -1,4 +1,4 @@
-import locales from "../../locales/en";
+import locales from "../../locales/es";
 import { createCheckIcon } from "../../utilities/svgs";
 import { isNumeric, placePopup } from "../../utilities/helpers";
 const checkIcon = createCheckIcon('var(--taskcolor');
