@@ -600,7 +600,7 @@ export class AonHeader extends AonElement {
 	}
 	
 	
-	setColor(color) {
+	setColor(color, backgroundColor) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
 			this.getElement('aonHeaderHomeButton'),
@@ -621,7 +621,10 @@ export class AonHeader extends AonElement {
 		//
 		if ( color ) {
 			texts.forEach( (text) => text.style.color = color );
-			buttons.forEach( (button) => button.getButton().style.color = color );
+			buttons.forEach( (button) => {
+				button.setColor(color);
+				button.setBackgroundColor(backgroundColor);
+			});
 			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
 		} else {
 			imgs.forEach( (img) => img.style.removeProperty ('filter') );

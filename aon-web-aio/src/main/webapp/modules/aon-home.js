@@ -82,7 +82,7 @@ export class AonHome extends AonElement {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
 			}
-			aonHeader.setColor(app.color && '#fff');
+			aonHeader.setColor(app.color && '#fff', app.color);
 			aonHeader.setBackgroundColor(app.color);
 		});
 
