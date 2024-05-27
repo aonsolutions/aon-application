@@ -66,12 +66,18 @@ import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRAddress;
+import net.aonsolutions.invofox.model.OCRApiKey;
+import net.aonsolutions.invofox.model.OCRApiKeyResponse;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
+import net.aonsolutions.invofox.model.OCREndpoint;
+import net.aonsolutions.invofox.model.OCREnvironment;
+import net.aonsolutions.invofox.model.OCREnvironmentResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCREvent;
 import net.aonsolutions.invofox.model.OCRField;
 import net.aonsolutions.invofox.model.OCRInfoResponse;
 import net.aonsolutions.invofox.model.OCRInvoice;
@@ -79,8 +85,11 @@ import net.aonsolutions.invofox.model.OCRLine;
 import net.aonsolutions.invofox.model.OCRLogin;
 import net.aonsolutions.invofox.model.OCRLoginToken;
 import net.aonsolutions.invofox.model.OCRPage;
+import net.aonsolutions.invofox.model.OCRSecurity;
 import net.aonsolutions.invofox.model.OCRSeverity;
 import net.aonsolutions.invofox.model.OCRType;
+import net.aonsolutions.invofox.model.OCRUser;
+import net.aonsolutions.invofox.model.OCRWebhook;
 import net.aonsolutions.invofox.model.OCRWord;
 import solutions.aon.aws.s3.S3;
 
@@ -89,6 +98,7 @@ import solutions.aon.aws.s3.S3;
 public class InvofoxServlet extends AonApiHttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(InvofoxServlet.class.getName());
+	private static final String WEBHOOK_URL = "https://7ocqe3muv7hdurqizaxljwsc4e0xcvgl.lambda-url.eu-west-1.on.aws";
 
 	public static final String DOCUMENTS = "/";
 	public static final String DOCUMENT = "/document";
@@ -96,6 +106,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static final String TEXT_CONTENT = "/text_content";
 	public static final String CONFIGURATION = "/configuration";
 	public static final String ACCEPT = "/accept";
+	public static final String LOGIN = "/login";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -137,6 +148,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 
 			Object object = new AonRouting(api)
+					.addRoute(LOGIN, InvofoxServlet::invofoxLogin)
 					.addRoute(DOCUMENT, InvofoxServlet::updateDocument)
 					.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
 					.addRoute(ACCEPT, InvofoxServlet::acceptDocument).apply();
@@ -160,7 +172,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			String documentId = params.optString(IJsonNames.ID);
 
 			InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
-			if(invofoxConfiguration.isAutoAccept()) {
+//			if(invofoxConfiguration.isAutoAccept()) {
 				OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(),
 						invofoxConfiguration.getApiUrl(), documentId);
 				
@@ -175,7 +187,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
-				if (inv != null && !AonStringUtils.isBlank(inv.getTediCategory()) && publicState != null && OCRSeverity.approved.equals(publicState)) {
+				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)) {
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, null);
 					if (inv != null && inv.getId() != null) {
@@ -192,7 +204,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				if(invofoxConfiguration.isAutoRecord()) {					
 					// TODO RECORD INVOICE!
 				}
-			}
+//			}
 			
 			return new JSONObject();
 		}
@@ -261,7 +273,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		String token = OCRInvofox.getLoginToken(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl())
 				.getLoginToken().orElse(new OCRLoginToken()).getToken().orElse(null);
 		String token2 = OCRInvofox
-				.getLogin("app@aonsolutions.es", "U%4LjF~ai$5ZW[Z", invofoxConfiguration.getApiUrl()).getLogin()
+				.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
 				.orElse(new OCRLogin()).getToken().orElse(null);
 
 		Company cp = AON.getCompany(api.getDomain(), api.getUser(),
@@ -274,7 +286,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				OCRCompany ocrCompany = companies.get(0);
 				OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
 				type.ifPresent(ocrDocumentParams::withType);
-				ocrDocumentParams.withEnvironment(invofoxConfiguration.isTest() ? "65491eee49f881000dd14c72" : "64804a43d883e2000ac0423a");
+				ocrDocumentParams.withEnvironment(invofoxConfiguration.getEnvironment());
 				ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC);
 				ocrDocumentParams.withCompany(ocrCompany.getId()).skiping(page * perPage);
 				ocrDocumentParams.withCompanyActsLike(companyActsLike);
@@ -313,7 +325,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		String companyActsLike = JsonUtils.getString(api.getData(), IJsonNames.COMPANY_ACTS_LIKE);
 		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser().getLogin());
 		String token = OCRInvofox
-				.getLogin("app@aonsolutions.es", "U%4LjF~ai$5ZW[Z", invofoxConfiguration.getApiUrl()).getLogin()
+				.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
 				.orElse(new OCRLogin()).getToken().orElse(null);
 		Company cp = AON.getCompany(api.getDomain(), api.getUser(),
 				f -> f.getDomainProperty().eq(api.getDomain().getId()));
@@ -327,7 +339,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				type.ifPresent(ocrDocumentParams::withType);
 				ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC);
 				ocrDocumentParams.withCompany(ocrCompany.getId());
-				ocrDocumentParams.withEnvironment(invofoxConfiguration.isTest() ? "65491eee49f881000dd14c72" : "64804a43d883e2000ac0423a");
+				ocrDocumentParams.withEnvironment(invofoxConfiguration.getEnvironment());
 				ocrDocumentParams.withCompanyActsLike(companyActsLike);
 				publicStates.forEach(publicState -> OCRSeverity.safeValueOf((String) publicState)
 						.ifPresent(ocrDocumentParams::withPublicState));
@@ -342,16 +354,129 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return json;
 	}
 
+	public static JSONObject invofoxLogin(AonApiData api) {
+		String user = JsonUtils.getString(api.getData(), IJsonNames.USER);
+		String password = JsonUtils.getString(api.getData(), IJsonNames.PASSWORD);
+		OCRLogin ocrLogin = OCRInvofox
+			.getLogin(user, password, InvofoxConfiguration.DEFAULT_API_URL).getLogin()
+			.orElse(new OCRLogin());		
+
+		String token = ocrLogin.getToken().orElse(null);
+		String account = ocrLogin.getUser().orElse(new OCRUser()).getAccount().orElse(null);
+		
+		if(token != null && account != null) {
+			List<OCREnvironment> environments = OCRInvofox.getEnvironments(token, account).getEnvironments();
+			if(!environments.isEmpty()) {
+				OCREnvironment environment = environments.getFirst();
+				
+				OCRApiKey apikey = environment.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
+				if(AonStringUtils.isBlank(apikey.getKey())) {
+					OCRApiKeyResponse resp = OCRInvofox.createApikey(token, environment.getId());
+					apikey = resp.getApikey().orElse(new OCRApiKey());
+				}
+
+				OCRWebhook webhook = environment.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
+				if(webhook == null) {
+					webhook = new OCRWebhook()
+						.setEndpoint(new OCREndpoint()
+							.setHeaders(new LinkedList<>())
+							.setMethod("POST")
+							.setUrl(WEBHOOK_URL))
+						.setEvents(OCREvent.getValues())
+						.setSecurity(new OCRSecurity()
+								.setAlgorithm("sha256")
+								.setSecret(""))
+						.setActive(true);
+						
+					OCRInvofox.createWebhook(token, environment.getId(), webhook);
+				}
+				
+				InvofoxConfiguration invofoxConfiguration = new InvofoxConfiguration()
+						.setPersonalized(true)
+						.setUser(user)
+						.setPass(password)
+						.setApiKey(apikey.getKey())
+						.setEnvironment(environment.getId());
+				invofoxConfiguration = AON.saveInvofoxConfiguration(api.getDomain(), api.getUser().getLogin(), invofoxConfiguration);
+				return InvofoxConfigurationJSON.toJSON(invofoxConfiguration);	
+			} else throw new AonApiException("No se ha encontrado ningún entorno en Invofox");
+		} else throw new AonApiException("Error al iniciar sesión en Invofox");
+	}
+	
 	public static JSONObject getConfiguration(AonApiData api) {
-		return InvofoxConfigurationJSON.toJSON(AON.getInvofoxConfiguration(api.getDomain(), api.getUser()));
-	}
+		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
+		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
+		if(!invofoxConfiguration.isLoginRequired()) {
+			OCRLogin ocrLogin = OCRInvofox
+					.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
+					.orElse(new OCRLogin());
+			
+			String token = ocrLogin.getToken().orElse(null);
+			String account = ocrLogin.getUser().orElse(new OCRUser()).getAccount().orElse(null);
+			
+			if(token != null && account != null) {
+				JSONArray environments = new JSONArray();
+				
+				OCRInvofox.getEnvironments(token, account).getEnvironments().stream().forEach(env-> {
+					OCRApiKey apikey = env.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
+					if(AonStringUtils.isBlank(apikey.getKey())) {
+						OCRApiKeyResponse resp = OCRInvofox.createApikey(token, env.getId());
+						apikey = resp.getApikey().orElse(new OCRApiKey());
+					}
+					JSONObject envJSON = new JSONObject();
+					envJSON.put(IJsonNames.ID, env.getId());
+					envJSON.put(IJsonNames.NAME, env.getName());
+					envJSON.put(IJsonNames.API_KEY, apikey.getKey());
+					environments.put(envJSON);
+				});
+				invofoxConfigurationJSON.put("environments", environments);
+			}
+		}
 
-	private static JSONObject saveConfiguration(AonApiData api) {
+		return invofoxConfigurationJSON;
+	}
+	
+	public static JSONObject saveConfiguration(AonApiData api) {
 		InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationJSON.fromJSON(api.getData());
-		return InvofoxConfigurationJSON
-				.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), invofoxConfiguration));
-	}
+		AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), invofoxConfiguration);
+		
+		invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
 
+		OCRLogin ocrLogin = OCRInvofox
+				.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
+				.orElse(new OCRLogin());
+		
+		String token = ocrLogin.getToken().orElse(null);
+		
+		if(token != null) {
+			OCREnvironmentResponse response = OCRInvofox.getEnvironment(token, invofoxConfiguration.getEnvironment());
+			response.getEnvironment().ifPresent(r -> {
+				OCRApiKey apikey = r.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(null);
+				if(apikey == null) {
+					OCRInvofox.createApikey(token, r.getId());
+				}
+				
+				OCRWebhook webhook = r.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
+				if(webhook == null) {
+					webhook = new OCRWebhook()
+						.setEndpoint(new OCREndpoint()
+							.setHeaders(new LinkedList<>())
+							.setMethod("POST")
+							.setUrl(WEBHOOK_URL))
+						.setEvents(OCREvent.getValues())
+						.setSecurity(new OCRSecurity()
+								.setAlgorithm("sha256")
+								.setSecret(""))
+						.setActive(true);
+						
+					OCRInvofox.createWebhook(token, r.getId(), webhook);
+				}
+			});
+		}
+		
+		return InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
+	}
+	
 	private static JSONObject updateDocument(AonApiData api) {
 		OCRDocument document = OCRDocumentJSON.from(api.getData());
 		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser().getLogin());

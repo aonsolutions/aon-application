@@ -1962,7 +1962,7 @@ public class Bases {
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
-			put("01", new HCretaData(SALARY_HOURS.getName()) {
+			put("01", new DistributeHCretaData(SALARY_HOURS.getName()) {
 				@Override
 				public Double get(Salary salary, Fecha desde, Fecha hasta)
 				throws NoSuchVariableException,

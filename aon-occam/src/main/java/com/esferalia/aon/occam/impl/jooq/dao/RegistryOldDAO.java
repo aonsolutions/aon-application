@@ -30,6 +30,7 @@ import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,15 +39,12 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.Item;
-import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -66,7 +64,6 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
-import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Question;
@@ -1030,6 +1027,14 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new RegistryAddInfoFiller());
 	}
 	
+	public static List<String> getRAddInfoAviableAttributes(AONContext ctx, RegistryAddInfoFilter filter){
+		return ctx.getDslContext().selectDistinct(RADDINFO.ATTRIBUTE)
+				.from(RADDINFO)
+				.where(RADDINFO_PROPERTIES.getConditions(filter))
+				.orderBy(RADDINFO.ATTRIBUTE)
+				.fetch(RADDINFO.ATTRIBUTE).stream().collect(Collectors.toList());
+	}
+	
 	public static RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo){
 		return ctx.getDslContext().insertInto(RADDINFO,RADDINFO.DOMAIN, RADDINFO.REGISTRY, RADDINFO.ATTRIBUTE, RADDINFO.VALUE, RADDINFO.VALUE_DATE)
 			.values(raddinfo.getDomain(), raddinfo.getRegistry(), raddinfo.getAttribute(), raddinfo.getValue(), new java.sql.Date(raddinfo.getDate().getTime()))
@@ -1039,6 +1044,7 @@ public class RegistryOldDAO {
 	
 	public static RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo){
 		return ctx.getDslContext().update(RADDINFO)
+				.set(RADDINFO.ATTRIBUTE, raddinfo.getAttribute())
 				.set(RADDINFO.VALUE, raddinfo.getValue())
 				.set(RADDINFO.VALUE_DATE, new java.sql.Date(raddinfo.getDate().getTime()))
 				.where(RADDINFO.ID.eq(raddinfo.getId()))
@@ -1048,11 +1054,18 @@ public class RegistryOldDAO {
 	
 	public static void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId){
 		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO.ID.eq(raddinfoId)).execute();
-		ctx.log().info("DELETE RBANK ("+i+") id: " + raddinfoId);
+		ctx.log().info("DELETE RADDINFO ("+i+") id: " + raddinfoId);
 	}
 
 	public static void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter){
 		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
+	}
+	
+	public static RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo){
+		if(registryAddInfo.getId() == null)
+			return insertRegistryAddInfo(ctx, registryAddInfo);
+		else
+			return updateRegistryAddInfo(ctx, registryAddInfo);
 	}
 	
 	// ------------------- RDIRSTAFF

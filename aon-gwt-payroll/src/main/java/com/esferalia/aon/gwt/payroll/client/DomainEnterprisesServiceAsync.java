@@ -173,8 +173,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterprisesCosts(getCurrentDomainName(), enterpriseIds, callback);
 	}
 
-	public void getCCCEmployees(Date month, List<Integer> cccIds, AsyncCallback<List<Employee>> callback) {
-		enterprisesServiceAsync.getCCCEmployees(getCurrentDomainName(), month,  cccIds, callback);
+	public void getCCCEmployees(Date startMonth, Date endMonth, List<Integer> cccIds, AsyncCallback<List<Employee>> callback) {
+		enterprisesServiceAsync.getCCCEmployees(getCurrentDomainName(), startMonth, endMonth, cccIds, callback);
 	}
 
 	public void getBonusConcepts(int offset, int limit, AsyncCallback<List<Bonus>> callback) {

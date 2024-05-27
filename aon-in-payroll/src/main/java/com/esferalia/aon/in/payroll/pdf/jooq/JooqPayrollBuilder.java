@@ -882,7 +882,7 @@ public class JooqPayrollBuilder {
 	}
 
 	private static List<Date> listFestives(AONContext aonContext, Integer salaryId, Date salaryStart, Date salaryEnd) {
-		Record payrollWokplaceRecord = aonContext.getDslContext().select().from(PAYROLL_WORKPLACE)
+		Result<Record> payrollWokplaceRecords = aonContext.getDslContext().select().from(PAYROLL_WORKPLACE)
 			.join(WORKPLACE)
 			.on(WORKPLACE.ID.eq(PAYROLL_WORKPLACE.WORKPLACE))
 			.join(CONTRACT)
@@ -890,10 +890,12 @@ public class JooqPayrollBuilder {
 			.join(SALARY)
 			.on(SALARY.CONTRACT.eq(CONTRACT.ID))
 			.where(SALARY.ID.eq(salaryId))
-			.fetchOne();
+			.fetch();
 		
-		if(null == payrollWokplaceRecord)
+		if(payrollWokplaceRecords.isEmpty())
 			return new ArrayList<>();
+		
+		Record payrollWokplaceRecord = payrollWokplaceRecords.get(payrollWokplaceRecords.size() - 1);
 		
 		Integer holidayId = aonContext.getDslContext().select(CALENDAR.HOLIDAY).from(CALENDAR)
 				.where(CALENDAR.ID.eq(payrollWokplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR)))

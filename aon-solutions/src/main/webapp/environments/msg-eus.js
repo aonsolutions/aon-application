@@ -75,6 +75,7 @@ export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
 export const CLOSE = 'Itxi';
 export const CLOSE_SESSION = 'Saioa Itxi';
+export const CLOSED = 'Itxita';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';

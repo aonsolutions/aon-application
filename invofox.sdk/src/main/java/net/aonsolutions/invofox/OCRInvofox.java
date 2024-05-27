@@ -15,29 +15,40 @@ import java.util.function.Supplier;
 
 import org.json.JSONObject;
 
+import net.aonsolutions.invofox.json.OCRApiKeyResponseJSON;
 import net.aonsolutions.invofox.json.OCRCompaniesResponseJSON;
 import net.aonsolutions.invofox.json.OCRCompanyJSON;
 import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
+import net.aonsolutions.invofox.json.OCREnvironmentResponseJSON;
+import net.aonsolutions.invofox.json.OCREnvironmentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
 import net.aonsolutions.invofox.json.OCRInfoResponseJSON;
 import net.aonsolutions.invofox.json.OCRLoginResponseJSON;
 import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
+import net.aonsolutions.invofox.json.OCRWebhookJSON;
+import net.aonsolutions.invofox.json.OCRWebhookResponseJSON;
+import net.aonsolutions.invofox.model.OCRApiKey;
+import net.aonsolutions.invofox.model.OCRApiKeyResponse;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
 import net.aonsolutions.invofox.model.OCRCompanyResponse;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
+import net.aonsolutions.invofox.model.OCREnvironmentResponse;
+import net.aonsolutions.invofox.model.OCREnvironmentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
 import net.aonsolutions.invofox.model.OCRInfoResponse;
 import net.aonsolutions.invofox.model.OCRLoginResponse;
 import net.aonsolutions.invofox.model.OCRLoginTokenResponse;
 import net.aonsolutions.invofox.model.OCRResponse;
 import net.aonsolutions.invofox.model.OCRSeverity;
+import net.aonsolutions.invofox.model.OCRWebhook;
+import net.aonsolutions.invofox.model.OCRWebhookResponse;
 
 public class OCRInvofox {
 
@@ -45,6 +56,7 @@ public class OCRInvofox {
 
 
 	private static final int STATUS_OK = 200;
+	private static final int STATUS_OK1 = 201;
 
 
 	private static final String API_URL = "api-url";
@@ -84,6 +96,26 @@ public class OCRInvofox {
         	return "https://app.invofox.com/api/login";
         }
         
+        private static String getAccountURL(String account) {
+        	return "https://api.invofox.com/frontend/accounts/" + account;
+        }
+        
+        private static String getEnvironmentURL(String environment) {
+        	return "https://api.invofox.com/environments/" + environment;
+        }
+        
+        private static String getApiKeyURL(String environment) {
+        	return "https://api.invofox.com/environments/" + environment +"/apiKeys";
+        }
+        
+        private static String getWebhookURL(String environment) {
+        	return "https://api.invofox.com/environments/" + environment +"/webhooks";
+        }
+        
+        private static String getWebhookURL(String environment, String webhook) {
+        	return "https://api.invofox.com/environments/" + environment +"/webhooks/" + webhook;
+        }
+        
 	
 	// ---------------------------------------------------------------------- [POST METHOD]
 	private static <T extends OCRResponse> T post(String apiKey, String url, JSONObject postData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
@@ -101,6 +133,31 @@ public class OCRInvofox {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
 			.header(API_KEY, apiKey)
+			.header("accept", APPLICATION_JSON)
+			.header("Content-Type", APPLICATION_JSON)
+			.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
+			.build();
+		return HttpClient.newBuilder()
+			.build()
+			.send(request, BodyHandlers.ofString());
+	}
+	
+	
+	private static <T extends OCRResponse> T postWithToken(String token, String url, JSONObject postData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = postWithToken(token, url, postData);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
+	private static HttpResponse<String> postWithToken(String token, String url, JSONObject postData) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri( URI.create(url) )
+			.header(API_TOKEN, token)
 			.header("accept", APPLICATION_JSON)
 			.header("Content-Type", APPLICATION_JSON)
 			.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
@@ -179,6 +236,31 @@ public class OCRInvofox {
 			.build()
 			.send(request, BodyHandlers.ofString());
 	}
+	
+	// ---------------------------------------------------------------------- [PUT METHOD]
+	private static <T extends OCRResponse> T putWithToken(String token, String url, JSONObject putData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = putWithToken(token, url, putData);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
+	private static HttpResponse<String> putWithToken(String token, String url, JSONObject putData) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri( URI.create(url) )
+			.header(API_TOKEN, token)
+			.header("accept", APPLICATION_JSON)
+			.header("Content-Type", APPLICATION_JSON)
+			.PUT( HttpRequest.BodyPublishers.ofString(putData.toString()) )
+			.build();
+		return HttpClient.newBuilder()
+			.build()
+			.send(request, BodyHandlers.ofString());
+	}
 
 	// ---------------------------------------------------------------------- [GET METHOD]
 	private static <T extends OCRResponse> T get(String apiKey, String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
@@ -240,7 +322,7 @@ public class OCRInvofox {
 	private static <T extends OCRResponse> T giveBack(HttpResponse<String> response, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
 		JSONObject responseJson = new JSONObject(response.body());
 		T t = null;
-		if (STATUS_OK != response.statusCode()) {
+		if (STATUS_OK != response.statusCode() && STATUS_OK1 != response.statusCode()) {
 			t = supplier.get();
 			t.setError(OCRErrorJSON.from(responseJson));
 		} else {
@@ -263,6 +345,27 @@ public class OCRInvofox {
 	public static OCRLoginTokenResponse getLoginToken(String apiKey, String apiUrl) {
 		return post(apiKey, getLoginTokenURL(apiUrl), new JSONObject(), OCRLoginTokenResponse::new, OCRLoginTokenResponseJSON::from);
 	}
+	
+	// ---------------------------------------------------------------------- [ENVIRONMENT]
+	
+	public static OCREnvironmentsResponse getEnvironments(String token, String account) {
+		return getWithToken(token, getAccountURL(account), OCREnvironmentsResponse::new, OCREnvironmentsResponseJSON::from);
+	}
+	
+	public static OCREnvironmentResponse getEnvironment(String token, String environment) {
+		return getWithToken(token, getEnvironmentURL(environment), OCREnvironmentResponse::new, OCREnvironmentResponseJSON::from);
+	}
+	
+	public static OCRWebhookResponse createWebhook(String token, String environment, OCRWebhook webhook) {
+		OCRWebhookResponse response = postWithToken(token, getWebhookURL(environment), new JSONObject(), OCRWebhookResponse::new, OCRWebhookResponseJSON::from);
+		webhook.setId(response.getWebhook().orElse(new OCRWebhook()).getId());
+		return putWithToken(token, getWebhookURL(environment, webhook.getId()), OCRWebhookJSON.to(webhook), OCRWebhookResponse::new, OCRWebhookResponseJSON::from);
+	}
+	
+	public static OCRApiKeyResponse createApikey(String token, String environment) {
+		return postWithToken(token, getApiKeyURL(environment), new JSONObject(), OCRApiKeyResponse::new, OCRApiKeyResponseJSON::from);
+	}
+	
 	
 	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentsResponse getDocuments(String apiKey, String apiUrl, OCRDocumentsParams params) {

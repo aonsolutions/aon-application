@@ -61,7 +61,8 @@ public enum AonRole  implements Serializable {
 	GROUPWARE,
 	CONSOLE,				// ACCESO A CONSOLE (sig.aonsolutions.org)
 	INVOFOX,
-	SERES
+	SERES,
+	FACTURAE
 	;
 	
 	public Byte value(){

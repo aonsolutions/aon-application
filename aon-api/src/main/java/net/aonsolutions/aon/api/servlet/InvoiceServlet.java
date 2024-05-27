@@ -939,8 +939,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
 		
 		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
-				InvofoxConfigurationJSON.toJSON(AON.saveInvofoxConfiguration(api.getDomain(), api.getUser(), 
-						InvofoxConfigurationJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), "invofox")))) 
+				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), "invofox"))) 
 				: new JSONObject();
 		
 		return new JSONObject()

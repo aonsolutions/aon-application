@@ -48,6 +48,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_filter")
 	String aonIconFilter();
 	
+	@ClassName("aon_icon_filter_list")
+	String aonIconFilterList();
+	
+	@ClassName("aon_icon_filter_list_off")
+	String aonIconFilterListOff();
+	
 	@ClassName("aon_icon_drop_down")
 	String aonIconDropDown();
 	
@@ -107,6 +113,12 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_excel")
 	String aonIconExcel();
+	
+	@ClassName("aon_icon_circle_green")
+	String aonIconCircleGreen();
+	
+	@ClassName("aon_icon_circle_red")
+	String aonIconCircleRed();
 
 	@ClassName("aon_icon_word")
 	String aonIconWord();
@@ -314,6 +326,12 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_work_off")
 	String aonIconWorkOff();
+	
+	@ClassName("aon_icon_work_add")
+	String aonIconWorkAdd();
+	
+	@ClassName("aon_icon_comment")
+	String aonIconComment();
 	
 	@ClassName("aon_icon_web")
 	String aonIconWeb();
@@ -840,6 +858,36 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_item_flex")
 	String aonItemFlex();
+	
+	@ClassName("aon_utility_option")
+	String aonUtilityOption();
+	
+	@ClassName("aon_custom_card")
+	String aonCustomCard();
+	
+	@ClassName("aon_custom_card_button")
+	String aonCustomCardButton();
+	
+	@ClassName("aon_custom_row")
+	String aonCustomRow();
+	
+	@ClassName("aon_custom_row_button")
+	String aonCustomRowButtom();
+	
+	@ClassName("aon_custom_text_box")
+	String aonCustomTextBox();
+	
+	@ClassName("aon_custom_text_box_title")
+	String aonCustomTextBoxTitle();
+	
+	@ClassName("aon_custom_text_box_input")
+	String aonCustomTextBoxInput();
+	
+	@ClassName("aon_custom_text_box_input_no_border")
+	String aonCustomTextBoxInputNoBorder();
+	
+	@ClassName("aon_custom_search_box")
+	String aonCustomSearchBox();
 
 	@ClassName("aon_flex_block_inline")
 	String aonFlexBlockInline();

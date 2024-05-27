@@ -135,8 +135,8 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvoice(this.invoice.type, this.invoice);
 		} else if(this.value){
 			this.aonInvoiceById(this.value);
-		} else if(this.isBeta()) this.aonInvoiceHome();
-		else this.selectOption(this.option);
+		} else this.aonInvoiceHome();
+		// else this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -309,10 +309,9 @@ export class AonInvoicePanel extends AonElement {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
-				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
-
 				addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
 			this.updateCounterHome();
 		});
@@ -323,10 +322,9 @@ export class AonInvoicePanel extends AonElement {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
-				this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
-
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
 			this.updateCounterHome();
 		});
@@ -337,10 +335,9 @@ export class AonInvoicePanel extends AonElement {
 			this.counterActive = true;
 			if(r && r.count && r.count > 0) {
 				addCounter(OPTION.INVOICE_PENDINGS, r.count);
-				this.updateCounterSpan(OPTION.RAWDOC_INBOX);
-
 				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
 			}
+			this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
 			this.updateCounterHome();
 		});
@@ -384,9 +381,21 @@ export class AonInvoicePanel extends AonElement {
 		let pendingRecordNumber = this.getElement('pendingRecordNumber');
 		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
 
-		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
-		let pendingNumber = this.getElement('pendingNumber');
-		if(pendingNumber) pendingNumber.innerHTML = pending;
+//		let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
+//		let pendingNumber = this.getElement('pendingNumber');
+//		if(pendingNumber) pendingNumber.innerHTML = pending;
+
+		let pendingIssuedCounter = getCounter()[OPTION.RAWDOC_INBOX_ISSUED.id] || 0;
+		let pendingIssuedNumber = this.getElement('pendingIssuedNumber');
+		if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
+
+		let pendingReceivedCounter = getCounter()[OPTION.RAWDOC_INBOX_RECEIVED.id] || 0;
+		let pendingReceivedNumber = this.getElement('pendingReceivedNumber');
+		if(pendingReceivedNumber) pendingReceivedNumber.innerHTML = pendingReceivedCounter;
+
+		let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET.id] || 0;
+		let pendingTicketNumber = this.getElement('pendingTicketNumber');
+		if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
 
 		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
 		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
@@ -429,6 +438,7 @@ export class AonInvoicePanel extends AonElement {
 		let invoiceList = this.getElement('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
+			invoiceList.invofoxFilter = this.invofoxFilter;
 			invoiceList.init();
 		} else {
 			let table = this.isMobile() 

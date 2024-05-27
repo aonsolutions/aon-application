@@ -92,7 +92,13 @@ import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Period;
 
 public class SistemaRED2AON {
-
+	
+	@FunctionalInterface
+	public static interface CalcsCallback {
+		default void end(){};
+		void accept(Salary salary);
+		default void start(int employees){};
+	}
 	
 	public static void main(String[] args) throws java.text.ParseException, SQLException, AonConnectionException {
 		
@@ -328,7 +334,7 @@ public class SistemaRED2AON {
 			String ccc, 
 			java.sql.Date month,
 			LiquidationType liquidationType,
-			Consumer<Salary> callback) {
+			CalcsCallback callback) {
 		addCalcs(
 		login, 
 		domainName, 
@@ -356,7 +362,7 @@ public class SistemaRED2AON {
 		java.sql.Date month,
 		LiquidationType liquidationType,
 		String[] nafs,
-		Consumer<Salary> callback) {
+		CalcsCallback callback) {
 	    
 	    java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(month);
 	    
@@ -405,7 +411,7 @@ public class SistemaRED2AON {
 			java.sql.Date startDate, 
 			java.sql.Date endDate ,
 			String[] nafs,
-			Consumer<Salary> callback ) throws SegSocialException {
+			CalcsCallback callback ) throws SegSocialException {
 		    	
 		    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
 			addCalcs(login, 
@@ -435,7 +441,7 @@ public class SistemaRED2AON {
 			String ccc, 
 			java.sql.Date startDate, 
 			java.sql.Date endDate ,
-			Consumer<Salary> callback ) throws SegSocialException {
+			CalcsCallback callback ) throws SegSocialException {
 		    	
 		    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
 			addCalcs(login, 
@@ -497,7 +503,7 @@ public class SistemaRED2AON {
 			java.sql.Date endDate ,
 			LiquidationType liquidationType,
 			String[] nafs,
-			Consumer<Salary> callback
+			CalcsCallback callback
 			) throws SegSocialException {
 		
 		String authorized = getAuthorized(login, domainId, domainName, ccc);
@@ -506,6 +512,10 @@ public class SistemaRED2AON {
 		
 		nafs = employees.keySet().toArray(new String[employees.size()]);
 		
+		int employeeCount = employees.values().stream().collect(Collectors.summingInt(List::size));
+		
+		callback.start(employeeCount);
+
 		SistemaRED.getCalcByNAF(
 				certificateData, 
 				certificatePassword, 
@@ -557,6 +567,7 @@ public class SistemaRED2AON {
 						}
 					})
 				);
+		callback.end();
 	}
 	
 	public static void addCalcs( 
@@ -568,7 +579,7 @@ public class SistemaRED2AON {
 		String certificateType, 
 		Liquidacion liquidacion,
 		String[] nafs,
-		Consumer<Salary> callback
+		CalcsCallback callback
 		) throws SegSocialException {
 	
 	
@@ -586,7 +597,10 @@ public class SistemaRED2AON {
 		Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
 		
 		nafs = employees.keySet().toArray(new String[employees.size()]);
-	
+		
+		int employeeCount = employees.values().stream().collect(Collectors.summingInt(List::size));
+		
+		callback.start(employeeCount);
 		
 		SistemaRED.getCalcByNAF(
 				certificateData, 
@@ -643,6 +657,8 @@ public class SistemaRED2AON {
 					})
 				
 				);
+		
+		callback.end();
 	
 	}
 

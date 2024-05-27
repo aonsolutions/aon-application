@@ -15,6 +15,7 @@ import * as LS from '../../../services/localStorageService.js';
 import {openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
+import { deleteElaborationPackage } from '../../../services/warehouseService.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -86,7 +87,9 @@ export class AonMobilePackage extends AonElement {
 
 		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
 		toolbar.removeButton(ACTION.PRINT.id);
+		toolbar.addButtonAfter(ACTION.DELETE, () => this.delete());
 		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
+		
 	}
 
   	buildPackage(parent){
@@ -195,6 +198,18 @@ export class AonMobilePackage extends AonElement {
 
 	print() {
 		openFileUrl(this.fileUrl, 'application/pdf');
+	}
+
+	delete() {
+		let aonWarehouse = this.getElement('aonWarehouse');
+		let d = document.getElementById(aonWarehouse.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE);
+		d.setContentHTML('Estás seguro de eliminar el Envase');
+		d.addAcceptAction(() => deleteElaborationPackage(this.packaging.id)
+			.then(() => {}));
+		d.open();
 	}
 
 	

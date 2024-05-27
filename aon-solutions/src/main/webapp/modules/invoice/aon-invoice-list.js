@@ -30,7 +30,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	set id(id) {
-		this.setAttribute(CONSTANT.FILTER, id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	constructor () {

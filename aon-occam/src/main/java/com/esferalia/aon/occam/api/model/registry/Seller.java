@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 
 public class Seller extends Registry implements Serializable {
@@ -14,6 +15,7 @@ public class Seller extends Registry implements Serializable {
 	private CommissionType commissionType;
 	private Scope scope;
 	private SellerStatus status;
+	private TaskHolder taskHolder;
 	
 	public Seller copy(Registry registry) {
 		return super.copy( registry, this);
@@ -77,6 +79,18 @@ public class Seller extends Registry implements Serializable {
 			&& (getScope() == null || getScope().isEmpty())
 			&& getStatus() == null
 			&& (getCommissionType() == null || getCommissionType().isEmpty());
+	}
+
+	public TaskHolder getTaskHolder() {
+		if(taskHolder == null) {
+			taskHolder = new TaskHolder();
+		}
+		return taskHolder;
+	}
+	
+	public Seller setTaskHolder(TaskHolder taskHolder) {
+		this.taskHolder = taskHolder;
+		return this;
 	}
 	
 }

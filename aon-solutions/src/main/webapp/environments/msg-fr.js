@@ -76,6 +76,7 @@ export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
 export const CLOSE = 'Cerrar';
 export const CLOSE_SESSION = 'Fermer la session';
+export const CLOSED = 'Fermé';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';

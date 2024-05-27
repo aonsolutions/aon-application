@@ -315,6 +315,8 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		List<PDFPayment> others = getOtherPayments(allPayments);
 
+		List<PDFPayment> inKindPaymets = DefaultPayrollFuseBox.getInKindPayments(allPayments);
+
 		String paymentTxt;
 		try {
 			paymentTxt = 1 + ". " + getType(1, lang);
@@ -339,9 +341,17 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawPayment(gratExtrasPayment);
 			y -= LITTLE_LINE_JUMP;
 			
-			double kExtras = DefaultPayrollFuseBox.getInKindPayment(allPayments);
-			PDFPayment kindExtrasPayment = new PDFPayment(kExtras != 0 ? kExtras : null, "Salario en Especie");
-			drawPayment(kindExtrasPayment);
+			if ( ppes.isEmpty() ) {
+				double kExtras = DefaultPayrollFuseBox.getInKindPayment(allPayments);
+				PDFPayment kindExtrasPayment = new PDFPayment(kExtras != 0 ? kExtras : null, "Salario en Especie");
+				drawPayment(kindExtrasPayment);
+			} else {
+				drawText(contents, "Salario en Especie", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+				y -= LITTLE_LINE_JUMP;
+				if ( !inKindPaymets.isEmpty() )
+					drawOrLine(inKindPaymets);
+				drawOrLine(ppes);
+			}
 			y -= LITTLE_LINE_JUMP;
 
 			drawText(contents, noSalaryTitle, x, y, BLACK, HELVETICA, FONT_SIZE);
@@ -353,7 +363,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(prestSS);
 
-			if ( !ppes.isEmpty() ) {
+			if ( false && !ppes.isEmpty() ) {
 				drawText(contents, "Aportación empresarial al plan de pensiones de empleo", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 				y -= LITTLE_LINE_JUMP;
 				drawOrLine(ppes);

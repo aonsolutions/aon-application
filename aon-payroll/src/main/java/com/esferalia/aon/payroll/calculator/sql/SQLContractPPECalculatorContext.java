@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORK_DAYS;
 
 import java.sql.Connection;
@@ -65,6 +66,7 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 
 	@Override
 	public Collection<IContractPayment> getContractPayments() throws AonException {
+		initMonthDays();
 		readDelayCause();
 		return new FilterCollection<IContractPayment>(p -> ContextVariable.PPE.equals(p.getName()),
 				super.getContractPayments()) {
@@ -84,20 +86,13 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 
 					@Override
 					public String getExpression() {
-						return String.format("%s; %s", WORK_DAYS.getName(), super.getExpression());
+						return String.format("%s; %s", WORKED_DAYS.getName(), super.getExpression());
 					}
 				};
 			}
 		};
 	}
 	
-	@Override
-	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate,
-			Date endDate) throws SQLException {
-		// TODO Auto-generated method stub
-		return super.loadContractData(ctx, startDate, endDate);
-	}
-
 	private void readDelayCause() {
 
 		try {
@@ -114,6 +109,13 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 				PaymentType.class);
 	}
 	
+	private void initMonthDays() {
+		try {
+			getExpressionContext().eval(ContextVariable.MONTH_DAYS.getName(), getStartDate(), getEndDate(),Number.class);
+		} catch (Exception e) {
+		}
+	}
+
 	private void overrideSalaryHours(ExpressionContext ctx) {
 		
 		for ( Period period : ctx.getPeriods(ContextVariable.SALARY_HOURS.getName())) {

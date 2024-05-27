@@ -2,7 +2,6 @@ package solutions.aon.aws.s3;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
@@ -10,6 +9,7 @@ import java.util.UUID;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -28,6 +28,7 @@ public class S3 {
 	
 	public static final String DEFAULT_BUCKET = "aon-attach";
 	public static final String AUTH_ATTACH_BUCKET = "aon-auth-attach";
+	public static final String INVOICE_DOC = "aon-invoice-doc";
 	
 	private static AmazonS3 connect() {
 		return AmazonS3ClientBuilder.standard()
@@ -108,4 +109,10 @@ public class S3 {
 			throw new AonAwsS3Exception(AonAwsErrorMessage.S3_BUCKET_NOT_EXIST.getMessage());
         s3.deleteObject(bucket, key);
 	}
+	
+	public static void copy(String fromBucket, String toBucket, String key) {
+		AmazonS3 s3 = connect();	
+		CopyObjectRequest copyRequest = new CopyObjectRequest(fromBucket, key, toBucket, key);
+		s3.copyObject(copyRequest);
+    }
 }

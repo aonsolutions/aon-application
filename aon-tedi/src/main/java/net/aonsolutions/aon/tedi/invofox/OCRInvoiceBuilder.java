@@ -1137,8 +1137,8 @@ public class OCRInvoiceBuilder {
 			if (opItem.isPresent()) {
 				invoiceDetail.setItem( opItem.get() );	
 			} else {
-				// Se busca la ´tulima cuanta contable del registry que se trata
-				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry());
+				// Se busca la ultima cuenta contable del registry que se trata
+				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
 				Account account = AonCollectionUtils.stream(accounts)
 					.findFirst()
 					.orElse(null);

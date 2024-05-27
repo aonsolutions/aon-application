@@ -9,7 +9,9 @@ export const getWarehouses = (data) => get(API.WAREHOUSES, data);
 export const saveWarehouse = (data) => put(API.WAREHOUSES, data);
 export const deleteWarehouse = (id)  => remove(`${API.WAREHOUSES}/${id}`, {id});
 
-export const getElaborations = (data) => post(API.ELABORATION, data);
-export const getElaboration = (id) => post(API.ELABORATION, {id});
+export const getElaborations = (data) => get(API.ELABORATION, data);
+export const getElaboration = (id) => get(API.ELABORATION, {id});
 export const saveElaboration = (data) => put(API.ELABORATION, data);
 export const deleteElaboration = (id)  => remove(API.ELABORATION, {id});
+
+export const deleteElaborationPackage = (id)  => remove(`${API.ELABORATIONS}/packages/${id}`, {id});
