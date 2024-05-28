@@ -247,6 +247,12 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public void deleteRegistryMedia(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryMediaDAO.delete(ctx, id));
+	}
+	
+	@Override
 	public RegistryMedia save(AONContext ctx, RegistryMedia rmedia) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryMediaDAO.save(ctx, rmedia));
@@ -711,7 +717,12 @@ public class RegistryImpl implements IRegistry{
 		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, raddinfoId));
 	}
 	
-
+	@Override
+	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter){
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getRAddInfoAviableAttributes(ctx, filter));
+	}
+	
 	@Override
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
 		return 	ctx.getDslContext().transactionResult(
@@ -719,7 +730,6 @@ public class RegistryImpl implements IRegistry{
 	}
 
 
-	
 	// -------------------- RDIRSTAFF
 
 	@Override

@@ -53,7 +53,8 @@ public enum AonApp implements Serializable {
 	TREASURY(getTreasuryModules(), "Tesorer\u00eda"),
 	GROUPWARE(getGroupwareModules(), "Expedientes"),
 	INVOFOX(getEmptyModules(), "OCR Invofox"),
-	SERES(getEmptyModules(), "Seres")
+	SERES(getEmptyModules(), "Seres"),
+	FACTURAE(getEmptyModules(), "Factura Electr\u00f3nica")
 	;
 	
 	LinkedList<Module> modules;

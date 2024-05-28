@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
-public class InvoiceTracking implements Serializable {
+public class InvoiceCommunicationTracking implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -16,7 +16,7 @@ public class InvoiceTracking implements Serializable {
 		return invoiceBatchDetail;
 	}
 	
-	public InvoiceTracking setInvoiceBatchDetail(InvoiceBatchDetail invoiceBatchDetail) {
+	public InvoiceCommunicationTracking setInvoiceBatchDetail(InvoiceBatchDetail invoiceBatchDetail) {
 		this.invoiceBatchDetail = invoiceBatchDetail;
 		return this;
 	}
@@ -28,7 +28,7 @@ public class InvoiceTracking implements Serializable {
 		return invoiceBatch;
 	}
 	
-	public InvoiceTracking setInvoiceBatch(InvoiceBatch invoiceBatch) {
+	public InvoiceCommunicationTracking setInvoiceBatch(InvoiceBatch invoiceBatch) {
 		this.invoiceBatch = invoiceBatch;
 		return this;
 	}

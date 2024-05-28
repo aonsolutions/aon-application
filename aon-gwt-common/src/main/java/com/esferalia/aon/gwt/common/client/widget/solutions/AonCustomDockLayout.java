@@ -16,15 +16,14 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	private static final String EMPTY_STRING = "";
 
 	// Toolbar
-	private AonToolbarButton filterButton = new AonToolbarButton("Filtrar", AON.CSS.aonIconFilterList());
-	private HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
+	private HTMLPanel toolbarButtonsRight = new HTMLPanel(EMPTY_STRING);
 	private TextBox searchTextBox = new TextBox();
-	private boolean isSearchTextBoxShown = true;
+	private AonToolbarButton filterButton = new AonToolbarButton("Filtros", AON.CSS.aonIconFilterList());
 	
-	// Left Menu
-	private ScrollPanel leftMenuScroll;
-	private boolean isLefMenuShown = false;
-	private HTMLPanel leftMenu = new HTMLPanel(EMPTY_STRING);
+	// Right Menu
+	private ScrollPanel rightMenuScroll;
+	private boolean isRightMenuShown = false;
+	private HTMLPanel rightMenu = new HTMLPanel(EMPTY_STRING);
 	
 	private HTMLPanel filterToolbarButtonsMenu = new HTMLPanel(EMPTY_STRING);
 	
@@ -33,6 +32,9 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	
 	private boolean isUtilitiesShown = true;
 	private HTMLPanel utilitiesBody = new HTMLPanel(EMPTY_STRING);
+	
+	private boolean isSortShown = true;
+	private HTMLPanel sortBody = new HTMLPanel(EMPTY_STRING);
 	
 	public AonCustomDockLayout(String title) {
 		super(Unit.PX);
@@ -51,33 +53,21 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		// Left
 		HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
 		toolbarLeft.addStyleName(AON.CSS.aonItemFlex());
-		filterButton.setVisible(false);
-		toolbarLeft.add(filterButton);
 		
-		Label titleLabel = new Label(title.toUpperCase());
-		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
-		titleLabel.getElement().getStyle().setProperty("font-size", "1.2rem");
+		Label titleLabel = new Label(title);
+		titleLabel.getElement().getStyle().setProperty("font-size", "1.1rem");
 		toolbarLeft.add(titleLabel);
 		
 		toolbar.add(toolbarLeft);
 		
 		// Right
+		HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 		toolbarRight.addStyleName(AON.CSS.aonItemFlex());
 		
 		HTMLPanel searchPanel = new HTMLPanel(EMPTY_STRING);
-		searchPanel.addStyleName(AON.CSS.aonItemFlex());
-		searchPanel.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
+		searchPanel.setStyleName(AON.CSS.aonCustomSearchBox());
 		
-		AonToolbarButton searchButton = new AonToolbarButton("Buscar", AON.CSS.aonIconSearch());
-		searchButton.addClickHandler(e -> {
-			isSearchTextBoxShown = !isSearchTextBoxShown;
-			searchTextBox.setVisible(isSearchTextBoxShown);
-			
-			if(isSearchTextBoxShown)
-				searchPanel.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
-			else
-				searchPanel.getElement().getStyle().clearProperty("border-bottom");
-		});
+		AonTableButton searchButton = new AonTableButton("Buscar", AON.CSS.aonIconSearch());
 		
 		searchTextBox.setStyleName(AON.CSS.aonCustomTextBoxInputNoBorder());
 		searchTextBox.getElement().setPropertyString("placeholder", "Filtrar por documento, nombre o alias");
@@ -86,7 +76,18 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		searchPanel.add(searchButton);
 		searchPanel.add(searchTextBox);
 		
+		filterButton.addClickHandler(e -> {
+			isRightMenuShown = !isRightMenuShown;
+			setWidgetSize(rightMenuScroll, isRightMenuShown ? 350.00 : 0.00);
+			animate(500);
+			
+			filterButton.removeStyleName(isRightMenuShown ? AON.CSS.aonIconFilterList() : AON.CSS.aonIconFilterListOff());
+			filterButton.addStyleName(isRightMenuShown ? AON.CSS.aonIconFilterListOff() : AON.CSS.aonIconFilterList());
+		});
+		
+		toolbarRight.add(toolbarButtonsRight);
 		toolbarRight.add(searchPanel);
+		toolbarRight.add(filterButton);
 		
 		toolbar.add(toolbarRight);
 		
@@ -94,30 +95,20 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	}
 	
 	public void addToolbarButton(Widget widget) {
-		toolbarRight.add(widget);
+		toolbarButtonsRight.add(widget);
 	}
 	
 	public TextBox getSearchTextBox() {
 		return searchTextBox;
 	}
 	
-	// Left menu
+	// Right menu
 	
 	public void addFilterMenu() {
-		filterButton.setVisible(true);
-		filterButton.addClickHandler(e -> {
-			isLefMenuShown = !isLefMenuShown;
-			setWidgetSize(leftMenuScroll, isLefMenuShown ? 350.00 : 0.00);
-			animate(500);
-			
-			filterButton.removeStyleName(isLefMenuShown ? AON.CSS.aonIconFilterList() : AON.CSS.aonIconFilterListOff());
-			filterButton.addStyleName(isLefMenuShown ? AON.CSS.aonIconFilterListOff() : AON.CSS.aonIconFilterList());
-		});
-		
-		// Left menu
-		leftMenu.addStyleName(AON.CSS.aonFlexColumn());
-		leftMenu.getElement().getStyle().setProperty("padding", "1rem");
-		leftMenu.getElement().getStyle().setProperty("gap", "2rem");
+		// Right menu
+		rightMenu.addStyleName(AON.CSS.aonFlexColumn());
+		rightMenu.getElement().getStyle().setProperty("padding", "1rem 1.5rem 1rem 1rem");
+		rightMenu.getElement().getStyle().setProperty("gap", "2rem");
 		
 		// Filter
 		HTMLPanel filterMenu = new HTMLPanel(EMPTY_STRING);
@@ -127,10 +118,9 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		HTMLPanel filterToolbarMenu = new HTMLPanel(EMPTY_STRING);
 		filterToolbarMenu.addStyleName(AON.CSS.aonFlexBetween());
 		
-		Label filterToolbarTitle = new Label("FILTRAR");
+		Label filterToolbarTitle = new Label("Filtros");
 		filterToolbarTitle.getElement().getStyle().setProperty("cursor", "pointer");
 		filterToolbarTitle.getElement().getStyle().setProperty("width", "100%");
-		filterToolbarTitle.getElement().getStyle().setProperty("font-weight", "700");
 		filterToolbarTitle.getElement().getStyle().setProperty("font-size", "1rem");
 		filterToolbarMenu.add(filterToolbarTitle);
 		
@@ -150,11 +140,11 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 			filterBody.setVisible(isFilterShown);
 		});
 		
-		leftMenu.add(filterMenu);
+		rightMenu.add(filterMenu);
 		
-		leftMenuScroll = new ScrollPanel(leftMenu);
+		rightMenuScroll = new ScrollPanel(rightMenu);
 		
-		addWest(leftMenuScroll, 0.00);
+		addEast(rightMenuScroll, 0.00);
 	}
 	
 	public void addFilterToolbarButton(Button button) {
@@ -163,6 +153,40 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public void addFilterWidget(Widget widget) {
 		filterBody.add(widget);
+	}
+	
+	public void addSortMenu() {
+		// Utilities
+		HTMLPanel sortMenu = new HTMLPanel(EMPTY_STRING);
+		sortMenu.addStyleName(AON.CSS.aonFlexColumn());
+		
+		// Utilities toolbar
+		HTMLPanel sortToolbarMenu = new HTMLPanel(EMPTY_STRING);
+		sortToolbarMenu.addStyleName(AON.CSS.aonFlexBetween());
+		
+		Label sortToolbarTitle = new Label("Ordenar");
+		sortToolbarTitle.getElement().getStyle().setProperty("cursor", "pointer");
+		sortToolbarTitle.getElement().getStyle().setProperty("width", "100%");
+		sortToolbarTitle.getElement().getStyle().setProperty("font-size", "1rem");
+		sortToolbarMenu.add(sortToolbarTitle);
+		
+		sortMenu.add(sortToolbarMenu);
+		
+		// Filter body
+		sortBody.addStyleName(AON.CSS.aonFlexColumn());
+		sortBody.getElement().getStyle().setProperty("padding-left", "0.5rem");
+		sortMenu.add(sortBody);
+		
+		sortToolbarTitle.addClickHandler(e -> {
+			isSortShown = !isSortShown;
+			sortBody.setVisible(isSortShown);
+		});
+		
+		rightMenu.add(sortMenu);
+	}
+	
+	public void addSortWidget(Widget widget) {
+		sortBody.add(widget);
 	}
 	
 	public void addUtilitiesMenu() {
@@ -174,10 +198,9 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		HTMLPanel utilitiesToolbarMenu = new HTMLPanel(EMPTY_STRING);
 		utilitiesToolbarMenu.addStyleName(AON.CSS.aonFlexBetween());
 		
-		Label utilitiesToolbarTitle = new Label("UTILIDADES");
+		Label utilitiesToolbarTitle = new Label("Utilidades");
 		utilitiesToolbarTitle.getElement().getStyle().setProperty("cursor", "pointer");
 		utilitiesToolbarTitle.getElement().getStyle().setProperty("width", "100%");
-		utilitiesToolbarTitle.getElement().getStyle().setProperty("font-weight", "700");
 		utilitiesToolbarTitle.getElement().getStyle().setProperty("font-size", "1rem");
 		utilitiesToolbarMenu.add(utilitiesToolbarTitle);
 		
@@ -193,7 +216,7 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 			utilitiesBody.setVisible(isUtilitiesShown);
 		});
 		
-		leftMenu.add(utilitiesMenu);
+		rightMenu.add(utilitiesMenu);
 	}
 	
 	public void addUtilityOption(Button button, String text) {

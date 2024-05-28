@@ -13,6 +13,7 @@ import static java.lang.String.format;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -630,21 +631,26 @@ public class CretaServlet extends HttpServlet
 		String ctrlAnho = hasta.getAnho();
 		String autorizado = respuesta.getAutorizado();
 		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		TrabajadoresTramos.generate(
+			connection, 
+			autorizado, 
+			desdeMes, 
+			desdeAnho, 
+			hastaMes, 
+			hastaAnho, 
+			ctrlMes, 
+			ctrlAnho, 
+			tipo, 
+			cccs );
+		try {
+			trabajadoresTramos = com.esferalia.aon.payroll.tgss.creta.Respuesta.fixTrabajadoresTramos(trabajadoresTramos, respuesta);
+		} catch ( Exception e ) {
+			
+		}
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-		TrabajadoresTramos.generate(
-				connection, 
-				autorizado, 
-				desdeMes, 
-				desdeAnho, 
-				hastaMes, 
-				hastaAnho, 
-				ctrlMes, 
-				ctrlAnho, 
-				tipo, 
-				cccs, 
-				os);
+		Utils.marshal(trabajadoresTramos, os);
 		os.close();
 		
 		return new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));

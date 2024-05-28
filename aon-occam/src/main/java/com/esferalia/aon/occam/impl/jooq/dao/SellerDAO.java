@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -82,6 +83,7 @@ public class SellerDAO {
 				.from(SELLER)
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+				.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
@@ -100,18 +102,39 @@ public class SellerDAO {
 	public static List<Seller>  getList(CloseableAONContext ctx, SellerParams params) {
 		Condition condition = paramsToCondition(ctx, params);
 		
-		List<Seller> sellers = ctx.getDslContext().select()
-				.from(SELLER)
-				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
-				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
-				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
-				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
-				.where(condition)
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+			.from(SELLER)
+			.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+			.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+			.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
+			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+			.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(SELLER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "alias"))
+				select.orderBy(SELLER_ALIAS.ALIAS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(SELLER_ALIAS.DOCUMENT);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(SELLER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "alias"))
+				select.orderBy(SELLER_ALIAS.ALIAS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(SELLER_ALIAS.DOCUMENT.desc());
+		}
+				
+		List<Seller> sellers = select
 				.limit(params.getOffset(), params.getLimit())
 				.fetch()
 				.stream()
 				.map(new SellerFiller())
 				.collect(Collectors.toList());
+		
+		sellers.forEach(seller -> System.out.println(seller.getName()));
 			
 		return sellers;
 	}
@@ -126,7 +149,16 @@ public class SellerDAO {
 					.or(SELLER_ALIAS.ALIAS.like("%" + params.getDescription() + "%"))
 			);
 		}
-
+		
+		if(AonStringUtils.isNotBlank(params.getName()))
+			condition = condition.and(SELLER_ALIAS.NAME.like("%" + params.getName() + "%"));
+		
+		if(AonStringUtils.isNotBlank(params.getAlias()))
+			condition = condition.and(SELLER_ALIAS.ALIAS.like("%" + params.getAlias() + "%"));
+		
+		if(AonStringUtils.isNotBlank(params.getDocument()))
+			condition = condition.and(SELLER_ALIAS.DOCUMENT.like("%" + params.getDocument() + "%"));
+		
 		if(null != params.getScope())
 			condition = condition.and(SELLER.SCOPE.eq(params.getScope()));
 		
@@ -208,12 +240,14 @@ public class SellerDAO {
 		}
 		
 		public static Seller build(Record r, Registry registry) {
-			return  new Seller()
+			Seller seller = new Seller()
 				.copy(RegistryFiller.build(r, registry))
 				.setId(getValue(r, SELLER.REGISTRY))
 				.setDomain(getValue(r, SELLER.DOMAIN))
 				.setStatus(SellerStatus.safeValueOf(getValue(r, SELLER.STATUS)))
-				.setCommissionType(new CommissionType().setId(getValue(r, SELLER.COMMISSION_TYPE)))
+				.setCommissionType(checkField(r, SCOPE.ID)
+						? new CommissionType().setId(getValue(r, COMMISSION_TYPE.ID)).setDomain(getValue(r, COMMISSION_TYPE.DOMAIN)).setName(getValue(r, COMMISSION_TYPE.NAME))
+						: new CommissionType().setId(getValue(r, SELLER.COMMISSION_TYPE)))
 				.setScope(checkField(r, SCOPE.ID)
 					? ScopeFiller.buildScope(r)
 					: new Scope().setId(getValue(r, SELLER.SCOPE)))
@@ -221,6 +255,8 @@ public class SellerDAO {
 					? TaskHolderFiller.build(r, TASK_HOLDER_ALIAS)
 					: new TaskHolder().setRegistry(getValue(r, SELLER.TASK_HOLDER)))
 				;
+			
+			return seller;
 		}
 
 	}

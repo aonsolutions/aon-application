@@ -570,6 +570,21 @@ export class DomainUserRoles {
       && (this.isAdmin() || this.hasRole(Role.INVOFOX));
   }
 
+  // OCR INVOFOX
+
+  hasFacturae() {
+    return this.hasApp(App.FACTURAE);
+  }
+    
+  hasParentFacturae() {
+    return this.hasParentApp(App.FACTURAE);
+  }
+    
+  isFacturae() {
+    return (this.hasFacturae() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentFacturae()))
+      && (this.isAdmin() || this.hasRole(Role.FACTURAE));
+  }
+
   // SERES
 
   hasSeres() {

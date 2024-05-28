@@ -710,11 +710,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
-    	
-    	if(!AonStringUtils.isBlank(invoiceFilter.getDescription())) {
-    		filter = filter.and(
-    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
+    
+    	if(invoiceFilter.getDescription() != null) {
+    		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
+        			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getSeriesProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getRegistryDocumentProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			;
+    		if (AonStringUtils.isNumeric(invoiceFilter.getDescription())) {
+   				Integer i = AonNumberUtils.toInteger( invoiceFilter.getDescription() );
+   				Double d = AonNumberUtils.toDouble( invoiceFilter.getDescription() );
+				ft = ft.or (f.getNumberProperty().like(i))
+					.or (f.getTotalProperty().like(d));
+   			}
+    		filter = filter.and( ft );
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
@@ -917,6 +926,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
+		json.put(IJsonNames.SERIES, invoice.getSeries());
+		json.put(IJsonNames.SERIE, invoice.getSeries());
+		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		return json;
 	}
 	
@@ -1378,13 +1390,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private static void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente está vacio.");
+			throw new Exception("El Documento del cliente estï¿½ vacio.");
 		}
 			
 		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
 				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente no es válido.");
+			throw new Exception("El Documento del cliente no es vï¿½lido.");
 		}
 	}
 	

@@ -467,6 +467,17 @@ export const OCR = {
   price: " ",
 };
 
+export const FACTURAE = {
+  app: "facturae",
+  title: "Factura Electrónica",
+  description: "Factura Electrónica.",
+  icon: AON_ICONS.AON_APP,
+  color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
+  price: " ",
+};
+
 
 export const INVOFOX = {
   app: "invofox",
@@ -843,8 +854,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE };
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE};
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,

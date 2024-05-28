@@ -3,8 +3,15 @@ export const AON_PRIMARY = "#002469";
 export const AON_SECONDARY = "#b10d4c";
 export const AON_OLD_SECONDARY = "#12ccd1";
 
-// ---------------------------------------------------- BLUE COLORS 
+// ---------------------------------------------------- AON COLORS
+
 export const AON_BLUE = "--aonBlue";
+export const AON_ORANGE = "--aonOrange";
+export const AON_GREEN = "--aonGreen";
+export const AON_RED = "--aonRed";
+
+// ---------------------------------------------------- BLUE COLORS 
+
 export const MATERIAL_BLUE = "--materialBlue";
 
 // ---------------------------------------------------- BLACK COLORS 
