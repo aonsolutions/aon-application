@@ -243,7 +243,7 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
-  color: LS.isNewTheme() ? "var(--aonDocumental)" : "#6986BB",
+  color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
   backgroundColor: 'var(--aonDocumentalBackground)',
   hover: 'aonDocumentalHover',
   access: [

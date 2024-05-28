@@ -24,7 +24,7 @@
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:if test="#{saleInvoice.tbaiInvoice}"> 
+						<aon:if test="#{saleInvoice.tbaiInvoice and !saleInvoice.recorded}"> 
 							<aon:commandButton id="tbaiInvoiceRemove"	
 								value="Borrar"
 								action="#{saleInvoice.tbai}"

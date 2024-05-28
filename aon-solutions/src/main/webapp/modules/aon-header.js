@@ -11,11 +11,8 @@ import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
-import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
-import { AonMessenger } from './messenger/aon-messenger.js';
-import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 import * as LS from '../services/localStorageService.js';
 import { Language } from '../models/Language.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
@@ -186,9 +183,16 @@ export class AonHeader extends AonElement {
 			aonHeaderButtons.appendChild(aonHeaderConfig);
 		}
 
+
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
-		aonHeaderNotiication.appendChild(new AonNotificationIcon());
+		if(this.newTheme){
+			let aonHeaderNotificationButton = new AonIconButton();
+			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+			aonHeaderNotificationButton.icon = "notifications";
+			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		}else
+			aonHeaderNotiication.appendChild(new AonNotificationIcon());
 
 		aonHeaderButtons.appendChild(aonHeaderNotiication);
 
@@ -596,11 +600,12 @@ export class AonHeader extends AonElement {
 	}
 	
 	
-	setColor(color) {
+	setColor(color, backgroundColor) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
 			this.getElement('aonHeaderHomeButton'),
 			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderConfigButton'),
 			this.getElement('aonHeaderNotificationButton'),
 			this.getElement('aonHeaderCompanyListButton')
 		];
@@ -616,7 +621,10 @@ export class AonHeader extends AonElement {
 		//
 		if ( color ) {
 			texts.forEach( (text) => text.style.color = color );
-			buttons.forEach( (button) => button.getButton().style.color = color );
+			buttons.forEach( (button) => {
+				button.setColor(color);
+				button.setBackgroundColor(backgroundColor);
+			});
 			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
 		} else {
 			imgs.forEach( (img) => img.style.removeProperty ('filter') );

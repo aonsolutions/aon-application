@@ -1,11 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import { getDomainUserRoles } from 'aonsolutions/services/service.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
+import {ACCOUNTING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
-import { AonDocumentalAyudat } from 'aonsolutions/modules/documental/ayudat/aon-documental-ayudat.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
@@ -16,11 +14,9 @@ import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
 import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
-import { AonSaltra } from 'aonsolutions/modules/laboral/aon-saltra.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
 import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
-import { AonBooking } from 'aonsolutions/modules/marketplace/aon-booking.js';
 import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
@@ -30,6 +26,7 @@ import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 
 import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -161,6 +158,9 @@ export class AonNewMenu extends AonElement {
 			case HomeApps.HOME.app:
 				this.rootPanel(new AonParent());
 				break;
+			case ACCOUNTING_MENU.app:
+				this.rootPanel(new AonAccountingMenu());
+				break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
@@ -220,6 +220,7 @@ export class AonNewMenu extends AonElement {
 		appDiv.id = `aonMenuLeftop-${app.app}`;
 		appDiv.style.width = '68px';
 		appDiv.style.backgroundColor = 'transparent';
+		appDiv.style.cursor = "pointer";
 		appDiv.appendChild(this.buildApp(app, {height:'48px'}));
 		div.appendChild(appDiv);
 
@@ -233,7 +234,8 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-		ul.style.marginTop = '8px';
+		ul.style.marginTop = '11px';
+
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {
@@ -260,7 +262,6 @@ export class AonNewMenu extends AonElement {
 
 	buildMenuTopnav() {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
-
 		let div = this.createElement(TAG.DIV);
 		div.style.display = 'flex';
 		div.style.flexDirection = 'row';
@@ -363,7 +364,7 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -384,7 +385,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		//icon.style.visibility = "hidden";
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
 	}

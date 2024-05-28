@@ -16,6 +16,7 @@ public class AonCompany implements Serializable {
     Administration administration;
 	private boolean shared;
 	private String schema;
+	private String login;
 	
 	
 	public AonCompany() {
@@ -76,6 +77,15 @@ public class AonCompany implements Serializable {
 		this.shared = shared;
 		return this;
 	}
+		
+	public String getLogin() {
+		return login;
+	}
+	
+	public AonCompany setLogin(String login) {
+		this.login = login;
+		return this;
+	}
 
 	public JSONObject toJSON() {
 		return new JSONObject()
@@ -92,6 +102,7 @@ public class AonCompany implements Serializable {
 			.put("parentId",getDomain().getParentId())
 			.put("maxDefinedUsers", getDomain().getMaxDefinedUsers())
 			.put("withholding", getCompany().isWithholding())
+			.put("login", getLogin())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, getCompany().isVatAccrualPayment())
 			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge())
 			.put(IJsonNames.SCHEMA, getSchema())
