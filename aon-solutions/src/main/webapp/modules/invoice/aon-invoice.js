@@ -2769,7 +2769,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		if(this.invoice.category) {
+		// if(this.invoice.category) {
 			let div = this.getElement("PRUEBA_RAWDOC_RECORD");
 			if(!div) {
 				div = this.createDiv("PRUEBA_RAWDOC_RECORD");
@@ -2779,12 +2779,12 @@ export class AonInvoice extends AonElement {
 			this.clearElement(div);
 	
 			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
-		} else {
-			this.showError({
-				type: CONSTANT.ERROR,
-				message: "Para Contabilizar es necesario la categoría."
-			});
-		}
+		// } else {
+		// 	this.showError({
+		// 		type: CONSTANT.ERROR,
+		// 		message: "Para Contabilizar es necesario la categoría."
+		// 	});
+		// }
 	}
 
 	rejectInvoice() {
