@@ -82,17 +82,5 @@
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-    	<groupId>net.aonsolutions</groupId>
-    	<artifactId>aon.accounting.report</artifactId>
-    	<version>9.23-SNAPSHOT</version>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>com.esferalia.aon</groupId>
-    	<artifactId>aon.occam</artifactId>
-    	<version>9.23-SNAPSHOT</version>
-    	<scope>compile</scope>
-    </dependency>
   </dependencies>
 </project>
