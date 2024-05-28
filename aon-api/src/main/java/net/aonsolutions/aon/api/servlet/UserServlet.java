@@ -992,7 +992,7 @@ public class UserServlet extends AonApiHttpServlet {
 		Integer userId = api.getUser().getId();
 		String permission = api.getData().optString(IJsonNames.ROLES);
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", 
-				f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().eq(AonRole.safeValueOf(permission).value())))
+				f -> f.getUserIdProperty().eq(userId).and(f.getRoleProperty().eq(AonRole.safeValueOf(permission).value()).and(f.getDomainProperty().eq(domain.getId()))))
 				.collect(Collectors.toCollection(LinkedList::new));
 		if(roles.size() > 0)
 			return new JSONObject().put(IJsonNames.RESULT, true);

@@ -449,6 +449,19 @@ public class AON_SOLUTIONS {
 		return stream;
 	}
 	
+	public static Stream<AonCompany> getCompanyWithRolesStream(String token, String schema, Integer page, Integer perPage) {	
+		AonToken aonToken = SECURITY.getAonToken(token);
+		Stream<AonCompany> stream = new LinkedList<AonCompany>().stream();
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		if(!AonStringUtils.isBlank(domain)) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				Stream<AonCompany> s = getRegistry().getCompanyWithRolesStream(ctx, aonToken.getAuth(), page, perPage);
+				stream = Stream.concat(stream, s);
+			}
+		} 
+		return stream;
+	}
+	
 	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		List<AonCompany> list = new ArrayList<>();

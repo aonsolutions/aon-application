@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Module;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
@@ -226,7 +225,6 @@ public class CompanyServlet extends AonApiHttpServlet{
 			}
 			
 		} else {
-			
 			JSONArray jsArray = new JSONArray();
 			
 			List<String> schemas = AONContext.getSchemas();
@@ -250,29 +248,21 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	// Devuelve solo las empresas con permiso de empresa o empleado para el portal
 	private JSONArray getCompaniesWithRoles(HttpServletRequest req, AonApiData api) {
-		JSONArray json =  getCompanies(api);
-		JSONArray result = new JSONArray();
-		for(int i = 0; i < json.length(); i++) {
-			Occam occam = new Occam();
-			Domain domain;
-			if(api.getData().has(IJsonNames.PARENT_ID)) {
-				occam.setDomain(json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID));
-				occam.setDomainName(json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getString(IJsonNames.NAME));
-				occam.setUser(api.getUser().getLogin());
-				domain = AON.getDomain(occam, json.getJSONObject(i).getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID));
-			} else {				
-				occam.setDomain(json.getJSONObject(i).getInt(IJsonNames.ID));
-				occam.setDomainName(json.getJSONObject(i).getString(IJsonNames.DOMAIN));
-				occam.setUser(api.getUser().getLogin());
-				domain = AON.getDomain(occam, json.getJSONObject(i).getInt(IJsonNames.ID));
-			}
-			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-			DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
-			AonDomainUserRoles adur = new AonDomainUserRoles(dur);
-			if((adur.isEmployee() || adur.isEnterprise()) && !adur.isAdmin())
-				result.put(json.get(i));
+		JSONArray jsArray = new JSONArray();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema : schemas) {
+			LinkedList<Integer> ds = new LinkedList<>();	
+			AON_SOLUTIONS.getCompanyWithRolesStream(api.getToken(), schema, null, null)
+			.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
+			.forEach(
+					ac -> {
+						if(!ds.contains(ac.getDomain().getId())){
+							jsArray.put(ac.toJSON());
+							ds.add(ac.getDomain().getId());
+						}
+					});
 		}
-		return result;
+		return jsArray;
 	}
 	
 	private JSONArray getDomainCompanies(AonApiData api) {
