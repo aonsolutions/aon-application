@@ -16,26 +16,29 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class AonAttachPanel extends SimplePanel {
+public class AonAttachPanel extends SimplePanel {
 	
 	public static interface AonAttachCallback {
 		void onAccept();
@@ -57,11 +60,15 @@ public abstract class AonAttachPanel extends SimplePanel {
 	private static final String CREATEURL = GWT.getModuleBaseURL() + "attach/create/";
 	private static final String UPDATEURL = GWT.getModuleBaseURL() + "attach/update/";
 	
+	private FocusPanel dropPanel; 	
+	
+	
 	// Form
 	FormPanel form;
 	FileUpload fileUpload;
 	Hidden userLoginHidden = new Hidden("login", "");
 	Hidden currentDomainHidden = new Hidden("domain", "");
+	Hidden attachIdHidden = new Hidden("attachId", "");
 	Hidden attachTypeHidden = new Hidden("attachType", "");
 	Hidden attachModuleHidden = new Hidden("attachModule", "");
 	Hidden descriptionHidden = new Hidden("description", "");
@@ -73,7 +80,6 @@ public abstract class AonAttachPanel extends SimplePanel {
 	Hidden categoryHidden = new Hidden("category", "");
 	
 	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
-	private AonTableButton attachButton = new AonTableButton("", AON.CSS.aonIconAttach());
 	
 	private AonCustomToogleButton visible = new AonCustomToogleButton("Privado");
 	private AonCustomDateBox date = new AonCustomDateBox("Fecha");
@@ -101,6 +107,17 @@ public abstract class AonAttachPanel extends SimplePanel {
 		this.aviableScopes = aviableScopes;
 		
 		show(new Attach(), callback);
+	}
+	
+	public AonAttachPanel(final String domainName,final int domain, final String user, final LinkedList<Scope> aviableScopes, final Attach attach, final AonAttachCallback callback) {
+		initializeCommonService();
+		this.domainName = domainName;
+		this.domainId = domain;
+		this.user = user;
+		
+		this.aviableScopes = aviableScopes;
+		
+		show(attach, callback);
 	}
 	
 	public void show(Attach attach, AonAttachCallback callback) {
@@ -131,30 +148,6 @@ public abstract class AonAttachPanel extends SimplePanel {
 		form.setEncoding(FormPanel.ENCODING_MULTIPART);
 		form.setMethod(FormPanel.METHOD_POST);
 		form.addSubmitCompleteHandler(e -> callback.onAccept());
-		
-		// FileUpload
-		FileUpload fileUpload = new FileUpload();
-		fileUpload.setName("uploader");
-		fileUpload.getElement().setPropertyString("multiple", "multiple");
-		fileUpload.getElement().getStyle().setDisplay(Display.NONE);
-
-		fileUpload.addChangeHandler(e -> {
-			String filename = getFileName(fileUpload.getFilename());
-			String fileExt = getFileExtension(fileUpload.getFilename());
-
-			if (filename.length() == 0)
-				Window.alert("Cant upload file - Try again");
-			else {
-				mimeTypeHidden.setValue(fileExt);
-				descriptionHidden.setValue(filename);
-				description.setValue(filename);
-
-//						final int size = getFileSize(fileUpload.getElement());
-//						if (size > 15000000)
-//							showError("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
-
-			}
-		});
 
 		FlexTable table1 = new FlexTable();
 		table1.setStyleName(AON.CSS.aonTable());
@@ -163,14 +156,12 @@ public abstract class AonAttachPanel extends SimplePanel {
 		description.getTextBox().setMaxLength(64);
 		
 		date.setValue(new Date());
-		attachButton.addClickHandler(e -> fileUpload.click());
 		
 		scope.clearItems();
 		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
 		
 		table1.setWidget(0, 0, description);
-		table1.setWidget(0, 1, attachButton);
-		table1.getFlexCellFormatter().setColSpan(0, 0, 2);
+		table1.getFlexCellFormatter().setColSpan(0, 0, 3);
 		
 		table1.setWidget(1, 0, date);
 		table1.setWidget(1, 1, scope);
@@ -184,19 +175,25 @@ public abstract class AonAttachPanel extends SimplePanel {
 			}
 		});
 		getAviableCategories(success -> {
-			category.setValue(null);
+			if(attach.getId() != null)
+				category.setValue(null == attach.getFullCategory() ? null : ("[" + attach.getFullCategory().getId() + "] " + attach.getFullCategory().getName()));
 		});
 		table1.setWidget(2, 0, category);
 		table1.getFlexCellFormatter().setColSpan(2, 0, 3);
 		
 		tablePanel.add( table1 );
 		
-		rootPanel.add( tablePanel );
+		
+		FlowPanel flowFormPanel = new FlowPanel();
+		if(attach.getId() == null) {
+			Panel dropZone = getDropFileZone();
+			flowFormPanel.add(dropZone);
+		}
 		
 		// Add all to FlowPanel to add to FormPanel
-		HTMLPanel flowFormPanel = new HTMLPanel("");
 		flowFormPanel.add(userLoginHidden);
 		flowFormPanel.add(currentDomainHidden);
+		flowFormPanel.add(attachIdHidden);
 		flowFormPanel.add(attachTypeHidden);
 		flowFormPanel.add(attachModuleHidden);
 		flowFormPanel.add(descriptionHidden);
@@ -206,9 +203,20 @@ public abstract class AonAttachPanel extends SimplePanel {
 		flowFormPanel.add(scopeHidden);
 		flowFormPanel.add(mimeTypeHidden);
 		flowFormPanel.add(categoryHidden);
-		flowFormPanel.add(fileUpload);
 		form.add(flowFormPanel);
+		
 		rootPanel.add(form);
+		rootPanel.add( tablePanel );
+		
+		if(attach.getId() != null) {
+			attachIdHidden.setValue(attach.getId().toString());
+			mimeTypeHidden.setValue(attach.getMimeType().getExtension());
+			
+			description.setValue(attach.getDescription());
+			date.setValue(attach.getDate());
+			scope.setValue(null == attach.getScope() ? null : attach.getScope().toString());
+			visible.setValue(attach.isConfidential());
+		}
 		
 		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
@@ -227,13 +235,14 @@ public abstract class AonAttachPanel extends SimplePanel {
 				userLoginHidden.setValue(user);
 				currentDomainHidden.setValue(domainName);
 				attachTypeHidden.setValue("registry");
-				attachModuleHidden.setValue(registry.toString());
+				attachModuleHidden.setValue(attach.getId() == null ? registry.toString() : attach.getAttachModule().toString());
 				descriptionHidden.setValue(description.getValue());
 				typeHidden.setValue("5");
 				dateHidden.setValue(formatDate.format(date.getValue()));
 				scopeHidden.setValue(scope.getValue());
+				securityHidden.setValue(Boolean.toString(visible.getValue()));
 				categoryHidden.setValue(AonStringUtils.isBlank(category.getValue()) ? "" : category.getValue().split("\\[")[1].split("\\]")[0]);
-			
+				
 				form.submit();
 			}
 		});
@@ -285,6 +294,43 @@ public abstract class AonAttachPanel extends SimplePanel {
 		});
 	}
 	
+	private Panel getDropFileZone() {
+		fileUpload = new FileUpload();
+		fileUpload.setName("uploader");
+		fileUpload.getElement().setPropertyString("multiple", "multiple");
+        fileUpload.getElement().setAttribute("style", "display:none;");
+        
+        final FlowPanel dropPanel = new FlowPanel();
+        dropPanel.getElement().setAttribute("style", "border: 2px dashed #ccc; padding: 20px; width: -moz-available; width: -webkit-fill-available; text-align: center; border-radius: 5px;");
+        dropPanel.add(new Label("Arrastra un archivo aqui. O haga click para importarlo."));
+
+        HTMLPanel mainPanel = new HTMLPanel("");
+        mainPanel.addStyleName(AON.CSS.aonFlexColumn());
+        mainPanel.getElement().getStyle().setProperty("align-items", "center");
+        mainPanel.getElement().getStyle().setProperty("cursor", "pointer");
+        mainPanel.getElement().getStyle().setProperty("padding", "0 1.5rem");
+        mainPanel.addDomHandler(e -> fileUpload.click(), ClickEvent.getType());
+        mainPanel.add(dropPanel);
+        mainPanel.add(fileUpload);
+
+        addDragAndDropHandlers(dropPanel.getElement(), fileUpload.getElement());
+
+        fileUpload.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+            	String filename = getFileName(fileUpload.getFilename());
+    			String fileExt = getFileExtension(fileUpload.getFilename());
+            	
+    			mimeTypeHidden.setValue(fileExt);
+				descriptionHidden.setValue(filename);
+				description.setValue(filename);
+				
+				mainPanel.setVisible(false);
+            }
+        });
+        
+        return mainPanel;
+	}
+	
 	private String getFileName(String filename) {
 		String[] splits = filename.split("\\\\");
 		return splits[splits.length-1].contains("\\.") ? splits[splits.length-1].split("\\.")[0] : splits[splits.length-1];
@@ -299,6 +345,30 @@ public abstract class AonAttachPanel extends SimplePanel {
 		return data.files[0].size;
 	}-*/;
 	
-	protected abstract void onResize();
+	private native void addDragAndDropHandlers(Element dropElement, Element fileInputElement) /*-{
+	    dropElement.addEventListener('dragover', function(event) {
+	        event.preventDefault();
+	        dropElement.style.border = '2px solid #ddd';
+	    }, false);
+	
+	    dropElement.addEventListener('dragleave', function(event) {
+	        dropElement.style.border = '2px dashed #ccc';
+	    }, false);
+	
+	    dropElement.addEventListener('drop', function(event) {
+	        event.preventDefault();
+	        dropElement.style.backgroundColor = '';
+	
+	        var files = event.dataTransfer.files;
+	        if (files.length > 0) {
+	            fileInputElement.files = files;
+	            var changeEvent = new Event('change', {
+	                'bubbles': true,
+	                'cancelable': true
+	            });
+	            fileInputElement.dispatchEvent(changeEvent);
+	        }
+	    }, false);
+	}-*/;
 
 }
