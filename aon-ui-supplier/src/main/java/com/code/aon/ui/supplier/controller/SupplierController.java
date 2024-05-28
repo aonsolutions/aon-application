@@ -129,7 +129,6 @@ public class SupplierController extends RegistryController implements IAuditable
 					.map(to -> (Supplier) to)
 					.map(this::toSupplierFull ));
 			response.flushBuffer();
-			response.setHeader("Content-disposition","attachment; filename=\"PROVEEDORES."+MimeType.PDF.getExtension()+"\";");
 			context.responseComplete();
 			return null;
 		} catch (IOException | AonReportException e) {
