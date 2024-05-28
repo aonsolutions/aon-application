@@ -135,7 +135,7 @@ public class CreditorController extends RegistryController implements IAuditable
 				.map(this::toCreditorFull);
 			stream.forEach(report);
 			response.setContentType(MimeType.MS_EXCEL.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"ACREEDORES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			response.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			report.finalize(response.getOutputStream());
 			response.flushBuffer();
 

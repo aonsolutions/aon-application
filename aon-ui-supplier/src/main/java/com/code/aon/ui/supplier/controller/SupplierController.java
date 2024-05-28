@@ -149,7 +149,7 @@ public class SupplierController extends RegistryController implements IAuditable
 				.map(this::toSupplierFull);
 			stream.forEach(report);
 			response.setContentType(MimeType.MS_EXCEL.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"PROVEEDORES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			response.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			report.finalize(response.getOutputStream());
 			response.flushBuffer();
 
