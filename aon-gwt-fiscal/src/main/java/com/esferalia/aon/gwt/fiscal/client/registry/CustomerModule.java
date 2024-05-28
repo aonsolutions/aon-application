@@ -323,11 +323,6 @@ public class CustomerModule extends MainEntryPoint {
 		AonToolbarButton printPDF = new AonToolbarButton(AON.MSG.printPDF(), AON.CSS.aonIconPdf());
 		printPDF.addClickHandler(e -> printPDFReport(opt));
 		toolbar.add(printPDF);
-		
-		
-		AonToolbarButton printXLS = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
-		printXLS.addClickHandler(e -> printXLSReport(opt));
-		toolbar.add(printXLS);
 
 		return toolbar;
 	}
@@ -641,35 +636,6 @@ public class CustomerModule extends MainEntryPoint {
 	private void printPDFReport(RegistryModuleOptions opt) {
 		FormPanel diskForm = new FormPanel("_blank");
 		String action = URL.encode(GWT.getModuleBaseURL() + "roms/CustomerPDFServlet");
-		diskForm.setAction(action);
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		
-		Hidden registryParamsHidden = new Hidden(IRequestParamsNames.REGISTRY_PARAMS);
-		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
-		Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
-		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
-		domainIdHidden.setValue(AonNumberUtils.toString(opt.getDomain()));
-		userHidden.setValue(opt.getUser());
-		domainNameHidden.setValue(opt.getDomainName());
-		RegistryParams params = searchPanel.getParams(opt);
-		registryParamsHidden.setValue(JsonParams.convert(params));
-
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		
-		formFlowPanel.add(registryParamsHidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-		
-		toolbar.add(diskForm);
-		diskForm.submit();
-	}
-	
-	
-	private void printXLSReport(RegistryModuleOptions opt) {
-		FormPanel diskForm = new FormPanel("_blank");
-		String action = URL.encode(GWT.getModuleBaseURL() + "roms/CustomerXLSServlet");
 		diskForm.setAction(action);
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		
