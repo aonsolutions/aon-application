@@ -741,15 +741,12 @@ public class AON {
 		}
 	}
 	
-<<<<<<< HEAD
 	public static void updateDomainOwner(String schema, String domainName, Integer domainId, String owner) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			getCommon().updateDomainOwner(ctx, domainName, domainId, owner);
 		}
 	}
 	
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	public static Domain getCompanyDomain(String domainName, Integer domainId,
 			String user, String document) {
 		CloseableAONContext ctx = null;
@@ -978,7 +975,6 @@ public class AON {
 		}
 	}
 	
-<<<<<<< HEAD
 	public static ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter) {
 		return getCommon().insertApplicationParameter(ctx, applicationParameter);
 	}
@@ -986,17 +982,6 @@ public class AON {
 	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameter applicationParameter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return insertApplicationParameter(ctx, applicationParameter);
-
-=======
-	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameter applicationParameter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().insertApplicationParameter(ctx, applicationParameter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		}
 	}
 	
@@ -1737,10 +1722,6 @@ public class AON {
 			getRegistry().deleteRegistryAddInfo(ctx, raddinfoId);
 		}
 	}
-<<<<<<< HEAD
-
-
-
 	
 	public static List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String login) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
@@ -1754,10 +1735,6 @@ public class AON {
 		}
 	}
 	
-
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	// ------------------------------------ BRAND
 	
 	public static Brand getBrand(String domainName, Integer domainId, String login, Integer id){
@@ -1853,16 +1830,12 @@ public class AON {
 				ctx.close();
 		}
 	}
-<<<<<<< HEAD
-
 	
 	public static InvoiceCounter getInvoiceCounter(Domain domain, User user) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceCounter(ctx);
 		}
 	}
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	
 	public static Invoice acceptInvoice(Occam occam, Invoice invoice){
 		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
@@ -2729,7 +2702,6 @@ public class AON {
 		return getSalary().saveSalaries(ctx, domainId, salaries);
 	}
 
-<<<<<<< HEAD
 
 	public static Collection<Salary> saveSalaries(String domainName, String login, 
 			Integer domainId, Collection<Salary> salaries) {
@@ -2738,8 +2710,6 @@ public class AON {
 		}
 	}
 
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	public static Stream<Salary> getSalaryData(AONContext ctx, 
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
@@ -2790,7 +2760,7 @@ public class AON {
 			return getFinance().getProjectsSuggestion(ctx, domainId, customerId, query);
 		}
 	}
-<<<<<<< HEAD
+	
 	public static Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domainId, String login, Integer itemId, Integer customerId, String customerFeeQuery) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getCustomerFeeSuggestion(ctx, domainId, itemId, customerId, customerFeeQuery);
@@ -2802,8 +2772,6 @@ public class AON {
 			getFinance().reorderCustomerFeeLine(ctx, domainId, customer);
 		}
 	}
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
@@ -2885,16 +2853,10 @@ public class AON {
 			return getFinance().saveMassiveFees(ctx, fee, params);
 		}
 	}
-<<<<<<< HEAD
+	
 	public static Fee createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().createCustomerFeeList(ctx, fee);
-=======
-	
-	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
-		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			getFinance().createCustomerFeeList(ctx, fee);
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		}
 	}
 	
@@ -3248,10 +3210,6 @@ public class AON {
 				ctx.close();
 		}
 	}
-<<<<<<< HEAD
-
-
-
 	
 
 	public static Attach save(Domain domain, User user, Attach attach) {
@@ -3264,10 +3222,6 @@ public class AON {
 		return attach;
 	}
 	
-
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	@Deprecated
 	public static Integer insert(String domainName, Integer domainId, String login, Attach attach){
 		return insertAttach(domainName, domainId, login, attach);
@@ -4484,7 +4438,6 @@ public class AON {
 
 	// ------------------ SUPPLIER 
 	
-<<<<<<< HEAD
 	public static Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter) {
 		return getRegistry().getSupplierStream(ctx, filter);
 	}
@@ -4492,11 +4445,6 @@ public class AON {
 	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSupplierStream(ctx, filter);
-=======
-	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getSupplierStream(ctx, filter);
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		}
 	}
 	
@@ -4510,8 +4458,7 @@ public class AON {
 		return getSupplierStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-<<<<<<< HEAD
-
+	
 	public static Optional<Supplier> getSupplier(AONContext ctx, SupplierFilter filter) {
 		return getSupplierStream(ctx, filter)
 				.findFirst();
@@ -4519,13 +4466,6 @@ public class AON {
 	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, SupplierFilter filter) {
 		return getSupplierStream(domainName, domainId, login, filter)
 				.findFirst();
-
-=======
-	
-	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, SupplierFilter filter) {
-		return getSupplierStream(domainName, domainId, login, filter)
-				.findFirst();
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	}
 	
 	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, Integer id) {
@@ -5183,18 +5123,12 @@ public class AON {
 			return getRegistry().getCustomerWithoutFee(ctx, customerParams);
 		}
 	}
-<<<<<<< HEAD
-
+	
 	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
 		return getRegistry().getCustomerStream(ctx, filter);
 	}
 	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
-
-=======
-	
-	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCustomerStream(ctx, filter);
 		}
@@ -5210,13 +5144,11 @@ public class AON {
 		return getCustomerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-<<<<<<< HEAD
+	
 	public static Customer getCustomer(AONContext ctx, CustomerFilter filter) {
 		return getCustomerStream(ctx, filter)
 				.findFirst().orElse(new Customer());
 	}
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	
 	public static Customer getCustomer(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)
@@ -5277,10 +5209,6 @@ public class AON {
 	public static Seller getSeller(String domainName, Integer domainId, String login, Integer registry){
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
-<<<<<<< HEAD
-
-
-
 	
 	public static List<Seller> getSellerList(SellerParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
@@ -5300,10 +5228,6 @@ public class AON {
 		}
 	}
 	
-
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	// ------------------- RSELLER
 	public static RegistrySeller getRegistrySeller(Domain domain, String login, RegistrySellerFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
@@ -5706,10 +5630,6 @@ public class AON {
 			return getRegistry().deleteRMedia(ctx, registry);
 		}
 	}
-<<<<<<< HEAD
-
-
-
 	
 	public static void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
@@ -5717,10 +5637,6 @@ public class AON {
 		}
 	}
 	
-
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	// ------------------------------------- RNOTE
 
 	// ----- RNOTE GET
@@ -5990,17 +5906,11 @@ public class AON {
 	public static Stream<RegistryAddress> getStream(Domain domain, User user, RegistryAddressFilter filter) {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
-<<<<<<< HEAD
-
 	
 	public static Stream<RegistryAddress> getRegistryAddressStream(Domain domain, User user, RegistryAddressFilter filter) {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
-
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	public static Stream<RegistryAddress> getStream(Domain domain, String login, RegistryAddressFilter filter) {
 		return getStream(domain.getName(), domain.getId(), login, filter);
 	}
@@ -6055,18 +5965,12 @@ public class AON {
 	// ******************************** CREDITOR **
 	// ********************************************
 
-<<<<<<< HEAD
 	public static Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter) {
 		return getRegistry().getCreditorStream(ctx, filter);
 	}
 	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getCreditorStream(ctx, filter);
-=======
-	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getCreditorStream(ctx, filter);
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		}
 	}
 	
@@ -6080,16 +5984,11 @@ public class AON {
 		return getCreditorStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-<<<<<<< HEAD
-
 	
 	public static Optional<Creditor> getCreditor(AONContext ctx, CreditorFilter filter) {
 		return getCreditorStream(ctx, filter)
 				.findFirst();
 	}
-=======
-	
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	public static Optional<Creditor> getCreditor(String domainName, Integer domainId, String login, CreditorFilter filter) {
 		return getCreditorStream(domainName, domainId, login, filter)
 				.findFirst();
@@ -6767,12 +6666,6 @@ public class AON {
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
 		}
 	}
-<<<<<<< HEAD
-
-
-	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter) {
-		return getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), filter);
-
 	
 	public static List<TaskHolder> getAviableSellerTaskHolders(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
@@ -6782,12 +6675,6 @@ public class AON {
 	
 	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter){
 	    return getTaskHolder(domain.getName(),  domain.getId(), user.getLogin(), filter);
-
-=======
-	
-	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter){
-	    return getTaskHolder(domain.getName(),  domain.getId(), user.getLogin(), filter);
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	}
 	
 	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
@@ -7664,15 +7551,12 @@ public class AON {
 				ctx.close();
 		}
 	}
-<<<<<<< HEAD
 
 	public static RawdocInvoiceCounter getRawdocInvoiceCounter(Domain domain, User user) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getRawdocInvoiceCounter(ctx);
 		}
 	}
-=======
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 	
 	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
@@ -8185,36 +8069,19 @@ public class AON {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			getFinance().deleteInvoiceInfo(ctx, invoiceId);
 		}
-<<<<<<< HEAD
-
-	}
-
-	public static Stream<InvoiceTracking> getInvoiceTrackingStream(Domain domain, User user,
-			InvoiceTrackingFilter filter) {
-
 	}	
 	
 	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
-=======
-	}	
-	
-	public static Stream<InvoiceTracking> getInvoiceTrackingStream(Domain domain, User user, InvoiceTrackingFilter filter) {
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
 		}
 	}
 	
-	public static List<InvoiceTracking> getInvoiceTrackingList(Domain domain, User user, InvoiceTrackingFilter filter) {
-	
 	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
-
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
-	
-	public static InvoiceTracking getInvoiceTracking(Domain domain, User user, InvoiceTrackingFilter filter) {
 	
 	public static InvoiceCommunicationTracking getInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
@@ -8222,23 +8089,15 @@ public class AON {
 		}
 	}
 	
-	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
-	
 	public static InvoiceCommunicationTracking saveInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceCommunicationTracking(ctx, invoiceCommunicationTracking);
 		}
 	}
 	
-<<<<<<< HEAD
 	public static void deleteInvoiceCommunicationTracking(String schema, Integer invoiceId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			getFinance().deleteInvoiceCommunicationTracking(ctx, invoiceId);
-=======
-	public static void deleteInvoiceTracking(String schema, Integer invoiceId) {
-		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
-			getFinance().deleteInvoiceTracking(ctx, invoiceId);
->>>>>>> parent of 0f78843fbc5 (PDF y Excel GWT de Clientes, Acreedores y Proveedores)
 		}
 	}	
 
