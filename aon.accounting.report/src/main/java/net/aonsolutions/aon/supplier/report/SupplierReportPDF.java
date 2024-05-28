@@ -9,10 +9,10 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-import net.aonsolutions.aon.registry.report.IHeader;
-import net.aonsolutions.aon.report.pdf.AbsReportTablePDF;
-import net.aonsolutions.aon.report.pdf.AbsSimpleReportPDF;
-import net.aonsolutions.aon.report.pdf.AonReportException;
+import net.aonsolutions.aon.report.AbsReportTablePDF;
+import net.aonsolutions.aon.report.AbsSimpleReportPDF;
+import net.aonsolutions.aon.report.AonReportException;
+import net.aonsolutions.aon.report.IHeader;
 
 public class SupplierReportPDF extends AbsSimpleReportPDF<SupplierFull> {
 

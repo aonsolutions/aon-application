@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.registry.report;
+package net.aonsolutions.aon.report;
 
 public interface IHeader {
 	public String getLabel();
