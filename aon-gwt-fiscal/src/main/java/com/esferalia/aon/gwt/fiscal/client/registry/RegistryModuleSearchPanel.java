@@ -292,9 +292,7 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 				&& opt.getUser() != null 
 				&& opt.getConfiguration().getUser().hasConfidentialityRole();
 		return new RegistryParams()
-			.setDomainName(opt.getDomainName())
 			.setDomain(opt.getDomain())
-			.setUser(opt.getUser())
 			.setDocumentType(documentTypeBox.getValue())
 			.setDocumentCountry(documentCountryBox.getValue())
 			.setDocument(documentBox.getValue())
