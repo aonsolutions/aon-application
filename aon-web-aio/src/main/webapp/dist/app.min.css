@@ -3062,52 +3062,6 @@ aon-access-card{
   color: #464feb !important;
 }
 
-.aonDesktopAppsContainer {
-  display: grid;
-  column-gap: 20px;
-  row-gap: 20px;
-  grid-template-columns: repeat(1, minmax(0px, 1fr));
-}
-
-.aonDesktopAonAppsContainer {
-  display: grid;
-  column-gap: 20px;
-  row-gap: 20px;
-  grid-template-columns: repeat(1, minmax(0px, 1fr));
-}
-
-@media(min-width: 400px) {
-  .aonDesktopAppsContainer {
-    grid-template-columns: repeat(2, minmax(0px, 1fr));
-  }
-}
-
-@media(min-width: 500px) {
-  .aonDesktopAppsContainer {
-    grid-template-columns: repeat(3, minmax(0px, 1fr));
-  }
-  
-  .aonDesktopAonAppsContainer {
-    grid-template-columns: repeat(2, minmax(0px, 1fr));
-  }
-}
-
-@media(min-width: 750px) {
-  .aonDesktopAppsContainer {
-    grid-template-columns: repeat(5, minmax(0px, 1fr));
-  }
-  
-  .aonDesktopAonAppsContainer {
-    grid-template-columns: repeat(3, minmax(0px, 1fr));
-  }
-}
-
-@media(min-width: 1000px) {
-  .aonDesktopAppsContainer {
-    grid-template-columns: repeat(7, minmax(0px, 1fr));
-  }
-}
-
 :has(>.aonMenuApp):hover{
   background-color: white !important;
   cursor: pointer;
@@ -3143,34 +3097,6 @@ aon-access-card{
   text-align: center;
   font-size: 10px !important;
   padding: 5px;
-}
-
-.aonAppMoreBtn:hover {
-  cursor: pointer;
-}
-
-.aonAppMoreListItem {
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.aonAppMoreListItem a {
-  display: flex;
-  justify-items: center !important;
-  align-items: flex-start;
-}
-
-.aonAppMoreIcon {
-  margin-right: 2px;
-}
-
-.aonAppMoreListItem:hover {
-  cursor: pointer;
-  background-color: lightgrey;
-}
-
-.aonAppMoreListItem:hover .aonAppMoreIcon {
-  color: #464feb !important;
 }
 
 .aonAppLauncher {
@@ -3217,17 +3143,17 @@ aon-access-card{
   display: grid;
   column-gap: 20px;
   row-gap: 20px;
-  grid-template-columns: repeat(1, minmax(0px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
 }
 
 .aonDesktopAonAppsContainer {
   display: grid;
   column-gap: 20px;
   row-gap: 20px;
-  grid-template-columns: repeat(1, minmax(0px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
 }
 
-@container rootPanel (min-width: 400px) {
+/* @container rootPanel (min-width: 400px) {
   .aonDesktopAppsContainer {
     grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
@@ -3243,7 +3169,7 @@ aon-access-card{
   }
 }
 
-@container rootPanel (min-width: 750px) {
+@container rootPanel (min-width: 750px) and (max-width: 999px) {
   .aonDesktopAppsContainer {
     grid-template-columns: repeat(5, minmax(0px, 1fr));
   }
@@ -3257,7 +3183,11 @@ aon-access-card{
   .aonDesktopAppsContainer {
     grid-template-columns: repeat(7, minmax(0px, 1fr));
   }
-}
+  
+  .aonDesktopAonAppsContainer {
+    grid-template-columns: repeat(4, minmax(0px, 1fr));
+  }
+} */
 
 .aonAlwaysHidden {
   display: none !important;

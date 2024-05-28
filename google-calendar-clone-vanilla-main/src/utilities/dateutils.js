@@ -33,7 +33,7 @@ function getDateFormatted(date) {
 
 function getDateForStore(date) {
   date = testDate(date);
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate() + 1}`;
 }
 
 function getdatearray(date) {
