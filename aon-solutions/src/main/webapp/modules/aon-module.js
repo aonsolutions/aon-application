@@ -105,7 +105,7 @@ export class AonModule extends AonElement {
 			try {
 				await login(data);
 			} catch (e) {
-				alert(e);
+				
 			}
 			window.location = window.location.origin;
 		}
