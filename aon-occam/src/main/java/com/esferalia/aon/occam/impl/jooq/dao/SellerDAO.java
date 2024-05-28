@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import  org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
@@ -137,6 +138,39 @@ public class SellerDAO {
 		sellers.forEach(seller -> System.out.println(seller.getName()));
 			
 		return sellers;
+	}
+	
+	public static Integer getListCount(CloseableAONContext ctx, SellerParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectCount()
+			.from(SELLER)
+			.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+			.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+			.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
+			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+			.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(SELLER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "alias"))
+				select.orderBy(SELLER_ALIAS.ALIAS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(SELLER_ALIAS.DOCUMENT);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(SELLER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "alias"))
+				select.orderBy(SELLER_ALIAS.ALIAS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(SELLER_ALIAS.DOCUMENT.desc());
+		}
+				
+		Record1<Integer> sellerCount = select.fetchOne();
+					
+		return sellerCount == null ? 0 : sellerCount.value1();
 	}
 	
 	private static Condition paramsToCondition(CloseableAONContext ctx, SellerParams params) {

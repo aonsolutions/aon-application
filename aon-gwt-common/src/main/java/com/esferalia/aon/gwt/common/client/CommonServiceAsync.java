@@ -204,6 +204,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getSellers(SellerParams params, AsyncCallback<List<Seller>> asyncCallback) throws AonCoreException;
+	void getSellersCount(SellerParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
 	void getSeller(String domainName, int domain, String user, Integer id, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	void saveSeller(String domainName, int domain, String user, Seller seller, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	void deleteSeller(String domainName, int domain, String user, Integer sellerId, AsyncCallback<Void> asyncCallback) throws AonCoreException;

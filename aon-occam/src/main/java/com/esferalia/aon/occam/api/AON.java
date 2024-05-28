@@ -5215,6 +5215,12 @@ public class AON {
 			return getRegistry().getSellerList(ctx, params);
 		}
 	}
+	
+	public static Integer getSellerListCount(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerListCount(ctx, params);
+		}
+	}
 
 	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {

@@ -325,26 +325,23 @@ public abstract class SellerPanel extends ScrollPanel {
 		List<Seller> sellers = rowSellers.values().stream().collect(Collectors.toList());
 		for(int i=0; i<sellers.size(); i++)
 			if(sellers.get(i).getId().equals(sellerId))
-				return i + 1;
+				return i;
 		return 0;
 	}
 	
-	public Seller getPreviusSeller(Integer sellerId) {
-		List<Seller> sellers = rowSellers.values().stream().collect(Collectors.toList());
-		for(int i=0; i<sellers.size(); i++)
-			if(sellers.get(i).getId().equals(sellerId))
-				return i == 0 ? sellers.get(sellers.size() - 1) : sellers.get(i - 1);
-		
-		return null;
-	}
-	
-	public Seller getNextSeller(Integer sellerId) {
-		List<Seller> sellers = rowSellers.values().stream().collect(Collectors.toList());
-		for(int i=0; i<sellers.size(); i++)
-			if(sellers.get(i).getId().equals(sellerId))
-				return (i+1) == sellers.size() ? sellers.get(0) : sellers.get(i + 1);
-		
-		return null;
+	public void getSellerListCount(Consumer<Integer> finish) {
+		COMMON_SERVICE.getSellersCount(params, new AsyncCallback<Integer>() {
+					
+					@Override
+					public void onSuccess(Integer count) {
+						finish.accept(count);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						finish.accept(null);
+					}
+				});
 	}
 	
 	public void deleteSellers() {

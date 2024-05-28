@@ -496,6 +496,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getSellers(params, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getSellersCount(SellerParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getSeller(String domainName, int domain, String user, Integer id, AsyncCallback<Seller> callback) throws AonCoreException {

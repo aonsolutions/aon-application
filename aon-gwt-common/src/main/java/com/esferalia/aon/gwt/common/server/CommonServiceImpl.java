@@ -478,6 +478,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public Integer getSellersCount(SellerParams params) throws AonCoreException {
+		return AON.getSellerListCount(params);
+	}
+	
+	@Override
 	public Seller getSeller(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		Seller seller = AON.getSeller(domainName, domain, user, id);
 		return seller;
@@ -598,6 +603,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
 	}
+	
 	@Override
 	public List<Category> getAviableCategories(String domainName, Integer domain, String user) throws AonCoreException {
 		return AON_SOLUTIONS.getCategoryStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
