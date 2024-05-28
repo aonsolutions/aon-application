@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
@@ -96,10 +97,6 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		addSortWidget(sort);
 		addSortWidget(asc);
 		
-		addUtilitiesMenu();
-		addUtilityOption(new AonSearchPanelButton("Descargar fichero", AON.CSS.aonIconDownload()), "Exportar Excel");
-		addUtilityOption(new AonSearchPanelButton("Subir fichero", AON.CSS.aonIconUpload()), "Subir Fichero");
-		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		
@@ -120,6 +117,24 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		newButton.addClickHandler(e -> showSellerDialog());
 		
 		addToolbarButton(newButton);
+		
+		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
+		downloadExcel.addClickHandler(e -> {
+			String fileDownloadURL = 
+					"/ms/api/seller-excel/" + 
+					"?domainId=" + options.getDomain() + 
+					"&domainName=" + options.getDomainName() + 
+					"&login=" + options.getUser() +
+					"&description=" + getSearchTextBox().getValue() +
+					"&scope=" + scope.getValue() +
+					"&active=" + active.getValue() +
+					"&orderBy=" + sort.getValue() +
+					"&asc=" + asc.getValue()
+					;
+			
+			Window.open(fileDownloadURL, "_blank", null);
+		});
+		addToolbarButton(downloadExcel);
 		
 		deleteButton = new AonToolbarButton( "Borrar Agente Comercial", AON.CSS.aonIconDelete());
 		deleteButton.addClickHandler(e -> {

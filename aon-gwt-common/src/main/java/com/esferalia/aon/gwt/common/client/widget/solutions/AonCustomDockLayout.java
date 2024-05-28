@@ -107,7 +107,7 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	public void addFilterMenu() {
 		// Right menu
 		rightMenu.addStyleName(AON.CSS.aonFlexColumn());
-		rightMenu.getElement().getStyle().setProperty("padding", "1rem");
+		rightMenu.getElement().getStyle().setProperty("padding", "1rem 1.5rem 1rem 1rem");
 		rightMenu.getElement().getStyle().setProperty("gap", "2rem");
 		
 		// Filter
