@@ -754,7 +754,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
     	if(!AonStringUtils.isBlank(invoiceFilter.getGlobal())) {
     		Filter filter3 = f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%")
-    				.or(f.getTotalProperty().like("%" + invoiceFilter.getGlobal() + "%"))
+    				.or(f.getTotalStringProperty().like("%" + invoiceFilter.getGlobal() + "%"))
     				.or(f.getReferenceCodeProperty().like("%" + invoiceFilter.getGlobal() + "%"))
     				.or(f.getDateNewPortalProperty().like("%" + invoiceFilter.getGlobal() +"%"));
     		filter = filter.and(filter3);
