@@ -52,11 +52,14 @@ import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.hibernateToOccam.registry.OccamCustomer;
 import net.aonsolutions.aon.registry.report.CustomerReportPDF;
 import net.aonsolutions.aon.registry.report.CustomerReportXLS;
 import net.aonsolutions.aon.report.pdf.AonReportException;
@@ -346,7 +349,7 @@ public class CustomerController extends CustomerListController implements ICusto
 			new CustomerReportPDF( occam )
 				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
 					.map(to -> (Customer) to)
-					.map(OccamCustomer::from ));
+					.map(this::toCustomerFull ));
 			response.flushBuffer();
 			response.setHeader("Content-disposition","attachment; filename=\"CLIENTES."+MimeType.PDF.getExtension()+"\";");
 			context.responseComplete();
@@ -366,7 +369,7 @@ public class CustomerController extends CustomerListController implements ICusto
 
 			Stream<CustomerFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
 				.map(to -> (Customer) to)
-				.map(OccamCustomer::from);
+				.map(this::toCustomerFull);
 			stream.forEach(report);
 			response.setContentType(MimeType.MS_EXCEL.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"CLIENTES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
@@ -388,8 +391,44 @@ public class CustomerController extends CustomerListController implements ICusto
 
 
 
+	private CustomerFull toCustomerFull(Customer customer) {
+		CustomerFull customerFull = new CustomerFull();
+		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
+		
+		occamCustomer.setDocument(customer.getRegistry().getDocument());
+		occamCustomer.setAlias(customer.getRegistry().getAlias());
+		occamCustomer.setDocumentCountry(toOccamCountry(customer.getRegistry().getDocumentCountry()));
+		occamCustomer.setId(customer.getRegistry().getId());
+		occamCustomer.setName(customer.getRegistry().getName());
+		customerFull.setRegistry(occamCustomer);
+		
+		try {
+			com.code.aon.registry.RegistryMedia phone = customer.getRegistry().getPhone();
+			if (phone != null) {
+				customerFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
+		}
+		
+		occamCustomer.setStatus(customerStatusToRegistryStatus(customer.getStatus()));
+		
+		return customerFull;
 
+	}
 
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
+	}
+	
+	
+	
+	private static RegistryStatus customerStatusToRegistryStatus( CustomerStatus cs ) {
+		if(cs== null) {
+			return null;
+		}
+		return RegistryStatus.valueOf( cs.toString() );
+	}
 
 	
 }

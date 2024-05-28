@@ -18,16 +18,20 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.supplier.enumeration.SupplierStatus;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.hibernateToOccam.registry.OccamSupplier;
 import net.aonsolutions.aon.registry.report.SupplierReportPDF;
 import net.aonsolutions.aon.registry.report.SupplierReportXLS;
 import net.aonsolutions.aon.report.pdf.AonReportException;
@@ -123,7 +127,7 @@ public class SupplierController extends RegistryController implements IAuditable
 			new SupplierReportPDF( occam )
 				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
 					.map(to -> (Supplier) to)
-					.map( OccamSupplier::from ));
+					.map(this::toSupplierFull ));
 			response.flushBuffer();
 			response.setHeader("Content-disposition","attachment; filename=\"PROVEEDORES."+MimeType.PDF.getExtension()+"\";");
 			context.responseComplete();
@@ -143,7 +147,7 @@ public class SupplierController extends RegistryController implements IAuditable
 
 			Stream<SupplierFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
 				.map(to -> (Supplier) to)
-				.map(OccamSupplier::from);
+				.map(this::toSupplierFull);
 			stream.forEach(report);
 			response.setContentType(MimeType.MS_EXCEL.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"PROVEEDORES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
@@ -162,5 +166,42 @@ public class SupplierController extends RegistryController implements IAuditable
 
 	}
 
+	private SupplierFull toSupplierFull(Supplier supplier) {
+		SupplierFull supplierFull = new SupplierFull();
+		com.esferalia.aon.occam.api.model.registry.Supplier occamSupplier = new com.esferalia.aon.occam.api.model.registry.Supplier();
+		
+		occamSupplier.setDocument(supplier.getRegistry().getDocument());
+		occamSupplier.setAlias(supplier.getRegistry().getAlias());
+		occamSupplier.setDocumentCountry(toOccamCountry(supplier.getRegistry().getDocumentCountry()));
+		occamSupplier.setId(supplier.getRegistry().getId());
+		occamSupplier.setName(supplier.getRegistry().getName());
+		supplierFull.setRegistry(occamSupplier);
+		try {
+			com.code.aon.registry.RegistryMedia phone = supplier.getRegistry().getPhone();
+			if (phone != null) {
+				supplierFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
+		}
+		
+		occamSupplier.setStatus(supplierStatusToRegistryStatus(supplier.getStatus()));
+		
+		return supplierFull;
+
+	}
+
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
+	}
+	
+	
+	
+	private static RegistryStatus supplierStatusToRegistryStatus( SupplierStatus ss ) {
+		if(ss== null) {
+			return null;
+		}
+		return RegistryStatus.valueOf( ss.toString() );
+	}
 
 }

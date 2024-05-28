@@ -219,13 +219,6 @@
 			<scope>compile</scope>
 		</dependency>
 		
-		<dependency>
-	    	<groupId>net.aonsolutions.aon</groupId>
-	    	<artifactId>hibernateToOccam</artifactId>
-	    	<version>${project.version}</version>
-	    	<scope>compile</scope>
-    	</dependency>
-		
 		<!--dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.pms</artifactId>
