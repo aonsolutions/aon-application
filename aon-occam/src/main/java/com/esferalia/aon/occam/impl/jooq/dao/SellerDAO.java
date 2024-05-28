@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -82,6 +83,7 @@ public class SellerDAO {
 				.from(SELLER)
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+				.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
 				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
@@ -104,6 +106,7 @@ public class SellerDAO {
 			.from(SELLER)
 			.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 			.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+			.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
 			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
 			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 			.where(condition);
@@ -242,7 +245,9 @@ public class SellerDAO {
 				.setId(getValue(r, SELLER.REGISTRY))
 				.setDomain(getValue(r, SELLER.DOMAIN))
 				.setStatus(SellerStatus.safeValueOf(getValue(r, SELLER.STATUS)))
-				.setCommissionType(new CommissionType().setId(getValue(r, SELLER.COMMISSION_TYPE)))
+				.setCommissionType(checkField(r, SCOPE.ID)
+						? new CommissionType().setId(getValue(r, COMMISSION_TYPE.ID)).setDomain(getValue(r, COMMISSION_TYPE.DOMAIN)).setName(getValue(r, COMMISSION_TYPE.NAME))
+						: new CommissionType().setId(getValue(r, SELLER.COMMISSION_TYPE)))
 				.setScope(checkField(r, SCOPE.ID)
 					? ScopeFiller.buildScope(r)
 					: new Scope().setId(getValue(r, SELLER.SCOPE)))

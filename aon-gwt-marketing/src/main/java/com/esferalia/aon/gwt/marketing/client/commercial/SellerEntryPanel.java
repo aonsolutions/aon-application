@@ -506,7 +506,7 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			addDocument.addClickHandler(e -> createDocument());
 			AonCustomCard documentCard = new AonCustomCard("Documentos", addDocument);
 			documentCard.getElement().getStyle().setProperty("margin-top", "1rem");
-			rattachTable = new RattachTable(options.getDomainName(), options.getDomain(), options.getUser(), seller.getId()) {
+			rattachTable = new RattachTable(options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), seller.getId()) {
 
 				@Override
 				protected void onShowErrorMessage(String errorMessage) {
@@ -614,12 +614,7 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 				dialog.hide();
 				rattachTable.onSearch();
 			}
-		}) {
-
-			@Override
-			protected void onResize() {
-				dialog.showLoaded();
-			}};
+		});
 		
 		dialog.add( marketingCampaignPanel );
 		dialog.showLoaded();

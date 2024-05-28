@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { getToken , getCompanies, getUser, login} from '../services/service.js';
+import { getToken , getCompanies, login} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 
 import { AonHome } from './aon-home.js';
@@ -75,6 +75,7 @@ export class AonModule extends AonElement {
 				});
 			} else {
 				getCompanies().then(companies => {
+					alert(companies.length)
 					if(companies.length === 1){
 						this.companySelection(companies[0], true);
 					} else {
@@ -121,7 +122,8 @@ export class AonModule extends AonElement {
 		LS.setDomainName(company.domain);
 		LS.setDomainDocumnet(company.document);
 		LS.setOnlyOne(onlyOne);
-
+		LS.setDomainLogin(company.login);
+		
 		let home = this.getElement(this.AON_HOME);
 		home.showMenu(true);
 
@@ -134,7 +136,9 @@ export class AonModule extends AonElement {
 			aonMenu.init();
 		} else aonHeader.companyIn(onlyOne);
 
-
+		this.rootPanelHtml(this.isMobile()
+			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+			: '<aon-desktop id="aonDesktop"></aon-desktop>');
 	}
 
 	async orientationLocked(){

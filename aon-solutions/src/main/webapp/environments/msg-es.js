@@ -225,6 +225,7 @@ export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
 export const INVOICE_CONFIGURATION = 'Configuración de Facturas';
 export const INVOICE_DATA = 'Datos Factura';
+export const INVOICE_DOCUMENT_NUMBER = 'Número Documento';
 export const INVOICE_ISSUED = 'Factura Emitida';
 export const INVOICE_NUMBER = 'Número Factura';
 export const INVOICE_OBJECT = 'Objeto de Factura';
