@@ -111,7 +111,7 @@ export const GROUPWARE_MENU = {
 };
 
 export const ACCOUNTING_MENU = {
-	app: "accounting",
+	app: "accountingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,

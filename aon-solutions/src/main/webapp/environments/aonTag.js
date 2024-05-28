@@ -208,3 +208,5 @@ export const AON_CONFIG = 'aon-config';
 export const AON_RIGHT_PANEL = 'aon-right-panel';
 
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+
+export const AON_SUITE_MENU = 'aon-suite-menu';

@@ -1,6 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
+import {ACCOUNTING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -25,6 +26,7 @@ import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 
 import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -156,9 +158,9 @@ export class AonNewMenu extends AonElement {
 			case HomeApps.HOME.app:
 				this.rootPanel(new AonParent());
 				break;
-			/*case TOP_MENU_APPS.ACCOUNTING_MENU.app:
+			case ACCOUNTING_MENU.app:
 				this.rootPanel(new AonAccountingMenu());
-			*/	break;
+				break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
