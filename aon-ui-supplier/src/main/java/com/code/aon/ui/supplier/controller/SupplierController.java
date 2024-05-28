@@ -4,7 +4,6 @@ import static com.code.aon.ui.common.ICommonMessages.SUPPLIER_REPORT;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -27,14 +26,12 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.registry.report.SupplierReportPDF;
-import net.aonsolutions.aon.registry.report.SupplierReportXLS;
-import net.aonsolutions.aon.report.pdf.AonReportException;
+import net.aonsolutions.aon.report.AonReportException;
+import net.aonsolutions.aon.supplier.report.SupplierReportPDF;
 
 public class SupplierController extends RegistryController implements IAuditableController {
 	
@@ -134,35 +131,6 @@ public class SupplierController extends RegistryController implements IAuditable
 		} catch (IOException | AonReportException e) {
 			throw new ManagerBeanException( e ); 
 		}
-	}
-	
-	public String onNewReportXLS() throws ManagerBeanException {
-		try {
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			
-			SupplierReportXLS report = new SupplierReportXLS();
-			report.printReport("Diario");
-
-			Stream<SupplierFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
-				.map(to -> (Supplier) to)
-				.map(this::toSupplierFull);
-			stream.forEach(report);
-			response.setContentType(MimeType.MS_EXCEL.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
-			report.finalize(response.getOutputStream());
-			response.flushBuffer();
-
-			stream.close();
-			context.responseComplete();
-			return null;
-
-		} catch (IOException e) {
-			throw new ManagerBeanException( e ); 
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException( e ); 
-		}
-
 	}
 
 	private SupplierFull toSupplierFull(Supplier supplier) {

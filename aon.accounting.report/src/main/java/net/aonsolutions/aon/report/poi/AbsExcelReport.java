@@ -170,7 +170,7 @@ public abstract class AbsExcelReport {
 		int cellCount = rowCellCount();
 		CellUtil.createCell(row, cellCount, header.getLabel(), headerStyle);
 		sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-		sheet.setColumnWidth(cellCount, (int) (header.getxlsWidth() * 256) );
+		sheet.setColumnWidth(cellCount, (int) (header.getWidth() * 256) );
 	}
 
 	

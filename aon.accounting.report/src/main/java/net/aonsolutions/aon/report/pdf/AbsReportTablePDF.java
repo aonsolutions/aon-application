@@ -26,7 +26,7 @@ public abstract class AbsReportTablePDF<T> extends PdfPTable implements Consumer
 		this.setHeaderRows(1);
 		try {
 			float[] widths = new float[ headers.length ];
-			IntStream.range(0, headers.length).forEach( i -> widths[i] = headers[i].getpdfWidth());
+			IntStream.range(0, headers.length).forEach( i -> widths[i] = headers[i].getWidth());
 			this.setTotalWidth(widths);
 		} catch (DocumentException e) {
 			// Imposible
