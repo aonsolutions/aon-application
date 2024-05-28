@@ -78,10 +78,4 @@ public class CustomerReportPDF extends AbsSimpleReportPDF<CustomerFull> {
 		super.printReportPDF(outputStream, new PDFReport(Header.values()), stream);
 	}
 
-
-	@Override
-	protected String getTitle() {
-		return "Listado de clientes";
-	}
-
 }

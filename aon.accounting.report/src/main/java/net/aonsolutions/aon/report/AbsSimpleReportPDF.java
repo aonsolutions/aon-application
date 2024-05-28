@@ -23,14 +23,12 @@ public abstract class AbsSimpleReportPDF<T>  {
 	protected AbsSimpleReportPDF(Occam occam) {
 		AonConfiguration config = AON.getConfiguration(occam);
 		this.metadata = new ReportMetadata()
-			.setTitle(getTitle())
+			.setTitle("Listado de Clientes")
 			.setCompanyName(Optional.ofNullable(config.getCompany()).map(c -> c.getName()).orElse(""));
 		this.document = new Document();
 		this.document.setPageSize(PageSize.A4);
 		this.document.setMargins(30, 30, 50, 30);
 	}
-
-
 
 	protected void printReportPDF(OutputStream outputStream, AbsReportTablePDF<T> table, Stream<T> stream) throws AonReportException {
 		try {
@@ -46,6 +44,5 @@ public abstract class AbsSimpleReportPDF<T>  {
 	}
 	
 	protected abstract void print(OutputStream outputStream, Stream<T> stream) throws AonReportException;
-	protected abstract String getTitle();
 
 }
