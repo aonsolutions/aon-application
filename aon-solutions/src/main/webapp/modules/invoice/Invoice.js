@@ -1088,6 +1088,35 @@ export class Invoice {
     this.finances.splice(i, 1);
     return this;
   }
+
+}
+
+export const getDocumentNumber = (invoice) => {
+  let documentNumber = "";
+  if (invoice.type) {
+    if (invoice.type == "emitida") {
+      documentNumber = "E-";
+    } else if (invoice.type == "recibida") {
+      documentNumber = "R-";
+    } else if (invoice.type == "ticket") {
+      documentNumber = "G-";
+    } else {
+      documentNumber = "?-";
+    }
+  } else {
+    documentNumber = "?-";
+  }
+  
+  if (invoice.series) {
+    documentNumber += invoice.series + "/";
+  }
+  if (invoice.number) {
+    let n = "" + invoice.number;
+    documentNumber += n.zeros(6);
+  } else {
+    documentNumber += "??????";
+  }
+  return documentNumber;
 }
 
 export class InvoiceTax {
