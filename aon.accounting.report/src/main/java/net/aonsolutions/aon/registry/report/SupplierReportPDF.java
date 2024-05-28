@@ -54,7 +54,7 @@ public class SupplierReportPDF extends AbsSimpleReportPDF<SupplierFull> {
 
 	@Override
 	protected String getTitle() {
-		return "Listado de Proveedores";
+		return "Listado de clientes";
 	}
 
 }
