@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -56,9 +57,9 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.itextpdf.text.DocumentException;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.report.AonReportException;
 import net.aonsolutions.customer.report.CustomerReportPDF;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
@@ -333,26 +334,26 @@ public class CustomerController extends CustomerListController implements ICusto
 		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
 	
-	public String onNewReport() throws ManagerBeanException {
-		try {
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			OutputStream out = response.getOutputStream();
-			Occam occam = new Occam()
-					.setDomainName(  AonUtil.getDomainName() )
-					.setDomain(  DomainManager.getCurrentDomain() )
-					.setUser(  AonUtil.getRemoteUser() )
-					;
-			new CustomerReportPDF( occam )
-				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
-					.map(to -> (Customer) to)
-					.map(this::toCustomerFull ));
-			response.flushBuffer();
-			context.responseComplete();
-			return null;
-		} catch (IOException | AonReportException e) {
-			throw new ManagerBeanException( e ); 
-		}
+	public String onNewReport() throws ManagerBeanException, IOException, DocumentException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		OutputStream out = response.getOutputStream();
+		
+		Occam occam = new Occam()
+				.setDomainName(  AonUtil.getDomainName() )
+				.setDomain(  DomainManager.getCurrentDomain() )
+				.setUser(  AonUtil.getRemoteUser() )
+				;
+	
+		Stream <CustomerFull> customers = 
+		AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+			.map(to -> (Customer) to)
+			.map(this::toCustomerFull );
+		CustomerReportPDF c = new CustomerReportPDF();
+		c.printReportPDF(occam, out, customers);
+		response.flushBuffer();
+		context.responseComplete();
+		return null;
 	}
 
 	private CustomerFull toCustomerFull(Customer customer) {
