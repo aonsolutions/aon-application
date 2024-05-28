@@ -250,7 +250,6 @@
 		<!-- TESTS  
 		<module>aon-hibernate-test</module>
 		-->
-		<module>hibernateToOccam</module>
 	</modules>
 
 	<scm>
