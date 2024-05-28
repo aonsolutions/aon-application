@@ -43,11 +43,5 @@
 	      	<artifactId>commons-io</artifactId>
 	      	<version>2.6</version>
 	    </dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
- 	 		<artifactId>aon.gwt.fiscal</artifactId>
- 	 		<version>${project.version}</version>
- 	 		<scope>compile</scope>
-		</dependency>
 	</dependencies>
 </project>
