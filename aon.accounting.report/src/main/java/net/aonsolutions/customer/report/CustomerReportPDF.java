@@ -56,12 +56,54 @@ public class CustomerReportPDF  {
 		table.setTotalWidth(widths);
 		table.setLockedWidth(true);
 
-		createHeader("C\u00F3digo",table);
-		createHeader("N.I.F.",table);
-		createHeader("Nombre",table);
-		createHeader("Alias",table);
-		createHeader("Tel\u00E9fono",table);
-		createHeader("Estado",table);
+		Paragraph codeParagraph = new Paragraph(8, "C\u00F3digo", BODY_FONT_BOLD);
+		codeParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell codeCell = new PdfPCell();
+		codeCell.setBorder(0);
+		codeCell.setBorderWidthBottom(1);
+		codeCell.addElement(codeParagraph);
+		table.addCell(codeCell);
+
+		Paragraph documentParagraph = new Paragraph(8, "N.I.F.", BODY_FONT_BOLD);
+		documentParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell documentCell = new PdfPCell();
+		documentCell.setBorder(0);
+		documentCell.setBorderWidthBottom(1);
+		documentCell.addElement(documentParagraph);
+		table.addCell(documentCell);
+
+		Paragraph nameParagraph = new Paragraph(8, "Nombre", BODY_FONT_BOLD);
+		nameParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell nameCell = new PdfPCell();
+		nameCell.setBorder(0);
+		nameCell.setBorderWidthBottom(1);
+		nameCell.addElement(nameParagraph);
+		table.addCell(nameCell);
+
+		Paragraph aliasParagraph = new Paragraph(8, "Alias", BODY_FONT_BOLD);
+		aliasParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell aliasCell = new PdfPCell();
+		aliasCell.setBorder(0);
+		aliasCell.setBorderWidthBottom(1);
+		aliasCell.addElement(aliasParagraph);
+		table.addCell(aliasCell);
+
+		Paragraph phoneParagraph = new Paragraph(8, "Tel\u00E9fono", BODY_FONT_BOLD);
+		phoneParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell phoneCell = new PdfPCell();
+		phoneCell.setBorder(0);
+		phoneCell.setBorderWidthBottom(1);
+		phoneCell.addElement(phoneParagraph);
+		table.addCell(phoneCell);
+		
+		Paragraph statusParagraph = new Paragraph(8, "Estado", BODY_FONT_BOLD);
+		statusParagraph.setAlignment(Element.ALIGN_LEFT);
+		PdfPCell statusCell = new PdfPCell();
+		statusCell.setBorder(0);
+		statusCell.setBorderWidthBottom(1);
+		statusCell.addElement(statusParagraph);
+		table.addCell(statusCell);
+
 		table.setHeaderRows(1);
 
 		PDFAction action = new PDFAction(table);
@@ -70,16 +112,6 @@ public class CustomerReportPDF  {
 		document.add(table);
 		document.close();
 
-	}
-	
-	private void createHeader(String columnName, PdfPTable table) {
-		Paragraph paragraph = new Paragraph (8,columnName,BODY_FONT_BOLD);
-		paragraph.setAlignment(Element.ALIGN_LEFT);
-		PdfPCell cell = new PdfPCell();
-		cell.setBorder(0);
-		cell.setBorderWidthBottom(1);
-		cell.addElement(paragraph);
-		table.addCell(cell);
 	}
 
 	private class PDFAction implements Consumer<CustomerFull> {
@@ -138,8 +170,6 @@ public class CustomerReportPDF  {
 			table.addCell(statusCell);
 
 		}
-		
-		
 
 	}
 
