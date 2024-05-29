@@ -4,21 +4,25 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONObject;
 
 public class TediJSONUtils {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	private static final SimpleDateFormat DATE_TO_STRING_FORMAT = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
 	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private static final SimpleDateFormat DATE_TIME_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
 	private static final SimpleDateFormat DATE_TIME_FORMAT3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 																						
 	private static final SimpleDateFormat[] FORMATS = new SimpleDateFormat[] {
 		 DATE_FORMAT
+		,DATE_TO_STRING_FORMAT
 		,DATE_TIME_FORMAT
 		,DATE_TIME_FORMAT2
 		,DATE_TIME_FORMAT3
+		
 	};
 
 	private TediJSONUtils() {
@@ -87,12 +91,12 @@ public class TediJSONUtils {
 		return (date == null) ? null : format.format(date);
 	}
 	
-public static void main(String[] args) throws ParseException {
-		String d = "2024-04-09T08:09:51Z";
-		System.out.println( d );
-		System.out.println( DATE_TIME_FORMAT3.parse( d ) );
-		
-}
+	public static void main(String[] args) throws ParseException {
+			// String d = "Tue Apr 30 00:00:00 CEST 2024";
+			String d = "Fri Jun 28 00:00:00 CEST 2024";
+			System.out.println( d );
+			System.out.println( TediJSONUtils.parseDate( d ) );
+	}
 
 }
 
