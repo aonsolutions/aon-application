@@ -1,8 +1,12 @@
 package com.esferalia.aon.gwt.common.server;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -436,8 +440,13 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
-		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
-		return taskHolders;
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
+//		return taskHolders;
+		Integer[] taskHolderIds = new Integer[taskHolders.size()];
+		taskHolders.stream().map(taskHolder -> taskHolder.getId()).collect(Collectors.toList()).toArray(taskHolderIds);
+		LinkedList<Seller> sellerList = AON.getSellerList(domainName, domain, user, f -> f.getStatusProperty().eq((byte)0).and(f.getTaskHolderProperty().in(taskHolderIds)));
+		
+		return sellerList.stream().map(seller -> seller.getTaskHolder()).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -452,9 +461,36 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolderId) throws AonCoreException {
-		TaskHolder taskHolder = AON.getTaskHolder(domainName, domain, user, f -> f.getIdProperty().eq(taskHolderId));
-		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getDocumentProperty().eq(taskHolder.getDocument()));
+		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getTaskHolderProperty().eq(taskHolderId));
 		return seller;
+	}
+	
+	@Override
+	public Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
+		Integer[] taskHolderIds = new Integer[taskHolders.size()];
+		taskHolders.stream().map(taskHolder -> taskHolder.getId()).collect(Collectors.toList()).toArray(taskHolderIds);
+		LinkedList<Seller> sellerList = AON.getSellerList(domainName, domain, user, f -> f.getStatusProperty().eq((byte)0).and(f.getTaskHolderProperty().in(taskHolderIds)));
+		Map<Seller, Date> sellerProjects = new HashMap<Seller, Date>();
+		
+		for(Seller seller : sellerList) {
+			LinkedList<ProjectCommercial> projectCommercials = AON.getProjectCommercialList(domainName, domain, user, f -> f.getSellerProperty().eq(seller.getId()));
+			
+			// Si esta activo y no tiene ninguna operacion comercial se devuelve este
+			if(projectCommercials.isEmpty()) return seller;
+			
+			projectCommercials.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+			sellerProjects.put(seller, projectCommercials.get(0).getDate());
+		}
+		
+		Optional<Date> oldestDate = sellerProjects.values().stream().sorted((d1, d2) -> d1.compareTo(d2)).findFirst();
+		if(oldestDate.isEmpty()) return null;
+		else {
+			for(Entry<Seller, Date> entry : sellerProjects.entrySet()) {
+				if(entry.getValue().equals(oldestDate.get())) return entry.getKey();
+			}
+			return null;
+		}
 	}
 	
 	@Override

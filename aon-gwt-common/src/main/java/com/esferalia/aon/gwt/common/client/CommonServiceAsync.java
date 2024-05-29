@@ -196,6 +196,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getSellerByTaskHolder(String domainName, int domain, String user, int taskHolder, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
+	void getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	void saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial, AsyncCallback<ProjectCommercial> asyncCallback) throws AonCoreException;
 	void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 
