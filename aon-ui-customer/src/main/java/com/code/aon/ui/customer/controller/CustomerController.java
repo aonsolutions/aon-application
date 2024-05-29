@@ -53,7 +53,6 @@ import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -384,10 +383,6 @@ public class CustomerController extends CustomerListController implements ICusto
 				.setValue(phoneMedia.getValue());
 	}
 
-	private static RegistryStatus customerStatusToRegistryStatus(CustomerStatus cs) {
-		return RegistryStatus.valueOf(cs.toString());
-	}
-
 	
 	public String onNewReport() throws ManagerBeanException, IOException, DocumentException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -411,7 +406,7 @@ public class CustomerController extends CustomerListController implements ICusto
 		return null;
 	}
 
-	private CustomerFull toCustomerFull(Customer customer) {
+	/* private CustomerFull toCustomerFull(Customer customer) {
 		CustomerFull customerFull = new CustomerFull();
 		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
 		
@@ -435,7 +430,7 @@ public class CustomerController extends CustomerListController implements ICusto
 		
 		return customerFull;
 
-	}
+	} */
 
 	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
 		return Country.safeValueOf( documentCountry.getValue() );

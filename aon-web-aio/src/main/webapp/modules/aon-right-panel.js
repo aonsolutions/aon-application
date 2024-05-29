@@ -205,6 +205,7 @@ export class AonRightPanel extends AonElement {
 
     getRedirectButton(){
         return this.getElement(this.REDIRECT_BUTTON);
+    }
 
     getConfigButton(){
         return this.getElement(this.CONFIG_BUTTON);
@@ -214,12 +215,11 @@ export class AonRightPanel extends AonElement {
         return this.getElement(this.HELP_BUTTON);
     }
 
-    getNotificationButton(){
+    getNotificationButton() {
         return this.getElement(this.NOTIFICATION_BUTTON);
-
     }
 
-    getTitle(){
+    getTitle() {
         return this.getElement(this.TITLE);
     }
 }

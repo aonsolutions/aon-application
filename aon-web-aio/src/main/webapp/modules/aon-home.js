@@ -254,7 +254,7 @@ export class AonHome extends AonElement {
 						rightPanel.open("200px", "0px", "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 					}*/
 					rightPanel.setContent(new AonLoginPanel());
-					rightPanel.setTitle(MSG.USER
+					rightPanel.setTitle(MSG.USER);
 					rootPanel.style.marginRight = '0px';
 					editButton.style.visibility = 'visible';
 					redirectButton.style.visibility = 'hidden';
@@ -293,14 +293,23 @@ export class AonHome extends AonElement {
 				let rightPanel = this.getElement('aonRightPanel');
 				let notification = this.getElement('aonNotificationPanel');
 				if (notification) {
-					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					helpButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
-					rightPanel.close();
+					rootPanel.style.marginRight = '0px';
+					rightPanel.remove();
 				} else  {
-					rightPanel.clear();
+					if (rightPanel) {
+						rightPanel.remove();
+					}
+					rightPanel = new AonRightPanel();
+					rightPanel.addEventListener(EVENT.CLOSE, () => {
+						rootPanel.style.marginRight = '0px';
+					});
+					this.appendChild(rightPanel);
+					let editButton = this.getElement('aonRightPanelEditButton');
+					let redirectButton = this.getElement('aonRightPanelRedirectButton');
+					let title = this.getElement('aonRightPanelTitle');
+					let notificationButton = this.getElement('aonRightPanelNotificationButton');
+					let helpButton = this.getElement('aonRightPanelHelpButton');
+					let configButton = this.getElement('aonRightPanelConfigButton');
 					rightPanel.setContent(new AonNotificationPanel());
 					rightPanel.setTitle(MSG.NOTIFICATIONS);
 					rootPanel.style.marginRight = '321px';
