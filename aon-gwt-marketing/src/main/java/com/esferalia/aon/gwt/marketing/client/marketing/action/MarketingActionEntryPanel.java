@@ -464,7 +464,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		table.setWidget(4, 3, endDate);
 		
 		// Accion Comercial
-		AonTableButton projectCommercialBtn = new AonTableButton("Crear operaci\u00f3n comercial", AON.CSS.aonIconWork());
+		AonTableButton projectCommercialBtn = new AonTableButton("Crear operaci\u00f3n comercial", AON.CSS.aonIconWorkAdd());
 		projectCommercialBtn.setEnabled(false);	
 		projectCommercialBtn.addClickHandler(e -> createProjectCommercial());
 		
@@ -480,6 +480,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			} else {
 				taskHolder.setVisible(true);
 				taskHolderLabel.setVisible(true);
+				projectCommercialBtn.setEnabled(true);	
 				getAviableTaskHolders(Integer.parseInt(workgroup.getSelectedValue()), taskHolders -> { 
 					taskHolder.clear();
 					taskHolder.addItem("-", "");
@@ -492,12 +493,14 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		addSelectStyle(taskHolder.getElement());
 		taskHolder.addItem("-", "");
 		taskHolder.addChangeHandler(e -> {
-			projectCommercialBtn.setEnabled(AonStringUtils.isNotBlank(taskHolder.getSelectedValue()));	
+			projectCommercialBtn.setEnabled(AonStringUtils.isNotBlank(workgroup.getSelectedValue()));	
 		});
 		
 		getAviableWorkgroups(workgroups -> {
 			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
 			setSelectedValueLB(workgroup, null != marketingAction.getWorkgroup() ? marketingAction.getWorkgroup().getId().toString() : null);
+			
+			projectCommercialBtn.setEnabled(null != marketingAction.getWorkgroup());	
 			
 			if(null != marketingAction.getWorkgroup()) {	
 				getAviableTaskHolders(marketingAction.getWorkgroup().getId(), taskHolders -> {
@@ -506,12 +509,13 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
 					setSelectedValueLB(taskHolder, null != marketingAction.getTaskHolder() ? marketingAction.getTaskHolder().getRegistry().toString() : null);
 					taskHolderLabel.setVisible(true);
-					projectCommercialBtn.setEnabled(null != marketingAction.getTaskHolder());	
+					
+					createMarketingActionTargets();
 				});
 			} else {
 				taskHolder.setVisible(false);
 				taskHolderLabel.setVisible(false);
-				projectCommercialBtn.setEnabled(false);	
+				createMarketingActionTargets();
 			}	
 		});
 		
@@ -667,7 +671,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		
 		add(container);
 		
-		createMarketingActionTargets();
+//		createMarketingActionTargets();
 		
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
@@ -784,21 +788,36 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	
 	public void onSearchActionTargets() {
 		MarketingActionTargetParams params = getWidgetParams( options );
-		marketingActionPanel = new MarketingActionTargetPanel(params) {
-
-			@Override
-			protected void onShowErrorMessage(String errorMessage) {
-				AonMessagePanel.showError(messagePanel, errorMessage);
-			}
-
-			@Override
-			protected void reloadMarketingAction() {
-				setMarketingAction(marketingAction);
-			}
 		
-		};
-		
-		centerPanel.setWidget(marketingActionPanel);
+		getTaskHolderSeller(seller -> {
+			
+			marketingActionPanel = new MarketingActionTargetPanel(params, seller) {
+
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+				@Override
+				protected void reloadMarketingAction() {
+					setMarketingAction(marketingAction);
+				}
+
+				@Override
+				protected void onShowLoadingMessage(String loadingMessage) {
+					AonMessagePanel.showLoading(messagePanel, loadingMessage);
+				}
+
+				@Override
+				protected void onShowSuccessMessage(String successMessage) {
+					AonMessagePanel.showSuccess(messagePanel, successMessage);
+				}
+			
+			};
+			
+			centerPanel.setWidget(marketingActionPanel);
+			
+		});
 	}
 
 	public MarketingActionTargetParams getWidgetParams( MarketingModuleOptions options) {
@@ -837,10 +856,70 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	}
 	
 	// Project Comercial
-	private void createProjectCommercial() {
+	private void getTaskHolderSeller(Consumer<Seller> finish) {
 		if(AonStringUtils.isBlank(taskHolder.getSelectedValue()))
-			AonMessagePanel.showError(messagePanel, "No se ha seleccionado ningun task holder. Esto es requerido para poder crear una acci\u00f3n comercial");
+			finish.accept(null);
 		else {
+			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
+				
+				@Override
+				public void onSuccess(Seller seller) {
+					finish.accept(seller);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					finish.accept(null);
+				}
+				
+			});
+			
+		}
+	}
+	
+	private void createProjectCommercial() {
+		if(AonStringUtils.isBlank(taskHolder.getSelectedValue())) {
+			AonDialog dialog = new AonDialog("Asignaci\u00f3n lineal agente comercial",
+					new HTML("Se va a proceder a buscar el siguiente agente comercial disponible de forma lineal para la acci\u00f3n <b>" + marketingAction.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la asignaci\u00f3n lineal\u003f."));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {}
+
+				@Override
+				public void onAccept() {
+					commonService.getNextLinealSellerByWorkgroup(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(workgroup.getSelectedValue()), new AsyncCallback<Seller>() {
+						
+						@Override
+						public void onSuccess(Seller seller) {
+							if(seller == null)
+								AonMessagePanel.showError(messagePanel, "No exiten agentes comerciales para el grupo comercial seleccionado. Pruebe con otro grupo comercial");
+							else {
+								marketingAction.setTaskHolder(seller.getTaskHolder());
+								commonService.saveMarketingAction(options.getDomainName(), options.getDomain(), options.getUser(), marketingAction, new AsyncCallback<MarketingAction>() {
+									
+									@Override
+									public void onSuccess(MarketingAction marketingAction) {
+										createProjectCommercial(seller);
+									}
+									
+									@Override
+									public void onFailure(Throwable arg0) {}
+									
+								});
+							}
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error getNextLinealSellerByWorkgroup(): " + caught.getMessage());
+						}
+						
+					});
+				}
+			});
+		} else {
 			commonService.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), Integer.parseInt(taskHolder.getSelectedValue()), new AsyncCallback<Seller>() {
 				
 				@Override

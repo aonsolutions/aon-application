@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -196,6 +197,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolder) throws AonCoreException;
+	Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException;
 	ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) throws AonCoreException;
 	void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial) throws AonCoreException;
 
