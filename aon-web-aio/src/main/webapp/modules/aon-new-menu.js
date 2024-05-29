@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -21,6 +21,7 @@ import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js'
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
+import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
@@ -113,6 +114,9 @@ export class AonNewMenu extends AonElement {
 
 	appSelection(app, sidenav) {
 		switch (app.app) {
+			case HOME.app:
+				this.rootPanel(new AonDesktop());
+				break;
 			case Apps.CONSOLE.app:
 				this.rootPanel(new AonConsole());
 				break;
@@ -441,12 +445,24 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
-		div.addEventListener('mouseover', () => {
-			div.style.backgroundColor = 'white';
-		});
-		div.addEventListener('mouseout', () => {
-			div.style.backgroundColor = 'transparent';
-		});
+		let header = this.getElement("aonHeaderWeb");
+		if(app.app==APPS.app){
+			div.addEventListener('mouseover', () => {
+				div.style.backgroundColor = "green";
+			});
+			div.addEventListener('mouseout', () => {
+				div.style.backgroundColor = 'transparent';
+			});
+		}else{
+			div.addEventListener('mouseover', () => {
+				div.style.backgroundColor = 'white';
+			});
+			div.addEventListener('mouseout', () => {
+				div.style.backgroundColor = 'transparent';
+			});
+		}
+
+		
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);

@@ -17,7 +17,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		this.accountingInitialize()
 		this.initialize();
 		this.build();
-		this.setTitle("Accesos rápidos");
+		this.setTitle("Opciones de contabilidad");
 	}
 
 	accountingInitialize() {
@@ -26,7 +26,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
 		this.options = [{
-			title: 'Contabilidad',
+			title: 'Apuntes contables',
 			options: ["Mantenimiento de Apuntes","Apuntes de Amortizaciones","Asientos de explotación, cierre y apertura",
 			"Contabilziación de Facturas","Contabilización de Cobros y Pagos realizados", "Documentos Pendientes"]
 		},{
