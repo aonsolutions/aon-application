@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -203,6 +204,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getSellers(SellerParams params, AsyncCallback<List<Seller>> asyncCallback) throws AonCoreException;
+	void getSellersCount(SellerParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
 	void getSeller(String domainName, int domain, String user, Integer id, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	void saveSeller(String domainName, int domain, String user, Seller seller, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	void deleteSeller(String domainName, int domain, String user, Integer sellerId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
@@ -226,10 +228,12 @@ public interface CommonServiceAsync {
 	void getRegistryAddInfo(String domainName, Integer domain, String user, Integer id, AsyncCallback<RegistryAddInfo> asyncCallback) throws AonCoreException;
 	void saveRegistryAddInfo(String domainName, Integer domain, String user, RegistryAddInfo registryAddInfo, AsyncCallback<RegistryAddInfo> asyncCallback) throws AonCoreException;
 	void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getRAddInfoAviableAttributes(String domainName, Integer domain, String user, AsyncCallback<List<String>> asyncCallback) throws AonCoreException;
 	
 	void getRegistryAttaches(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<Attach>> asyncCallback) throws AonCoreException;
 	void getRegistryAttach(String domainName, Integer domain, String user, Integer id, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
 	void saveRegistryAttach(String domainName, Integer domain, String user, Attach attach, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
 	void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getAviableCategories(String domainName, Integer domainId, String user, AsyncCallback<List<Category>> asyncCallback) throws AonCoreException;
 	
 }

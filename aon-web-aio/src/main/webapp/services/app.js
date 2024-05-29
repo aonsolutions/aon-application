@@ -50,11 +50,13 @@ export const MENU_APPS = [
 export const Apps = APP.Apps;
 export const AuxApps = APP.AuxApps;
 export const MenuApps = APP.MenuApps;
+
 export const HomeApps = {
 	HOME,
 	APPS,
 	APPLICATIONS
 };
+
 
 export const COMERCIAL_MENU = {
 	app: "comercial",
@@ -112,7 +114,7 @@ export const GROUPWARE_MENU = {
 };
 
 export const ACCOUNTING_MENU = {
-	app: "accounting",
+	app: "accountingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,

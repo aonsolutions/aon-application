@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -30,12 +29,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class AonSellerPanel extends SimplePanel {
 	
@@ -54,23 +49,22 @@ public abstract class AonSellerPanel extends SimplePanel {
 	}
 	
 	// Seller Info
-	private ListBox type = new ListBox();
-	private ListBox nationality = new ListBox();
+	private AonCustomTextBox name = new AonCustomTextBox("Nombre");
 	
-	private ListBox documentType = new ListBox();
-	private ListBox documentNationality = new ListBox();
-	private TextBox document = new TextBox();
+	private AonCustomTextBox alias = new AonCustomTextBox("Alias");
+	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	
-	private TextBox name = new TextBox();
-	private TextBox alias = new TextBox();
+	private AonCustomListBox type = new AonCustomListBox("Entidad");
+	private AonCustomListBox nationality = new AonCustomListBox("Nacionalidad");
 	
-	private ListBox scope = new ListBox();
-	private Button active = new Button();
+	private AonCustomListBox documentType = new AonCustomListBox("Documento");
+	private AonCustomListBox documentNationality = new AonCustomListBox("Pais Emision");
+	private AonCustomTextBox document = new AonCustomTextBox(null);
 	
-	private SuggestBox commisionType = new SuggestBox();
+	private AonCustomSuggestBox commisionType = new AonCustomSuggestBox("Tipo Comisi\u00f3n");
 	private List<CommissionType> commisionTypes = new ArrayList<>();
 	
-	private SuggestBox taskHolder = new SuggestBox();
+	private AonCustomSuggestBox taskHolder = new AonCustomSuggestBox("Operario");
 	private List<TaskHolder> taskHolders = new ArrayList<>();
 	
 	private String domainName;
@@ -107,82 +101,57 @@ public abstract class AonSellerPanel extends SimplePanel {
 			}
 		};
 
-		FlexTable table = new FlexTable();
-		table.setStyleName(AON.CSS.aonTable());
+		FlexTable table1 = new FlexTable();
+		table1.setStyleName(AON.CSS.aonTable());
+		table1.setWidth("100%");
 		
-		table.setWidget(0, 0, new InlineLabel("Entidad"));
-		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		type = new ListBox();
-		type.addItem("P. F\u00edsicas", "0");
-		type.addItem("P. Jur\u00edicas", "1");
-		addSelectStyle(type.getElement());
-		table.setWidget(0,1,type);
+		table1.setWidget(0,0,name);
+		table1.getFlexCellFormatter().setColSpan(0, 0, 2);
 		
-		table.setWidget(0, 2, new InlineLabel("Nacionalidad"));
-		table.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
-		nationality = new ListBox();
+		table1.setWidget(1,0,alias);
+		
+		scope.clearItems();
+		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
+		table1.setWidget(1,1,scope);
+		
+		nationality.clearItems();
 		for(int i=0; i < Country.values().length; i++)
 			nationality.addItem(Country.values()[i].getName(), Country.values()[i].getIso2());
-		setSelectedValueLB(nationality, "ES");
-		addSelectStyle(nationality.getElement());
-		nationality.getElement().getStyle().setProperty("max-width", "10rem");
-		table.setWidget(0,3,nationality);
+		nationality.setValue("ES");
+		table1.setWidget(2,0,nationality);
 		
-		table.setWidget(1, 0, new InlineLabel("Documento"));
-		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		documentType = new ListBox();
-		for(int i=0; i < DocumentType.values().length; i++)
-			documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
-		addSelectStyle(documentType.getElement());
-		table.setWidget(1,1,documentType);
+		type.clearItems();
+		type.addItem("P. F\u00edsicas", "0");
+		type.addItem("P. Jur\u00eddicas", "1");
+		table1.setWidget(2,1,type);
 		
-		table.setWidget(1, 2, new InlineLabel("Pa\u00eds Emisi\u00f3n"));
-		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
-		documentNationality = new ListBox();
+		FlowPanel documentPanel = new FlowPanel();
+		documentPanel.setStyleName(AON.CSS.aonItemFlex());
+		documentPanel.getElement().getStyle().setProperty("align-items", "flex-end");
+		
+		documentNationality.clearItems();
 		for(int i=0; i < Country.values().length; i++)
 			documentNationality.addItem(Country.values()[i].getIso2(), Country.values()[i].getIso2());
-		setSelectedValueLB(documentNationality, "ES");
-		addSelectStyle(documentNationality.getElement());
-		table.setWidget(1,3,documentNationality);
+		documentNationality.getElement().getStyle().setProperty("max-width", "5rem");
+		documentNationality.setValue("ES");
+		documentPanel.add(documentNationality);
 		
-		document.addValueChangeHandler(e -> {
+		document.getTextBox().addValueChangeHandler(e -> {
 			DocumentType documentTypeValidator = DocumentValidator.validateDocument(document.getValue());
-			setSelectedValueLB(documentType, documentTypeValidator.toString());
+			documentType.setValue(documentTypeValidator.toString());
 		});
-		addInputStyle(document.getElement());
-		table.setWidget(1,4,document);
+		documentPanel.add(document);
 		
-		table.setWidget(2, 0, new InlineLabel("Nombre / Raz\u00f3n Social"));
-		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		addInputStyle(name.getElement());
-		table.setWidget(2,1,name);
-		table.getFlexCellFormatter().setColSpan(2, 1, 4);
+		table1.setWidget(3,0,documentPanel);
 		
-		table.setWidget(3, 0, new InlineLabel("Nombre Comercial / Alias"));
-		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
-		addInputStyle(alias.getElement());
-		table.setWidget(3,1,alias);
-		table.getFlexCellFormatter().setColSpan(3, 1, 4);
+		documentType.clearItems();
+		for(int i=0; i < DocumentType.values().length; i++)
+			documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
+		table1.setWidget(3,1,documentType);
 		
-		table.setWidget(4,0,new InlineLabel(AON.MSG.scope()));
-		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
-		scope.clear();
-		addSelectStyle(scope.getElement());
-		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
-		scope.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(4,1,scope);
-		
-		active = new Button();
-		table.setWidget(4,2,new InlineLabel("Activo"));
-		table.getCellFormatter().setStyleName(4, 2, AON.CSS.aonTableLabel());
-		getEnableDisableButton(active, true);
-		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
-		table.setWidget(4,3,active);
-		
-		addInputStyle(commisionType.getElement());
 		commisionType.setAutoSelectEnabled(false);
-		commisionType.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
-		commisionType.addKeyUpHandler(e -> {
+		commisionType.setPlaceHolder("Cuota: ctrl + espacio para ver sugerencias");
+		commisionType.getSuggestBox().addKeyUpHandler(e -> {
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				commisionType.showSuggestionList();
 			}
@@ -191,16 +160,12 @@ public abstract class AonSellerPanel extends SimplePanel {
 			commisionType.setValue(null);
 		});
 		
-		table.setWidget(5,0,new InlineLabel("Tipo Comisi\u00f3n"));
-		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
-		table.setWidget(5,1,commisionType);
-		table.getFlexCellFormatter().setColSpan(5, 1, 4);
+		table1.setWidget(4, 0, commisionType);
+		table1.getFlexCellFormatter().setColSpan(4, 0, 2);
 		
-
-		addInputStyle(taskHolder.getElement());
 		taskHolder.setAutoSelectEnabled(false);
-		taskHolder.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
-		taskHolder.addKeyUpHandler(e -> {
+		taskHolder.setPlaceHolder("Cuota: ctrl + espacio para ver sugerencias");
+		taskHolder.getSuggestBox().addKeyUpHandler(e -> {
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				taskHolder.showSuggestionList();
 			}
@@ -209,12 +174,12 @@ public abstract class AonSellerPanel extends SimplePanel {
 			taskHolder.setValue(null);
 		});
 		
-		table.setWidget(6,0,new InlineLabel("Operario"));
-		table.getCellFormatter().setStyleName(6, 0, AON.CSS.aonTableLabel());
-		table.setWidget(6,1,taskHolder);
-		table.getFlexCellFormatter().setColSpan(6, 1, 4);
+		table1.setWidget(5, 0, taskHolder);
+		table1.getFlexCellFormatter().setColSpan(5, 0, 2);
+
+		table1.getColumnFormatter().setWidth(0, "5rem");
 		
-		tablePanel.add( table );
+		tablePanel.add( table1 );
 		
 		rootPanel.add( tablePanel );
 		
@@ -234,34 +199,44 @@ public abstract class AonSellerPanel extends SimplePanel {
 				
 				seller.setDomain(domainId);
 				
-				seller.setLegalPerson(type.getSelectedValue() == "1");
-				seller.setDocumentType(DocumentType.valueOf(documentType.getSelectedValue()));
-				seller.setDocumentCountry(Country.valueOf(documentNationality.getSelectedValue()));
+				seller.setLegalPerson(type.getValue() == "1");
+				seller.setDocumentType(DocumentType.valueOf(documentType.getValue()));
+				seller.setDocumentCountry(Country.valueOf(documentNationality.getValue()));
 				seller.setDocument(document.getValue());
-				seller.setNationality(Country.valueOf(documentNationality.getSelectedValue()));
+				seller.setNationality(Country.valueOf(nationality.getValue()));
 				
 				seller.setName(name.getValue());
 				seller.setAlias(alias.getValue());
 				
-				seller.setScope(new Scope().setId(Integer.parseInt(scope.getSelectedValue())));
+				seller.setScope(new Scope().setId(Integer.parseInt(scope.getValue())));
 				
 				if(AonStringUtils.isNotBlank(commisionType.getValue())) {
 					Integer commisionTypeId = Integer.parseInt(commisionType.getValue().split("\\[")[1].split("\\]")[0]);
 					seller.setCommissionType(new CommissionType().setId(commisionTypeId));
 				} else seller.setCommissionType(null);
-				
+			
 				if(AonStringUtils.isNotBlank(taskHolder.getValue())) {
 					Integer taskHolderId = Integer.parseInt(taskHolder.getValue().split("\\[")[1].split("\\]")[0]);
 					seller.setTaskHolder(new TaskHolder().setRegistry(taskHolderId));
 				} else seller.setTaskHolder(null);
 				
-				seller.setActive(isActiveToggleButton(active));
+				seller.setActive(true);
 				
 				commonService.saveSeller(domainName, domainId, user, seller, new AsyncCallback<Seller>() {
 
 					@Override
 					public void onSuccess(Seller seller) {
-						callback.onAccept(seller);
+						commonService.getSeller(domainName, domainId, user, seller.getId(), new AsyncCallback<Seller>() {
+
+							@Override
+							public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(Seller sellerDB) {
+								callback.onAccept(sellerDB);
+							}
+						
+						});
 					}
 					@Override
 					public void onFailure(Throwable caught) {
@@ -300,44 +275,6 @@ public abstract class AonSellerPanel extends SimplePanel {
 		
 	}
 	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
-		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-	}
-	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
-	}
-	
-	private void addInputStyle(Element el) {
-		el.getStyle().setProperty("width", "-moz-available");
-		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.1rem");
-	}
-	
-	private void addSelectStyle(Element el) {
-		el.getStyle().setProperty("width", "-moz-available");
-		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.2rem");
-	}
-
-	private void setSelectedValueLB(ListBox lBox, String str) {
-	    String text = str;
-	    int indexToFind = 0;
-	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
-	            indexToFind = i;
-	            break;
-	        }
-	    }
-	    lBox.setSelectedIndex(indexToFind);
-	}
-	
 	private void getAviableCommisionTypes(Consumer<Void> success) {
 		commonService.getAviableCommisionTypes(domainName, domainId, user, new AsyncCallback<List<CommissionType>>() {
 			
@@ -348,7 +285,7 @@ public abstract class AonSellerPanel extends SimplePanel {
 				List<String> suggestions = new ArrayList<String>();
 				commisionTypes.forEach(newIt -> suggestions.add("[" + newIt.getId() + "] " + newIt.getName()));
 				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) commisionType.getSuggestOracle();
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) commisionType.getSuggestBox().getSuggestOracle();
 				orclSb.clear();
 				orclSb.addAll(suggestions);
 				orclSb.setDefaultSuggestionsFromText(suggestions);
@@ -374,7 +311,7 @@ public abstract class AonSellerPanel extends SimplePanel {
 				List<String> suggestions = new ArrayList<String>();
 				taskHolders.forEach(newIt -> suggestions.add("[" + newIt.getId() + "] " + newIt.getName()));
 				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) taskHolder.getSuggestOracle();
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) taskHolder.getSuggestBox().getSuggestOracle();
 				orclSb.clear();
 				orclSb.addAll(suggestions);
 				orclSb.setDefaultSuggestionsFromText(suggestions);

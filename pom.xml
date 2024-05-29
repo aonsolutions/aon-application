@@ -133,7 +133,7 @@
 		<module>aon-pms</module>
 		<module>aon-geozone</module>
  		-->
-		<module>hibernateToOccam</module>
+
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>

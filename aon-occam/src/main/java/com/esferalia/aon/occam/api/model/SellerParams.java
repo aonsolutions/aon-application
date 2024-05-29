@@ -10,12 +10,19 @@ public class SellerParams implements Serializable{
 	private int domain;
 	private String user;
 	
-	private String description;
+	private String name;
+	private String alias;
+	private String document;
 	private Integer scope;
 	private Byte active;
 	
+	private String description;
+	
 	private int limit;
 	private int offset;
+	
+	private String orderBy;
+	private boolean asc = true;
 	
 	public String getDomainName() {
 		return domainName;
@@ -39,11 +46,25 @@ public class SellerParams implements Serializable{
 		this.user = user;
 		return this;
 	}
-	public String getDescription() {
-		return description;
+	public String getName() {
+		return name;
 	}
-	public SellerParams setDescription(String description) {
-		this.description = description;
+	public SellerParams setName(String name) {
+		this.name = name;
+		return this;
+	}
+	public String getAlias() {
+		return alias;
+	}
+	public SellerParams setAlias(String alias) {
+		this.alias = alias;
+		return this;
+	}
+	public String getDocument() {
+		return document;
+	}
+	public SellerParams setDocument(String document) {
+		this.document = document;
 		return this;
 	}
 	public Integer getScope() {
@@ -60,6 +81,13 @@ public class SellerParams implements Serializable{
 		this.active = active;
 		return this;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public SellerParams setDescription(String description) {
+		this.description = description;
+		return this;
+	}
 	public int getLimit() {
 		return limit;
 	}
@@ -74,7 +102,19 @@ public class SellerParams implements Serializable{
 		this.offset = offset;
 		return this;
 	}
-	
-	
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public SellerParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public boolean isAsc() {
+		return asc;
+	}
+	public SellerParams setAsc(boolean asc) {
+		this.asc = asc;
+		return this;
+	}
 	
 }

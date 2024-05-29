@@ -53,21 +53,15 @@ import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.itextpdf.text.DocumentException;
 
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.accounting.report.CustomerReportPDF;
-
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-
-import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.hibernateToOccam.registry.OccamCustomer;
-import net.aonsolutions.aon.registry.report.CustomerReportXLS;
-import net.aonsolutions.aon.report.pdf.AonReportException;
+import net.aonsolutions.customer.report.CustomerReportPDF;
 
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
@@ -395,63 +389,66 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
 	
-	public String onNewReport() throws ManagerBeanException {
+	public String onNewReport() throws ManagerBeanException, IOException, DocumentException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		OutputStream out = response.getOutputStream();
+		
+		Occam occam = new Occam()
+				.setDomainName(  AonUtil.getDomainName() )
+				.setDomain(  DomainManager.getCurrentDomain() )
+				.setUser(  AonUtil.getRemoteUser() )
+				;
+	
+		Stream <CustomerFull> customers = 
+		AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+			.map(to -> (Customer) to)
+			.map(this::toCustomerFull );
+		CustomerReportPDF c = new CustomerReportPDF();
+		c.printReportPDF(occam, out, customers);
+		response.flushBuffer();
+		context.responseComplete();
+		return null;
+	}
+
+	private CustomerFull toCustomerFull(Customer customer) {
+		CustomerFull customerFull = new CustomerFull();
+		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
+		
+		occamCustomer.setDocument(customer.getRegistry().getDocument());
+		occamCustomer.setAlias(customer.getRegistry().getAlias());
+		occamCustomer.setDocumentCountry(toOccamCountry(customer.getRegistry().getDocumentCountry()));
+		occamCustomer.setId(customer.getRegistry().getId());
+		occamCustomer.setName(customer.getRegistry().getName());
+		customerFull.setRegistry(occamCustomer);
+		
 		try {
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			OutputStream out = response.getOutputStream();
-			Occam occam = new Occam()
-					.setDomainName(  AonUtil.getDomainName() )
-					.setDomain(  DomainManager.getCurrentDomain() )
-					.setUser(  AonUtil.getRemoteUser() )
-					;
-			new net.aonsolutions.aon.registry.report.CustomerReportPDF( occam )
-				.print(out,AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
-					.map(to -> (Customer) to)
-					.map(OccamCustomer::from ));
-			response.flushBuffer();
-			response.setHeader("Content-disposition","attachment; filename=\"CLIENTES."+MimeType.PDF.getExtension()+"\";");
-			context.responseComplete();
-			return null;
-		} catch (IOException | AonReportException e) {
-			throw new ManagerBeanException( e ); 
+			com.code.aon.registry.RegistryMedia phone = customer.getRegistry().getPhone();
+			if (phone != null) {
+				customerFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
 		}
+		
+		occamCustomer.setStatus(customerStatusToRegistryStatus(customer.getStatus()));
+		
+		return customerFull;
+
+	}
+
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
 	}
 	
-	public String onNewReportXLS() throws ManagerBeanException {
-		try {
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			
-			CustomerReportXLS report = new CustomerReportXLS();
-			report.printReport("Diario");
-
-			Stream<CustomerFull> stream = AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
-				.map(to -> (Customer) to)
-				.map(OccamCustomer::from);
-			stream.forEach(report);
-			response.setContentType(MimeType.MS_EXCEL.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"CLIENTES."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
-			report.finalize(response.getOutputStream());
-			response.flushBuffer();
-
-			stream.close();
-			context.responseComplete();
+	
+	
+	private static RegistryStatus customerStatusToRegistryStatus( CustomerStatus cs ) {
+		if(cs== null) {
 			return null;
-
-		} catch (IOException e) {
-			throw new ManagerBeanException( e ); 
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException( e ); 
 		}
-
+		return RegistryStatus.valueOf( cs.toString() );
 	}
-
-
-
-
-
-
 
 	
 }

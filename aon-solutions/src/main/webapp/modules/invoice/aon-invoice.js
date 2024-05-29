@@ -5,7 +5,7 @@ import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInv
 	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount, 
 	getInvofoxDocument} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
-	 import { Invoice } from './Invoice.js';
+	 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
 
@@ -1062,7 +1062,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildGeneralCard(parent) {
-		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, MSG.INVOICE_DATA);
+		let dn = "";
+		if (!this.isInvofoxInvoice() && !this.invoice.isRawdoc() ) {
+			dn = MSG.INVOICE_DATA + " (" + getDocumentNumber(this.invoice) + ")";
+		} else {
+			dn = MSG.DOCUMENT_DATA;
+		}
+		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, dn);
 		card.style.width = '50%';
 		parent.appendChild(card);
 
@@ -2769,7 +2775,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		if(this.invoice.category) {
+		// if(this.invoice.category) {
 			let div = this.getElement("PRUEBA_RAWDOC_RECORD");
 			if(!div) {
 				div = this.createDiv("PRUEBA_RAWDOC_RECORD");
@@ -2779,12 +2785,12 @@ export class AonInvoice extends AonElement {
 			this.clearElement(div);
 	
 			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
-		} else {
-			this.showError({
-				type: CONSTANT.ERROR,
-				message: "Para Contabilizar es necesario la categoría."
-			});
-		}
+		// } else {
+		// 	this.showError({
+		// 		type: CONSTANT.ERROR,
+		// 		message: "Para Contabilizar es necesario la categoría."
+		// 	});
+		// }
 	}
 
 	rejectInvoice() {

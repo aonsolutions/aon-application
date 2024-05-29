@@ -80,6 +80,7 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
+export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
 export const AON_UPLOAD_TOAST = 'aon-upload-toast';
@@ -205,3 +206,7 @@ export const AON_HELP = 'aon-help';
 export const AON_CONFIG = 'aon-config';
 
 export const AON_RIGHT_PANEL = 'aon-right-panel';
+
+export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+
+export const AON_SUITE_MENU = 'aon-suite-menu';

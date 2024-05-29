@@ -13,6 +13,7 @@ public class AonCustomToolbar extends HTMLPanel {
 	private AonToolbarButton backButton = new AonToolbarButton("Volver", AON.CSS.aonIconBack());
 	private Label parentBreadCrumb;
 	private Label titleLabel;
+	private HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
 	private HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 	
 	public AonCustomToolbar(String title) {
@@ -22,29 +23,28 @@ public class AonCustomToolbar extends HTMLPanel {
 		getElement().getStyle().setProperty("padding", "0 1rem");
 		
 		// Left
-		HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
 		toolbarLeft.addStyleName(AON.CSS.aonItemFlex());
 		backButton.setVisible(false);
 		toolbarLeft.add(backButton);
-		
-		parentBreadCrumb = new Label(EMPTY_STRING);
-		parentBreadCrumb.getElement().getStyle().setProperty("font-size", "1rem");
-		toolbarLeft.add(parentBreadCrumb);
-		
-		titleLabel = new Label(title.toUpperCase());
-		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
-		titleLabel.getElement().getStyle().setProperty("font-size", "1.2rem");
-		toolbarLeft.add(titleLabel);
 		
 		add(toolbarLeft);
 		
 		// Right
 		toolbarRight.addStyleName(AON.CSS.aonItemFlex());
+		
+		parentBreadCrumb = new Label(EMPTY_STRING);
+		parentBreadCrumb.getElement().getStyle().setProperty("font-size", "1rem");
+		toolbarRight.add(parentBreadCrumb);
+		
+		titleLabel = new Label(title);
+		titleLabel.getElement().getStyle().setProperty("font-weight", "700");
+		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
+		toolbarRight.add(titleLabel);
 		add(toolbarRight);
 	}
 	
 	public void addToolbarButton(Widget widget) {
-		toolbarRight.add(widget);
+		toolbarLeft.add(widget);
 	}
 	
 	public AonToolbarButton getBackButton() {
@@ -56,8 +56,8 @@ public class AonCustomToolbar extends HTMLPanel {
 	}
 
 	public void setToolbarTitle(String breadCrumb, String title) {
-		parentBreadCrumb.setText(breadCrumb.toUpperCase());
-		titleLabel.setText(title.toUpperCase());
+		parentBreadCrumb.setText(breadCrumb);
+		titleLabel.setText(title);
 	}
 
 }

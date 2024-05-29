@@ -732,8 +732,8 @@ public interface Filter extends Serializable{
 	}
 
 	@FunctionalInterface
-	public interface InvoiceTrackingFilter{
-		Filter filter(InvoiceTrackingProperties properties);
+	public interface InvoiceCommunicationTrackingFilter{
+		Filter filter(InvoiceCommunicationTrackingProperties properties);
 	}
 	
 	@FunctionalInterface

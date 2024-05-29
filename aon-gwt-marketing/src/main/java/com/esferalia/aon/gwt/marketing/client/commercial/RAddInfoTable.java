@@ -8,10 +8,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddInfoPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddInfoPanel.AonAddInfoPanelCallback;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -135,7 +138,7 @@ public abstract class RAddInfoTable extends ScrollPanel {
 		moreData.setValue(0);
 	}
 	
-	private void onSearch() {
+	public void onSearch() {
 		enableMoreData();
 		search();
 	}
@@ -199,6 +202,7 @@ public abstract class RAddInfoTable extends ScrollPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				event.stopPropagation();
 				button.setEnabled(false);
 				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Media",
 						new HTML("Se va a proceder a eliminar el dato <b>" + registryAddInfo.getAttribute() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -222,12 +226,14 @@ public abstract class RAddInfoTable extends ScrollPanel {
 		buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> onUpdateRAddInfo(registryAddInfo), ClickEvent.getType());
+		
 		tab.addRow(row, new Label(registryAddInfo.getAttribute()), COLS.TYP.getColWidth());
 		tab.addRow(row, new Label(registryAddInfo.getValue()), COLS.VAL.getColWidth());
 		tab.addRow(row, new Label(registryAddInfo.getDate() == null ? "" : formatDate.format(registryAddInfo.getDate())), COLS.ADM.getColWidth());
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
-	
+
 	private void getList(Consumer<List<RegistryAddInfo>> success) {
 		COMMON_SERVICE.getRegistryAddInfos(domainName, domain, user, registry, new AsyncCallback<List<RegistryAddInfo>>() {
 			
@@ -256,6 +262,28 @@ public abstract class RAddInfoTable extends ScrollPanel {
 				onShowErrorMessage("Error borrado: " + caught.getMessage());
 			}
 		});
+	}
+	
+	private void onUpdateRAddInfo(RegistryAddInfo registryAddInfo) {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Editar Otro Dato");
+		
+		final AonAddInfoPanel marketingCampaignPanel = new AonAddInfoPanel( domainName, domain, user, registryAddInfo, new AonAddInfoPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(RegistryAddInfo rAddInfo) {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

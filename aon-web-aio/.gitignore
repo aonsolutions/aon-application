@@ -9,3 +9,4 @@ webapp/dist/
 /package-lock.json
 *.min.css
 *.min.js
+/src/main/webapp/dist

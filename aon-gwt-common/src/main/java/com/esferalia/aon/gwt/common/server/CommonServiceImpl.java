@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -476,6 +478,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public Integer getSellersCount(SellerParams params) throws AonCoreException {
+		return AON.getSellerListCount(params);
+	}
+	
+	@Override
 	public Seller getSeller(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		Seller seller = AON.getSeller(domainName, domain, user, id);
 		return seller;
@@ -549,7 +556,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
-		AON.deleteRMedia(domainName, domain, user, id);
+		AON.deleteRegistryMedia(domainName, domain, user, id);
 	}
 	
 	@Override
@@ -571,6 +578,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteRegistryAddInfo(new Domain().setName(domainName).setId(domain), user, id);
 	}
+
+	@Override
+	public List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getRAddInfoAviableAttributes(domainName, domain, user);
+	}
 	
 	@Override
 	public List<Attach> getRegistryAttaches(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
@@ -590,6 +602,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+	}
+	
+	@Override
+	public List<Category> getAviableCategories(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON_SOLUTIONS.getCategoryStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 	}
 	
 }

@@ -243,7 +243,7 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
-  color: LS.isNewTheme() ? "var(--aonDocumental)" : "#6986BB",
+  color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
   backgroundColor: 'var(--aonDocumentalBackground)',
   hover: 'aonDocumentalHover',
   access: [
@@ -472,6 +472,17 @@ export const OCR = {
   title: "OCR | Asistente Registro Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
+  color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
+  price: " ",
+};
+
+export const FACTURAE = {
+  app: "facturae",
+  title: "Factura Electrónica",
+  description: "Factura Electrónica.",
+  icon: AON_ICONS.AON_APP,
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
@@ -856,8 +867,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE };
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE};
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,

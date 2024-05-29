@@ -28,7 +28,6 @@ import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -58,11 +57,13 @@ public abstract class SellerPanel extends ScrollPanel {
 	private Map<Integer, Seller> rowSellers = new HashMap<>();
 	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
+	private Integer deleteIterator = 0;
+	
 	private static enum COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem" )
-		, DOC(AON.MSG.document()					,"20rem")
 		, DES(AON.MSG.name()						,"-moz-available")
-		, BUD(AON.MSG.alias()						,"70rem")
+		, BUD(AON.MSG.alias()						,"50rem")
+		, DOC(AON.MSG.document()					,"20rem")
 		, TYP(AON.MSG.scope()						,"30rem")
 		, ACT("Estado"								,"5rem")
 		, BUT(AonStringUtils.EMPTY					,"5rem")
@@ -167,6 +168,7 @@ public abstract class SellerPanel extends ScrollPanel {
 							check.addStyleName(AON.CSS.aonIconCheck());
 							check.removeStyleName(AON.CSS.aonIconChecked());
 						});
+						onDeleteEnable(false);
 					} else {
 						checkAllButton.addStyleName(AON.CSS.aonIconChecked());
 						checkAllButton.removeStyleName(AON.CSS.aonIconCheck());
@@ -174,6 +176,7 @@ public abstract class SellerPanel extends ScrollPanel {
 							check.addStyleName(AON.CSS.aonIconChecked());
 							check.removeStyleName(AON.CSS.aonIconCheck());
 						});
+						onDeleteEnable(true);
 					}
 				});
 				
@@ -240,7 +243,7 @@ public abstract class SellerPanel extends ScrollPanel {
 
 					@Override
 					public void onAccept() {
-						delete(seller);
+						delete(seller.getId());
 					}
 				});
 			}
@@ -260,33 +263,22 @@ public abstract class SellerPanel extends ScrollPanel {
 				checkButton.addStyleName(AON.CSS.aonIconChecked());
 				checkButton.removeStyleName(AON.CSS.aonIconCheck());
 			}
+			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+			onDeleteEnable(!selectedItemList.isEmpty());
 		});
 		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
 		
 		
-		tab.addRow(row, new Label(seller.getDocument()), COLS.DOC.getColWidth());
 		tab.addRow(row, new Label(seller.getName()), COLS.DES.getColWidth());
 		tab.addRow(row, new Label(seller.getAlias()), COLS.BUD.getColWidth());
+		tab.addRow(row, new Label(seller.getDocument()), COLS.DOC.getColWidth());
 		tab.addRow(row, new Label(seller.getScope() == null ? null : seller.getScope().getDescription()), COLS.TYP.getColWidth());
-		
-		Button activeBtn = new Button();
-		getEnableDisableButton(activeBtn, seller.isActive());
-		tab.addRow(row, activeBtn, COLS.ACT.getColWidth());
+		tab.addRow(row, new Label(seller.isActive() ? "Activo" : "Inactivo"), COLS.ACT.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
 		rowSellers.put(seller.getId(), seller);
 		selectedItems.put(seller.getId(), checkButton);
-	}
-	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
-		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 	}
 	
 	private void getList(Consumer<List<Seller>> success) {
@@ -304,8 +296,8 @@ public abstract class SellerPanel extends ScrollPanel {
 		});
 	}
 	
-	private void delete(Seller seller) {
-		COMMON_SERVICE.deleteSeller(params.getDomainName(), params.getDomain(), params.getUser(), seller.getId(), new AsyncCallback<Void>() {
+	private void delete(Integer sellerId) {
+		COMMON_SERVICE.deleteSeller(params.getDomainName(), params.getDomain(), params.getUser(), sellerId, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -324,9 +316,84 @@ public abstract class SellerPanel extends ScrollPanel {
 		rowSellers.clear();
 		selectedItems.clear();
 	}
+	
+	public AonCustomTable getTable() {
+		return tab;
+	}
 
+	public Integer getSellerListPosition(Integer sellerId) {
+		List<Seller> sellers = rowSellers.values().stream().collect(Collectors.toList());
+		for(int i=0; i<sellers.size(); i++)
+			if(sellers.get(i).getId().equals(sellerId))
+				return i;
+		return 0;
+	}
+	
+	public void getSellerListCount(Consumer<Integer> finish) {
+		COMMON_SERVICE.getSellersCount(params, new AsyncCallback<Integer>() {
+					
+					@Override
+					public void onSuccess(Integer count) {
+						finish.accept(count);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						finish.accept(null);
+					}
+				});
+	}
+	
+	public void deleteSellers() {
+		List<Integer> selectedSellerList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).map(entry -> entry.getKey()).collect(Collectors.toList());
+		
+		AonDialog dialog = new AonDialog("Eliminaci\u00f3n Agente Comercial",
+				new HTML(selectedSellerList.size() == selectedItems.entrySet().size() ? "Se va a proceder a eliminar <b>TODOS</b> los agentes comerciales.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"
+						: "Se va a proceder a eliminar <b>" + selectedSellerList.size() + " agentes comerciales</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+		
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				onDeleteEnable(true);
+			}
+
+			@Override
+			public void onAccept() {
+				onShowLoadingMessage("Eliminando agentes comerciales seleccionados...");
+				deleteIterator = 0;
+				delete(selectedSellerList);
+			}
+		});
+	}
+	
+	private void delete(List<Integer> selectedSellerList) {
+		if(deleteIterator == selectedSellerList.size()) {
+			resetSearchOffset();
+			onSearch();
+			onShowSuccessMessage("Agentes comerciales eliminados correctamente");
+		} else {
+			COMMON_SERVICE.deleteSeller(params.getDomainName(), params.getDomain(), params.getUser(), selectedSellerList.get(deleteIterator), new AsyncCallback<Void>() {
+				
+				@Override
+				public void onSuccess(Void result) {
+					deleteIterator++;
+					delete(selectedSellerList);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					onShowErrorMessage("Error borrado: " + caught.getMessage());
+				}
+			});
+		}
+	}
+
+	protected abstract void onShowSuccessMessage(String successMessage);
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract void onShowLoadingMessage(String loadingMessage);
 	protected abstract void onSellerOpen(Seller seller);
+	protected abstract void onDeleteEnable(boolean enabled);
 	
 }
 
