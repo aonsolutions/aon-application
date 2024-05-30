@@ -1,14 +1,9 @@
-package net.aonsolutions.aon.tedi;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
 
-import com.esferalia.aon.occam.api.model.tedi.TediContext;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-
-public enum TediErrorMessages implements Serializable {
+public enum InvoiceErrorMessages implements Serializable {
 	// Á --> \u00C1 á --> \u00E1 
 	// É --> \u00C9 é --> \u00E9 
 	// Í --> \u00CD í --> \u00ED 
@@ -38,11 +33,17 @@ public enum TediErrorMessages implements Serializable {
 	C017("No se han podido determinar bases y cuotas de la factura"),
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
+	
+	// Mensajes previos a la contabilización
+	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),
+	
+	
 	C500("Error desconocido");
+	
 	;
 	private String message;
 
-	private TediErrorMessages(String message) {
+	private InvoiceErrorMessages(String message) {
 		this.message = message;
 	}
 	public String getMessage() {
@@ -53,41 +54,41 @@ public enum TediErrorMessages implements Serializable {
 		return MessageFormat.format(getMessage(), args);
 	}
 	
-	public TediError err(TediContextKey key) {
+	public InvoiceError err(InvoiceErrorKey key) {
 		return err(key, key.getDescription());
 	}
-	public TediError err(TediContextKey key, Object ... args) {
-		return err( new TediContext(key), format(args));
+	public InvoiceError err(InvoiceErrorKey key, Object ... args) {
+		return err( new InvoiceErrorContext(key), format(args));
 	}
-	public TediError err(TediContext context, Object ... args) {
+	public InvoiceError err(InvoiceErrorContext context, Object ... args) {
 		return err( context, format(args));
 	}
-	public TediError err(TediContext context, String message) {
-		return add(context, TediLevel.ERR, message);
+	public InvoiceError err(InvoiceErrorContext context, String message) {
+		return add(context, InvoiceErrorLevel.ERR, message);
 	}
 	
-	public TediError wrn(TediContextKey key) {
+	public InvoiceError wrn(InvoiceErrorKey key) {
 		return wrn(key, key.getDescription());
 	}
-	public TediError wrn(TediContextKey key, Object ... args) {
-		return wrn( new TediContext(key), format(args));
+	public InvoiceError wrn(InvoiceErrorKey key, Object ... args) {
+		return wrn( new InvoiceErrorContext(key), format(args));
 	}
-	public TediError wrn(TediContext context, String message) {
-		return add(context, TediLevel.WRN, message);
+	public InvoiceError wrn(InvoiceErrorContext context, String message) {
+		return add(context, InvoiceErrorLevel.WRN, message);
 	}
 
-	public TediError inf(TediContextKey key) {
+	public InvoiceError inf(InvoiceErrorKey key) {
 		return inf(key, key.getDescription());
 	}
-	public TediError inf(TediContextKey key, Object ... args) {
-		return inf( new TediContext(key), format(args));
+	public InvoiceError inf(InvoiceErrorKey key, Object ... args) {
+		return inf( new InvoiceErrorContext(key), format(args));
 	}
-	public TediError inf(TediContext context, String message) {
-		return add(context, TediLevel.INF, message);
+	public InvoiceError inf(InvoiceErrorContext context, String message) {
+		return add(context, InvoiceErrorLevel.INF, message);
 	}
 	
-	public TediError add(TediContext context,TediLevel level,String message) {
-		return new TediError(context,level,this.toString(), message);
+	public InvoiceError add(InvoiceErrorContext context,InvoiceErrorLevel level,String message) {
+		return new InvoiceError(context,level,this.toString(), message);
 	}	
 	
 }
