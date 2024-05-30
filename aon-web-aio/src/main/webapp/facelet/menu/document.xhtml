@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,52 +6,34 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_documental"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-payroll aon-direct-access-panel">
+						<aon:panelGrid id="group_documental" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-payroll aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_module_document}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="corporateDocuments" 
-										action="#{corporateIdentityAttach.initialAction}"
-										actionListener="#{corporateIdentityAttach.onInit}"
-										value="#{bundle.aon_documents}" />
+									<aon:commandLink id="corporateDocuments" action="#{corporateIdentityAttach.initialAction}" actionListener="#{corporateIdentityAttach.onInit}" value="#{bundle.aon_documents}"/>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="batchDocument" 
-										action="batchDocument_form"
-										value="#{bundle.registry_batch_document}"/>
+									<aon:commandLink id="batchDocument" action="batchDocument_form" value="#{bundle.registry_batch_document}"/>
 								</aon:div>					
 								<aon:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="documentMassiveUpload" 
-											action="corporateIdentityAttach_form"
-											actionListener="#{corporateIdentityAttach.onInitMassiveUpload}"
-											value="#{bundle.registry_document_massive_upload}" />
+										<aon:commandLink id="documentMassiveUpload" action="corporateIdentityAttach_form" actionListener="#{corporateIdentityAttach.onInitMassiveUpload}" value="#{bundle.registry_document_massive_upload}"/>
 									</aon:div>
 								</aon:if>							
 								<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="documentGlobal" 
-											action="documentGlobal_search"
-											actionListener="#{documentGlobal.onEditSearch}"
-											value="#{bundle.registry_document_global_search}"/>
+										<aon:commandLink id="documentGlobal" action="documentGlobal_search" actionListener="#{documentGlobal.onEditSearch}" value="#{bundle.registry_document_global_search}"/>
 									</aon:div>					
 								</aon:if>	
 															
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwtDocuments" 
-										action="portal_documental"
-										title="#{bundle.aon_documents}">
-										<aon:outputText styleClass="aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;" 
-											value="#{bundle.aon_documents}" />
+									<aon:commandLink id="gwtDocuments" action="portal_documental" title="#{bundle.aon_documents}">
+										<aon:outputText styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="#{bundle.aon_documents}"/>
 									</aon:commandLink>
 								</aon:div>		
 													
@@ -70,24 +44,16 @@
 					
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.documentManager}">													
-							<aon:panelGrid id="group_documental_utilities"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-utilities aon-direct-access-panel">
+							<aon:panelGrid id="group_documental_utilities" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-utilities aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.registry_qualifier_group}" />
+									<aon:outputText value="#{bundle.registry_qualifier_group}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tag" 
-											action="registryAttachmentTag_form" 
-											actionListener="#{registryAttachmentTag.onCancel}"
-											value="#{bundle.registry_tag_module}"/>	
+										<aon:commandLink id="tag" action="registryAttachmentTag_form" actionListener="#{registryAttachmentTag.onCancel}" value="#{bundle.registry_tag_module}"/>	
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="category" 
-											action="category_form"
-											actionListener="#{category.onCancel}" 
-											value="#{bundle.aon_categories}"/>	
+										<aon:commandLink id="category" action="category_form" actionListener="#{category.onCancel}" value="#{bundle.aon_categories}"/>	
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

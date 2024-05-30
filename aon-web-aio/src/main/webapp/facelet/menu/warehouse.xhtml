@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,103 +6,64 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 			
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_warehouse_movements"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-refresh aon-direct-access-panel">
+						<aon:panelGrid id="group_warehouse_movements" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-refresh aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.warehouse_warehouse_movements}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
  								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="income" 
-										action="income_search"
-										actionListener="#{income.onEditSearch}"
-										value="#{bundle.warehouse_income_module}" />
+									<aon:commandLink id="income" action="income_search" actionListener="#{income.onEditSearch}" value="#{bundle.warehouse_income_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="delivery" 
-										action="delivery_search"
-										actionListener="#{delivery.onEditSearch}"
-										value="#{bundle.warehouse_delivery_module}" />
+									<aon:commandLink id="delivery" action="delivery_search" actionListener="#{delivery.onEditSearch}" value="#{bundle.warehouse_delivery_module}"/>
 								</aon:div>								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="warehouseTransfer" 
-										action="warehouseTransfer_search"
-										actionListener="#{warehouseTransfer.onEditSearch}"
-										value="#{bundle.warehouse_transfer_module}" />
+									<aon:commandLink id="warehouseTransfer" action="warehouseTransfer_search" actionListener="#{warehouseTransfer.onEditSearch}" value="#{bundle.warehouse_transfer_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="orderServer" 
-										action="orderServer_search"
-										actionListener="#{orderServer.onEditSearch}"
-										value="#{bundle.sales_orderServer_module}" />
+									<aon:commandLink id="orderServer" action="orderServer_search" actionListener="#{orderServer.onEditSearch}" value="#{bundle.sales_orderServer_module}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_warehouse_inventory"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-warehouse aon-direct-access-panel">
+						<aon:panelGrid id="group_warehouse_inventory" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-warehouse aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.warehouse_stock_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="inventory_close" 
-										action="inventory_close"
-										actionListener="#{inventory.onStartClosing}"
-										value="#{bundle.warehouse_inventory_close_module}" />
+									<aon:commandLink id="inventory_close" action="inventory_close" actionListener="#{inventory.onStartClosing}" value="#{bundle.warehouse_inventory_close_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="inventory" 
-										action="inventory_search"
-										actionListener="#{inventory.onEditSearch}"
-										value="#{bundle.warehouse_inventory_closed_module}" />
+									<aon:commandLink id="inventory" action="inventory_search" actionListener="#{inventory.onEditSearch}" value="#{bundle.warehouse_inventory_closed_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock" 
-										action="stock_search"
-										actionListener="#{stock.onEditSearch}"
-										value="#{bundle.warehouse_stock_module}" />
+									<aon:commandLink id="stock" action="stock_search" actionListener="#{stock.onEditSearch}" value="#{bundle.warehouse_stock_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="orderProposal" 
-										action="orderProposal_search"
-										actionListener="#{orderProposal.onEditSearch}"
-										value="#{bundle.warehouse_order_proposal_module}" />
+									<aon:commandLink id="orderProposal" action="orderProposal_search" actionListener="#{orderProposal.onEditSearch}" value="#{bundle.warehouse_order_proposal_module}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_warehouse_manufacture"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-task aon-direct-access-panel">
+						<aon:panelGrid id="group_warehouse_manufacture" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.warehouse_manufacture_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{domainSwitcher.paturpat}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_dataSheet"
-											action="gwt_dataSheet"
-											title="Ficha Técnica">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;"
-												value="Ficha Técnica" />
+										<aon:commandLink id="gwt_dataSheet" action="gwt_dataSheet" title="Ficha Técnica">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text" style="margin-left: 5px; padding-left: 20px;" value="Ficha Técnica"/>
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>			
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_elaboration"
-										action="gwt_elaboration"
-										title="#{bundle.warehouse_manufacturing_order}">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.warehouse_manufacturing_order}" />
+									<aon:commandLink id="gwt_elaboration" action="gwt_elaboration" title="#{bundle.warehouse_manufacturing_order}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="#{bundle.warehouse_manufacturing_order}"/>
 									</aon:commandLink>
 								</aon:div>
 								
@@ -128,20 +81,14 @@
 						
 						
 						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
-							<aon:panelGrid id="group_statistics_warehouse"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-statistics aon-direct-access-panel">
+							<aon:panelGrid id="group_statistics_warehouse" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-statistics aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_role_statistics}" />
+									<aon:outputText value="#{bundle.aon_role_statistics}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_directSalesStats-warehouse"
-											action="gwt_directSalesStat-warehouse"
-											title="Estadística de ventas/compras directas">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Estadística de ventas/compras directas" />		
+										<aon:commandLink id="gwt_directSalesStats-warehouse" action="gwt_directSalesStat-warehouse" title="Estadística de ventas/compras directas">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="Estadística de ventas/compras directas"/>		
 										</aon:commandLink>												
 									</aon:div>
 								</aon:div>
@@ -150,59 +97,37 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_warehouse_stock"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
+						<aon:panelGrid id="group_warehouse_stock" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_reports}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock_report_by_warehouse" 
-										action="stock_report_search-warehouse"
-										actionListener="#{stockReport.onReportByWarehouse}"
-										value="#{bundle.warehouse_stock_by_warehouse_module}" />
+									<aon:commandLink id="stock_report_by_warehouse" action="stock_report_search-warehouse" actionListener="#{stockReport.onReportByWarehouse}" value="#{bundle.warehouse_stock_by_warehouse_module}"/>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock_report_by_item" 
-										action="stock_report_search-item"
-										actionListener="#{stockReport.onReportByItem}"
-										value="#{bundle.warehouse_stock_by_item_module}" />
+									<aon:commandLink id="stock_report_by_item" action="stock_report_search-item" actionListener="#{stockReport.onReportByItem}" value="#{bundle.warehouse_stock_by_item_module}"/>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock_report_by_warehouse_valued" 
-										action="stock_report_search-warehouseValued"
-										actionListener="#{stockReport.onReportByWarehouseValued}"
-										value="#{bundle.warehouse_stock_by_warehouse_valued_module}" />
+									<aon:commandLink id="stock_report_by_warehouse_valued" action="stock_report_search-warehouseValued" actionListener="#{stockReport.onReportByWarehouseValued}" value="#{bundle.warehouse_stock_by_warehouse_valued_module}"/>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock_report_by_item_valued" 
-										action="stock_report_search-itemValued"
-										actionListener="#{stockReport.onReportByItemValued}"
-										value="#{bundle.warehouse_stock_by_item_valued_module}" />
+									<aon:commandLink id="stock_report_by_item_valued" action="stock_report_search-itemValued" actionListener="#{stockReport.onReportByItemValued}" value="#{bundle.warehouse_stock_by_item_valued_module}"/>
 								</aon:div>
 														
 								<aon:if test="#{domainSwitcher.udapa}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_udapa_quality"
-											action="gwt_udapa_quality"
-											title="Ficha de Calidad (Udapa)"
-											value="Ficha de Calidad (Udapa)" 
-										/>		
+										<aon:commandLink id="gwt_udapa_quality" action="gwt_udapa_quality" title="Ficha de Calidad (Udapa)" value="Ficha de Calidad (Udapa)"/>		
 									</aon:div>
 								</aon:if>
 							
 								<aon:if test="#{domainSwitcher.paturpat}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_paturpat_quality"
-											action="gwt_paturpat_quality"
-											title="Ficha de Calidad (Paturpat)">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Ficha de Calidad (Paturpat)" />												
+										<aon:commandLink id="gwt_paturpat_quality" action="gwt_paturpat_quality" title="Ficha de Calidad (Paturpat)">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text" style="margin-left: 5px; padding-left: 20px;" value="Ficha de Calidad (Paturpat)"/>												
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>
@@ -210,77 +135,51 @@
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_warehouse_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-utilities">
+						<aon:panelGrid id="group_warehouse_utilities" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-utilities">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
+								<aon:outputText value="#{bundle.aon_utilities}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_carrier_packing"
-										action="gwt_carrier_packing"
-										title="carrier_packing">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;" 
-											value="Packing List" />												
+									<aon:commandLink id="gwt_carrier_packing" action="gwt_carrier_packing" title="carrier_packing">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="Packing List"/>												
 									</aon:commandLink>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="corporateIdentityLabel"
-										action="corporateIdentity_label"
-										actionListener="#{corporateIdentity.onInit}"
-										value="#{bundle.registry_corporateIdentity_label}" />
+									<aon:commandLink id="corporateIdentityLabel" action="corporateIdentity_label" actionListener="#{corporateIdentity.onInit}" value="#{bundle.registry_corporateIdentity_label}"/>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="itemTagPrint-warehouse" 
-										action="itemTagPrint_search-warehouse"
-										actionListener="#{itemTagPrint.onEditSearch}"
-										value="#{bundle.product_tag_print_module}"/>	
+									<aon:commandLink action="itemTagPrint_list-warehouse" actionListener="#{itemTagPrint.onSearch}" id="itemTagPrint-warehouse" value="#{bundle.product_tag_print_module}">.</aon:commandLink>	
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_stockForecast"
-										action="gwt_stockForecast"
-										title="#{bundle.warehouse_stockForecast}">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.warehouse_stockForecast}" />
+									<aon:commandLink id="gwt_stockForecast" action="gwt_stockForecast" title="#{bundle.warehouse_stockForecast}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="#{bundle.warehouse_stockForecast}"/>
 									</aon:commandLink>
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_movementList"
-										action="gwt_movementList"
-										title="#{bundle.warehouse_movementList}">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.warehouse_movementList}" />
+									<aon:commandLink id="gwt_movementList" action="gwt_movementList" title="#{bundle.warehouse_movementList}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="#{bundle.warehouse_movementList}"/>
 									</aon:commandLink>
 								</aon:div>
 								
 							</aon:div>
 						</aon:panelGrid>									
 						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_warehouse_warehouses"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-general">
+							<aon:panelGrid id="group_warehouse_warehouses" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.warehouse_warehouse_group}" />
+									<aon:outputText value="#{bundle.warehouse_warehouse_group}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="warehouse" 
-											action="warehouse" 
-											value="#{bundle.warehouse_warehouse_module}" />
+										<aon:commandLink id="warehouse" action="warehouse" value="#{bundle.warehouse_warehouse_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="carrier" 
-											action="carrier_search" 
-											value="#{bundle.carrier_carrier_module}" />
+										<aon:commandLink id="carrier" action="carrier_search" value="#{bundle.carrier_carrier_module}"/>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

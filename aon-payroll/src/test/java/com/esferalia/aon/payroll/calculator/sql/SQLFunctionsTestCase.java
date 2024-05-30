@@ -1536,6 +1536,7 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	@Ignore("https://www.poderjudicial.es TimeOut.")
 	public void testCalcCompensations() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
