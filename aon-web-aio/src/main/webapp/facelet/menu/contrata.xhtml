@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -6,52 +14,76 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_contrata_general" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-account-entry aon-direct-access-panel">
+						<aon:panelGrid id="group_contrata_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.contrata_main_menu_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contract-contrata" action="contract_search" actionListener="#{contract.onEditSearch}" value="#{bundle.payroll_contract_module}"/>
+										<aon:commandLink id="contract-contrata"
+											action="contract_search"
+											actionListener="#{contract.onEditSearch}"
+											value="#{bundle.payroll_contract_module}"/>
 									</aon:div>
 								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="person-contrata" action="#{person.initialAction}" actionListener="#{person.onEditSearch}" value="#{bundle.report_room_persons}"/>
+									<aon:commandLink id="person-contrata"
+										action="#{person.initialAction}"
+										actionListener="#{person.onEditSearch}"
+										value="#{bundle.report_room_persons}"/>
 								</aon:div>
 							</aon:div>							
 						</aon:panelGrid>
-						<aon:panelGrid id="group_contrata_batch" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-renameFolder aon-direct-access-panel">
+						<aon:panelGrid id="group_contrata_batch"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-renameFolder aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.batch_menu_group}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contrataBatch-contrata" action="contrataBatch_search-contrata" value="#{bundle.sepe_contrataBatch_module}">
-										<aon:actionListener method="#{contrataBatch.onEditSearch}"/>
+									<aon:commandLink id="contrataBatch-contrata"
+										action="contrataBatch_search-contrata"
+										value="#{bundle.sepe_contrataBatch_module}" >
+										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink action="certifica2Batch_list-contrata" actionListener="#{certifica2Batch.onSearch}" id="certifica2Batch-contrata" value="#{bundle.sepe_certifica2Batch_module}">.</aon:commandLink>
+										<aon:commandLink id="certifica2Batch-contrata"
+											action="certifica2Batch_search-contrata"
+											actionListener="#{certifica2Batch.onEditSearch}"
+											value="#{bundle.sepe_certifica2Batch_module}" />
 									</aon:div>
 								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractBatch" action="contractBatch_search" actionListener="#{contractBatch.onEditSearch}" value="#{bundle.payroll_contrata_contractBatch_module}"/>
+									<aon:commandLink id="contractBatch" 
+										action="contractBatch_search"
+										actionListener="#{contractBatch.onEditSearch}"
+										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_contrata_utilities" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-config">
+						<aon:panelGrid id="group_contrata_utilities"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-config">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}"/>
+								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractLoader" action="contractLoader_form" actionListener="#{contractLoader.onStart}" value="#{bundle.payroll_contractLoader_module}"/>
+									<aon:commandLink id="contractLoader"
+										action="contractLoader_form"
+										actionListener="#{contractLoader.onStart}"
+										value="#{bundle.payroll_contractLoader_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -61,41 +93,61 @@
 					<aon:panelGroup>
 						
 						<aon:if test="#{aonRole.config}">												
-							<aon:panelGrid id="group_contrata_parameters" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-config">
+							<aon:panelGrid id="group_contrata_parameters"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_configuration}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="sepeAppParams-contrata" action="sepeAppParams_form-contrata" actionListener="#{sepeAppParams.onLoad}" value="#{bundle.payroll_default_params_module}"/>
+										<aon:commandLink id="sepeAppParams-contrata" 
+											action="sepeAppParams_form-contrata"
+											actionListener="#{sepeAppParams.onLoad}"
+											value="#{bundle.payroll_default_params_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
 					
-						<aon:panelGrid id="group_contrata_auxiliaries" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-utilities aon-direct-access-panel">
+						<aon:panelGrid id="group_contrata_auxiliaries"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_auxiliaries}"/>
+								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="agreement-contrata" action="agreement_search" actionListener="#{agreement.onEditSearch}" value="#{bundle.payroll_agreement_module}"/>
+									<aon:commandLink id="agreement-contrata" 
+										action="agreement_search"
+										actionListener="#{agreement.onEditSearch}"
+										value="#{bundle.payroll_agreement_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="trainingCenter-contrata" action="trainingCenter_list-contrata" value="#{bundle.payroll_trainingCenter_module}"/>
+									<aon:commandLink id="trainingCenter-contrata"
+										action="trainingCenter_list-contrata"
+										value="#{bundle.payroll_trainingCenter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractMode-contrata" action="contractOption_list-contrata" actionListener="#{contractModel.onReset}" value="#{bundle.payroll_contract_mode_module}"/>
+									<aon:commandLink id="contractMode-contrata"
+										action="contractOption_list-contrata"
+										actionListener="#{contractModel.onReset}"
+										value="#{bundle.payroll_contract_mode_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="sepeTables-contrata" action="sepeTables_list-contrata" actionListener="#{sepeTables.onInit}" value="#{bundle.sepe_sepeTables_module}"/>
+									<aon:commandLink id="sepeTables-contrata"
+										action="sepeTables_list-contrata"
+										actionListener="#{sepeTables.onInit}"  
+										value="#{bundle.sepe_sepeTables_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_contrata_links" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-report aon-direct-access-panel">
+						<aon:panelGrid id="group_contrata_links"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="Enlaces externos"/>
+								<aon:outputText value="Enlaces externos" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
