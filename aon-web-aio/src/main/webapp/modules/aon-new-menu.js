@@ -36,7 +36,10 @@ import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
 //import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
-import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
+
+//	Falla la compilación por esta línea que no se usa. REVISAR!!
+// import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
+//
 
 
 const ID = 'id';
