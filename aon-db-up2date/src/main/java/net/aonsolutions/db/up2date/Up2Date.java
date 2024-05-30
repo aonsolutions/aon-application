@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTag;
 import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 
@@ -456,7 +457,8 @@ public class Up2Date {
         //AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
 		
         CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
-        AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION
+        AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
+        AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG
 	};
 
     // ------------------------------------------------------------------------
