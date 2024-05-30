@@ -1,11 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.vat;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -35,13 +35,13 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 
 	private IntegerBox yearBox;
 	private PeriodListBox periodBox;
-	private DateBoxEx fromDateBox;
-	private DateBoxEx toDateBox;
+	private AonDateBox fromDateBox;
+	private AonDateBox toDateBox;
 	private ListBox outputBox;
 	private InvoiceTransactionListBox transactionBox;
 
 	private ListBox activityBox;
-	private AccountingRegistryBox registryBox;
+	private AonAccountingRegistryBox registryBox;
 	private ListBox investmentBox;
 	
 	private ListBox accrualRegimeBox;
@@ -67,9 +67,9 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 			onSearch(opt);
 		});
 		
-		fromDateBox = new DateBoxEx();
+		fromDateBox = new AonDateBox();
 		fromDateBox.addValueChangeHandler(event -> onSearch(opt));
-		toDateBox = new DateBoxEx();
+		toDateBox = new AonDateBox();
 		toDateBox.addValueChangeHandler(event -> onSearch(opt));
 		
 		outputBox = new ListBox();
@@ -100,7 +100,7 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 			activityBox.addChangeHandler(event -> onSearch(opt));
 		}
 
-		registryBox = new AccountingRegistryBox(opt.getOccam());
+		registryBox = new AonAccountingRegistryBox(opt,true);
 		registryBox.setRequired(false);
 		registryBox.addSelectionHandler(event -> onSearch(opt));
 		

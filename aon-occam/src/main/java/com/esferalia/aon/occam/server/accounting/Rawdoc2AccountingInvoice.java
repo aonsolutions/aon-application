@@ -139,7 +139,7 @@ public class Rawdoc2AccountingInvoice {
 				}
 
 				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
+					//.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)

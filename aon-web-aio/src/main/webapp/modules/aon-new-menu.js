@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import {ACCOUNTING_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -21,12 +21,26 @@ import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js'
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
+import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
 import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
+import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
+import { AonManagementMenu } from './management/aon-management-menu.js';
+import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
+import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
+import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
+//import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
+import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
+import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
+
+//	Falla la compilación por esta línea que no se usa. REVISAR!!
+// import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
+//
+
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -113,6 +127,9 @@ export class AonNewMenu extends AonElement {
 
 	appSelection(app, sidenav) {
 		switch (app.app) {
+			case HOME.app:
+				this.rootPanel(new AonDesktop());
+				break;
 			case Apps.CONSOLE.app:
 				this.rootPanel(new AonConsole());
 				break;
@@ -160,6 +177,30 @@ export class AonNewMenu extends AonElement {
 				break;
 			case ACCOUNTING_MENU.app:
 				this.rootPanel(new AonAccountingMenu());
+				break;
+			case COMMERCIAL_MENU.app:
+				this.rootPanel(new AonCommercialMenu());
+				break;
+			case GROUPWARE_MENU.app:
+				this.rootPanel(new AonGroupwareMenu());
+				break;
+			case MANAGEMENT_MENU.app:
+				this.rootPanel(new AonManagementMenu());
+				break;
+			case TREASURY_MENU.app:
+				this.rootPanel(new AonTreasuryMenu());
+				break;
+			case WAREHOUSE_MENU.app:
+				this.rootPanel(new AonWarehouseMenu());
+				break;
+			/*case FISCAL_MENU.app:
+				this.rootPanel(new AonFiscalMenu());
+			*/	break;
+			case PAYROLL_MENU.app:
+				this.rootPanel(new AonPayrollMenu());
+				break;
+			case MARKETING_MENU.app:
+				this.rootPanel(new AonMarketingMenu());
 				break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
@@ -441,12 +482,30 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
-		div.addEventListener('mouseover', () => {
-			div.style.backgroundColor = 'white';
-		});
-		div.addEventListener('mouseout', () => {
-			div.style.backgroundColor = 'transparent';
-		});
+		let header = this.getElement("aonHeaderWeb");
+		if(app.app=="applications"){
+			div.addEventListener("mouseover", () => {
+				div.style.backgroundColor = this.getBackgroundHover();
+			  });
+			  div.addEventListener("mouseleave", () => {
+				div.style.backgroundColor = "transparent";
+				if(!header.style.backgroundColor)
+					div.style.color = "#5f6368";
+				else if(header.style.backgroundColor)
+					div.style.color = "white";
+				else 
+					div.style.color = "#5f6368";
+			  });
+		}else{
+			div.addEventListener('mouseover', () => {
+				div.style.backgroundColor = 'white';
+			});
+			div.addEventListener('mouseout', () => {
+				div.style.backgroundColor = 'transparent';
+			});
+		}
+
+		
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
@@ -737,6 +796,41 @@ export class AonNewMenu extends AonElement {
 
 	setExpanded(expanded) {
 		this.expanded = expanded;
+	}
+
+
+	getBackgroundHover() {
+		//alert(this.backgroundColor);
+		//alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
+		return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+	}
+
+	isLightColor(colorString) {
+		// Extraer los valores RGB del string
+		const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
+		const [r, g, b] = rgba;
+	
+		// Calcular el brillo relativo
+		const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+		return brightness > 128;  // Umbral: 128
+	}
+	
+	hexToRgb(hex) {
+		// Eliminar el símbolo '#' si está presente
+		hex = hex.replace(/^#/, '');
+
+		// Comprobar si el color es en formato corto (#RGB)
+		if (hex.length === 3) {
+			hex = hex.split('').map(c => c + c).join('');
+		}
+
+		// Extraer los componentes rojo, verde y azul
+		const r = parseInt(hex.substring(0, 2), 16);
+		const g = parseInt(hex.substring(2, 4), 16);
+		const b = parseInt(hex.substring(4, 6), 16);
+
+		// Devolver el color en formato RGB
+		return `rgb(${r}, ${g}, ${b})`;
 	}
 
 	isApp(app) {
