@@ -11,6 +11,7 @@ export class AonSuiteMenu extends AonElement {
     NEW_BUTTON;
     UPLOAD_BUTTON;
     CONF_BUTTON;
+    DROPDOWN_BUTTON;
     options; 
 
 	constructor () {
@@ -31,6 +32,7 @@ export class AonSuiteMenu extends AonElement {
         this.NEW_BUTTON = this.id + 'NewButton';
         this.UPLOAD_BUTTON = this.id + 'UploadButton';
         this.CONF_BUTTON = this.id + 'ConfButton';
+        this.DROPDOWN_BUTTON = this.id + "DropDownButton";
 	}
 
 	build() {
@@ -47,34 +49,62 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.style.borderRight = "1px solid rgba(0, 0, 0, 0.1)";
         divFlex.appendChild(sideMenu);
 
+        let divNewButton = this.createDiv();
+        divNewButton.style.display = "flex";
+        sideMenu.appendChild(divNewButton);
+
         let newButton = new AonButton();
         newButton.id = this.NEW_BUTTON;
         newButton.icon = "add";
         newButton.title = "Agregar nuevo";
         newButton.style.display = "block";
         newButton.color = "transparent";
-        newButton.style.width = "222px";
-        newButton.style.border = "1px solid var(--aonBlue)";
-        newButton.style.borderRadius = "5px";
+        newButton.style.width = "157px";
+        newButton.style.borderTopLeftRadius = "5px";
+        newButton.style.borderBottomLeftRadius = "5px";
         newButton.style.marginLeft = "14px";
         newButton.style.marginTop = "20px";
-        sideMenu.appendChild(newButton);  
+        newButton.style.borderTopWidth = "1px";
+        newButton.style.borderTopStyle = "Solid";
+        newButton.style.borderTopColor = "rgb(72,70,68)";
+        newButton.style.borderBottomWidth = "1px";
+        newButton.style.borderBottomStyle = "Solid";
+        newButton.style.borderBottomColor = "rgb(72,70,68)";
+        newButton.style.borderLeftWidth = "1px";
+        newButton.style.borderLeftStyle = "Solid";
+        newButton.style.borderLeftColor = "rgb(72,70,68)";
+        divNewButton.appendChild(newButton);  
         let newBtText = this.getElement(newButton.TEXT);
         let newBtIcon = this.getElement(newButton.ICON);
         let newBtBt = this.getElement(newButton.BUTTON);
-        newBtText.style.color = "var(--aonBlue)";
+        newBtText.style.color = "rgb(72,70,68)";
         newBtText.style.fontWeight = "normal";
-        newBtIcon.style.color = "var(--aonBlue)";
+        newBtIcon.style.color = "rgb(72,70,68)";
         newBtBt.style.boxShadow = "none";
+        this.setButtonHover(newButton);
 
-
-        newButton.addEventListener("mouseover", () => {
-           newButton.style.backgroundColor = "rgba(0,36,105,0.1)";
-        });
-          
-          newButton.addEventListener("mouseleave", () => {
-            newButton.style.backgroundColor = "transparent";
-        });
+        let dropdownButton = new AonButton();
+        dropdownButton.id = this.DROPDOWN_BUTTON;
+        dropdownButton.icon = "keyboard_arrow_down";
+        dropdownButton.title = "Ver opciones";
+        dropdownButton.style.display = "block";
+        dropdownButton.color = "transparent";
+        dropdownButton.style.width = "50px";
+        dropdownButton.style.borderTopRightRadius = "5px";
+        dropdownButton.style.borderBottomRightRadius = "5px";
+        dropdownButton.style.border = "1px solid rgb(72,70,68)";
+        dropdownButton.style.marginTop = "20px";
+        dropdownButton.style.justifyContent = "center";
+        divNewButton.appendChild(dropdownButton);  
+        let dropBtIcon = this.getElement(dropdownButton.ICON);
+        let dropBtBT = this.getElement(dropdownButton.BUTTON);
+        let dropBtText = this.getElement(dropdownButton.TEXT);
+        dropBtIcon.style.color = "rgb(72,70,68)";
+        dropBtIcon.style.marginLeft = "-7px";
+        dropBtText.innerHTML = "";
+        dropBtBT.style.boxShadow = "none";
+        this.setButtonHover(dropdownButton);
+        //dropdownButton.addEventListener(EVENT.CLICK, this.buildOptions("1","2","3","4"));
 
         let sideNavTitle = this.createDiv();
         sideNavTitle.className = "aonSidenavTitleBeta";
@@ -84,7 +114,6 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.appendChild(this.buildSideNavRow("Todos","stacks"));
         sideMenu.appendChild(this.buildSideNavRow("Abierto recientemente","schedule"));
 
-
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
         utilidades.innerHTML = "Utilidades";
@@ -93,12 +122,11 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.appendChild(this.buildSideNavRow("Configuración", "folder_managed"));
 
         this.buildSideNavCard(sideMenu, "Documentos","1");
-        this.buildSideNavCard2(sideMenu, "Auditoria facturas","2");
 
         let uploadButton = new AonButton();
         uploadButton.id = this.UPLOAD_BUTTON;
         uploadButton.icon = "publish";
-        uploadButton.title = "Subir archivo";
+        uploadButton.title = "Cargar archivo";
         uploadButton.color = "transparent";
         uploadButton.style.display = "block";
         uploadButton.style.width = "222px";
@@ -110,43 +138,42 @@ export class AonSuiteMenu extends AonElement {
         let text = this.getElement(uploadButton.TEXT);
         let icon = this.getElement(uploadButton.ICON);
         let button = this.getElement(uploadButton.BUTTON);
-        text.style.color = "var(--aonBlue)";
+        text.className= CSS.AON_CARD_TEXT;
         text.style.fontWeight = "normal";
-        icon.style.color = "var(--aonBlue)";
+        icon.style.color = "rgb(72,70,68)";
         button.style.boxShadow = "none";
-
-
-        uploadButton.addEventListener("mouseover", () => {
-            uploadButton.style.backgroundColor = "rgba(0,36,105,0.1)";
-        });
-           
-        uploadButton.addEventListener("mouseleave", () => {
-            uploadButton.style.backgroundColor = "transparent";
-        });
+        this.setButtonHover(uploadButton);
               
         let content = this.createDiv();
         content.id = this.CONTENT;
-        content.style.height = "822px";
+        content.style.height = "calc(-62px + 100vh)";
         content.style.width = "100%";
         content.style.display = "flex";
         content.style.backgroundColor = "rgb(250, 249, 248)";
         content.style.gap = "1rem";
         content.style.flexWrap = "wrap";
+        content.style.position = "relative";
+        content.style.overflowY = "auto";
+        content.style.justifyContent = "center";
         divFlex.appendChild(content);
+
+        let div = this.createDiv();
+        div.style.marginTop = "10px";
+        div.style.marginBottom = "-17px";
+        div.style.width = "100%"
+        div.style.justifyContent = "center";
+        div.style.display = "flex";
+        content.appendChild(div);
 
         let title = this.createDiv();
         title.id = this.TITLE;
         title.className = "aonSidenavTitleBeta";
-        title.style.position = "absolute";
-        title.style.marginLeft = "22px";
-        title.style.marginTop = "30px";
-        content.appendChild(title);
+        div.appendChild(title);
 
         this.options.forEach((opt, i) => {
             this.buildCard(opt, i);
         });
 	}
-
 
     setTitle(title){
         this.title = title;
@@ -155,7 +182,6 @@ export class AonSuiteMenu extends AonElement {
             titleElement.innerHTML = this.title;
         }
     }
-
 
     buildSideNavCard(sideMenu,title,id){
         let card = new AonCard();
@@ -174,40 +200,11 @@ export class AonSuiteMenu extends AonElement {
         cardDiv.style.minWidth = "230px";
         
         let divGeneral = this.createDiv();
-        divGeneral.appendChild(this.buildCardData("999 Pendientes"));
-        divGeneral.appendChild(this.buildCardData("999 Rechazados"));
-        divGeneral.appendChild(this.buildCardData("999 Fras sin contabilizar"));
+        divGeneral.appendChild(this.buildSideNavCardData("Pendientes","999"));
+        divGeneral.appendChild(this.buildSideNavCardData("Rechazados","999"));
+        divGeneral.appendChild(this.buildSideNavCardData("Fras. sin contabilizar","999"));
         
-	
 		card.setContent(divGeneral);
-        
-    }
-
-    buildSideNavCard2(sideMenu,title,id){
-        let card = new AonCard();
-        card.id = id;
-		card.title = title;
-		card.style.minWidth = "230px";
-
-        card.style.display = "flex";
-        card.style.minHeight = "20px";
-        card.style.marginTop = "10px";
-        sideMenu.appendChild(card);
-		
-        let cardDiv = this.getElement(card.CARD);
-		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv.style.borderRadius = '2px';
-        cardDiv.style.minWidth = "230px";
-        
-        let divGeneral = this.createDiv();
-        divGeneral.appendChild(this.buildCardData("999 Con IRPF Profesional"));
-        divGeneral.appendChild(this.buildCardData("999 Con IRPF Alquiler"));
-        divGeneral.appendChild(this.buildCardData("999 Intracomunitarios"));
-        divGeneral.appendChild(this.buildCardData("999 Extracomunitarios"));
-        
-	
-		card.setContent(divGeneral);
-        
     }
 
     buildCard(opt, i){
@@ -219,7 +216,7 @@ export class AonSuiteMenu extends AonElement {
         card.style.display = "flex";
         card.style.height = "300px";
 		card.style.marginLeft = "10px";
-        card.style.marginTop = "60px";
+        //card.style.marginTop = "20px";
         this.getContent().appendChild(card);
 		
         let cardDiv = this.getElement(card.CARD);
@@ -245,7 +242,7 @@ export class AonSuiteMenu extends AonElement {
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value;
+		span.innerHTML = value.description;
         span.style.cursor = "pointer";
         span.style.color = "var(--aonBlue)"
 		div.appendChild(span);
@@ -259,9 +256,43 @@ export class AonSuiteMenu extends AonElement {
             span.style.textDecoration = '';
         });
 
+        span.addEventListener(EVENT.CLICK, value.action);
+
 		return div;
 	}
 
+
+    buildSideNavCardData(value,number) {
+		let div = this.createDiv();
+		div.style.marginTop = '10px';
+		div.title = value;
+        div.style.padding = "2px";
+        div.style.position = "relative";
+
+		let span = this.createSpan();
+		span.className = CSS.AON_CARD_TEXT;
+		span.innerHTML = value;
+		div.appendChild(span);
+
+        let span2 = this.createSpan();
+        span2.className = CSS.AON_CARD_TEXT;
+        span2.innerHTML = number;
+        span2.style.right = "0px";
+        span2.style.position = "absolute";
+        div.appendChild(span2);
+
+		return div;
+	}
+
+    setButtonHover(button){
+        button.addEventListener("mouseover", () => {
+            button.style.backgroundColor = "rgba(72,70,68,0.1)";
+        });
+           
+        button.addEventListener("mouseleave", () => {
+            button.style.backgroundColor = "transparent";
+        });
+    }
     
 
     buildSideNavRow(value, icon) {
@@ -298,6 +329,47 @@ export class AonSuiteMenu extends AonElement {
 		return div;
 	}
 
+    /*
+    buildOptions(options) {
+
+        this.clearElementById(this.OPTIONS);
+    
+        if(options.length === 0) return null;
+    
+        let input = this.getElement(this.INPUT);
+        let div = this.getElement(this.OPTIONS);
+        div.classList.add('is-visible');
+      
+        if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
+          let empty = {};
+          empty[this.nameAlias] = '-';
+          empty[this.valueAlias] = '';
+          options.unshift(empty); //EMPTY
+        }
+    
+        let ul = this.createElement(TAG.UL);
+        ul.classList.add(CSS.AON_UL);
+        ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
+        ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
+        div.appendChild(ul);
+    
+        const isMultiple = this.multiple;
+        for (const option of options) {
+          isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
+        }
+    
+        
+        document.addEventListener(EVENT.CLICK, function(event) {
+          this.value = this._selected ? this._selected[this.nameAlias] : '';
+          let isClickInside = input.contains(event.target);
+          if(!isClickInside){
+            if(div.classList.contains('is-visible')){
+              div.classList.remove('is-visible');
+            }
+          }
+        });
+      }
+      */
     getContent(){
         return this.getElement(this.CONTENT);
     }

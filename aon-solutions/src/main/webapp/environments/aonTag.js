@@ -210,3 +210,19 @@ export const AON_RIGHT_PANEL = 'aon-right-panel';
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
 
 export const AON_SUITE_MENU = 'aon-suite-menu';
+
+export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
+
+export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
+
+export const AON_MANAGEMENT_MENU = 'aon-management-menu';
+
+export const AON_TREASURY_MENU = 'aon-treasury-menu';
+
+export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
+
+export const AON_FISCAL_MENU = 'aon-fiscal-menu';
+
+export const AON_PAYROLL_MENU = 'aon-payroll-menu';
+
+export const AON_MARKETING_MENU = 'aon-marketing-menu';
