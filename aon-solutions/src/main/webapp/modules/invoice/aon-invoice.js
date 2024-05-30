@@ -42,6 +42,9 @@ import { AonNewNumber } from '../../components/aon-new-number.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonNewTextarea } from '../../components/aon-new-textarea.js';
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
+import { addCounter, transferCounter } from './InvoiceCounter.js';
+
+import * as OPTION from './InvoiceOptions.js';
 
 export class AonInvoice extends AonElement {
 
@@ -2701,52 +2704,28 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		// if((this.getDur().hasAccounting() || this.getDur().hasParentAccounting())
-		// 	&& !this.invoice.category) {
-		// 	this.showError({
-		// 		type: CONSTANT.ERROR,
-		// 		message: "Para Aceptar es necesaria la categoría."
-		// 	});
-		// } else {
-			if(this.invoice.isEmitida() && this.configuration.tbai.active) {
-				let d = this.getApplication().getDialog();
-				d.clear();
-				if(!this.isMobile()) d.width = '400px';
-				d.setTitle(MSG.ACCEPT);
-				let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
-				getAeatCertificates().then(certs => {
-					certSelect.setOptions(certs.map(s => {
-						return {
-						  value: s.id,
-						  name: s.name
-						}
-					  }));
-				}); 
-				d.setContent(certSelect);
-				d.addAcceptAction(() => {
-					this.getApplication().startLoader();
-					this.accept = false;
-					let data = this.getInvoice();
-					data.cert = certSelect.value;
-					acceptInvoice(data).then(r => {
-						this.getApplication().getParent().buildCounter();
-						this.invoice = new Invoice(r);
-						this.getApplication().stopLoader(); 
-						this.reload();
-					}).catch(e => {
-						this.accept = true;
-						this.getApplication().stopLoader(); 
-						this.showError(e)
-					});
-				});			
-				d.open();
-			} else if(this.accept) {
+		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
+			let d = this.getApplication().getDialog();
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ACCEPT);
+			let certSelect = this.createAonElement(LS.isNewTheme() ? new AonNewSelect() : new AonSelect(), "cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+						value: s.id,
+					  	name: s.name
+					}
+				}));
+			}); 
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
 				this.getApplication().startLoader();
 				this.accept = false;
-				acceptInvoice(this.getInvoice())
-				.then(r => {
-					this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
-					this.getApplication().getParent().buildCounter();
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				acceptInvoice(data).then(r => {
+					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader(); 
 					this.reload();
@@ -2755,12 +2734,45 @@ export class AonInvoice extends AonElement {
 					this.getApplication().stopLoader(); 
 					this.showError(e)
 				});
-			}
-		// }
+			});			
+			d.open();
+		} else if(this.accept) {
+			this.getApplication().startLoader();
+			this.accept = false;
+			acceptInvoice(this.getInvoice())
+			.then(r => {
+				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+				this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+				this.invoice = new Invoice(r);
+				this.getApplication().stopLoader(); 
+				this.reload();
+			}).catch(e => {
+				this.accept = true;
+				this.getApplication().stopLoader(); 
+				this.showError(e)
+			});
+		}
 	}
 	
+	getAcceptFromOption() {
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.RAWDOC_INBOX_ISSUED;
+		} else if(this.getInvoice().isTicket()) {
+			return OPTION.RAWDOC_INBOX_TICKET;
+		} else return OPTION.RAWDOC_INBOX_RECEIVED;
+	}
+
+	getAcceptToOption() {
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.INVOICE_ISSUED;
+		} else if(this.getInvoice().isTicket()) {
+			return OPTION.INVOICE_TICKET;
+		} else return OPTION.INVOICE_RECEIVED;
+	}
+
 	setInvofoxState(publicState) {
 		try {
+			this.getInvoice().status = CONSTANT.OCR + publicState;
 			let invofoxDocumentId = this.getInvofoxDocumentId();
 			saveInvofoxDocument({_id: invofoxDocumentId , publicState: publicState});
 		}  catch ( e ){
@@ -2790,7 +2802,9 @@ export class AonInvoice extends AonElement {
 	rejectInvoice() {
 		if ( this.isInvofoxInvoice() ) {
 			this.setInvofoxState(CONSTANT.PENDING_DECISSION);
-			this.back();
+			this.updateCounter(this.getAcceptFromOption(), OPTION.RAWDOC_REJECT, 1);
+			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
+			this.reload();
 			return;
 		}
 			
@@ -2817,6 +2831,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
+			this.updateCounter(this.getRejectFromOption(), OPTION.RAWDOC_REJECT, 1);
+			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -2824,6 +2840,15 @@ export class AonInvoice extends AonElement {
 		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
+	}
+
+	getRejectFromOption() {
+		// (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.RAWDOC_INBOX_ISSUED;
+		} else if(this.getInvoice().isTicket()) {
+			return OPTION.RAWDOC_INBOX_TICKET;
+		} else return OPTION.RAWDOC_INBOX_RECEIVED;
 	}
 
 	addInvoiceRemarks() {
@@ -3086,6 +3111,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashInvoice() {
+		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_DRAFT, 1);
+		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
+		if(!this.getInvoice().isRejected() && !invofoxRejected)
+			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		if(this.isInvofoxInvoice()) {
 			this.setInvofoxState(CONSTANT.ERROR);
 		} else {
@@ -3093,6 +3122,16 @@ export class AonInvoice extends AonElement {
 			this.save(MSG.MOVED_TO_TRASH);
 		}
 		this.reload();
+	}
+
+	getTrashFromOption() {
+		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
+			return OPTION.RAWDOC_REJECT;
+		} else if(this.getInvoice().isEmitida()) {
+			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_ISSUED : OPTION.INVOICE_ISSUED;
+		} else if(this.getInvoice().isTicket()) {
+			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_TICKET : OPTION.INVOICE_TICKET;
+		} else return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_RECEIVED : OPTION.INVOICE_RECEIVED;
 	}
 
 	trashPendingInvoice() {
@@ -3138,7 +3177,23 @@ export class AonInvoice extends AonElement {
 			this.getInvoice().status = CONSTANT.INBOX;
 			this.save(MSG.RESTORED_DATA);
 		}		
+		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
+		this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, 1);
 		this.reload();
+	}
+
+	getRestoreFromOption() {
+		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
+			return OPTION.RAWDOC_REJECT;
+		} else return OPTION.RAWDOC_DRAFT;
+	}
+	
+	getRestoreToOption() {
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.RAWDOC_INBOX_ISSUED;
+		} else if(this.getInvoice().isTicket()) {
+			return OPTION.RAWDOC_INBOX_TICKET;
+		} else return OPTION.RAWDOC_INBOX_RECEIVED;
 	}
 
 	removeInvoice() {
@@ -3148,7 +3203,10 @@ export class AonInvoice extends AonElement {
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.DELETE_FOREVER);
 			d.setContentHTML(MSG.DELETE_FOREVER_INVOICE_CONFIRMATION);
-			d.addAcceptAction(() => this.back());
+			d.addAcceptAction(() => {
+				this.updateCounter(OPTION.RAWDOC_DRAFT, undefined, -1);
+				this.back()
+			});
 			d.open();
 		});
 	}
@@ -3161,10 +3219,23 @@ export class AonInvoice extends AonElement {
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
 			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.REJECTED);	
+			this.updateCounter(OPTION.RAWDOC_DRAFT, undefined, -1);
 			this.back();
 		});
 		d.open();
 	}
+
+	updateCounter(from, to, count) {
+		if(!to) {
+			addCounter(from, count);
+			this.getApplication().getParent().updateCounterSpan(from);
+		}  else {
+			transferCounter(from, to, count);
+			this.getApplication().getParent().updateCounterSpan(from);
+			this.getApplication().getParent().updateCounterSpan(to);
+		}
+	}
+
 
 }
 if(!window.customElements.get(TAG.AON_INVOICE)){
