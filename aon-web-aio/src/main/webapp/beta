@@ -28,6 +28,9 @@
 	
 	<script type="module" src="dist/app.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="dist/app.min.css">
+	
+	<script src="https://npmcdn.com/chart.js@latest/dist/chart.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 </head>
 

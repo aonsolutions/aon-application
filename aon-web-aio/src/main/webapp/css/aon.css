@@ -1018,6 +1018,10 @@
   display: none;
 }
 
+.aonContentBeta::-webkit-scrollbar {
+  display: none;
+}
+
 .aonSubContent::-webkit-scrollbar {
   display: none;
 }
