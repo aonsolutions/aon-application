@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -64,6 +65,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -406,6 +408,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Survey> getSurveySuggestion(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getSurveyStream(domainName, domain, user);
+	}
+	
+
+	@Override
+	public List<Tag> getTagSuggestion(String domainName, int domain, String user, TagType tagType) throws AonCoreException {
+		return AON.getTagStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getTypeProperty().eq((byte) tagType.ordinal()))).collect(Collectors.toList());
 	}
 	
 	// **************************************************

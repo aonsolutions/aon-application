@@ -35,10 +35,12 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -88,6 +90,8 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 	private TextBox description = new TextBox();
 	private Label actionType = new Label();
 	private ListBox typeListBox = new ListBox();
+	private SuggestBox tagSuggestBox = new SuggestBox();
+	private List<Tag> tags = new ArrayList<>();
 	private AonDoubleBox budget = new AonDoubleBox(15, 2);
 	private AonDoubleBox expense = new AonDoubleBox(15, 2);
 	private AonDateBox startDate = new AonDateBox();
@@ -271,19 +275,23 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		switch (MarketingActionMediaType.getMediaType(Integer.parseInt(typeListBox.getSelectedValue()))) {
 			case PHONE:
 				newsletterSuggestBox.setValue("");
+				tagSuggestBox.setValue("");
 				break;
 			case EMAIL:
 				newsletterSuggestBox.setValue("");
 				surveySuggestBox.setValue("");
+				tagSuggestBox.setValue("");
 				break;
 			case MAIL:
 				newsSuggestBox.setValue("");
 				newsletterSuggestBox.setValue("");
 				surveySuggestBox.setValue("");
+				tagSuggestBox.setValue("");
 				break;
 			case BULLETIN:
 				newsSuggestBox.setValue("");
 				surveySuggestBox.setValue("");
+				tagSuggestBox.setValue("");
 				break;
 			default:
 				newsSuggestBox.setValue("");
@@ -307,11 +315,20 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			marketingAction.setSurvey(new Survey().setId(surveyId));
 		} else marketingAction.setSurvey(null);
 		
+		if(AonStringUtils.isNotBlank(tagSuggestBox.getValue())) {
+			if(AonStringUtils.contains(tagSuggestBox.getValue(), '[')) {
+				marketingAction.setTag(new Tag().setId(Integer.parseInt(tagSuggestBox.getValue().split("\\[")[1].split("\\]")[0])));
+			} else {
+				marketingAction.setTag(new Tag().setDomain(marketingAction.getDomain()).setTagType(TagType.MARKETING).setName(tagSuggestBox.getValue()));
+			}
+		} else marketingAction.setTag(null);
+		
 		commonService.saveMarketingAction(options.getDomainName(), options.getDomain(), options.getUser(), marketingAction, new AsyncCallback<MarketingAction>() {
 			
 			@Override
 			public void onSuccess(MarketingAction result) {
 				marketingAction = result;
+				setMarketingAction(marketingAction);
 				AonMessagePanel.showSuccess(messagePanel, "Acci\u00f3n " + marketingAction.getDescription()+ " guardada correctamente");
 			}
 			
@@ -413,8 +430,17 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		table.setWidget(1, 1, description);
 		table.getFlexCellFormatter().setColSpan(1, 1, 3);
 		
-		table.setWidget(2, 0, new InlineLabel("Canal"));
+		table.setWidget(2, 0, new InlineLabel("Tipo"));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
+		actionType.setText(getActivonType(marketingAction.getMediaType().getValue()));
+		table.setWidget(2, 1, actionType);
+		
+		table.setWidget(2, 2, new InlineLabel("Canal"));
+		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
+		
+		HTMLPanel typePanel = new HTMLPanel("");
+		typePanel.addStyleName(AON.CSS.aonItemFlex());
+		
 		addSelectStyle(typeListBox.getElement());
 		typeListBox.clear();
 		for(int i=0; i<MarketingActionMediaType.values().length; i++) {
@@ -427,13 +453,26 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			showMarketingActionMediaOptions(table, marketingActionMediaType);
 		});
 		setSelectedValueLB(typeListBox, marketingAction.getMediaType().getValue().toString());
-		addSelectStyle(workgroup.getElement());
-		table.setWidget(2, 1, typeListBox);
-
-		table.setWidget(2, 2, new InlineLabel("Tipo"));
-		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
-		actionType.setText(getActivonType(marketingAction.getMediaType().getValue()));
-		table.setWidget(2, 3, actionType);
+		typePanel.add(typeListBox);
+		
+		tagSuggestBox.setStyleName(AON.CSS.aonInputText());
+		addInputStyle(tagSuggestBox.getElement());
+		tagSuggestBox.setAutoSelectEnabled(false);
+		tagSuggestBox.getElement().setPropertyString("placeholder", "Etiqueta");
+		tagSuggestBox.addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				tagSuggestBox.showSuggestionList();
+			}
+		});
+		getTagSuggestion(success -> {
+			if(marketingAction.getTag() != null) {
+				Optional<Tag> tagOpt = tags.stream().filter(tag -> tag.getId().equals(marketingAction.getTag().getId())).findFirst();
+				tagSuggestBox.setValue(tagOpt.isPresent() ? "[" + tagOpt.get().getId() + "] " + tagOpt.get().getName() : "");
+			} else tagSuggestBox.setValue(null);
+		});
+		typePanel.add(tagSuggestBox);
+		table.setWidget(2, 3, typePanel);
+		
 
 		table.setWidget(3, 0, new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
@@ -687,30 +726,35 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(8).getStyle().clearDisplay();
 				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
+				tagSuggestBox.getElement().getStyle().setDisplay(Display.NONE);
 				break;
 			case EMAIL:
 				table.getRowFormatter().getElement(6).getStyle().clearDisplay();
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
+				tagSuggestBox.getElement().getStyle().setDisplay(Display.NONE);
 				break;
 			case MAIL:
 				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
+				tagSuggestBox.getElement().getStyle().setDisplay(Display.NONE);
 				break;
 			case BULLETIN:
 				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(7).getStyle().clearDisplay();
 				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(9).getStyle().setDisplay(Display.NONE);
+				tagSuggestBox.getElement().getStyle().setDisplay(Display.NONE);
 				break;
 			default:
 				table.getRowFormatter().getElement(6).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(7).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(8).getStyle().setDisplay(Display.NONE);
 				table.getRowFormatter().getElement(9).getStyle().clearDisplay();
+				tagSuggestBox.getElement().getStyle().clearDisplay();
 				break;
 		}
 		
@@ -1013,6 +1057,32 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			} else createProjectCommercial(seller, projectCommercialIndx++);
 		}
 		
+	}
+	
+	private void getTagSuggestion(Consumer<Void> success) {
+		commonService.getTagSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), TagType.MARKETING, new AsyncCallback<List<Tag>>() {
+			
+			@Override
+			public void onSuccess(List<Tag> tagSuggestion) {
+				tags = tagSuggestion;
+				
+				List<String> suggestions = new ArrayList<String>();
+				tags.forEach(tag -> suggestions.add("[" + tag.getId() + "] " + tag.getName()));
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) tagSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(suggestions);
+				orclSb.setDefaultSuggestionsFromText(suggestions);
+				
+				success.accept(null);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 	
 	private void getNewsSuggestion(Consumer<Void> success) {
