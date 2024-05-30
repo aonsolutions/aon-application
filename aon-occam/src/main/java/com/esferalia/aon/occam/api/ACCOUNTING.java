@@ -506,15 +506,15 @@ public class ACCOUNTING {
 	}
 
 
-	public static FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+	public static FinanceEntry save(Occam occam, FinanceEntry financeEntry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {			
 			return getAccounting().save(ctx, financeEntry);
 		}
 	}
 
 
-	public static FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getFinanceEntry(ctx, accountEntry);
 		}
 	}
