@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"	
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -6,42 +14,65 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 			
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_projectTas" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-car aon-direct-access-panel">
+						<aon:panelGrid id="group_projectTas"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-car aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.tas_projectTas_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="projectTas" action="projectTas_search" actionListener="#{projectTas.onEditSearch}" value="#{bundle.tas_projectTas_module}"/>
+									<aon:commandLink id="projectTas" 
+										action="projectTas_search"
+										actionListener="#{projectTas.onEditSearch}"
+										value="#{bundle.tas_projectTas_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink action="taskHolder_list-garage" actionListener="#{taskHolder.onSearch}" id="taskHolder-garage" value="#{bundle.groupware_taskHolders}">.</aon:commandLink>
+									<aon:commandLink id="taskHolder-garage"
+										action="taskHolder_search-garage"
+										actionListener="#{taskHolder.onEditSearch}"
+										value="#{bundle.groupware_taskHolders}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_commercial_commercial-garage" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-offer aon-direct-access-panel">
+						<aon:panelGrid id="group_commercial_commercial-garage"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-offer aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_invoice_offers}"/>
 							</f:facet>						
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink action="offer_list-garage" actionListener="#{offer.onSearch}" id="offer-garage" value="#{bundle.commercial_offer_module}">.</aon:commandLink>
+										<aon:commandLink id="offer-garage" 
+											action="offer_search-garage"
+											actionListener="#{offer.onEditSearch}"
+											value="#{bundle.commercial_offer_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="target-garage" action="target_search" actionListener="#{target.onEditSearch}" value="#{bundle.commercial_target_module}"/>
+										<aon:commandLink id="target-garage" 
+											action="target_search"
+											actionListener="#{target.onEditSearch}"
+											value="#{bundle.commercial_target_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="seller-garage" action="seller_search" actionListener="#{seller.onEditSearch}" value="#{bundle.seller_module}"/>
+										<aon:commandLink id="seller-garage" 
+											action="seller_search"
+											actionListener="#{seller.onEditSearch}"
+											value="#{bundle.seller_module}" />
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="commercialTerm-garage" action="commercialTerm-garage" actionListener="#{commercialTerm.onSearch}" value="#{bundle.commercial_term_module}"/>
+										<aon:commandLink id="commercialTerm-garage"
+											action="commercialTerm-garage"
+											actionListener="#{commercialTerm.onSearch}" 
+											value="#{bundle.commercial_term_module}" />
 									</aon:div>
 								</aon:if>								
 							</aon:div>
@@ -51,32 +82,48 @@
 
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.productOperator or aonRole.config}">
-							<aon:panelGrid id="group_warehouse_general" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-general">
+							<aon:panelGrid id="group_warehouse_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_general}"/>
+									<aon:outputText value="#{bundle.aon_general}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="make" action="make_form" actionListener="#{make.onSearch}" value="#{bundle.product_brand_module}"/>
+										<aon:commandLink id="make" 
+											action="make_form"
+											actionListener="#{make.onSearch}"
+											value="#{bundle.product_brand_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="model" action="model_form" actionListener="#{model.onSearch}" value="#{bundle.tas_models_module}"/>
+										<aon:commandLink id="model" 
+											action="model_form"
+											actionListener="#{model.onSearch}"
+											value="#{bundle.tas_models_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tasItem" action="tasItem_search" actionListener="#{tasItem.onEditSearch}" value="#{bundle.tas_tasItem_module}"/>
+										<aon:commandLink id="tasItem" 
+											action="tasItem_search"
+											actionListener="#{tasItem.onEditSearch}"
+											value="#{bundle.tas_tasItem_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
 						
 						<aon:if test="#{aonRole.statisticsOperator}">
-							<aon:panelGrid id="group_sales_reports-garage" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-statistics aon-direct-access-panel">
+							<aon:panelGrid id="group_sales_reports-garage"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-statistics aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_reports}"/>
+									<aon:outputText value="#{bundle.aon_reports}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tasOwnerStat" actionListener="#{tasStat.onEditSearch}" action="tasStat_search" value="#{bundle.stat_menu_tas_stat}"/>
+										<aon:commandLink id="tasOwnerStat"
+											actionListener="#{tasStat.onEditSearch}"
+											action="tasStat_search" 
+											value="#{bundle.stat_menu_tas_stat}"/>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

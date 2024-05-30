@@ -169,13 +169,7 @@
 		      <artifactId>poi-ooxml</artifactId>
 		      <version>3.17</version>
 		      <scope>compile</scope>
-		      <exclusions>
-		      	<exclusion>
-		      		<groupId>stax</groupId>
-		      		<artifactId>stax-api</artifactId>
-		      	</exclusion>
-		      </exclusions>
-		</dependency>
+	    </dependency>
 		<!--dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>

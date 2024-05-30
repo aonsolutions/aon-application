@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"	
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -6,28 +14,43 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
 						<aon:if test="#{salesAppParam.activeMarketPlace}">
-							<aon:panelGrid id="group_ecommerce_marketplace" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-sales aon-direct-access-panel">
+							<aon:panelGrid id="group_ecommerce_marketplace"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-sales aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.sales_marketplace_module}"/>
+									<aon:outputText value="#{bundle.sales_marketplace_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amazonSalesImporter-eCommerce" action="salesImporter_form-eCommerce-amazonSales" actionListener="#{salesImporter.onInitAmazonItem}" value="#{bundle.sales_amazon_sales_integration}"/>
+										<aon:commandLink id="amazonSalesImporter-eCommerce"
+											action="salesImporter_form-eCommerce-amazonSales"
+											actionListener="#{salesImporter.onInitAmazonItem}"
+											value="#{bundle.sales_amazon_sales_integration}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amazonSalesShipmentImporter-eCommerce" action="salesImporter_form-eCommerce-amazonSalesShipment" actionListener="#{salesImporter.onInitAmazonShipment}" value="#{bundle.sales_amazon_shipment_integration}"/>
+										<aon:commandLink id="amazonSalesShipmentImporter-eCommerce"
+											action="salesImporter_form-eCommerce-amazonSalesShipment"
+											actionListener="#{salesImporter.onInitAmazonShipment}"
+											value="#{bundle.sales_amazon_shipment_integration}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amazonSalesReturnImporter-eCommerce" action="salesImporter_form-eCommerce-amazonSalesReturn" actionListener="#{salesImporter.onInitAmazonItemReturn}" value="#{bundle.sales_amazon_sales_return_integration}"/>
+										<aon:commandLink id="amazonSalesReturnImporter-eCommerce"
+											action="salesImporter_form-eCommerce-amazonSalesReturn"
+											actionListener="#{salesImporter.onInitAmazonItemReturn}"
+											value="#{bundle.sales_amazon_sales_return_integration}"/>
 									</aon:div>
 									
 									<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="prueba-marketplace-PRUEBA" action="gwt_marketplace">
-												<aon:outputText styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;" value="Marketplace"/>
+											<aon:commandLink id="prueba-marketplace-PRUEBA"
+												action="gwt_marketplace">
+												<aon:outputText  styleClass="aon-icon-new-text" 
+														style="margin-left: 5px; padding-left: 20px;" 
+														value="Marketplace" />
 											</aon:commandLink>
 									</aon:div>
 								</aon:div>
