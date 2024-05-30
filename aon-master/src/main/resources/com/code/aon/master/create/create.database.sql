@@ -5480,6 +5480,7 @@ CREATE TABLE `mk_action` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `campaign` int NOT NULL COMMENT 'Identificador de la Campaña',
   `media_type` int NOT NULL COMMENT 'Tipo de contacto de la Accion',
+  `tag` int(11) DEFAULT NULL COMMENT 'Etiqueta para definir el tipo de accion',
   `start_date` datetime NOT NULL COMMENT 'Fecha de inicio',
   `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `survey` int DEFAULT NULL COMMENT 'Identificador del Cuestionario',
@@ -5498,11 +5499,13 @@ CREATE TABLE `mk_action` (
   KEY `IDX_MK_ACTION_NEWS` (`news`),
   KEY `IDX_MK_ACTION_WORKGROUP` (`workgroup`),
   KEY `IDX_MK_ACTION_TASK_HOLDER` (`task_holder`),
+  KEY `IDX_MK_ACTION_TAG` (`tag`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_MK_ACTION_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
   CONSTRAINT `FK_MK_ACTION_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
