@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,28 +6,19 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_enterprise_security"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-company aon-direct-access-panel">
+						<aon:panelGrid id="group_enterprise_security" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_enterprise}" />
+								<aon:outputText value="#{bundle.aon_module_enterprise}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="newDomain-enterprise"
-										action="newDomain_form-enterprise"
-										actionListener="#{adminNewDomain.onInit}"
-										value="#{bundle.admin_new_domain}" />
+									<aon:commandLink id="newDomain-enterprise" action="newDomain_form-enterprise" actionListener="#{adminNewDomain.onInit}" value="#{bundle.admin_new_domain}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="removeDomain-enterprise"
-										action="removeDomain_form-enterprise"
-										actionListener="#{adminRemoveDomain.onInit}"
-										value="#{bundle.admin_remove_domain}" />
+									<aon:commandLink id="removeDomain-enterprise" action="removeDomain_form-enterprise" actionListener="#{adminRemoveDomain.onInit}" value="#{bundle.admin_remove_domain}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

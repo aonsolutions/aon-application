@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,86 +6,51 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 			
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_academy_management"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-task aon-direct-access-panel">
+						<aon:panelGrid id="group_academy_management" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.academy_academic_management}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alumn" 
-										action="customer_search"
-										actionListener="#{customer.onAlumnEditSearch}"
-										value="#{bundle.aon_alumns}" />
+									<aon:commandLink id="alumn" action="customer_search" actionListener="#{customer.onAlumnEditSearch}" value="#{bundle.aon_alumns}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="course" 
-										action="course_search"
-										actionListener="#{course.onEditSearch}"
-										value="#{bundle.course_courses}" />
+									<aon:commandLink id="course" action="course_search" actionListener="#{course.onEditSearch}" value="#{bundle.course_courses}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="taskHolder-academy"
-										action="taskHolder_search-academy"
-										actionListener="#{taskHolder.onEditSearch}"
-										value="#{bundle.academy_teachers}" />
+									<aon:commandLink action="taskHolder_list-academy" actionListener="#{taskHolder.onSearch}" id="taskHolder-academy" value="#{bundle.academy_teachers}">.</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mark" 
-										action="mark_search"
-										actionListener="#{mark.onEditSearch}"
-										value="#{bundle.academy_mark}" />
+									<aon:commandLink id="mark" action="mark_search" actionListener="#{mark.onEditSearch}" value="#{bundle.academy_mark}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alumnLoan" 
-										action="alumnLoan_search"
-										actionListener="#{alumnLoan.onEditSearch}"
-										value="#{bundle.academy_loans}" />
+									<aon:commandLink id="alumnLoan" action="alumnLoan_search" actionListener="#{alumnLoan.onEditSearch}" value="#{bundle.academy_loans}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_academy_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
+						<aon:panelGrid id="group_academy_utilities" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
+								<aon:outputText value="#{bundle.aon_utilities}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alumnReclassification" 
-										action="alumnReclassification_search"
-										actionListener="#{alumnReclassification.onEditSearch}"
-										value="#{bundle.academy_alumn_reclassification}" />
+									<aon:commandLink id="alumnReclassification" action="alumnReclassification_search" actionListener="#{alumnReclassification.onEditSearch}" value="#{bundle.academy_alumn_reclassification}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">										
-									<aon:commandLink id="closeGroup" 
-										action="closeGroup_search"
-										actionListener="#{closeGroup.onEditSearch}"
-										value="#{bundle.academy_close_groups}" />
+									<aon:commandLink id="closeGroup" action="closeGroup_search" actionListener="#{closeGroup.onEditSearch}" value="#{bundle.academy_close_groups}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">										
-									<aon:commandLink id="duplicateGroup" 
-										action="duplicateGroup_search"
-										actionListener="#{duplicateGroup.onEditSearch}"
-										value="#{bundle.academy_duplicate_groups}" />
+									<aon:commandLink id="duplicateGroup" action="duplicateGroup_search" actionListener="#{duplicateGroup.onEditSearch}" value="#{bundle.academy_duplicate_groups}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">																		
-									<aon:commandLink id="academicSkillToGroup" 
-										action="academicSkillToGroup_search"
-										actionListener="#{academicSkillToGroup.onEditSearch}"
-										value="#{bundle.academy_academic_skill_to_groups}" />
+									<aon:commandLink id="academicSkillToGroup" action="academicSkillToGroup_search" actionListener="#{academicSkillToGroup.onEditSearch}" value="#{bundle.academy_academic_skill_to_groups}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="feeToGroup" 
-										action="feeToGroup_search"
-										actionListener="#{feeToGroup.onEditSearch}"
-										value="#{bundle.academy_fee_to_group}" />
+									<aon:commandLink id="feeToGroup" action="feeToGroup_search" actionListener="#{feeToGroup.onEditSearch}" value="#{bundle.academy_fee_to_group}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -102,57 +59,37 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_academy_auxiliaries"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-config">
+						<aon:panelGrid id="group_academy_auxiliaries" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-config">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_auxiliaries}" />
+								<aon:outputText value="#{bundle.aon_auxiliaries}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="relationship-academy" 
-										action="relationship_form-academy" 
-										value="#{bundle.registry_relationship_module}" />
+									<aon:commandLink id="relationship-academy" action="relationship_form-academy" value="#{bundle.registry_relationship_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="segment_form-academy" 
-										action="segment_form-academy" 
-										value="#{bundle.registry_segment_module}" />
+									<aon:commandLink id="segment_form-academy" action="segment_form-academy" value="#{bundle.registry_segment_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="academicYear" 
-										action="academicYear_form"
-										value="#{bundle.course_academic_year}" />
+									<aon:commandLink id="academicYear" action="academicYear_form" value="#{bundle.course_academic_year}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="courseSubject" 
-										action="courseSubject_form"
-										value="#{bundle.academy_course_subject}" />
+									<aon:commandLink id="courseSubject" action="courseSubject_form" value="#{bundle.academy_course_subject}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="courseLevel" 
-										action="courseLevel_form"
-										value="#{bundle.academy_course_level}" />
+									<aon:commandLink id="courseLevel" action="courseLevel_form" value="#{bundle.academy_course_level}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="academicSkill" 
-										action="academicSkill_form"
-										value="#{bundle.academicSkill_academicSkills}" />
+									<aon:commandLink id="academicSkill" action="academicSkill_form" value="#{bundle.academicSkill_academicSkills}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="qualification" 
-										action="qualification_form"
-										value="#{bundle.academy_qualification}" />
+									<aon:commandLink id="qualification" action="qualification_form" value="#{bundle.academy_qualification}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="observation" 
-										action="observation_form"
-										value="#{bundle.aon_remark}" />
+									<aon:commandLink id="observation" action="observation_form" value="#{bundle.aon_remark}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="qualitySkill" 
-										action="qualitySkill_form"
-										value="#{bundle.academy_quality_skill}" />
+									<aon:commandLink id="qualitySkill" action="qualitySkill_form" value="#{bundle.academy_quality_skill}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

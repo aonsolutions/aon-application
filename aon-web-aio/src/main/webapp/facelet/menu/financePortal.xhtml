@@ -1,52 +1,29 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="financePortalMenu">
 			<aon:div styleClass="aon-scroll-area">
-				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 					<aon:panelGroup>
-						<aon:panelGrid id="group_sales_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+						<aon:panelGrid id="group_sales_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_invoices}" />
+								<aon:outputText value="#{bundle.aon_invoices}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="saleInvoice-financePortal"
-											action="saleInvoice_search-financePortal"
-											actionListener="#{saleInvoice.onEditSearch}"
-											value="#{bundle.finance_sale_invoice_management_module}" />
+										<aon:commandLink action="saleInvoice_list-financePortal" actionListener="#{saleInvoice.onSearch}" id="saleInvoice-financePortal" value="#{bundle.finance_sale_invoice_management_module}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="purchaseInvoice-financePortal"
-											action="purchaseInvoice_search-financePortal"
-											actionListener="#{purchaseInvoice.onEditSearch}"
-											value="#{bundle.finance_purchase_invoice_management_module}" />
+										<aon:commandLink action="purchaseInvoice_list-financePortal" actionListener="#{purchaseInvoice.onSearch}" id="purchaseInvoice-financePortal" value="#{bundle.finance_purchase_invoice_management_module}">.</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="expenseInvoice-financePortal"
-											action="expenseInvoice_search-financePortal"
-											actionListener="#{expenseInvoice.onEditSearch}"
-											value="#{bundle.finance_expense_invoice_management_module}" />
+										<aon:commandLink action="expenseInvoice_list-financePortal" actionListener="#{expenseInvoice.onSearch}" id="expenseInvoice-financePortal" value="#{bundle.finance_expense_invoice_management_module}">.</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="undeductibleInvoice-financePortal"
-											action="undeductibleInvoice_search-financePortal"
-											actionListener="#{undeductibleInvoice.onEditSearch}"
-											value="#{bundle.finance_undeductible_invoice_management_module}" />
+										<aon:commandLink action="undeductibleInvoice_list-financePortal" actionListener="#{undeductibleInvoice.onSearch}" id="undeductibleInvoice-financePortal" value="#{bundle.finance_undeductible_invoice_management_module}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 							</aon:div>
@@ -54,31 +31,21 @@
 					</aon:panelGroup>				
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_finances_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-treasury aon-direct-access-panel">
+						<aon:panelGrid id="group_finances_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-treasury aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_finance}" />
+								<aon:outputText value="#{bundle.aon_module_finance}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeCharge-financePortal"
-											action="finance_search-charge-financePortal"
-											actionListener="#{finance.onEditSearchCharge}"
-											value="#{bundle.finance_charge_module}" />
+										<aon:commandLink id="financeCharge-financePortal" action="finance_search-charge-financePortal" actionListener="#{finance.onEditSearchCharge}" value="#{bundle.finance_charge_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financePayment-financePortal"
-											action="finance_search-payment-financePortal"
-											actionListener="#{finance.onEditSearchPayment}"
-											value="#{bundle.finance_payment_module}" />
+										<aon:commandLink id="financePayment-financePortal" action="finance_search-payment-financePortal" actionListener="#{finance.onEditSearchPayment}" value="#{bundle.finance_payment_module}"/>
 									</aon:div>
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="payMethod-financePortal"
-												action="payMethod-financePortal"
-												value="#{bundle.config_paymethod_module}" />
+											<aon:commandLink id="payMethod-financePortal" action="payMethod-financePortal" value="#{bundle.config_paymethod_module}"/>
 										</aon:div>
 									</aon:if>
 								</aon:if>
@@ -87,42 +54,28 @@
 					</aon:panelGroup>				
 					
 					<aon:panelGroup>
-						<aon:panelGrid id="group_holders_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-customer aon-direct-access-panel">
+						<aon:panelGrid id="group_holders_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-customer aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_holder}" />
+								<aon:outputText value="#{bundle.aon_holder}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="customer-financePortal"
-											action="customer_search-financePortal"
-											actionListener="#{customer.onEditSearch}"
-											value="#{bundle.customer_finance_checking}" />
+										<aon:commandLink action="customer_list-financePortal" actionListener="#{customer.onSearch}" id="customer-financePortal" value="#{bundle.customer_finance_checking}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="supplier-financePortal" 
-											action="supplier_search-financePortal"
-											actionListener="#{supplier.onEditSearch}"
-											value="#{bundle.aon_suppliers}" />
+										<aon:commandLink action="supplier_list-financePortal" actionListener="#{supplier.onSearch}" id="supplier-financePortal" value="#{bundle.aon_suppliers}">.</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="creditor-financePortal" 
-											action="creditor_search-financePortal"
-											actionListener="#{creditor.onEditSearch}"
-											value="#{bundle.finance_creditor_module}" >
-										</aon:commandLink>
+										<aon:commandLink action="creditor_list-financePortal" actionListener="#{creditor.onSearch}" id="creditor-financePortal" value="#{bundle.finance_creditor_module}">
+										.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="geotreeParent_list-financePortal"
-											action="geotreeParent_list-financePortal"
-											actionListener="#{geotreeParent.onSearch}"
-											value="#{bundle.geozone_module}" />
+										<aon:commandLink id="geotreeParent_list-financePortal" action="geotreeParent_list-financePortal" actionListener="#{geotreeParent.onSearch}" value="#{bundle.geozone_module}"/>
 									</aon:div>
 								</aon:if>
 							</aon:div>
@@ -131,34 +84,24 @@
 					
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_masters_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-treasury aon-direct-access-panel">
+						<aon:panelGrid id="group_masters_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-treasury aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_masters}" />
+								<aon:outputText value="#{bundle.aon_masters}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.productOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="product-financePortal"
-											action="product_search-financePortal"
-											actionListener="#{product.onEditSearch}"
-											value="#{bundle.aon_role_product}" />
+										<aon:commandLink action="product_list-financePortal" actionListener="#{product.onSearch}" id="product-financePortal" value="#{bundle.aon_role_product}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="productCategory-financePortal"
-											action="productCategory-financePortal"
-											value="#{bundle.aon_categories}" />
+										<aon:commandLink id="productCategory-financePortal" action="productCategory-financePortal" value="#{bundle.aon_categories}"/>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aonLoader-financePortal"
-											action="aonLoader_form-financePortal"
-											actionListener="#{aonLoader.onStart}"
-											value="#{bundle.aon_loader_module}" />
+										<aon:commandLink id="aonLoader-financePortal" action="aonLoader_form-financePortal" actionListener="#{aonLoader.onStart}" value="#{bundle.aon_loader_module}"/>
 									</aon:div>										
 								</aon:if>
 							</aon:div>
@@ -166,31 +109,22 @@
 					</aon:panelGroup>				
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_reports_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-treasury aon-direct-access-panel">
+						<aon:panelGrid id="group_reports_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-treasury aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_reports}" />
+								<aon:outputText value="#{bundle.aon_reports}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.fiscal}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_vatReport-financePortal"
-											action="gwt_vatReport-deposit" title="Panel de control de IVA"
-											value="Panel de control de IVA" />
+										<aon:commandLink id="gwt_vatReport-financePortal" action="gwt_vatReport-deposit" title="Panel de control de IVA" value="Panel de control de IVA"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_irpfReport-financePortal"
-											action="gwt_irpfReport-acc" title="Panel de control de IRPF"
-											value="Panel de control de IRPF" />
+										<aon:commandLink id="gwt_irpfReport-financePortal" action="gwt_irpfReport-acc" title="Panel de control de IRPF" value="Panel de control de IRPF"/>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_invoiceStats-financePortal"
-											action="gwt_invoiceStat-financePortal"
-											title="#{bundle.aon_global_statistics}"
-											value="#{bundle.aon_global_statistics}" />												
+										<aon:commandLink id="gwt_invoiceStats-financePortal" action="gwt_invoiceStat-financePortal" title="#{bundle.aon_global_statistics}" value="#{bundle.aon_global_statistics}"/>												
 									</aon:div>
 								</aon:if>
 							</aon:div>
@@ -198,35 +132,24 @@
 					</aon:panelGroup>				
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_utilities_financePortal"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+						<aon:panelGrid id="group_utilities_financePortal" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
+								<aon:outputText value="#{bundle.aon_utilities}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="invoicePrint-financePortal"
-											action="invoicePrint_search-financePortal"
-											actionListener="#{invoicePrint.onEditSearch}"
-											value="#{bundle.finance_invoice_print_module}"/>
+										<aon:commandLink action="invoicePrint_list-financePortal" actionListener="#{invoicePrint.onSearch}" id="invoicePrint-financePortal" value="#{bundle.finance_invoice_print_module}">.</aon:commandLink>
 									</aon:div>			
 								</aon:if>
-								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
+								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount &gt; 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="saleInvoiceSigner-financePortal"
-											action="invoiceSigner_search-financePortal"
-											actionListener="#{invoiceSigner.onEditSearch}"
-											value="#{bundle.finance_invoice_signing_module}"/>
+										<aon:commandLink action="invoiceSigner_list-financePortal" actionListener="#{invoiceSigner.onSearch}" id="saleInvoiceSigner-financePortal" value="#{bundle.finance_invoice_signing_module}">.</aon:commandLink>
 									</aon:div>								
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="globalConfiguration-financePortal"
-											action="globalConfig_form-financePortal"
-											actionListener="#{globalConfig.onInit}"
-											value="#{bundle.admin_global_configuration}" />
+										<aon:commandLink id="globalConfiguration-financePortal" action="globalConfig_form-financePortal" actionListener="#{globalConfig.onInit}" value="#{bundle.admin_global_configuration}"/>
 									</aon:div>
 								</aon:if>
 							</aon:div>

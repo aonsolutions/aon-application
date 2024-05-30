@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,49 +6,31 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_pos"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-pos aon-direct-access-panel">
+						<aon:panelGrid id="group_pos" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-pos aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_module_pos}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="pos_opening-tpv" 
-										action="posOpening_form-tpv"
-										actionListener="#{posOpening.onReset}"
-										value="#{bundle.finance_posOpening_module}" />
+									<aon:commandLink id="pos_opening-tpv" action="posOpening_form-tpv" actionListener="#{posOpening.onReset}" value="#{bundle.finance_posOpening_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="pos_closing-tpv" 
-										action="posClosing_form-tpv"
-										actionListener="#{posClosing.onLoad}" 
-										value="#{bundle.finance_posClosing_module}" />
+									<aon:commandLink id="pos_closing-tpv" action="posClosing_form-tpv" actionListener="#{posClosing.onLoad}" value="#{bundle.finance_posClosing_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="pos_invoice" 
-										action="posInvoice_form"
-										actionListener="#{posInvoice.onLoad}" 
-										value="#{bundle.finance_pos_invoice_management_module}" />
+									<aon:commandLink id="pos_invoice" action="posInvoice_form" actionListener="#{posInvoice.onLoad}" value="#{bundle.finance_pos_invoice_management_module}"/>
 								</aon:div>
 								<aon:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="pos_finance_batch-tpv" 
-											action="posFinance_search-tpv"
-											actionListener="#{posFinance.onEditSearch}"
-											value="#{bundle.finance_posFinance_module}" />
+										<aon:commandLink action="posFinance_list-tpv" actionListener="#{posFinance.onSearch}" id="pos_finance_batch-tpv" value="#{bundle.finance_posFinance_module}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.productOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="product" 
-											action="product_search"
-											actionListener="#{product.onEditSearch}"
-											value="#{bundle.aon_role_product}" />
+										<aon:commandLink id="product" action="product_search" actionListener="#{product.onEditSearch}" value="#{bundle.aon_role_product}"/>
 									</aon:div>
 								</aon:if>								
 							</aon:div>							
@@ -64,45 +38,29 @@
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
-						<aon:panelGrid id="group_pos_auxiliaries"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
+						<aon:panelGrid id="group_pos_auxiliaries" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_auxiliaries}" />
+								<aon:outputText value="#{bundle.aon_auxiliaries}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productTag-pos" 
-										action="productTag_form-pos" 
-										actionListener="#{productTag.onCancel}"
-										value="#{bundle.product_tag_module}"/>	
+									<aon:commandLink id="productTag-pos" action="productTag_form-pos" actionListener="#{productTag.onCancel}" value="#{bundle.product_tag_module}"/>	
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategory-pos" 
-										action="productCategory-pos"
-										value="#{bundle.aon_categories}" />
+									<aon:commandLink id="productCategory-pos" action="productCategory-pos" value="#{bundle.aon_categories}"/>
 								</aon:div>								
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="posDefinition-tpv" 
-											action="pos_search-tpv"
-											actionListener="#{pos.onEditSearch}"
-											value="#{bundle.finance_pos_definition_module}" />
+										<aon:commandLink action="pos_list-tpv" actionListener="#{pos.onSearch}" id="posDefinition-tpv" value="#{bundle.finance_pos_definition_module}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="posShift-tpv" 
-											action="posShift_search-tpv"
-											actionListener="#{posShift.onEditSearch}"
-											value="#{bundle.report_posShift_list}" />
+										<aon:commandLink action="posShift_list-tpv" actionListener="#{posShift.onSearch}" id="posShift-tpv" value="#{bundle.report_posShift_list}">.</aon:commandLink>
 									</aon:div>
 								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="itemTagPrint-tpv" 
-										action="itemTagPrint_search-tpv"
-										actionListener="#{itemTagPrint.onEditSearch}"
-										value="#{bundle.product_tag_print_module}"/>	
+									<aon:commandLink action="itemTagPrint_list-tpv" actionListener="#{itemTagPrint.onSearch}" id="itemTagPrint-tpv" value="#{bundle.product_tag_print_module}">.</aon:commandLink>	
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

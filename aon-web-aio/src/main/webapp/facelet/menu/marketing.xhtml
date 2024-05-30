@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,90 +6,63 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-200
-					             , aon-vertical-align-top aon-width-200
-					             , aon-vertical-align-top aon-width-200">
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-200                   , aon-vertical-align-top aon-width-200                   , aon-vertical-align-top aon-width-200">
 
 					<aon:panelGroup>	
-						<aon:panelGrid id="group_marketing_news"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
+						<aon:panelGrid id="group_marketing_news" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.marketing_news_module}" />
+								<aon:outputText value="#{bundle.marketing_news_module}"/>
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">	
 								<!-- Mensajes -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="news_messages"
-										action="news_list-messages"
-										actionListener="#{news.onSetTypeMessage}"
-										value="#{bundle.aon_messages}">
-										<aon:actionListener method="#{news.onEditSearch}" />
-										<aon:actionListener method="#{news.onSearch}" />
+									<aon:commandLink id="news_messages" action="news_list-messages" actionListener="#{news.onSetTypeMessage}" value="#{bundle.aon_messages}">
+										<aon:actionListener method="#{news.onEditSearch}"/>
+										<aon:actionListener method="#{news.onSearch}"/>
 									</aon:commandLink>
 								</aon:div>
 								
 								<!-- Noticias -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="news_news"
-										action="news_list-news"
-										actionListener="#{news.onSetTypeNews}"
-										value="#{bundle.marketing_newss}">
-										<aon:actionListener method="#{news.onEditSearch}" />
-										<aon:actionListener method="#{news.onSearch}" />
+									<aon:commandLink id="news_news" action="news_list-news" actionListener="#{news.onSetTypeNews}" value="#{bundle.marketing_newss}">
+										<aon:actionListener method="#{news.onEditSearch}"/>
+										<aon:actionListener method="#{news.onSearch}"/>
 									</aon:commandLink>
 								</aon:div>
 								
 								<!-- Boletines -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="newsletter"
-										action="newsletter_list"
-										actionListener="#{newsletter.onSearch}"
-										value="#{bundle.marketing_newsletter_module}" />
+									<aon:commandLink id="newsletter" action="newsletter_list" actionListener="#{newsletter.onSearch}" value="#{bundle.marketing_newsletter_module}"/>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 	
 						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_commercial_templates"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-general">
+							<aon:panelGrid id="group_commercial_templates" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_templates}" />
+									<aon:outputText value="#{bundle.aon_templates}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<!-- Cabeceras y Pies de Plantilla -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="htmlTemplate" 
-											action="htmlTemplate_list"
-											actionListener="#{htmlTemplate.onEditSearch}"
-											value="#{bundle.marketing_html_template_module}" />
+										<aon:commandLink id="htmlTemplate" action="htmlTemplate_list" actionListener="#{htmlTemplate.onEditSearch}" value="#{bundle.marketing_html_template_module}"/>
 									</aon:div>					
 											
 									<!-- Plantillas de Correo -->								
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="marketingTemplate-commercial"
-											action="marketingTemplate_list-commercial"
-											actionListener="#{marketingTemplate.onSearch}" 
-											value="#{bundle.marketing_template_module}" />
+										<aon:commandLink id="marketingTemplate-commercial" action="marketingTemplate_list-commercial" actionListener="#{marketingTemplate.onSearch}" value="#{bundle.marketing_template_module}"/>
 									</aon:div>
 									
 									<!-- Imágenes -->
 									<aon:div styleClass="aon-direct-access-list-element">																										
-										<aon:commandLink id="images-commercial" 
-											action="#{companyImages.initialAction}" 
-											actionListener="#{companyImages.onEditSearch}"
-											value="#{bundle.company_images_module}">
-											<aon:actionListener method="#{companyImages.onSearch}" />
+										<aon:commandLink id="images-commercial" action="#{companyImages.initialAction}" actionListener="#{companyImages.onEditSearch}" value="#{bundle.company_images_module}">
+											<aon:actionListener method="#{companyImages.onSearch}"/>
 										</aon:commandLink>
 									</aon:div>
 									
 									<!-- Personalización de Envío Email -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailProcess" action="mailProcess_form"
-											actionListener="#{mailProcess.onInit}"
-											value="#{bundle.webmail_mailAccount_process}" />
+										<aon:commandLink id="mailProcess" action="mailProcess_form" actionListener="#{mailProcess.onInit}" value="#{bundle.webmail_mailAccount_process}"/>
 									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>
@@ -105,11 +70,9 @@
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_marketing_communications"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-marketing">
+						<aon:panelGrid id="group_marketing_communications" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-marketing">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.marketing_communications}" />
+								<aon:outputText value="#{bundle.marketing_communications}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">	
 								<!-- Campañas 
@@ -120,18 +83,12 @@
 								
 								<!-- Campañas  -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingCampaign"
-										action="marketingCampaign_list"
-										actionListener="#{marketingCampaign.onSearch}"
-										value="#{bundle.marketing_campaign_module}" />
+									<aon:commandLink id="marketingCampaign" action="marketingCampaign_list" actionListener="#{marketingCampaign.onSearch}" value="#{bundle.marketing_campaign_module}"/>
 								</aon:div>
 								
 								<!-- Centro de Comunicaciones -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="communicationCenter"
-										action="communicationCenter"
-										actionListener="#{communicationCenter.onInit}"
-										value="#{bundle.commercial_communication_center_module}" />										
+									<aon:commandLink id="communicationCenter" action="communicationCenter" actionListener="#{communicationCenter.onInit}" value="#{bundle.commercial_communication_center_module}"/>										
 								</aon:div>
 								
 								<aon:div style="height: 26px;">
@@ -143,34 +100,25 @@
 
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_commercial_survey"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-task">
+							<aon:panelGrid id="group_commercial_survey" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-task">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.marketing_survey_module}" />
+									<aon:outputText value="#{bundle.marketing_survey_module}"/>
 								</f:facet>
 
 								<aon:div styleClass="aon-direct-access-list">
 									<!-- Preguntas -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="questionModule" action="gwt_questionModule"
-											value="#{bundle.registry_question_module}" />
+										<aon:commandLink id="questionModule" action="gwt_questionModule" value="#{bundle.registry_question_module}"/>
 									</aon:div>
 									
 									<!-- Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="survey-commercial"
-											action="survey_list-commercial"
-											actionListener="#{survey.onSearch}" 
-											value="#{bundle.marketing_survey_module}" />
+										<aon:commandLink id="survey-commercial" action="survey_list-commercial" actionListener="#{survey.onSearch}" value="#{bundle.marketing_survey_module}"/>
 									</aon:div>								
 									
 									<!-- Respuestas de Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="surveyResponse"
-											action="surveyResponse_search"
-											actionListener="#{surveyResponse.onEditSearch}"
-											value="#{bundle.marketing_survey_response_module}" />
+										<aon:commandLink id="surveyResponse" action="surveyResponse_search" actionListener="#{surveyResponse.onEditSearch}" value="#{bundle.marketing_survey_response_module}"/>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -183,31 +131,22 @@
 
 					<aon:div style="padding: 10px; border: solid red 1px;">
 						<aon:div style="text-align: center; margin-bottom: 10px;">
-							<aon:outputText style="color: red; font-weight:bold;"
-								value="ANTIGUAS OPCIONES (OBSOLETAS)" />
+							<aon:outputText style="color: red; font-weight:bold;" value="ANTIGUAS OPCIONES (OBSOLETAS)"/>
 						</aon:div>
 						
-						<h:panelGrid styleClass="aon-width-all" columns="3"
-							cellspacing="15" style="background-color: lightgray;"
-							columnClasses="aon-vertical-align-top aon-width-200,
-							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
+						<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15" style="background-color: lightgray;" columnClasses="aon-vertical-align-top aon-width-200,        aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
 
 							<aon:panelGroup>
 							
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:panelGrid id="group_manual_entries"
-										styleClass="aon-width-all" columnClasses="aon-padding"
-										headerClass="aon-icon-account-entry aon-direct-access-panel">
+									<aon:panelGrid id="group_manual_entries" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-icon-account-entry aon-direct-access-panel">
 										<f:facet name="header">
-											<aon:outputText value="#{bundle.marketing_survey_module}" />
+											<aon:outputText value="#{bundle.marketing_survey_module}"/>
 										</f:facet>
 										<aon:div styleClass="aon-direct-access-list">
 											<!-- Preguntas -->
 											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="question-commercial"
-													action="question_list-commercial"
-													actionListener="#{question.onSearch}"
-													value="#{bundle.registry_question_module} [Antiguo]" />
+												<aon:commandLink id="question-commercial" action="question_list-commercial" actionListener="#{question.onSearch}" value="#{bundle.registry_question_module} [Antiguo]"/>
 											</aon:div>
 											
 										</aon:div>

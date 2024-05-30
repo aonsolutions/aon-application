@@ -370,6 +370,7 @@ export class AonViewer extends AonElement {
 						
 						this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
 							// clean viewer implicit styles.
+							console.log('clean viewer implicit styles');
 							document.body.style.setProperty('background-color', 'transparent');
 							
 							page.getTextContent().then((textContent) => {

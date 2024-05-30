@@ -1,12 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+<?xml version="1.0" encoding="UTF-8"?><ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:aon="http://www.code.es/aon-rich-components" xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,90 +6,60 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15" columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_project_management"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-statistics">
+						<aon:panelGrid id="group_project_management" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-statistics">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_groupware}" />
+								<aon:outputText value="#{bundle.aon_module_groupware}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="project"
-										action="project_search"
-										actionListener="#{project.onEditSearch}"
-										value="#{bundle.aon_module_groupware}" />
+									<aon:commandLink id="project" action="project_search" actionListener="#{project.onEditSearch}" value="#{bundle.aon_module_groupware}"/>
 								</aon:div>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="project_type"
-											action="projectType_list"
-											actionListener="#{projectType.onSearch}"
-											value="#{bundle.project_project_type}" />
+										<aon:commandLink id="project_type" action="projectType_list" actionListener="#{projectType.onSearch}" value="#{bundle.project_project_type}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="activity_type"
-											action="activityTypeStandalone_grid"
-											actionListener="#{activityTypeStandalone.onSearch}"
-											value="#{bundle.project_activity_type}" />
+										<aon:commandLink id="activity_type" action="activityTypeStandalone_grid" actionListener="#{activityTypeStandalone.onSearch}" value="#{bundle.project_activity_type}"/>
 									</aon:div>
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					
-						<aon:panelGrid id="group_general_task"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-task">
+						<aon:panelGrid id="group_general_task" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-task">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_tasks}" />
+								<aon:outputText value="#{bundle.aon_tasks}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_taskInbox"
-										action="task_list"
-										actionListener="#{task.onLaunch}"
-										value="#{bundle.groupware_task_inbox}" />
+									<aon:commandLink id="groupware_taskInbox" action="task_list" actionListener="#{task.onLaunch}" value="#{bundle.groupware_task_inbox}"/>
 								</aon:div>
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="groupware_gantt"
-											action="gantt_form"
-											actionListener="#{gantt.onLaunch}"
-											value="#{bundle.groupware_gantt_diagram}" />
+										<aon:commandLink id="groupware_gantt" action="gantt_form" actionListener="#{gantt.onLaunch}" value="#{bundle.groupware_gantt_diagram}"/>
 									</aon:div>
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					
-						<aon:panelGrid id="group_general_dailyTracking"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-version">
+						<aon:panelGrid id="group_general_dailyTracking" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-version">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_daily_tracking_module}" />
+								<aon:outputText value="#{bundle.aon_daily_tracking_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_dailyTracking"
-										action="dailyTracking_form"
-										actionListener="#{dailyTracking.onReset}"
-										value="#{bundle.aon_daily_tracking_module}" />
+									<aon:commandLink id="groupware_dailyTracking" action="dailyTracking_form" actionListener="#{dailyTracking.onReset}" value="#{bundle.aon_daily_tracking_module}"/>
 								</aon:div>
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="groupware_dailyTracking_reports"
-											actionListener="#{dailyTrackingReport.onResetReportSearch}"
-											action="daily_tracking_report"
-											value="#{bundle.aon_reports}" />
+										<aon:commandLink id="groupware_dailyTracking_reports" actionListener="#{dailyTrackingReport.onResetReportSearch}" action="daily_tracking_report" value="#{bundle.aon_reports}"/>
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="groupware_job_type"
-											action="job_type"
-											value="#{bundle.aon_job_type_module}" />
+										<aon:commandLink id="groupware_job_type" action="job_type" value="#{bundle.aon_job_type_module}"/>
 									</aon:div>
 								</aon:if>
 							</aon:div>
@@ -106,89 +68,60 @@
 
 					<aon:if test="#{aonRole.config or aonRole.taskMonitor}">
 						<aon:panelGroup>
-							<aon:panelGrid id="group_general_processes"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-tree-root">
+							<aon:panelGrid id="group_general_processes" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-tree-root">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_processes}" />
+									<aon:outputText value="#{bundle.aon_processes}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="groupware_process"
-												action="process_list"
-												actionListener="#{process.onSearch}"
-												value="#{bundle.aon_processes}" />
+											<aon:commandLink id="groupware_process" action="process_list" actionListener="#{process.onSearch}" value="#{bundle.aon_processes}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="groupware_processTransitionType"
-												action="process_transition_type"
-												actionListener="#{processTransitionType.onSearch}"
-												value="#{bundle.groupware_process_transition_types}" />
+											<aon:commandLink id="groupware_processTransitionType" action="process_transition_type" actionListener="#{processTransitionType.onSearch}" value="#{bundle.groupware_process_transition_types}"/>
 										</aon:div>
 									</aon:if>
 									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="groupware_process_launcher"
-												action="#{processWizard.start}"
-												value="#{bundle.groupware_process_launcher}" />
+											<aon:commandLink id="groupware_process_launcher" action="#{processWizard.start}" value="#{bundle.groupware_process_launcher}"/>
 										</aon:div>
 									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 	
-							<aon:panelGrid id="group_general_campaigns"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-campaign">
+							<aon:panelGrid id="group_general_campaigns" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-campaign">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.groupware_campaigns}" />
+									<aon:outputText value="#{bundle.groupware_campaigns}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="groupware_campaigns"
-												action="campaign_search"
-												actionListener="#{campaign.onEditSearch}"
-												value="#{bundle.groupware_campaign_monitor}" />
+											<aon:commandLink id="groupware_campaigns" action="campaign_search" actionListener="#{campaign.onEditSearch}" value="#{bundle.groupware_campaign_monitor}"/>
 										</aon:div>
 									</aon:if>
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="groupware_campaignTypes"
-												action="campaign_type"
-												actionListener="#{campaignType.onSearch}"
-												value="#{bundle.groupware_campaign_types}" />
+											<aon:commandLink id="groupware_campaignTypes" action="campaign_type" actionListener="#{campaignType.onSearch}" value="#{bundle.groupware_campaign_types}"/>
 										</aon:div>
 									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 	
 							<aon:if test="#{aonRole.config}">
-								<aon:panelGrid id="group_general_taskHolders"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-direct-access-panel aon-icon-contactGroup">
+								<aon:panelGrid id="group_general_taskHolders" styleClass="aon-width-all" columnClasses="aon-padding" headerClass="aon-direct-access-panel aon-icon-contactGroup">
 									<f:facet name="header">
-										<aon:outputText value="#{bundle.groupware_user_management}" />
+										<aon:outputText value="#{bundle.groupware_user_management}"/>
 									</f:facet>
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="taskHolder-management"
-												action="taskHolder_search"
-												actionListener="#{taskHolder.onEditSearch}"
-												value="#{bundle.groupware_taskHolders}" />
+											<aon:commandLink id="taskHolder-management" action="taskHolder_search" actionListener="#{taskHolder.onEditSearch}" value="#{bundle.groupware_taskHolders}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="workgroup-management"
-												action="workgroup_list"
-												actionListener="#{workGroup.onEditSearch}"
-												value="#{bundle.config_workgroup_module}" />
+											<aon:commandLink id="workgroup-management" action="workgroup_list" actionListener="#{workGroup.onEditSearch}" value="#{bundle.config_workgroup_module}"/>
 										</aon:div>
 										
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="costProfile-management"
-												action="costProfile_list"
-												actionListener="#{costProfile.onSearch}"
-												value="#{bundle.groupware_cost_profiles}" />
+											<aon:commandLink id="costProfile-management" action="costProfile_list" actionListener="#{costProfile.onSearch}" value="#{bundle.groupware_cost_profiles}"/>
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
