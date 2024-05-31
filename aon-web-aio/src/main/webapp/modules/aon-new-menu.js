@@ -33,7 +33,7 @@ import { AonManagementMenu } from './management/aon-management-menu.js';
 import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
 import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
 import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
-//import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
+import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -190,9 +190,9 @@ export class AonNewMenu extends AonElement {
 			case WAREHOUSE_MENU.app:
 				this.rootPanel(new AonWarehouseMenu());
 				break;
-			/*case FISCAL_MENU.app:
+			case FISCAL_MENU.app:
 				this.rootPanel(new AonFiscalMenu());
-			*/	break;
+				break;
 			case PAYROLL_MENU.app:
 				this.rootPanel(new AonPayrollMenu());
 				break;
@@ -471,6 +471,7 @@ export class AonNewMenu extends AonElement {
 		a.appendChild(hoverDiv);
 
 		let div = this.createElement(TAG.DIV);
+		div.id = 'aaaaaaaaaaaaa' + app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
@@ -480,11 +481,11 @@ export class AonNewMenu extends AonElement {
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
 		let header = this.getElement("aonHeaderWeb");
-		if(app.app=="applications"){
+		if(app.app == "applications"){
 			div.addEventListener("mouseover", () => {
-				div.style.backgroundColor = this.getBackgroundHover();
-			  });
-			  div.addEventListener("mouseleave", () => {
+				div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+			});
+			div.addEventListener("mouseleave", () => {
 				div.style.backgroundColor = "transparent";
 				if(!header.style.backgroundColor)
 					div.style.color = "#5f6368";
@@ -492,8 +493,8 @@ export class AonNewMenu extends AonElement {
 					div.style.color = "white";
 				else 
 					div.style.color = "#5f6368";
-			  });
-		}else{
+			});
+		} else{
 			div.addEventListener('mouseover', () => {
 				div.style.backgroundColor = 'white';
 			});
@@ -796,10 +797,10 @@ export class AonNewMenu extends AonElement {
 	}
 
 
-	getBackgroundHover() {
+	getBackgroundHover(backgroundColor) {
 		//alert(this.backgroundColor);
 		//alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
-		return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+		return backgroundColor && !this.isLightColor(this.hexToRgb(backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
 	}
 
 	isLightColor(colorString) {

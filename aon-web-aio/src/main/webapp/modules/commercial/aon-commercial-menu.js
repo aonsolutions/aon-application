@@ -26,6 +26,12 @@ export class AonCommercialMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
+        this.last = "Últimos potenciales";
+        this.new = "Nuevo Presupuesto";
+        this.cardData={
+            title: "Actividad",
+            info:["Presupuestos pendientes", "Operaciones abiertas", "Citas expiradas"]
+        };
         this.options = [{
             title: 'Actividad Comercial',
             options: [ {

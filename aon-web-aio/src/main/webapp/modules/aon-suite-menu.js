@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG, CONSTANT } from 'aonsolutions/environments/environments.js'; 
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonButton } from 'aonsolutions/components/aon-button.js';
 import { AonCard } from 'aonsolutions/components/aon-card.js';
@@ -10,9 +10,15 @@ export class AonSuiteMenu extends AonElement {
     TITLE;
     NEW_BUTTON;
     UPLOAD_BUTTON;
+    OPTIONS;
     CONF_BUTTON;
     DROPDOWN_BUTTON;
-    options; 
+    options;
+    last; 
+    new;
+    cardData;
+    valueAlias;
+    nameAlias;
 
 	constructor () {
 		super();
@@ -33,10 +39,10 @@ export class AonSuiteMenu extends AonElement {
         this.UPLOAD_BUTTON = this.id + 'UploadButton';
         this.CONF_BUTTON = this.id + 'ConfButton';
         this.DROPDOWN_BUTTON = this.id + "DropDownButton";
+        this.OPTIONS = this.id + "Options";
 	}
 
 	build() {
-
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
         this.appendChild(divFlex);
@@ -95,7 +101,7 @@ export class AonSuiteMenu extends AonElement {
         dropdownButton.style.border = "1px solid rgb(72,70,68)";
         dropdownButton.style.marginTop = "20px";
         dropdownButton.style.justifyContent = "center";
-        divNewButton.appendChild(dropdownButton);  
+        divNewButton.appendChild(dropdownButton);
         let dropBtIcon = this.getElement(dropdownButton.ICON);
         let dropBtBT = this.getElement(dropdownButton.BUTTON);
         let dropBtText = this.getElement(dropdownButton.TEXT);
@@ -104,7 +110,14 @@ export class AonSuiteMenu extends AonElement {
         dropBtText.innerHTML = "";
         dropBtBT.style.boxShadow = "none";
         this.setButtonHover(dropdownButton);
-        //dropdownButton.addEventListener(EVENT.CLICK, this.buildOptions("1","2","3","4"));
+
+        let options = this.createElement(TAG.DIV);
+        options.id = this.OPTIONS;
+        options.className = 'aonInputListOptions';
+        sideMenu.appendChild(options);
+        dropdownButton.addEventListener(EVENT.CLICK, () => {
+           this.buildOptions(["Cuenta contable","Ficha de amortización","Apunte"]);
+        });
 
         let sideNavTitle = this.createDiv();
         sideNavTitle.className = "aonSidenavTitleBeta";
@@ -113,6 +126,9 @@ export class AonSuiteMenu extends AonElement {
 
         sideMenu.appendChild(this.buildSideNavRow("Todos","stacks"));
         sideMenu.appendChild(this.buildSideNavRow("Abierto recientemente","schedule"));
+        sideMenu.appendChild(this.buildSideNavRow(this.last,"quick_reference_all"));
+
+        this.buildSideNavCard(sideMenu, "Documentos","1");
 
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
@@ -120,8 +136,6 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.appendChild(utilidades);
 
         sideMenu.appendChild(this.buildSideNavRow("Configuración", "folder_managed"));
-
-        this.buildSideNavCard(sideMenu, "Documentos","1");
 
         let uploadButton = new AonButton();
         uploadButton.id = this.UPLOAD_BUTTON;
@@ -148,20 +162,16 @@ export class AonSuiteMenu extends AonElement {
         content.id = this.CONTENT;
         content.style.height = "calc(-62px + 100vh)";
         content.style.width = "100%";
-        content.style.display = "flex";
         content.style.backgroundColor = "rgb(250, 249, 248)";
-        content.style.gap = "1rem";
-        content.style.flexWrap = "wrap";
-        content.style.position = "relative";
         content.style.overflowY = "auto";
-        content.style.justifyContent = "center";
         divFlex.appendChild(content);
 
+
+
         let div = this.createDiv();
-        div.style.marginTop = "10px";
-        div.style.marginBottom = "-17px";
+        div.style.marginTop = "15px";
         div.style.width = "100%"
-        div.style.justifyContent = "center";
+        div.style.justifyContent = "left";
         div.style.display = "flex";
         content.appendChild(div);
 
@@ -170,8 +180,17 @@ export class AonSuiteMenu extends AonElement {
         title.className = "aonSidenavTitleBeta";
         div.appendChild(title);
 
+        let div2 = this.createDiv();
+        div2.style.width = "100%";
+        div2.style.display = "flex";
+        div2.style.gap = "1rem";
+        div2.style.flexWrap = "wrap";
+        div2.style.position = "relative";
+        div2.style.justifyContent = "center";
+        content.appendChild(div2);
+
         this.options.forEach((opt, i) => {
-            this.buildCard(opt, i);
+            this.buildCard(opt, i,div2);
         });
 	}
 
@@ -188,12 +207,23 @@ export class AonSuiteMenu extends AonElement {
         card.id = id;
 		card.title = title;
 		card.style.minWidth = "230px";
+        sideMenu.appendChild(card);
+
+        let cardTitle = this.getElement(card.TITLE_SECTION1);
+        cardTitle.style.marginLeft = "24px";
+
+        let icon = new AonIconButton();
+        icon.icon = "info";
+        icon.style.height = "fit-content";
+        icon.style.position = "absolute";
+        icon.style.marginTop = "16px";
+        icon.style.marginLeft = "21px";
+        card.appendChild(icon);
 
         card.style.display = "flex";
         card.style.minHeight = "20px";
         card.style.marginTop = "10px";
-        sideMenu.appendChild(card);
-		
+  
         let cardDiv = this.getElement(card.CARD);
 		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
 		cardDiv.style.borderRadius = '2px';
@@ -207,17 +237,18 @@ export class AonSuiteMenu extends AonElement {
 		card.setContent(divGeneral);
     }
 
-    buildCard(opt, i){
+    buildCard(opt, i,div){
         let card = new AonCard();
 		card.id = "card" + i;
 		card.title = opt.title;
 		card.style.minWidth = "375px";
+        card.style.maxWidth = "375px";      
 
         card.style.display = "flex";
         card.style.height = "300px";
 		card.style.marginLeft = "10px";
         //card.style.marginTop = "20px";
-        this.getContent().appendChild(card);
+        div.appendChild(card);
 		
         let cardDiv = this.getElement(card.CARD);
 		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
@@ -295,6 +326,54 @@ export class AonSuiteMenu extends AonElement {
     }
     
 
+    buildOptions(options) {
+        this.clearElementById(this.OPTIONS);
+
+        if(options.length === 0) return null;
+
+        let newButton = this.getElement(this.NEW_BUTTON);
+        let dropdownButton = this.getElement(this.DROPDOWN_BUTTON);
+
+        let div = this.getElement(this.OPTIONS);
+        div.classList.add('is-visible');
+        div.style.width = "209px";
+        div.style.marginLeft = "13px";
+        div.style.marginTop = "5px";
+        div.style.borderRadius = "5px";
+        div.style.boxShadow= "rgba(0, 0, 0, 0.15) 0px 24px 54px, rgba(0, 0, 0, 0.08) 0px 4.5px 13.5px";
+
+        div.addEventListener("mouseleave", () => {
+           div.classList.remove('is-visible');
+        });
+
+        dropdownButton.addEventListener(EVENT.CLICK, () => {
+            this.buildOptions(["Cuenta contable","Ficha de amortización","Apunte"]);
+         });
+
+        if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
+            let empty = {};
+            empty[this.nameAlias] = '-';
+            empty[this.valueAlias] = '';
+            options.unshift(empty); //EMPTY
+        }
+
+        let ul = this.createElement(TAG.UL);
+        ul.classList.add(CSS.AON_UL);
+        ul.style.width = "221px";
+        ul.style.paddingTop = "0px";
+        ul.style.paddingRight = "15px";
+        ul.style.paddingBottom = "0px";
+        ul.style.paddingLeft = "0px";
+        ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
+        ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
+        div.appendChild(ul);
+        
+        options.forEach((opt) =>{
+           this.buildLi(opt,ul,div);
+        });
+        
+    }
+
     buildSideNavRow(value, icon) {
 		let div = this.createSpan();
 		div.style.paddingTop = '5px';
@@ -329,49 +408,30 @@ export class AonSuiteMenu extends AonElement {
 		return div;
 	}
 
-    /*
-    buildOptions(options) {
+    buildLi(option, ul, div){
+        let li = this.createElement(TAG.LI);
+        li.className = 'aonInputListOptionsItem';
+        li.innerHTML = option;
+        li.style.padding = "5px";
+        li.style.paddiingLeft = "25px";
+        li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
+        ul.appendChild(li);
+    
+        li.addEventListener(EVENT.CLICK, () => {
+          div.classList.remove('is-visible');
+          // TODO EJECUTAR ACCION
 
-        this.clearElementById(this.OPTIONS);
-    
-        if(options.length === 0) return null;
-    
-        let input = this.getElement(this.INPUT);
-        let div = this.getElement(this.OPTIONS);
-        div.classList.add('is-visible');
-      
-        if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
-          let empty = {};
-          empty[this.nameAlias] = '-';
-          empty[this.valueAlias] = '';
-          options.unshift(empty); //EMPTY
-        }
-    
-        let ul = this.createElement(TAG.UL);
-        ul.classList.add(CSS.AON_UL);
-        ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
-        ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
-        div.appendChild(ul);
-    
-        const isMultiple = this.multiple;
-        for (const option of options) {
-          isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
-        }
-    
-        
-        document.addEventListener(EVENT.CLICK, function(event) {
-          this.value = this._selected ? this._selected[this.nameAlias] : '';
-          let isClickInside = input.contains(event.target);
-          if(!isClickInside){
-            if(div.classList.contains('is-visible')){
-              div.classList.remove('is-visible');
-            }
-          }
         });
-      }
-      */
+    
+        return li;
+    }
+
     getContent(){
         return this.getElement(this.CONTENT);
+    }
+
+    getDropDown(){
+        return this.getElement(this.DROPDOWN_BUTTON);
     }
 
 	

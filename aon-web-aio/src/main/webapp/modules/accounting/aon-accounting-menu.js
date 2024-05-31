@@ -26,6 +26,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
+		this.last = "Últimos apuntes";
+		this.new = "Nuevo Apunte"
 		this.options = [{
 			title: 'Apuntes contables',
 			options: [ {
