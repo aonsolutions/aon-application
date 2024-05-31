@@ -59,9 +59,11 @@ export class AonModule extends AonElement {
 	}
 
 	async load() {
+		LS.setNewTheme(true, false);
 		await this.checkLogin();
 		if(LS.getToken()){
 			this.buildHome();
+			this.rootPanel(new AonParent());
 		} else {
 			this.buildLogin();
 		}

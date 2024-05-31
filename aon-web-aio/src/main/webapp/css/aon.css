@@ -1016,6 +1016,10 @@
   display: none;
 }
 
+.aonContentBeta::-webkit-scrollbar {
+  display: none;
+}
+
 .aonSubContent::-webkit-scrollbar {
   display: none;
 }
@@ -1943,10 +1947,6 @@ label.rating:hover {
   white-space: nowrap;
 }
 
-aon-access-card{
-  width: 100%;
-}
-
 /*
 ********************************************
             RESPONSIVE NOTES
@@ -2171,10 +2171,6 @@ aon-access-card{
       min-width: 22rem;
   }
 
-  aon-access-card{
-    width: auto;
-    min-width: 22rem;
-  }
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
     max-width: 26rem;
@@ -2325,6 +2321,7 @@ aon-access-card{
 .aonTabItem {
 	float: left;
 	padding: 2px 24px 0 2px;
+  cursor: pointer;
 }
 
 .aonTabItemText {

@@ -75,7 +75,6 @@ export class AonModule extends AonElement {
 				});
 			} else {
 				getCompanies().then(companies => {
-					alert(companies.length)
 					if(companies.length === 1){
 						this.companySelection(companies[0], true);
 					} else {
