@@ -26,6 +26,8 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
+        this.last = "Últimos vencidos";
+        this.new = "Nuevo vencimiento";
         this.options = [{
             title: 'Cobros',
             options: [ {

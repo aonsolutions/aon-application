@@ -26,6 +26,8 @@ export class AonWarehouseMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
+        this.last = "Últimas elaboraciones";
+        this.new = "Nuevo Albarán de venta"
         this.options = [{
             title: 'Movimientos',
             options: [ {
@@ -55,6 +57,12 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             },{
                 description: "Listado valorado por articulo.",
                 action: () => alert("description")
+            },{
+                description: "Aprovisionamiento según consumo",
+                action: () => alert("description")
+            },{
+                description: "Listado de movimientos",
+                action: () => alert("description")
             }]
         },{
             title: 'Control de Existencias',
@@ -72,27 +80,15 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => alert("description")
             }]
         },{
-            title: 'Utilidades',
+            title: 'Elaboraciones',
             options: [{
+                description: "Orden de elaboración",
+                action: () => alert("description")
+            },{
                 description: "Packing List",
                 action: () => alert("description")
             },{
                 description: "Etiquetas Envio",
-                action: () => alert("description")
-            },{
-                description: "Impresión de etiquetas de productos",
-                action: () => alert("description")
-            },{
-                description: "Aprovisionamiento según consumo",
-                action: () => alert("description")
-            },{
-                description: "Listado de movimientos",
-                action: () => alert("description")
-            }]
-        },{
-            title: 'Elaboración',
-            options: [{
-                description: "Orden de elaboración",
                 action: () => alert("description")
             }]
         },{
@@ -102,6 +98,9 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => alert("description")
             },{
                 description: "Agencias de transporte",
+                action: () => alert("description")
+            },{
+                description: "Impresión de etiquetas de productos",
                 action: () => alert("description")
             }]
         }];

@@ -26,6 +26,8 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
+        this.last = "Últimos clientes";
+        this.new = "Nuevo Cliente";
         this.options = [{
             title: 'Ventas',
             options: [ {

@@ -2,7 +2,7 @@ import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 
-export class AonGroupwareMenu extends AonSuiteMenu {
+export class AonFiscalMenu extends AonSuiteMenu {
 
     AON_MENU;
     AON_HEADER;
@@ -15,83 +15,83 @@ export class AonGroupwareMenu extends AonSuiteMenu {
 
     connectedCallback () {
         this.clear();
-        this.expedientesInitialize()
+        this.comercialInitialize()
         this.initialize();
         this.build();
-        this.setTitle("Opciones de expedientes");
+        this.setTitle("Opciones fiscales");
     }
 
-    expedientesInitialize() {
+    comercialInitialize() {
         this.AON_MENU = 'aonMenu';
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos expedientes";
-        this.new = "Nuevo Parte de trabajo";
+        this.last = "Matriz fiscal";
+        this.new = "Nueva Acción"
         this.options = [{
-            title: 'Expedientes',
+            title: 'IVA',
             options: [ {
-                description: "Expedientes",
+                description: "Modelo 303",
                 action: () => alert("description")
             },{
-                description: "Tipo de Expediente",
+                description: "Modelo 347",
                 action: () => alert("description")
             },{
-                description: "Tipo de Actividad",
+                description: "Modelo 349",
+                action: () => alert("description")
+            },{
+                description: "Modelo 390",
                 action: () => alert("description")
             }]
         },{
-            title: 'Procesos',
+            title: 'IRPF',
             options: [{
-                description: "Procesos",
+                description: "Modelo 111",
                 action: () => alert("description")
             },{
-                description: "Tipos de Transiciones",
+                description: "Modelo 115",
                 action: () => alert("description")
             },{
-                description: "Lanzador de procesos",
+                description: "Modelo 123",
+                action: () => alert("description")
+            },{
+                description: "Modelo 130",
                 action: () => alert("description")
             }]
         },{
-            title: 'Tareas',
+            title: 'IRPF Anual',
             options: [{
-                description: "Bandeja de tareas",
+                description: "Modelo 131",
                 action: () => alert("description")
             },{
-                description: "Diagrama de Gantt",
+                description: "Modelo 180",
+                action: () => alert("description")
+            },{
+                description: "Modelo 184",
+                action: () => alert("description")
+            },{
+                description: "Modelo 190",
+                action: () => alert("description")
+            },{
+                description: "Modelo 193",
                 action: () => alert("description")
             }]
         },{
-            title: 'Campañas (Procesos Masivos)',
+            title: 'Otros',
             options: [{
-                description: "Monitor de campañas",
+                description: "Modelo 202",
                 action: () => alert("description")
             },{
-                description: "Tipos de campañas",
-                action: () => alert("description")
-            }]
-        },{
-            title: 'Partes de Trabajo',
-            options: [{
-                description: "Partes de Trabajo",
+                description: "Modelo 200",
                 action: () => alert("description")
             },{
-                description: "Informes",
+                description: "Modelo SII",
                 action: () => alert("description")
             },{
-                description: "Tipos de Trabajos",
-                action: () => alert("description")
-            }]
-        },{
-            title: 'Operarios',
-            options: [{
-                description: "Operarios",
+                description: "Modelo 140",
                 action: () => alert("description")
             },{
-                description: "Grupos de usuarios",
-                action: () => alert("description")
-            },{
-                description: "Perfiles de coste",
+                description: "Modelo 390",
                 action: () => alert("description")
             }]
         }];
@@ -102,6 +102,6 @@ export class AonGroupwareMenu extends AonSuiteMenu {
     }
     */
 }
-if(!window.customElements.get(TAG.AON_GROUPWARE_MENU)){
-    window.customElements.define(TAG.AON_GROUPWARE_MENU, AonGroupwareMenu);
+if(!window.customElements.get(TAG.AON_FISCAL_MENU)){
+    window.customElements.define(TAG.AON_FISCAL_MENU, AonFiscalMenu);
 }
