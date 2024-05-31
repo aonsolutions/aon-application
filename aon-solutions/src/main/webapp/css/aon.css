@@ -1801,9 +1801,6 @@ label.rating:hover {
   white-space: nowrap;
 }
 
-aon-access-card{
-  width: 100%;
-}
 
 /*
 ********************************************
@@ -2027,11 +2024,6 @@ aon-access-card{
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
-  }
-
-  aon-access-card{
-    width: auto;
-    min-width: 22rem;
   }
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{

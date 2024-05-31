@@ -1949,10 +1949,6 @@ label.rating:hover {
   white-space: nowrap;
 }
 
-aon-access-card{
-  width: 100%;
-}
-
 /*
 ********************************************
             RESPONSIVE NOTES
@@ -2177,10 +2173,6 @@ aon-access-card{
       min-width: 22rem;
   }
 
-  aon-access-card{
-    width: auto;
-    min-width: 22rem;
-  }
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
     max-width: 26rem;
