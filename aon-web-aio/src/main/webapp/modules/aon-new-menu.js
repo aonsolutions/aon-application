@@ -459,7 +459,7 @@ export class AonNewMenu extends AonElement {
 		} else if (app.icon) {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon = app.icon;
+			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = style?.color || app.color;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
@@ -479,10 +479,11 @@ export class AonNewMenu extends AonElement {
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
 				if (MenuApps.TIMECONTROL.app === app.app) {
-					span.style.minHeight = '36px';
-				}else{
-					span.style.minHeight = '26px';
+					app.title = 'Ctr. Horario'
 				}
+
+				span.style.minHeight = '26px';
+				
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }

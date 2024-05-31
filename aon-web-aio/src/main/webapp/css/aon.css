@@ -2323,6 +2323,7 @@ label.rating:hover {
 .aonTabItem {
 	float: left;
 	padding: 2px 24px 0 2px;
+  cursor: pointer;
 }
 
 .aonTabItemText {
