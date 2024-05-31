@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +102,14 @@ public class AonFunctions {
 		return compensations;
 		
 	    } catch (IOException | ParseException e) {
-		throw new ExpressionException(e);
+			Map<String,Object> error = new HashMap<>();
+			error.put("title", "AON ha tenido un problema");
+			error.put("expression", "No se ha podido acceder al servicio de cálculo de indemnizaciones por extinción de contrato de trabajo");
+			error.put("days", "");
+			error.put("months", "");
+			error.put("amount", "");
+			error.put("description", "");
+	    	return Collections.singletonMap(1, error );
 	    }
 	}
 	

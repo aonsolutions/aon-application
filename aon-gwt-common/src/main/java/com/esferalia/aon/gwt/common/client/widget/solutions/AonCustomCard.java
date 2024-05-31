@@ -30,19 +30,12 @@ public class AonCustomCard extends HTMLPanel {
 		toolbarPanel.getElement().getStyle().setProperty("display", "flex");
 		toolbarPanel.getElement().getStyle().setProperty("align-items", "center");
 		toolbarPanel.getElement().getStyle().setProperty("justify-content", "space-between");
-		toolbarPanel.getElement().getStyle().setProperty("margin-bottom", ".5rem");
+		toolbarPanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
 		
 		HTMLPanel titlePanel = new HTMLPanel(EMPTY_STRING);
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
-		
-		HTMLPanel titleBar = new HTMLPanel(EMPTY_STRING);
-		titleBar.getElement().getStyle().setProperty("height", "2rem");
-		titleBar.getElement().getStyle().setProperty("width", "0.2rem");
-		titleBar.getElement().getStyle().setProperty("border-radius", "1rem");
-		titleBar.getElement().getStyle().setProperty("background-color", "#5f6368");
-		titlePanel.add(titleBar);
 		
 		HTMLPanel titleLabel = new HTMLPanel(title);
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
@@ -63,14 +56,7 @@ public class AonCustomCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
-		titlePanel.getElement().getStyle().setProperty("margin-bottom", ".5rem");
-		
-		HTMLPanel titleBar = new HTMLPanel(EMPTY_STRING);
-		titleBar.getElement().getStyle().setProperty("height", "2rem");
-		titleBar.getElement().getStyle().setProperty("width", "0.2rem");
-		titleBar.getElement().getStyle().setProperty("border-radius", "1rem");
-		titleBar.getElement().getStyle().setProperty("background-color", "#5f6368");
-		titlePanel.add(titleBar);
+		titlePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
 		
 		HTMLPanel titleLabel = new HTMLPanel(title);
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");

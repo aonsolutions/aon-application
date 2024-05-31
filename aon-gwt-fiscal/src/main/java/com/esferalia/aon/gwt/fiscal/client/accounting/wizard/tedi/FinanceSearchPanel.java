@@ -3,14 +3,15 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -36,7 +37,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 
 public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, HasSelectionHandlers<Finance>{
@@ -49,11 +49,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	
 	private static final int LIMIT = 100;
 	
-	private String domainName;
-	private int domainId;
-	private String currentUser;
+	private final IFinancePanelCallback callback;
 	private User user;
-	
 	
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
@@ -69,87 +66,82 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private FlowPanel amountPanel; 
 	private FlowPanel paymentPanel; 
 	
-	private DateBoxEx fromDate;
-	private DateBoxEx toDate;
+	private AonDateBox fromDate;
+	private AonDateBox toDate;
 	
 	private CheckBox confidential;
 	private ListBox payment;
-	private AccountingRegistryBox registryBox;
-	private DoubleBox amount;
+	private AonAccountingRegistryBox registryBox;
+	private AonDoubleBox amount;
 	private CheckBox nearbyNumbers;
-	private TextBox concept;
-	private TextBox referenceCode;
+	private AonTextBox concept;
+	private AonTextBox referenceCode;
 	private ListBox payMethod;
 	private ListBox order;
-	
-	private IFinancePanelCallback callback;
-	
 	
 	private int lastScrollPos = 0;
 	
 	public static interface IFinancePanelCallback {
 		boolean isSelected( Finance finance);
+		AccountEntryModuleOptions getModuleModuleOptions();
 	}
 	
-	public FinanceSearchPanel(String domainName,int domainId, String currentUser,AonConfiguration config,IFinancePanelCallback callback) {
+	public FinanceSearchPanel(IFinancePanelCallback callback) {
 		super(Unit.PX);
-		this.domainName = domainName;
-		this.domainId = domainId;
-		this.currentUser = currentUser;
-		this.callback = callback; 
+		this.callback = callback;
 		
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		northPanel = new SimpleLayoutPanel();
 
-		amount = new DoubleBox();
+		amount = new AonDoubleBox();
 		amount.setVisibleLength(6);
 		amount.setValue(null,false);
-		amount.addValueChangeHandler(event -> search());
+		amount.addValueChangeHandler(event -> search(callback));
 		
 		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
 		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
-		nearbyNumbers.addClickHandler(event -> search());
+		nearbyNumbers.addClickHandler(event -> search(callback));
 
-		concept = new TextBox();
+		concept = new AonTextBox();
 		concept.setStyleName(AON.AON_CSS.aonInputText());
-		concept.addValueChangeHandler(event -> search());
+		concept.addValueChangeHandler(event -> search(callback));
 
-		fromDate = new DateBoxEx();
-		fromDate.addValueChangeHandler(event -> search());
+		fromDate = new AonDateBox();
+		fromDate.addValueChangeHandler(event -> search(callback));
 		
-		toDate = new DateBoxEx();
-		toDate.addValueChangeHandler(event -> search());
+		toDate = new AonDateBox();
+		toDate.addValueChangeHandler(event -> search(callback));
 		
 		confidential = new CheckBox( AON.MSG.confidential());
 		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
-		confidential.addClickHandler(event -> search());
+		confidential.addClickHandler(event -> search(callback));
 		
-		referenceCode = new TextBox();
+		referenceCode = new AonTextBox();
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
-		referenceCode.addValueChangeHandler(event -> search());
+		referenceCode.addValueChangeHandler(event -> search(callback));
 
-		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
+		registryBox = new AonAccountingRegistryBox(callback.getModuleModuleOptions(), false);
 		registryBox.setRequired(false);
-		registryBox.addSelectionHandler(event -> search());
+		registryBox.addSelectionHandler(event -> search(callback));
 
 		payment = new ListBox();
 		payment.addItem(" --- "," --- ");
 		payment.addItem("Pago" ,"Pago");
 		payment.addItem("Cobro", "Cobro");
-		payment.addChangeHandler(event -> search());
+		payment.addChangeHandler(event -> search(callback));
 		
 		
 		payMethod = new ListBox();
 		payMethod.setWidth("120px");
 		payMethod.addItem(" ---- ", "") ;
-		if (config != null && config.getPayMethods() != null) {
-			for (PayMethod pm : config.getPayMethods() ) {
+		if (callback.getModuleModuleOptions().getConfiguration() != null && callback.getModuleModuleOptions().getConfiguration().getPayMethods() != null) {
+			for (PayMethod pm : callback.getModuleModuleOptions().getConfiguration().getPayMethods() ) {
 				payMethod.addItem( pm.getName(), AonNumberUtils.toString(pm.getId()));
 			}
 		}
-		payMethod.addChangeHandler(event -> search());
+		payMethod.addChangeHandler(event -> search(callback));
 
 		order = new ListBox();
 		order.setWidth("150px");
@@ -162,7 +154,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		order.addItem("Fecha creaci\u00F3n, descendente");
 		order.addItem("Fecha modificaci\u00F3n, descendente");
 		order.setSelectedIndex(0);
-		order.addChangeHandler(event -> search());
+		order.addChangeHandler(event -> search(callback));
 		
 		
 		FlowPanel flowNorthPanel = new FlowPanel();
@@ -261,7 +253,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 				int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
 				if (lastScrollPos >= maxScrollTop) {
 					disableSearch();
-					search(offset.getValue());
+					search(callback, offset.getValue());
 				}
 			}
 		});
@@ -317,18 +309,18 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		fromDate.setTabIndex(index);
 	}
 	
-	private void search() {
+	private void search(final IFinancePanelCallback callback) {
 		enableMoreData();
 		container.clear();
 		offset.setValue(0);
-		search(offset.getValue());
+		search(callback, offset.getValue());
 	}
 	
-	private void search(final int ofs) {
+	private void search(final IFinancePanelCallback callback, final int ofs) {
 		if (!isMoreData()) return; 
 		
 		FinanceParams params = new FinanceParams()
-			.setDomain(this.domainId)
+			.setDomain(callback.getModuleModuleOptions().getDomain())
 			.setFromDueDate(fromDate.getValue())
 			.setToDueDate(toDate.getValue())
 			.setRegistry(registryBox.getId())
@@ -343,7 +335,10 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setOrder(order.getSelectedIndex())
 			;
 		
-		FINANCE_SERVICE.getAccountFinances(domainName,domainId, currentUser, params, ofs, LIMIT
+		FINANCE_SERVICE.getAccountFinances(
+				 callback.getModuleModuleOptions().getDomainName()
+				,callback.getModuleModuleOptions().getDomain()
+				,callback.getModuleModuleOptions().getUser(), params, ofs, LIMIT
 				, new AsyncCallback<LinkedList<Finance>>() {
 					
 					@Override
@@ -407,11 +402,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		concept.setValue(null);
 		payMethod.setSelectedIndex(0);
 		order.setSelectedIndex(0);
-		search();
+		search(this.callback);
 	}
 	
 	public void uncheck(Finance finance) {
-		search();		
+		search(this.callback);
 	}
 	public void enable() {
 		northPanel.setVisible(true);

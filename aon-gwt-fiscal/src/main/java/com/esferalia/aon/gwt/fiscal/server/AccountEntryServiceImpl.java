@@ -49,6 +49,16 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 		return ACCOUNTING.initializeInvoice(occam, registry, activity, issueDate);
 	}
 	
+	@Override
+	public FinanceEntry save(Occam occam, FinanceEntry financeEntry) throws AonCoreException {
+		return ACCOUNTING.save(occam, financeEntry);
+	}
+
+	@Override
+	public FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) {
+		return ACCOUNTING.getFinanceEntry(occam, accountEntry);
+	}
+
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -122,16 +132,6 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	@Override
 	public AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) throws AonCoreException {
 		return ACCOUNTING.save(domainName, domain, user, invoice);
-	}
-
-	@Override
-	public FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, user, financeEntry);
-	}
-
-	@Override
-	public FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) {
-		return ACCOUNTING.getFinanceEntry(domainName, domain, user, accountEntry);
 	}
 
 	@Override

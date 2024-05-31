@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class MarketingAction implements Serializable {
@@ -13,12 +14,7 @@ public class MarketingAction implements Serializable {
 		EMAIL("Correo Electr\u00f3nico", 2),
 		MAIL("Correo", 4),
 		BULLETIN("Boletin", 5),
-		META("Meta", 6),
-		INSTAGRAM("Instagram", 7),
-		LINKEDIN("LinkedIn", 8),
-		WEB("Web Corporativa", 9),
-		LANDING("Landing Page", 10),
-		OTHER("Otros", 11),
+		INCOMING("Incoming", 6)
 		;
 		
 		private String description;
@@ -43,7 +39,7 @@ public class MarketingAction implements Serializable {
 					return MarketingActionMediaType.values()[i];
 			}
 			
-			return MarketingActionMediaType.OTHER;
+			return MarketingActionMediaType.PHONE;
 		}
 		
 	}
@@ -54,6 +50,7 @@ public class MarketingAction implements Serializable {
 	private Integer domain;
 	private MarketingCampaign marketingCampaign;
 	private MarketingActionMediaType mediaType;
+	private Tag tag;
 	private Date startDate;
 	private Date endDate;
 	private String description;
@@ -96,6 +93,13 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setMediaType(MarketingActionMediaType mediaType) {
 		this.mediaType = mediaType;
+		return this;
+	}
+	public Tag getTag() {
+		return tag;
+	}
+	public MarketingAction setTag(Tag tag) {
+		this.tag = tag;
 		return this;
 	}
 	public Date getStartDate() {

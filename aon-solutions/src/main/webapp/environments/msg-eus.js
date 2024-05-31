@@ -168,6 +168,7 @@ export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
+export const EXPIRED_SESSION = 'Saioa iraungi da';
 export const ERRORS = 'Akatsak';
 
 // ----- F
@@ -285,6 +286,7 @@ export const NEW_TICKET = 'Tiket Berria';
 export const NEW_WAREHOUSE = 'Biltegi Berria';
 export const NEXT = 'Hurrengoa';
 export const NIF = 'IFZ';
+export const NO_DATA = 'Ez dago daturik';
 export const NOT_LINKED = 'Estekatu gabea';
 export const NOT_LINKED1 = 'Estekatu gabeak';
 export const NOTIFICATION = 'Jakinarazpena';

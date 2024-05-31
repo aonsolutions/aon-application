@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRInvoice;
@@ -16,7 +16,7 @@ public class OCRResult implements Serializable {
 
 	private OCRDocument ocrDocument;
 	private Invoice invoice;
-	private LinkedList<TediError> messages = new LinkedList<>();
+	private LinkedList<InvoiceError> messages = new LinkedList<>();
 	
 	boolean selected;
 
@@ -52,7 +52,7 @@ public class OCRResult implements Serializable {
 		return invoice;
 	}
 	
-	public void add(TediError error) {
+	public void add(InvoiceError error) {
 		messages.add(error);
 	}
 
@@ -60,19 +60,19 @@ public class OCRResult implements Serializable {
 		messages.clear();
 	}
 
-	public LinkedList<TediError> getMessages() {
+	public LinkedList<InvoiceError> getMessages() {
 		return messages;
 	}
 
 	public boolean isImportable() {
-		TediLevel level = getMoreSeriousLevel();
-		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
+		InvoiceErrorLevel level = getMoreSeriousLevel();
+		return ( level == null || level.ordinal() < InvoiceErrorLevel.ERR.ordinal() );
 	}
 
-	public TediLevel getMoreSeriousLevel() {
-		TediLevel level  = null;
+	public InvoiceErrorLevel getMoreSeriousLevel() {
+		InvoiceErrorLevel level  = null;
 		if (getMessages() != null) {
-			for (TediError error : getMessages()) {
+			for (InvoiceError error : getMessages()) {
 				if (level == null || error.getLevel().ordinal() >  level.ordinal()) {
 					level = error.getLevel();
 				}

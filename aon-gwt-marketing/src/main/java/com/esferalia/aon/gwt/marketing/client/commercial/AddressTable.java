@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -8,10 +9,14 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel.AonAddressPanelCallback;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -134,7 +139,7 @@ public abstract class AddressTable extends ScrollPanel {
 		moreData.setValue(0);
 	}
 	
-	private void onSearch() {
+	public void onSearch() {
 		enableMoreData();
 		search();
 	}
@@ -198,6 +203,7 @@ public abstract class AddressTable extends ScrollPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				event.stopPropagation();
 				button.setEnabled(false);
 				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Direcci\u00f3n",
 						new HTML("Se va a proceder a eliminar la direcci\u00f3n <b>" + registryAddress.getAddress() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -219,6 +225,8 @@ public abstract class AddressTable extends ScrollPanel {
 		buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> onUpdateRegistryAddress(registryAddress), ClickEvent.getType());
+		
 		tab.addRow(row, new Label(registryAddress.getStreetType().getAeatCode() + "."), COLS.STR.getColWidth());
 		tab.addRow(row, new Label(registryAddress.getAddress()), COLS.ADD.getColWidth());
 		tab.addRow(row, new Label(registryAddress.getNumber()), COLS.NMB.getColWidth());
@@ -227,7 +235,7 @@ public abstract class AddressTable extends ScrollPanel {
 		tab.addRow(row, new Label(registryAddress.getCity()), COLS.CIT.getColWidth());
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
-	
+
 	private void getList(Consumer<List<RegistryAddress>> success) {
 		COMMON_SERVICE.getRegistryAddresses(domainName, domain, user, registry, new AsyncCallback<List<RegistryAddress>>() {
 			
@@ -257,8 +265,31 @@ public abstract class AddressTable extends ScrollPanel {
 			}
 		});
 	}
+	
+	private void onUpdateRegistryAddress(RegistryAddress registryAddress) {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption( "Editar Direcci\u00f3n" );
+		
+		final AonAddressPanel marketingCampaignPanel = new AonAddressPanel( domainName, domain, user, getAviableGeozones(), registryAddress, new AonAddressPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(RegistryAddress address) {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
+	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract LinkedList<GeoZone> getAviableGeozones();
 	
 }
 

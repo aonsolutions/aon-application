@@ -1,8 +1,12 @@
 package com.esferalia.aon.gwt.common.server;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -10,6 +14,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -41,9 +46,11 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -58,6 +65,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -402,6 +410,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getSurveyStream(domainName, domain, user);
 	}
 	
+
+	@Override
+	public List<Tag> getTagSuggestion(String domainName, int domain, String user, TagType tagType) throws AonCoreException {
+		return AON.getTagStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getTypeProperty().eq((byte) tagType.ordinal()))).collect(Collectors.toList());
+	}
+	
 	// **************************************************
 	// ************************ [MARKETING ACTION TARGET]
 	// **************************************************
@@ -434,8 +448,13 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException {
-		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).collect(Collectors.toList());
-		return taskHolders;
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
+//		return taskHolders;
+		Integer[] taskHolderIds = new Integer[taskHolders.size()];
+		taskHolders.stream().map(taskHolder -> taskHolder.getId()).collect(Collectors.toList()).toArray(taskHolderIds);
+		LinkedList<Seller> sellerList = AON.getSellerList(domainName, domain, user, f -> f.getStatusProperty().eq((byte)0).and(f.getTaskHolderProperty().in(taskHolderIds)));
+		
+		return sellerList.stream().map(seller -> seller.getTaskHolder()).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -450,9 +469,36 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolderId) throws AonCoreException {
-		TaskHolder taskHolder = AON.getTaskHolder(domainName, domain, user, f -> f.getIdProperty().eq(taskHolderId));
-		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getDocumentProperty().eq(taskHolder.getDocument()));
+		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getTaskHolderProperty().eq(taskHolderId));
 		return seller;
+	}
+	
+	@Override
+	public Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException {
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
+		Integer[] taskHolderIds = new Integer[taskHolders.size()];
+		taskHolders.stream().map(taskHolder -> taskHolder.getId()).collect(Collectors.toList()).toArray(taskHolderIds);
+		LinkedList<Seller> sellerList = AON.getSellerList(domainName, domain, user, f -> f.getStatusProperty().eq((byte)0).and(f.getTaskHolderProperty().in(taskHolderIds)));
+		Map<Seller, Date> sellerProjects = new HashMap<Seller, Date>();
+		
+		for(Seller seller : sellerList) {
+			LinkedList<ProjectCommercial> projectCommercials = AON.getProjectCommercialList(domainName, domain, user, f -> f.getSellerProperty().eq(seller.getId()));
+			
+			// Si esta activo y no tiene ninguna operacion comercial se devuelve este
+			if(projectCommercials.isEmpty()) return seller;
+			
+			projectCommercials.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+			sellerProjects.put(seller, projectCommercials.get(0).getDate());
+		}
+		
+		Optional<Date> oldestDate = sellerProjects.values().stream().sorted((d1, d2) -> d1.compareTo(d2)).findFirst();
+		if(oldestDate.isEmpty()) return null;
+		else {
+			for(Entry<Seller, Date> entry : sellerProjects.entrySet()) {
+				if(entry.getValue().equals(oldestDate.get())) return entry.getKey();
+			}
+			return null;
+		}
 	}
 	
 	@Override
@@ -473,6 +519,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<Seller> getSellers(SellerParams params) throws AonCoreException {
 		List<Seller> sellers =  AON.getSellerList(params);
 		return sellers;
+	}
+	
+	@Override
+	public Integer getSellersCount(SellerParams params) throws AonCoreException {
+		return AON.getSellerListCount(params);
 	}
 	
 	@Override
@@ -549,7 +600,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
-		AON.deleteRMedia(domainName, domain, user, id);
+		AON.deleteRegistryMedia(domainName, domain, user, id);
 	}
 	
 	@Override
@@ -571,6 +622,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteRegistryAddInfo(new Domain().setName(domainName).setId(domain), user, id);
 	}
+
+	@Override
+	public List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getRAddInfoAviableAttributes(domainName, domain, user);
+	}
 	
 	@Override
 	public List<Attach> getRegistryAttaches(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
@@ -590,6 +646,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+	}
+	
+	@Override
+	public List<Category> getAviableCategories(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON_SOLUTIONS.getCategoryStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 	}
 	
 }

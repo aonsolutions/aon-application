@@ -106,6 +106,8 @@
 .aonBody {
   padding: 0px !important;
   margin: 0px !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
   line-height: normal !important;
   height: 100%;
   overflow: hidden;
@@ -118,9 +120,6 @@
   font-weight: 400 !important;
   font-style: normal;
   font-variation-settings: "wdth" 100;
-  /* font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; */
-  /* background-color: var(--aonBackground); */
-  /* font-family: "Roboto", "Helvetica", "Arial", sans-serif !important; */
 }
 
 .aonBodyBeta {
@@ -788,7 +787,6 @@
   top: 48px;
   left: 0px;
   overflow-x: hidden;
-
   font-size: 10px;
   border-right: none;
   background-color: #f0f0f0; 

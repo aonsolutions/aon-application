@@ -1723,6 +1723,12 @@ public class AON {
 		}
 	}
 	
+	public static List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getRegistry().getRAddInfoAviableAttributes(ctx, f -> f.getDomainProperty().eq(domain));
+		}
+	}
+	
 	public static RegistryAddInfo save(Domain domain, User user, RegistryAddInfo registryAddInfo) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getRegistry().saveRegistryAddInfo(ctx, registryAddInfo);
@@ -5209,6 +5215,12 @@ public class AON {
 			return getRegistry().getSellerList(ctx, params);
 		}
 	}
+	
+	public static Integer getSellerListCount(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerListCount(ctx, params);
+		}
+	}
 
 	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
@@ -5622,6 +5634,12 @@ public class AON {
 	public static RegistryMedia deleteRMedia(String domainName, Integer domainId, String login, Integer registry) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().deleteRMedia(ctx, registry);
+		}
+	}
+	
+	public static void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			getRegistry().deleteRegistryMedia(ctx, id);
 		}
 	}
 	

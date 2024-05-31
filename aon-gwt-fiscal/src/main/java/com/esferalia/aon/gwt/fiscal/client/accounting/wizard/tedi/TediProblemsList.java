@@ -3,15 +3,15 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class TediProblemsList extends ScrollPanel {
 
-	public TediProblemsList( List<TediError> messages) {
+	public TediProblemsList( List<InvoiceError> messages) {
 		setStyleName(AON.CSS.aonScrollArea());
 		FlowPanel mainPanel = new FlowPanel();
 		setWidget(mainPanel);
@@ -19,7 +19,7 @@ public class TediProblemsList extends ScrollPanel {
 			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
 			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
 			mainPanel.addStyleName(AON.CSS.aonFixedFont());
-			for (TediError error : messages) {
+			for (InvoiceError error : messages) {
 				FlowPanel flowPanel = new FlowPanel();
 				InlineLabel colorLabel = new InlineLabel("");
 				colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
@@ -41,15 +41,15 @@ public class TediProblemsList extends ScrollPanel {
 		}
 	}
 
-	private String getBackgroundColor(TediLevel curLevel) {
+	private String getBackgroundColor(InvoiceErrorLevel curLevel) {
 		String color = null;
 		if (curLevel == null) {
 			color = "#c1f9ba";
-		} else if (curLevel == TediLevel.INF) {
+		} else if (curLevel == InvoiceErrorLevel.INF) {
 			color = "RoyalBlue";
-		} else if (curLevel == TediLevel.WRN) {
+		} else if (curLevel == InvoiceErrorLevel.WRN) {
 			color = "#ffa54f"; 
-		} else if (curLevel == TediLevel.ERR) {
+		} else if (curLevel == InvoiceErrorLevel.ERR) {
 			color = "red";
 		}
 		return color;

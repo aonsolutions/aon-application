@@ -168,6 +168,7 @@ export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Abgelaufen';
+export const EXPIRED_SESSION = 'Sitzung abgelaufen';
 export const ERRORS = 'Fehler';
 
 // ----- F
@@ -285,6 +286,7 @@ export const NEW_TICKET = 'Neue Ticket';
 export const NEW_WAREHOUSE = 'Neue Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
+export const NO_DATA = 'Keine Daten verfügbar';
 export const NOT_LINKED = 'Nicht verbunden';
 export const NOT_LINKED1 = 'Nicht verbunden';
 export const NOTIFICATION = 'Benachrichtigung';

@@ -96,10 +96,8 @@ public class Rawdoc2AccountingInvoice {
 	}
 	
 	public static AccountingInvoice tedi2Aon(Domain domain, User user, Invoice invoice, JSONObject ti)  {
-		System.out.println( "JSON" );
-		System.out.println( ti.toString(1) );
-
-		
+//		System.out.println( "JSON" );
+//		System.out.println( ti.toString(1) );
 		Occam occam = new Occam( )
 			.setDomainName( domain.getName())
 			.setDomain(domain.getId())
@@ -141,7 +139,7 @@ public class Rawdoc2AccountingInvoice {
 				}
 
 				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
+					//.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)

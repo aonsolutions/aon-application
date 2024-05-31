@@ -171,6 +171,7 @@ export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
+export const EXPIRED_SESSION = 'Sesión expirada';
 export const ERRORS = 'Errores';
 
 // ----- F
@@ -224,6 +225,7 @@ export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
 export const INVOICE_CONFIGURATION = 'Configuración de Facturas';
 export const INVOICE_DATA = 'Datos Factura';
+export const INVOICE_DOCUMENT_NUMBER = 'Número Documento';
 export const INVOICE_ISSUED = 'Factura Emitida';
 export const INVOICE_NUMBER = 'Número Factura';
 export const INVOICE_OBJECT = 'Objeto de Factura';
@@ -290,6 +292,7 @@ export const NEW_TICKET = 'Nuevo Ticket';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
+export const NO_INFORMATION = 'No hay información'
 export const NOT_LINKED = 'No vinculado';
 export const NOT_LINKED1 = 'No vinculados';
 export const NOTIFICATION = 'Notificación';

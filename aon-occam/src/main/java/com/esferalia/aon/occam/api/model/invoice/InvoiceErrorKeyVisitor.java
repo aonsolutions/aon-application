@@ -1,0 +1,38 @@
+package com.esferalia.aon.occam.api.model.invoice;
+
+public interface InvoiceErrorKeyVisitor<T> {
+	void visitDomain(T t);
+	void visitType(T t);
+	void visitSeries(T t);
+	void visitNumber(T t);
+	void visitReferenceCode(T t);
+	void visitTransaction(T t);
+	void visitIssueDate(T t);
+	void visitTaxDate(T t);
+	void visitTaxRate(T t);
+	void visitTaxBase(T t);
+	void visitTaxQuota(T t);
+	void visitIrpfRate(T t);
+	void visitIrpfQuota(T t);
+	void visitScope(T t);
+	void visitRegistry(T t);
+	void visitAmbiguousRegistry(T t);
+	void visitRdocument(T t);
+	void visitRdocumentCountry(T t);
+	void visitRname(T t);
+	void visitAddress(T t);
+	void visitDetailDescription(T t);
+	void visitDetails(T t);
+	void visitAccountEntry(T t);
+	void visitDuplicatedSeriesNumber(T t);
+	void visitDuplicatedReferenceCode(T t);
+	void visitFinanceAmountZero(T t);
+	void visitFinanceTotalAmount(T t);
+	void visitFinanceWrongDate(T t);
+	void visitFinanceAccountBank(T t);
+	void visitWorkplace(T t);
+	void visitBasesQuotas(T t);
+	void visitPayMethod(T t);
+	void visitTotal(T t);
+	
+}

@@ -236,7 +236,6 @@ public class FinanceReportExcelPrint extends HttpServlet {
 		String user = req.getParameter(IRequestParamsNames.USER);
 		int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 		
-		
 		FinanceParams params = JsonParser.parseFinanceParams(financeParams);
 		ExcelPaymentsAction action = new ExcelPaymentsAction( );
 		String name = "Informe de plazos de pago";
@@ -244,10 +243,25 @@ public class FinanceReportExcelPrint extends HttpServlet {
 		Stream<Finance> stream =  AON.getFinancesStream(domainName,domainId,user, params,0,Integer.MAX_VALUE);
 		
 		stream.map(finance -> {
-			LinkedList<FinanceTracking> trackings = AON.getFinanceTracking(domainName, domainId, user, finance.getId());
-			Optional<FinanceTracking> paidTracking = trackings.stream().sorted((t1, t2) -> t2.getTrackingDate().compareTo(t1.getTrackingDate())).filter(tracking -> tracking.getType().equals(FinanceTrackingType.PAID)).findFirst();
-			if(paidTracking.isPresent()) finance.setPaidDate(paidTracking.get().getTrackingDate());
-			return finance;
+			if(null == finance.getFinanceGroup()) {
+				LinkedList<FinanceTracking> trackings = AON.getFinanceTracking(domainName, domainId, user, finance.getId());
+				Optional<FinanceTracking> paidTracking = trackings.stream().sorted((t1, t2) -> t2.getTrackingDate().compareTo(t1.getTrackingDate())).filter(tracking -> tracking.getType().equals(FinanceTrackingType.PAID)).findFirst();
+				if(paidTracking.isPresent()) finance.setPaidDate(paidTracking.get().getTrackingDate());
+				return finance;
+			} else {
+				LinkedList<Finance> fipsanceGrous = AON.getFinanceList(domainName,domainId,user, f -> f.getIdProperty().eq(finance.getFinanceGroup()));
+				Finance financeGroup = fipsanceGrous.get(0);
+				
+				// Tracking of financeGroup
+				LinkedList<FinanceTracking> trackings = AON.getFinanceTracking(domainName, domainId, user, financeGroup.getId());
+				Optional<FinanceTracking> paidTracking = trackings.stream().sorted((t1, t2) -> t2.getTrackingDate().compareTo(t1.getTrackingDate())).filter(tracking -> tracking.getType().equals(FinanceTrackingType.PAID)).findFirst();
+				if(paidTracking.isPresent()) finance.setPaidDate(paidTracking.get().getTrackingDate());
+				
+				// Status of financeGroup
+				finance.setFinanceStatus(financeGroup.getFinanceStatus());
+				
+				return finance;
+			}			
 		}).forEach(action);
 				
 		resp.setContentType(MimeType.MS_EXCEL.getName());
@@ -371,7 +385,7 @@ public class FinanceReportExcelPrint extends HttpServlet {
 				
 			}
 			addCell(finance.getPayMethodName());
-			addCell(finance.getInvoice().getIssueDate());
+			addCell(finance.getDueDate());
 			
 			Cell amountCell = addCell(euroFormat.format(finance.getAmount()));
 			CellStyle amountStyle = workbook.createCellStyle();
