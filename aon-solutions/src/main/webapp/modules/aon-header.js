@@ -367,7 +367,9 @@ export class AonHeader extends AonElement {
 			LS.removeDomain();
 
 			clearDurum();
-			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+			if(this.newTheme){
+				this.rootPanelHtml('<aon-new-parent id="aonParent"></aon-new-parent>');
+			} else this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );

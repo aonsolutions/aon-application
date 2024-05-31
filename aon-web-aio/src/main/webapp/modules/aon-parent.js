@@ -8,7 +8,7 @@ import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 
-export class AonParent extends AonElement {
+export class AonNewParent extends AonElement {
 
 
 	notice;
@@ -396,7 +396,7 @@ export class AonParent extends AonElement {
 }
 
 
-if(!window.customElements.get('aon-parent')){
-	console.log( 'Define <aon-parent> ^-^' );
-	window.customElements.define('aon-parent', AonParent);
+if(!window.customElements.get('aon-new-parent')){
+	console.log( 'Define <aon-new-parent> ^-^' );
+	window.customElements.define('aon-new-parent', AonNewParent);
 }
