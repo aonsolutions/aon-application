@@ -25,7 +25,6 @@ import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
-import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
@@ -173,7 +172,7 @@ export class AonNewMenu extends AonElement {
 				this.rootPanel(new AonMarketing());
 				break;
 			case HomeApps.HOME.app:
-				this.rootPanel(new AonParent());
+				this.rootPanel(new AonDesktop());
 				break;
 			case ACCOUNTING_MENU.app:
 				this.rootPanel(new AonAccountingMenu());

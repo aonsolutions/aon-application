@@ -9,6 +9,7 @@ import { AonLoader } from 'aonsolutions/components/aon-loader.js';
 import { AonNewLogin } from 'aonsolutions/modules/login/aon-new-login.js';
 
 import { AonNewInput } from "aonsolutions/components/aon-new-input.js";
+import { AonParent } from './aon-parent.js';
 
 
 export class AonModule extends AonElement {
