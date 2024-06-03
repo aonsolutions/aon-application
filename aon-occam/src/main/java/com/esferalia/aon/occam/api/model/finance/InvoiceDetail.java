@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -38,7 +37,6 @@ public class InvoiceDetail implements Serializable {
 	private DiscountExpression discountExpression;
 	private double taxableBase;
 	private double taxes;
-	private double surcharge;
 	private boolean prepayment;
 
 	private LinkedList<String> segments;
@@ -263,13 +261,6 @@ public class InvoiceDetail implements Serializable {
 	}
 	public InvoiceDetail setTaxes(double taxes) {
 		this.taxes = taxes;
-		return this;
-	}
-	public double getSurcharge() {
-		return surcharge;
-	}
-	public InvoiceDetail setSurcharge(double surcharge) {
-		this.surcharge = surcharge;
 		return this;
 	}
 	public boolean isPrepayment() {
