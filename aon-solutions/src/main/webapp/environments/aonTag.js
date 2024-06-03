@@ -96,6 +96,7 @@ export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 export const AON_MODULE = 'aon-module';
 export const AON_COMPANY = 'aon-company';
 export const AON_COMPANY_LIST = 'aon-company-list';
+export const AON_PARENT = 'aon-parent';
 
 // MODULES - INVOICE
 

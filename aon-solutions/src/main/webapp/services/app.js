@@ -81,6 +81,7 @@ export const FISCAL = {
   newIcon: AON_ICONS.AON_NEW_FISCAL,
   symbol: MATERIAL_ICONS.EURO_SYMBOL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
+  newColor: "#FB982E",
   backgroundColor: '#fef3e7',
   hover: 'aonFiscalHover',
   access: [
@@ -112,6 +113,7 @@ export const PAYROLL = {
   newIcon: AON_ICONS.AON_NEW_PAYROLL,
   symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
+  newColor: "#33A9A9",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
   access: [
@@ -249,6 +251,7 @@ export const DOCUMENTAL = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
   newIcon: AON_ICONS.AON_NEW_DOCUMENTAL,
   color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
+  newColor: "#EF6292",
   backgroundColor: 'var(--aonDocumentalBackground)',
   hover: 'aonDocumentalHover',
   access: [
@@ -307,6 +310,7 @@ export const INVOICE = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
   newIcon: AON_ICONS.AON_NEW_INVOICE,
   color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
+  newColor: "#4F91FF", 
   backgroundColor: '#ebf2ff',
   hover: 'aonInvoiceHover',
   access: [
@@ -353,6 +357,7 @@ export const MESSENGER = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
   newIcon: AON_ICONS.AON_NEW_MESSENGER,
   color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
+  newColor: "#f6655a",
   backgroundColor: '#feedec',
   hover: 'aonMessengerHover',
   access: [

@@ -6,6 +6,8 @@ import * as LS from '../services/localStorageService.js';
 
 export class AonSearchBox extends AonElement {
 
+	newTheme;
+
 	constructor () {
 		super();
 	}
@@ -52,7 +54,7 @@ export class AonSearchBox extends AonElement {
 		div.style.height = '40px';
 		div.style.borderRadius = '20px';
 		div.style.display = "flex";
-		if(!LS.isNewTheme()) {
+		if(!LS.isNewTheme() && !this.newTheme) {
 			div.style.backgroundColor = '#eaf1fb';
 			div.style.borderRadius = '10px';
 		} else {
@@ -72,8 +74,8 @@ export class AonSearchBox extends AonElement {
 		input.autocomplete = 'off';
 		input.placeholder = MSG.SEARCH;
 		input.title = MSG.SEARCH;
-		input.className = LS.isNewTheme() ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
-		if(!LS.isNewTheme()) input.style.backgroundColor = '#eaf1fb';
+		input.className = (LS.isNewTheme() || this.newTheme) ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
+		if(!LS.isNewTheme() && !this.newTheme) input.style.backgroundColor = '#eaf1fb';
 		input.style.width = '100%';
 		input.style.borderRadius = '20px';
 		div.appendChild(input);

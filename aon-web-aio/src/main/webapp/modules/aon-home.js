@@ -82,8 +82,9 @@ export class AonHome extends AonElement {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
 			}
-			aonHeader.setColor(app.color && '#fff', app.color);
-			aonHeader.setBackgroundColor(app.color);
+			const appColor = app.newColor || app.color;
+			aonHeader.setColor(appColor && '#fff', appColor);
+			aonHeader.setBackgroundColor(appColor);
 		});
 
 		let rootPanel = this.createElement(TAG.DIV);

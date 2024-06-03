@@ -32,7 +32,7 @@ export const ACCOUNTING_PERIOD = {
 
 export const ACCOUNT_ENTRY = {
   module: GWT_FISCAL,
-  entryPoint: 'AccountEntryModuleTEDI'
+  entryPoint: 'AccountEntryModule'
 };
 
 export const STATEMENT_REPORT = {

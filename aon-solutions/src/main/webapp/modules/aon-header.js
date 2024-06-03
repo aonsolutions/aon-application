@@ -8,7 +8,6 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
-import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
@@ -21,6 +20,7 @@ import { AonSearchBox } from '../components/aon-search-box.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonNotificationIcon } from './notification/aon-notification-icon.js';
+import { AonParent } from 'aonparent';
 
 export class AonHeader extends AonElement {
 
@@ -80,7 +80,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = LS.isNewTheme() ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
+		div.className = (LS.isNewTheme() || this.newTheme) ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -95,12 +95,13 @@ export class AonHeader extends AonElement {
 		aonLogo.id = "aonLogo";
 		aonLogo.style.paddingLeft = '0px';
 		aonLogo.style.width = '123px';
-		aonLogo.className = LS.isNewTheme() ? "aonNewLogo" : "aonLogo";
+		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
 		div.appendChild(aonLogo);
 
         let aonHeaderApp = this.createElement(TAG.DIV);
 		aonHeaderApp.id = "aonHeaderApp";
 		aonHeaderApp.className = "aonHeaderApp";
+		aonHeaderApp.style.minWidth = '120px';
 		aonHeaderApp.style.display = "none";
 		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		div.appendChild(aonHeaderApp);
@@ -115,6 +116,7 @@ export class AonHeader extends AonElement {
 		
 		let aonHeaderSearchBox = new AonSearchBox();
 		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
+		aonHeaderSearchBox.newTheme = this.newTheme;
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
 
 		div.appendChild(aonHeaderSearch);
@@ -122,7 +124,7 @@ export class AonHeader extends AonElement {
 		let aonHeaderButtons = this.createElement(TAG.DIV);
 		aonHeaderButtons.id = 'aonHeaderButtons';
 		aonHeaderButtons.className = "aonHeaderButtons";
-		if (!LS.isNewTheme()){
+		if (!LS.isNewTheme() && !this.newTheme){
 			aonHeaderButtons.style.display = "flex";
 			aonHeaderButtons.style.alignItems = "center";		
 		}
@@ -211,7 +213,7 @@ export class AonHeader extends AonElement {
 		this.buildLogo();
 
 		if(!this.isMobile()) {
-			if(!LS.isNewTheme()) {
+			if(!LS.isNewTheme() && !this.newTheme) {
 				let aonHeaderButtons = this.getElement('aonHeaderButtons');
 				aonHeaderButtons.style.position = 'absolute';
 				aonHeaderButtons.style.right = '20px';
@@ -348,7 +350,7 @@ export class AonHeader extends AonElement {
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-				if(!LS.isNewTheme()){
+				if(!LS.isNewTheme() && !this.newTheme){
 					let aonShowMenu = this.getElement('aonShowMenu');
 					aonShowMenu.style.display = 'none';
 				}
@@ -367,9 +369,7 @@ export class AonHeader extends AonElement {
 			LS.removeDomain();
 
 			clearDurum();
-			if(this.newTheme){
-				this.rootPanelHtml('<aon-new-parent id="aonParent"></aon-new-parent>');
-			} else this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+			this.rootPanel(new AonParent());
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -493,7 +493,7 @@ export class AonHeader extends AonElement {
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {
-				this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+				this.rootPanel(new AonParent());
 			}
 		})
 	}
@@ -518,7 +518,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
 		aonHeaderSearch.style.display = company ? 'none' : 'flex';
-		if(!LS.isNewTheme())
+		if(!LS.isNewTheme() && !this.newTheme)
 			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
@@ -651,7 +651,7 @@ export class AonHeader extends AonElement {
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
-		div.style.justifyContent = 'center';
+		// div.style.justifyContent = 'center';
 		div.style.height =  '32px';
 		div.style.flexDirection =  'row';
 		div.style.backgroundColor = 'transparent';

@@ -5,9 +5,7 @@ import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
 import "../../components/aon-dialog.js";
 import "../../components/aon-toast.js";
-
 import "../company/aon-mobile-desktop.js";
-import "../company/aon-parent.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
@@ -23,6 +21,8 @@ import { Language } from "../../models/Language.js";
 import * as COLORS from "../../environments/colors.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonEmail } from "../../components/aon-email.js";
+import { AonMobileParent } from "../company/aon-mobile-parent.js";
+import { AonParent } from "aonparent";
 
 export class AonLogin extends AonElement {
   tag;
@@ -402,9 +402,9 @@ export class AonLogin extends AonElement {
             this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
-            this.rootPanelHtml(this.isMobile()
-              ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
-              : '<aon-parent id="aonParent"></aon-parent>');
+            this.rootPanel(this.isMobile()
+              ? new AonMobileParent()
+              : new AonParent());
           }
           // this.getElement("aonLogin").style.display = 'none';
           // let homeDiv = this.getElement("aonHomeDiv");
