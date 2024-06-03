@@ -62,7 +62,7 @@ export class AonSuiteMenu extends AonElement {
         let newButton = new AonButton();
         newButton.id = this.NEW_BUTTON;
         newButton.icon = "add";
-        newButton.title = "Agregar nuevo";
+        newButton.title = this.new;
         newButton.style.display = "block";
         newButton.color = "transparent";
         newButton.style.width = "157px";
@@ -85,6 +85,7 @@ export class AonSuiteMenu extends AonElement {
         let newBtBt = this.getElement(newButton.BUTTON);
         newBtText.style.color = "rgb(72,70,68)";
         newBtText.style.fontWeight = "normal";
+        newBtText.innerHTML = "Agregar nuevo";
         newBtIcon.style.color = "rgb(72,70,68)";
         newBtBt.style.boxShadow = "none";
         this.setButtonHover(newButton);
@@ -116,7 +117,7 @@ export class AonSuiteMenu extends AonElement {
         options.className = 'aonInputListOptions';
         sideMenu.appendChild(options);
         dropdownButton.addEventListener(EVENT.CLICK, () => {
-           this.buildOptions(["Cuenta contable","Ficha de amortización","Apunte"]);
+           this.buildOptions(this.selectOptions);
         });
 
         let sideNavTitle = this.createDiv();
@@ -202,10 +203,10 @@ export class AonSuiteMenu extends AonElement {
         }
     }
 
-    buildSideNavCard(sideMenu,title,id){
+    buildSideNavCard(sideMenu,id){
         let card = new AonCard();
         card.id = id;
-		card.title = title;
+		card.title = this.cardData.title;
 		card.style.minWidth = "230px";
         sideMenu.appendChild(card);
 
@@ -230,9 +231,9 @@ export class AonSuiteMenu extends AonElement {
         cardDiv.style.minWidth = "230px";
         
         let divGeneral = this.createDiv();
-        divGeneral.appendChild(this.buildSideNavCardData("Pendientes","999"));
-        divGeneral.appendChild(this.buildSideNavCardData("Rechazados","999"));
-        divGeneral.appendChild(this.buildSideNavCardData("Fras. sin contabilizar","999"));
+        this.cardData.info.forEach((info)=>{
+            divGeneral.appendChild(this.buildSideNavCardData(info,"999"));
+        });
         
 		card.setContent(divGeneral);
     }
@@ -266,17 +267,25 @@ export class AonSuiteMenu extends AonElement {
     buildCardData(value) {
 		let div = this.createDiv();
 		div.style.marginTop = '10px';
-		div.title = value;
-        div.style.cursor = "pointer";
 		div.style.display = "block";
         div.style.padding = "2px";
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
 		span.innerHTML = value.description;
+        span.title = value.title;
         span.style.cursor = "pointer";
         span.style.color = "var(--aonBlue)"
 		div.appendChild(span);
+
+        if(value.description2){
+            div.style.display = "flex";
+            let span2 = this.createSpan();
+            span2.className = CSS.AON_CARD_TEXT;
+            span2.innerHTML = value.description2
+            span2.style.marginLeft = "5px";
+            div.appendChild(span2);
+        }
 
         span.addEventListener('mouseover', function() {
             span.style.color = 'var(--aonBlue)';
@@ -331,9 +340,6 @@ export class AonSuiteMenu extends AonElement {
 
         if(options.length === 0) return null;
 
-        let newButton = this.getElement(this.NEW_BUTTON);
-        let dropdownButton = this.getElement(this.DROPDOWN_BUTTON);
-
         let div = this.getElement(this.OPTIONS);
         div.classList.add('is-visible');
         div.style.width = "209px";
@@ -345,10 +351,6 @@ export class AonSuiteMenu extends AonElement {
         div.addEventListener("mouseleave", () => {
            div.classList.remove('is-visible');
         });
-
-        dropdownButton.addEventListener(EVENT.CLICK, () => {
-            this.buildOptions(["Cuenta contable","Ficha de amortización","Apunte"]);
-         });
 
         if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
             let empty = {};
@@ -411,10 +413,9 @@ export class AonSuiteMenu extends AonElement {
     buildLi(option, ul, div){
         let li = this.createElement(TAG.LI);
         li.className = 'aonInputListOptionsItem';
-        li.innerHTML = option;
+        li.innerHTML = option.title;
         li.style.padding = "5px";
         li.style.paddiingLeft = "25px";
-        li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
         ul.appendChild(li);
     
         li.addEventListener(EVENT.CLICK, () => {

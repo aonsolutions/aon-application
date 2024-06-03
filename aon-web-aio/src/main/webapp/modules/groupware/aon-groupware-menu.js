@@ -28,70 +28,103 @@ export class AonGroupwareMenu extends AonSuiteMenu {
         this.RIGHT_PANEL = 'rightPanel';
         this.last = "Últimos expedientes";
         this.new = "Nuevo Parte de trabajo";
+        this.cardData={
+            title: "Actividad",
+            info:["Expedientes abiertos", "Solicitudes ptes."]
+        };
+        this.selectOptions= [{
+            title: "Parte de trabajo",
+            action: () => alert("description")
+        },{
+            title: "Operario",
+            action: () => alert("description")
+        },{
+            title: "Proceso", 
+            action: () => alert("description")
+        },{
+            title: "Expediente", 
+            action: () => alert("description")
+        }];
         this.options = [{
             title: 'Expedientes',
             options: [ {
                 description: "Expedientes",
+                title: "Expedientes",
                 action: () => alert("description")
             },{
                 description: "Tipo de Expediente",
+                title: "Tipo de Expediente",
                 action: () => alert("description")
             },{
                 description: "Tipo de Actividad",
+                title: "Tipo de Actividad",
                 action: () => alert("description")
             }]
         },{
             title: 'Procesos',
             options: [{
                 description: "Procesos",
+                title: "Procesos",
                 action: () => alert("description")
             },{
                 description: "Tipos de Transiciones",
+                title: "Tipos de Transiciones",
                 action: () => alert("description")
             },{
                 description: "Lanzador de procesos",
+                title: "Lanzador de procesos",
                 action: () => alert("description")
             }]
         },{
             title: 'Tareas',
             options: [{
                 description: "Bandeja de tareas",
+                title: "Bandeja de tareas",
                 action: () => alert("description")
             },{
                 description: "Diagrama de Gantt",
+                title: "Diagrama de Gantt",
                 action: () => alert("description")
             }]
         },{
             title: 'Campañas (Procesos Masivos)',
             options: [{
                 description: "Monitor de campañas",
+                title: "Monitor de campañas",
                 action: () => alert("description")
             },{
                 description: "Tipos de campañas",
+                title: "Tipos de campañas",
                 action: () => alert("description")
             }]
         },{
             title: 'Partes de Trabajo',
             options: [{
                 description: "Partes de Trabajo",
+                title: "Partes de Trabajo",
                 action: () => alert("description")
             },{
                 description: "Informes",
+                title: "Informes",
                 action: () => alert("description")
             },{
                 description: "Tipos de Trabajos",
+                title: "Tipos de Trabajos",
                 action: () => alert("description")
             }]
         },{
             title: 'Operarios',
             options: [{
                 description: "Operarios",
+                title: "Operarios",
                 action: () => alert("description")
             },{
                 description: "Grupos de usuarios",
+                title: "Grupos de usuarios",
                 action: () => alert("description")
             },{
                 description: "Perfiles de coste",
+                title: "Perfiles de coste",
                 action: () => alert("description")
             }]
         }];
