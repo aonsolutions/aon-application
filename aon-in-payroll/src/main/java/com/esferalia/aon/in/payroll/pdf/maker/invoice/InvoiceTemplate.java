@@ -2201,7 +2201,6 @@ public class InvoiceTemplate {
 		newInvoiceDetail.setDiscountExpression(original.getDiscountExpression());
 		newInvoiceDetail.setTaxableBase(original.getTaxableBase());
 		newInvoiceDetail.setTaxes(original.getTaxes());
-		newInvoiceDetail.setSurcharge(original.getSurcharge());
 		newInvoiceDetail.setPrepayment(original.isPrepayment());
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
 		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
