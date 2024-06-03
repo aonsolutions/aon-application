@@ -2258,7 +2258,7 @@ label.rating:hover {
 .aonRootGradiantHeader {
 	top: 48px;
 	left: 0;
-	right: 10px;
+	right: 0px;
 	bottom: 0;
 	position: fixed;
 	background-color: #faf9f8;
@@ -2267,7 +2267,7 @@ label.rating:hover {
 .aonRootGradiantHeaderBlur {
 	top: 48px;
 	left: 0;
-	right: 10px;
+	right: 0px;
 	bottom: 0;
 	position: fixed;
 	backdrop-filter: blur(50px);
