@@ -12,40 +12,53 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 
 public abstract class SellerModulePanel extends AonCustomDockLayout {
-
+	
 	private HTMLPanel container;
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
+	private AonToolbarButton deleteButton;
+	
 	private SimpleLayoutPanel centerPanel;
+	
+	private AonSearchPanelButton cleanButton;
 	
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Activo");
 	
-	private AonSearchPanelButton cleanButton;
+	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
+	private AonCustomListBox asc = new AonCustomListBox("Orden");
 	
 	private SellerModuleOptions options;
 	
 	private SellerPanel sellerPanel;
 	
 	public SellerModulePanel(SellerModuleOptions options) {
-		super("Agentes comerciales");
+		super("Agentes Comerciales");
+		
 		this.options = options;
 		
 		addButtonsToolbar();
-		getSearchTextBox().addValueChangeHandler(e -> {
-			onSearch( options );
+		getSearchTextBox().addKeyUpHandler(e -> {
+			String value = getSearchTextBox().getValue();
+			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+				onSearch( options );
+			} else if(AonStringUtils.isBlank(value)) {
+				onSearch( options );
+			}
 		});
+		
 		
 		addFilterMenu();
 		
 		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
 		cleanButton.addClickHandler(event -> {
-			getSearchTextBox().setValue(null,false);
+			getSearchTextBox().setValue(null, false);
 			scope.getListBox().setSelectedIndex(0);
 			active.getListBox().setSelectedIndex(0);
 			
@@ -70,9 +83,19 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		addFilterWidget(scope);
 		addFilterWidget(active);
 		
-		addUtilitiesMenu();
-		addUtilityOption(new AonSearchPanelButton("Descargar fichero", AON.CSS.aonIconDownload()), "Exportar Excel");
-		addUtilityOption(new AonSearchPanelButton("Subir fichero", AON.CSS.aonIconUpload()), "Subir Fichero");
+		addSortMenu();
+		
+		sort.addItem("Nombre", "name");
+		sort.addItem("Alias", "alias");
+		sort.addItem("Documento", "document");
+		sort.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		asc.addItem("Ascendente", "true");
+		asc.addItem("Descendete", "false");
+		asc.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		addSortWidget(sort);
+		addSortWidget(asc);
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -80,7 +103,6 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		container.add(messagePanel);
 	
 		centerPanel = new SimpleLayoutPanel();
-//		centerPanel.setHeight((Window.getClientHeight() - 180) + "px");
 		centerPanel.setHeight("100%");
 		centerPanel.getElement().getStyle().setProperty("margin-left", "1rem");
 		
@@ -89,17 +111,44 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		add(container);
 		onSearch( options );
 	}
-	
+
 	private void addButtonsToolbar() {
-		final AonToolbarButton newButton = new AonToolbarButton( "Nuevo Agente Comercial", AON.CSS.aonIconAdd());
+		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Agente Comercial", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> showSellerDialog());
 		
 		addToolbarButton(newButton);
+		
+		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
+		downloadExcel.addClickHandler(e -> {
+			String fileDownloadURL = 
+					"/ms/api/seller-excel/" + 
+					"?domainId=" + options.getDomain() + 
+					"&domainName=" + options.getDomainName() + 
+					"&login=" + options.getUser() +
+					"&description=" + getSearchTextBox().getValue() +
+					"&scope=" + scope.getValue() +
+					"&active=" + active.getValue() +
+					"&orderBy=" + sort.getValue() +
+					"&asc=" + asc.getValue()
+					;
+			
+			Window.open(fileDownloadURL, "_blank", null);
+		});
+		addToolbarButton(downloadExcel);
+		
+		deleteButton = new AonToolbarButton( "Borrar Agente Comercial", AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(e -> {
+			deleteButton.setEnabled(false);
+			sellerPanel.deleteSellers();
+		});
+		deleteButton.setEnabled(false);
+		
+		addToolbarButton(deleteButton);
 	}
-	
+
 	private void showSellerDialog() {
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "NUEVO AGENTE COMERCIAL" );
+		dialog.setCaption( "Nuevo Agente Comercial" );
 		final AonSellerPanel marketingCampaignPanel = new AonSellerPanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), new AonSellerPanelCallback() {
 			
 			@Override
@@ -110,7 +159,7 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			@Override
 			public void onAccept(Seller seller) {
 				dialog.hide();
-				onSellerSelect(seller);
+				onSellerCreate(seller);
 			}
 		}) {
 
@@ -133,8 +182,23 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			}
 
 			@Override
+			protected void onDeleteEnable(boolean enabled) {
+				deleteButton.setEnabled(enabled);
+			}
+
+			@Override
 			protected void onShowErrorMessage(String errorMessage) {
 				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+
+			@Override
+			protected void onShowSuccessMessage(String successMessage) {
+				AonMessagePanel.showSuccess(messagePanel, successMessage);
+			}
+
+			@Override
+			protected void onShowLoadingMessage(String loadingMessage) {
+				AonMessagePanel.showLoading(messagePanel, loadingMessage);
 			}
 		
 		};
@@ -150,9 +214,28 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			.setDescription(getSearchTextBox().getValue())
 			.setScope(AonStringUtils.isBlank(scope.getValue()) ? null : Integer.parseInt(scope.getValue()))
 			.setActive(AonStringUtils.isBlank(active.getValue()) ? null : Byte.parseByte(active.getValue()))
+			.setOrderBy(sort.getValue())
+			.setAsc(Boolean.parseBoolean(asc.getValue()))
 			;
 	}
 	
-	protected abstract void onSellerSelect(Seller seller);
+	public Integer getSellerListCount() {
+		return null == sellerPanel || null ==  sellerPanel.getTable() ? 0 : sellerPanel.getTable().getRowsCount();
+	}
+
+	public Integer getSellerListPosition(Integer sellerId) {
+		return null == sellerId || null == sellerPanel ? 0 : sellerPanel.getSellerListPosition(sellerId);
+	}
 	
+	public Seller getPreviusSeller(Integer sellerId) {
+		return null == sellerId || null == sellerPanel ? null : sellerPanel.getPreviusSeller(sellerId);
+	}
+	
+	public Seller getNextSeller(Integer sellerId) {
+		return null == sellerId || null == sellerPanel ? null : sellerPanel.getNextSeller(sellerId);
+	}
+	
+	protected abstract void onSellerSelect(Seller seller);
+	protected abstract void onSellerCreate(Seller seller);
+
 }

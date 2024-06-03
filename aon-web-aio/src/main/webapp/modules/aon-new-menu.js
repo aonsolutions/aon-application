@@ -114,8 +114,7 @@ export class AonNewMenu extends AonElement {
 		//}
 	}
 
-	appSelection(app) {
-		
+	appSelection(app, sidenav) {
 		switch (app.app) {
 			case Apps.CONSOLE.app:
 				this.rootPanel(new AonConsole());
@@ -166,8 +165,11 @@ export class AonNewMenu extends AonElement {
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
 		}
-		
-		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: app } ));
+		let detail = {
+			app,
+			sidenav
+		};
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail } ));
 	}
 
 	build() {
@@ -395,11 +397,11 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app, style,sidenav) {
+	buildApp(app, style, sidenav) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app);
+			this.appSelection(app, sidenav);
 		});
 		a.classList.add('aonMenuApp');
 
@@ -476,7 +478,11 @@ export class AonNewMenu extends AonElement {
 				let span = this.createElement(TAG.SPAN);
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
-				span.style.minHeight = '26px';
+				if (MenuApps.TIMECONTROL.app === app.app) {
+					span.style.minHeight = '36px';
+				}else{
+					span.style.minHeight = '26px';
+				}
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }

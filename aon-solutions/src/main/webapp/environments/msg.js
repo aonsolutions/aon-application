@@ -131,6 +131,7 @@ export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
 export const CLOSE = MSG.CLOSE;
 export const CLOSE_SESSION = MSG.CLOSE_SESSION;
+export const CLOSED = MSG.CLOSED;
 export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
@@ -215,6 +216,7 @@ export const DEUTSCH = MSG.DEUTSCH;
 export const DISCARDED = MSG.DISCARDED;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
+export const DOCUMENT_DATA = "Datos Documento";
 export const DOMAIN = "Dominio"; //TODO
 export const DOMAIN_PARENT = "Dominio Padre"; //TODO
 export const DOCUMENTARY = MSG.DOCUMENTARY;
@@ -264,6 +266,7 @@ export const EXPORTED = "Exportadas";
 
 // ----- F
 
+export const FAILED = "Fallido"; // TODO
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
@@ -311,6 +314,8 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 // ----- I
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
+export const IN_PROGRESS = "En Progreso"; // TODO
+export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
@@ -330,6 +335,7 @@ export const INVOICE_CONFIGURATION = MSG.INVOICE_CONFIGURATION;
 export const INVOICE_DATA = MSG.INVOICE_DATA;
 export const INVOICE_ISSUED = MSG.INVOICE_ISSUED;
 export const INVOICE_NUMBER = MSG.INVOICE_NUMBER;
+export const INVOICE_DOCUMENT_NUMBER = MSG.INVOICE_DOCUMENT_NUMBER;
 export const INVOICE_OBJECT = MSG.INVOICE_OBJECT;
 export const INVOICE_PRINTING = MSG.INVOICE_PRINTING;
 export const INVOICE_RECEIVED = MSG.INVOICE_RECEIVED;
@@ -465,9 +471,10 @@ export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = MSG.OPTIONAL;
 export const OR_ACCESS = MSG.OR_ACCESS;
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
+export const OTHERS = "Otros";
 
 // ----- P
-
+export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
@@ -548,6 +555,8 @@ export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
 export const REMARKS = MSG.REMARKS;
 export const REMINDER = MSG.REMINDER;
+export const REOPEN = 'Reabrir';
+export const REOPENED = 'Reabierto';
 export const REPEAT_PASSWORD = 'Repetir Contraseña';
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
@@ -561,7 +570,6 @@ export const RESUME_COSTS = "Resumen Costes"; // TODO
 export const RETENTION_PANEL = 'Panel de IRPF';
 export const RETENTION_PERCENT = "% Retención"; 
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
-export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Régimen"; // TODO
 export const RGPD_URL = 'RGPD Url';
 export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; //TODO

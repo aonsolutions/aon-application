@@ -134,6 +134,7 @@ public interface IRegistry {
 	public RegistryMedia get(AONContext ctx, RegistryMediaFilter filter);
 	public RegistryMedia save(AONContext ctx, RegistryMedia media);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
+	public void deleteRegistryMedia(AONContext ctx, Integer id);
 
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter);
@@ -197,6 +198,7 @@ public interface IRegistry {
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
+	public Stream<AonCompany> getCompanyWithRolesStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage);
 	public Company saveCompany(AONContext ctx, Company company);
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);
@@ -230,6 +232,7 @@ public interface IRegistry {
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo);
+	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter);
 	
 	// ------------------- RDIRSTAFF
 	

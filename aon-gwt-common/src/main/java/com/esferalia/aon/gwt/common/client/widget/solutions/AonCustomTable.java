@@ -77,6 +77,10 @@ public class AonCustomTable extends HTMLPanel {
 		row.addStyleName(AON.CSS.aonCustomRow());
 	}
 
+	public Integer getRowsCount() {
+		return getWidgetCount() - 1;
+	}
+
 	
 
 }

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -8,11 +9,15 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAttachPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAttachPanel.AonAttachCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -60,13 +65,14 @@ public abstract class RattachTable extends ScrollPanel {
 	private Integer domain;
 	private String user;
 	private Integer registry;
+	private LinkedList<Scope> aviableScopes; 
 	
 	private static enum COLS {
 		  VAL(AON.MSG.description()					,"-moz-available" )
-		, ADM("Visibilidad"							,"10rem")
+		, ADM("Visibilidad"							,"4rem")
 		, COM("Fecha"								,"10rem")
-		, TEC(AON.MSG.scope()						,"30rem")
-		, BUT(AonStringUtils.EMPTY					,"5rem" )
+		, TEC(AON.MSG.scope()						,"10rem")
+		, BUT(AonStringUtils.EMPTY					,"12rem" )
 		;
 
 		String headerLabel;
@@ -84,7 +90,7 @@ public abstract class RattachTable extends ScrollPanel {
 		}
 	}
 	
-	public RattachTable(String domainName, int domain, String user, Integer registry) {
+	public RattachTable(String domainName, int domain, String user, LinkedList<Scope> aviableScopes, Integer registry) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
@@ -92,6 +98,7 @@ public abstract class RattachTable extends ScrollPanel {
 		this.domain = domain;
 		this.user = user;
 		this.registry = registry;
+		this.aviableScopes = aviableScopes;
 
 		container = new SimplePanel();
 		container.setHeight((Window.getClientHeight() - 310) + "px");
@@ -140,7 +147,7 @@ public abstract class RattachTable extends ScrollPanel {
 		moreData.setValue(0);
 	}
 	
-	private void onSearch() {
+	public void onSearch() {
 		enableMoreData();
 		search();
 	}
@@ -204,7 +211,7 @@ public abstract class RattachTable extends ScrollPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				download.setEnabled(false);
+				event.stopPropagation();
 				createDownloadForm(attach);
 			}
 
@@ -220,7 +227,9 @@ public abstract class RattachTable extends ScrollPanel {
 				form.setAction(DOWNLOADURL);
 				form.setEncoding(FormPanel.ENCODING_MULTIPART);
 				form.setMethod(FormPanel.METHOD_POST);
-				form.addSubmitCompleteHandler(e -> buttonContainer.remove(form));
+				form.addSubmitCompleteHandler(e -> {
+					buttonContainer.remove(form);
+				});
 				
 				// Add all to FlowPanel to add to FormPanel
 				HTMLPanel flowFormPanel = new HTMLPanel("");
@@ -243,6 +252,7 @@ public abstract class RattachTable extends ScrollPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				event.stopPropagation();
 				button.setEnabled(false);
 				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Documento",
 						new HTML("Se va a proceder a eliminar el documento <b>" + attach.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -264,6 +274,8 @@ public abstract class RattachTable extends ScrollPanel {
 		buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> onUpdateRattach(attach), ClickEvent.getType());
+		
 		tab.addRow(row, new Label(attach.getDescription()), COLS.VAL.getColWidth());
 		tab.addRow(row, new AonTableButton(attach.isConfidential() ? "Confidencial" : "Publico", attach.isConfidential() ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock()), COLS.ADM.getColWidth());
 		tab.addRow(row, new Label(attach.getDate() == null ? "" : formatDate.format(attach.getDate())), COLS.COM.getColWidth());
@@ -271,6 +283,28 @@ public abstract class RattachTable extends ScrollPanel {
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 	
+	private void onUpdateRattach(Attach attach) {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Editar Documento");
+		
+		final AonAttachPanel marketingCampaignPanel = new AonAttachPanel( domainName, domain, user, aviableScopes, attach, new AonAttachCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept() {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
+	}
+
 	private void getList(Consumer<List<Attach>> success) {
 		COMMON_SERVICE.getRegistryAttaches(domainName, domain, user, registry, new AsyncCallback<List<Attach>>() {
 			

@@ -62,7 +62,8 @@ export class AonHome extends AonElement {
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
 		aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
-			let app = e.detail; 
+			let app = e.detail.app;
+			let sidenav = e.detail.sidenav; 
 			console.log(JSON.stringify(e.detail));
 			if ( !app.home ){
 				let appEl = aonMenu.buildApp(app, 
@@ -70,9 +71,8 @@ export class AonHome extends AonElement {
 					height: '32px',
 					color: '#ffffff',
 					flexDirection: 'row'
-				}
-				);
-				aonHeader.setApp(appEl);
+				}, sidenav);
+				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
 			} else {

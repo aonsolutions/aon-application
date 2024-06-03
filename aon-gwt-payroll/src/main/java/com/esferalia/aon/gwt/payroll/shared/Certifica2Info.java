@@ -19,6 +19,8 @@ public class Certifica2Info implements Serializable {
 		private Double base_cgc;
 		private Double base_unemployment;
 		
+		private Date date;
+		
 		public Certifica2Period(){
 			super();
 		}
@@ -72,6 +74,15 @@ public class Certifica2Info implements Serializable {
 		public void setBase_unemployment(Double base_unemployment) {
 			this.base_unemployment = base_unemployment;
 		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
+		
 	}
 	
 	// ------------------------------------------ Variables

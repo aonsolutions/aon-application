@@ -393,13 +393,15 @@ public class PackagingDAO {
 		if(elaborationDetail.isEmpty()) {
 			String series = Integer.toString(AonDateUtils.getYear(new Date()));
 			Integer number = ElaborationDAO.getNextNumber(ctx, series);
+			String description = AonStringUtils.isBlank(packaging.getItem().getDescription())
+					? packaging.getItem().getProduct().getName() : packaging.getItem().getDescription();
 			elaboration = new Elaboration()
 					.setDomain(ctx.getDomainId())
 					.setSeries(series)
 					.setNumber(number)
 					.setDate(new Date())
 					.setItem(packaging.getBase())
-					.setDescription(packaging.getItem().getProduct().getName())
+					.setDescription(description)
 					.setWarehouse(warehouse)
 					.setQuantity(packaging.getQuantity())
 					.setStatus(ElaborationStatus.IN_PROGRESS)

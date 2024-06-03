@@ -232,7 +232,7 @@ export class AonIconButton extends AonElement {
     this.disabled = disabled;
     if(disabled) {
       this.getButton().disabled = disabled;
-    } else {
+    } else { 
       this.getButton().removeAttribute(CONSTANT.DISABLED);
     }
   }

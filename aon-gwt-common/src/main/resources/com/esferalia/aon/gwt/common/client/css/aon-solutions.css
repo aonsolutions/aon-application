@@ -1102,6 +1102,14 @@
 	border-bottom: 1px solid #b9b8b8;	
 }
 
+.aon_custom_search_box{
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	border-bottom: 1px solid rgb(185, 184, 184);
+	width: 275px;
+}
+
 .aon_custom_text_box_input_no_border{
 	text-overflow: ellipsis;
 	font-size: 13px;
@@ -1111,6 +1119,11 @@
 	width: -webkit-fill-available;
 	height: 1.5rem;
 	padding: .2rem;
+}
+
+.aon_custom_text_box_input_no_border:focus{
+	border: none !important;
+  	box-shadow: none !important;
 }
 
 .aon_custom_text_box_input:focus{

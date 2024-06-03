@@ -6744,6 +6744,162 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+
+	
+	@Test
+	public void testDelaysPPEIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, Collections.singletonMap("DIAS_MES", "[ \"01\":30, \"02\":30, \"03\":30, \"04\":30, \"05\":30, \"06\":30, \"07\":30, \"08\": DIAS_NATURALES_MES, \"09\": DIAS_NATURALES_MES, \"10\": DIAS_NATURALES_MES, \"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]"));
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"4.6 / 100.00 * BASE_CGC"
+				}, null);
+		//@formatter:on
+		setData(aonContext, contract, "GRUPO_COTIZACION","\"08\"");
+		setData(aonContext, contract, "COEFICIENTE_PARCIALIDAD","0.50");
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+
+		Date startDate = firstDayOfMonth;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date itStartDate = add(add(startDate, Calendar.MONTH, 2), Calendar.DAY_OF_MONTH, 10 ); 
+		Date itEndDate = add(itStartDate, Calendar.MONTH, 2); 
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, itStartDate, itEndDate, null);
+		
+		
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addCost(aonContext, contract, contract.getStartDate(), null,
+				"/*read-only*/ isdef BASE_PPE ? SELF.addBonus('REDUCCIÓN APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO','BASE_PPE * 23.6 / 100.00 '); BASE_PPE : HIDE() /**/",
+				"APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO", 
+				"PPE_E");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(
+				aonContext, 
+				contract, 
+				firstDayOfMonth, 
+				null, 
+				ppeConcept, 
+				"APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO", 
+				"TOTAL_DEVENGADO; __PPE =(/*user*/APORTACION_EMPRESA_PPE/**/ * DIAS_TRABAJADOS / DIAS_MES) ; 0.00", 
+				null, 
+				"__PPE", 
+				(PaymentType) null, 
+				(Byte) null);
+		
+
+		setData(aonContext, contract, "HORAS_NOMINA", "MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, 100.00)))");
+
+		addData(aonContext, contract, firstDayOfMonth, null, "APORTACION_EMPRESA_PPE","100.00");
+
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+
+		addData(aonContext, contract, 
+				firstDayOfMonth, 
+				add(startDate, DAY_OF_MONTH, -1), 
+				ContextVariable.DELAY_CAUSE.getName(), 
+				ContextVariable.CRA_0033.getName());
+		
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		
+		SQLContractSalaryCalculatorContext delayCtx = new SQLContractPPECalculatorContext(connection, getFirstDayOfMonth(getToday()), add(startDate, DAY_OF_MONTH, -1), endDate, criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.printf( "%d -. [%s]: %s, %f, %s\r\n", ((IContractPayment) payment ).getId(), payment.getName(), description, quote, startDate  );
+			}
+			
+			@Override
+			public void addBonus(Double amount, String description, java.util.Date startDate, java.util.Date endDate,
+					IBonus bonus, Map<String, ITimedVariable<?>> context) {
+				super.addBonus(amount, description, startDate, endDate, bonus, context);
+				System.out.printf( "[%s]: %s, %f, %s\r\n", bonus.getName(), description, amount, startDate  );
+			}
+			
+			@Override
+			public void addData(String name, ITimedVariable<?> data) {
+				// TODO Auto-generated method stub
+				super.addData(name, data);
+				//System.out.println(name + " : " + data.getValue(data.getPeriod() ));
+			}
+			
+		});
+
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+//		delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.DELAY_CAUSE.getName()))
+//				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
+//		
+//		List<ContextData> salaryHours = AON.getSalaryData( new AONContext(connection) , 
+//		p -> p.getContractProperty().eq(contract.getId()))
+//		//.sorted( (s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()))
+//		.flatMap( s -> s.getContextData().get(ContextVariable.SALARY_HOURS.getName()).stream())
+//		.sorted( (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate() ))
+//		.toList();
+//		
+//		
+//		List<SalaryData> delayHours = delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.SALARY_HOURS.getName())).sorted((v1,v2) -> v1.getStartDate().compareTo(v2.getStartDate())).toList();
+//		for (int i = 0; i < salaryHours.size(); i++) {
+//			Double delayHour = Double.parseDouble(delayHours.get(i).getExpression());
+//			Double salaryHour = Double.parseDouble(salaryHours.get(i).getExpression());
+//			org.junit.Assert.assertEquals(salaryHour, delayHour, DELTA );
+//			
+//		}	
+		
+		org.junit.Assert.assertEquals(9, delay.getSalaryPayments().size());
+		
+		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
+		org.junit.Assert.assertEquals(1, distinct);
+		
+		int itStartDay =  get(itStartDate, Calendar.DAY_OF_MONTH );
+		int itStartDays =  get( getLastDayOfMonth(itStartDate), Calendar.DAY_OF_MONTH);
+
+		int itEndDay =  get(itEndDate, Calendar.DAY_OF_MONTH );
+		int itEndDays =  get( getLastDayOfMonth(itEndDate), Calendar.DAY_OF_MONTH);
+
+		double expected = 100.00 * 7 * 0.5  
+				+ 100.00 * 0.5 * itStartDay / itStartDays 
+				+ 100.00 * 0.5 * ( itEndDays - itEndDay - 1 ) / itEndDays 
+				;
+		
+		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), 0.5);
+		org.junit.Assert.assertEquals(expected, delay.getRawCommonBase(), 0.5);
+		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), 0.5);
+		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
+		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), 0.5);
+		
+		
+	}
+
 	// ------------------------------------------
 
 	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,

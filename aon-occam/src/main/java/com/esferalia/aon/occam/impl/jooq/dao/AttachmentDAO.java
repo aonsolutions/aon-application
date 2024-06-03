@@ -94,7 +94,7 @@ public class AttachmentDAO {
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
 		RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID, RATTACH.CATEGORY,
-		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE};
+		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE, CATEGORY.ID, CATEGORY.DESCRIPTION, CATEGORY.DOMAIN, CATEGORY.NAME, CATEGORY.RATTACH, CATEGORY.SCOPE, CATEGORY.TYPE, CATEGORY.URL, SCOPE.ID, SCOPE.DESCRIPTION};
 
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] contractAttachWD = {CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT,
@@ -183,9 +183,17 @@ public class AttachmentDAO {
 	}
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
-		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		if(withData) select = ctx.getDslContext().select().from(RATTACH); //.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
+		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		if(withData) select = ctx.getDslContext().select().from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		return RATTACH_PROPERTIES.build(select, filter).fetch().stream().map(new RegistryAttachFiller());
 	}
 	
 	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){

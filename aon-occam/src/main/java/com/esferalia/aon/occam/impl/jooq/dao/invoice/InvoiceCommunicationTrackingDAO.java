@@ -15,30 +15,29 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceTrackingProperties;
+import com.esferalia.aon.occam.api.model.Properties.InvoiceCommunicationTrackingProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO.InvoiceBatchFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO.InvoiceBatchDetailFiller;
 
-public class InvoiceTrackingDAO {
+public class InvoiceCommunicationTrackingDAO {
 	
-	private InvoiceTrackingDAO() {
+	private InvoiceCommunicationTrackingDAO() {
 	
 	}
 	
-	private static final InvoiceTrackingPropertiesDAO INVOICE_TRACKING_PROPERTIES = new InvoiceTrackingPropertiesDAO();
-	public static class InvoiceTrackingPropertiesDAO implements InvoiceTrackingProperties {
+	private static final InvoiceCommunicationTrackingPropertiesDAO INVOICE_COMMUNICATION_TRACKING_PROPERTIES = new InvoiceCommunicationTrackingPropertiesDAO();
+	public static class InvoiceCommunicationTrackingPropertiesDAO implements InvoiceCommunicationTrackingProperties {
 		
-		public Condition[] getConditions(InvoiceTrackingFilter filter) {
+		public Condition[] getConditions(InvoiceCommunicationTrackingFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
@@ -60,42 +59,42 @@ public class InvoiceTrackingDAO {
 	}
 	
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceTrackingFilter filter){	
+	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceCommunicationTrackingFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(INVOICE_BATCH)
 				.join(INVOICE_BATCH_DETAIL).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
-				.where(INVOICE_TRACKING_PROPERTIES.getConditions(filter));
+				.where(INVOICE_COMMUNICATION_TRACKING_PROPERTIES.getConditions(filter));
 	}
 
-	public static Stream<InvoiceTracking> getStream(AONContext ctx, InvoiceTrackingFilter filter) {
+	public static Stream<InvoiceCommunicationTracking> getStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return select(ctx, filter)
-			.fetch().stream().map(new InvoiceTrackingFiller());
+			.fetch().stream().map(new InvoiceCommunicationTrackingFiller());
 	}
 	
-	public static List<InvoiceTracking> getList(AONContext ctx, InvoiceTrackingFilter filter) {
+	public static List<InvoiceCommunicationTracking> getList(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return select(ctx, filter)
-			.fetch().stream().map(new InvoiceTrackingFiller())
+			.fetch().stream().map(new InvoiceCommunicationTrackingFiller())
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static InvoiceTracking get(AONContext ctx, InvoiceTrackingFilter filter) {
+	public static InvoiceCommunicationTracking get(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return select(ctx, filter).limit(1)
-			.fetch().stream().map(new InvoiceTrackingFiller())
-			.findFirst().orElse(new InvoiceTracking());
+			.fetch().stream().map(new InvoiceCommunicationTrackingFiller())
+			.findFirst().orElse(new InvoiceCommunicationTracking());
 	}
 	
-	public static InvoiceTracking save(AONContext ctx, InvoiceTracking invoiceTracking) {
-		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceTracking.getInvoiceBatchDetail().getInvoice());
+	public static InvoiceCommunicationTracking save(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking) {
+		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceCommunicationTracking.getInvoiceBatchDetail().getInvoice());
 		if(inv != null && inv.getId() != null) {
-			InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceTracking.getInvoiceBatch());
-			invoiceTracking.setInvoiceBatch(invoiceBatch);
+			InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceCommunicationTracking.getInvoiceBatch());
+			invoiceCommunicationTracking.setInvoiceBatch(invoiceBatch);
 		
-			invoiceTracking.getInvoiceBatchDetail().setInvoiceBatch(invoiceBatch.getId());
-			InvoiceBatchDetail invoiceBatchDetail = InvoiceBatchDetailDAO.save(ctx, invoiceTracking.getInvoiceBatchDetail());
-			invoiceTracking.setInvoiceBatchDetail(invoiceBatchDetail);
+			invoiceCommunicationTracking.getInvoiceBatchDetail().setInvoiceBatch(invoiceBatch.getId());
+			InvoiceBatchDetail invoiceBatchDetail = InvoiceBatchDetailDAO.save(ctx, invoiceCommunicationTracking.getInvoiceBatchDetail());
+			invoiceCommunicationTracking.setInvoiceBatchDetail(invoiceBatchDetail);
 		}
-		return invoiceTracking;
+		return invoiceCommunicationTracking;
 	}
 	
 	public static void delete(AONContext ctx, Integer invoiceId) {
@@ -106,15 +105,15 @@ public class InvoiceTrackingDAO {
 		InvoiceBatchDAO.delete(ctx, f -> f.getIdProperty().in(array));
 	}
 
-	public static class InvoiceTrackingFiller extends Filler implements Function<Record, InvoiceTracking> {
+	public static class InvoiceCommunicationTrackingFiller extends Filler implements Function<Record, InvoiceCommunicationTracking> {
 
 		@Override
-		public InvoiceTracking apply(Record r) {
+		public InvoiceCommunicationTracking apply(Record r) {
 			return build(r);
 		}
 		
-		public static InvoiceTracking build(Record r) {
-			return new InvoiceTracking()
+		public static InvoiceCommunicationTracking build(Record r) {
+			return new InvoiceCommunicationTracking()
 				.setInvoiceBatch(InvoiceBatchFiller.build(r))
 				.setInvoiceBatchDetail(InvoiceBatchDetailFiller.build(r));
 		}
