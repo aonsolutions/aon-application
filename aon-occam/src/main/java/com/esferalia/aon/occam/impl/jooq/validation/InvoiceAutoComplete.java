@@ -237,7 +237,7 @@ public class InvoiceAutoComplete {
 								.setScope(inv.getScope());
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "430"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4300"))
 								.setAlias(customer.getAlias())
 								.setDescription(customer.getName())
 								.setActive(true);
@@ -273,7 +273,7 @@ public class InvoiceAutoComplete {
 								.setScope(inv.getScope());
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "400"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4000"))
 								.setAlias(supplier.getAlias())
 								.setDescription(supplier.getName())
 								.setActive(true);
@@ -312,7 +312,7 @@ public class InvoiceAutoComplete {
 						
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "410"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4100"))
 								.setAlias(creditor.getAlias())
 								.setDescription(creditor.getName())
 								.setActive(true);
