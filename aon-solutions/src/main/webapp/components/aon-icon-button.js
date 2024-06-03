@@ -185,9 +185,9 @@ export class AonIconButton extends AonElement {
       
       this.getButton().addEventListener("mouseleave", () => {
         this.getButton().style.backgroundColor = background;
-        if((!header.style.backgroundColor)&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"))
+        if((!header.style.backgroundColor)&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"||this.getButton().id=="aonHeaderCompanyListButtonIconButton"))
           this.getButton().style.color = "#5f6368";
-        else if(header.style.backgroundColor&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"))
+        else if(header.style.backgroundColor&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"||this.getButton().id=="aonHeaderCompanyListButtonIconButton"))
           this.getButton().style.color = "white";
         else 
           this.getButton().style.color = "#5f6368";
