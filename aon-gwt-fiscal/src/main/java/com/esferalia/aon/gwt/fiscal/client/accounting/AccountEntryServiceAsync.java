@@ -26,6 +26,8 @@ public interface AccountEntryServiceAsync {
 	void initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback);
 	void initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback);
 	void getPendingImportAccountingInvoices(Occam occam, String query, AsyncCallback<LinkedList<AccountingInvoice>> asyncCallback);
+	void save(Occam occam, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback);
+	void getFinanceEntry(Occam occam, Integer accountEntry, AsyncCallback<FinanceEntry> asyncCallback);
 	//	-----------------------------------
 	
 	void getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit, AsyncCallback<LinkedList<AccountEntry>> callback);
@@ -41,8 +43,6 @@ public interface AccountEntryServiceAsync {
 	void rectifyInvoice(String domainName, int domain, String user, Integer id, InvoiceRectificationData data, AsyncCallback<AccountingInvoice> asyncCallback);
 	void getSalaryEntries(String domainName, int domain, String user, Date from, Date to, AsyncCallback<LinkedList<SalaryEntry>> callback);
 	void getSalaryFormatted(String domainName, int domain, String user, Date from, Date to, AsyncCallback<String> callback);
-	void getFinanceEntry(String domainName, int domain, String user, Integer accountEntry, AsyncCallback<FinanceEntry> asyncCallback);
-	void save(String domainName, int domain, String user, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback);
 	void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback);
 	void getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper, AsyncCallback<LinkedList<AccountEntryUpdate>> callback);
 

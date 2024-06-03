@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -422,6 +424,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getSurveySuggestion(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getTagSuggestion(String domainName, int domain, String user, TagType tagType, AsyncCallback<List<Tag>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTagSuggestion(domainName, domain, user, tagType, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// **************************************************
 	// ************************ [MARKETING ACTION TARGET]
 	// **************************************************
@@ -474,6 +482,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getSellerByTaskHolder(domainName, domain, user, taskHolder, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup, AsyncCallback<Seller> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getNextLinealSellerByWorkgroup(domainName, domain, user, workgroup, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial, AsyncCallback<ProjectCommercial> callback) throws AonCoreException {
@@ -495,6 +509,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSellers(SellerParams params, AsyncCallback<List<Seller>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSellers(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getSellersCount(SellerParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

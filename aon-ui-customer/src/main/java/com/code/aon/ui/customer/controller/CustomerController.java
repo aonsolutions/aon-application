@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Stream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -28,6 +30,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
@@ -47,12 +50,24 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.itextpdf.text.DocumentException;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.customer.report.CustomerReportPDF;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
 	
-	private final static Logger LOGGER = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomerController.class);
 	
     private boolean showAlumnData;
@@ -309,7 +324,7 @@ public class CustomerController extends CustomerListController implements ICusto
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
 		List<ITransferObject> list = targetBean.getList(criteria);
-		if(list.size()>0)
+		if(!list.isEmpty())
 			return ((Target)list.get(0)).getId();
 		return -1;
 	}
@@ -318,5 +333,67 @@ public class CustomerController extends CustomerListController implements ICusto
 		Customer customer = (Customer)getTo();
 		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
+	
+	public String onNewReport() throws ManagerBeanException, IOException, DocumentException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		OutputStream out = response.getOutputStream();
+		
+		Occam occam = new Occam()
+				.setDomainName(  AonUtil.getDomainName() )
+				.setDomain(  DomainManager.getCurrentDomain() )
+				.setUser(  AonUtil.getRemoteUser() )
+				;
+	
+		Stream <CustomerFull> customers = 
+		AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+			.map(to -> (Customer) to)
+			.map(this::toCustomerFull );
+		CustomerReportPDF c = new CustomerReportPDF();
+		c.printReportPDF(occam, out, customers);
+		response.flushBuffer();
+		context.responseComplete();
+		return null;
+	}
+
+	private CustomerFull toCustomerFull(Customer customer) {
+		CustomerFull customerFull = new CustomerFull();
+		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
+		
+		occamCustomer.setDocument(customer.getRegistry().getDocument());
+		occamCustomer.setAlias(customer.getRegistry().getAlias());
+		occamCustomer.setDocumentCountry(toOccamCountry(customer.getRegistry().getDocumentCountry()));
+		occamCustomer.setId(customer.getRegistry().getId());
+		occamCustomer.setName(customer.getRegistry().getName());
+		customerFull.setRegistry(occamCustomer);
+		
+		try {
+			com.code.aon.registry.RegistryMedia phone = customer.getRegistry().getPhone();
+			if (phone != null) {
+				customerFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
+		}
+		
+		occamCustomer.setStatus(customerStatusToRegistryStatus(customer.getStatus()));
+		
+		return customerFull;
+
+	}
+
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
+	}
+	
+	
+	
+	private static RegistryStatus customerStatusToRegistryStatus( CustomerStatus cs ) {
+		if(cs== null) {
+			return null;
+		}
+		return RegistryStatus.valueOf( cs.toString() );
+	}
+
 	
 }

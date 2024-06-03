@@ -32,15 +32,15 @@ export const AON_APPS = [
 ];
 
 export const MENU_APPS = [
-  //APPLICATIONS,
   HOME,
+  APP.INVOICE,
   APP.DOCUMENTAL,
   APP.ACCOUNTING,
   APP.FISCAL,
   APP.PAYROLL,
-  APP.INVOICE,
   APP.TIMECONTROL,
   APP.NOTES,
+  APP.MESSENGER
 ];
 
 
@@ -48,14 +48,16 @@ export const MENU_APPS = [
 export const Apps = APP.Apps;
 export const AuxApps = APP.AuxApps;
 export const MenuApps = APP.MenuApps;
+
 export const HomeApps = {
 	HOME,
 	APPS,
 	APPLICATIONS
 };
 
-export const COMERCIAL_MENU = {
-	app: "comercial",
+
+export const COMMERCIAL_MENU = {
+	app: "comercialMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.HANDSHAKE,
 	title: MSG.COMMERCIAL,
@@ -66,7 +68,7 @@ export const COMERCIAL_MENU = {
 };
 
 export const MANAGEMENT_MENU = {
-	app: "management",
+	app: "managementMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.MONITORING,
 	title: MSG.MANAGEMENT,
@@ -77,7 +79,7 @@ export const MANAGEMENT_MENU = {
 };
 
 export const TREASURY_MENU = {
-	app: "treasury",
+	app: "treasuryMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.TREASURY,
@@ -88,7 +90,7 @@ export const TREASURY_MENU = {
 };
 
 export const WAREHOUSE_MENU = {
-	app: "warehouse",
+	app: "warehouseMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.TROLLEY,
 	title: MSG.WAREHOUSE,
@@ -99,7 +101,7 @@ export const WAREHOUSE_MENU = {
 };
 
 export const GROUPWARE_MENU = {
-	app: "groupware",
+	app: "groupwareMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.NOTE_STACK,
 	title: MSG.GROUPWARE,
@@ -110,7 +112,7 @@ export const GROUPWARE_MENU = {
 };
 
 export const ACCOUNTING_MENU = {
-	app: "accounting",
+	app: "accountingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,
@@ -121,7 +123,7 @@ export const ACCOUNTING_MENU = {
 };
 
 export const FISCAL_MENU = {
-	app: "fiscal",
+	app: "fiscalMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.FISCAL,
@@ -132,7 +134,7 @@ export const FISCAL_MENU = {
 };
 
 export const PAYROLL_MENU = {
-	app: "payroll",
+	app: "payrollMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.GROUPS,
 	title: MSG.PAYROLL,
@@ -143,7 +145,7 @@ export const PAYROLL_MENU = {
 };
 
 export const MARKETING_MENU = {
-	app: "marketing",
+	app: "marketingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CAMPAIGN,
 	title: MSG.MARKETING,
@@ -160,7 +162,7 @@ export const TOP_MENU_APPS = [
 	APP.ACADEMY,
 	APP.COMMERCE,
 
-	COMERCIAL_MENU,
+	COMMERCIAL_MENU,
 	MANAGEMENT_MENU,
 	TREASURY_MENU,
 	WAREHOUSE_MENU,

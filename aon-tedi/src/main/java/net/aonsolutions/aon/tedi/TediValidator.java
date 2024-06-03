@@ -15,9 +15,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.tedi.TediContext;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -34,7 +35,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_DOMAIN = (ctx) -> {
 		if (ctx.getInvoice().getDomain() == null || ctx.getInvoice().getDomain() == 0) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.DOMAIN) );
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.DOMAIN) );
 		}
 	};
 	/**
@@ -43,7 +44,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> EMPTY_INVOICE_SCOPE = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() != null &&
 			(ctx.getInvoice().getScope() == null || ctx.getInvoice().getScope().getId() == null)) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.SCOPE));
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.SCOPE));
 		}
 	};
 	/**
@@ -52,7 +53,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_SERIES = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getSeries())) {
 			if (willOverflow(INVOICE.SERIES, ctx.getInvoice().getSeries())) {
-				ctx.add( TediErrorMessages.C002.wrn(TediContextKey.SERIES, TediContextKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
+				ctx.add( InvoiceErrorMessages.C002.wrn(InvoiceErrorKey.SERIES, InvoiceErrorKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
 			}
 		}
 	};
@@ -61,7 +62,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_REFERENCE_CODE = (ctx) -> {
 		if (!ctx.getInvoice().isSales() && AonStringUtils.isBlank(ctx.getInvoice().getReferenceCode())) {
-			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.REFERENCE_CODE));
+			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.REFERENCE_CODE));
 		}
 	};
 	
@@ -70,7 +71,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_SALES_NUMBER = (ctx) -> {
 		if (ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() == 0 ) {
-			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.NUMBER));
+			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.NUMBER));
 		}
 	};
 	
@@ -81,7 +82,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_REFERENCE_CODE = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getReferenceCode())) {
 			if (willOverflow(INVOICE.REFERENCE_CODE, ctx.getInvoice().getReferenceCode())) {
-				ctx.add( TediErrorMessages.C002.err(TediContextKey.REFERENCE_CODE, TediContextKey.REFERENCE_CODE.getDescription(), INVOICE.REFERENCE_CODE.getDataType().length()));
+				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.REFERENCE_CODE, InvoiceErrorKey.REFERENCE_CODE.getDescription(), INVOICE.REFERENCE_CODE.getDataType().length()));
 			}
 		}
 	};
@@ -90,7 +91,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_TRANSACTION = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() != null && (ctx.getInvoice().getTransaction() == null)) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.TRANSACTION) );
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
 		}
 	};
 	/**
@@ -98,7 +99,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_DATE = (ctx) -> {
 		if (ctx.getInvoice().getIssueDate() == null) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.ISSUE_DATE) );
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE) );
 		}
 	};
 
@@ -117,7 +118,7 @@ public class TediValidator {
 						.and(INVOICE.NUMBER.eq(ctx.getInvoice().getNumber()))
 						.and(ctx.getInvoice().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(ctx.getInvoice().getId()))
 						.and(INVOICE.TYPE.eq(ctx.getInvoice().getType().value())))) {
-				ctx.add( TediErrorMessages.C005.wrn(TediContextKey.DUPLICATED_SERIES_NUMBER) );
+				ctx.add( InvoiceErrorMessages.C005.wrn(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
 			}
 		}
 	};
@@ -141,7 +142,7 @@ public class TediValidator {
 					.and(ctx.getInvoice().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(ctx.getInvoice().getId()))					
 					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( ctx.getInvoice().getIssueDate())))
 				)) {
-				ctx.add( TediErrorMessages.C006.wrn(TediContextKey.DUPLICATED_REFERENCE_CODE) );
+				ctx.add( InvoiceErrorMessages.C006.wrn(InvoiceErrorKey.DUPLICATED_REFERENCE_CODE) );
 			}
 		}
 	};
@@ -151,7 +152,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_TAX_DATE = (ctx) -> {
 		if (ctx.getInvoice().getIssueDate() != null && ctx.getInvoice().getTaxDate() == null) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.TAX_DATE) );
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
 		}
 	};
 	/**
@@ -159,7 +160,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_INVOICE_TYPE = (ctx) -> {
 		if (ctx.getInvoice().getType() == null) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.TYPE) );
+			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TYPE) );
 		}
 	};
 
@@ -169,9 +170,9 @@ public class TediValidator {
 	public static Consumer<ValidationContext> EMPTY_REGISTRY = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() == null) {
 			if (AonStringUtils.isEmpty(ctx.getInvoice().getRegistryDocument())) {
-				ctx.add( TediErrorMessages.C001.err(TediContextKey.REGISTRY) );
+				ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REGISTRY) );
 			} else {
-				ctx.add( TediErrorMessages.C009.err(TediContextKey.REGISTRY,
+				ctx.add( InvoiceErrorMessages.C009.err(InvoiceErrorKey.REGISTRY,
 						(ctx.getInvoice().isSales()?"cliente":"acreedor/proveedor")
 						,(ctx.getInvoice().getRegistryDocument() + " " + ctx.getInvoice().getRegistryName())) );
 			}
@@ -183,7 +184,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_REGISTRY_DOCUMENT = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() != null && AonStringUtils.isBlank(ctx.getInvoice().getRegistryDocument())) {
-			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.RDOCUMENT) );
+			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RDOCUMENT) );
 		}
 	};
 	/**
@@ -192,7 +193,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_REGISTRY_DOCUMENT = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryDocument())) {
 			if (willOverflow(INVOICE.RDOCUMENT, ctx.getInvoice().getRegistryDocument())) {
-				ctx.add( TediErrorMessages.C002.err(TediContextKey.RDOCUMENT, TediContextKey.RDOCUMENT.getDescription(), INVOICE.RDOCUMENT.getDataType().length()));
+				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RDOCUMENT, InvoiceErrorKey.RDOCUMENT.getDescription(), INVOICE.RDOCUMENT.getDataType().length()));
 			}
 		}
 	};
@@ -206,10 +207,10 @@ public class TediValidator {
 				ctx.getInvoice().getRegistryDocumentCountry().getIso2();
 			if ("ES".equals( country )) {
 				if (!AonDocumentUtil.isValid(ctx.getInvoice().getRegistryDocument())) {
-					ctx.add( TediErrorMessages.C004.wrn(TediContextKey.RDOCUMENT) );
+					ctx.add( InvoiceErrorMessages.C004.wrn(InvoiceErrorKey.RDOCUMENT) );
 				}
 			} else if (!AonDocumentUtil.isValidComunitaryCode(country,ctx.getInvoice().getRegistryDocument())) {
-				ctx.add( TediErrorMessages.C004.wrn(TediContextKey.RDOCUMENT) );
+				ctx.add( InvoiceErrorMessages.C004.wrn(InvoiceErrorKey.RDOCUMENT) );
 			}
 		}
 	};
@@ -218,7 +219,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_REGISTRY_NAME = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() != null &&  AonStringUtils.isBlank(ctx.getInvoice().getRegistryName())) {
-			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.RNAME) );
+			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RNAME) );
 		}
 	};
 	/**
@@ -227,7 +228,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_REGISTRY_NAME = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryName())) {
 			if (willOverflow(INVOICE.RNAME, ctx.getInvoice().getRegistryName())) {
-				ctx.add( TediErrorMessages.C002.err(TediContextKey.RNAME, TediContextKey.RNAME.getDescription(), INVOICE.RNAME.getDataType().length()));
+				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RNAME, InvoiceErrorKey.RNAME.getDescription(), INVOICE.RNAME.getDataType().length()));
 			}
 		}
 	};
@@ -238,7 +239,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_ADDRESS = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getAddress().getAddress())) {
 			if (willOverflow(RADDRESS.ADDRESS, ctx.getInvoice().getAddress().getAddress())) {
-				ctx.add( TediErrorMessages.C002.err(TediContextKey.ADDRESS, TediContextKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
+				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.ADDRESS, InvoiceErrorKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
 			}
 		}
 	};
@@ -249,8 +250,8 @@ public class TediValidator {
 	public static BiConsumer<ValidationContext,InvoiceDetail> OVERFLOW_DETAIL_DESCRIPTION = (ctx,detail) -> {
 		if (AonStringUtils.isNotBlank(detail.getDescription())) {
 			if (willOverflow(INVOICE_DETAIL.DESCRIPTION, detail.getDescription())) {
-				TediContext context = new TediContext(TediContextKey.DETAIL_DESCRIPTION, (int) detail.getLine());  
-				ctx.add( TediErrorMessages.C002.err(context, TediContextKey.DETAIL_DESCRIPTION.getDescription(), INVOICE_DETAIL.DESCRIPTION.getDataType().length()));
+				InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.DETAIL_DESCRIPTION, (int) detail.getLine());  
+				ctx.add( InvoiceErrorMessages.C002.err(context, InvoiceErrorKey.DETAIL_DESCRIPTION.getDescription(), INVOICE_DETAIL.DESCRIPTION.getDataType().length()));
 			}
 		}
 	};
@@ -266,8 +267,8 @@ public class TediValidator {
 
 	public static BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount())) {
-			TediContext context = new TediContext(TediContextKey.FINANCE_AMOUNT_ZERO);
-			ctx.add( TediErrorMessages.C014.wrn(context, TediContextKey.FINANCE_AMOUNT_ZERO.getDescription()));
+			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.FINANCE_AMOUNT_ZERO);
+			ctx.add( InvoiceErrorMessages.C014.wrn(context, InvoiceErrorKey.FINANCE_AMOUNT_ZERO.getDescription()));
 		}
 	};
 
@@ -278,8 +279,8 @@ public class TediValidator {
 			finance.setBic(null);
 		}
 		if (finance.getBankAccount() != null && !finance.getBankAccount().isValidBankAccount()) {
-			TediContext context = new TediContext(TediContextKey.FINANCE_WRONG_ACCOUNT_BANK);
-			ctx.add( TediErrorMessages.C014.err(context, TediContextKey.FINANCE_WRONG_ACCOUNT_BANK.getDescription()));
+			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.FINANCE_WRONG_ACCOUNT_BANK);
+			ctx.add( InvoiceErrorMessages.C014.err(context, InvoiceErrorKey.FINANCE_WRONG_ACCOUNT_BANK.getDescription()));
 		}
 	};
 	
@@ -302,14 +303,14 @@ public class TediValidator {
 			int thisYear = AonDateUtils.getYear(new Date());
 			int invoiceYear = AonDateUtils.getYear(ctx.getInvoice().getIssueDate());
 			if (invoiceYear < (thisYear - 5) || invoiceYear > (thisYear + 1)) {
-				ctx.add( TediErrorMessages.C008.err(TediContextKey.ISSUE_DATE) );
+				ctx.add( InvoiceErrorMessages.C008.err(InvoiceErrorKey.ISSUE_DATE) );
 			}
 		}
 	};
 
 	public static Consumer<ValidationContext> CHECK_LINES = (ctx) -> {
 		if (ctx.getInvoice().getDetails() == null || ctx.getInvoice().getDetails().size() == 0) {
-			ctx.add( TediErrorMessages.C010.err(TediContextKey.DETAILS) );
+			ctx.add( InvoiceErrorMessages.C010.err(InvoiceErrorKey.DETAILS) );
 		}
 	};
 
@@ -327,10 +328,10 @@ public class TediValidator {
 //				}
 //			}
 //			if (empty) {
-//				ctx.add( TediErrorMessages.C013.wrn(TediContextKey.ACCOUNT_ENTRY) );
+//				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
 //			}
 //			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
-//				ctx.add( TediErrorMessages.C012.wrn(TediContextKey.ACCOUNT_ENTRY) );
+//				ctx.add( InvoiceErrorMessages.C012.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
 //			}
 //		}
 //	};
@@ -353,7 +354,7 @@ public class TediValidator {
 		private TediResult getResult() {
 			return result;
 		}
-		public void add(TediError err) {
+		public void add(InvoiceError err) {
 			this.getResult().add(err);
 		}
 		public Invoice getInvoice() {

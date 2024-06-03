@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
+import java.util.function.Consumer;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
@@ -219,20 +221,20 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			;
 	}
 	
-	public Integer getSellerListCount() {
-		return null == sellerPanel || null ==  sellerPanel.getTable() ? 0 : sellerPanel.getTable().getRowsCount();
+	public void getSellerListCount(Consumer<Integer> finish) {
+		if(null == sellerPanel || null ==  sellerPanel.getTable()) finish.accept(0);
+		
+		sellerPanel.getSellerListCount(count -> {
+			finish.accept(count);
+		});
 	}
 
 	public Integer getSellerListPosition(Integer sellerId) {
 		return null == sellerId || null == sellerPanel ? 0 : sellerPanel.getSellerListPosition(sellerId);
 	}
 	
-	public Seller getPreviusSeller(Integer sellerId) {
-		return null == sellerId || null == sellerPanel ? null : sellerPanel.getPreviusSeller(sellerId);
-	}
-	
-	public Seller getNextSeller(Integer sellerId) {
-		return null == sellerId || null == sellerPanel ? null : sellerPanel.getNextSeller(sellerId);
+	public SellerParams getSellerListParams() {
+		return getWidgetParams(options);
 	}
 	
 	protected abstract void onSellerSelect(Seller seller);

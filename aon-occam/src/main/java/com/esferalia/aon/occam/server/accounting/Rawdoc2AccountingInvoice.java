@@ -67,6 +67,8 @@ public class Rawdoc2AccountingInvoice {
 				invoice.setId(null);
 			}
 			invoice = AON_SOLUTIONS.validateInvoice(domain, user, invoice);
+			// Se pone a 0 porque es rawdoc / ocr y hasta que no se grabe no tiene que tener un número asignado.
+			invoice.setNumber(0);
 			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
 		} else {
 			invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoice.getId());
@@ -137,7 +139,7 @@ public class Rawdoc2AccountingInvoice {
 				}
 
 				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
+					//.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)

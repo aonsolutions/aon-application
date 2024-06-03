@@ -587,6 +587,11 @@ public class InvoiceAutoComplete {
 					}
 				}
 			}
+			
+			if (inv.isUndeductible() && it.getTaxType() == TaxType.VAT) {
+				detail.setTaxableBase( AonMathUtils.round(it.getBase() + it.getQuota()));
+			}
+			
 		});
 	};
 	
@@ -743,5 +748,4 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
-
 }

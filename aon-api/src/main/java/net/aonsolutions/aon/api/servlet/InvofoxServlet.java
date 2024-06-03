@@ -19,8 +19,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.InvoiceErrorJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.TediErrorJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -32,13 +32,13 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisito
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.tedi.TediContext;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -680,15 +680,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		ocrDocument.getValidationInfo()
 				.ifPresent(validationInfo -> validationInfo.getErrors()
 						.ifPresent(errors -> errors.forEach(ocrError -> getMessages(ocrError)
-								.forEach(message -> messages.add(TediErrorJSON.toJSON(message))))));
+								.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))))));
 
 		ocrDocument.getData().ifPresent(ocrInvoice -> getMessages(ocrInvoice, company)
-				.forEach(message -> messages.add(TediErrorJSON.toJSON(message))));
+				.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))));
 
 		return new JSONArray(messages);
 	}
 
-	private static final Collection<TediError> getMessages(OCRInvoice ocrInvoice, Company company) {
+	private static final Collection<InvoiceError> getMessages(OCRInvoice ocrInvoice, Company company) {
 
 		if (AonStringUtils.isBlank(ocrInvoice.getIssuerDocument()))
 			return Collections.emptyList();
@@ -701,103 +701,103 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				+ ocrInvoice.getRecipientDocument());
 
 		return Collections
-				.singleton(new TediError().setLevel(TediLevel.ERR).setCode("ERROR_ISSUER_RECIPIENT_MISMATCHED")
+				.singleton(new InvoiceError().setLevel(InvoiceErrorLevel.ERR).setCode("ERROR_ISSUER_RECIPIENT_MISMATCHED")
 						.setMessage("Ni el emisor ni el receptor coinciden con la empresa."));
 
 	}
 
-	private static final Collection<TediError> getMessages(OCRError ocrError) {
+	private static final Collection<InvoiceError> getMessages(OCRError ocrError) {
 
-		Collection<TediError> messages = ocrError.getFields().orElse(Collections.emptyList()).stream().map(ocrField -> {
-			TediError tediError = new TediError();
-			tediError.setLevel(getTediLevel(ocrError));
-			ocrError.getCode().ifPresent(tediError::setCode);
-			getTediContext(ocrField).ifPresent(tediError::setContext);
-			ocrError.getDescription().ifPresent(tediError::setMessage);
-			return tediError;
-		}).collect(Collectors.toMap(TediError::getMessage, err -> err, (err1, err2) -> err2)).values();
+		Collection<InvoiceError> messages = ocrError.getFields().orElse(Collections.emptyList()).stream().map(ocrField -> {
+			InvoiceError invoiceError = new InvoiceError();
+			invoiceError.setLevel(getInvoiceErrorLevel(ocrError));
+			ocrError.getCode().ifPresent(invoiceError::setCode);
+			getInvoiceErrorContext(ocrField).ifPresent(invoiceError::setContext);
+			ocrError.getDescription().ifPresent(invoiceError::setMessage);
+			return invoiceError;
+		}).collect(Collectors.toMap(InvoiceError::getMessage, err -> err, (err1, err2) -> err2)).values();
 
 		if (!messages.isEmpty()) {
 			return messages;
 		}
 
-		TediError tediError = new TediError();
-		tediError.setLevel(getTediLevel(ocrError));
-		ocrError.getCode().ifPresent(tediError::setCode);
-		ocrError.getDescription().ifPresent(tediError::setMessage);
-		return Collections.singletonList(tediError);
+		InvoiceError invoiceError = new InvoiceError();
+		invoiceError.setLevel(getInvoiceErrorLevel(ocrError));
+		ocrError.getCode().ifPresent(invoiceError::setCode);
+		ocrError.getDescription().ifPresent(invoiceError::setMessage);
+		return Collections.singletonList(invoiceError);
 
 	}
 
-	private static final TediLevel getTediLevel(OCRError ocrError) {
+	private static final InvoiceErrorLevel getInvoiceErrorLevel(OCRError ocrError) {
 		OCRSeverity severity = ocrError.getSeverity().orElse(OCRSeverity.error);
 		switch (severity) {
 		case approved:
 		case exported:
 		case processing:
-			return TediLevel.INF;
+			return InvoiceErrorLevel.INF;
 		case error:
 		case rejected:
 		case discarded:
-			return TediLevel.ERR;
+			return InvoiceErrorLevel.ERR;
 		case pendingDecission:
 		case pendingCorrection:
-			return TediLevel.WRN;
+			return InvoiceErrorLevel.WRN;
 		default:
-			return TediLevel.ERR;
+			return InvoiceErrorLevel.ERR;
 		}
 	}
 
-	private static final Optional<TediContext> getTediContext(OCRField ocrField) {
-		TediContextKey tediContextKey = getTediContextKey(ocrField);
-		if (tediContextKey == null) {
+	private static final Optional<InvoiceErrorContext> getInvoiceErrorContext(OCRField ocrField) {
+		InvoiceErrorKey invoiceErrorKey = getInvoiceErrorKey(ocrField);
+		if (invoiceErrorKey == null) {
 			return Optional.empty();
 		}
 
-		TediContext tediContext = new TediContext();
-		tediContext.setKey(tediContextKey);
+		InvoiceErrorContext invoiceErrorContext = new InvoiceErrorContext();
+		invoiceErrorContext.setKey(invoiceErrorKey);
 
-		ocrField.getIndex().ifPresent(tediContext::setLine);
+		ocrField.getIndex().ifPresent(invoiceErrorContext::setLine);
 
-		return Optional.of(tediContext);
+		return Optional.of(invoiceErrorContext);
 	}
 
-	private static final TediContextKey getTediContextKey(OCRField ocrField) {
+	private static final InvoiceErrorKey getInvoiceErrorKey(OCRField ocrField) {
 		String fieldName = ocrField.getName().orElse("");
 		switch (fieldName) {
 		case "documentNumber":
-			return TediContextKey.REFERENCE_CODE;
+			return InvoiceErrorKey.REFERENCE_CODE;
 		case "issueDate":
-			return TediContextKey.ISSUE_DATE;
+			return InvoiceErrorKey.ISSUE_DATE;
 		case "issuerName":
-			return TediContextKey.RNAME;
+			return InvoiceErrorKey.RNAME;
 		case "issuerTaxId":
-			return TediContextKey.RDOCUMENT;
+			return InvoiceErrorKey.RDOCUMENT;
 		case "issuerCountry":
-			return TediContextKey.RDOCUMENT_COUNTRY;
+			return InvoiceErrorKey.RDOCUMENT_COUNTRY;
 		case "issuerAddress":
 		case "issuerAddressDetails":
-			return TediContextKey.ADDRESS;
+			return InvoiceErrorKey.ADDRESS;
 		case "invoiceRef":
-			return TediContextKey.REFERENCE_CODE;
+			return InvoiceErrorKey.REFERENCE_CODE;
 		case "seriesCode":
-			return TediContextKey.SERIES;
+			return InvoiceErrorKey.SERIES;
 		case "taxRate":
-			return TediContextKey.TAX_RATE;
+			return InvoiceErrorKey.TAX_RATE;
 		case "taxAmount":
 		case "totalTaxAmount":
-			return TediContextKey.TAX_QUOTA;
+			return InvoiceErrorKey.TAX_QUOTA;
 		case "taxBaseAmount":
 		case "totalTaxBaseAmount":
-			return TediContextKey.TAX_BASE;
+			return InvoiceErrorKey.TAX_BASE;
 		case "totalAmount":
-			return TediContextKey.TOTAL;
+			return InvoiceErrorKey.TOTAL;
 		case "withholdingTaxAmount":
-			return TediContextKey.IRPF_QUOTA;
+			return InvoiceErrorKey.IRPF_QUOTA;
 		case "withholdingTaxRate":
-			return TediContextKey.IRPF_RATE;
+			return InvoiceErrorKey.IRPF_RATE;
 		case "paymentMethod":
-			return TediContextKey.PAY_METHOD;
+			return InvoiceErrorKey.PAY_METHOD;
 
 		case "additionalChargesAmount":
 		case "additionalDiscountsAmount":

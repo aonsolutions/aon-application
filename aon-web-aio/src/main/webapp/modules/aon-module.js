@@ -1,7 +1,6 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { getToken , getCompanies, getUser, login} from 'aonsolutions/services/service.js';
+import { login } from 'aonsolutions/services/service.js';
 
-import { AonParent } from './aon-parent.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from 'aonsolutions/environments/environments.js'; 
 import * as LS  from 'aonsolutions/services/localStorageService.js';
@@ -10,6 +9,7 @@ import { AonLoader } from 'aonsolutions/components/aon-loader.js';
 import { AonNewLogin } from 'aonsolutions/modules/login/aon-new-login.js';
 
 import { AonNewInput } from "aonsolutions/components/aon-new-input.js";
+import { AonNewParent } from './aon-parent.js';
 
 
 export class AonModule extends AonElement {
@@ -60,9 +60,11 @@ export class AonModule extends AonElement {
 	}
 
 	async load() {
+		LS.setNewTheme(true, false);
 		await this.checkLogin();
 		if(LS.getToken()){
 			this.buildHome();
+			this.rootPanel(new AonNewParent());
 		} else {
 			this.buildLogin();
 		}

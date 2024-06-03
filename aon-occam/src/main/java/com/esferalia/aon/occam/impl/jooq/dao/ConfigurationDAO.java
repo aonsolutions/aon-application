@@ -73,22 +73,20 @@ public class ConfigurationDAO {
 		
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
-		
+		Integer[] userScopes = SecurityDAO.getUserScopes(ctx, conf.getUser().getId());
 		conf.setMd5(getMd5(conf.getUser().getLogin()+conf.getDomain().getName()))
 			.setUserOperator(operator)
 			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setAllEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
-					p -> {
-						Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
-						return (userScopes == null) 
-							? p.getDomainProperty().eq(ctx.getDomainId())
-								.and(p.getActiveProperty().eq( (byte) 1 ))
-							: p.getDomainProperty().eq(ctx.getDomainId())
-								.and(p.getActiveProperty().eq( (byte) 1 ))
-								.and(p.getScopeProperty().in( userScopes ));
-					}
+					p -> (userScopes == null) 
+						? p.getDomainProperty().eq(ctx.getDomainId())
+							.and(p.getActiveProperty().eq( (byte) 1 ))
+						: p.getDomainProperty().eq(ctx.getDomainId())
+							.and(p.getActiveProperty().eq( (byte) 1 ))
+							.and(p.getScopeProperty().in( userScopes ))
+					
 					))
 			.setVatTaxes( TaxDAO.getVatTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
@@ -141,14 +139,14 @@ public class ConfigurationDAO {
 	private static AonConfiguration getBasicConfiguration(AONContext ctx, ConfigParams params) {
 		AonConfiguration conf = new AonConfiguration()
 				.setDomain( DomainDAO.getDomain(ctx, ctx.getDomainId()) )
-				.setCompany(CompanyDAO.getCompany(ctx, ctx.getDomainId()))
-				;
+				.setCompany(CompanyDAO.getCompany(ctx, ctx.getDomainId()));
 		if (params.isByToken()) {
 			conf.setUser(AON_SOLUTIONS.getUser(conf.getDomain(), params.getToken()))
 				.setAonSolutions(true);
-		} else {
+		} 
+		if(conf.getUser() == null || conf.getUser().isEmpty()) {
 			conf.setUser(AON.getUser(conf.getDomain().getName(), conf.getDomain().getId(), ctx.getUser()))
-				.setAonSolutions(false);
+			.setAonSolutions(false);			
 		}
 		return conf;
 	}

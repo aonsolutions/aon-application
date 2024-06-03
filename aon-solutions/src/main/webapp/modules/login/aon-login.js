@@ -151,7 +151,7 @@ export class AonLogin extends AonElement {
       certificateButton.setIcon(MATERIAL_ICONS.SECURITY);
       certificateButton.setTitle(MSG.SIGN_IN_WITH_CERTIFICATE);
       certificateButton.setColor("black");
-      certificateButton.addEventListener(EVENT.CLICK, () =>  LS.setNewTheme(true));
+      certificateButton.addEventListener(EVENT.CLICK, () =>  LS.setNewTheme(true, true));
       divButtons.appendChild(certificateButton);
     }
 
