@@ -1,14 +1,11 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
-import {AonSign} from 'aonsolutions/modules/timecontrol/aon-sign.js';
-import { AonApplication } from 'aonsolutions/components/aon-application.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 
-export class AonNewParent extends AonElement {
+export class AonParent extends AonElement {
 
 
 	notice;
@@ -396,7 +393,7 @@ export class AonNewParent extends AonElement {
 }
 
 
-if(!window.customElements.get('aon-new-parent')){
+if(!window.customElements.get(TAG.AON_PARENT)){
 	console.log( 'Define <aon-new-parent> ^-^' );
-	window.customElements.define('aon-new-parent', AonNewParent);
+	window.customElements.define(TAG.AON_PARENT, AonParent);
 }
