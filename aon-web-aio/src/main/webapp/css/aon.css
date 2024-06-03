@@ -1,5 +1,8 @@
 :root{
   --aonBlue: #002469;
+  --aonOrange: #e6970a;
+  --aonGreen: #169873;
+  --aonRed: #f6655a;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
@@ -2413,10 +2416,10 @@ label.rating:hover {
   }
 }
 
-:has(>.aonMenuApp):hover{
+/* :has(>.aonMenuApp):hover{
   background-color: white !important;
   cursor: pointer;
-}
+} */
 
 :has(>.aonMenuApp):hover .aonMenuAppHighlight {
   color: #464feb !important;
