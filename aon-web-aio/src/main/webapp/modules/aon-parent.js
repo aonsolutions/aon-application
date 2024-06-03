@@ -66,6 +66,7 @@ export class AonParent extends AonElement {
 			if(companies.length === 1){
 				this.companySelection(companies[0], true);
 			} else {
+				this.getElement("aonMenu").close();
 				this.selectTab(filter);		
 				//TODO: aonParent.stopLoader();
 				this.page = 1;

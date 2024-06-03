@@ -101,6 +101,7 @@ export class AonHeader extends AonElement {
         let aonHeaderApp = this.createElement(TAG.DIV);
 		aonHeaderApp.id = "aonHeaderApp";
 		aonHeaderApp.className = "aonHeaderApp";
+		aonHeaderApp.style.minWidth = '120px';
 		aonHeaderApp.style.display = "none";
 		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		div.appendChild(aonHeaderApp);
@@ -650,7 +651,7 @@ export class AonHeader extends AonElement {
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
-		div.style.justifyContent = 'center';
+		// div.style.justifyContent = 'center';
 		div.style.height =  '32px';
 		div.style.flexDirection =  'row';
 		div.style.backgroundColor = 'transparent';

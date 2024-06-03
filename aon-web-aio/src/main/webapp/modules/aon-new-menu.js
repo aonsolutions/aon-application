@@ -512,7 +512,9 @@ export class AonNewMenu extends AonElement {
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
-			if(app.color) icon.style.color = app.color;
+			if(app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
 			icon.style.padding = "4px";
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
@@ -757,7 +759,8 @@ export class AonNewMenu extends AonElement {
 				return '#da002a';
 			} else return '#3a85c3';
 		}
-		return app.color ? app.color : '#f1f1f1';
+		const appColor = app.newColor || app.color;
+		return appColor ? appColor : '#f1f1f1';
 	}
 
 	addApp(app) {
@@ -772,24 +775,8 @@ export class AonNewMenu extends AonElement {
 	}
 
 	close() {
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		aonMenuSidenav.style.transitionDuration = '0ms';
-		aonMenuSidenav.style.width = '0px';
-		this.getRootPanel().style.marginLeft = '0px';
-		this.removeAttribute('opened');
-		this.toolbarClose();
-	}
-
-	toolbarClose() {
-		let application = this.getApplication();
-		if (application) {
-			let toolbar = application.getToolbar();
-			if (toolbar) {
-				let toolSection = toolbar.getToolSection();
-				if (toolSection)
-					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
-			}
-		}
+		this.hideSideNav();
+		this.hideTopNav();
 	}
 
 	isExpanded() {
