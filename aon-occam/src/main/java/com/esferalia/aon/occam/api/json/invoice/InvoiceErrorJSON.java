@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.json;
+package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.LinkedList;
 import java.util.List;
