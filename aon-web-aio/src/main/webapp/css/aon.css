@@ -2413,11 +2413,6 @@ label.rating:hover {
   }
 }
 
-:has(>.aonMenuApp):hover{
-  background-color: white !important;
-  cursor: pointer;
-}
-
 :has(>.aonMenuApp):hover .aonMenuAppHighlight {
   color: #464feb !important;
   font-weight: bold !important;

@@ -517,10 +517,11 @@ export class AonNewMenu extends AonElement {
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
 		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
-			aonIcon.color = style?.color || app.color;
+			aonIcon.color = style?.color || appColor;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
