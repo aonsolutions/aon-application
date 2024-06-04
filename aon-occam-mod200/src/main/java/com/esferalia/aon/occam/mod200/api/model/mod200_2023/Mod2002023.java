@@ -84,9 +84,9 @@ public class Mod2002023 extends Mod200 {
 	private String nrsAnexoV;
 	private String nrsAnexoVric;
 	private String justActivos;
-	// FALTA - NUEVAS CASILLAS PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPOS EN fs_model200
-	// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-	// ESTA CASILLA NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+	
+	// FALTA - NUEVA CASILLA PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPO EN fs_model200)
+	private String nrsAnexoVI; // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
@@ -361,6 +361,12 @@ public class Mod2002023 extends Mod200 {
 	}
 	public void setJustActivos(String justActivos) {
 		this.justActivos = justActivos;
+	}
+	public String getNrsAnexoVI() {
+		return nrsAnexoVI;
+	}
+	public void setNrsAnexoVI(String nrsAnexoVI) {
+		this.nrsAnexoVI = nrsAnexoVI;
 	}
 	public String getUltimateDocument() {
 		return ultimateDocument;

@@ -39,7 +39,7 @@ public enum Mod2002023BN565_1Key implements Serializable, IMod200KeysProvider {
 	,C20(new Mod2002023Key[]{Mod2002023Key.BN1326,Mod2002023Key.BN1327,Mod2002023Key.BN1328},"2023(*) Con reiteraci\u00F3n de donaciones a una misma entidad")
 	,C21(new Mod2002023Key[]{Mod2002023Key.BN2471,Mod2002023Key.BN2576,Mod2002023Key.BN2577},"2023 Sin reiteraci\u00F3n de donaciones a una misma entidad")
 	,C22(new Mod2002023Key[]{Mod2002023Key.BN2691,Mod2002023Key.BN2692,Mod2002023Key.BN2693},"2023 Con reiteraci\u00F3n de donaciones a una misma entidad")
-	,C23(new Mod2002023Key[]{Mod2002023Key.BN1689,Mod2002023Key.BN1690,Mod2002023Key.BN1691},"Subtotal donaciones 2013 a 2014")                                                  
+	,C23(new Mod2002023Key[]{Mod2002023Key.BN1689,Mod2002023Key.BN1690,Mod2002023Key.BN1691},"Subtotal donaciones 2013 y 2014")                                                  
 	,C24(new Mod2002023Key[]{Mod2002023Key.BN1692,Mod2002023Key.BN1693,Mod2002023Key.BN1694},"Subtotal donaciones 2015 a 2023 sin reiteraci\u00F3n de donaciones a una misma entidad")
 	,C25(new Mod2002023Key[]{Mod2002023Key.BN1695,Mod2002023Key.BN1696,Mod2002023Key.BN1697},"Subtotal donaciones 2015 a 2023 con reiteraci\u00F3n de donaciones a una misma entidad")
 	,C26(new Mod2002023Key[]{Mod2002023Key.BN1698,Mod2002023Key.BN1699,Mod2002023Key.BN1700},"Total")

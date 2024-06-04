@@ -45,24 +45,25 @@ public enum Mod2002023Key implements IMod200Key {
 	        ,C0034  ,C0020
 	        
 	// Otros caracteres
-	,C0007	,C0039	,C0059		
-	,C0009  ,C0043  ,C0065
-	,C0010  ,C0045  ,C0084   
-	,C0081  ,C0087  ,C0072
-	,C0082	,C0063  ,C0073
-	,C0026  ,C0071  ,C0037 		
-	,C0027  ,C0088  ,C0044
-		    ,C0083
-	,C0030  ,C0070	,C0074
-					,C0089
+	,C0007	,C0043	,C0059		
+	,C0009  ,C0045  ,C0065
+	,C0010  ,C0087  ,C0084   
+	,C0081  ,C0063  ,C0072
+	,C0082	,C0071  ,C0073
+	,C0026  ,C0088  ,C0037 		
+	,C0027  ,C0083  ,C0044
+	,C0030  ,C0070  ,C0074
+	,C0039  		,C0089
 
-	// FALTA - QUITAN LA OPCION 3 Y LA OPCION 2 PASA A SER: 2 - INCN de al menos 20 millones de euros
+	// FALTA - QUITAN LA OPCION 3 Y LA OPCION 2 PASA A SER: 2 - INCN de al menos 20 millones de euros, EXCEPTO PARA COOPERATIVAS QUE SIGUE HABIENDO 3, PERO EN OTRA PAGINA
 	// Además de las modificaciones en las pantallas o calculos, tambien habrá que modificar el traspaso del ejercicio anterior, para que si esta marcado 3, se marque 2
 	// Importe neto de la cifra de negocios (INCN) de los doce meses anteriores a la fecha de inicio del período impositivo
 	// 1 - INCN inferior a 20 millones de euros					
 	// 2 - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros					
 	// 3 - INCN de al menos 60 millones de euros 					
 	,VOLOPE
+	// FALTA - EN LA PAGINA 22 BIS APARECE PARA COOPERATIVAS LAS 2 SEGUNDAS OPCIONES QUE HABIA HASTA AHORA, ASI QUE IGUAL SE PUEDE PONER PARA COOPERATIVAS LAS 3 OPCIONES Y PARA EL RESTO
+	// LAS DOS PRIMERAS, TENIENDO EN CUENTA QUE AL HACER EL FICHERO, EN LA PAGINA 1 SOLO SE PUEDEN PONER LAS OPCIONES 1 O 2
 	// FALTA - EN EL DOC PADIS DE 20/05 EN LA PAGINA 382 VUELVE A HABLAR DE 3 OPCIONES Y HABLA DE QUE TAMBIEN ESTA EL INCN EN LA PAGINA 22 BIS ??
 	// TAMBIEN ESTA EN LA PAGINA 394 DEL DOC, PERO ESE APARTADO DE INFORMACION ADICIONAL, NO APARECE EN LA PAGINA 22 BIS, NI EN EL MODELO, NI EN EL FICHERO
 	// EN EL DOC PAGINA 405, TAMBIEN ESTA ESA INFORMACION ADICIONAL
@@ -477,10 +478,10 @@ public enum Mod2002023Key implements IMod200Key {
 	,I1011	,D1012	
 	,I1572	,D1573
 	,I1574	,D1575
-	
-	// LIQUIDACION (II)
-	
 	,I1015	,D1016
+	
+	// LIQUIDACION (II)	
+	
 			,D0370
 			,D2181
 			,D1764
@@ -537,8 +538,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ579
 	
 	// Entidades que forman parte de grupos de consolidación fiscal	
-	,LQ1029
-	//,LQ814 - ESTA CASILLA NO ESTA EN EL FICHERO
+	,LQ1029	
 	,LQ1030
 	,LQ1031
 	
@@ -742,8 +742,6 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ1889 		,LQ1891
 	,LQ216 	,LQ243 	,LQ265
 	,LQ266 			,LQ267
-	// FALTA ESTA CASILLA NO ESTA EN EL FICHERO
-	//,LQ290 	,LQ2465	,LQ344 
 	,LQ290 			,LQ344
 	
 // --------------- PAGINA 15 BIS --------------- //
@@ -757,7 +755,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN114	,BN115	,BN714	,BN715	,BN716
 	,BN735	,BN920	,BN736	,BN737	,BN738
 	,BN116			,BN117			,BN118
-	,BN103A
+			,BN103A
 	
 	// Desglose BN1344 - Deducciones doble imposición interna periodos anteriores (DT 23ª.1 LIS)
 	,BN101	,BN102	,BN119	,BN120	,BN121
@@ -770,7 +768,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN394 	,BN436 	,BN437 	,BN438 	,BN2076	
 	,BN1270 ,BN1271 ,BN1299 ,BN1318 ,BN1360	
 	,BN1342			,BN1343			,BN1345
-	,BN103B
+			,BN103B
 	
 	// Desglose BN1280 - DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
 	,BN127	,BN128	,BN129
@@ -788,7 +786,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN739	,BN921	,BN740	,BN741	,BN742
 	,BN134	,BN926	,BN135	,BN136	,BN137
 	,BN160			,BN161			,BN162
-	,BN103C
+			,BN103C
  
 // --------------- PAGINA 16 --------------- //
 	
@@ -803,7 +801,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN490 	,BN491 	,BN492 	,BN493 	,BN620	
 	,BN1361 ,BN1362 ,BN1457 ,BN1472 ,BN1505	
 	,BN131			,BN132			,BN133
-	,BN103D
+			,BN103D
 	
 	// Desglose BN573 - DI internacional generada y aplicada en el ejercicio (LIS)
 	,BN163	,BN165	,BN166
@@ -894,7 +892,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN1805	,BN1806	,BN1847	
 	,BN886  		,BN887
 	
-	// Deducciones inversión en Canarias con límites incrementados (continuación)	
+	// Información adicional para el cálculo de límites de deducciones	
 	,BN2287
 	,BN2288
 	,BN2495
@@ -964,7 +962,8 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN2455	,BN2456	,BN2457
 	,BN795	,BN796	,BN797
 	,BN792 	,BN793 	,BN794
-	,BN549	,BN888	,BN889		
+	,BN549	,BN888	,BN889
+	
 	,BN1369	,BN1370	,BN1371	
 	,BN2190	,BN2191	,BN2192
 	,BN1626	,BN1627	,BN1628	
@@ -1019,13 +1018,13 @@ public enum Mod2002023Key implements IMod200Key {
 	,BN1261 ,BN1262 ,BN1263
 	,BN1264 ,BN1265 ,BN1266
 	,BN1267 ,BN1268 ,BN1269
-	,BN1272 ,BN1273 ,BN1274	
+	,BN1272 ,BN1273 ,BN1274
+	
 	,BN1281 ,BN1282 ,BN1283
 	,BN1883 ,BN1884 ,BN1885
 	,BN1900 ,BN1901 ,BN1902
 	,BN1903 ,BN1904 ,BN1976
-	,BN1987 ,BN1995 ,BN1996
-	//,BN1997 ,BN1998 ,BN1999
+	,BN1987 ,BN1995 ,BN1996	
 	,BN1907 ,BN1908 ,BN1999
 	,BN2000 ,BN2024 ,BN2025
 	,BN2026 ,BN2027 ,BN2028
@@ -1315,7 +1314,6 @@ public enum Mod2002023Key implements IMod200Key {
 	,LM2418	,LM2419	,LM2420	,LM2421	,LM2422	,LM1116	,LM2423	,LM2424	,LM2425	,LM2426
 	,LM1117	,LM1118	,LM1119	,LM1120	,LM1121	,LM1413	,LM1122	,LM1131	,LM1132	,LM1133
 	,LM1414 ,LM1415 ,LM1416 ,LM1417 ,LM1418 ,LM2785	,LM1419 ,LM1420 ,LM1421	,LM1422
-	//,LM2786 ,LM2787 ,LM2788 ,LM2789 ,LM2890 		,LM2792 ,LM2793 ,LM2794	,LM2795
 	,LM2786 ,LM2787 ,LM2788 ,LM2789 ,LM2790 		,LM2792 ,LM2793 ,LM2794	,LM2795
 	,LM1561, LM1562	,LM1563	,LM1564	,LM1565	,LM1566	,LM1567	,LM1568	,LM1569	,LM1570
 	
@@ -1384,11 +1382,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ631
 	,LQ632
 	
-	// FALTA - ESTE NUEVO APARTADO SUPONGO QUE SERA NUMERICO - ES Num 5 (5 enteros)
-	// Inversiones en producciones cinematográficas o series audiovisuales
-//	,INV01 // Producciones cinematográficas (excepto series audiovisuales) 
-//	,INV02 // Series audiovisuales 
-//	,INV03 // Número de capítulos	
+	// Inversiones en producciones cinematográficas o series audiovisuales: Num 5 (5 enteros)
 	
 	,IPCRG01 // Régimen general: Producciones cinematográficas (excepto series audiovisuales)
 	,IPCRG02 // Régimen general: Series audiovisuales
@@ -1412,24 +1406,10 @@ public enum Mod2002023Key implements IMod200Key {
 	,RC2446					
 	,RC1176					,RC2451
 	,RC1823					,RC1184
-	,RC2823	,RC1523 ,RC130 	,RC1600
+	,RC2823				 	,RC1600
 			,RC2824 ,RC2825 ,RC2826
 			
 	// Desglose LQ553, LQ554 - Cooperativas - Determinacion de la base imponible
-    // FALTA - CAMBIA LA NUMERACION DE TODAS LAS CASILLAS E INTRODUCEN UNA CASILLA NUEVA (DESPUES DEL APARTADO 10)			
-//	,CP0C1	,CP0E1
-//	,CP0C2	,CP0E2
-//	,CP0C3	,CP0E3
-//	,CP0C4	,CP0E4
-//			,CP0E5
-//	,CP0C6	,CP0E6
-//	,CP0C7	,CP0E7
-//	,CP0C8	,CP0E8
-//	,CP0C9	,CP0E9
-//	,CPC10	,CPE10
-//	,CPC11	,CPE11
-//	,CPC12	,CPE12
-			
 	,CP2827 ,CP2828 // 1. Ingresos computables 
 	,CP2829 ,CP2830 // 2. Gastos específicos 
 	,CP2832 ,CP2833 // 3. Gastos generales imputados 
@@ -1441,8 +1421,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,CP2843 ,CP2845 // 9. 50% Dotación obligatoria F.R.O. (art. 16.5 Ley 20/1990) 
 	,CP2846 ,CP2847 // 10. Reserva para inversiones en Canarias (Ley 19/1994) 
 	,CP0012 ,CP0016 // 11. Reserva para inversiones en Illes Balears  
-	,CP2848 ,CP2849 // 12. Factor de agotamiento
-	
+	,CP2848 ,CP2849 // 12. Factor de agotamiento	
 	// FALTA - LOS TOTALES ANTES ESTABAN EN CPC12 Y CPE12, VER SI ES NECESARIO DESPUES PONER CASILLAS PARA ELLO O PUEDE SERVIR CON LAS 553 Y 554
 			
 	// Desglose - LQ561 - Cooperativas - Compensación de cuotas por pérdidas de cooperativas 
@@ -1474,13 +1453,21 @@ public enum Mod2002023Key implements IMod200Key {
 	,LQ1225  		,LQ1226
 	
 // ------------- PAGINA 22 BIS -------------- //
-	// FALTA - NUEVO APARTADO - SERA UN DESGLOSE DE LA RESERVA EN LAS ILLES BALEARS
+	
+// FALTA - NUEVO APARTADO SOLO PARA REGIMEN COOPERATIVAS, SE SUPONE:
+//	Información adicional para el cálculo de límites de compensación de cuotas
+//	En caso de que el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo sea de al menos 20 millones de euros, indique el
+//	tramo que corresponda:
+//	- INCN de al menos 20 millones de euros pero inferior a 60 millones de euros 
+//	- INCN de al menos 60 millones de euros
+//	SE PODRIA HACER ENTONCES, CUANDO SE PIDE EL INCN EN LA PRIMERA PAGINA, QUE SI ES COOPERATIVA, ENTONCES APAREZCAN LAS 3 OPCIONES Y SI NO LO ES APAREZCAN SOLO 2 OPCIONES
+	
 	// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)
+	
 	,RB2914 ,RB2915 ,RB2916 ,RB2917
-	// FALTA - ESTAS CASILLAS EN EL FICHERO PONE 2918 Y 2919
-	//,RB2818
+	
 	,RB2918
-	//,RB2819 ,RB2920 ,RB2941
+	
 	,RB2919 ,RB2920 ,RB2941
 	
 // --------------- PAGINA 23 --------------- //	
@@ -1498,15 +1485,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,UT552   // B) Datos económicos - 4.- Base imponible                                          
 	,UT1330  // B) Datos económicos - 5.- Base imponible minorada o incrementada                  
 	
-	// FALTA - AQUI CREAN UN MONTON DE NUEVAS CASILLAS DESGLOSANDO LOS APARTADOS 7 Y 8 
-//	,UTC01 // Base de las bonificaciones
-//	,UTC02 // Base total (excepto base de deducción por inversiones en elementos del inmovilizado material nuevos).
-//	,UTC03 // Base de deducción por inversiones en elementos del inmovilizado material nuevos
-//	,UT062 // Retenciones e ingresos a cuenta
-//	,UTC04 // Dividendos y participaciones en beneficios distribuidos con cargo a reservas - De ejercicios en los que la sociedad no haya tributado en el régimen especia
-//	,UTC05 // Dividendos y participaciones en beneficios distribuidos con cargo a reservas - De ejercicios en los que la sociedad haya tributado en el régimen especial
-	
-	// FALTA - ESTAS DOS CASILLAS DEL APARTADO B.6, VER SI LAS PONEMOS TAMBIEN EN LA PANTALLA O NO HACE FALTA, A VER COMO SE QUEDA AL FINAL EN EL MODELO
+	// FALTA - ESTAS DOS CASILLAS DE TOTALES DEL APARTADO B.6, VER SI LAS PONEMOS TAMBIEN EN LA PANTALLA O NO HACE FALTA, A VER COMO SE QUEDA AL FINAL EN EL MODELO
 	,UT1277  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Base de la deducción
 	,UT1278  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Importe de la deducción
 	
@@ -1539,6 +1518,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,UT3283 ,UT3284
 	,UT3355 ,UT3356
 	,UT3359 ,UT3360
+	
 	,UT3285 ,UT3287
 	,UT3288 ,UT3289
 	,UT3290 ,UT3311
@@ -1601,7 +1581,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,TR420	,TR421	,TR426	,TR427	,TR600
 	,TR402	,TR442	,TR443	,TR444	,TR602
 	,TR445	,TR446	,TR447	,TR448	,TR604
-	,TR449	,TR451	,TR450	,TR465	,TR606
+	,TR449	,TR450  ,TR451	,TR465	,TR606  // FALTA - AQUI LAS CASILLAS 450 Y LA 451 LAS TENIA INTERCAMBIADAS, COMPROBAR EN LA PANTALLA COMO ESTAN
 	,TR474	,TR475	,TR476	,TR477	,TR612
 	,TR482	,TR483	,TR484	,TR485	,TR616
 	,TR913	,TR914	,TR915	,TR916	,TR642

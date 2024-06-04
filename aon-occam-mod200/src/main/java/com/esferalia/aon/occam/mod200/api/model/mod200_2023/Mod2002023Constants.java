@@ -309,7 +309,6 @@ public class Mod2002023Constants {
 		
 		// Entidades que forman parte de grupos de consolidación fiscal
 		Mod2002023Key.LQ1029,
-		// Mod2002023Key.LQ814, - ESTA CASILLA NO ESTA EN EL FICHERO
 		Mod2002023Key.LQ1030,
 		Mod2002023Key.LQ1031,
 		

@@ -10,7 +10,7 @@ public enum Mod2002023RIC_2Key implements Serializable, IMod200KeysProvider {
 	 C01(new Mod2002023Key[]{Mod2002023Key.RC2446,null				  ,null				   ,null                },"Inversiones anticipadas 2019")
 	,C02(new Mod2002023Key[]{Mod2002023Key.RC1176,null				  ,null			 	   ,Mod2002023Key.RC2451},"Inversiones anticipadas 2020")
 	,C03(new Mod2002023Key[]{Mod2002023Key.RC1823,null				  ,null			 	   ,Mod2002023Key.RC1184},"Inversiones anticipadas 2021")	
-	,C04(new Mod2002023Key[]{Mod2002023Key.RC2823,Mod2002023Key.RC1523,Mod2002023Key.RC130 ,Mod2002023Key.RC1600},"Inversiones anticipadas 2022")
+	,C04(new Mod2002023Key[]{Mod2002023Key.RC2823,null				  ,null   			   ,Mod2002023Key.RC1600},"Inversiones anticipadas 2022")
 	,C05(new Mod2002023Key[]{null				 ,Mod2002023Key.RC2824,Mod2002023Key.RC2825,Mod2002023Key.RC2826},"Inversiones anticipadas 2023")
 	;
 	 

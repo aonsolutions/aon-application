@@ -279,9 +279,6 @@ public class Mod2002023Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ578, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ579, new Boolean[]{FALSE,TRUE});
 		
-		// FALTA - ESTA CASILLA NO ESTA EN EL FICHERO - Entidades que forman parte de grupos de consolidación fiscal
-		// NUEVA CASILLA 00814 NO SE SI SERA AUTOMATICA DE ALGUNA FORMA
-		
         // Base Imponible	
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ550, new Boolean[]{TRUE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002023Key.LQ1032,new Boolean[]{FALSE,TRUE});

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
-// Deducciones doble imposición internacional LIS. DI internacional 2021 
+// Deducciones doble imposición internacional LIS. DI internacional 2023 
 public enum Mod2002023BN573Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
