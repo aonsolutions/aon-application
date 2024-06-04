@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_COMPOSITION = 'Konposizioa Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_NEW = "Gehitu berria";
 export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
@@ -326,6 +327,7 @@ export const PENDING_TASKS = 'Zain Dauden Zereginak';
 export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
+export const PORTAL_MENU = "Portaleko menua";
 export const POSTAL_CODE = 'Posta-kodea';
 export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
@@ -341,6 +343,7 @@ export const PROVINCE = 'Probintzia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Sarbide azkarra";
 export const QUANTITY = 'Kantitatea';
 export const QUOTA = 'Kuota';
 
@@ -350,6 +353,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
+export const RECENTLY_OPENED = "Berriki irekia";
 export const RECORD = 'Kontabilizatu';
 export const RECORD_INVOICE = 'Faktura Kontabilizatu';
 export const RECTIFIED = 'Zuzenketa';
@@ -408,6 +412,7 @@ export const SPANISH = 'Gaztelania';
 export const STATISTICS = 'Estatistikak';
 export const STATUS = "Egoera";
 export const STATUS_NOT_EMPTY = "Egoera ezin da hutsik geratu";
+export const SUITE_MENU = "Suite menua";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';

@@ -55,7 +55,7 @@ export class AonNotificationPanel extends AonElement {
         divGeneral.style.marginTop = "-40px";
 
         let divTodas = this.createDiv();
-        divTodas.innerHTML = 'VER TODAS';
+        divTodas.innerHTML = MSG.SEE_ALL.toUpperCase();
         divTodas.style.cursor = 'pointer';
         divTodas.style.position = 'relative';
         divTodas.style.padding = '9px';

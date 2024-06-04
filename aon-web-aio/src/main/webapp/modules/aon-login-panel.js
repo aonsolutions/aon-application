@@ -176,9 +176,9 @@ export class AonLoginPanel extends AonElement {
 	buildImage(letters){
 		let div = this.createDiv();
 		div.className = "profile-letters";
-		div.style.scale = "3";
+		div.style.scale = "2.6";
 		div.style.marginLeft = "40px";
-		div.style.marginTop = "19px";
+		div.style.marginTop = "15px";
 		div.style.border = "none";
 		div.style.backgroundColor = "var(--aonBlue)";
 		div.style.color = "white";

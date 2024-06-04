@@ -2115,21 +2115,13 @@ public class AON {
 		}
 	}
 
-	public static Integer getInvoiceNextNumber(
-			String domainName, Integer domainId, String login,
-			Byte[] types, String series) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Integer getInvoiceNextNumber(String domainName, Integer domainId, String login, Byte[] types, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceNextNumber(ctx, types,series);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login,
-			InvoiceType type, String series) {
+	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login, InvoiceType type, String series) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoiceMinNumber(ctx, type, series);
 		}

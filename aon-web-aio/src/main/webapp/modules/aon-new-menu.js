@@ -484,17 +484,17 @@ export class AonNewMenu extends AonElement {
 		div.style.backgroundColor = 'transparent';
 		let header = this.getElement("aonHeaderWeb");
 		if(app.app == "applications"){
+			if(!header.style.backgroundColor)
+				div.style.color = "#5f6368";
+			else if(header.style.backgroundColor)
+				div.style.color = "white";
+			else 
+				div.style.color = "#5f6368";
 			div.addEventListener("mouseover", () => {
 				div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
 			});
 			div.addEventListener("mouseleave", () => {
 				div.style.backgroundColor = "transparent";
-				if(!header.style.backgroundColor)
-					div.style.color = "#5f6368";
-				else if(header.style.backgroundColor)
-					div.style.color = "white";
-				else 
-					div.style.color = "#5f6368";
 			});
 		} else{
 			div.addEventListener('mouseover', () => {
