@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Engadir Comentario';
 export const ADD_COMPOSITION = 'Engadir Composición';
 export const ADD_FILE = 'Achegar Ficheiro';
 export const ADD_INVOICE = 'Engadir Factura';
+export const ADD_NEW = "Engadir novo";
 export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
@@ -329,6 +330,7 @@ export const PENDING_TASKS = 'Tarefas Pendentes';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menu do portal"
 export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
@@ -344,6 +346,7 @@ export const PROVINCE = 'Provincia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Acceso rápido";
 export const QUANTITY = 'Cantidade';
 export const QUOTA = 'Cota';
 
@@ -353,6 +356,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recentes';
+export const RECENTLY_OPENED = "Aberto recentemente";
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar';
 export const RECTIFIED = 'Rectificativa';
@@ -411,6 +415,7 @@ export const SPANISH = 'Castelán';
 export const STATISTICS = 'Estatística';
 export const STATUS = "Estado";
 export const STATUS_NOT_EMPTY = "O estado non pode quedar baleiro";
+export const SUITE_MENU = "Menu suite";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';
 export const SUPPLIERS = 'Provedores';

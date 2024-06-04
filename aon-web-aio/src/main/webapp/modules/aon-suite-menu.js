@@ -88,7 +88,7 @@ export class AonSuiteMenu extends AonElement {
         let newBtBt = this.getElement(newButton.BUTTON);
         newBtText.style.color = "rgb(72,70,68)";
         newBtText.style.fontWeight = "normal";
-        newBtText.innerHTML = "Agregar nuevo";
+        newBtText.innerHTML = MSG.ADD_NEW;
         newBtIcon.style.color = "rgb(72,70,68)";
         newBtBt.style.boxShadow = "none";
         this.setButtonHover(newButton);
@@ -125,21 +125,21 @@ export class AonSuiteMenu extends AonElement {
 
         let sideNavTitle = this.createDiv();
         sideNavTitle.className = "aonSidenavTitleBeta";
-        sideNavTitle.innerHTML = "Accesos rápidos";
+        sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
         sideMenu.appendChild(sideNavTitle);
 
-        sideMenu.appendChild(this.buildSideNavRow("Todos","stacks"));
-        sideMenu.appendChild(this.buildSideNavRow("Abierto recientemente","schedule"));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1,"stacks"));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED,"schedule"));
         sideMenu.appendChild(this.buildSideNavRow(this.last,"quick_reference_all"));
 
-        this.buildSideNavCard(sideMenu, "Documentos","1");
+        this.buildSideNavCard(sideMenu,"1");
 
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
-        utilidades.innerHTML = "Utilidades";
+        utilidades.innerHTML = MSG.UTILITIES;
         sideMenu.appendChild(utilidades);
 
-        sideMenu.appendChild(this.buildSideNavRow("Configuración", "folder_managed"));
+        sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, "folder_managed"));
 
         let uploadButton = new AonButton();
         uploadButton.id = this.UPLOAD_BUTTON;
