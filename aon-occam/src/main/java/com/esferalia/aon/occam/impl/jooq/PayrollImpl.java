@@ -124,6 +124,11 @@ public class PayrollImpl implements IPayroll {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getContractExtendedDataStream(ctx, filter, page, perPage));
 	}
+	
+	public Stream<ContractExtendedData> getContractSimplifiedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getContractSimplifiedData(ctx, filter, page, perPage));
+	}
 
 	public void deleteContracts(AONContext ctx, Integer ...contractIds) {
 		ctx.getDslContext().transaction(configuration -> ContractDAO.delete(ctx, contractIds));

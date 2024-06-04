@@ -22,4 +22,12 @@ public class ContractExtendedDataJSON {
 		return json;
 	}
 	
+	public static JSONObject toJSONSimple(ContractExtendedData data) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.ID, data.getId());
+		json.put(IJsonNames.NAME, data.getPersonName());
+		json.put(IJsonNames.DOCUMENT, data.getPersonDocument());
+		return json;
+	}
+	
 }

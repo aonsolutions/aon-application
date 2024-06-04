@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractExtendedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractSimplifiedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.AgreementLevelCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertiesDAO;
@@ -72,7 +73,7 @@ public class ContractDAO {
 	public static final Field<Double> SALARY_CGC_BASE = DSL.field("salary", Double.class);
 	public static final Field<Double> MARK_TOTAL_TIME = DSL.field("mark", Double.class);
 	public static final Field<String> CONTRACT_TYPE = DSL.field("contract_type", String.class);
-	public static final Field<String> PERSON_FULL_NAME = DSL.field("person_full_name", String.class);
+	public static final Field<String> PERSON_FULL_NAME = DSL.field("'person_full_name'", String.class);
 	
 	// -------------------- CONTRACT
 	
@@ -87,6 +88,22 @@ public class ContractDAO {
 			.innerJoin(ENTERPRISE_CCC).onKey()
 			, filter).fetch().stream().map(new ContractFiller());		
 	}
+	
+	public static Stream<ContractExtendedData> getContractSimplifiedData(AONContext ctx, ContractExtendedDataFilter filter,  Integer page, Integer perPage){
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select(CONTRACT.ID)
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+				.select(REGISTRY.DOCUMENT)
+				.from(CONTRACT)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME.asc())
+				.limit(perPage).offset(perPage * (page -1))
+				.fetch()
+				.stream()
+				.map(new ContractSimplifiedDataFiller());
+	} 
 	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
@@ -125,6 +142,41 @@ public class ContractDAO {
 						.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
 						)
 				.groupBy(registryTable.field(REGISTRY.DOCUMENT));
+		
+		System.out.println(ctx.getDslContext()
+				.select(CONTRACT.ID)
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+				.select(CONTRACT.START_DATE)
+				.select(CONTRACT.END_DATE)
+				.select(REGISTRY.DOCUMENT)
+				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
+				.select(CONTRACT.DOMAIN)
+				.select(CONTRACT.PERSON)
+				.select(CONTRACT.WORKPLACE)
+				.select(WORKPLACE.DESCRIPTION)
+				.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class).as(SALARY_CGC_BASE))
+				.select(subQ3.asTable().as(tm).field(totalTime).as(MARK_TOTAL_TIME))
+				.from(CONTRACT)
+				.join(WORKPLACE).onKey()
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.leftJoin(subQ1.asTable().as(salary))
+						.on(CONTRACT.ID.eq(salary.field(SALARY.CONTRACT)))
+				.leftJoin(SALARY)
+						.on(SALARY.CONTRACT.eq(CONTRACT.ID)
+						.and(DSL.year(salaryMaxDate).eq(DSL.year(SALARY.END_DATE)))
+						.and(DSL.month(salaryMaxDate).eq(DSL.month(SALARY.END_DATE))))
+				.leftJoin(subQ2.asTable().as(contractData))
+						.on(subQ2.asTable().as(contractData).field(CONTRACT_DATA.CONTRACT).eq(CONTRACT.ID))
+				.leftJoin(CONTRACT_DATA)
+						.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID)
+						.and(subQ2.asTable().as(contractData).field(cdMaxDate).eq(CONTRACT_DATA.START_DATE))
+						.and(CONTRACT_DATA.NAME.eq("TC2")))
+				.leftJoin(subQ3.asTable().as(tm)).on(subQ3.asTable().as(tm).field(rDocument).eq(REGISTRY.DOCUMENT))
+				.groupBy(CONTRACT.ID)
+				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME.asc())
+				.limit(perPage).offset(perPage * (page -1))
+				.getSQL());
 		
 		return ctx.getDslContext()
 				.select(CONTRACT.ID)

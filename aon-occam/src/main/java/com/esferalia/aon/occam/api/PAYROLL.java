@@ -166,6 +166,18 @@ public class PAYROLL {
 		}
 	}
 	
+	public static Stream<ContractExtendedData> getContractSimplifiedDataStream(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getContractSimplifiedDataStream(ctx, filter, page, perPage);
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+	
 	public static LinkedList<Contract> getContractList(String domainName, Integer domainId, String login, ContractFilter filter) {
 		CloseableAONContext ctx = null;
 		try {

@@ -610,6 +610,17 @@ public class FillerDAO {
 		}
 	}
 	
+	
+	public static class ContractSimplifiedDataFiller implements Function<Record, ContractExtendedData> {
+		@Override
+		public ContractExtendedData apply(Record r) {
+			return new ContractExtendedData()
+					.setId(r.getValue(CONTRACT.ID))		
+					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME));
+		}
+	}
+	
 	public static class ContractDataFiller implements Function<Record, ContractData> {
 		
 		@Override

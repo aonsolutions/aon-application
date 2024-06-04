@@ -27,7 +27,8 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(ContractServlet.class.getName());
 	
 	public static final String CONTRACT_LIST = "/";
-	public static final String CONTRACT_BY_ID = "/:id";
+	public static final String CONTRACT_BY_ID = "/one/:id";
+	public static final String CONTRACT_LIST_SIMPLIFIED = "/simple";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -46,6 +47,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(CONTRACT_LIST, ContractServlet::getContractList)
 				.addRoute(CONTRACT_BY_ID, ContractServlet::getContractById)
+				.addRoute(CONTRACT_LIST_SIMPLIFIED, ContractServlet::getContractSimplifiedList)
 				.apply();
 			
 			response(req, resp, object);
@@ -64,6 +66,20 @@ public class ContractServlet extends AonApiHttpServlet {
 				params.optInt(IJsonNames.PER_PAGE)).forEach(element -> {
 					array.put(ContractExtendedDataJSON.toJSON(element));
 				});
+		return array;
+	}
+	
+	private static JSONArray getContractSimplifiedList(AonApiData api) {
+		LOGGER.info("GET SIMPLIFIED LIST METHOD");
+		JSONObject params = api.getData();
+		JSONArray array = new JSONArray();
+		PAYROLL.getContractSimplifiedDataStream(api.getDomain().getName() , api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api), 
+				params.optInt(IJsonNames.PAGE), 
+				params.optInt(IJsonNames.PER_PAGE)).forEach(element -> {
+					array.put(ContractExtendedDataJSON.toJSONSimple(element));
+				});
+		
 		return array;
 	}
 	
