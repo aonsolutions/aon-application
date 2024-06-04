@@ -2205,8 +2205,6 @@ public class InvoiceTemplate {
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
 		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
 		newInvoiceDetail.setWorkplace(original.getWorkplace());
-		newInvoiceDetail.setWorkPlace(original.getWorkPlace());
-		newInvoiceDetail.setWorkPlaceName(original.getWorkPlaceName());
 		newInvoiceDetail.setAccount(original.getAccount());
 		newInvoiceDetail.setAccountCode(original.getAccountCode());
 		newInvoiceDetail.setAccountDescription(original.getAccountDescription());

@@ -50,8 +50,6 @@ public class InvoiceDetail implements Serializable {
 	
 	// WORKPLACE
 	private Workplace workplace;
-	private Integer workPlace;
-	private String workPlaceName;
 	
 	// ACCOUNT
 	// TODO private Account account;
@@ -155,20 +153,6 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public Integer getWorkPlace() {
-		return workPlace;
-	}
-	public InvoiceDetail setWorkPlace(Integer workPlace) {
-		this.workPlace = workPlace;
-		return this;
-	}
-	public String getWorkPlaceName() {
-		return workPlaceName;
-	}
-	public InvoiceDetail setWorkPlaceName(String workPlaceName) {
-		this.workPlaceName = workPlaceName;
-		return this;
-	}
 	public Item getItem() {
 		return item;
 	}

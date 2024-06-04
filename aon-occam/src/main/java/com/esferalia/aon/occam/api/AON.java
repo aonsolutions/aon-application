@@ -1872,17 +1872,6 @@ public class AON {
 			return getFinance().updateInvoice(ctx, invoice);
 		}
 	}
-
-	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().insertInvoiceDetail(ctx, invoiceDetail);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
 	public static void deleteInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

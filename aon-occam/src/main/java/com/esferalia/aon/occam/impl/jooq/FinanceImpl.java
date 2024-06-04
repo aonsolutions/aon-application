@@ -449,12 +449,6 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-		InvoiceDAO.insertInvoiceDetail(ctx, invoiceDetail));		
-	}
-
-	@Override
 	public Finance insertFinance(AONContext ctx, Finance finance) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			FinanceDAO.getFinance(ctx, FinanceDAO.insert(ctx, finance))

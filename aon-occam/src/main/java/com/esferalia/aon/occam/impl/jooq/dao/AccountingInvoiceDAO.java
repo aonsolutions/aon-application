@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -1214,7 +1215,7 @@ public class AccountingInvoiceDAO {
 				.setDomain(accInvoice.getInvoice().getDomain())
 				.setInvoice(accInvoice.getInvoice())
 				.setInvestAsset(vat.getInvestAsset())
-				.setWorkPlace( accInvoice.getWorkplace())
+				.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 				.setLine(line)
 				.setDescription( vat.getExpAccountDescription() )
 				.setQuantity(1)

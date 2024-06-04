@@ -476,10 +476,13 @@ public class OCRInvoiceBuilder {
 	    detail.setSource( InvoiceSource.TEDI );
 	}
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
-		ocr.getDetail().setWorkPlace( Optional.ofNullable(ocr.getConfig().getWorkplaces())
-				.flatMap( l -> l.stream().map(w -> w.getId())
-				.findFirst()).orElse(null));
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> {
+		ocr.getDetail().setWorkplace(
+			AonCollectionUtils.stream( ocr.getConfig().getWorkplaces() )
+				.findFirst()
+				.orElse(null)
+			);
+	};
 
 	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_QUANTITY = ocr -> {
 		BigDecimal quantity = ocr.getOcrLine().getQuantity().flatMap( d -> d.getValue() ).orElse(null);

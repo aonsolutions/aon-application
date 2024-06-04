@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -119,6 +120,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -775,8 +777,9 @@ public class InvoiceDAO {
 				.setSeller(checkField(r, SELLER_ALIAS.ID)
 					? new Seller().copy(RegistryFiller.build(r, SELLER_ALIAS))
 					: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
-				.setWorkPlace(r.getValue(INVOICE_DETAIL.WORKPLACE))
-				.setWorkPlaceName(r.getValue(WORKPLACE.DESCRIPTION))
+				.setWorkplace( new Workplace()
+					.setId( r.getValue(INVOICE_DETAIL.WORKPLACE) )
+					.setDescription(getValue(r,WORKPLACE.DESCRIPTION)))
 				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
@@ -786,6 +789,7 @@ public class InvoiceDAO {
 						? r.get(SELLER_SUPPORT_ALIAS.NAME)
 						: "")
 				;
+			
 		}
 		
 	}
@@ -1061,33 +1065,6 @@ public class InvoiceDAO {
 		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
 	}
 	
-	public static InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail) {
-		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
-		.set(INVOICE_DETAIL.QUANTITY, invoiceDetail.getQuantity())
-		.set(INVOICE_DETAIL.DESCRIPTION, invoiceDetail.getDescription())
-		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression().getDiscountExpr())
-		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
-		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset())
-		.set(INVOICE_DETAIL.ITEM, invoiceDetail.getItem() != null ? invoiceDetail.getItem().getId() : null)
-		.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
-		.set(INVOICE_DETAIL.PRICE, invoiceDetail.getPrice())
-		.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
-		.set(INVOICE_DETAIL.SOURCE, invoiceDetail.getSource() != null ? invoiceDetail.getSource().value(): null)
-		.set(INVOICE_DETAIL.SOURCE_ID, invoiceDetail.getSourceId())
-		.set(INVOICE_DETAIL.TAXABLE_BASE, invoiceDetail.getTaxableBase())
-		.set(INVOICE_DETAIL.TAXES, invoiceDetail.getTaxes())
-		.set(INVOICE_DETAIL.PREPAYMENT, (byte)1)
-		.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() != null ? invoiceDetail.getSeller().getId(): null)
-		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkPlace())
-		.set(INVOICE_DETAIL.WAREHOUSE,  invoiceDetail.getWarehouse())
-		.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp(new Date().getTime()))
-		.set(INVOICE_DETAIL.CREATION_USER, ctx.getUser())
-		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
-		.set(INVOICE_DETAIL.MODIFICATION_USER, ctx.getUser())
-		.execute();
-		return invoiceDetail.setId(id);
-	}
 	public static Invoice insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
