@@ -53,6 +53,9 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.style.marginLeft = "2px"
         sideMenu.style.backgroundColor = "rgb(250, 249, 248)";
         sideMenu.style.borderRight = "1px solid rgba(0, 0, 0, 0.1)";
+        sideMenu.style.overflowY = "auto";
+        sideMenu.style.height = "calc(-62px + 100vh)";
+        sideMenu.style.paddingBottom = "80px"
         divFlex.appendChild(sideMenu);
 
         let divNewButton = this.createDiv();
@@ -167,8 +170,6 @@ export class AonSuiteMenu extends AonElement {
         content.style.overflowY = "auto";
         divFlex.appendChild(content);
 
-
-
         let div = this.createDiv();
         div.style.marginTop = "15px";
         div.style.width = "100%"
@@ -188,6 +189,8 @@ export class AonSuiteMenu extends AonElement {
         div2.style.flexWrap = "wrap";
         div2.style.position = "relative";
         div2.style.justifyContent = "center";
+        div2.style.paddingRight = "20px";
+        div2.style.paddingBottom = "70px";
         content.appendChild(div2);
 
         this.options.forEach((opt, i) => {
@@ -216,9 +219,9 @@ export class AonSuiteMenu extends AonElement {
         let icon = new AonIconButton();
         icon.icon = "info";
         icon.style.height = "fit-content";
-        icon.style.position = "absolute";
-        icon.style.marginTop = "16px";
-        icon.style.marginLeft = "21px";
+        icon.style.position = "relative";
+        icon.style.top = "15px";
+        icon.style.left = "-231px";
         card.appendChild(icon);
 
         card.style.display = "flex";
@@ -385,6 +388,7 @@ export class AonSuiteMenu extends AonElement {
         div.style.paddingBottom = "5px";
         div.style.cursor = "pointer";
 		div.style.display = "flex";
+        div.style.transition = "background-color 0.2s"
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
@@ -420,7 +424,7 @@ export class AonSuiteMenu extends AonElement {
     
         li.addEventListener(EVENT.CLICK, () => {
           div.classList.remove('is-visible');
-          // TODO EJECUTAR ACCION
+          option.action();
 
         });
     
