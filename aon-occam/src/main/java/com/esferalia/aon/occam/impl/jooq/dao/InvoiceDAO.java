@@ -90,6 +90,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -998,7 +999,11 @@ public class InvoiceDAO {
 	}
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
-		Integer next = selectMaxInvoice(ctx, types, series)
+		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
+		if(tbaiConfiguration.isActive()) {
+			return getTbaiNextNumber(ctx, types, series);
+		} else {
+			Integer next = selectMaxInvoice(ctx, types, series)
 			.fetch()
 			.stream()
 			.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(INVOICE.NUMBER)) != null) 
@@ -1006,8 +1011,9 @@ public class InvoiceDAO {
 					: 0)
 			.findFirst()
 			.orElse(0);
-		if(next < 0) next = 0;
-		return ++next;
+			if(next < 0) next = 0;
+			return ++next;
+		}
 	}
 	
 	
@@ -1384,8 +1390,11 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
-// 		TODO ONLY IF IS TICKET BAI.
-//		saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+		// ONLY IF IS TICKET BAI.
+		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
+		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0) {
+			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+		}
 	}
 
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
