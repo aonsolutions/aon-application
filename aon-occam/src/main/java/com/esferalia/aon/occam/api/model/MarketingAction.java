@@ -43,6 +43,40 @@ public class MarketingAction implements Serializable {
 		}
 		
 	}
+	
+	public static enum MarketingSellerDistribution {
+		MANUAL("Manual", 0),
+		AUTOMATIC("Autom\u00e1tico", 1),
+//		WORK("Carga Trabajo", 2),
+//		CALENDAR("Calendario Laboral", 3)
+		;
+		
+		private String description;
+		private Integer value;
+
+		MarketingSellerDistribution(String description, Integer value) {
+			this.description = description;
+			this.value = value;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public Integer getValue() {
+			return value;
+		}
+		
+		public static MarketingSellerDistribution getSellerDistribution(Integer value) {
+			for(int i=0; i<MarketingSellerDistribution.values().length; i++) {
+				if(MarketingSellerDistribution.values()[i].getValue() == value)
+					return MarketingSellerDistribution.values()[i];
+			}
+			
+			return MarketingSellerDistribution.MANUAL;
+		}
+		
+	}
 
 	private static final long serialVersionUID = -3274429313022170469L;
 	
@@ -62,6 +96,8 @@ public class MarketingAction implements Serializable {
 	private Survey survey;
 	private Integer newsletter;
 	private Integer news;
+	
+	private MarketingSellerDistribution sellerDistribution;
 	
 	private List<MarketingActionTarget> targets;
 	
@@ -170,6 +206,13 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setTaskHolder(TaskHolder taskHolder) {
 		this.taskHolder = taskHolder;
+		return this;
+	}
+	public MarketingSellerDistribution getSellerDistribution() {
+		return null == sellerDistribution ? MarketingSellerDistribution.MANUAL : sellerDistribution;
+	}
+	public MarketingAction setSellerDistribution(MarketingSellerDistribution sellerDistribution) {
+		this.sellerDistribution = sellerDistribution;
 		return this;
 	}
 	public boolean isDeleted() {
