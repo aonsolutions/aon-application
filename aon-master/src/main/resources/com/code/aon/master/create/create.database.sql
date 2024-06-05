@@ -4933,6 +4933,35 @@ CREATE TABLE `invoice_tax_account` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Impuestos de Facturas';
 
 #
+# Table structure for table `invoice_tracking`
+#
+
+CREATE TABLE `invoice_tracking` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la Factura',
+  `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `series` char(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Serie de la Factura',
+  `number` int NOT NULL DEFAULT '0' COMMENT 'Numero de la Factura',
+  `reference_code` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de referencia de la Factura',
+  `issue_date` date DEFAULT NULL COMMENT 'Fecha de emision de la Factura',
+  `rdocument` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Documento del Cliente o Proveedor',
+  `rname` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre completo del Cliente o Proveedor',
+  `status` tinyint DEFAULT '0' COMMENT 'Estado del Seguimiento de Factura',
+  `type` tinyint DEFAULT '0' COMMENT 'Tipo de Factura (Compra o Venta)',
+  `total` decimal(15,4) DEFAULT '0' COMMENT 'Total Factura',
+  `json` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Factura en formato JSON',
+  `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `IDX_UNQ_INVOICE_TRACKING_DOMAIN_SERIES_NUMBER_TYPE` (`domain`,`series`,`number`,`type`),
+  KEY `IDX_INVOICE_TRACKING_ISSUE_DATE` (`issue_date`),
+  KEY `IDX_INVOICE_TRACKING_DOMAIN` (`domain`),
+  KEY `IDX_INVOICE_TRACKING_REFERENCE_CODE` (`reference_code`),
+  CONSTRAINT `FK_INVOICE_TRACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimiento de Facturas';
+
+#
 # Table structure for table `invoicing_group`
 #
 
@@ -5451,6 +5480,7 @@ CREATE TABLE `mk_action` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `campaign` int NOT NULL COMMENT 'Identificador de la Campaña',
   `media_type` int NOT NULL COMMENT 'Tipo de contacto de la Accion',
+  `tag` int(11) DEFAULT NULL COMMENT 'Etiqueta para definir el tipo de accion',
   `start_date` datetime NOT NULL COMMENT 'Fecha de inicio',
   `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `survey` int DEFAULT NULL COMMENT 'Identificador del Cuestionario',
@@ -5469,11 +5499,13 @@ CREATE TABLE `mk_action` (
   KEY `IDX_MK_ACTION_NEWS` (`news`),
   KEY `IDX_MK_ACTION_WORKGROUP` (`workgroup`),
   KEY `IDX_MK_ACTION_TASK_HOLDER` (`task_holder`),
+  KEY `IDX_MK_ACTION_TAG` (`tag`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_MK_ACTION_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
   CONSTRAINT `FK_MK_ACTION_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
@@ -5491,14 +5523,21 @@ CREATE TABLE `mk_action_target` (
   `survey_response` int DEFAULT NULL COMMENT 'Identificador de la Respuesta de Cuestionario',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios',
   `user` int DEFAULT NULL COMMENT 'Identificador del Usuario',
+  `project` int(11) DEFAULT NULL COMMENT 'Expediente asociado al cliente potencial de la accion',
+  `creation_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_ACTION_TARGET_USER` (`user`),
   KEY `IDX_MK_ACTION_TARGET_SURVEY_RESPONSE` (`survey_response`),
   KEY `IDX_MK_ACTION_TARGET_MK_ACTION` (`action`),
   KEY `IDX_MK_ACTION_TARGET_TARGET` (`target`),
   KEY `IDX_MK_ACTION_TARGET_DOMAIN` (`domain`),
+  KEY `IDX_MK_ACTION_TARGET_PROJECT` (`project`),
   CONSTRAINT `FK_MK_ACTION_TARGET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_MK_ACTION` FOREIGN KEY (`action`) REFERENCES `mk_action` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TARGET_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_SURVEY_RESPONSE` FOREIGN KEY (`survey_response`) REFERENCES `survey_response` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_MK_ACTION_TARGET_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
@@ -8022,14 +8061,17 @@ CREATE TABLE `seller` (
   `commission_type` int DEFAULT NULL COMMENT 'Identificador del Tipo de Comision',
   `status` tinyint DEFAULT '0' COMMENT 'Estado del Agente Comercial',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
+  `task_holder` int(11) DEFAULT NULL COMMENT 'Operario asociado al agente comercial',
   PRIMARY KEY (`registry`),
   KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
   KEY `IDX_SELLER_DOMAIN` (`domain`),
   KEY `IDX_SELLER_SCOPE` (`scope`),
+  KEY `IDX_SELLER_TASK_HOLDER` (`task_holder`),
   CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
   CONSTRAINT `FK_SELLER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SELLER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_SELLER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_SELLER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_SELLER_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #

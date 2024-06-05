@@ -516,6 +516,11 @@ public interface Filter extends Serializable{
 	public interface ContractDocFilter{
 		Filter filter(ContractDocProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvoiceDocFilter{
+		Filter filter(InvoiceDocProperties properties);
+	}
 
 	@FunctionalInterface
 	public interface ContractDataFilter{
@@ -727,8 +732,8 @@ public interface Filter extends Serializable{
 	}
 
 	@FunctionalInterface
-	public interface InvoiceTrackingFilter{
-		Filter filter(InvoiceTrackingProperties properties);
+	public interface InvoiceCommunicationTrackingFilter{
+		Filter filter(InvoiceCommunicationTrackingProperties properties);
 	}
 	
 	@FunctionalInterface

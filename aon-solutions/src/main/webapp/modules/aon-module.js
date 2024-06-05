@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { getToken , getCompanies, getUser, login} from '../services/service.js';
+import { getToken , getCompanies, login} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 
 import { AonHome } from './aon-home.js';
@@ -8,6 +8,8 @@ import * as LS  from '../services/localStorageService.js';
 import './company/aon-mobile-parent.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
+import { AonParent } from 'aonparent';
+import { AonMobileParent } from './company/aon-mobile-parent.js';
 
 export class AonModule extends AonElement {
 
@@ -79,9 +81,9 @@ export class AonModule extends AonElement {
 						this.companySelection(companies[0], true);
 					} else {
 						this.getElement(this.AON_HOME).showMenu(false);
-						this.rootPanelHtml(this.isMobile()
-						 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
-						 	: '<aon-parent id="aonParent"></aon-parent>');
+						this.rootPanel(this.isMobile()
+							? new AonMobileParent()
+							: new AonParent());
 					}
 				});
 			}
@@ -104,7 +106,7 @@ export class AonModule extends AonElement {
 			try {
 				await login(data);
 			} catch (e) {
-				alert(e);
+				
 			}
 			window.location = window.location.origin;
 		}
@@ -121,7 +123,8 @@ export class AonModule extends AonElement {
 		LS.setDomainName(company.domain);
 		LS.setDomainDocumnet(company.document);
 		LS.setOnlyOne(onlyOne);
-
+		LS.setDomainLogin(company.login);
+		
 		let home = this.getElement(this.AON_HOME);
 		home.showMenu(true);
 
@@ -134,13 +137,9 @@ export class AonModule extends AonElement {
 			aonMenu.init();
 		} else aonHeader.companyIn(onlyOne);
 
-		getUser().then(user => {
-			LS.setDomainLogin(user.login);
-			
-			this.rootPanelHtml(this.isMobile()
-				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-				: '<aon-desktop id="aonDesktop"></aon-desktop>');
-		});
+		this.rootPanelHtml(this.isMobile()
+			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+			: '<aon-desktop id="aonDesktop"></aon-desktop>');
 	}
 
 	async orientationLocked(){

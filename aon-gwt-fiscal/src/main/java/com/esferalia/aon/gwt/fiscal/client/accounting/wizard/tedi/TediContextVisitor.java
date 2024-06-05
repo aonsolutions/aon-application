@@ -16,12 +16,12 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKeyVisitor;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
-import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -52,7 +52,7 @@ import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.ewok.TediRegistry;
 
-public class TediContextVisitor implements ITediContextVisitor {
+public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 
 	private static final Logger LOGGER = Logger.getLogger(EditableInvoicePanel.class.getName());
 	static {
@@ -400,6 +400,11 @@ public class TediContextVisitor implements ITediContextVisitor {
 	
 	@Override
 	public void visitFinanceAmountZero(ICallback callback) {
+		noVisit();
+	}
+	
+	@Override
+	public void visitFinanceTotalAmount(ICallback callback) {
 		noVisit();
 	}
 	

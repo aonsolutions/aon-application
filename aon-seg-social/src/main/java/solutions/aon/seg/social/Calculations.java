@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -14,18 +13,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.TextPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
@@ -35,7 +37,6 @@ import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.util.WebConnectionWrapper;
 
-import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -50,16 +51,55 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class Calculations {
 	
-    	@FunctionalInterface
-    	private static interface LiquidationPageFill {
+    @FunctionalInterface
+    static interface LiquidationPageFill {
 	    HtmlPage fill(HtmlPage htmlPage) throws IOException, SegSocialException;
 	}
 
+    @FunctionalInterface
+    static interface CalcCallback {
+	    void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs);
+	}
+    
+    private static void trace(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs) {
+    	
+    }
 
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc,
-			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
 			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
+		return workersCalculationQueryByCCC(
+				certificateInputStream, 
+				certificatePassword, 
+				certificateType, 
+				ccc, 
+				regime, 
+				dateFrom, 
+				dateTo, 
+				liqType, 
+				liqOrigin, 
+				Calculations::trace
+				);
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin,
+			final CalcCallback callback) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);
@@ -74,7 +114,7 @@ class Calculations {
 			try {
 				SistemaREDI.checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
-				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret= new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
+				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret=  new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
 				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
 				DomNodeList<DomNode> trowList = htmlPage.querySelectorAll("table>tbody>tr:not(.cabecera)");
@@ -180,6 +220,7 @@ class Calculations {
 							});
 							
 							periods.put(period, calcs);
+							callback.accept(liquidationType, naf, periods);
 							
 							htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
 							radios = htmlPage.getElementsByName("TRAMO");
@@ -239,8 +280,35 @@ class Calculations {
 	}
 	
 	
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-		final String certificatePassword, final String certificateType, String numLiquidation, String authorized, String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			String numLiquidation, 
+			String authorized, 
+			String[] nafs
+			) throws SegSocialException{
+		
+		return workersCalculationByCCCandNAFS(
+			    certificateInputStream, 
+			    certificatePassword, 
+			    certificateType,
+			    numLiquidation,
+			    authorized,
+			    nafs,
+			    Calculations::trace
+				);
+		
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+		final InputStream certificateInputStream,
+		final String certificatePassword, 
+		final String certificateType, 
+		String numLiquidation, 
+		String authorized, 
+		String[] nafs,
+		final CalcCallback callback) throws SegSocialException{
 	    
 	    Object[] arrFields = { numLiquidation };
 	    Toolkit.verifyData(arrFields);
@@ -251,13 +319,50 @@ class Calculations {
 		    certificateType, 
 		    authorized, 
 		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, numLiquidation), 
-		    nafs);
+		    nafs,
+		    callback);
 	}
 
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-		final String certificatePassword, final String certificateType, final String ccc,
-		final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-		final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			final String ccc,
+			final SistemaRED.Regime regime, 
+			final Date dateFrom, 
+			final Date dateTo, 
+			final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin, 
+			String authorized, 
+			String[] nafs) throws SegSocialException{
+		return workersCalculationByCCCandNAFS(
+				certificateInputStream, 
+				certificatePassword, 
+				certificateType, 
+				ccc, 
+				regime, 
+				dateFrom, 
+				dateTo, 
+				liqType, 
+				liqOrigin, 
+				authorized, 
+				nafs,
+				Calculations::trace);
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+		final InputStream certificateInputStream,
+		final String certificatePassword, 
+		final String certificateType, 
+		final String ccc,
+		final SistemaRED.Regime regime, 
+		final Date dateFrom, 
+		final Date dateTo, 
+		final SistemaRED.LiquidationType liqType,
+		final SistemaRED.LiquidationOrigin liqOrigin, 
+		String authorized, 
+		String[] nafs,
+		final CalcCallback callback) throws SegSocialException{
 	    
 	    Object[] arrFields = { ccc, regime, dateFrom, dateTo, liqType, liqOrigin };
 	    Toolkit.verifyData(arrFields);
@@ -268,11 +373,18 @@ class Calculations {
 		    certificateType, 
 		    authorized, 
 		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin), 
-		    nafs);
+		    nafs,
+		    callback);
 	}
 	
-	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String authorized,LiquidationPageFill liquidationPageFill,  String... nafs) throws SegSocialException{
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
+			final InputStream certificateInputStream,
+			final String certificatePassword, 
+			final String certificateType, 
+			String authorized,
+			LiquidationPageFill liquidationPageFill,  
+			String[] nafs,
+			final CalcCallback callback) throws SegSocialException{
 		
 		byte [] certificateData = null;
 		try {
@@ -297,63 +409,66 @@ class Calculations {
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
 			try {
 				authorized = authorized.trim().replaceFirst("^0*", "");
-				for ( Object autorizacionInput : htmlPage.getByXPath("//*[starts-with(@id,\"autorizacion\")]") ) {
-					if ( ((HtmlInput) autorizacionInput).getAttribute("title").contains(authorized) ) {
-						((HtmlInput) autorizacionInput).click();
-						htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
-						break;
-					}
+				for ( DomElement autorizacionAnchor : htmlPage.getElementsByTagName(HtmlAnchor.TAG_NAME) ) {
+						String href = ((HtmlAnchor) autorizacionAnchor).getHrefAttribute();
+						if ( href.endsWith("NUM_AUTORIZADO="+authorized) ) {
+							htmlPage = ((HtmlAnchor) autorizacionAnchor).click();
+							break;
+						}
 				}
 			} catch (NullPointerException e) {}
+			
 			htmlPage=liquidationPageFill.fill(htmlPage);
 			try {
 				SistemaREDI.checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
 				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret= new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
-				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
-				DomNodeList<DomNode> trowList = htmlPage.querySelectorAll("table>tbody>tr:not(.cabecera)");
+				HtmlForm liqForm = (HtmlForm) htmlPage.getElementById("idFormularioSeleccionLiquidaciones");
+				DomNodeList<HtmlElement> liqAnchors = liqForm.getElementsByTagName(HtmlAnchor.TAG_NAME);
+				DomNodeList<DomNode> liqTRList = liqForm.querySelectorAll("table>tbody>tr:not(.cabecera)");
 				
-				for (int h=0;h<liqList.size();h++) {
-					String liquidationType = Toolkit.removeWeirdCharacters(((HtmlTableRow)trowList.get(h)).getCells().get(3).getVisibleText());
+				for (int h = 0; h < liqAnchors.size(); h++) {
+					String liquidationType = Toolkit.removeWeirdCharacters(((HtmlTableRow)liqTRList.get(h)).getCells().get(3).getVisibleText());
 					Map<String,Map<Period, Map<String, Calc>>> nafMap = new LinkedHashMap<String,Map<Period, Map<String, Calc>>>();
-					HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(h);
-					radio.click();
-					htmlPage=formDatos.getInputByValue("Continuar").click();
-					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					htmlPage = liqAnchors.get(h).click();
+					htmlPage = htmlPage.getElementByName("SPM.ACC.CONSULTA_TRABAJADORES").click();
 					
 					for(String naf : nafs) {
-						System.out.println("Try NAF:" + naf);
-						DomNodeList<DomNode> rowNodes = htmlPage.querySelectorAll("tbody tr:not([class='cabecera'])");
-						if(!rowNodes.isEmpty()) {
-							Optional<DomNode> row = rowNodes.stream().filter(node -> (Toolkit.removeWeirdCharacters(((HtmlTableRow)node).getCell(1).getVisibleText()).equalsIgnoreCase(naf))).findFirst();
-							if(row.isPresent()) {
-								HtmlTableRow tableRow = (HtmlTableRow) row.get();
-								HtmlRadioButtonInput nafRadio = tableRow.getCell(0).querySelector("input[type='radio']");
-								nafRadio.click();
+						HtmlForm nafForm = (HtmlForm) htmlPage.getElementById("idFormularioSeleccionPorNAF");
+						
+						if ( nafForm != null ) {
+							DomNodeList<DomNode> nafRows = nafForm.querySelectorAll("tbody tr:not([class='cabecera'])");
+	
+							if(!nafRows.isEmpty()) {
+								Optional<DomNode> nafRow = nafRows.stream().filter(node -> (Toolkit.removeWeirdCharacters(((HtmlTableRow)node).getCell(0).getVisibleText()).equalsIgnoreCase(naf))).findFirst();
+								if(nafRow.isPresent()) {
+									HtmlTableRow nafTableRow = (HtmlTableRow) nafRow.get();
+									htmlPage = nafTableRow.getCell(0).getElementsByTagName(HtmlAnchor.TAG_NAME).getFirst().click();
+								}
 							}
 						}
 						else {
-							HtmlInput nafInput = (HtmlInput) htmlPage.getElementById("NAF_TRABAJADOR");
+							HtmlInput nafInput = (HtmlInput) htmlPage.getElementByName("NAF_TRABAJADOR");
 							nafInput.setValue(naf);
+							htmlPage = htmlPage.getElementByName("SPM.ACC.CONSULTAR").click();
 						}
-						htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
 						
 						if (htmlPage.querySelector("li[title='Error']") == null) {
 
-							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<Period, Map<String,Calc>>();
+							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<>();
 
-							HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
+							HtmlForm nafMonthForm = (HtmlForm) htmlPage.getElementById("idformularioDatosGlobalesTrabajadorMes");
+							HtmlTableBody firstTable = nafMonthForm.querySelector("table>tbody");
 							
 							if ( firstTable == null ) {
-								htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-								formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+								htmlPage = htmlPage.getElementById("paginaVolver").click();
+								liqForm = (HtmlForm) htmlPage.getElementById("idFormularioSeleccionLiquidaciones");
 								continue; //CR61(7106) .
 							}
 							 
 							DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
 							
-							LinkedHashMap<String, Calc> employeeCalcs = new LinkedHashMap<String, Calc>();
+							LinkedHashMap<String, Calc> employeeCalcs = new LinkedHashMap<>();
 							
 							trList.forEach(trNode -> {
 								HtmlTableRow tr = (HtmlTableRow) trNode;
@@ -379,13 +494,14 @@ class Calculations {
 							
 							periods.put(null, employeeCalcs);
 
-							htmlPage = htmlPage.getElementById("SPM.ACC.RELACION_TRAMOS").click();
+							htmlPage = htmlPage.getElementByName("SPM.ACC.RELACION_TRAMOS").click();
 
 							
-							List<DomElement> radios = htmlPage.getElementsByName("TRAMO");
+							DomNodeList<DomNode> anchors = htmlPage.querySelectorAll("a[href*=\"CALCULOS_TRAMO\"]");
 							
-							for (int i=0; i<radios.size(); i++) {
-								DomElement rad = radios.get(i);
+							for (int i=0; i<anchors.size(); i++) {
+								
+								HtmlAnchor rad = (HtmlAnchor) anchors.get(i);
 								
 								HtmlTableRow tableRow = getParentHtmlTableRow(rad);
 								Double quoteDays = getDoubleValue(tableRow.getCell(3));
@@ -393,31 +509,23 @@ class Calculations {
 								Double baseCC = getDoubleValue(tableRow.getCell(5));
 								Double baseAT = getDoubleValue(tableRow.getCell(6));
 								
+								String fromDateStr  = getStringValue(tableRow.getCell(1));
+								String toDateStr  = getStringValue(tableRow.getCell(2));
 								
 								htmlPage = rad.click();
-								htmlPage = htmlPage.getElementById("SPM.ACC.CALCULOS_TRAMO").click();
 								
-								DomNode element = htmlPage.querySelector("div>abbr[title='Número de afiliado.']");
-								element = element.getParentNode();
-								element = element.getNextElementSibling();
-								String fromDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
-								Pattern datePattern = Pattern.compile("\\s*Fecha\\s*(Desde|Hasta)\\s*:\\s*(?<date>(?<day>\\d{1,2})\\/(?<month>\\d{1,2})\\/(?<year>\\d{2,4}))\\s*", Pattern.CASE_INSENSITIVE);
 								DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-								Matcher matcher = datePattern.matcher(fromDateStr);
 								Date fromDate = null;
-								if (matcher.matches()) {
-									try {
-										fromDate = df.parse(matcher.group("date"));
-									} catch (ParseException e1) {}
+								try {
+									fromDate = df.parse(fromDateStr);
+								} catch (ParseException e1) {
+									
 								}
-								element = element.getNextElementSibling();
-								String toDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
-								matcher = datePattern.matcher(toDateStr);
 								Date toDate = null;
-								if (matcher.matches()) {
-									try {
-										toDate = df.parse(matcher.group("date"));
-									} catch (ParseException e1) {}
+								try {
+									toDate = df.parse(toDateStr);
+								} catch (ParseException e1) {
+									
 								}
 								
 								Period period = 
@@ -429,7 +537,6 @@ class Calculations {
 								;
 								
 								firstTable = htmlPage.querySelector("table>tbody");
-								
 								trList = firstTable.querySelectorAll("tr:not(.cabecera)");
 								
 								LinkedHashMap<String, Calc> calcs = new LinkedHashMap<String, Calc>();
@@ -437,6 +544,9 @@ class Calculations {
 								trList.forEach(trNode -> {
 									HtmlTableRow tr = (HtmlTableRow) trNode;
 									List<HtmlTableCell> cells = tr.getCells();
+									
+									if ( cells.size() < 7 ) 
+										return;
 									
 									String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
 									
@@ -459,28 +569,38 @@ class Calculations {
 									
 								});
 								
+								if ( calcs.isEmpty() ) {
+									calcs.putAll(employeeCalcs);
+								}
+								
 								periods.put(period, calcs);
 								
-								htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
-								radios = htmlPage.getElementsByName("TRAMO");
+								htmlPage = htmlPage.getElementById("paginaVolver").click();
+								anchors = htmlPage.querySelectorAll("a[href*=\"CALCULOS_TRAMO\"]");
 							}
 							nafMap.put(naf, periods);
+							callback.accept(liquidationType, naf, periods);
 							
-							htmlPage = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+							Page page = htmlPage.getElementById("paginaVolver").click();
+							if ( page.isHtmlPage() ) {
+								htmlPage = (HtmlPage ) page;
+							}
 							
-							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+							page = htmlPage.getElementById("paginaVolver").click();
+							if ( page.isHtmlPage() ) { 
+								htmlPage = (HtmlPage ) page;
+							}
+							 
+							liqForm =(HtmlForm) htmlPage.getElementById("idFormularioSeleccionLiquidaciones");
 						}
 						
-						System.out.println(naf +"...SUCCESS" );
-
 					}
 					
 					ret.put(liquidationType, nafMap);
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-					liqList=formDatos.querySelectorAll("input[type='radio']");
+					htmlPage = htmlPage.getElementById("paginaVolver").click();
+					htmlPage = htmlPage.getElementById("paginaVolver").click();
+					liqForm =(HtmlForm) htmlPage.getElementById("idFormularioSeleccionLiquidaciones");
+					liqAnchors = liqForm.getElementsByTagName(HtmlAnchor.TAG_NAME);
 				}
 				return ret;
 			}
@@ -526,6 +646,17 @@ class Calculations {
 	}
 
 
+	private static String getStringValue(HtmlTableCell cell) {
+		String str = Toolkit.removeWeirdCharacters(cell.getVisibleText());
+		
+		if ( str == null )
+			return null;
+		if ( str.isEmpty())
+			return null;
+		
+		return str;
+	}
+
 	private static Double getDoubleValue(HtmlTableCell cell) {
 		String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
 		String str = Toolkit.removeWeirdCharacters(cell.getVisibleText());
@@ -547,6 +678,16 @@ class Calculations {
 	
 	
 	
+	private static HtmlTableRow getParentHtmlTableRow(DomNode el) {
+		for ( DomNode parent = el.getParentNode(); parent != null; parent = parent.getParentNode() ) {
+			if ( HtmlTableRow.TAG_NAME.equalsIgnoreCase(parent.getLocalName())) {
+				return (HtmlTableRow) parent;
+			}
+		}
+		return null;
+	}
+	
+
 	private static HtmlTableRow getParentHtmlTableRow(DomElement el) {
 		for ( DomNode parent = el.getParentNode(); parent != null; parent = parent.getParentNode() ) {
 			if ( HtmlTableRow.TAG_NAME.equalsIgnoreCase(parent.getLocalName())) {

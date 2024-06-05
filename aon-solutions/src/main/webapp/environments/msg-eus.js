@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Guri buruz';
+export const ACADEMIES = 'Akademiak';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Sartu zure AON kontura';
@@ -19,6 +20,7 @@ export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_COMPOSITION = 'Konposizioa Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_NEW = "Gehitu berria";
 export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
@@ -67,15 +69,19 @@ export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
+export const CHANGE_PASSWORD = 'Aldatu pasahitza';
 export const CHOOSE_A_DOMAIN = 'Aukeratu domeinuren bat, mesedez';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
 export const CLOSE = 'Itxi';
 export const CLOSE_SESSION = 'Saioa Itxi';
+export const CLOSED = 'Itxita';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
+export const COMMERCE = 'Merkataritza';
+export const COMMERCIAL = 'Komertziala';
 export const COMMUNICATION = 'Komunikazioa';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
@@ -89,6 +95,7 @@ export const CONFIDENTIAL = 'Konfidentziala';
 export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
+export const CONTACT_DATA2 = "Harremanetarako informazioa";
 export const CONTACTS = 'Kontaktuak';
 export const CONTAINER = 'Ontzia';
 export const CONTRACT = 'Kontratatu';
@@ -162,6 +169,7 @@ export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
+export const EXPIRED_SESSION = 'Saioa iraungi da';
 export const ERRORS = 'Akatsak';
 
 // ----- F
@@ -172,8 +180,10 @@ export const FILE_DATA = 'Fitxategiaren Datuak';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
+export const FISCAL = 'Fiskal';
 export const FOOTER = 'Oina';
 export const FROM = 'Noiztik';
+export const FRENCH = 'Frantsesa';
 
 // ----- G
 
@@ -184,6 +194,7 @@ export const GET_INVOICES = 'Fakturak Lortu';
 export const GROUP_DATA = 'Taldeko Datuak';
 export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';
+export const GROUPWARE = 'Txosten';
 export const GROUPS = 'Taldeak';
 
 // ----- H
@@ -246,6 +257,7 @@ export const LOCATION = 'Kokapena';
 
 // ----- M
 
+export const MARKETING = 'Marketin';
 export const MARK_ENTRY = 'Sarrera Markatu';
 export const MARK_EXIT = 'Irteera Markatu';
 export const MANAGEMENT = 'Kudeaketa';
@@ -275,6 +287,7 @@ export const NEW_TICKET = 'Tiket Berria';
 export const NEW_WAREHOUSE = 'Biltegi Berria';
 export const NEXT = 'Hurrengoa';
 export const NIF = 'IFZ';
+export const NO_DATA = 'Ez dago daturik';
 export const NOT_LINKED = 'Estekatu gabea';
 export const NOT_LINKED1 = 'Estekatu gabeak';
 export const NOTIFICATION = 'Jakinarazpena';
@@ -303,7 +316,7 @@ export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
-export const PAYROLL = "Nómina";
+export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nomina';
 export const PAYSHEETS = 'Nominak';
 export const PENDING = 'Zain';
@@ -314,6 +327,7 @@ export const PENDING_TASKS = 'Zain Dauden Zereginak';
 export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
+export const PORTAL_MENU = "Portaleko menua";
 export const POSTAL_CODE = 'Posta-kodea';
 export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
@@ -329,6 +343,7 @@ export const PROVINCE = 'Probintzia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Sarbide azkarra";
 export const QUANTITY = 'Kantitatea';
 export const QUOTA = 'Kuota';
 
@@ -338,6 +353,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
+export const RECENTLY_OPENED = "Berriki irekia";
 export const RECORD = 'Kontabilizatu';
 export const RECORD_INVOICE = 'Faktura Kontabilizatu';
 export const RECTIFIED = 'Zuzenketa';
@@ -370,6 +386,7 @@ export const REVIEW = 'Berrikusi';
 export const SAVE = 'Gorde';
 export const SAVED_DATA = 'Datuak zuzen gorde dira';
 export const SCOPE = 'Esparrua';
+export const SCHEDULE = "Ordutegia";
 export const SEARCH = 'Bilatu';
 export const SEE_ALL = 'Guztiak Ikusi';
 export const SEND = 'Bidali';
@@ -384,6 +401,7 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SIDE_MENU = 'Alboko menua';
 export const SIGN_IN = 'Saioa Hasi';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';
@@ -394,6 +412,7 @@ export const SPANISH = 'Gaztelania';
 export const STATISTICS = 'Estatistikak';
 export const STATUS = "Egoera";
 export const STATUS_NOT_EMPTY = "Egoera ezin da hutsik geratu";
+export const SUITE_MENU = "Suite menua";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';
@@ -401,6 +420,8 @@ export const SUPPORT = 'Euskarri';
 export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
+export const SELECT_LANGUAGE = "Hautatu hizkuntza";
+export const SELECT_COMPANY_TYPE = "Hautatu enpresa mota";
 
 // ----- T
 
@@ -425,6 +446,7 @@ export const TOTAL = 'Guztira';
 export const TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
 export const TRANSACTION_TYPE = 'Transakzio Mota';
 export const TRASH = 'Paperontzia';
+export const TREASURY = 'Diruzaintza';
 export const TYPE = 'Mota';
 export const TYPES = 'Motak';
 
@@ -443,6 +465,7 @@ export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
 export const UTILITIES = 'Utilitateak';
+export const UPPER_MENU = "Goiburuko menua";
 
 // ----- V
 
@@ -458,10 +481,13 @@ export const WAREHOUSES = 'Biltegiak';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';
+export const WORKSHOPS = 'Tailerrak';
 export const WRITE_YOUR_TITLE = "Idatzi hemen zure izenburua";
 export const WRITE_A_COMMENT =  "Idatzi iruzkin bat";
 export const WRITE_A_DESCRIPTION = "Idatzi deskribapen bat";
 export const WRITE_A_NOTE =  "Idatzi ohar bat";
+export const WEEK_SCHEDULE = "Astelehenetik ostegunera 8:00etatik 15:00etara";
+export const WEEK_FRIDAY_SCHEDULE = "Ostiralean 08:00etatik 14:00etara";
 
 
 // ----- X

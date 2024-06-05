@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -29,7 +28,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -43,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -52,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -238,7 +238,7 @@ public class InvoiceAutoComplete {
 								.setScope(inv.getScope());
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "430"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4300"))
 								.setAlias(customer.getAlias())
 								.setDescription(customer.getName())
 								.setActive(true);
@@ -274,7 +274,7 @@ public class InvoiceAutoComplete {
 								.setScope(inv.getScope());
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "400"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4000"))
 								.setAlias(supplier.getAlias())
 								.setDescription(supplier.getName())
 								.setActive(true);
@@ -313,7 +313,7 @@ public class InvoiceAutoComplete {
 						
 						Account account = new Account()
 								.setDomain(inv.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "410"))
+								.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4100"))
 								.setAlias(creditor.getAlias())
 								.setDescription(creditor.getName())
 								.setActive(true);
@@ -482,7 +482,9 @@ public class InvoiceAutoComplete {
 					Integer[] domains = {domain.getId(), domain.getParentId()};
 					acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.in(domains).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
 				} else acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.eq(domain.getId()).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
-
+				
+				double base = inv.isUndeductible() ?AonMathUtils.round(b.getBase() + b.getQuota()) : b.getBase();
+				
 				InvoiceDetail id = new InvoiceDetail()
 						.setAccount( acc != null ? acc.getId(): null)
 						.setAccountCode(acc != null ? acc.getCode() : null)
@@ -492,18 +494,25 @@ public class InvoiceAutoComplete {
 						.setDomain(inv.getDomain())
 						.setInvoice(inv)
 						.setInvoiceTaxes(invoiceTax)
-						.setPrice(b.getBase())
+						.setPrice(base)
 						.setQuantity(1)
-						.setTaxableBase(b.getBase())
+						.setTaxableBase(base)
 						.setSource(InvoiceSource.TEDI)
-						.setWorkPlace(ctx.getConfiguration().getWorkplaces() != null
-							? ctx.getConfiguration().getWorkplaces().getFirst().getId() 
+						.setWorkplace(ctx.getConfiguration().getWorkplaces() != null
+							? ctx.getConfiguration().getWorkplaces().getFirst() 
 							: null);
 				invoiceDetails.add(id);
 			});
 			inv.setDetails(invoiceDetails);
 		}
 		inv.getDetails().stream().forEach(detail -> {
+			
+			if(detail.getId() != null) {
+				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
+					detail.setId(null);
+				}
+			}
 
 			detail.setDomain(inv.getDomain());
 			
@@ -514,9 +523,8 @@ public class InvoiceAutoComplete {
 					it = detail.getInvoiceTaxes().get(i);
 			}
 			
-			if(detail.getWorkPlace() == null && ctx.getConfiguration().getWorkplaces() != null
-					&& !ctx.getConfiguration().getWorkplaces().isEmpty()) {
-				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().get(0).getId());
+			if(detail.getWorkplace() == null && AonCollectionUtils.isNotEmpty( ctx.getConfiguration().getWorkplaces() )) {
+				detail.setWorkplace(ctx.getConfiguration().getWorkplaces().get(0));
 			}
 			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
@@ -568,17 +576,23 @@ public class InvoiceAutoComplete {
 			}
 			
 			if(detail.getWorkplace() == null || detail.getWorkplace().getId() == null) {
-				if(detail.getWorkPlace() != null){
-					Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkPlace()));
-					detail.setWorkplace(wp);
+				if(detail.getWorkplace() != null){
+					if ( detail.getWorkplace().getId() == null && AonStringUtils.isBlank( detail.getWorkplace().getDescription()) ) {
+						Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkplace().getId()));
+						detail.setWorkplace(wp);
+					}
 				} else {
 					Workplace wp = ctx.getConfiguration().getWorkplaces().getFirst();
 					if(wp != null && wp.getId() != null) {
-						detail.setWorkPlace(wp.getId());
 						detail.setWorkplace(wp);
 					}
 				}
 			}
+			
+			if (inv.isUndeductible() && it.getTaxType() == TaxType.VAT) {
+				detail.setTaxableBase( AonMathUtils.round(it.getBase() + it.getQuota()));
+			}
+			
 		});
 	};
 	
@@ -645,6 +659,19 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el ambito de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
+		if((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
+			if(inv.isSales()) {
+				Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(customer.getScope());
+			} else if(inv.isPurchase()) {
+				Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(supplier.getScope());				
+			} else if(inv.isExpenses() || inv.isUndeductible()){
+				Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistry());
+				inv.setScope(creditor.getScope());
+			}
+		}
+
 		if(inv.getScope() == null || inv.getScope().getId() == null) {
 			List<Scope> scopes = SecurityDAO.getScopeStream(ctx.getContext(),  f -> f.getDomainProperty().eq(inv.getDomain())).toList();
 			if(scopes.isEmpty()) {
@@ -672,14 +699,18 @@ public class InvoiceAutoComplete {
 	 * Aseguramos la base imponible de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_TAXABLE_BASE = (inv,ctx) -> {
-		if(inv.getTaxableBase() == 0) {
+		if (inv.isUndeductible() ) {
+			inv.setTaxableBase(inv.getTotal());
+			inv.setVatQuota( 0.0 );
+			inv.setRetentionQuota( 0.0 );
+		} else if(inv.getTaxableBase() == 0 ) {
 			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 					.mapToDouble(r -> r.getBase()).sum();
 			double prepayment = inv.getDetails().stream().filter(f -> f.isPrepayment())
-			.mapToDouble(r -> r.getAmount()).sum();
-			
+					.mapToDouble(r -> r.getAmount()).sum();
 			inv.setTaxableBase(AonMathUtils.round(taxableBase + prepayment));
-		}
+		} 
+		
 	};
 	
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
@@ -718,5 +749,4 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
-
 }

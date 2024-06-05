@@ -94,7 +94,7 @@ public class AttachmentDAO {
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
 		RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID, RATTACH.CATEGORY,
-		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE};
+		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE, CATEGORY.ID, CATEGORY.DESCRIPTION, CATEGORY.DOMAIN, CATEGORY.NAME, CATEGORY.RATTACH, CATEGORY.SCOPE, CATEGORY.TYPE, CATEGORY.URL, SCOPE.ID, SCOPE.DESCRIPTION};
 
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] contractAttachWD = {CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT,
@@ -183,9 +183,17 @@ public class AttachmentDAO {
 	}
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
-		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		if(withData) select = ctx.getDslContext().select().from(RATTACH); //.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
+		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		if(withData) select = ctx.getDslContext().select().from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		return RATTACH_PROPERTIES.build(select, filter).fetch().stream().map(new RegistryAttachFiller());
 	}
 	
 	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){
@@ -570,23 +578,42 @@ public class AttachmentDAO {
 	}
 
 	public static void updateRegistryAttach(AONContext ctx, Attach attach){
-		ctx.getDslContext().update(RATTACH)
-			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
-			.set(RATTACH.CATEGORY,attach.getCategory())
-			.set(RATTACH.DATA, attach.getData())
-			.set(RATTACH.DESCRIPTION, attach.getDescription())
-			.set(RATTACH.DOMAIN, attach.getDomain().getId())
-			.set(RATTACH.DPARENT_ID, attach.getDparentId())
-			.set(RATTACH.DRIVE_ID, attach.getDriveId())
-			.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
-			.set(RATTACH.REGISTRY, attach.getAttachModule())
-			.set(RATTACH.SCOPE, attach.getScope())
-			.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
-			.set(RATTACH.TYPE, (byte) attach.getType())
-			.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
-			.set(RATTACH.MODIFICATION_USER, ctx.getUser())
-		.where(RATTACH.ID.eq(attach.getId()))
-		.execute();
+		if(null == attach.getData()) {
+			ctx.getDslContext().update(RATTACH)
+				.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
+				.set(RATTACH.CATEGORY,attach.getCategory())
+				.set(RATTACH.DESCRIPTION, attach.getDescription())
+				.set(RATTACH.DOMAIN, attach.getDomain().getId())
+				.set(RATTACH.DPARENT_ID, attach.getDparentId())
+				.set(RATTACH.DRIVE_ID, attach.getDriveId())
+				.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(RATTACH.REGISTRY, attach.getAttachModule())
+				.set(RATTACH.SCOPE, attach.getScope())
+				.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
+				.set(RATTACH.TYPE, (byte) attach.getType())
+				.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(RATTACH.MODIFICATION_USER, ctx.getUser())
+			.where(RATTACH.ID.eq(attach.getId()))
+			.execute();
+		} else {
+			ctx.getDslContext().update(RATTACH)
+				.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
+				.set(RATTACH.CATEGORY,attach.getCategory())
+				.set(RATTACH.DATA, attach.getData())
+				.set(RATTACH.DESCRIPTION, attach.getDescription())
+				.set(RATTACH.DOMAIN, attach.getDomain().getId())
+				.set(RATTACH.DPARENT_ID, attach.getDparentId())
+				.set(RATTACH.DRIVE_ID, attach.getDriveId())
+				.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(RATTACH.REGISTRY, attach.getAttachModule())
+				.set(RATTACH.SCOPE, attach.getScope())
+				.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
+				.set(RATTACH.TYPE, (byte) attach.getType())
+				.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(RATTACH.MODIFICATION_USER, ctx.getUser())
+			.where(RATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
 	}
 
 	public static void updateSepeAttach(AONContext ctx, Attach attach){

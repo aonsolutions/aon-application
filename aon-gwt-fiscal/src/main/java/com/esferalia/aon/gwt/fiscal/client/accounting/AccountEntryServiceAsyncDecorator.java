@@ -54,6 +54,18 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		AON.start();
 		fsa.getPendingImportAccountingInvoices(occam, query, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void save(Occam occam, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback) {
+		AON.start();
+		fsa.save(occam, financeEntry, new AsyncCallbackWrapper<>(asyncCallback));
+	}
+	
+	@Override
+	public void getFinanceEntry(Occam occam, Integer accountEntry, AsyncCallback<FinanceEntry> callback) {
+		AON.start();
+		fsa.getFinanceEntry(occam, accountEntry, new AsyncCallbackWrapper<>(callback));
+	}
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -136,17 +148,6 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.getSalaryFormatted(domainName, domain, user, from, to, new AsyncCallbackWrapper<>(callback));
 	}
 
-	@Override
-	public void getFinanceEntry(String domainName, int domain, String user, Integer accountEntry, AsyncCallback<FinanceEntry> callback) {
-		AON.start();
-		fsa.getFinanceEntry(domainName, domain, user, accountEntry, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void save(String domainName, int domain, String user, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback) {
-		AON.start();
-		fsa.save(domainName, domain, user, financeEntry, new AsyncCallbackWrapper<>(asyncCallback));
-	}
 
 	@Override
 	public void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback) {

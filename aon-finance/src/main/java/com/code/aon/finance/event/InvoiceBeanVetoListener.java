@@ -134,7 +134,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeInvoiceAddress(invoice);
 				removeInvoiceFiscal(invoice);
 				removeInvoiceInfo(invoice);
-				removeInvoiceTracking(invoice);
+				removeInvoiceCommunicationTracking(invoice);
 				if (invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
 					updateRectifiedInvoices(invoice);
 				}
@@ -236,19 +236,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         return false;
 	}
 	
-	private String getDomainName(Invoice invoice) throws ManagerBeanVetoListenerException {
-		String select = "SELECT domain.name" +
-						"FROM domain" +
-						"WHERE domain.id = " + invoice.getDomain();
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		SQLQuery query = session.createSQLQuery(select);
-        List<?> list = query.list();
-        if (!list.isEmpty()) {
-        	Object[] obj = (Object[])list.get(0);
-        	return (String) obj[0];
-        }
-        return null;
-	}
 
 	private boolean updateDetailsNeeded(Invoice invoice) throws ManagerBeanVetoListenerException {
     	String select = "SELECT invoice.issue_date issue_date, invoice.registry registry " +
@@ -395,8 +382,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		AON.deleteInvoiceInfo(HibernateUtil.getSessionFactoryName(), invoice.getId());
 	}
 	
-	private void removeInvoiceTracking(Invoice invoice) {
-		AON.deleteInvoiceTracking(HibernateUtil.getSessionFactoryName(), invoice.getId());
+	private void removeInvoiceCommunicationTracking(Invoice invoice) {
+		AON.deleteInvoiceCommunicationTracking(HibernateUtil.getSessionFactoryName(), invoice.getId());
 	}
 	
 	private void removeInvoiceDetailCommission(Invoice invoice) {

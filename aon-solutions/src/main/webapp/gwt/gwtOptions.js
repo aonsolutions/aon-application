@@ -32,7 +32,7 @@ export const ACCOUNTING_PERIOD = {
 
 export const ACCOUNT_ENTRY = {
   module: GWT_FISCAL,
-  entryPoint: 'AccountEntryModuleTEDI'
+  entryPoint: 'AccountEntryModule'
 };
 
 export const STATEMENT_REPORT = {
@@ -40,9 +40,24 @@ export const STATEMENT_REPORT = {
   entryPoint: 'StatementReportModule'
 };
 
+export const ACCOUNT_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountModule'
+};
+
 export const ACCOUNT_OPERATING_REPORT = {
   module: GWT_FISCAL,
   entryPoint: 'AccountOperatingReport'
+};
+
+export const ACCOUNT_TRIAL_BALANCE_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountTrialBalanceReport'
+};
+
+export const ACCOUNT_ANALYTICAL_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountAnalyticalReport'
 };
 
 export const JOURNAL_REPORT = {
@@ -73,6 +88,11 @@ export const IRPF_REPORT = {
 export const OPERATION_REPORT = {
   module: GWT_FISCAL,
   entryPoint: 'OperationReport'
+};
+
+export const AMORTIZATION_TYPE = {
+  module: GWT_FISCAL,
+  entryPoint: 'AmortizationType'
 };
 
 export const DEPOSIT = {

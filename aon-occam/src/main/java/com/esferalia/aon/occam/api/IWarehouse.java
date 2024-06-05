@@ -189,7 +189,9 @@ public interface IWarehouse {
 	
 	Integer getElaborationNextNumber(AONContext ctx, String serie);
 
-
+	ElaborationDetail deleteElaborationPackage(AONContext ctx, Integer id);
+	
+	
 	// 	***********************************************
 	// 	**************************** UDAPA QUALITY ****
 	// 	***********************************************

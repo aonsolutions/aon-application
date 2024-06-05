@@ -652,12 +652,16 @@ public class JooqCertifica2 {
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
 						monthDateFormat.format(salaryStartDate), restDays,
 						baseCGC / 30 * restDays, baseCGP / 30 * restDays);
+				
+				certifica2Period.setDate(salaryStartDate);
 
 				maxDays += salaryDaysBetween;
 
 			} else {
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
 						monthDateFormat.format(salaryStartDate), salaryDaysBetween, baseCGC, baseCGP);
+				
+				certifica2Period.setDate(salaryStartDate);
 
 				maxDays += salaryDaysBetween;
 			}
@@ -668,7 +672,7 @@ public class JooqCertifica2 {
 
 		List<Map<String, String>> quoteDataList = new ArrayList<>();
 
-		certifica2List.sort((o1, o2) -> o2.getMonth().compareTo(o1.getMonth()));
+		certifica2List.sort((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
 
 		for (Certifica2Period certifica2 : certifica2List) {
 			Map<String, String> quoteData = new HashMap<>();

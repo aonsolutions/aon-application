@@ -80,12 +80,14 @@ public class FilterDAO implements Filter {
 				return new FilterDAO(field.like(new String((byte[])t)));
 			} else if ( t instanceof Integer) {
 				return new FilterDAO(field.like("%"+ AonNumberUtils.toString((Integer) t) +"%"));
+			} else if ( t instanceof Double) {
+				return new FilterDAO(field.like("%"+ AonNumberUtils.toString((Double) t) +"%"));
 			} else {
 				throw new UnsupportedOperationException();				
 			}
 		}
 		
-		@Override
+	@Override
 		public Filter match(T t) {
 		    Param<T> val = DSL.val(t);
 		    String str = t.toString();

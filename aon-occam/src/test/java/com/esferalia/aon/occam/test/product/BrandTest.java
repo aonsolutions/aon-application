@@ -7,9 +7,7 @@ import static org.junit.Assert.assertThrows;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
@@ -31,8 +29,8 @@ public class BrandTest extends AbstractOccamTest {
 		Brand updated = BrandDAO.get(ctx, f -> f.getIdProperty().eq(brandId));
 		Asserts.assertEqualsBrand(brand, updated);
 		
-		ProductDAO.delete(ctx, brandId);
-		Product deleted = ProductDAO.get(ctx, f -> f.getIdProperty().eq(brandId));
+		BrandDAO.delete(ctx, brandId);
+		Brand deleted = BrandDAO.get(ctx, f -> f.getIdProperty().eq(brandId));
 		
 		assertNull(deleted.getId());
 	}

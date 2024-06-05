@@ -24,9 +24,9 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Record;
@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -57,6 +58,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -463,8 +465,16 @@ public class AccountingInvoiceDAO {
 		return refreshInvoice(ctx, type, registryId, ai);
 	}
 	
-	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
-			final Integer activity, final Date issueDate) {
+	private static void checkTBAIForSales( final AONContext ctx, final InvoiceType type ) {
+		TbaiConfiguration tbaiConfig = TbaiConfigurationDAO.get(ctx);
+		if (tbaiConfig.isActive() && type == InvoiceType.SALES) {
+			throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
+		}
+	}
+	
+	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
+		checkTBAIForSales( ctx, type);	
+		
 		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
 				.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
@@ -510,7 +520,7 @@ public class AccountingInvoiceDAO {
 				.setPayment(!ai.isSales())
 				.setFinanceStatus(FinanceStatus.PENDING));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
-		ai.setSuggestedAccounts(getSuggestedAccounts(ctx,ai.getRegistry().getId()));
+		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		InvoiceVAT vat = createNewInvoiceVAT(ai, config);
 		ai.addVat(vat);
 		/// RETENCIÓN
@@ -590,33 +600,7 @@ public class AccountingInvoiceDAO {
 		return vat;
 	}
 
-	public static LinkedList<Account> getSuggestedAccounts(final AONContext ctx, Integer registry) {
-		return ctx.getDslContext()
-			.selectDistinct( )	
-			.from(				
-				ctx.getDslContext()
-				.select( ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION)
-				.from(INVOICE)
-				.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-				.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
-				.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
-				.where(INVOICE.REGISTRY.eq(registry))
-					.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-				.orderBy(INVOICE.ID.desc(), INVOICE_DETAIL.LINE.asc())
-				.limit(50)
-			)
-			.limit(3)
-			.fetch()
-			.stream()
-			.map( rec -> new Account()
-						.setId(rec.getValue(ACCOUNT.ID))
-						.setCode(rec.getValue(ACCOUNT.CODE))
-						.setDescription(rec.getValue(ACCOUNT.DESCRIPTION))
-				)
-			.collect(Collectors.toCollection(LinkedList::new));	
-	}
-	
-	public static List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type) {
+	private static Stream<Account> getSuggestedAccountsStream(AONContext ctx, Integer registry, InvoiceType type) {
 		AggregateFunction<Integer> count = DSL.count(ACCOUNT.ID);
 		return ctx.getDslContext().select(ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION, count)
 			.from(INVOICE)
@@ -631,10 +615,14 @@ public class AccountingInvoiceDAO {
 			.fetch().stream().map(r -> new Account()
 				.setId(r.getValue(ACCOUNT.ID))
 				.setCode(r.getValue(ACCOUNT.CODE))
-				.setDescription(r.getValue(ACCOUNT.DESCRIPTION)))
-			.toList();	
+				.setDescription(r.getValue(ACCOUNT.DESCRIPTION)));
 	}
 
+	public static LinkedList<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type) {
+		return getSuggestedAccountsStream(ctx, registry, type)
+			.collect(Collectors.toCollection(LinkedList::new));	
+	}
+	
 	// ---------------------------------------------------------------
 	// USED in 
 	//  - net.aonsolutions.aon.tedi.AccountingInvoiceBuilder 
@@ -812,6 +800,10 @@ public class AccountingInvoiceDAO {
 				InvoiceDAO.insert(ctx, config, accInvoice.getInvoice());
 				saveFinances(ctx, accInvoice);
 			} else {
+				Invoice i = InvoiceDAO.getInvoice(ctx, accInvoice.getInvoice().getId());
+				if (i.isRecorded()) {
+					throw new AonCoreException("La factura ya ha sido contabilizada");
+				}
 				InvoiceDAO.save(ctx, accInvoice.getInvoice().setRecorded(true));
 			}
 			
@@ -1223,7 +1215,7 @@ public class AccountingInvoiceDAO {
 				.setDomain(accInvoice.getInvoice().getDomain())
 				.setInvoice(accInvoice.getInvoice())
 				.setInvestAsset(vat.getInvestAsset())
-				.setWorkPlace( accInvoice.getWorkplace())
+				.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 				.setLine(line)
 				.setDescription( vat.getExpAccountDescription() )
 				.setQuantity(1)
@@ -1437,11 +1429,14 @@ public class AccountingInvoiceDAO {
 		if (registry == null) throw new AonCoreException("No se pudo inicializar una factura sin titular");
 		if (ai.getInvoice() == null) throw new AonCoreException("No se pudo inicializar un apunte sin factura");
 		
+		checkTBAIForSales( ctx, type);
+		
 		boolean hasRegistry = ai.getInvoice().getRegistry() != null;
 		boolean registryChanged = hasRegistry
 			&& AonNumberUtils.notEquals( ai.getInvoice().getRegistry() , registry);  
 			
-		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry))
+		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry) )
+			.filter( r -> r.getType().getInvoiceType() == type )
 			.findFirst()
 			.orElseThrow( () -> new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\""));
 
@@ -1499,7 +1494,6 @@ public class AccountingInvoiceDAO {
 	
 	private static final Consumer<RefreshContext> REFRESH_UNDEDUCTIBLE = (rctx) -> {
 		AonCollectionUtils.stream(rctx.getInvoice().getDetails())
-			.map( d -> d.setSurcharge( 0.0 ))
 			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 			.forEach( t -> t
 				.setPercentage(0.0)
@@ -1546,7 +1540,6 @@ public class AccountingInvoiceDAO {
 	private static final Consumer<RefreshContext> REFRESH_SURCHARGE = (rctx) -> {
 		if (!rctx.getInvoice().isSurcharge()) {
 			AonCollectionUtils.stream(rctx.getInvoice().getDetails())
-			.map( d -> d.setSurcharge( 0.0 ))
 			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 			.forEach( t -> t 
 				.setSurcharge( 0.0 )
@@ -1573,7 +1566,9 @@ public class AccountingInvoiceDAO {
 	};
 	
 	private static final Consumer<RefreshContext> REFRESH_SUGGESTED_ACCOUNTS = (rctx) -> {
-		rctx.getAccountingInvoice().setSuggestedAccounts(getSuggestedAccounts(rctx.getCtx(), rctx.getAccountingInvoice().getRegistry().getId()));
+		rctx.getAccountingInvoice().setSuggestedAccounts(getSuggestedAccounts(rctx.getCtx()
+				,rctx.getAccountingInvoice().getRegistry().getId()
+				,rctx.getAccountingInvoice().getRegistry().getType().getInvoiceType()));
 	};
 	
 	private static class InvoiceRegistryRefresh extends InvoiceRegistryInitializer {

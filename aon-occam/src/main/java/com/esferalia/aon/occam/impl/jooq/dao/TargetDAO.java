@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
@@ -39,6 +40,7 @@ public class TargetDAO {
 		return ctx.getDslContext().select()
 				.from(TARGET)
 				.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
 				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
 				.where(TARGET_PROPERTIES.getConditions(filter));	
 	}

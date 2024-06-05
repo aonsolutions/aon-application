@@ -2181,7 +2181,8 @@ public class EnterprisePayrollExcel {
 
 		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
 				.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())))
-				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
+				.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
+				.and(SALARY.TYPE.lt((byte)4)); // Only, salary, extra, delay, settle
 		if (workplaceId != null && workplaceId > 0)
 			condition = condition.and(WORKPLACE.ID.eq(workplaceId));
 

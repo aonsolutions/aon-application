@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Academias';
 export const ACCEPT = 'Aceptar';
 export const ACCESS = "Acceso";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede á túa conta de AON';
@@ -19,6 +20,7 @@ export const ADD_COMMENT = 'Engadir Comentario';
 export const ADD_COMPOSITION = 'Engadir Composición';
 export const ADD_FILE = 'Achegar Ficheiro';
 export const ADD_INVOICE = 'Engadir Factura';
+export const ADD_NEW = "Engadir novo";
 export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
@@ -67,15 +69,19 @@ export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CHARGES_AND_PAYMENTS = 'Cargos e Pagamentos';
+export const CHANGE_PASSWORD = 'Cambie o contrasinal';
 export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacións Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
 export const CLOSE = 'Pechar';
 export const CLOSE_SESSION = 'Pechar Sesión';
+export const CLOSED = 'Pechado';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
+export const COMMERCE = 'Comercio';
+export const COMMERCIAL = 'Comercial';
 export const COMMERCIAL_NAME = 'Nome Comercial';
 export const COMMUNICATION = 'Comunicación';
 export const COMPANIES = 'Empresas';
@@ -90,6 +96,7 @@ export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos do Contacto';
+export const CONTACT_DATA2 = 'Información de contacto';
 export const CONTACTS = 'Contactos';
 export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
@@ -163,6 +170,7 @@ export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencementos';
 export const EXPIRED = 'Expirado';
+export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Erros';
 
 // ----- F
@@ -173,8 +181,10 @@ export const FILE_DATA = 'Datos do Ficheiro';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
+export const FISCAL = 'Fiscal';
 export const FOOTER = 'Pé';
 export const FROM = 'Desde';
+export const FRENCH = 'Francés'
 
 // ----- G
 
@@ -185,6 +195,7 @@ export const GET_INVOICES = 'Conseguir Factures';
 export const GROUP_DATA = 'Datos do Grupo';
 export const GROUP_MANAGEMENT = 'Xestión de Grupos';
 export const GROUP = 'Grupo';
+export const GROUPWARE = 'Arquivos';
 export const GROUPS = 'Grupos';
 
 // ----- H
@@ -248,6 +259,7 @@ export const LOCATION = 'Ubicación';
 
 // ----- M
 
+export const MARKETING = 'Márketing';
 export const MARK_ENTRY = 'Marcar Entrada';
 export const MARK_EXIT = 'Marcar Saída';
 export const MANAGEMENT = 'Xestión';
@@ -277,6 +289,7 @@ export const NEW_TICKET = 'Novo Ticket';
 export const NEW_WAREHOUSE = 'Nova Almacén';
 export const NEXT = 'Seguinte';
 export const NIF = 'NIF';
+export const NO_DATA = 'Non hai datos';
 export const NOT_LINKED = 'Non vinculado';
 export const NOT_LINKED1 = 'Non vinculados';
 export const NOTIFICATION = 'Notificación';
@@ -306,7 +319,7 @@ export const PARENT_APPS = "Aplicacións do pai";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contrasinal';
 export const PAYMETHOD = 'Forma de Pagament'
-export const PAYROLL = "Nómina";
+export const PAYROLL = 'Laboral';
 export const PAYSHEET = 'Nómina';
 export const PAYSHEETS = 'Nóminas';
 export const PENDING = 'Pendente';
@@ -317,6 +330,7 @@ export const PENDING_TASKS = 'Tarefas Pendentes';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menu do portal"
 export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
@@ -332,6 +346,7 @@ export const PROVINCE = 'Provincia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Acceso rápido";
 export const QUANTITY = 'Cantidade';
 export const QUOTA = 'Cota';
 
@@ -341,6 +356,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recentes';
+export const RECENTLY_OPENED = "Aberto recentemente";
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar';
 export const RECTIFIED = 'Rectificativa';
@@ -373,6 +389,7 @@ export const REVIEW = 'Revisar';
 export const SAVE = 'Gardar';
 export const SAVED_DATA = 'Los datos se han guardado correctamente';
 export const SCOPE = 'Ámbito';
+export const SCHEDULE = "Horario";
 export const SEARCH = 'Buscar';
 export const SEE_ALL = 'Ver Todas';
 export const SEND = 'Enviar';
@@ -387,6 +404,7 @@ export const SERVICES = 'Servizos';
 export const SETTING = 'Configuración'; 
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';
+export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sesión';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sesión sen Contrasinal';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
@@ -397,6 +415,7 @@ export const SPANISH = 'Castelán';
 export const STATISTICS = 'Estatística';
 export const STATUS = "Estado";
 export const STATUS_NOT_EMPTY = "O estado non pode quedar baleiro";
+export const SUITE_MENU = "Menu suite";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';
 export const SUPPLIERS = 'Provedores';
@@ -404,6 +423,8 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apelidos';
 export const SYSTEM_MESSAGES = 'Mesaxes do Sistema';
+export const SELECT_LANGUAGE = "Seleccione o idioma";
+export const SELECT_COMPANY_TYPE = "Seleccione o tipo de empresa";
 
 // ----- T
 
@@ -428,6 +449,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Suplidos';
 export const TRANSACTION_TYPE = 'Tipo de Transacción';
 export const TRASH = 'Papeleira';
+export const TREASURY = 'Facenda';
 export const TYPE = 'Tipo';
 export const TYPES = 'Tipos';
 
@@ -446,6 +468,7 @@ export const USER_DATA = 'Datos do Usuario';
 export const USER_MANAGEMENT = 'Xestión de Usuarios';
 export const USERS = 'Usuarios';
 export const UTILITIES = 'Utilidades';
+export const UPPER_MENU = "Menú de capçalera";
 
 // ----- V
 
@@ -461,11 +484,13 @@ export const WAREHOUSES = 'Almacéns';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de traballo';
+export const WORKSHOPS = 'Obradoiros';
 export const WRITE_YOUR_TITLE = "Escribe aquí o teu título";
 export const WRITE_A_COMMENT =  "Escribe un comentario";
 export const WRITE_A_DESCRIPTION = "Escribe unha descrición";
 export const WRITE_A_NOTE =  "Escribe unha nota";
-
+export const WEEK_SCHEDULE = "De luns a xoves de 8:00 a 15:00 h"
+export const WEEK_FRIDAY_SCHEDULE = "Venres de 8:00 a 14:00 h"
 
 // ----- X
 

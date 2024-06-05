@@ -274,6 +274,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
 		acumulateBudget.addStyleName(AON.CSS.aonTextRight());
 		acumulateBudget.setText(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		acumulateBudget.addStyleName(AON.CSS.aonNowrap());
 		table.setWidget(1,3,acumulateBudget);
 		
 		table.setWidget(2,0,new InlineLabel("Gastos"));
@@ -294,6 +295,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
 		acumulateExpense.addStyleName(AON.CSS.aonTextRight());
 		acumulateExpense.setText(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		acumulateExpense.addStyleName(AON.CSS.aonNowrap());
 		table.setWidget(2,3,acumulateExpense);
 		
 		workgroup = new ListBox();
@@ -337,7 +339,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 			}	
 		});
 		
-		table.setWidget(3,0,new InlineLabel("Grupo trabajo"));
+		table.setWidget(3,0,new InlineLabel("Grupo gesti\u00f3n"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
 		table.setWidget(3,1,workgroup);
 		

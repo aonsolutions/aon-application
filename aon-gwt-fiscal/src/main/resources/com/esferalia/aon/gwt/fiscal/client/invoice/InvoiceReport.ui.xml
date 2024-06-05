@@ -9,11 +9,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-		<g:center>
-			<g:DockLayoutPanel>
-				
-	
+	<g:DockLayoutPanel>
 		<g:north size="26">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
 				styleName="aon-finding-title-toolbar aon-width-all">
@@ -102,27 +98,9 @@
 					</div>
 					<g:Hidden ui:field="domainId"/>
 					<g:Hidden ui:field="domainName"/>
+					<g:Hidden ui:field="user"/>
 				</g:HTMLPanel>
 			</g:FormPanel>
 		</g:center>
-
-
-			</g:DockLayoutPanel>	
-		</g:center>
-		
-		<g:south size="0">
-			<aon:MinimizePanel ui:field="footPanel">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX">
-					<g:tab>
-						<g:header>
-							<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
-								Notificaciones
-							</span>
-						</g:header>
-						<aon:ResultsPanel ui:field="resultsPanel" />
-					</g:tab>
-				</g:TabLayoutPanel>
-			</aon:MinimizePanel>
-		</g:south>
-	</g:SplitLayoutPanel>
+	</g:DockLayoutPanel>	
 </ui:UiBinder>

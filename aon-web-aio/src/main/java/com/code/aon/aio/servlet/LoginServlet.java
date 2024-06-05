@@ -21,7 +21,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class LoginServlet extends HttpServlet {
 
-	private static final String LOGIN_SERVLET_FAIL_ATTRIBUTE = "loginServletFail";
+	static final String LOGIN_SERVLET_FAIL_ATTRIBUTE = "loginServletFail";
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -31,17 +31,6 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
-	}
-	
-	private Request getRealRequest( HttpServletRequest request ) {
-		try {
-			Field f = request.getClass().getDeclaredField("request");
-			f.setAccessible(true); // grant access to (protected) field
-			return (Request)f.get(request);				
-		} catch (Throwable e) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return null;
 	}
 	
 	@Override
@@ -99,4 +88,15 @@ public class LoginServlet extends HttpServlet {
 		
 	}
 
+	static Request getRealRequest( HttpServletRequest request ) {
+		try {
+			Field f = request.getClass().getDeclaredField("request");
+			f.setAccessible(true); // grant access to (protected) field
+			return (Request)f.get(request);				
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return null;
+	}
+	
 }

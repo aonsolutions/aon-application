@@ -131,6 +131,11 @@ public class AccountingImpl implements IAccounting {
 		return AccountPeriodDAO.getDomainPeriods(ctx);
 	}
 	@Override
+	public AccountPeriod ensurePeriod(AONContext ctx, Integer domain, Date date) {
+		return AccountPeriodDAO.ensurePeriod(ctx, domain, date);
+	}
+	
+	@Override
 	public AccountPeriod getPeriod(AONContext ctx, Date date) {
 		return AccountPeriodDAO.getPeriod(ctx, date);
 	}
@@ -281,7 +286,7 @@ public class AccountingImpl implements IAccounting {
 		if (registry.getType() == null) {
 			throw new AonCoreException("No se puede inicializar una factura sin tipo");
 		}
-		return AccountingInvoiceDAO.initializeInvoice(ctx, ai.getInvoice().getType(), registry.getId(), ai, preserveData);
+		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), ai, preserveData);
 	}
 	
 	@Override

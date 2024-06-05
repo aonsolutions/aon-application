@@ -8,23 +8,25 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
-import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
-import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
-import { AonMessenger } from './messenger/aon-messenger.js';
-import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 import * as LS from '../services/localStorageService.js';
 import { Language } from '../models/Language.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonDialog } from '../components/aon-dialog.js';
+import { AonSearchBox } from '../components/aon-search-box.js';
+import { AonIcon } from '../components/aon-icon.js';
+import { AonIconButton } from '../components/aon-icon-button.js';
+import { AonNotificationIcon } from './notification/aon-notification-icon.js';
+import { AonParent } from 'aonparent';
 
 export class AonHeader extends AonElement {
 
 	BASE_ID;
 	activeTimecontrol;
+	newTheme;
 
 	get id() {
 		return this.getAttribute('id');
@@ -71,12 +73,14 @@ export class AonHeader extends AonElement {
 		this.AON_HEADER_COMPANY_NAME = this.AON_HEADER_COMPANY + 'Name';
 		this.AON_HEADER_DIALOG_HELP_OPTION = this.BASE_ID + 'DialogHelpOption';
 		this.AON_HEADER_DIALOG_USER_OPTION = this.BASE_ID + 'DialogUserOption';
+		this.AON_HEADER_CONFIG = this.BASE_ID + 'Config';
+		this.AON_HEADER_CONFIG_BUTTON = this.BASE_ID + 'ConfigButton';
 	}
 
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = LS.isNewTheme() ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
+		div.className = (LS.isNewTheme() || this.newTheme) ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -87,91 +91,136 @@ export class AonHeader extends AonElement {
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
 
-		if(LS.isNewTheme()){ // Change logo size
-			div.innerHTML = /*html*/`
-				<img id="aonLogo" class="aonNewLogo"/>
+		let aonLogo = this.createElement(TAG.IMG);
+		aonLogo.id = "aonLogo";
+		aonLogo.style.paddingLeft = '0px';
+		aonLogo.style.width = '123px';
+		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
+		div.appendChild(aonLogo);
 
-				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
-					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
-				</span>
+        let aonHeaderApp = this.createElement(TAG.DIV);
+		aonHeaderApp.id = "aonHeaderApp";
+		aonHeaderApp.className = "aonHeaderApp";
+		aonHeaderApp.style.minWidth = '120px';
+		aonHeaderApp.style.display = "none";
+		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
+		div.appendChild(aonHeaderApp);
 
-				<div class="aonHeaderButtons">
+		let aonHeaderSearch = this.createElement(TAG.SPAN);
+		aonHeaderSearch.id = this.AON_HEADER_SEARCH;
+		aonHeaderSearch.style.display = "flex";
+		aonHeaderSearch.style.alignItems = "center";
+		aonHeaderSearch.style.width = "100%";
+		aonHeaderSearch.style.minWidth = '150px';
+		aonHeaderSearch.style.maxWidth = '500px';
+		
+		let aonHeaderSearchBox = new AonSearchBox();
+		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
+		aonHeaderSearchBox.newTheme = this.newTheme;
+		aonHeaderSearch.appendChild(aonHeaderSearchBox);
 
-					<span id="aonHeaderCompany" style="display:none;">
-						<span id="aonHeaderCompanyName"> </span>
-					</span>	
+		div.appendChild(aonHeaderSearch);
 
-					<span id="aonHeaderHome" style="display:none;">
-						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
-					</span>
- 
-					<span id="aonHeaderCompanyList" style="display:none;">
-						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
-					</span>
+		let aonHeaderButtons = this.createElement(TAG.DIV);
+		aonHeaderButtons.id = 'aonHeaderButtons';
+		aonHeaderButtons.className = "aonHeaderButtons";
+		if (!LS.isNewTheme() && !this.newTheme){
+			aonHeaderButtons.style.display = "flex";
+			aonHeaderButtons.style.alignItems = "center";		
+		}
+		
+		let aonHeaderCompany = this.createElement(TAG.SPAN);
+		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
+		aonHeaderCompany.style.display = "none";
+		aonHeaderCompany.style.height = "14px";
 
-					<span id="aonHeaderHelp">
-						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
-					</span>
+		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
+		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
+		aonHeaderCompany.appendChild(aonHeaderCompanyName);
 
-					<span id="aonHeaderNotiication" >
-						<aon-notification-icon></aon-notification-icon>
-					</span>
+		aonHeaderButtons.appendChild(aonHeaderCompany);
 
-					<span id="aonHeaderUser" >
-						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
-					</span>
-				
-				</div>
-			`;
-		} else {
-			div.innerHTML = /*html*/`
-				<img id="aonLogo" class="aonLogo"  />
+		let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+		aonHeaderHome.style.display = "none";
 
-				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
-					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
-				</span>
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHomeButton.outlined = true;
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
 
-				<div id="aonHeaderButtons" style="display: flex; align-items: center;">
+		aonHeaderButtons.appendChild(aonHeaderHome);
 
-					<span id="aonHeaderCompany" style="display:none;">
-						<span id="aonHeaderCompanyName"> </span>
-					</span>	
+		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
+		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
+		aonHeaderCompanyList.style.display = "none";
 
-					<span id="aonHeaderHome" style="display:none;">
-						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
-					</span>
- 
-					<span id="aonHeaderCompanyList" style="display:none;">
-						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
-					</span>
+		let aonHeaderHomeCompanyListButton = new AonIconButton();
+		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
+		aonHeaderHomeCompanyListButton.icon = "business";
+		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
-					<span id="aonHeaderHelp">
-						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
-					</span>
+		aonHeaderButtons.appendChild(aonHeaderCompanyList);
 
-					<span id="aonHeaderNotiication" >
-						<aon-notification-icon></aon-notification-icon>
-					</span>
+		let aonHeaderHelp = this.createElement(TAG.SPAN);
+		aonHeaderHelp.id = this.AON_HEADER_HELP;
 
-					<span id="aonHeaderUser" >
-						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
-					</span>
-				
-				</div>
-			`;
+		let aonHeaderHelpButton = new AonIconButton();
+		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
+		aonHeaderHelpButton.icon = "help_outline";
+		aonHeaderHelp.appendChild(aonHeaderHelpButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHelp);
+
+		if(this.newTheme){
+			let aonHeaderConfig = this.createElement(TAG.SPAN);
+			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+
+			let aonHeaderConfigButton = new AonIconButton();
+			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
+			aonHeaderConfigButton.icon = "settings"
+			aonHeaderConfig.appendChild(aonHeaderConfigButton);
+
+			aonHeaderButtons.appendChild(aonHeaderConfig);
 		}
 
+
+		let aonHeaderNotiication = this.createElement(TAG.SPAN);
+		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
+		if(this.newTheme){
+			let aonHeaderNotificationButton = new AonIconButton();
+			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+			aonHeaderNotificationButton.icon = "notifications";
+			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		}else
+			aonHeaderNotiication.appendChild(new AonNotificationIcon());
+
+		aonHeaderButtons.appendChild(aonHeaderNotiication);
+
+		let aonHeaderUser = this.createElement(TAG.SPAN)
+		aonHeaderUser.id = this.AON_HEADER_USER;
+		
+		let aonHeaderUserButton = new AonIconButton();
+		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
+		aonHeaderUserButton.icon = "account_circle";
+		aonHeaderUser.appendChild(aonHeaderUserButton);
+		
+		aonHeaderButtons.appendChild(aonHeaderUser);
+
+		div.appendChild(aonHeaderButtons);
+		
 		this.buildLogo();
 
 		if(!this.isMobile()) {
-			if(!LS.isNewTheme()) {
+			if(!LS.isNewTheme() && !this.newTheme) {
 				let aonHeaderButtons = this.getElement('aonHeaderButtons');
 				aonHeaderButtons.style.position = 'absolute';
 				aonHeaderButtons.style.right = '20px';
  		 		aonHeaderButtons.style.top = '10px';
 
 				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-				aonHeaderSearch2.style.marginLeft = '33px';
+				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
@@ -182,8 +231,8 @@ export class AonHeader extends AonElement {
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			});
-
-			let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
+			if(!this.newTheme){
+				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
 				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
 				const left = aonHeaderHelpButton.getBoundingClientRect().left;
@@ -285,7 +334,10 @@ export class AonHeader extends AonElement {
 					d.open();
 				});
 			});
+			}
+
 		}
+			
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
@@ -298,7 +350,7 @@ export class AonHeader extends AonElement {
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-				if(!LS.isNewTheme()){
+				if(!LS.isNewTheme() && !this.newTheme){
 					let aonShowMenu = this.getElement('aonShowMenu');
 					aonShowMenu.style.display = 'none';
 				}
@@ -317,77 +369,79 @@ export class AonHeader extends AonElement {
 			LS.removeDomain();
 
 			clearDurum();
-			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+			this.rootPanel(new AonParent());
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
-		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
-		aonHeaderUserButton.addEventListener('click', () => {
-			const top  = aonHeaderUserButton.getBoundingClientRect().top;
-			const left = aonHeaderUserButton.getBoundingClientRect().left;
-			if(this.activeTimecontrol) {
-				getTimeControl().then(r => {
-					this.timeControlStatus(r);
-
-					let d = this.getElement('aonHeaderDialogUserOption');
-					
-					let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
-					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
-					let options = [{
-							name: fichajeText,
-							icon: 'alarm',
-							id: 'dialogAlarm',
-							fn: () => this.aonFichar(signin)
-						}, {
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogLanguage',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => {
-								this.activeTimecontrol= false;
-								closeSession();
-							}
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					}).catch(e => {
+		if(!this.newTheme){
+			aonHeaderUserButton.addEventListener('click', () => {
+				const top  = aonHeaderUserButton.getBoundingClientRect().top;
+				const left = aonHeaderUserButton.getBoundingClientRect().left;
+				if(this.activeTimecontrol) {
+					getTimeControl().then(r => {
+						this.timeControlStatus(r);
+	
+						let d = this.getElement('aonHeaderDialogUserOption');
+						
+						let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
+						let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
+						let options = [{
+								name: fichajeText,
+								icon: 'alarm',
+								id: 'dialogAlarm',
+								fn: () => this.aonFichar(signin)
+							}, {
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogLanguage',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => {
+									this.activeTimecontrol= false;
+									closeSession();
+								}
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						}).catch(e => {
+							let d = this.getElement('aonHeaderDialogUserOption');
+							let options = [{
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+						});
+					} else {
 						let d = this.getElement('aonHeaderDialogUserOption');
 						let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-					});
-				} else {
-					let d = this.getElement('aonHeaderDialogUserOption');
-					let options = [{
-							name: MSG.CONFIGURATION,
-							icon: 'settings',
-							id: 'dialogSettings',
-							fn: () => this.aonConfiguration()
-						}, {
-							name: MSG.CLOSE_SESSION,
-							icon: MATERIAL_ICONS.LOGOUT,
-							id: 'dialogLogout',
-							fn: () => closeSession()
-						}];
-						d.setMenuOptions(options, top, left);
-						d.open();
-				}
-		});
+								name: MSG.CONFIGURATION,
+								icon: 'settings',
+								id: 'dialogSettings',
+								fn: () => this.aonConfiguration()
+							}, {
+								name: MSG.CLOSE_SESSION,
+								icon: MATERIAL_ICONS.LOGOUT,
+								id: 'dialogLogout',
+								fn: () => closeSession()
+							}];
+							d.setMenuOptions(options, top, left);
+							d.open();
+					}
+			});
+		}
+		
 	}
 
 	timeControlStatus(signin) {
@@ -421,7 +475,6 @@ export class AonHeader extends AonElement {
 				if(aonSign) {
 					aonSign.buildSignin(r);
 				}
-
 				this.timeControlStatus(r);
 			});
 		});
@@ -440,7 +493,7 @@ export class AonHeader extends AonElement {
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {
-				this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+				this.rootPanel(new AonParent());
 			}
 		})
 	}
@@ -465,7 +518,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
 		aonHeaderSearch.style.display = company ? 'none' : 'flex';
-		if(!LS.isNewTheme())
+		if(!LS.isNewTheme() && !this.newTheme)
 			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
@@ -547,6 +600,134 @@ export class AonHeader extends AonElement {
 		aboutContent.appendChild(divInfo);
 		return aboutContent;
 	}
+	
+	
+	setColor(color, backgroundColor) {
+		let buttons = [
+			this.getElement('aonHeaderHelpButton'),
+			this.getElement('aonHeaderHomeButton'),
+			this.getElement('aonHeaderUserButton'),
+			this.getElement('aonHeaderConfigButton'),
+			this.getElement('aonHeaderNotificationButton'),
+			this.getElement('aonHeaderCompanyListButton')
+		];
+		let texts = [ 
+			this.getElement('aonHeaderApp'),
+			this.getElement('aonHeaderCompanyName'),
+			this.getElement('aonMenuListAppImg-applications')
+		];
+		let imgs = [ 
+			this.getElement('aonLogo')
+		];
+		
+		//
+		if ( color ) {
+			texts.forEach( (text) => text.style.color = color );
+			buttons.forEach( (button) => {
+				button.setColor(color);
+				button.setBackgroundColor(backgroundColor);
+			});
+			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
+		} else {
+			imgs.forEach( (img) => img.style.removeProperty ('filter') );
+			texts.forEach( (text) => text.style.removeProperty('color') );
+			buttons.forEach( (button) => button.getButton().style.removeProperty('color'));
+		}
+	}
+
+	setBackgroundColor(backgroundColor) {
+		if ( backgroundColor ) {
+			this.getElement(this.AON_HEADER_WEB).style.backgroundColor = backgroundColor;
+		} else {
+			this.getElement(this.AON_HEADER_WEB).style.removeProperty('background-color');
+		}
+	}
+
+	buildApp(app, sidenav){	
+		let a = this.createElement(TAG.A);
+		a.classList.add('aonMenuApp');
+
+		let div = this.createElement(TAG.DIV);
+		div.style.padding = '1px';
+		div.style.display = 'flex';
+		div.style.alignItems = 'center';
+		// div.style.justifyContent = 'center';
+		div.style.height =  '32px';
+		div.style.flexDirection =  'row';
+		div.style.backgroundColor = 'transparent';
+
+		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.id = `aonMenuListAppImg-${app.app}`;
+			icon.innerHTML = app.symbol;
+			if(app.color) icon.style.color = "white";
+			icon.style.padding = "4px";
+			icon.style.fontSize = "24px";
+			div.appendChild(icon);
+		} else if (app.icon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.icon;
+			aonIcon.color = "white";
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.logo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImg-${app.app}`;
+			img.style.width = '24px';
+			img.src = app.logo;
+			img.title = app.title;
+			div.appendChild(img);
+		}
+
+		if (app.title) {
+			// let titles = app.title.match(/\b\w+\b/g);
+			// for (let i = 0; i < 2; i++) {
+				let span = this.createElement(TAG.SPAN);
+				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+				span.style.textAlign = 'center';
+				span.style.minHeight = '21px';
+				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
+				div.appendChild(span);
+			// }
+		}
+
+		a.appendChild(div);
+		let headerApp = this.getElement('aonHeaderApp');
+		headerApp.replaceChild(a, headerApp.firstChild);
+	}
+
+	
+	setApp(el) {
+		let headerApp = this.getElement('aonHeaderApp');
+		headerApp.replaceChild(el, headerApp.firstChild);
+	}
+	
+	setVisibleApp(visible) {
+		this.setVisibleElement('aonHeaderApp', visible)
+	}
+
+	setVisibleLogo(visible) {
+		this.setVisibleElement('aonLogo', visible)
+	}
+
+	setVisibleHomeButton(visible) {
+		this.setVisibleElement('aonHeaderHomeButton', visible)
+	}
+
+	setVisibleCompanyListButton(visible) {
+		this.setVisibleElement('aonHeaderCompanyListButton', visible)
+	}
+	
+	setVisibleElement(elementId, visible) {
+		if ( visible )
+			this.getElement(elementId).style.removeProperty('display');
+		else 
+			this.getElement(elementId).style.display = 'none';
+	}
+	
+
 }
 
 window.customElements.define('aon-header', AonHeader);

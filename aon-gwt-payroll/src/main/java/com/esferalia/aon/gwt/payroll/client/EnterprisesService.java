@@ -130,7 +130,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<Extra> getWorkplacesExtras(String domain, List<Integer> workplaceIds) ;
 
-	List<Employee> getCCCEmployees(String domain, Date month, List<Integer> cccIds); 
+	List<Employee> getCCCEmployees(String domain, Date startMonth, Date endMonth, List<Integer> cccIds); 
 
 	Integer getParentDomain(String domain );
 

@@ -8,9 +8,9 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -362,19 +362,19 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 
-	public List<TediError> getMessages() {
+	public List<InvoiceError> getMessages() {
 		return invoice.getMessages();
 	}
 
-	public void add(TediError error) {
+	public void add(InvoiceError error) {
 		invoice.addMessage(error);
 	}
 
-	public TediLevel getMoreSeriousLevel() {
-		TediLevel level  = null;
+	public InvoiceErrorLevel getMoreSeriousLevel() {
+		InvoiceErrorLevel level  = null;
 		if (getMessages() != null) {
-			for (TediError error : getMessages()) {
-				if (level == null || error.getLevel().ordinal() >  level.ordinal()) {
+			for (InvoiceError error : getMessages()) {
+				if (level == null || error.getLevel().ordinal() > level.ordinal()) {
 					level = error.getLevel();
 				}
 			}
@@ -383,8 +383,8 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean isImportable() {
-		TediLevel level = getMoreSeriousLevel();
-		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
+		InvoiceErrorLevel level = getMoreSeriousLevel();
+		return ( level == null || level.ordinal() < InvoiceErrorLevel.ERR.ordinal() );
 	}
 	public void clearMessages() {
 		invoice.clearMessages();		

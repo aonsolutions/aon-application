@@ -26,10 +26,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -253,7 +254,7 @@ public class AccountingInvoiceBuilder {
 				if (result.getTedi().getNumber() != null) {
 					result.getInvoice().setNumber(result.getTedi().getNumber());
 				} else {
-					result.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+					result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
 					result.getInvoice().setNumber(0);
 				}
 			}
@@ -747,19 +748,19 @@ public class AccountingInvoiceBuilder {
 					AccountingRegistry ar = registries.get(0);
 					AccountingInvoice ai = result.getAccountingInvoice();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
 					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
 					return true;
 				} else {
 					result.setPosibleRegistries(registries);
-					result.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+					result.add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 				}
 			}
 			if (result.getInvoice().getRegistryDocumentCountry() == null) {
 				result.getInvoice().setRegistryDocumentCountry(Country.ES);
-				result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+				result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
 			}
 			return false;
 		}		
@@ -792,12 +793,12 @@ public class AccountingInvoiceBuilder {
 				if (ar.getType() == AccountingRegistryType.CREDITOR) {
 					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.EXPENSES );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
 					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
 					}
 				}
 			}
@@ -819,7 +820,7 @@ public class AccountingInvoiceBuilder {
 					Invoice invoice = result.getInvoice();
 					TediInvoice tedi = result.getTedi();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId(), ar.getType().getInvoiceType()));
 					invoice
 						.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
