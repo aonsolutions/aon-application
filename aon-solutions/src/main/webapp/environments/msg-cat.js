@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Afegir Comentari';
 export const ADD_COMPOSITION = 'Afegir Composició';
 export const ADD_FILE = 'Adjuntar Fitxer';
 export const ADD_INVOICE = 'Afegir Factura';
+export const ADD_NEW = "Afegir nou";
 export const ADD_REMARKS = 'Afegir Observacions';
 export const ADD_TAG = 'Afegir Etiqueta';
 export const ADD_TAX = 'Afegir Impost';
@@ -167,6 +168,7 @@ export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
+export const EXPIRED_SESSION = 'Sessió expirada';
 export const ERRORS = 'Errors';
 
 // ----- F
@@ -283,6 +285,7 @@ export const NEW_TICKET = 'Nou Tiquet';
 export const NEW_WAREHOUSE = 'Nou Magatzem';
 export const NEXT = 'Següent';
 export const NIF = 'NIF';
+export const NO_DATA = 'No hi ha dades';
 export const NOT_LINKED = 'No vinculat';
 export const NOT_LINKED1 = 'No vinculats';
 export const NOTIFICATION = 'Notificació';
@@ -323,6 +326,7 @@ export const PENDING_TASKS = 'Tasques Pendents';
 export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menu portal"
 export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
@@ -338,6 +342,7 @@ export const PROVINCE = 'Provincia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Accés ràpid";
 export const QUANTITY = 'Quantitat';
 export const QUOTA = 'Quota';
 
@@ -347,6 +352,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Rebuda';
 export const RECEIVEDS = 'Rebudes';
 export const RECENTS = 'Recents';
+export const RECENTLY_OPENED = "Obert recentment";
 export const RECORD = 'Comptabilitzar';
 export const RECORD_INVOICE = 'Comptabilitzar';
 export const RECTIFIED = 'Rectificativa';
@@ -405,6 +411,7 @@ export const SPANISH = 'Castellà';
 export const STATISTICS = 'Estadístiques';
 export const STATUS = "Estado";
 export const STATUS_NOT_EMPTY = "L'estat no pot estar buit";
+export const SUITE_MENU = "Menu suite";
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';
 export const SUPPLIERS = 'Proveïdors';

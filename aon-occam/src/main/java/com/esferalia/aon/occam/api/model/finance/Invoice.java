@@ -8,10 +8,10 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -104,7 +104,10 @@ public class Invoice implements Serializable, HasAudit {
 
 	private InvoiceInfo invoiceInfo;
 		
-	private List<TediError> messages ;
+	private List<InvoiceError> messages;
+	
+	private boolean recordable;
+	private boolean selected;
 
 	public Integer getId() {
 		return id;
@@ -735,19 +738,19 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public List<TediError> getMessages() {
+	public List<InvoiceError> getMessages() {
 	    if ( messages == null ) {
 		messages = new LinkedList<>();
 	    }
 	    return messages;
 	}
 	
-	public Invoice setMessages(LinkedList<TediError> messages) {
+	public Invoice setMessages(LinkedList<InvoiceError> messages) {
 	    this.messages = messages;
 	    return this;
 	}
 	
-	public Invoice addMessage(TediError message) {
+	public Invoice addMessage(InvoiceError message) {
 	    if ( messages == null ) {
 		messages = new LinkedList<>();
 	    }
@@ -757,6 +760,22 @@ public class Invoice implements Serializable, HasAudit {
 
 	public void clearMessages() {
 		this.messages = new LinkedList<>();		
+	}
+	
+	public boolean isRecordable() {
+		return recordable;
+	}
+	public Invoice setRecordable(boolean recordable) {
+		this.recordable = recordable;
+		return this;
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	public Invoice setSelected(boolean selected) {
+		this.selected = selected;
+		return this;
 	}
 	
 	

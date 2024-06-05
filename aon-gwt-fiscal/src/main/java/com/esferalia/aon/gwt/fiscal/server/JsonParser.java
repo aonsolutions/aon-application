@@ -597,7 +597,7 @@ public class JsonParser {
 		params.setToDueDate(JsonUtils.getDate(json, IJsonNames.TO_DUE_DATE));
 		params.setSecurityLevel(SecurityLevel.safeValueOf(JsonUtils.getInteger(json, IJsonNames.SECURITY_LEVEL)));
 		params.setHasConfidentialityRole(JsonUtils.getInt(json, IJsonNames.SECURITY_LEVEL) == 1);		
-		params.setPayment(JsonUtils.getInt(json, IJsonNames.PAYMENT) == 1);
+		params.setPayment(null == JsonUtils.getString(json, IJsonNames.PAYMENT) ? null : JsonUtils.getInt(json, IJsonNames.PAYMENT) == 1);
 		params.setPending(JsonUtils.getInt(json, IJsonNames.PENDING) == 1);
 		params.setBatched(JsonUtils.getInt(json, IJsonNames.BATCHED) == 1);
 		params.setReturned(JsonUtils.getInt(json, IJsonNames.RETURNED) == 1);

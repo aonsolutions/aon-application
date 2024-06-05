@@ -80,6 +80,7 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
+export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
 export const AON_UPLOAD_TOAST = 'aon-upload-toast';
@@ -95,6 +96,7 @@ export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 export const AON_MODULE = 'aon-module';
 export const AON_COMPANY = 'aon-company';
 export const AON_COMPANY_LIST = 'aon-company-list';
+export const AON_PARENT = 'aon-parent';
 
 // MODULES - INVOICE
 
@@ -205,3 +207,23 @@ export const AON_HELP = 'aon-help';
 export const AON_CONFIG = 'aon-config';
 
 export const AON_RIGHT_PANEL = 'aon-right-panel';
+
+export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+
+export const AON_SUITE_MENU = 'aon-suite-menu';
+
+export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
+
+export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
+
+export const AON_MANAGEMENT_MENU = 'aon-management-menu';
+
+export const AON_TREASURY_MENU = 'aon-treasury-menu';
+
+export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
+
+export const AON_FISCAL_MENU = 'aon-fiscal-menu';
+
+export const AON_PAYROLL_MENU = 'aon-payroll-menu';
+
+export const AON_MARKETING_MENU = 'aon-marketing-menu';

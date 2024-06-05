@@ -44,7 +44,6 @@ public class InvoiceDetailJSON {
 			.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))
 			.setDiscountExpression(AonStringUtils.isBlank(discount) ? "0.0" : discount)
 			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
-			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
 			.setInvoiceTaxes(new LinkedList<>())

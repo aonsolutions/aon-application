@@ -7,7 +7,6 @@ import "../../components/aon-dialog.js";
 import "../../components/aon-toast.js";
 
 import "../company/aon-mobile-desktop.js";
-import "../company/aon-parent.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
@@ -15,14 +14,14 @@ import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
-import { AonButton } from "../../components/aon-button.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
-import * as COLORS from "../../environments/colors.js";
 import { AonEmail } from "../../components/aon-email.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
+import { AonMobileParent } from "../company/aon-mobile-parent.js";
+import { AonParent } from "aonparent";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -365,9 +364,12 @@ export class AonNewLogin extends AonElement {
       .then(() => {
         document.body.style.background = 'transparent';
         loader.stop();
+
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
+        // LS.setLanguage(Language.SPANISH);
+
         LS.setLeftMenu(true);
         LS.setTopMenu(true);
         getCompanies().then(companies => {
@@ -381,9 +383,9 @@ export class AonNewLogin extends AonElement {
             this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
-           	this.rootPanelHtml(this.isMobile()
-              ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
-              : '<aon-parent id="aonParent"></aon-parent>');
+           	this.rootPanel(this.isMobile()
+              ? new AonMobileParent()
+              : new AonParent());
           }
           
           // this.getElement("aonLogin").style.display = 'none';

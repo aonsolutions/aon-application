@@ -1,11 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import { getDomainUserRoles } from 'aonsolutions/services/service.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
-import { AonDocumentalAyudat } from 'aonsolutions/modules/documental/ayudat/aon-documental-ayudat.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
@@ -16,20 +14,32 @@ import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
 import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
-import { AonSaltra } from 'aonsolutions/modules/laboral/aon-saltra.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
 import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
-import { AonBooking } from 'aonsolutions/modules/marketplace/aon-booking.js';
 import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
+import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
-import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
+import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
+import { AonManagementMenu } from './management/aon-management-menu.js';
+import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
+import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
+import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
+import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
+import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
+import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
+
+//	Falla la compilación por esta línea que no se usa. REVISAR!!
+// import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
+//
+
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -116,6 +126,9 @@ export class AonNewMenu extends AonElement {
 
 	appSelection(app, sidenav) {
 		switch (app.app) {
+			case HOME.app:
+				this.rootPanel(new AonDesktop());
+				break;
 			case Apps.CONSOLE.app:
 				this.rootPanel(new AonConsole());
 				break;
@@ -159,7 +172,34 @@ export class AonNewMenu extends AonElement {
 				this.rootPanel(new AonMarketing());
 				break;
 			case HomeApps.HOME.app:
-				this.rootPanel(new AonParent());
+				this.rootPanel(new AonDesktop());
+				break;
+			case ACCOUNTING_MENU.app:
+				this.rootPanel(new AonAccountingMenu());
+				break;
+			case COMMERCIAL_MENU.app:
+				this.rootPanel(new AonCommercialMenu());
+				break;
+			case GROUPWARE_MENU.app:
+				this.rootPanel(new AonGroupwareMenu());
+				break;
+			case MANAGEMENT_MENU.app:
+				this.rootPanel(new AonManagementMenu());
+				break;
+			case TREASURY_MENU.app:
+				this.rootPanel(new AonTreasuryMenu());
+				break;
+			case WAREHOUSE_MENU.app:
+				this.rootPanel(new AonWarehouseMenu());
+				break;
+			case FISCAL_MENU.app:
+				this.rootPanel(new AonFiscalMenu());
+				break;
+			case PAYROLL_MENU.app:
+				this.rootPanel(new AonPayrollMenu());
+				break;
+			case MARKETING_MENU.app:
+				this.rootPanel(new AonMarketingMenu());
 				break;
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
@@ -220,6 +260,7 @@ export class AonNewMenu extends AonElement {
 		appDiv.id = `aonMenuLeftop-${app.app}`;
 		appDiv.style.width = '68px';
 		appDiv.style.backgroundColor = 'transparent';
+		appDiv.style.cursor = "pointer";
 		appDiv.appendChild(this.buildApp(app, {height:'48px'}));
 		div.appendChild(appDiv);
 
@@ -233,7 +274,8 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-		ul.style.marginTop = '8px';
+		ul.style.marginTop = '11px';
+
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {
@@ -260,7 +302,6 @@ export class AonNewMenu extends AonElement {
 
 	buildMenuTopnav() {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
-
 		let div = this.createElement(TAG.DIV);
 		div.style.display = 'flex';
 		div.style.flexDirection = 'row';
@@ -363,7 +404,7 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -384,7 +425,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		//icon.style.visibility = "hidden";
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
 	}
@@ -432,6 +473,7 @@ export class AonNewMenu extends AonElement {
 		a.appendChild(hoverDiv);
 
 		let div = this.createElement(TAG.DIV);
+		div.id = 'aaaaaaaaaaaaa' + app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
@@ -440,27 +482,48 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
-		div.addEventListener('mouseover', () => {
-			div.style.backgroundColor = 'white';
-		});
-		div.addEventListener('mouseout', () => {
-			div.style.backgroundColor = 'transparent';
-		});
+		let header = this.getElement("aonHeaderWeb");
+		if(app.app == "applications"){
+			if(!header.style.backgroundColor)
+				div.style.color = "#5f6368";
+			else if(header.style.backgroundColor)
+				div.style.color = "white";
+			else 
+				div.style.color = "#5f6368";
+			div.addEventListener("mouseover", () => {
+				div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+			});
+			div.addEventListener("mouseleave", () => {
+				div.style.backgroundColor = "transparent";
+			});
+		} else{
+			div.addEventListener('mouseover', () => {
+				div.style.backgroundColor = 'white';
+			});
+			div.addEventListener('mouseout', () => {
+				div.style.backgroundColor = 'transparent';
+			});
+		}
+
+		
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
-			if(app.color) icon.style.color = app.color;
+			if(app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
 			icon.style.padding = "4px";
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
 		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon = app.icon;
-			aonIcon.color = style?.color || app.color;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = style?.color || appColor;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
@@ -479,10 +542,11 @@ export class AonNewMenu extends AonElement {
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
 				if (MenuApps.TIMECONTROL.app === app.app) {
-					span.style.minHeight = '36px';
-				}else{
-					span.style.minHeight = '26px';
+					app.title = 'Ctr. Horario'
 				}
+
+				span.style.minHeight = '26px';
+				
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }
@@ -695,7 +759,8 @@ export class AonNewMenu extends AonElement {
 				return '#da002a';
 			} else return '#3a85c3';
 		}
-		return app.color ? app.color : '#f1f1f1';
+		const appColor = app.newColor || app.color;
+		return appColor ? appColor : '#f1f1f1';
 	}
 
 	addApp(app) {
@@ -710,24 +775,8 @@ export class AonNewMenu extends AonElement {
 	}
 
 	close() {
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		aonMenuSidenav.style.transitionDuration = '0ms';
-		aonMenuSidenav.style.width = '0px';
-		this.getRootPanel().style.marginLeft = '0px';
-		this.removeAttribute('opened');
-		this.toolbarClose();
-	}
-
-	toolbarClose() {
-		let application = this.getApplication();
-		if (application) {
-			let toolbar = application.getToolbar();
-			if (toolbar) {
-				let toolSection = toolbar.getToolSection();
-				if (toolSection)
-					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
-			}
-		}
+		this.hideSideNav();
+		this.hideTopNav();
 	}
 
 	isExpanded() {
@@ -736,6 +785,41 @@ export class AonNewMenu extends AonElement {
 
 	setExpanded(expanded) {
 		this.expanded = expanded;
+	}
+
+
+	getBackgroundHover(backgroundColor) {
+		//alert(this.backgroundColor);
+		//alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
+		return backgroundColor && !this.isLightColor(this.hexToRgb(backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+	}
+
+	isLightColor(colorString) {
+		// Extraer los valores RGB del string
+		const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
+		const [r, g, b] = rgba;
+	
+		// Calcular el brillo relativo
+		const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+		return brightness > 128;  // Umbral: 128
+	}
+	
+	hexToRgb(hex) {
+		// Eliminar el símbolo '#' si está presente
+		hex = hex.replace(/^#/, '');
+
+		// Comprobar si el color es en formato corto (#RGB)
+		if (hex.length === 3) {
+			hex = hex.split('').map(c => c + c).join('');
+		}
+
+		// Extraer los componentes rojo, verde y azul
+		const r = parseInt(hex.substring(0, 2), 16);
+		const g = parseInt(hex.substring(2, 4), 16);
+		const b = parseInt(hex.substring(4, 6), 16);
+
+		// Devolver el color en formato RGB
+		return `rgb(${r}, ${g}, ${b})`;
 	}
 
 	isApp(app) {

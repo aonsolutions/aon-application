@@ -569,6 +569,10 @@ class Calculations {
 									
 								});
 								
+								if ( calcs.isEmpty() ) {
+									calcs.putAll(employeeCalcs);
+								}
+								
 								periods.put(period, calcs);
 								
 								htmlPage = htmlPage.getElementById("paginaVolver").click();

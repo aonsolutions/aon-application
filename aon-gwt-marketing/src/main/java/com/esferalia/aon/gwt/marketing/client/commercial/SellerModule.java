@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -9,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -94,28 +96,18 @@ public class SellerModule extends MainEntryPoint {
 			}
 
 			@Override
-			protected Integer getSellerListPosition(Integer sellerId) {
-				return sellerModulePanel.getSellerListPosition(sellerId);
+			protected void getSellerListCount(Consumer<Integer> finish) {
+				sellerModulePanel.getSellerListCount(count -> finish.accept(count));
 			}
 
 			@Override
-			protected Integer getSellerListCount() {
-				return sellerModulePanel.getSellerListCount();
+			protected void onSellerSelectionChange(Seller seller, Integer position) {
+				showSelectedSeller(seller, position);
 			}
 
 			@Override
-			protected Seller getPreviusSeller(Integer sellerId) {
-				return sellerModulePanel.getPreviusSeller(sellerId);
-			}
-
-			@Override
-			protected Seller getNextSeller(Integer sellerId) {
-				return sellerModulePanel.getNextSeller(sellerId);
-			}
-
-			@Override
-			protected void onSellerSelectionChange(Seller seller) {
-				showSelectedSeller(seller);
+			protected SellerParams getSellerListParams() {
+				return sellerModulePanel.getSellerListParams();
 			}
 		};
 			
@@ -135,12 +127,17 @@ public class SellerModule extends MainEntryPoint {
 	
 	private void showSelectedSeller(Seller seller) {
 		deckLayoutPanel.showWidget(sellerEntryPanel);
-		sellerEntryPanel.setSeller(seller, true);
+		sellerEntryPanel.setSeller(seller, sellerModulePanel.getSellerListPosition(seller.getId()));
+	}
+	
+	private void showSelectedSeller(Seller seller, Integer position) {
+		deckLayoutPanel.showWidget(sellerEntryPanel);
+		sellerEntryPanel.setSeller(seller, position);
 	}
 	
 	private void showCreatedSeller(Seller seller) {
 		deckLayoutPanel.showWidget(sellerEntryPanel);
-		sellerEntryPanel.setSeller(seller, false);
+		sellerEntryPanel.setSeller(seller, -1);
 	}
 	
 	private void deleteSeller(Integer sellerId) {

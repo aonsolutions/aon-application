@@ -403,6 +403,12 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> SellerDAO.getList(ctx, params));
 	}
+	
+	@Override
+	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getListCount(ctx, params));
+	}
 
 	@Override
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller) {

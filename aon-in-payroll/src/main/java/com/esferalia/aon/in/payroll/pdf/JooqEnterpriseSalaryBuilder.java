@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -569,6 +570,22 @@ public class JooqEnterpriseSalaryBuilder {
 		});
 		
 		
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.PAYMENT_CONCEPT.eq(ContextVariable.PPE))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getQuote());
+			inKindDeductions.compute(sp.getSalary(), ( k, v ) -> v == null ? amount : amount + v);
+		});
+
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
 		.from(SALARY)
@@ -738,6 +755,22 @@ public class JooqEnterpriseSalaryBuilder {
 			inKindDeductions.put(sp.getSalary(), amount);
 		});
 		
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.PAYMENT_CONCEPT.eq(ContextVariable.PPE))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getQuote());
+			inKindDeductions.compute(sp.getSalary(), ( k, v ) -> v == null ? amount : amount + v);
+		});
+
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
 		.from(SALARY)
@@ -896,6 +929,22 @@ public class JooqEnterpriseSalaryBuilder {
 			inKindDeductions.put(sp.getSalary(), amount);
 		});
 		
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.PAYMENT_CONCEPT.eq(ContextVariable.PPE))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getQuote());
+			inKindDeductions.compute(sp.getSalary(), ( k, v ) -> v == null ? amount : amount + v);
+		});
+
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
 		.from(SALARY)

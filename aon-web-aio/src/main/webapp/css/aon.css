@@ -1,5 +1,8 @@
 :root{
   --aonBlue: #002469;
+  --aonOrange: #e6970a;
+  --aonGreen: #169873;
+  --aonRed: #f6655a;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
@@ -106,6 +109,8 @@
 .aonBody {
   padding: 0px !important;
   margin: 0px !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
   line-height: normal !important;
   height: 100%;
   overflow: hidden;
@@ -118,9 +123,6 @@
   font-weight: 400 !important;
   font-style: normal;
   font-variation-settings: "wdth" 100;
-  /* font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; */
-  /* background-color: var(--aonBackground); */
-  /* font-family: "Roboto", "Helvetica", "Arial", sans-serif !important; */
 }
 
 .aonBodyBeta {
@@ -788,7 +790,6 @@
   top: 48px;
   left: 0px;
   overflow-x: hidden;
-
   font-size: 10px;
   border-right: none;
   background-color: #f0f0f0; 
@@ -1015,6 +1016,10 @@
 }
 
 .aonContent::-webkit-scrollbar {
+  display: none;
+}
+
+.aonContentBeta::-webkit-scrollbar {
   display: none;
 }
 
@@ -1945,10 +1950,6 @@ label.rating:hover {
   white-space: nowrap;
 }
 
-aon-access-card{
-  width: 100%;
-}
-
 /*
 ********************************************
             RESPONSIVE NOTES
@@ -2173,10 +2174,6 @@ aon-access-card{
       min-width: 22rem;
   }
 
-  aon-access-card{
-    width: auto;
-    min-width: 22rem;
-  }
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
     max-width: 26rem;
@@ -2264,7 +2261,7 @@ aon-access-card{
 .aonRootGradiantHeader {
 	top: 48px;
 	left: 0;
-	right: 10px;
+	right: 0px;
 	bottom: 0;
 	position: fixed;
 	background-color: #faf9f8;
@@ -2273,7 +2270,7 @@ aon-access-card{
 .aonRootGradiantHeaderBlur {
 	top: 48px;
 	left: 0;
-	right: 10px;
+	right: 0px;
 	bottom: 0;
 	position: fixed;
 	backdrop-filter: blur(50px);
@@ -2327,6 +2324,7 @@ aon-access-card{
 .aonTabItem {
 	float: left;
 	padding: 2px 24px 0 2px;
+  cursor: pointer;
 }
 
 .aonTabItemText {
@@ -2418,10 +2416,10 @@ aon-access-card{
   }
 }
 
-:has(>.aonMenuApp):hover{
+/* :has(>.aonMenuApp):hover{
   background-color: white !important;
   cursor: pointer;
-}
+} */
 
 :has(>.aonMenuApp):hover .aonMenuAppHighlight {
   color: #464feb !important;

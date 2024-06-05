@@ -1,15 +1,15 @@
-package com.esferalia.aon.occam.api.model.tedi;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
-public enum TediLevel implements Serializable{
+public enum InvoiceErrorLevel implements Serializable{
 	INF ("INFO."), 
 	WRN ("AVISO"), 
 	ERR ("ERROR")
 	;
 	
 	private  String label;
-	private TediLevel(String label) {
+	private InvoiceErrorLevel(String label) {
 		this.label = label;
 	}
 	

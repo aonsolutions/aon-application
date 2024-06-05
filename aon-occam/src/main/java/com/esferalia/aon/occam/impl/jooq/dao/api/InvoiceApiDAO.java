@@ -20,6 +20,7 @@ import org.jooq.Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -258,7 +259,7 @@ public class InvoiceApiDAO {
 				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setTaxes(record.getValue(INVOICE_DETAIL.TAXES))
 				.setSeller(new Seller().copy(new Registry().setId(record.getValue(INVOICE_DETAIL.SELLER))))
-				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
+				.setWorkplace( new Workplace().setId(record.getValue(INVOICE_DETAIL.WORKPLACE)))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setAccount(record.getValue(ACCOUNT.ID))
 				.setAccountCode(record.getValue(ACCOUNT.CODE))

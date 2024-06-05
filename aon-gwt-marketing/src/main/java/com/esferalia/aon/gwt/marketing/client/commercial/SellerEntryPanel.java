@@ -31,6 +31,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DocumentValidator;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -80,6 +81,7 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 	private DockLayoutPanel sellerEntryPanel;
 
 	private AonCustomToolbar toolbar;
+	private Integer position = -1;
 	private AonToolbarButton previusSeller;
 	private Label sellerIteration;
 	private AonToolbarButton nextSeller;
@@ -172,25 +174,47 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 		toolbar.addToolbarButton(saveButton);
 		
 		previusSeller = new AonToolbarButton("Anterior Agente Comercial", AON.CSS.aonIconLeft());
+		previusSeller.setEnabled(position > 0);
 		previusSeller.addClickHandler(e -> {
-			Seller prevSeller = null == seller ? null : getPreviusSeller(seller.getId());
-			onSellerSelectionChange(prevSeller);
+			position = position - 1;
+			getNextSeller(position, nextSeller -> onSellerSelectionChange(nextSeller, position));
 		});
 		toolbar.addToolbarButton(previusSeller);
 		
-		sellerIteration = new Label((null == seller ? "ND" : getSellerListPosition(seller.getId())) + " / " + getSellerListCount());
-		toolbar.addToolbarButton(sellerIteration);
-		
-		nextSeller = new AonToolbarButton("Siguiente Agente Comercial", AON.CSS.aonIconRight());
-		nextSeller.addClickHandler(e -> {
-			Seller nxtSeller = null == seller ? null : getNextSeller(seller.getId());
-			onSellerSelectionChange(nxtSeller);
+		getSellerListCount(count -> {
+			sellerIteration = new Label((null == seller ? "ND" : (position + 1)) + " / " + count);
+			toolbar.addToolbarButton(sellerIteration);
+			
+			nextSeller = new AonToolbarButton("Siguiente Agente Comercial", AON.CSS.aonIconRight());
+			nextSeller.setEnabled(position < (count - 1));
+			nextSeller.addClickHandler(e -> {
+				position = position + 1;
+				getNextSeller(position, nextSeller -> onSellerSelectionChange(nextSeller, position));
+			});
+			toolbar.addToolbarButton(nextSeller);
 		});
-		toolbar.addToolbarButton(nextSeller);
 		
 		sellerEntryPanel.addNorth(toolbar, 50);
 	}
-	
+
+	private void getNextSeller(Integer nextPos, Consumer<Seller> sellerLoad) {
+		SellerParams params = getSellerListParams();
+		params.setOffset(nextPos);
+		params.setLimit(1);
+		
+		commonService.getSellers(params, new AsyncCallback<List<Seller>>() {
+			
+			@Override
+			public void onSuccess(List<Seller> sellers) {
+				sellerLoad.accept(sellers.get(0));
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
 
 	private void hideNavegationOptions() {
 		previusSeller.setVisible(false);
@@ -247,9 +271,10 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 
 
 
-	public void setSeller(Seller seller, boolean showNavOpt) {
+	public void setSeller(Seller seller, Integer sellectPos) {
+		this.position = sellectPos;
 		setSeller(seller, finish -> {
-			if(showNavOpt) showNavegationOptions();
+			if(position >= 0) showNavegationOptions();
 			else hideNavegationOptions();
 		});
 	}
@@ -723,11 +748,9 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 	protected abstract void onBackClick();
 	protected abstract void onSellerDeleteClick(Integer sellerId);
 	
-	protected abstract Integer getSellerListPosition(Integer sellerId);
-	protected abstract Integer getSellerListCount();
+	protected abstract void getSellerListCount(Consumer<Integer> finish);
+	protected abstract SellerParams getSellerListParams();
 	
-	protected abstract Seller getPreviusSeller(Integer sellerId);
-	protected abstract Seller getNextSeller(Integer sellerId);
-	protected abstract void onSellerSelectionChange(Seller seller);
+	protected abstract void onSellerSelectionChange(Seller seller, Integer position);
 
 }

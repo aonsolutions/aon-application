@@ -72,9 +72,9 @@ export class AonNotificationDesk extends AonElement {
   buildToobar(){
     const application = this.getApplication();
 
-    if(!this.getDur().isEmptyDomain() && !this.getDur().isEmployee()) {
+    // if(!this.getDur().isEmptyDomain() && !this.getDur().isEmployee()) {
       application.addToolbarOption2(SigninSidenav.ADD, () => NotificationUtils.openDialog(this, this.getApplication().getDialog()));
-    }
+    // }
 
     this.buildToolbarSearch();
 

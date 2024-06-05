@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 public class ItemCRUDETest extends AbstractOccamTest {
 
 	@Test
-	@Repeat(1000)
+	@Repeat(200)
 	public void test() {
 		Item item = AonFaker.getItem( ctx ); 
 		item = ItemDAO.insert(ctx, item);

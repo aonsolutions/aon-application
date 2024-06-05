@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -1215,7 +1216,7 @@ public class AccountingInvoiceDAO {
 				.setDomain(accInvoice.getInvoice().getDomain())
 				.setInvoice(accInvoice.getInvoice())
 				.setInvestAsset(vat.getInvestAsset())
-				.setWorkPlace( accInvoice.getWorkplace())
+				.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 				.setLine(line)
 				.setDescription( vat.getExpAccountDescription() )
 				.setQuantity(1)
@@ -1494,7 +1495,6 @@ public class AccountingInvoiceDAO {
 	
 	private static final Consumer<RefreshContext> REFRESH_UNDEDUCTIBLE = (rctx) -> {
 		AonCollectionUtils.stream(rctx.getInvoice().getDetails())
-			.map( d -> d.setSurcharge( 0.0 ))
 			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 			.forEach( t -> t
 				.setPercentage(0.0)
@@ -1541,7 +1541,6 @@ public class AccountingInvoiceDAO {
 	private static final Consumer<RefreshContext> REFRESH_SURCHARGE = (rctx) -> {
 		if (!rctx.getInvoice().isSurcharge()) {
 			AonCollectionUtils.stream(rctx.getInvoice().getDetails())
-			.map( d -> d.setSurcharge( 0.0 ))
 			.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 			.forEach( t -> t 
 				.setSurcharge( 0.0 )

@@ -21,6 +21,8 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.finance.controller.FeeExportGwtController;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -229,6 +231,12 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 
 	}	
 	
+	@Override
+	public void beforeModelSearched(ControllerEvent event) throws ControllerListenerException {
+		checkGwtExport();
+		super.beforeModelSearched(event);
+	}
+	
 	public String getFilter() {
 		return getFeeGwtExport().getFilter();
 	}
@@ -265,4 +273,9 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 		}
 	}
 
+	private void checkGwtExport() {
+		if ( getFeeGwtExport() == null ) {
+			setFeeGwtExport(new FeeExportGwtController());
+		}
+	}
 }

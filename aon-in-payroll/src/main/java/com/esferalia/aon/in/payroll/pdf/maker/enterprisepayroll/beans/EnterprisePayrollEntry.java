@@ -25,6 +25,7 @@ public class EnterprisePayrollEntry {
 	Optional<Double> irpfSS;
 	Optional<Double> deduccionesSS;
 	Optional<Double> liquidoSS;
+	Optional<Double> inKindSS;
 	Optional<Double> ssEmprSS;
 	Optional<Double> costeTotalSS;
 	Optional<Double> ssTotalSS;
@@ -49,7 +50,7 @@ public class EnterprisePayrollEntry {
 		this.liquido		= Optional.empty();
 		this.ssEmpr			= Optional.empty();
 		this.costeTotal		= Optional.empty();
-		this.inKind		= Optional.empty();
+		this.inKind			= Optional.empty();
 		this.ssTotal		= Optional.empty();
 		this.fundae 		= Optional.empty();
 		this.bonificaciones	= Optional.empty();
@@ -61,6 +62,7 @@ public class EnterprisePayrollEntry {
 		this.irpfSS			  = Optional.empty();
 		this.deduccionesSS	  = Optional.empty();
 		this.liquidoSS		  = Optional.empty();
+		this.inKindSS		  = Optional.empty();
 		this.ssEmprSS		  = Optional.empty();
 		this.costeTotalSS	  = Optional.empty();
 		this.ssTotalSS		  = Optional.empty();
@@ -107,6 +109,7 @@ public class EnterprisePayrollEntry {
 		this.irpfSS			  = ss_en.getIrpfSS();
 		this.deduccionesSS	  = ss_en.getDeduccionesSS();
 		this.liquidoSS		  = ss_en.getLiquidoSS();
+		this.inKindSS		  = ss_en.getInKindSS();
 		this.ssEmprSS		  = ss_en.getSsEmprSS();
 		this.costeTotalSS	  = ss_en.getCosteTotalSS();
 		this.ssTotalSS		  = ss_en.getSsTotalSS();
@@ -166,10 +169,14 @@ public class EnterprisePayrollEntry {
 		return inKind;
 	}
 
+	public Optional<Double> getInKindSS() {
+		return inKindSS;
+	}
+
 	public Optional<Double> getLiquido() {
 		return liquido;
 	}
-
+	
 	public Optional<Double> getLiquidoSS() {
 		return liquidoSS;
 	}
@@ -261,6 +268,10 @@ public class EnterprisePayrollEntry {
 
 	public void setInKind(Optional<Double> inKind) {
 		this.inKind = inKind;
+	}
+
+	public void setInKindSS(Optional<Double> inKindSS) {
+		this.inKindSS = inKindSS;
 	}
 	
 	public void setLiquido(Optional<Double> liquido) {

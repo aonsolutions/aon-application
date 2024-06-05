@@ -148,6 +148,7 @@ public interface IRegistry {
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
 
 	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params);
+	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params);
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	

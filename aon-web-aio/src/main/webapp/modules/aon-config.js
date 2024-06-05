@@ -36,7 +36,7 @@ export class AonConfig extends AonElement {
 	build() {
 
 		let div = this.createDiv();
-		div.innerHTML = MSG.UPPER_MENU;
+		div.innerHTML = MSG.SUITE_MENU;
 		div.style.marginLeft = '10px';
 		div.style.position = "relative";
 		div.style.top = "-15px";
@@ -52,7 +52,7 @@ export class AonConfig extends AonElement {
 		div.appendChild(rightPanelSwitchTopButton);
 
 		let span2= this.createSpan();
-		span2.innerHTML = MSG.SIDE_MENU;
+		span2.innerHTML = MSG.PORTAL_MENU;
 		span2.style.marginLeft = '10px';
 		span2.style.position = "relative";
 		span2.style.top = '0px';

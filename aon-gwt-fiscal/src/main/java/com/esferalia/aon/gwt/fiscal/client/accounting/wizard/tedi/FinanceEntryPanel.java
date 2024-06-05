@@ -3,10 +3,12 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceSearchPanel.IFinancePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
@@ -18,17 +20,13 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -41,91 +39,73 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 
 public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implements HasSelectionHandlers<Finance>{
 	
 	static final String BACKGROUND_COLOR = "#EEEEEE";
-	public final static int TAB_OFFSET = 1000;
-	public final static int SEARCH_PANEL_TAB_OFFSET = 10000;
+	public static final int TAB_OFFSET = 1000;
+	public static final int SEARCH_PANEL_TAB_OFFSET = 10000;
 	
 	private DockLayoutPanel resultPanel;
 	
-	private AccountBox bankAccount;
-	private DoubleBox  expenses;
-	private AccountBox expensesAccount;
-	private TextBox manualConcept;
+	private AonAccountBox bankAccount;
+	private AonDoubleBox  expenses;
+	private AonAccountBox expensesAccount;
+	private AonTextBox manualConcept;
 	private FlowPanel container;
 	private FinanceSearchPanel financeSearchPanel;
 	private FinanceEntry financeEntry;
 	
-	private final KeyUpHandler f9KeyHandler = new KeyUpHandler() {
-		@Override
-		public void onKeyUp(KeyUpEvent event) {
-			if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-				financeSearchPanel.setFocus(true);
-	        }
-		}
+	private final KeyUpHandler f9KeyHandler = event -> {
+		if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+			financeSearchPanel.setFocus(true);
+	    }
 	};
 	
 	public FinanceEntryPanel(final IAccountEntryModuleCallback callback) {
 		setCallback(callback);
 		
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
-		
-		financeSearchPanel = new FinanceSearchPanel(
-			  getCallback().getCurrentDomainName()
-			, getCallback().getCurrentDomainId()
-			, getCallback().getCurrentUser()
-			, getCallback().getConfiguration()
-			, new IFinancePanelCallback() {
-
-				@Override
-				public boolean isSelected(Finance finance) {
-					if (finance == null) return false;
-					return getWrapper().getTrackings().containsKey(finance.getId())
-						&& getWrapper().getTrackings().get(finance.getId()).isChecked();
-				}
-				
+		final IFinancePanelCallback financePanelCallback = new IFinancePanelCallback() {
+			@Override
+			public AccountEntryModuleOptions getModuleModuleOptions() {
+				return getCallback().getModuleOptions();
+			} 
+		  
+			@Override
+			public boolean isSelected(Finance finance) {
+				if (finance == null) return false;
+				return getWrapper().getTrackings().containsKey(finance.getId())
+					&& getWrapper().getTrackings().get(finance.getId()).isChecked();
 			}
-			);
+		};  
+		financeSearchPanel = new FinanceSearchPanel( financePanelCallback );
 		financeSearchPanel.setUser( getCallback().getConfiguration().getUser() );
 		financeSearchPanel.setStyleName(AON.AON_CSS.aonInvoicePanelEast());
-		financeSearchPanel.addSelectionHandler( new SelectionHandler<Finance>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Finance> event) {
-				if (event.getSelectedItem().isSelected()) {
-					Finance finance = event.getSelectedItem(); 
-					financeEntry.add(finance);
-				} else {
-					financeEntry.remove(event.getSelectedItem());	
-				}
-				refreshTable();
-				_paintEntry();
+		financeSearchPanel.addSelectionHandler( event -> {
+			if (event.getSelectedItem().isSelected()) {
+				Finance finance = event.getSelectedItem(); 
+				financeEntry.add(finance);
+			} else {
+				financeEntry.remove(event.getSelectedItem());	
 			}
-
+			refreshTable();
+			_paintEntry();
 		});
-		addSelectionHandler( new SelectionHandler<Finance>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Finance> event) {
-				financeSearchPanel.uncheck(event.getSelectedItem());		
-			}
-		});
+		addSelectionHandler( event -> financeSearchPanel.uncheck(event.getSelectedItem()));
 		financeSearchPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
 		rootPanel.addEast(financeSearchPanel, (Window.getClientWidth() / 2));
 		
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
 		centerPanel.getElement().getStyle().setBackgroundColor(FinanceEntryPanel.BACKGROUND_COLOR);
-		int tabindex = TAB_OFFSET;
+		
 		resultPanel = new DockLayoutPanel(Unit.PX);
 		
 		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 		northPanel.setStyleName(AON.AON_CSS.aonBorderBottom());
-		fillNorthPanel(northPanel,tabindex);
+		fillNorthPanel(northPanel);
 		resultPanel.addNorth(northPanel, 135);
 		
 		
@@ -158,19 +138,16 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				} else {
 					financePanel.addStyleName(AON.AON_CSS.aonIconCheckYes());
 				}
-				financePanel.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						if (!isNew()) {
-							ft.setDeleted(!ft.isDeleted());
-							ft.setChecked(!ft.isDeleted());
-						} else {
-							getWrapper().getTrackings().remove(ft.getFinance().getId());
-						}
-						refreshTable();
-						_paintEntry();
-						SelectionEvent.<Finance>fire( FinanceEntryPanel.this, ft.getFinance());
+				financePanel.addClickHandler(event -> {
+					if (!isNew()) {
+						ft.setDeleted(!ft.isDeleted());
+						ft.setChecked(!ft.isDeleted());
+					} else {
+						getWrapper().getTrackings().remove(ft.getFinance().getId());
 					}
+					refreshTable();
+					_paintEntry();
+					SelectionEvent.<Finance>fire( FinanceEntryPanel.this, ft.getFinance());
 				});
 			} else {
 				if (getWrapper().isFromFinanceBatch()) {
@@ -197,7 +174,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 
 	
-	private void fillNorthPanel(SimpleLayoutPanel northPanel,int tabIndex) {
+	private void fillNorthPanel(SimpleLayoutPanel northPanel) {
 		FlowPanel flowNorthPanel = new FlowPanel();
 		Label label = new Label(AON.MSG.financeSelected());
 		label.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -214,14 +191,11 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		tab.getColumnFormatter().setWidth(0, "100px");
 		tab.getColumnFormatter().setWidth(1, "auto");
 		
-		bankAccount = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
+		bankAccount = new AonAccountBox(getCallback().getOccam());
 		bankAccount.addKeyUpHandler(f9KeyHandler);
-		bankAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setBankAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		bankAccount.addSelectionHandler( event -> {
+			getWrapper().setBankAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		tab.setWidget(0, 0, new Label(AON.MSG.account()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
@@ -235,15 +209,12 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		FlowPanel expensesPanel = new FlowPanel();
 		expensesPanel.setStyleName(AON.AON_CSS.aonNowrap());
 		
-		expenses = new DoubleBox();
+		expenses = new AonDoubleBox();
 		expenses.addKeyUpHandler(f9KeyHandler);
 		expenses.setVisibleLength(6);
-		expenses.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setExpenses(expenses.getValue());
-				valueChanged();
-			}
+		expenses.addValueChangeHandler(event -> {
+			getWrapper().setExpenses(expenses.getValue());
+			valueChanged();
 		});
 		expensesPanel.add(expenses);
 		
@@ -252,16 +223,14 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		aa.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		expensesPanel.add(aa);
 
-		expensesAccount = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
+		expensesAccount = new AonAccountBox(getCallback().getOccam());
 		expensesAccount.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		expensesAccount.getElement().getStyle().setDisplay(Display.INLINE);
 		expensesAccount.setRequired(false);
 		expensesAccount.addKeyUpHandler(f9KeyHandler);
-		expensesAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setExpensesAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		expensesAccount.addSelectionHandler( event -> {
+			getWrapper().setExpensesAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		expensesPanel.add(expensesAccount);
 		tab.setWidget(1, 1, expensesPanel);
@@ -269,16 +238,12 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		tab.setWidget(2, 0, new Label(AON.MSG.concept()));
 		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
 
-		manualConcept = new TextBox();
-		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
+		manualConcept = new AonTextBox();
 		manualConcept.addKeyUpHandler(f9KeyHandler);
 		manualConcept.setVisibleLength(20);
-		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getWrapper().setManualConcept(manualConcept.getValue());
-				valueChanged();
-			}
+		manualConcept.addValueChangeHandler(event -> {
+			getWrapper().setManualConcept(manualConcept.getValue());
+			valueChanged();
 		});
 		tab.setWidget(2, 1, manualConcept);
 
@@ -293,12 +258,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> callback) {
-		
-		getAccountEntryService().save(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId()
-				,getCallback().getCurrentUser()
-				, getWrapper(), new AsyncCallback<FinanceEntry>() {
-
+		getAccountEntryService().save(getCallback().getOccam(), getWrapper(), new AsyncCallback<FinanceEntry>() {
 			@Override
 			public void onSuccess(FinanceEntry result) {
 				setWrapper(result);
@@ -322,7 +282,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.FINANCE)
 			.setPeriod(base.getPeriod())
-			.setDomain(getCallback().getCurrentDomainId())
+			.setDomain(getCallback().getOccam().getDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -334,19 +294,17 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getAccountEntryService().getFinanceEntry(getCallback().getCurrentDomainName()
-					,getCallback().getCurrentDomainId(),getCallback().getCurrentUser(),id
-					,new AsyncCallback<FinanceEntry>() {
-							@Override
-							public void onSuccess(FinanceEntry result) {
-								select(result,cbk);
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().getModule().onError(caught.getMessage());
-							}
-						});
+			getAccountEntryService().getFinanceEntry(getCallback().getOccam(),id,new AsyncCallback<FinanceEntry>() {
+				@Override
+				public void onSuccess(FinanceEntry result) {
+					select(result,cbk);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					getCallback().getModule().onError(caught.getMessage());
+				}
+			});
 		} else {
 			if (wrp != null) {
 				select((FinanceEntry) wrp, cbk);
@@ -382,7 +340,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		getCallback().getModule().refreshIdLabel();
 	}
 
-	private void setAccount(AccountBox accountBox, Account account) {
+	private void setAccount(AonAccountBox accountBox, Account account) {
 		if (account != null) {
 			accountBox.setValue(account.getId(),account.getCode(),account.getDescription(),false);
 		} else {

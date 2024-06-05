@@ -1,31 +1,31 @@
-package com.esferalia.aon.occam.api.model.tedi;
+package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
 
-public class TediContext implements Serializable {
+public class InvoiceErrorContext implements Serializable {
 
 	private static final long serialVersionUID = -1772168986100300984L;
 
-	private TediContextKey key;
+	private InvoiceErrorKey key;
 	private Integer line;
 
-	public TediContext() {
+	public InvoiceErrorContext() {
 	}
 
-	public TediContext(TediContextKey key) {
+	public InvoiceErrorContext(InvoiceErrorKey key) {
 		this(key, null);
 	}
 
-	public TediContext(TediContextKey key, Integer line) {
+	public InvoiceErrorContext(InvoiceErrorKey key, Integer line) {
 		this.key = key;
 		this.line = line;
 	}
 
-	public TediContextKey getKey() {
+	public InvoiceErrorKey getKey() {
 		return key;
 	}
 
-	public TediContext setKey(TediContextKey key) {
+	public InvoiceErrorContext setKey(InvoiceErrorKey key) {
 		this.key = key;
 		return this;
 	}
@@ -34,7 +34,7 @@ public class TediContext implements Serializable {
 		return line;
 	}
 
-	public TediContext setLine(Integer line) {
+	public InvoiceErrorContext setLine(Integer line) {
 		this.line = line;
 		return this;
 	}

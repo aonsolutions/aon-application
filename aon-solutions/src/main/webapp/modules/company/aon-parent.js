@@ -33,12 +33,10 @@ export class AonParent extends AonElement {
 
 	constructor () {
 		super();
-		this.id = 'aonParent';
-		this.filter = {};
-		this._filter = {};
 	}
 
 	connectedCallback () {
+		this.initialize();
 		this.createApplication("aonParentMain", "Parent", new AonApplication(), true);
 
 		this.buildSidenav();
@@ -51,6 +49,12 @@ export class AonParent extends AonElement {
 			this.init({value: searchBox.value});
 			this.addFilter({value:searchBox.value});
 		});
+	}
+
+	initialize() {
+		this.id = this.id || 'aonParent';
+		this.filter = {};
+		this._filter = {};
 	}
 
 	buildSidenav() {
