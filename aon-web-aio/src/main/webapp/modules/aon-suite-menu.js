@@ -17,8 +17,6 @@ export class AonSuiteMenu extends AonElement {
     last; 
     new;
     cardData;
-    valueAlias;
-    nameAlias;
 
 	constructor () {
 		super();
@@ -54,7 +52,7 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.style.backgroundColor = "rgb(250, 249, 248)";
         sideMenu.style.borderRight = "1px solid rgba(0, 0, 0, 0.1)";
         sideMenu.style.overflowY = "auto";
-        sideMenu.style.height = "calc(-62px + 100vh)";
+        sideMenu.style.height = "calc(-61px + 100vh)";
         sideMenu.style.paddingBottom = "80px"
         divFlex.appendChild(sideMenu);
 
@@ -164,10 +162,9 @@ export class AonSuiteMenu extends AonElement {
               
         let content = this.createDiv();
         content.id = this.CONTENT;
-        content.style.height = "calc(-62px + 100vh)";
+        content.style.height = "calc(-61px + 100vh)";
         content.style.width = "100%";
         content.style.backgroundColor = "rgb(250, 249, 248)";
-        content.style.overflowY = "auto";
         divFlex.appendChild(content);
 
         let div = this.createDiv();
@@ -249,7 +246,7 @@ export class AonSuiteMenu extends AonElement {
         card.style.maxWidth = "375px";      
 
         card.style.display = "flex";
-        card.style.height = "300px";
+        card.style.maxHeight = "330px";
 		card.style.marginLeft = "10px";
         //card.style.marginTop = "20px";
         div.appendChild(card);
@@ -354,13 +351,6 @@ export class AonSuiteMenu extends AonElement {
         div.addEventListener("mouseleave", () => {
            div.classList.remove('is-visible');
         });
-
-        if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
-            let empty = {};
-            empty[this.nameAlias] = '-';
-            empty[this.valueAlias] = '';
-            options.unshift(empty); //EMPTY
-        }
 
         let ul = this.createElement(TAG.UL);
         ul.classList.add(CSS.AON_UL);

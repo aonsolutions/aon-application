@@ -368,12 +368,12 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 62px)`;
+			rightPanel.style.height = `calc(100vh - 61px)`;
 		
 		}
 		
 		rootPanel.style.marginTop = "69px";
-		rootPanel.style.height = `calc(100vh - 62px)`;
+		rootPanel.style.height = `calc(100vh - 61px)`;
 	}
 
 	hideTopNav() {

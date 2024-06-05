@@ -142,7 +142,7 @@ export class AonRightPanel extends AonElement {
         if(height) this.getRightPanel().style.height = height;
         else this.getRightPanel().style.height = "";
         if (marginTop) this.getRightPanel().style.marginTop = marginTop;
-        else this.getRightPanel().style.marginTop = this.getElement("aonMenuTopnav").offsetHeight;
+        else this.getRightPanel().style.marginTop = "65px";
         if (boxShadow) this.getRightPanel().style.boxShadow = boxShadow;
         else this.getRightPanel().style.boxShadow = "";
     }

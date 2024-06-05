@@ -43,105 +43,205 @@ export class AonFiscalMenu extends AonSuiteMenu {
             action : () => alert("description")
         }];
         this.options = [{
-            title: 'IVA',
+            title: 'IVA AEAT',
             options: [ {
                 description: "Modelo 303 ",
-                description2: " |AEAT |Bizk",
                 title: "IVA Autoliquidación",
                 action: () => alert("description")
             },{
-                description: "Modelo 347 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
-                title: "Declaración anual operaciones con terceras personas",
-                action: () => alert("description")
-            },{
                 description: "Modelo 349 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
                 title: "Declaración recapitulativas de operaciones intracomunitarias",
                 action: () => alert("description")
             },{
                 description: "Modelo 390 ",
-                description2: " |Álava |Bizk |Gipu",
                 title: "Declaración resumen anual IVA",
+                action: () => alert("description")
+            },{
+                description: "Modelo 347 ",
+                title: "Declaración anual operaciones con terceras personas",
+                action: () => alert("description")
+            },{
+                description: "Declaración SII ",
+                title: "Suministro Inmediato de Información",
                 action: () => alert("description")
             }]
         },{
-            title: 'IRPF',
+            title: 'IRPF AEAT',
             options: [{
-                description: "Modelo 110/111 ",
-                description2: " |AEAT |Álava |Bizk |Gipu",
-                title: "Retenciones e ingresos a cuenat sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                description: "Modelo 111 ",
+                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
                 action: () => alert("description")
             },{
                 description: "Modelo 115 ",
-                description2: " |AEAT |Álava |Bizk |Gipu",
                 title: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
                 action: () => alert("description")
             },{
                 description: "Modelo 123 ",
-                description2: " |AEAT |Álava |Bizk |Gipu",
                 title: "Retención e ingreso a cuenta sobre determinadas rendimientos del capital mobiliario o determinadas rentas",
                 action: () => alert("description")
             },{
-                description: "Modelo 130 ",
-                description2: " |AEAT |Bizk",
-                title: "Pago fraccionado. Empresarios y profesionales en estimación directa",
-                action: () => alert("description")
-            }]
-        },{
-            title: 'IRPF Anual',
-            options: [{
-                description: "Modelo 131 ",
-                description2: " |AEAT",
-                title: "Pago fraccionado. Empresarios y profesionales en estimación objetiva",
-                action: () => alert("description")
-            },{
                 description: "Modelo 180 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
                 action: () => alert("description")
             },{
                 description: "Modelo 184 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
-                title: "Declaración anual. Entidades en régimen de atribución rentas",
+                title: "Declaración anual. Entidades en régimen de atribución de rentas",
                 action: () => alert("description")
             },{
                 description: "Modelo 190 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
                 action: () => alert("description")
             },{
                 description: "Modelo 193 ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientosdel capital mobiliario, IS e IRNR sobre determinadas rentas",
+                action: () => alert("description")
+            }]
+        },{
+            title: 'AEAT',
+            options: [{
+                description: "Modelo 130 ",
+                description2: " |Profes./Empresar.",
+                title: "IRPF. Pago fraccionado. Empresarios y profesionales en estimación directa",
+                action: () => alert("description")
+            },{
+                description: "Modelo 131 ",
+                description2: " |Profes./Empresar.",
+                title: "Pago fraccionado. Empresarios y profesionales en estimación objetiva",
+                action: () => alert("description")
+            },{
+                description: "Modelo 200 ",
+                description2: " |Sociedades",
+                title: "Impuesto sobre Sociedades",
+                action: () => alert("description")
+            },{
+                description: "Modelo 202 ",
+                description2: " |Sociedades",
+                title: "Impuesto Sociedades. Pago fraccionado",
+                action: () => alert("description")
+            }]
+        },{
+            title: 'IVA Forales',
+            options: [{
+                description: "Modelo 303 ",
+                description2: " |320 Gipuzkoa",
+                title: "IVA. Autoliquidación",
+                action: () => alert("description")
+            },{
+                description: "Modelo 349 ",
+                description2: " |AEAT",
+                tite: "Declaración recapitulativa de operaciones intracomunitarias",
+                action: () => alert("description")
+            },{
+                description: "Modelo 390 ",
+                title: "Declaración resume anual IVA",
+                action: () => alert("description")
+            },{
+                description: "Modelo 347 ",
+                title: "Declaración anual operaciones con terceras personas",
+                action: () => alert("description")
+            },{
+                description: "Declaración SII ",
+                title: "Suministro Inmediato de Información",
+                action: () => alert("description")
+            }]
+        },{
+            title: 'IRPF Forales',
+            options: [{
+                description: "Modelo 110/111 ",
+                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                action: () => alert("description")
+            },{
+                description: "Modelo 115 ",
+                tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanes",
+                action: () => alert("description")
+            },{
+                description: "Modelo 123 ",
+                title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
+                action: () => alert("description")
+            },{
+                description: "Modelo 180 ",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
+                action: () => alert("description")
+            },{
+                description: "Modelo 184 ",
+                title: "Declaración anual. Entidades en régimen de atribución de rentas",
+                action: () => alert("description")
+            },{
+                description: "Modelo 190 ",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
+                action: () => alert("description")
+            },{
+                description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => alert("description")
             }]
         },{
-            title: 'Otros',
+            title: 'LROE Bizkaia',
             options: [{
-                description: "Modelo 202 ",
-                description2: " |AEAT",
-                title: "Impuesto Sociedades. Pago fraccionado",
-                action: () => alert("description")
-            },{
-                description: "Modelo 200 ",
-                description2: " |AEAT",
-                tite: "Impuesto sobre Sociedades",
-                action: () => alert("description")
-            },{
-                description: "Modelo SII ",
-                description2: " |AEAT |Álava |Bizk |Gipu |Navarra",
-                title: "Suministro Inmediato de Información",
-                action: () => alert("description")
-            },{
                 description: "Modelo 140 ",
-                description2: " |Bizk",
                 title: "Libro-registro de operaciones económicas de personas físicas",
                 action: () => alert("description")
             },{
-                description: "Modelo 390 ",
-                description2: " |AEAT",
-                title: "Declaración resumen anual IVA",
+                description: "Modelo 240 ",
+                tite: "Libro-registro de operaciones económicas de sociedades",
+                action: () => alert("description")
+            }]
+        },{
+            title: 'IVA Navarra',
+            options: [{
+                description: "Modelo F69 ",
+                title: "Autoliquidación",
+                action: () => alert("description")
+            },{
+                description: "Modelo 349 ",
+                tite: "Declaración recapitulativa de operaciones intracomunitarias",
+                action: () => alert("description")
+            },{
+                description: "Modelo 111 ",
+                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                action: () => alert("description")
+            },{
+                description: "Modelo 357 ",
+                title: "Declaración anual operaciones con terceras personas",
+                action: () => alert("description")
+            },{
+                description: "Declaración SII ",
+                title: "Suministro Inmediato de Información",
+                action: () => alert("description")
+            }]
+        },{
+            title: 'IRPF Navarra',
+            options: [{
+                description: "Modelo 745/715 ",
+                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                action: () => alert("description")
+            },{
+                description: "Modelo 759/760 ",
+                tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
+                action: () => alert("description")
+            },{
+                description: "Modelo 716 ",
+                title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
+                action: () => alert("description")
+            },{
+                description: "Modelo 180 ",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimiento procedentes de arrendamiento de inmuebles Urbanos",
+                action: () => alert("description")
+            },{
+                description: "Modelo 184 ",
+                title: "Declaración anual. Entidades en régmien de atribución de rentas",
+                action: () => alert("description")
+            },{
+                description: "Modelo 184 ",
+                title: "Declaración anual. Entidades en régmien de atribución de rentas",
+                action: () => alert("description")
+            },{
+                description: "Modelo 190 ",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
+                action: () => alert("description")
+            },{
+                description: "Modelo 193 ",
+                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => alert("description")
             }]
         }];
