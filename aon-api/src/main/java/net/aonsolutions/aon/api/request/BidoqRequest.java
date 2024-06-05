@@ -255,7 +255,7 @@ public class BidoqRequest {
 //						.setSurcharge(detail.optJSONObject("equivalenceSurcharge") != null
 //							? detail.optJSONObject("equivalenceSurcharge").optDouble("surchargePct")
 //							: 0.0)
-						.setWorkPlace(ai.getWorkplace())
+						.setWorkplace( new Workplace().setId(ai.getWorkplace()) )
 						.setPrepayment("5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4)) || detail.optBoolean("suplidos"));
 				
 				InvoiceVAT vat = new InvoiceVAT()

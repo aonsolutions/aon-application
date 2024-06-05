@@ -36,7 +36,10 @@ public enum ProjectSource implements IResourceable {
 	PRESENTATION,
 
 	/** RECOMMENDATION. */
-	RECOMMENDATION;
+	RECOMMENDATION,
+	
+	/** MK_ACTION. */
+	MK_ACTION;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_project_source_";

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.MkAction.MK_ACTION;
 import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
 import static com.esferalia.aon.jooq.tables.MkCampaign.MK_CAMPAIGN;
@@ -8,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
@@ -21,21 +23,25 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.MarketingCampaignFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
+import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribution;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Properties.MarketingCampaignProperties;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO.SurveyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
@@ -48,6 +54,7 @@ public class MarketingCampaignDAO {
 	
 	private MarketingCampaignDAO() {}
 
+	private static final String MARKETING_ACTION_DISTRIBUTION = "MK_ACTION_SELLER_DIST_";
 	private static final  MarketingCampaignPropertiesDAO MARKETING_CAMPAIGN_PROPERTIES = new MarketingCampaignPropertiesDAO();
 
 	protected static class MarketingCampaignPropertiesDAO implements MarketingCampaignProperties {
@@ -147,12 +154,16 @@ public class MarketingCampaignDAO {
 				.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
 				.leftOuterJoin(REGISTRY)
 				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(TAG)
+				.on(TAG.ID.eq(MK_ACTION.TAG))
 				.where(MK_ACTION.DOMAIN.eq(marketingCampaign.getDomain()))
 				.and(MK_ACTION.CAMPAIGN.eq(marketingCampaign.getId()))
 				.fetch()
 				.stream()
 				.map(new MarketingActionFiller(marketingCampaign))
 				.collect(Collectors.toList());
+		
+		marketingActions.forEach(marketingAction -> getMarketingActionSellerDistribution(ctx, marketingAction));
 		
 		marketingCampaign.setActions(marketingActions);
 	}
@@ -252,6 +263,8 @@ public class MarketingCampaignDAO {
 			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
 			.leftOuterJoin(REGISTRY)
 			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(TAG)
+			.on(TAG.ID.eq(MK_ACTION.TAG))
 			.where(condition)
 			.limit(params.getOffset(), params.getLimit())
 			.fetch()
@@ -259,7 +272,10 @@ public class MarketingCampaignDAO {
 			.map(new MarketingActionFiller(params.getMarketingCampaign()))
 			.collect(Collectors.toList());
 		
-		marketingActions.forEach(marketingAction -> getMarketingActionTargets(ctx, marketingAction));
+		marketingActions.forEach(marketingAction -> {
+			getMarketingActionTargets(ctx, marketingAction);
+			getMarketingActionSellerDistribution(ctx, marketingAction);
+		});
 		
 		return marketingActions;
 	}
@@ -276,6 +292,8 @@ public class MarketingCampaignDAO {
 			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
 			.leftOuterJoin(REGISTRY)
 			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(TAG)
+			.on(TAG.ID.eq(MK_ACTION.TAG))
 			.where(MK_ACTION.ID.eq(id))
 			.fetchOne();
 		
@@ -286,6 +304,7 @@ public class MarketingCampaignDAO {
 		}
 			
 		getMarketingActionTargets(ctx, marketingAction);
+		getMarketingActionSellerDistribution(ctx, marketingAction);
 		
 		return marketingAction;
 	}
@@ -316,10 +335,25 @@ public class MarketingCampaignDAO {
 		
 		return condition;
 	}
+	
+	private static void getMarketingActionSellerDistribution(CloseableAONContext ctx, MarketingAction marketingAction) {
+		AppParamRecord record = ctx.getDslContext().selectFrom(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(marketingAction.getDomain()))
+			.and(APP_PARAM.NAME.eq(MARKETING_ACTION_DISTRIBUTION + marketingAction.getId()))
+			.fetchOne();
+		
+		if(null == record) marketingAction.setSellerDistribution(MarketingSellerDistribution.MANUAL);
+		else marketingAction.setSellerDistribution(MarketingSellerDistribution.getSellerDistribution(Integer.parseInt(record.getValue())));
+	}
 
 	public static void deleteAction(CloseableAONContext ctx, Integer id) {
 		List<Integer> marketingActionTargetIds = ctx.getDslContext().select(MK_ACTION_TARGET.ID).from(MK_ACTION_TARGET).where(MK_ACTION_TARGET.ACTION.eq(id)).fetch(MK_ACTION_TARGET.ID);
 		marketingActionTargetIds.forEach(marketingActionTargetId -> deleteActionTarget(ctx, marketingActionTargetId));
+		
+		ctx.getDslContext().delete(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(MARKETING_ACTION_DISTRIBUTION + id))
+			.execute();
 		
 		ctx.getDslContext().delete(MK_ACTION)
 			.where(MK_ACTION.ID.eq(id))
@@ -336,10 +370,21 @@ public class MarketingCampaignDAO {
 	}
 	
 	public static MarketingAction insert(AONContext ctx, MarketingAction marketingAction) {
+		// Check tag
+		if(null != marketingAction.getTag() && null == marketingAction.getTag().getId() && AonStringUtils.isNotBlank(marketingAction.getTag().getName())) {
+			// Insert tag
+			Tag insertedTag = TagDAO.insertTag(ctx, marketingAction.getTag()); 
+			marketingAction.getTag().setId(insertedTag.getId());
+		}
+		
+		// Check Seller Distribution
+		checkMarketingActionSellerDistribution(ctx, marketingAction);
+		
 		Integer id = ctx.getDslContext().insertInto(MK_ACTION)
 				.set(MK_ACTION.DOMAIN, marketingAction.getDomain())
 				.set(MK_ACTION.CAMPAIGN, marketingAction.getMarketingCampaign().getId())
 				.set(MK_ACTION.MEDIA_TYPE, marketingAction.getMediaType().getValue())
+				.set(MK_ACTION.TAG, null == marketingAction.getTag() ? null : marketingAction.getTag().getId())
 				.set(MK_ACTION.START_DATE, new Timestamp(marketingAction.getStartDate().getTime()))
 				.set(MK_ACTION.END_DATE, null == marketingAction.getEndDate() ? null : new Timestamp(marketingAction.getEndDate().getTime()))
 				.set(MK_ACTION.SURVEY, marketingAction.getSurvey() == null ? null : marketingAction.getSurvey().getId())
@@ -354,7 +399,7 @@ public class MarketingCampaignDAO {
 				.fetchOne()
 				.getValue(MK_ACTION.ID);
 		
-		ctx.log().debug("INSERT MK_ACTION id: " +id);
+		ctx.log().debug("INSERT MK_ACTION id: " + id);
 		
 		marketingAction.setId(id);
 		
@@ -362,10 +407,21 @@ public class MarketingCampaignDAO {
 	}
 	
 	public static MarketingAction update(AONContext ctx, MarketingAction marketingAction) {
+		// Check tag
+		if(null != marketingAction.getTag() && null == marketingAction.getTag().getId() && AonStringUtils.isNotBlank(marketingAction.getTag().getName())) {
+			// Insert tag
+			Tag insertedTag = TagDAO.insertTag(ctx, marketingAction.getTag()); 
+			marketingAction.getTag().setId(insertedTag.getId());
+		}
+		
+		// Check Seller Distribution
+		checkMarketingActionSellerDistribution(ctx, marketingAction);
+		
 		ctx.getDslContext().update(MK_ACTION)
 			.set(MK_ACTION.DOMAIN, marketingAction.getDomain())
 			.set(MK_ACTION.CAMPAIGN, marketingAction.getMarketingCampaign().getId())
 			.set(MK_ACTION.MEDIA_TYPE, marketingAction.getMediaType().getValue())
+			.set(MK_ACTION.TAG, null == marketingAction.getTag() ? null : marketingAction.getTag().getId())
 			.set(MK_ACTION.START_DATE, new Timestamp(marketingAction.getStartDate().getTime()))
 			.set(MK_ACTION.END_DATE, null == marketingAction.getEndDate() ? null : new Timestamp(marketingAction.getEndDate().getTime()))
 			.set(MK_ACTION.SURVEY, marketingAction.getSurvey() == null ? null : marketingAction.getSurvey().getId())
@@ -386,6 +442,25 @@ public class MarketingCampaignDAO {
 	
 	// MARKETING ACTION TAGERT
 	
+	private static void checkMarketingActionSellerDistribution(AONContext ctx, MarketingAction marketingAction) {
+		AppParamRecord record = ctx.getDslContext().selectFrom(APP_PARAM)
+				.where(APP_PARAM.DOMAIN.eq(marketingAction.getDomain()))
+				.and(APP_PARAM.NAME.eq(MARKETING_ACTION_DISTRIBUTION + marketingAction.getId()))
+				.fetchOne();
+			
+			if(null == record) 
+				ctx.getDslContext().insertInto(APP_PARAM)
+					.set(APP_PARAM.DOMAIN, marketingAction.getDomain())
+					.set(APP_PARAM.NAME, MARKETING_ACTION_DISTRIBUTION + marketingAction.getId())
+					.set(APP_PARAM.VALUE,marketingAction.getSellerDistribution().getValue().toString())
+					.execute();
+			else 
+				ctx.getDslContext().update(APP_PARAM)
+					.set(APP_PARAM.VALUE,marketingAction.getSellerDistribution().getValue().toString())
+					.where(APP_PARAM.ID.eq(record.getId()))
+					.execute();
+	}
+
 	private static void getMarketingActionTargets(CloseableAONContext ctx, MarketingAction marketingAction) {
 		List<MarketingActionTarget> marketingActionTargets = ctx.getDslContext().select().from(MK_ACTION_TARGET)
 				.join(TARGET)
@@ -543,6 +618,7 @@ public class MarketingCampaignDAO {
 				.setDomain(r.getValue(MK_ACTION.DOMAIN))
 				.setMarketingCampaign(MarketingActionFiller.marketingCampaign)
 				.setMediaType(MarketingActionMediaType.getMediaType(r.getValue(MK_ACTION.MEDIA_TYPE)))
+				.setTag(null == r.get(TAG.ID) ? null : TagFiller.build(r))
 				.setStartDate(r.getValue(MK_ACTION.START_DATE))
 				.setEndDate(r.getValue(MK_ACTION.END_DATE))
 				.setSurvey(r.getValue(MK_ACTION.SURVEY) == null ? null : SurveyFiller.build(r))

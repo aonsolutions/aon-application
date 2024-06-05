@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -54,6 +55,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private MarketingActionTargetParams params;
 	private Seller seller;
+	private Workgroup workgroup;
 	
 	private static enum COLS {
 		DES("Cliente Potencial"						,"auto"  ,null)
@@ -86,7 +88,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		}
 	}
 
-	public MarketingActionTargetPanel(MarketingActionTargetParams params, Seller seller) {
+	public MarketingActionTargetPanel(MarketingActionTargetParams params, Seller seller,  Workgroup workgroup) {
 		
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonPaddingBottom());
@@ -96,6 +98,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		
 		this.params = params;
 		this.seller = seller;
+		this.workgroup = workgroup;
 
 		container = new SimplePanel();
 		setWidget(container);
@@ -298,7 +301,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 						@Override
 						public void onAccept() {
-							createProjectCommercial(marketingActionTarget, seller);
+							createProjectCommercial(marketingActionTarget, seller, workgroup);
 						}
 					});
 				}
@@ -418,14 +421,72 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		});
 	}
 	
-	private void createProjectCommercial(MarketingActionTarget marketingActionTarget, Seller seller) {
-		if(seller == null)
-			onShowErrorMessage("El task holder seleccionado no tiene un comercial asociado. Pruebe con otro task holder");
-		else {
-			onShowLoadingMessage("Creando operaciones comerciales para cada lead de la acción " + marketingActionTarget.getName() + " ...");
-		
-			if(marketingActionTarget.getActionTargetStatus() == (byte)0) { // Pendiente
+	private void createProjectCommercial(MarketingActionTarget marketingActionTarget, Seller seller, Workgroup workgroup) {
+		if(marketingActionTarget.getActionTargetStatus() == (byte)0) { // Pendiente
+			
+			if(seller == null) {
+				onShowLoadingMessage("Creando operaciones comerciales para cada lead de la acción " + marketingActionTarget.getName() + " ...");
 				
+				COMMON_SERVICE.getNextLinealSellerByWorkgroup(params.getDomainName(), params.getDomain(), params.getUser(), workgroup.getId(), new AsyncCallback<Seller>() {
+					
+					@Override
+					public void onSuccess(Seller seller) {
+						ProjectCommercial projectCommercial = new ProjectCommercial()
+								.copy(new Project()
+									.setDomain(marketingActionTarget.getDomain())
+									.setRegistry(marketingActionTarget.get())
+									.setName(marketingActionTarget.getMarketingAction().getDescription())
+									.setDate(new Date())
+									.setTas(false)
+									.setCommercial(true)
+									.setReservation(false)
+									.setActive(true)
+								)
+								.setTarget(marketingActionTarget.getId())
+								.setSeller(seller.getId())
+								.setComments(marketingActionTarget.getComments())
+								.setSource((byte)3)
+								.setStatus((byte)0)
+								.setStatusDate(new Date())
+								.setProbability(0);
+						
+						COMMON_SERVICE.saveProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), projectCommercial, new AsyncCallback<ProjectCommercial>() {
+							
+							@Override
+							public void onSuccess(ProjectCommercial projectCommercial) {
+								marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
+								COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
+									
+									@Override
+									public void onSuccess(MarketingActionTarget marketingActionTarget) {
+										onShowSuccessMessage("Operaci\u00f3n comercial creada correctamente");
+										reloadMarketingAction();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										onShowErrorMessage("Error saveMarketingActionTarget(): " + caught.getMessage());
+									}
+								});
+							}
+				
+							@Override
+							public void onFailure(Throwable caught) {
+								onShowErrorMessage("Error saveProjectCommercial(): " + caught.getMessage());
+							}
+							
+						} );
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						onShowErrorMessage("Error getNextLinealSellerByWorkgroup(): " + caught.getMessage());
+					}
+					
+				});	
+			} else {
+				onShowLoadingMessage("Creando operaciones comerciales para cada lead de la acción " + marketingActionTarget.getName() + " ...");
+			
 				ProjectCommercial projectCommercial = new ProjectCommercial()
 						.copy(new Project()
 							.setDomain(marketingActionTarget.getDomain())
@@ -471,7 +532,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 					}
 					
 				} );
-			
+				
 			}
 		}
 	}

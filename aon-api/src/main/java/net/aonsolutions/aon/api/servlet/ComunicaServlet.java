@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,9 +23,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONArray;
@@ -32,21 +31,25 @@ import org.json.JSONObject;
 import com.esferalia.aon.in.payroll.AonComunica;
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.in.payroll.utils.EmployeeParse;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.EmployeeJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
@@ -55,10 +58,14 @@ import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -69,7 +76,6 @@ import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.ServicioREDEmployee;
-import solutions.aon.seg.social.ServicioREDMov;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -555,12 +561,32 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String contract    = params.optString("contract");	
 		String ocup        = params.has("ocup") && !params.isNull("ocup") ? params.optString("ocup") : null;
 		String coef        = params.has("coef") && !params.isNull("coef") ? params.optString("coef") : null;
-		String convenio    = params.has("convenio") && !params.isNull("convenio") ? params.optString("convenio") : "60888888888888";
+		String convenio    = params.has("convenio") && !params.isNull("convenio") ? params.optString("convenio") : null;
 		String rlce        = params.has("rlce") && !params.isNull("rlce") ? params.optString("rlce") : null; 
 		String collective  = params.has("collective") && !params.isNull("collective") ? params.optString("collective") : null;
 		String modCtz      = params.has("md_ctz") && !params.isNull("md_ctz") ? params.optString("md_ctz") : null; //para regime agrario
 		Boolean quoteMonth = params.optBoolean("quoteMonth");
 		Date   fra         = AonDateUtils.parse(params.optString("fecha"), FORMAT_DATE);
+		
+		// Try to get enterprise agreement default
+		if(AonStringUtils.isBlank(convenio)) {
+			LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+			Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
+			
+			if(enterpriseAgreementOpt.isEmpty()) convenio = "60888888888888";
+			else {
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+					AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
+						.where(AGREEMENT.ID.eq(Integer.parseInt(enterpriseAgreementOpt.get().getExpression())))
+						.fetchOne();
+					
+					if(null == agreementRecord) convenio = "60888888888888";
+					else convenio = AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? "60888888888888" : agreementRecord.getSsNumber();  
+				} catch (Exception e) {
+					convenio = "60888888888888";
+				}
+			}
+		}
 
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(regime)

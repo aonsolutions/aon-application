@@ -28,7 +28,6 @@ public class InvoiceDetail implements Serializable {
 	private String projectName;
 	private Seller seller;
 
-
 	private Item item;
 	private short line;
 	private String description;
@@ -39,22 +38,14 @@ public class InvoiceDetail implements Serializable {
 	private double taxes;
 	private boolean prepayment;
 
-	private LinkedList<String> segments;
-	@Deprecated // Debería estar en Invoice dentro de Registry...  
-	private String sellerSupport;
-	
 	// WAREHOUSE
-	// TODO private Warehouse warehouse;
 	private Integer warehouse;
 	private String warehouseName;
 	
 	// WORKPLACE
 	private Workplace workplace;
-	private Integer workPlace;
-	private String workPlaceName;
 	
 	// ACCOUNT
-	// TODO private Account account;
 	private Integer account;
 	private String accountCode;
 	private String accountDescription;
@@ -62,10 +53,8 @@ public class InvoiceDetail implements Serializable {
 	private LinkedList<InvoiceTax> invoiceTaxes;
 	
 	// SOURCE INFO
-	
 	private InvoiceSource source;
 	private Integer sourceId;
-	
 	private PurchaseDetail purchaseDetail;
 	private SalesDetail salesDetail;
 	private DeliveryDetail deliveryDetail;
@@ -155,20 +144,6 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public Integer getWorkPlace() {
-		return workPlace;
-	}
-	public InvoiceDetail setWorkPlace(Integer workPlace) {
-		this.workPlace = workPlace;
-		return this;
-	}
-	public String getWorkPlaceName() {
-		return workPlaceName;
-	}
-	public InvoiceDetail setWorkPlaceName(String workPlaceName) {
-		this.workPlaceName = workPlaceName;
-		return this;
-	}
 	public Item getItem() {
 		return item;
 	}
@@ -355,23 +330,4 @@ public class InvoiceDetail implements Serializable {
 		this.offerDetail = offerDetail;
 	}
 
-	public LinkedList<String> getSegments() {
-		return segments;
-	}
-
-	public InvoiceDetail setSegments(LinkedList<String> segments) {
-		this.segments = segments;
-		return this;
-	}
-	
-	@Deprecated // Debería estar en Invoice dentro de Registry...  
-	public String getSellerSupport() {
-		return sellerSupport;
-	}
-	
-	@Deprecated // Debería estar en Invoice dentro de Registry... 
-	public InvoiceDetail setSellerSupport(String sellerSupport) {
-		this.sellerSupport = sellerSupport;
-		return this;
-	}
 }

@@ -11,7 +11,8 @@ public enum ProjectSource implements Serializable {
 	ADVERTISEMENT("Anuncio"),
 	EMAIL("Email"),
 	PRESENTATION("Presentación"),
-	RECOMMENDATION("Recomendación");
+	RECOMMENDATION("Recomendación"),
+	MK_ACTION("Marketing");
     
 	String description;
 	

@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -497,8 +498,8 @@ public class InvoiceAutoComplete {
 						.setQuantity(1)
 						.setTaxableBase(base)
 						.setSource(InvoiceSource.TEDI)
-						.setWorkPlace(ctx.getConfiguration().getWorkplaces() != null
-							? ctx.getConfiguration().getWorkplaces().getFirst().getId() 
+						.setWorkplace(ctx.getConfiguration().getWorkplaces() != null
+							? ctx.getConfiguration().getWorkplaces().getFirst() 
 							: null);
 				invoiceDetails.add(id);
 			});
@@ -522,9 +523,8 @@ public class InvoiceAutoComplete {
 					it = detail.getInvoiceTaxes().get(i);
 			}
 			
-			if(detail.getWorkPlace() == null && ctx.getConfiguration().getWorkplaces() != null
-					&& !ctx.getConfiguration().getWorkplaces().isEmpty()) {
-				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().get(0).getId());
+			if(detail.getWorkplace() == null && AonCollectionUtils.isNotEmpty( ctx.getConfiguration().getWorkplaces() )) {
+				detail.setWorkplace(ctx.getConfiguration().getWorkplaces().get(0));
 			}
 			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
@@ -576,13 +576,14 @@ public class InvoiceAutoComplete {
 			}
 			
 			if(detail.getWorkplace() == null || detail.getWorkplace().getId() == null) {
-				if(detail.getWorkPlace() != null){
-					Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkPlace()));
-					detail.setWorkplace(wp);
+				if(detail.getWorkplace() != null){
+					if ( detail.getWorkplace().getId() == null && AonStringUtils.isBlank( detail.getWorkplace().getDescription()) ) {
+						Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkplace().getId()));
+						detail.setWorkplace(wp);
+					}
 				} else {
 					Workplace wp = ctx.getConfiguration().getWorkplaces().getFirst();
 					if(wp != null && wp.getId() != null) {
-						detail.setWorkPlace(wp.getId());
 						detail.setWorkplace(wp);
 					}
 				}

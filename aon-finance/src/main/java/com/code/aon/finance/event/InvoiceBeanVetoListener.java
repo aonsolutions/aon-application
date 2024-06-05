@@ -236,19 +236,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         return false;
 	}
 	
-	private String getDomainName(Invoice invoice) throws ManagerBeanVetoListenerException {
-		String select = "SELECT domain.name" +
-						"FROM domain" +
-						"WHERE domain.id = " + invoice.getDomain();
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		SQLQuery query = session.createSQLQuery(select);
-        List<?> list = query.list();
-        if (!list.isEmpty()) {
-        	Object[] obj = (Object[])list.get(0);
-        	return (String) obj[0];
-        }
-        return null;
-	}
 
 	private boolean updateDetailsNeeded(Invoice invoice) throws ManagerBeanVetoListenerException {
     	String select = "SELECT invoice.issue_date issue_date, invoice.registry registry " +

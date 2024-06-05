@@ -710,6 +710,10 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		+ "<br>"
 		+ "      &ensp; &ensp;\"id\":\"" + marketingAction.getId() + "\",\n"
 		+ "<br>"
+		+ "      &ensp; &ensp;\"sellerDistribution\":\"" + marketingAction.getSellerDistribution().getValue() + "\",\n"
+		+ "<br>"
+		+ "      &ensp; &ensp;\"workgroup\":\"" + (null == marketingAction.getWorkgroup() ? "" : marketingAction.getWorkgroup().getId()) + "\",\n"
+		+ "<br>"
 		+ "      &ensp; &ensp;\"seller\":\"" + (null == seller ? "" : seller.getId()) + "\",\n"
 		+ "<br>"
 		+ "   &ensp;},\n"
@@ -802,6 +806,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 		JSONObject action = new JSONObject();
 		action.put("id", new JSONString(marketingAction.getId().toString()));
+		action.put("workgroup", new JSONString(null == marketingAction.getWorkgroup() ? "" : marketingAction.getWorkgroup().getId().toString()));
+		action.put("sellerDistribution", new JSONString(marketingAction.getSellerDistribution().getValue().toString()));
 		action.put("seller", new JSONString(null == seller ? "" : seller.getId().toString()));
 		actionTarget.put("marketingAction", action);
 		
