@@ -1,4 +1,4 @@
-// COMUNICACION IMPORTE NETO CIFRA DE NEGOCIO
+// COMUNICACION IMPORTE NETO CIFRA DE NEGOCIOS
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -100,6 +100,7 @@ public class Page19 extends PageAbs {
 		paintFooterNote(basePanel, "(**) NIF de las entidades del grupo (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a) (excepto el de la entidad declarante)");
 				
 		// Actividades agrícolas y/o ganaderas		
+		
 		FlexTable tab21 = addTable("Actividades agr\u00EDcolas y/o ganaderas");
 		paintKey(tab21, Mod2002023Key.CN1897, 0);
 		paintKey(tab21, Mod2002023Key.CN1901, 1);

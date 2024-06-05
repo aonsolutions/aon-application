@@ -456,14 +456,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		return d;
 	}
 
-// FALTA 	
-//	public Boolean isChecked(Mod2002023Key key) {
-//		return (Boolean) get(key.toString());
-//	}
-	public boolean isChecked(Mod2002023Key key) {
-		//return (boolean) get(key.toString());
-		return (boolean) get(key.toString());
-	}	
+	public Boolean isChecked(Mod2002023Key key) {
+		return (Boolean) get(key.toString());
+	}
 	public Boolean isCooperativa() {
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
 	}
@@ -1081,10 +1076,10 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		}
 		
 		// La tributación mínima es aplicable en los siguientes casos:
-		// - Contribuyentes que marquen el supuesto 2 (INCN de al menos 20 millones de euros)
+		// - Contribuyentes que marquen el supuesto 2 (INCN de al menos 20 millones de euros) (supuestos 2 o 3 en caso de cooperativas)
 		// - Contribuyentes que marquen el caracter 00079 de la página 1 de la declaración (excepto supuestos excluidos).
 		int volope = getValue(Mod2002023Key.VOLOPE).intValue();
-		if (volope == 2 || isChecked(C0079)) { 
+		if (volope >= 2 || isChecked(C0079)) { 
 
 			// CALCULO DE LA TRIBUTACION MINIMA
 

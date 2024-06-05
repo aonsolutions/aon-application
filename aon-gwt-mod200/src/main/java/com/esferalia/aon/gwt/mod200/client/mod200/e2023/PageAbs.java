@@ -40,7 +40,6 @@ public abstract class PageAbs extends ResizeComposite {
 		PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);			
 	
 	protected HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
-//	protected HashMap<IMod200Key, HashSet<AonDoubleBox>> inputs = new HashMap<>();  // FALTA - IGUAL ASI SE PODRIA HACER TENER VARIOS BOX UNIDOS A UNA MISMA CLAVE PARA ACTUALIZARLOS CUANDO CORRESPONDA, AUNQUE HAY QUE TENER EN CUENTA, QUE CUANDO SE VAN REPINTANDO LAS PAGINAS, SE VAN CREANDO NUEVOS BOX Y AHI APARECERIAN BOX QUE YA NO SON VISIBLES NI NADA, AUNQUE AL HACER EL CLEAR EN CADA PAGINA SUPONGO QUE SE BORRARIAN Y SE QUEDARIA SOLO UN ELEMENTO NULL
 	protected ArrayList<Widget> otherInputs = new ArrayList<>();
 	protected FlowPanel basePanel;
 	protected Model2002023PageCallback callback = null;

@@ -74,7 +74,8 @@ public class Page01 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(secretaryName);
-// FALTA - ESTE DATO NO APARECE EN EL PROYECTO DE ORDEN - TAMPOCO EN EL FICHERO NI EN EL PADIS 		
+		
+// ESTE DATO NO APARECE ESTE AÑO 		
 //		AonDateBox irnr = new AonDateBox();
 //		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
 //		irnr.addValueChangeHandler(event -> {

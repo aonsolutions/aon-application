@@ -537,12 +537,16 @@ public class Page00 extends PageAbs {
 
 		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
 		
+		// FALTA - Para este año existen solo 0, 1 y 2, excepto cooperativas, que tienen todos los valores
 		opeVol = new ListBox();
 		opeVol.addItem("0 - No consta");
 		opeVol.addItem("1 - Inferior a 20 millones de euros");
-//		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-//		opeVol.addItem("3 - Al menos 60 millones de euros");
-		opeVol.addItem("2 - Al menos 20 millones de euros");
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0017) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0018) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0019)) {
+			opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
+			opeVol.addItem("3 - Al menos 60 millones de euros");
+		} else {
+			opeVol.addItem("2 - Al menos 20 millones de euros");
+		}
 		opeVol.addChangeHandler( event -> {
 			DoubleVariableEx bv = new DoubleVariableEx(Mod2002023Key.VOLOPE);
 			bv.setValue((double)opeVol.getSelectedIndex());
@@ -555,7 +559,8 @@ public class Page00 extends PageAbs {
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
 
-		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
+		//paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
+		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si procede, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima (art\u00EDculo 30 bis LIS)");
 		
 		// CARACTERES DE LA DECLARACION
 		

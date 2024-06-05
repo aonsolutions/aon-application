@@ -534,14 +534,14 @@ public class Mod2002023Constants {
 		,new Mod2002023Key[] {Mod2002023Key.TR1670, Mod2002023Key.TR1671, Mod2002023Key.TR1672, Mod2002023Key.TR1673, Mod2002023Key.TR2494}
 	};
 	
-	public static Mod2002023Key[] INCOME_DISTRIBUTION_KEYS_1 = new Mod2002023Key[] {
+	public static final Mod2002023Key[] INCOME_DISTRIBUTION_KEYS_1 = new Mod2002023Key[] {
 		 Mod2002023Key.ID650
 		,Mod2002023Key.ID651
 		,Mod2002023Key.ID652
 		,Mod2002023Key.ID653
 	};
 
-	public static Mod2002023Key[] INCOME_DISTRIBUTION_KEYS_2 = new Mod2002023Key[] {
+	public static final Mod2002023Key[] INCOME_DISTRIBUTION_KEYS_2 = new Mod2002023Key[] {
 		  Mod2002023Key.ID654
 		 ,Mod2002023Key.ID1270
 		 ,Mod2002023Key.ID1271
@@ -558,7 +558,7 @@ public class Mod2002023Constants {
 		 ,Mod2002023Key.ID666
 	};
 
-	public static Mod2002023Key[][] DEDUCIBLE_LIMITATION_KEYS_1 = new Mod2002023Key[][] {
+	public static final Mod2002023Key[][] DEDUCIBLE_LIMITATION_KEYS_1 = new Mod2002023Key[][] {
 		 null
 		,new Mod2002023Key[]{null				 , Mod2002023Key.LM1240}
 		,new Mod2002023Key[]{Mod2002023Key.LM1241, null				  }
@@ -585,11 +585,11 @@ public class Mod2002023Constants {
 	};
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
-	public static Mod2002023Key[] DOTACION_KEYS_5 = new Mod2002023Key[] {
+	public static final Mod2002023Key[] DOTACION_KEYS_5 = new Mod2002023Key[] {
 		 Mod2002023Key.LM393, Mod2002023Key.LM150, Mod2002023Key.LM506
 	};
 	
-	public static Mod2002023Key[][] UTE_KEYS_B7 = {
+	public static final Mod2002023Key[][] UTE_KEYS_B7 = {
 		 {Mod2002023Key.UT2942 ,Mod2002023Key.UT2943}
 		,{Mod2002023Key.UT2944 ,Mod2002023Key.UT2945}
 		,{Mod2002023Key.UT2946 ,Mod2002023Key.UT2947}
@@ -598,7 +598,7 @@ public class Mod2002023Constants {
 		,{Mod2002023Key.UT2962 ,Mod2002023Key.UT2963}
 	};
 	
-	public static Mod2002023Key[][] UTE_KEYS_B81 = {
+	public static final Mod2002023Key[][] UTE_KEYS_B81 = {
 		 {Mod2002023Key.UT2964 ,Mod2002023Key.UT2965}
 		,{Mod2002023Key.UT2967 ,Mod2002023Key.UT2968}
 		,{Mod2002023Key.UT2969 ,Mod2002023Key.UT2970}
@@ -621,14 +621,14 @@ public class Mod2002023Constants {
 		,{Mod2002023Key.UT3359 ,Mod2002023Key.UT3360}			
 	};
 	
-	public static Mod2002023Key[][] UTE_KEYS_B82 = {
+	public static final Mod2002023Key[][] UTE_KEYS_B82 = {
 		 {Mod2002023Key.UT3285 ,Mod2002023Key.UT3287}
 		,{Mod2002023Key.UT3288 ,Mod2002023Key.UT3289}
 		,{Mod2002023Key.UT3290 ,Mod2002023Key.UT3311}
 		,{Mod2002023Key.UT3314 ,Mod2002023Key.UT3315}
 	};
 	
-	public static Mod2002023Key[] FILM_PRODUCTIONS = new Mod2002023Key[] {
+	public static final Mod2002023Key[] FILM_PRODUCTIONS = new Mod2002023Key[] {
 			 Mod2002023Key.IPCRG01 
 			,Mod2002023Key.IPCRG02 
 			,Mod2002023Key.IPCRG03 

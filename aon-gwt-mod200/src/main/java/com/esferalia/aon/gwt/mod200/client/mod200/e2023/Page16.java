@@ -42,6 +42,7 @@ public class Page16 extends PageAbs {
 					"Pendiente de materializar RIC al final de per\u00EDodo" );
 			
 			// Importe de la dotación RIC con cargo a beneficios de 2023 (Casilla 927)
+			
 			FlexTable table2 = new FlexTable();
 			basePanel.add(table2);
 			
@@ -70,7 +71,7 @@ public class Page16 extends PageAbs {
 			
 			int row = 0;
 			addHeaderCell(table1, row, 2, "Aplicado/materializado en esta liquidaci\u00F3n");
-			table1.getFlexCellFormatter().setColSpan(row, 2, 3);
+			table1.getFlexCellFormatter().setColSpan(row, 2, 4);
 			row++;
 			paintKeysProvider(Mod2002023RIIB_1Key.values(), table1, row, false, 
 					"",
@@ -78,9 +79,11 @@ public class Page16 extends PageAbs {
 					"Inversiones previstas letras A y B, DA 70.4 Ley 31/2022",
 					"Inversiones previstas letra C, DA 70.4 Ley 31/2022",
 					"Inversiones anticipadas consideradas materializaci\u00F3n de la RIIB en esta liquidaci\u00F3n",
+					"Integrado en BI por incumplimiento de requisitos",
 					"Pendiente de materializar RIIB al final de per\u00EDodo" );
 			
 			// Importe de la dotación RIIB con cargo a beneficios de 2023 (Casilla 02918)
+			
 			FlexTable table2 = new FlexTable();
 			basePanel.add(table2);
 			

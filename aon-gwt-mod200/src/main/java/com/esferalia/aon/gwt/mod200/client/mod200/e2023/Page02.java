@@ -35,6 +35,7 @@ public class Page02 extends PageAbs {
 			
 			@Override
 			public void onCancel() {
+				// do nothing
 			}
 			
 			@Override
@@ -336,8 +337,7 @@ public class Page02 extends PageAbs {
 		
 		// D. INFORMACIÓN DE DETALLE DE EP QUE OPERE EN EL EXTRANJERO
 		
-		//basePanel.add(getTitle(AON.MSG.utefor()));
-		basePanel.add(getTitle("Informaci\u00F3n de detalle de EP que opere en el extranjero"));
+		basePanel.add(getTitle("Informaci\u00F3n de detalle de establecimiento permanente que opere en el extranjero"));
 		
 		AonDisplayTable tabForeign = addRegistryTable();
 		

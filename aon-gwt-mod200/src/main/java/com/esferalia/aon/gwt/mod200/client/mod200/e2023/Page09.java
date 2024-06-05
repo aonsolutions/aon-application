@@ -213,9 +213,9 @@ public class Page09 extends PageAbs {
 		
 		FlexTable tableDetail = getFlexTable(container, new String[]{
 				 "REDUCCION EN BASE IMPONIBLE  -  Ejercicio de generaci\u00F3n"
-				,"Importe minoraci\u00F3n B.I. en el per\u00EDodo/pendiente de adicionar a inicio del per\u00EDodo"
+				,"Importe minoraci\u00F3n BI en el per\u00EDodo/pendiente de adicionar a inicio del per\u00EDodo"
 				,"Importe adicionado a base imponible en el per\u00EDodo"
-				,"Importe integrado en la declaraci\u00F3n por incumplimiento de requisitos"
+				,"Importe BI integrado en la declaraci\u00F3n por incumplimiento de requisitos"
 				,"Importe pendiente de adicionar en per\u00EDodos futuros"
 				});
 		int r = 2;

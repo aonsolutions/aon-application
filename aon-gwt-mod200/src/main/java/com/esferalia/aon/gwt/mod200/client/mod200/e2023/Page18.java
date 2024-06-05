@@ -92,8 +92,6 @@ public class Page18 extends PageAbs {
 //		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
 		row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
-		
-		// FALTA - VER SI AL FINAL EN EL MODELO ESTE APARTADO B8 ESTA DIVIDIDO EN DOS O APARECE JUNTO 
 		row = paintTable(table1, row, UTE_KEYS_B81, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
 		row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
 		
@@ -113,12 +111,14 @@ public class Page18 extends PageAbs {
 		paintFooterNote(basePanel, FOOTER);
 		
 		// Relación de Partícipes
+		// FALTA - PONER ESTA LABEL ANTES DE LA TABLA
+		// Relación de partícipes existentes a la fecha de cierre del período impositivo, que deban soportar las imputaciones, en orden decreciente de grado de participación, con sus datos
+		// identificativos y grado de participación en dicha fecha:
 		panelB11 = new FlowPanel();
 		paintB11Panel();
 		addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(0, 0, panelB11);
 		
-		// FALTA - NUEVO APARTADO Partícipes de agrupaciones de interés económico y UTES (solo si caracter 00089 marcado)
-		
+		// FALTA - NUEVO APARTADO - Partícipes de agrupaciones de interés económico y UTES (cumplimentación voluntaria) (solo si caracter 00089 marcado)
 		
 	}
 	
@@ -144,7 +144,6 @@ public class Page18 extends PageAbs {
 	}
 	
 	// 6.- Deducción para evitar la doble imposición
-	// FALTA - APARTADO B6 TIENE UNA COLUMNA MAS, CONFIRMAR SI SE MANTIENE EN EL MODELO DEFINITIVO
 	private void paintB6Panel() {
 
 		panelB6.clear();

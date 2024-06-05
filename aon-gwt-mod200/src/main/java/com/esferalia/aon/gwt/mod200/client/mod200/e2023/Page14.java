@@ -17,6 +17,7 @@ public class Page14 extends PageAbs {
 	private AonTextBox nrsAnexoV;
 	private AonTextBox nrsAnexoVric;
 	private AonTextBox justActivos;
+	private AonTextBox nrsAnexoVI;
 
 	public Page14( Model2002023PageCallback callback ) {
 		super(callback);
@@ -54,6 +55,7 @@ public class Page14 extends PageAbs {
 		
 		// PRESENTACIÓN DE DOCUMENTACIÓN PREVIA EN LA SEDE ELECTRÓNICA
 		
+		// Documentación presentada por el Anexo III (Ajustes y deducciones)
 		nrsAnexoIII = new AonTextBox();
 		nrsAnexoIII.setVisibleLength(22);
 		nrsAnexoIII.setMaxLength(22);
@@ -64,6 +66,7 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(nrsAnexoIII);
 		
+		// Documentación presentada por el Anexo IV (Personal investigador) 
 		nrsAnexoIV = new AonTextBox();
 		nrsAnexoIV.setVisibleLength(22);
 		nrsAnexoIV.setMaxLength(22);
@@ -74,6 +77,7 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(nrsAnexoIV);
 		
+		// Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
 		nrsAnexoVric = new AonTextBox();
 		nrsAnexoVric.setVisibleLength(22);
 		nrsAnexoVric.setMaxLength(22);
@@ -84,8 +88,18 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(nrsAnexoVric);
 		
-		// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas) 
+		// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+		nrsAnexoVI = new AonTextBox();
+		nrsAnexoVI.setVisibleLength(22);
+		nrsAnexoVI.setMaxLength(22);
+		nrsAnexoVI.setValue(callback.getMod200Object().getMod200().getNrsAnexoVI());
+		nrsAnexoVI.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoVI(nrsAnexoVI.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoVI);		
 
+		// Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 		nrsAnexoV = new AonTextBox();
 		nrsAnexoV.setVisibleLength(22);
 		nrsAnexoV.setMaxLength(22);
@@ -96,6 +110,7 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(nrsAnexoV);
 		
+		// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
 		justCanarias = new AonTextBox();
 		justCanarias.setVisibleLength(22);
 		justCanarias.setMaxLength(13);
@@ -106,8 +121,7 @@ public class Page14 extends PageAbs {
 		});
 		otherInputs.add(justCanarias);
 		
-		// FALTA - ESTE NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
-
+		// Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 		justActivos = new AonTextBox();
 		justActivos.setVisibleLength(22);
 		justActivos.setMaxLength(13);
@@ -137,15 +151,14 @@ public class Page14 extends PageAbs {
 		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoVric);
 		
-		// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+		paintDescription(table2, "Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoVI);
 		
 		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoV);
 		
 		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
 		table2.setWidget(row, 1, justCanarias);
-		
-		// FALTA - ESTE NO ESTA EN EL FICHERO - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 		
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);
@@ -158,5 +171,3 @@ public class Page14 extends PageAbs {
 	}
 
 }
-
-
