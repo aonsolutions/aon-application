@@ -55,6 +55,19 @@
 
 }
 
+/* Estilos para ocultar la barra de desplazamiento en todos los elementos */
+* {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Ocultar la barra de desplazamiento en navegadores basados en WebKit (Chrome, Safari) */
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+
 .material-icons {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
