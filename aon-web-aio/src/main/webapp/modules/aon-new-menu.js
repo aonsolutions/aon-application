@@ -373,7 +373,7 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		rootPanel.style.marginTop = "69px";
-		rootPanel.style.height = `calc(100vh - 62px)`;
+		rootPanel.style.height = `calc(100vh - 61px)`;
 	}
 
 	hideTopNav() {

@@ -54,7 +54,7 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.style.backgroundColor = "rgb(250, 249, 248)";
         sideMenu.style.borderRight = "1px solid rgba(0, 0, 0, 0.1)";
         sideMenu.style.overflowY = "auto";
-        sideMenu.style.height = "calc(-62px + 100vh)";
+        sideMenu.style.height = "calc(-61px + 100vh)";
         sideMenu.style.paddingBottom = "80px"
         divFlex.appendChild(sideMenu);
 
@@ -164,7 +164,7 @@ export class AonSuiteMenu extends AonElement {
               
         let content = this.createDiv();
         content.id = this.CONTENT;
-        content.style.height = "calc(-62px + 100vh)";
+        content.style.height = "calc(-61px + 100vh)";
         content.style.width = "100%";
         content.style.backgroundColor = "rgb(250, 249, 248)";
         content.style.overflowY = "auto";
