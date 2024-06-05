@@ -9,7 +9,6 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
@@ -17,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -24,15 +24,10 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
-import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -57,9 +52,9 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -92,6 +87,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -121,7 +117,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -189,11 +184,6 @@ public class InvoiceDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_USER);}
 	}
 
-	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
-	public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
-	
-	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
@@ -376,16 +366,14 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.SOURCE_ID
 				,INVOICE_DETAIL.INVEST_ASSET
 				,INVOICE_DETAIL.PREPAYMENT
-				,SELLER_ALIAS.NAME
+				,SellerDAO.SELLER_ALIAS.ID
+				,SellerDAO.SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
 				,SCOPE.DESCRIPTION
 				,INVOICE_DETAIL.ID
 				,PRODUCT.CATEGORY
 				,ITEM.ID
-				,RSELLER.ID
-				,SELLER_ALIAS.ID
-				,SELLER_SUPPORT_ALIAS.NAME
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -401,14 +389,9 @@ public class InvoiceDAO {
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
-			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
+			.leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-			
-			.leftOuterJoin(RSELLER).on(RSELLER.REGISTRY.eq(INVOICE.REGISTRY))
-			.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
-			.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
-			
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
@@ -448,42 +431,30 @@ public class InvoiceDAO {
 			.map(new MinimalInvoiceFiller());
 	}
 
-	public static void getInvoicesFormatCSV(AONContext ctx,
-			InvoiceFilter filter, OutputStream out) {
-		getFullInvoices(ctx, filter).formatCSV(out,'\t',"");
-	}
-
-	public static void getInvoicesFormatHTML(AONContext ctx,
-			InvoiceFilter filter, OutputStream out) {
-		getFullInvoices(ctx, filter).formatHTML(out);
-	}
-
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
 		return getFullInvoices(ctx, filter)
 			.stream()
 			.map(new FullInvoiceDetailFiller());
 	}
-	
-	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
-		ArrayList<InvoiceDetail> invoiceDetails = getFullInvoices(ctx, filter)
+
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
+		return getFullInvoices(ctx, filter)
 			.stream()
+			.onClose(() -> { if (callback != null) callback.onFinish();})
 			.map(new FullInvoiceDetailFiller())
-			.collect(Collectors.toCollection(ArrayList::new));
-		
-		invoiceDetails.forEach(invoiceDetail -> invoiceDetail.setSegments(getRegistrySegments(ctx, invoiceDetail.getInvoice().getRegistry())));
-		
-		return invoiceDetails;
+			.map( d -> new InvoiceDetailExtended()
+				.setDetail(d)
+				.setSegments(
+					RegistryDAO.getRegistrySegmentNames(ctx, d.getInvoice().getRegistry())
+						.collect(Collectors.toCollection(LinkedList::new)
+					)
+				)
+				.setSellerSupport(
+					RegistryDAO.getRegistrySellerNames(ctx, d.getInvoice().getRegistry(), d.getInvoice().getIssueDate())
+						.collect(Collectors.joining(", ")))
+			);
 	}
 
-	private static LinkedList<String> getRegistrySegments(AONContext ctx, Integer id) {
-		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
-			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
-			.where(RSEGMENT.REGISTRY.eq(id))
-			.fetch(SEGMENT.NAME);
-		
-		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
@@ -775,8 +746,8 @@ public class InvoiceDAO {
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.build(r)
 					: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
-				.setSeller(checkField(r, SELLER_ALIAS.ID)
-					? new Seller().copy(RegistryFiller.build(r, SELLER_ALIAS))
+				.setSeller(checkField(r, SellerDAO.SELLER_ALIAS.ID)
+					? new Seller().copy(RegistryFiller.build(r, SellerDAO.SELLER_ALIAS))
 					: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
 				.setWorkplace( new Workplace()
 					.setId( r.getValue(INVOICE_DETAIL.WORKPLACE) )
@@ -786,9 +757,6 @@ public class InvoiceDAO {
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
-				.setSellerSupport(checkField(r, SELLER_SUPPORT_ALIAS.NAME)
-						? r.get(SELLER_SUPPORT_ALIAS.NAME)
-						: "")
 				;
 			
 		}
