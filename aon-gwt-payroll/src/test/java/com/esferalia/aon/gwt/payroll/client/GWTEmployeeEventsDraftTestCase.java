@@ -457,7 +457,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void cambioContrato(String currentDomainName, String currentUser,
-					EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback)
+					EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback)
 					throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				

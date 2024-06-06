@@ -387,14 +387,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void cambioContrato(String currentDomainName, String currentUser,
-				EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback)
-				throws IllegalArgumentException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
 				EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
 			// TODO Auto-generated method stub
@@ -651,6 +643,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
 				String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void cambioContrato(String currentDomainName, String currentUser,
+				EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}		
@@ -1023,14 +1023,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void cambioContrato(String currentDomainName, String currentUser,
-							EmployeeContractInfo employeeContractInfo, String tc2, Date fecha,
-							AsyncCallback<Void> callback) throws IllegalArgumentException {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
 					public void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
 							EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
 						// TODO Auto-generated method stub
@@ -1292,6 +1284,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
 							String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void cambioContrato(String currentDomainName, String currentUser,
+							EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

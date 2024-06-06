@@ -908,7 +908,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			String tc2, Date fecha) throws IllegalArgumentException {
+			String tc2, String partialityCoef, Date fecha) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
 	}
