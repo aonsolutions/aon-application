@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
@@ -139,7 +140,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
+				configuration -> InvoiceSIIDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
 	}
 		
 	@Override
