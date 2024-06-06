@@ -1147,7 +1147,7 @@ public abstract class EmployeeDraft extends Composite {
 					}
 
 					@Override
-					protected void onChangeContract(String contract, Date date) {
+					protected void onChangeContract(String contract, String partialityCoef, Date date) {
 						// Not use in this case
 					}
 
@@ -1355,9 +1355,9 @@ public abstract class EmployeeDraft extends Composite {
 			}
 
 			@Override
-			protected void onChangeContract(String contract, Date date) {
+			protected void onChangeContract(String contract, String partialityCoef, Date date) {
 				showLoading("Comunicando cambio TC2 (TGSS) ...");
-				employeeDraftObject.cambioContrato(contract, date,
+				employeeDraftObject.cambioContrato(contract, partialityCoef, date,
 						s -> showSuccess("AVISO: Tipo contrato",
 								"El cambio de tipo de contrato ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
