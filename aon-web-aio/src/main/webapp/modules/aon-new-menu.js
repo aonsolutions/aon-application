@@ -35,6 +35,9 @@ import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
 import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
+import { AonAcademyMenu } from './academy/aon-academy-menu.js';
+import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
+import { AonGarageMenu } from './garage/aon-garage-menu.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -201,6 +204,15 @@ export class AonNewMenu extends AonElement {
 			case MARKETING_MENU.app:
 				this.rootPanel(new AonMarketingMenu());
 				break;
+			case ACADEMY.app:
+				this.rootPanel(new AonAcademyMenu());
+				break;
+			case COMMERCE.app:
+				this.rootPanel(new AonCommerceMenu());
+				break;
+			case GARAGE.app:
+				this.rootPanel(new AonGarageMenu());
+				break;	
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
@@ -471,7 +483,6 @@ export class AonNewMenu extends AonElement {
 		});
 
 		a.appendChild(hoverDiv);
-
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aaaaaaaaaaaaa' + app.app;
 		div.style.padding = '1px';

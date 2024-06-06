@@ -130,7 +130,8 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED,"schedule"));
         sideMenu.appendChild(this.buildSideNavRow(this.last,"quick_reference_all"));
 
-        this.buildSideNavCard(sideMenu,"1");
+        if(this.cardData)
+            this.buildSideNavCard(sideMenu,"1");
 
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
@@ -139,27 +140,29 @@ export class AonSuiteMenu extends AonElement {
 
         sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, "folder_managed"));
 
-        let uploadButton = new AonButton();
-        uploadButton.id = this.UPLOAD_BUTTON;
-        uploadButton.icon = "publish";
-        uploadButton.title = "Cargar archivo";
-        uploadButton.color = "transparent";
-        uploadButton.style.display = "block";
-        uploadButton.style.width = "222px";
-        uploadButton.style.border = "2px dashed rgba(0, 0, 0, 0.1)";
-        uploadButton.style.borderRadius = "5px";
-        uploadButton.style.marginLeft = "12px";
-        uploadButton.style.marginTop = "20px";
-        sideMenu.appendChild(uploadButton);
-        let text = this.getElement(uploadButton.TEXT);
-        let icon = this.getElement(uploadButton.ICON);
-        let button = this.getElement(uploadButton.BUTTON);
-        text.className= CSS.AON_CARD_TEXT;
-        text.style.fontWeight = "normal";
-        icon.style.color = "rgb(72,70,68)";
-        button.style.boxShadow = "none";
-        this.setButtonHover(uploadButton);
-              
+        if(!this.uploadButton){
+            let uploadButton = new AonButton();
+            uploadButton.id = this.UPLOAD_BUTTON;
+            uploadButton.icon = "publish";
+            uploadButton.title = "Cargar archivo";
+            uploadButton.color = "transparent";
+            uploadButton.style.display = "block";
+            uploadButton.style.width = "222px";
+            uploadButton.style.border = "2px dashed rgba(0, 0, 0, 0.1)";
+            uploadButton.style.borderRadius = "5px";
+            uploadButton.style.marginLeft = "12px";
+            uploadButton.style.marginTop = "20px";
+            sideMenu.appendChild(uploadButton);
+            let text = this.getElement(uploadButton.TEXT);
+            let icon = this.getElement(uploadButton.ICON);
+            let button = this.getElement(uploadButton.BUTTON);
+            text.className= CSS.AON_CARD_TEXT;
+            text.style.fontWeight = "normal";
+            icon.style.color = "rgb(72,70,68)";
+            button.style.boxShadow = "none";
+            this.setButtonHover(uploadButton);
+        }
+      
         let content = this.createDiv();
         content.id = this.CONTENT;
         content.style.height = "calc(-61px + 100vh)";
@@ -246,7 +249,7 @@ export class AonSuiteMenu extends AonElement {
         card.style.maxWidth = "375px";      
 
         card.style.display = "flex";
-        card.style.maxHeight = "330px";
+        card.style.maxHeight = "375px";
 		card.style.marginLeft = "10px";
         //card.style.marginTop = "20px";
         div.appendChild(card);
