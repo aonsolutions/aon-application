@@ -525,7 +525,7 @@ public class InvoiceDAO {
 				.fetch().stream().map(new InvoiceTaxFiller());
 	}
 	
-	public static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
+	private static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().select()
 			.from(INVOICE_TAX)
 			.where(INVOICE_TAX.INVOICE_DETAIL.eq(id))
@@ -569,7 +569,7 @@ public class InvoiceDAO {
 					.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR)));
 	}
 	
-	public static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
+	static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record record) {
@@ -595,14 +595,14 @@ public class InvoiceDAO {
 	}
 	
 	
-	public static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+	static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record r) {
 			return buildInvoice(r);
 		}
 		
-		public static Invoice buildInvoice(Record r) {
+		static Invoice buildInvoice(Record r) {
 			return new Invoice()
 				.setId(r.getValue(INVOICE.ID))
 				.setDomain(r.getValue(INVOICE.DOMAIN))
@@ -818,14 +818,14 @@ public class InvoiceDAO {
 
 	}
 	
-	public static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
+	static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
 
 		@Override
 		public InvoicingGroup apply(Record r) {
 			return buildInvoicingGroup(r);			
 		}
 		
-		public static InvoicingGroup buildInvoicingGroup(Record r) {
+		static InvoicingGroup buildInvoicingGroup(Record r) {
 			return new InvoicingGroup()
 					.setId(r.getValue(INVOICING_GROUP.ID))
 					.setDomain(r.getValue(INVOICING_GROUP.DOMAIN))
@@ -875,7 +875,7 @@ public class InvoiceDAO {
 				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
 	}
 	
-	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+	private static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
 		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}
 	
@@ -901,7 +901,7 @@ public class InvoiceDAO {
 				: INVOICE_TRACKING.SERIES.eq(series));
 	}
 	
-	public static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
+	private static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = selectMaxInvoice(ctx, types, series)
 			.union(selectMaxInvoiceTracking(ctx, types, series))
 			.fetch()
@@ -1079,7 +1079,7 @@ public class InvoiceDAO {
 		return update(ctx, config, invoice, false);
 	}
 	
-	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
+	private static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
@@ -1170,7 +1170,7 @@ public class InvoiceDAO {
 		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
 	}
 	
-	public static void delete(AONContext ctx, AonConfiguration config, Integer id) {
+	private static void delete(AONContext ctx, AonConfiguration config, Integer id) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1362,7 +1362,7 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
+	private static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
 		Invoice inv = getInvoice(ctx, invoiceId);
 		if (inv == null) {
 			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1415,7 +1415,7 @@ public class InvoiceDAO {
 		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
 	}
 
-	public static void rectifyInvoiceDetails(Invoice inv) {
+	private static void rectifyInvoiceDetails(Invoice inv) {
 		for (InvoiceDetail detail : inv.getDetails()) {
 			detail.setId(null);
 			detail.setQuantity( AonMathUtils.round(detail.getQuantity() * (-1),3));	
@@ -1671,7 +1671,7 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
 
-	public static Condition getWhere(AccountingReportParams params) {
+	private static Condition getWhere(AccountingReportParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
 		
@@ -1811,7 +1811,7 @@ public class InvoiceDAO {
 			.map(new HeaderInvoiceFiller());
 	}
 
-	public static class HeaderInvoiceFiller  implements Function<Record,Invoice> {
+	private static class HeaderInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record record) {
