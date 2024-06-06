@@ -53,8 +53,7 @@ public class Mod2002023 extends Mod200 {
 	private EcpnType ecpnType;
 	private BalanceType pygType;
 	
-	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
-	                                                  // FALTA - LA FECHA IRNR NO ESTA EN EL MODELO
+	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante	                                                 
 	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 

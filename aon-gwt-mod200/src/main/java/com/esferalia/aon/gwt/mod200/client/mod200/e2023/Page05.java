@@ -1,4 +1,4 @@
-// CUENTA DE PERDIDAS Y GANANCIAS
+// BALANCE: PATRIMONIO NETO Y PASIVO
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,26 +16,24 @@ public class Page05 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
-		addTable(AON.MSG.pyg(), Mod2002023Constants.PYG_KEYS);
+		basePanel.clear();	
+		addTable(AON.MSG.balancePasivo(), Mod2002023Constants.BALANCE_PASIVE_KEYS);
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
-	
-	@Override
+
+	@Override	
 	protected boolean isDisabled(IMod200Key key) {
-		if (callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL) {
-			if (key == Mod2002023Key.PG255
-			  ||key == Mod2002023Key.PG279
-			  ||key == Mod2002023Key.PG309
+		if (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL) {
+			if (key == Mod2002023Key.BP191 
+ 			 || key == Mod2002023Key.BP195
+			 || key == Mod2002023Key.BP202 
+			 || key == Mod2002023Key.BP211
+			 || key == Mod2002023Key.BP230
+			 || key == Mod2002023Key.BP240
 			 ) {
 				return true;
 			}
 		}
 		return super.isDisabled(key);
-	}
-
-	@Override
-	protected boolean isAvailable() {
-		return super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0026));		
 	}
 }

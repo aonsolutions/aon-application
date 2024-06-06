@@ -57,8 +57,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod2002023Writer {	
 	
-	// FALTA - AUN NO TENGO EL FORMATO DEL FICHERO
-	
 	// ***************************************************
 	// **** VARIABLES Y METODOS ESTATICOS DE UTILIDAD ****
 	// ***************************************************
@@ -1740,7 +1738,6 @@ public class Mod2002023Writer {
 						                                                                                          // FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoV()), 22));     // Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustCanarias()), 13));  // Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-						                                                           		                          // FALTA - Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustActivos()), 13));   // Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 						
 						// FALTA - NUEVO APARTADO INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES AUDIOVISUALES

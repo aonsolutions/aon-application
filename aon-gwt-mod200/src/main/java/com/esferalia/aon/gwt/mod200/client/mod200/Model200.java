@@ -288,18 +288,13 @@ public class Model200 extends MainEntryPoint {
 				case 2023:
 					changeView2023((Mod2002023) mod200);
 					break;					
-//				default:
-//					break;
 			}
 		}
 		
 		public void cleanErrorPanel() {
-			// FALTA
-			//Model200.this.cleanErrorMessage();
 			cleanErrorMessage();
 		}
 		
-		// FALTA
 		private void cleanErrorMessage() {
 			aonLayout.hideErrorPanel();
 		}

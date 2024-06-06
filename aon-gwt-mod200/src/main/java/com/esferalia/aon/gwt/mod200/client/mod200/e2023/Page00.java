@@ -1,4 +1,4 @@
-// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, PERSONAL ASALARIADO, CIFRA DE NEGOCIOS, CARACTERES 
+// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character.CHARACTERS_KEYS;
@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -33,7 +32,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
@@ -153,9 +151,9 @@ public class Page00 extends PageAbs {
 	private ListBox balanceSheetType;
 	private ListBox ecpnType;
 	private ListBox profitAndLossType;
-	private AonDoubleBox c041;
-	private AonDoubleBox c042;	
-	private ListBox opeVol;
+//	private AonDoubleBox c041;
+//	private AonDoubleBox c042;	
+//	private ListBox opeVol;
 	private CheckBox agriculturalActivities;
 	private InlineLabel receiptNumberLabel;
 	private AonTextBox receiptNumber;
@@ -215,12 +213,12 @@ public class Page00 extends PageAbs {
 			inputsCheckBox.get(Mod2002023Key.C0027).setValue(AonMathUtils.equals(sv.getValue(), 1.0));
 		}
 		
-		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002023Key.VOLOPE);
-		index = 0;
-		if (dv != null) {
-			index = dv.getValue().intValue();
-		}
-		opeVol.setSelectedIndex(index);
+//		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002023Key.VOLOPE);
+//		index = 0;
+//		if (dv != null) {
+//			index = dv.getValue().intValue();
+//		}
+//		opeVol.setSelectedIndex(index);
 		
 		// Hago la llamada despues, porque para setEnabled(), necesito que algunos campos ya contengan el valor
 		super.dump();		
@@ -497,70 +495,70 @@ public class Page00 extends PageAbs {
 		    .addLabelWidgetRow(AON.MSG.ecpn(), ecpnType)
 		    .addLabelWidgetRow(AON.MSG.profitAndLoss(), profitAndLossType);
 		
-		// PERSONAL ASALARIADO
+//		// PERSONAL ASALARIADO
+//		
+//		basePanel.add(getTitle("Personal asalariado"));
+//		
+//		AonDisplayTable tab3 = new AonDisplayTable();
+//		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab3.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tab3);
+//		
+//		c041 = new AonDoubleBox();
+//		c041.setMaxLength(8);
+//		c041.setVisibleLength(8);
+//		c041.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002023Key.C0041));
+//		c041.addValueChangeHandler(event -> {			
+//			callback.getMod200Object().getMod200().setDoubleValue(Mod2002023Key.C0041, c041.getValue());
+//			callback.markAsDirty();
+//		});
+//		otherInputs.add(c041);
+//		
+//		c042 = new AonDoubleBox();	
+//		c042.setMaxLength(8);
+//		c042.setVisibleLength(8);	
+//		c042.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002023Key.C0042));
+//		c042.addValueChangeHandler(event -> {
+//			callback.getMod200Object().getMod200().setDoubleValue(Mod2002023Key.C0042, c042.getValue());
+//			callback.markAsDirty();
+//		});
+//		otherInputs.add(c042);
+//		
+//		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
+//	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
 		
-		basePanel.add(getTitle("Personal asalariado"));
-		
-		AonDisplayTable tab3 = new AonDisplayTable();
-		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab3.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab3);
-		
-		c041 = new AonDoubleBox();
-		c041.setMaxLength(8);
-		c041.setVisibleLength(8);
-		c041.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002023Key.C0041));
-		c041.addValueChangeHandler(event -> {			
-			callback.getMod200Object().getMod200().setDoubleValue(Mod2002023Key.C0041, c041.getValue());
-			callback.markAsDirty();
-		});
-		otherInputs.add(c041);
-		
-		c042 = new AonDoubleBox();	
-		c042.setMaxLength(8);
-		c042.setVisibleLength(8);	
-		c042.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002023Key.C0042));
-		c042.addValueChangeHandler(event -> {
-			callback.getMod200Object().getMod200().setDoubleValue(Mod2002023Key.C0042, c042.getValue());
-			callback.markAsDirty();
-		});
-		otherInputs.add(c042);
-		
-		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
-	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
-		
-		// CIFRA DE NEGOCIOS
-		
-		basePanel.add(getTitle("Cifra de negocios"));
-		
-		FlexTable tableVol = addTable();
-
-		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
-		
-		// FALTA - Para este año existen solo 0, 1 y 2, excepto cooperativas, que tienen todos los valores
-		opeVol = new ListBox();
-		opeVol.addItem("0 - No consta");
-		opeVol.addItem("1 - Inferior a 20 millones de euros");
-		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0017) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0018) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0019)) {
-			opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-			opeVol.addItem("3 - Al menos 60 millones de euros");
-		} else {
-			opeVol.addItem("2 - Al menos 20 millones de euros");
-		}
-		opeVol.addChangeHandler( event -> {
-			DoubleVariableEx bv = new DoubleVariableEx(Mod2002023Key.VOLOPE);
-			bv.setValue((double)opeVol.getSelectedIndex());
-			callback.getMod200Object().getMod200().addVariable(bv);
-			callback.getMod200Object().doubleValueChanged(Mod2002023Key.VOLOPE, opeVol.getSelectedIndex());
-			callback.markAsDirty();
-		});
-		otherInputs.add(opeVol);
-		
-		basePanel.add(opeVol);
-		tableVol.setWidget(1, 0, opeVol);
-
-		//paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
-		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si procede, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima (art\u00EDculo 30 bis LIS)");
+//		// CIFRA DE NEGOCIOS
+//		
+//		basePanel.add(getTitle("Cifra de negocios"));
+//		
+//		FlexTable tableVol = addTable();
+//
+//		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
+//		
+//		// Para este año existen solo 0, 1 y 2, excepto cooperativas, que tienen todos los valores
+//		opeVol = new ListBox();
+//		opeVol.addItem("0 - No consta");
+//		opeVol.addItem("1 - Inferior a 20 millones de euros");
+//		if (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0017) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0018) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0019)) {
+//			opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
+//			opeVol.addItem("3 - Al menos 60 millones de euros");
+//		} else {
+//			opeVol.addItem("2 - Al menos 20 millones de euros");
+//		}
+//		opeVol.addChangeHandler( event -> {
+//			DoubleVariableEx bv = new DoubleVariableEx(Mod2002023Key.VOLOPE);
+//			bv.setValue((double)opeVol.getSelectedIndex());
+//			callback.getMod200Object().getMod200().addVariable(bv);
+//			callback.getMod200Object().doubleValueChanged(Mod2002023Key.VOLOPE, opeVol.getSelectedIndex());
+//			callback.markAsDirty();
+//		});
+//		otherInputs.add(opeVol);
+//		
+//		basePanel.add(opeVol);
+//		tableVol.setWidget(1, 0, opeVol);
+//
+//		//paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
+//		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si procede, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima (art\u00EDculo 30 bis LIS)");
 		
 		// CARACTERES DE LA DECLARACION
 		

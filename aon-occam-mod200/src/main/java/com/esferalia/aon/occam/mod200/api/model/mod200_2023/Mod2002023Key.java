@@ -55,18 +55,8 @@ public enum Mod2002023Key implements IMod200Key {
 	,C0030  ,C0070  ,C0074
 	,C0039  		,C0089
 
-	// FALTA - QUITAN LA OPCION 3 Y LA OPCION 2 PASA A SER: 2 - INCN de al menos 20 millones de euros, EXCEPTO PARA COOPERATIVAS QUE SIGUE HABIENDO 3, PERO EN OTRA PAGINA
-	// Además de las modificaciones en las pantallas o calculos, tambien habrá que modificar el traspaso del ejercicio anterior, para que si esta marcado 3, se marque 2
 	// Importe neto de la cifra de negocios (INCN) de los doce meses anteriores a la fecha de inicio del período impositivo
-	// 1 - INCN inferior a 20 millones de euros					
-	// 2 - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros					
-	// 3 - INCN de al menos 60 millones de euros 					
 	,VOLOPE
-	// FALTA - EN LA PAGINA 22 BIS APARECE PARA COOPERATIVAS LAS 2 SEGUNDAS OPCIONES QUE HABIA HASTA AHORA, ASI QUE IGUAL SE PUEDE PONER PARA COOPERATIVAS LAS 3 OPCIONES Y PARA EL RESTO
-	// LAS DOS PRIMERAS, TENIENDO EN CUENTA QUE AL HACER EL FICHERO, EN LA PAGINA 1 SOLO SE PUEDEN PONER LAS OPCIONES 1 O 2
-	// FALTA - EN EL DOC PADIS DE 20/05 EN LA PAGINA 382 VUELVE A HABLAR DE 3 OPCIONES Y HABLA DE QUE TAMBIEN ESTA EL INCN EN LA PAGINA 22 BIS ??
-	// TAMBIEN ESTA EN LA PAGINA 394 DEL DOC, PERO ESE APARTADO DE INFORMACION ADICIONAL, NO APARECE EN LA PAGINA 22 BIS, NI EN EL MODELO, NI EN EL FICHERO
-	// EN EL DOC PAGINA 405, TAMBIEN ESTA ESA INFORMACION ADICIONAL
 	
 	// ESTADOS DE CUENTAS
 	,C0050	,C0075	,C0053
@@ -1421,8 +1411,8 @@ public enum Mod2002023Key implements IMod200Key {
 	,CP2843 ,CP2845 // 9. 50% Dotación obligatoria F.R.O. (art. 16.5 Ley 20/1990) 
 	,CP2846 ,CP2847 // 10. Reserva para inversiones en Canarias (Ley 19/1994) 
 	,CP0012 ,CP0016 // 11. Reserva para inversiones en Illes Balears  
-	,CP2848 ,CP2849 // 12. Factor de agotamiento	
-	// FALTA - LOS TOTALES ANTES ESTABAN EN CPC12 Y CPE12, VER SI ES NECESARIO DESPUES PONER CASILLAS PARA ELLO O PUEDE SERVIR CON LAS 553 Y 554
+	,CP2848 ,CP2849 // 12. Factor de agotamiento
+	,CP553  ,CP554  // 13. Base imponible (6 + 7 - 8 - 9 + 10 + 11 + 12)  
 			
 	// Desglose - LQ561 - Cooperativas - Compensación de cuotas por pérdidas de cooperativas 
 	,LQ673	,LQ674	,LQ1224
@@ -1454,13 +1444,13 @@ public enum Mod2002023Key implements IMod200Key {
 	
 // ------------- PAGINA 22 BIS -------------- //
 	
-// FALTA - NUEVO APARTADO SOLO PARA REGIMEN COOPERATIVAS, SE SUPONE:
-//	Información adicional para el cálculo de límites de compensación de cuotas
-//	En caso de que el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo sea de al menos 20 millones de euros, indique el
-//	tramo que corresponda:
-//	- INCN de al menos 20 millones de euros pero inferior a 60 millones de euros 
-//	- INCN de al menos 60 millones de euros
-//	SE PODRIA HACER ENTONCES, CUANDO SE PIDE EL INCN EN LA PRIMERA PAGINA, QUE SI ES COOPERATIVA, ENTONCES APAREZCAN LAS 3 OPCIONES Y SI NO LO ES APAREZCAN SOLO 2 OPCIONES
+	// NUEVO APARTADO SOLO PARA COOPERATIVAS:
+	//	Información adicional para el cálculo de límites de compensación de cuotas
+	//	En caso de que el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo sea de al menos 20 millones de euros, indique el
+	//	tramo que corresponda:
+	//	- INCN de al menos 20 millones de euros pero inferior a 60 millones de euros 
+	//	- INCN de al menos 60 millones de euros
+	//	SE UTILIZA VOLOPE Y SEGUN SI ES COOPERATIVA O NO TENDRA MAS O MENOS OPCIONES
 	
 	// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)
 	
@@ -1581,7 +1571,7 @@ public enum Mod2002023Key implements IMod200Key {
 	,TR420	,TR421	,TR426	,TR427	,TR600
 	,TR402	,TR442	,TR443	,TR444	,TR602
 	,TR445	,TR446	,TR447	,TR448	,TR604
-	,TR449	,TR450  ,TR451	,TR465	,TR606  // FALTA - AQUI LAS CASILLAS 450 Y LA 451 LAS TENIA INTERCAMBIADAS, COMPROBAR EN LA PANTALLA COMO ESTAN
+	,TR449	,TR450  ,TR451	,TR465	,TR606  
 	,TR474	,TR475	,TR476	,TR477	,TR612
 	,TR482	,TR483	,TR484	,TR485	,TR616
 	,TR913	,TR914	,TR915	,TR916	,TR642

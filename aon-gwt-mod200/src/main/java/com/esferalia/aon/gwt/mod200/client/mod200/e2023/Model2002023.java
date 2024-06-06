@@ -43,7 +43,7 @@ public class Model2002023 extends DockLayoutPanel {
 		public Mod2002023Object getMod200Object();
 	}
 	
-	private PageAbs[] pages = new PageAbs[22];
+	private PageAbs[] pages = new PageAbs[23];
 	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002023Object mod200Object;
@@ -343,8 +343,8 @@ public class Model2002023 extends DockLayoutPanel {
 		};		
 		
 		if (pages[i] == null) {
-			if (i ==  0) pages[i] = new Page00(cbk); 
-			if (i ==  1) pages[i] = new Page01(cbk); 
+			if (i ==  0) pages[i] = new Page00(cbk);
+			if (i ==  1) pages[i] = new Page01(cbk);
 			if (i ==  2) pages[i] = new Page02(cbk); 
 			if (i ==  3) pages[i] = new Page03(cbk); 
 			if (i ==  4) pages[i] = new Page04(cbk); 
@@ -354,17 +354,18 @@ public class Model2002023 extends DockLayoutPanel {
 			if (i ==  8) pages[i] = new Page08(cbk); 
 			if (i ==  9) pages[i] = new Page09(cbk); 
 			if (i == 10) pages[i] = new Page10(cbk); 
-			if (i == 11) pages[i] = new Page11(cbk);
-			if (i == 12) pages[i] = new Page12(cbk); 
-			if (i == 13) pages[i] = new Page13(cbk);
-			if (i == 14) pages[i] = new Page14(cbk); 
+			if (i == 11) pages[i] = new Page11(cbk); 
+			if (i == 12) pages[i] = new Page12(cbk);
+			if (i == 13) pages[i] = new Page13(cbk); 
+			if (i == 14) pages[i] = new Page14(cbk);
 			if (i == 15) pages[i] = new Page15(cbk); 
-			if (i == 16) pages[i] = new Page16(cbk);
-			if (i == 17) pages[i] = new Page17(cbk); 
+			if (i == 16) pages[i] = new Page16(cbk); 
+			if (i == 17) pages[i] = new Page17(cbk);
 			if (i == 18) pages[i] = new Page18(cbk); 
 			if (i == 19) pages[i] = new Page19(cbk); 
-			if (i == 20) pages[i] = new Page20(cbk);
-			if (i == 21) pages[i] = new PageAEAT(cbk);
+			if (i == 20) pages[i] = new Page20(cbk); 
+			if (i == 21) pages[i] = new Page21(cbk);
+			if (i == 22) pages[i] = new PageAEAT(cbk);
 		}
 		return getPage(i);
 	}
@@ -637,29 +638,30 @@ public class Model2002023 extends DockLayoutPanel {
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
-		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Cifra de negocios, Caracteres"));
-		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes, Administradores, Titular Real"));
-		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP, Socios SICAV"));
-		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()));
-		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()));
-		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg()));
-		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos()));
-		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()));
-		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Correcciones"));
-		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
-		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII() + ": Bonificaciones, Deducciones por doble imposici\u00F3n"));
-		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones, Cuota L\u00EDquida"));
-		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
-		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
-		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n resultados, Documentaci\u00F3n previa, Inversiones producciones cinematogr\u00E1ficas"));
-		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
-		linkContainer.add(new WestFocusPanel(17,"R\u00E9gimen especial Canarias, R\u00E9gimen especial Illes Balears"));
-		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
-		linkContainer.add(new WestFocusPanel(19,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
-		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
-		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));		
+		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n"));
+		linkContainer.add(new WestFocusPanel( 2,"Cifra de Negocios, Personal Asalariado, Secretario, Grupo Fiscal o Mercantil"));
+		linkContainer.add(new WestFocusPanel( 3,"Representantes, Administradores, Titular Real"));
+		linkContainer.add(new WestFocusPanel( 4,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP, Socios SICAV"));
+		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balanceActivo()));
+		linkContainer.add(new WestFocusPanel( 6,AON.MSG.balancePasivo()));
+		linkContainer.add(new WestFocusPanel( 7,AON.MSG.pyg()));
+		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioIngresos()));
+		linkContainer.add(new WestFocusPanel( 9,AON.MSG.patrimonioCambios()));
+		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionI() + ": Resultado PyG, Correcciones"));
+		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
+		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIII() + ": Bonificaciones, Deducciones por doble imposici\u00F3n"));
+		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionIV() + ": Otras deducciones, Cuota L\u00EDquida, Producciones cinematogr\u00E1ficas"));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
+		linkContainer.add(new WestFocusPanel(15,AON.MSG.combinedTaxationAbbrv()));
+		linkContainer.add(new WestFocusPanel(16,"Aplicaci\u00F3n resultados, Documentaci\u00F3n previa"));
+		linkContainer.add(new WestFocusPanel(17,AON.MSG.deducibleLimitation()));
+		linkContainer.add(new WestFocusPanel(18,"R\u00E9gimen especial Canarias, R\u00E9gimen especial Illes Balears"));
+		linkContainer.add(new WestFocusPanel(19,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
+		linkContainer.add(new WestFocusPanel(20,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
+		linkContainer.add(new WestFocusPanel(21,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
+		linkContainer.add(new WestFocusPanel(22,AON.MSG.idDocument()));		
 
-		westFocusPanelAEAT = new WestFocusPanel(22,"Agencia Tributaria");
+		westFocusPanelAEAT = new WestFocusPanel(23,"Agencia Tributaria");
 		linkContainer.add(westFocusPanelAEAT);
 		
 		scrollPanel.add(linkContainer);

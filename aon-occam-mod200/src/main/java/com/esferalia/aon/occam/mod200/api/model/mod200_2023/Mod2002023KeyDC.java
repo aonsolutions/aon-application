@@ -10,8 +10,6 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 // de Mod2002023Key, da error de "code too large"
 public enum Mod2002023KeyDC implements IMod200Key {
 	
-	// FALTA - REVISAR ESTE ENUMERADO DE LAS CORRECCIONES QUE AUN NO LO HE REVISADO
-	
 // --------------- PAGINA 26 BIS --------------- //	
 	
 			 DC0073

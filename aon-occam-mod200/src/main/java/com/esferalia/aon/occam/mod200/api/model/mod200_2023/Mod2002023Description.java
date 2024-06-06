@@ -53,11 +53,11 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0079,"Entidad ZEC en consolidaci\u00F3n fiscal");		
-		DESCRIPTION_MAP.put(Mod2002023Key.C0022,"R\u00E9gimen entid. navieras en funci\u00F3n del tonelaje");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0028,"Tribut. conjunta Estado/Diput. Cdad. Forales");		
+		DESCRIPTION_MAP.put(Mod2002023Key.C0022,"R\u00E9gimen entidades navieras en funci\u00F3n del tonelaje");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0028,"Tributaci\u00F3n conjunta Estado/Diputaciones Comunidades Forales");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0047,"Entidades sometidas a la normativa foral");		
 		DESCRIPTION_MAP.put(Mod2002023Key.C0049,"Reg\u00EDmenes especiales de normativa foral");
-		DESCRIPTION_MAP.put(Mod2002023Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
+		DESCRIPTION_MAP.put(Mod2002023Key.C0035,"R\u00E9gimen especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0029,"R\u00E9gimen especial Canarias");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0069,"R\u00E9gimen especial de buques y empresas navieras en Canarias");
 		DESCRIPTION_MAP.put(Mod2002023Key.C0086,"R\u00E9gimen especial Illes Balears");		

@@ -206,7 +206,7 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(tab1);
 		
 		document = new AonDocumentTextBox();
-		document.setVisibleLength(9);
+		document.setVisibleLength(15);
 		document.addValueChangeHandler(event -> setModified(true));
 		
 		name = new AonTextBox();
@@ -217,7 +217,7 @@ public class ParticipationPanel extends AonCustomDialog {
 		province = new ProvinceCountryListBox();
 		province.addChangeHandler(event -> setModified(true));		
 		
-		addRow(tab1, AON.MSG.nif(), document);
+		addRow(tab1, "NIF (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a)", document);
 		addRow(tab1, AON.MSG.companyName(), name);
 		addRow(tab1, AON.MSG.province() + "/" + AON.MSG.country(), province);
 		

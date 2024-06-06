@@ -1,20 +1,23 @@
-// LIMITACION EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS
+// APLICACION DE RESULTADOS, PRESENTACION DE DOCUMENTOS
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Model2002023.Model2002023PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023LM1212Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023LM538Key;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 
 public class Page15 extends PageAbs {
-	
-	private static final String FOOTER_1212_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes por otro per\u00EDodo impositivo iniciado en 2023, pero inferior a 12 meses y previo al declarado.";
-	private static final String FOOTER_1212_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes, devengados en el propio per\u00EDodo impositivo, deducibles en los pr\u00F3ximos per\u00EDodos impositivos.";
-	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2023, pero inferior a 12 meses y previo al declarado.";
-	private static final String FOOTER_538_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado, generado en el propio per\u00EDodo impositivo, aplicable en los pr\u00F3ximos per\u00EDodos impositivos.";	
+
+	private AonTextBox nrsAnexoIII;
+	private AonTextBox justCanarias;
+	private AonTextBox nrsAnexoIV;
+	private AonTextBox nrsAnexoV;
+	private AonTextBox nrsAnexoVric;
+	private AonTextBox justActivos;
+	private AonTextBox nrsAnexoVI;
 
 	public Page15( Model2002023PageCallback callback ) {
 		super(callback);
@@ -25,63 +28,146 @@ public class Page15 extends PageAbs {
 		
 		basePanel.clear();
 		
-		// Limitación en la deducibilidad de gastos financieros. Art. 16 LIS (excluidos aquellos a que se refieren los arts. 15 g), h) y 15 bis LIS)
+		// APLICACION DE RESULTADOS
 		
-		FlexTable table = addTable("Limitaci\u00F3n en la deducibilidad de gastos financieros. Art. 16 LIS (excluidos aquellos a que se refieren los arts. 15 g), h) y 15 bis LIS)", 2, "150px");
+		basePanel.add(getTitle(AON.MSG.incomeDistribution()));
 		
+		// Base de reparto
+		
+		basePanel.add(getSubtitle(AON.MSG.distributionBases()));		
+		addTable("", Mod2002023Constants.INCOME_DISTRIBUTION_KEYS_1);
+		
+		// Aplicación
+		
+		basePanel.add(getSubtitle(AON.MSG.aplication()));
+		
+		FlexTable table1 = addTable();
+
 		int row = 0;
-
-		for (int i = 0; i < Mod2002023Constants.DEDUCIBLE_LIMITATION_KEYS_1.length; i++) {
-			Mod2002023Key[] keys = Mod2002023Constants.DEDUCIBLE_LIMITATION_KEYS_1[i];
-			if (keys == null) {
-				if (i == 0) {
-					paintDescription(table, "L\u00EDmite art. 16.5 y/o 83 LIS" , row, 0, true); // Límite art. 16.5 y/o 83 LIS
-				} else {
-					paintDescription(table, AON.MSG.limitMsg2() , row, 0, true); // Límite art. 16.1 y 16.2 LIS
-				}
-			} else {
-				for (int x = 0; x < keys.length; x++) {
-					Mod2002023Key key = keys[x]; 
-					if (key != null && callback.getMod200Object().isVisible(key)) {						
-						paintDescription(table, key.getDescription(), row, 0, key == Mod2002023Key.LM1260);
-						if (key == Mod2002023Key.LM1250 || key == Mod2002023Key.LM1251
-						 || key == Mod2002023Key.LM1252 || key == Mod2002023Key.LM1253
-						 || key == Mod2002023Key.LM1254) {
-							table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());					
-						}
-						paintKeyField(table, key, row, x+1, 10, false);
-					}
-				}
+		for (final Mod2002023Key key : Mod2002023Constants.INCOME_DISTRIBUTION_KEYS_2) {
+			if (callback.getMod200Object().isVisible(key)) {
+				row = paintKey(table1, key, row);
+				if (key == Mod2002023Key.ID1270 || key == Mod2002023Key.ID1271 || key == Mod2002023Key.ID1522) {
+					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
+				}				
 			}
-			++row;
 		}
+		
+		// PRESENTACIÓN DE DOCUMENTACIÓN PREVIA EN LA SEDE ELECTRÓNICA
+		
+		// Documentación presentada por el Anexo III (Ajustes y deducciones)
+		nrsAnexoIII = new AonTextBox();
+		nrsAnexoIII.setVisibleLength(22);
+		nrsAnexoIII.setMaxLength(22);
+		nrsAnexoIII.setValue(callback.getMod200Object().getMod200().getNrsAnexoIII());
+		nrsAnexoIII.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoIII);
+		
+		// Documentación presentada por el Anexo IV (Personal investigador) 
+		nrsAnexoIV = new AonTextBox();
+		nrsAnexoIV.setVisibleLength(22);
+		nrsAnexoIV.setMaxLength(22);
+		nrsAnexoIV.setValue(callback.getMod200Object().getMod200().getNrsAnexoIV());
+		nrsAnexoIV.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());			
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoIV);
+		
+		// Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
+		nrsAnexoVric = new AonTextBox();
+		nrsAnexoVric.setVisibleLength(22);
+		nrsAnexoVric.setMaxLength(22);
+		nrsAnexoVric.setValue(callback.getMod200Object().getMod200().getNrsAnexoVric());
+		nrsAnexoVric.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoVric(nrsAnexoVric.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoVric);
+		
+		// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+		nrsAnexoVI = new AonTextBox();
+		nrsAnexoVI.setVisibleLength(22);
+		nrsAnexoVI.setMaxLength(22);
+		nrsAnexoVI.setValue(callback.getMod200Object().getMod200().getNrsAnexoVI());
+		nrsAnexoVI.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoVI(nrsAnexoVI.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoVI);		
 
-		// Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
+		// Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
+		nrsAnexoV = new AonTextBox();
+		nrsAnexoV.setVisibleLength(22);
+		nrsAnexoV.setMaxLength(22);
+		nrsAnexoV.setValue(callback.getMod200Object().getMod200().getNrsAnexoV());
+		nrsAnexoV.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoV);
 		
-		FlexTable table1 = addTable(AON.MSG.deducibleLimitationPending(), 5, "150px");
+		// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
+		justCanarias = new AonTextBox();
+		justCanarias.setVisibleLength(22);
+		justCanarias.setMaxLength(13);
+		justCanarias.setValue(callback.getMod200Object().getMod200().getJustCanarias());
+		justCanarias.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(justCanarias);
 		
-		row = 0;
-		addHeaderCell(table1,row, 1,AON.MSG.previousPending());  
-		table1.getFlexCellFormatter().setColSpan(row, 1, 2);
-		addHeaderCell(table1,row, 3,AON.MSG.liquiMsg4());
-		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
-		++row;
-		paintKeysProvider(Mod2002023LM1212Key.values(), table1, row, false, AON.MSG.liquiMsg1(), AON.MSG.liquiMsg21(), AON.MSG.remainder(), AON.MSG.liquiMsg3(), AON.MSG.liquiMsg21(), AON.MSG.remainder());
-		paintFooterNote(basePanel, FOOTER_1212_1, FOOTER_1212_2);
+		// Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
+		justActivos = new AonTextBox();
+		justActivos.setVisibleLength(22);
+		justActivos.setMaxLength(13);
+		justActivos.setValue(callback.getMod200Object().getMod200().getJustActivos());
+		justActivos.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(justActivos);
 		
-		// Pendiente de adición por límite beneficio operativo no aplicado
+		basePanel.add(getTitle("Presentaci\u00F3n de documentaci\u00F3n previa en la Sede electr\u00F3nica"));		
+
+		FlexTable table2 = addTable();
 		
-		paintKeysProvider(Mod2002023LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), AON.MSG.liquiMsg1(), "Importe generado. Pendiente de aplicaci\u00F3n a principio del periodo", AON.MSG.liquiMsg3(), AON.MSG.liquiMsg4());
-		paintFooterNote(basePanel, FOOTER_538_1, FOOTER_538_2);
+		Label desc = new Label("Consigne el N\u00FAmero de Referencia de Sociedades (NRS):");
+		desc.setStyleName(AON.AON_CSS.aonBold());
+		table2.setWidget(0, 0, desc);
+		
+		row = 1;
+		
+		paintDescription(table2, AON.MSG.nrsAnexoIII(), ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoIII);
+		
+		paintDescription(table2, AON.MSG.nrsAnexoIV(), ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoIV);
+		
+		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoVric);
+		
+		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo VI (RIIB: Inversiones anticipadas)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoVI);
+		
+		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoV);
+		
+		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
+		table2.setWidget(row, 1, justCanarias);
+		
+		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
+		table2.setWidget(row, 1, justActivos);
+		
+//		// INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES 
+//		
+//		basePanel.add(getTitle("Inversiones en producciones cinematogr\u00E1ficas o series audiovisuales"));
+//		addTable("", Mod2002023Constants.FILM_PRODUCTIONS);
 		
 	}
-	
-	@Override
-	protected boolean isAvailable() {
-		return super.isAvailable()
-  		  && callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0009) 
-  		  && callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0010);
-	}
-	
+
 }
-

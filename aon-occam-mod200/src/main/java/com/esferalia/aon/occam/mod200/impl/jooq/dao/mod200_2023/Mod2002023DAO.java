@@ -465,7 +465,7 @@ public class Mod2002023DAO  {
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002023RegistryType.UTE_BASE.byteValue());
 				detail.setNominalValue(ute.getBase());
-				// FALTA - IMPORTE DE LA DEDUCCIO QUE NO SE A QUE CAMPO LO LLEVARE
+				// FALTA - IMPORTE DE LA DEDUCCION QUE NO SE A QUE CAMPO LO LLEVARE
 				detail.setPercent(ute.getPercent());
 				list.add(detail);
 			}
@@ -892,6 +892,9 @@ public class Mod2002023DAO  {
 	
 	public static Mod2002023 initializeNewMod200(AONContext ctx, Mod2002023 mod200) {
 		
+		// FALTA - CUANDO SE INICIALIZA EL MODELO Y SE LEEN LOS DATOS DEL EJERCICIO ANTERIOR, ESTA COGIENDO EL PRIMERO QUE ENCUENTRA, Y 
+		// REALMENTE DEBERIA COGER EL ULTIMO PRESENTADO O ALGO ASI. ADEMAS, SI YA EXISTE OTRO PARA EL 2023, SE DEBERIA HACER UNA COMPLEMENTARIA
+		// Y COPIAR TODOS LOS DATOS DEL MODELO ANTERIOR DEL 2023
 		Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
 		if (old != null && old.getId() != null) { 
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2022");
@@ -1150,7 +1153,7 @@ public class Mod2002023DAO  {
 	}
 
 	private static void addCharacters(Mod2002023MVELContext ctx, Mod2002023 mod200) {
-		// FALTA - Caracteres de la declaración, solo están en Mod2002023Key
+		// Caracteres de la declaración, solo están en Mod2002023Key
 		for (Mod2002023Key[] block : Mod2002023Character.CHARACTERS_KEYS)
 		  for (Mod2002023Key key : block) {
 			DoubleVariableEx dv = mod200.getKeysMap().get(key);

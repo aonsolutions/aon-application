@@ -1,30 +1,32 @@
-// ECPN: ESTADO DE INGRESOS Y GASTOS RECONOCIDOS
+// CUENTA DE PERDIDAS Y GANANCIAS
 package com.esferalia.aon.gwt.mod200.client.mod200.e2023;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Model2002023.Model2002023PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.EcpnType;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
 
 public class Page06 extends PageAbs {
-	
+
 	public Page06( Model2002023PageCallback callback ) {
 		super(callback);
 	}
 	
 	@Override
 	protected void initializeTable() {
-		addTable(AON.MSG.patrimonioIngresos() + " (*)", Mod2002023Constants.ECPN_INCOME_KEYS);
-		paintFooterNote(basePanel,"(*) El estado de cambios en el patrimonio neto ser\u00E1 de cumplimentaci\u00F3n voluntaria si se utiliza el modelo abreviado o PYMES del PGC.");
+		addTable(AON.MSG.pyg(), Mod2002023Constants.PYG_KEYS);
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
-		if (callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL) {
-			if (key == Mod2002023Key.T0336 || key == Mod2002023Key.T0346) {
+		if (callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL) {
+			if (key == Mod2002023Key.PG255
+			  ||key == Mod2002023Key.PG279
+			  ||key == Mod2002023Key.PG309
+			 ) {
 				return true;
 			}
 		}
@@ -34,8 +36,6 @@ public class Page06 extends PageAbs {
 	@Override
 	protected boolean isAvailable() {
 		return super.isAvailable()
-  		  && ( (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0075)) ||
-  			   (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0076)) ||
-  			   (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0077)) );  				  
+  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002023Key.C0026));		
 	}
 }

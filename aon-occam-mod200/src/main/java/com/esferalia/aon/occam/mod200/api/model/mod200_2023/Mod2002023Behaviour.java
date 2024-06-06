@@ -543,13 +543,13 @@ public class Mod2002023Behaviour {
 		addBreakdown(Mod2002023RIC_1Key.values()); // No lleva fila de totales
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
-		addBreakdown(Mod2002023LQ554Key.values(), new Mod2002023Key[] {Mod2002023Key.CP2837, Mod2002023Key.CP2838}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
+		addBreakdown(Mod2002023LQ554Key.values(), new Mod2002023Key[] {Mod2002023Key.CP2837, Mod2002023Key.CP553}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
 		
 		// REGIMEN DE COOPERATIVAS - Desglose Casilla 561 - Detalle de compensación de cuotas
 		addBreakdown(Mod2002023LQ561Key.values(), Mod2002023Key.LQ561);
 		
-		// FALTA - Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)		
-//		addBreakdown(Mod2002023RIB_1Key.values()); // No lleva fila de totales
+		// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)		
+		addBreakdown(Mod2002023RIIB_1Key.values()); // No lleva fila de totales
 		
 	}
 	

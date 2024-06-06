@@ -15,8 +15,6 @@ public enum Mod2002023LQ554Key implements Serializable, IMod200KeysProvider {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
  	
-	// FALTA - MODIFICAN TODAS LAS CASILLAS, FALTARIA PONER EL TOTAL, NO SE SI SE PODRA PONER CON LAS CASILLAS DE LA 553 Y 554 O HABRA QUE PONER OTRA NUMERACION	
-	
 	 C01(new Mod2002023Key[]{Mod2002023Key.CP2827,Mod2002023Key.CP2828},"1. Ingresos computables")
 	,C02(new Mod2002023Key[]{Mod2002023Key.CP2829,Mod2002023Key.CP2830},"2. Gastos espec\u00EDficos")
 	,C03(new Mod2002023Key[]{Mod2002023Key.CP2832,Mod2002023Key.CP2833},"3. Gastos generales imputados")
@@ -29,7 +27,7 @@ public enum Mod2002023LQ554Key implements Serializable, IMod200KeysProvider {
 	,C10(new Mod2002023Key[]{Mod2002023Key.CP2846,Mod2002023Key.CP2847},"10. Reserva para inversiones en Canarias (Ley 19/1994)")
 	,C11(new Mod2002023Key[]{Mod2002023Key.CP0012,Mod2002023Key.CP0016},"11. Reserva para inversiones en Illes Balears")
 	,C12(new Mod2002023Key[]{Mod2002023Key.CP2848,Mod2002023Key.CP2849},"12. Factor de agotamiento")
-	,C13(new Mod2002023Key[]{Mod2002023Key.LQ553 ,Mod2002023Key.LQ554 },"13. Base imponible (6 + 7 - 8 - 9 + 10 + 11 + 12)")	
+	,C13(new Mod2002023Key[]{Mod2002023Key.CP553 ,Mod2002023Key.CP554 },"13. Base imponible (6 + 7 - 8 - 9 + 10 + 11 + 12)")	
 	;
 	 
     private String description;
