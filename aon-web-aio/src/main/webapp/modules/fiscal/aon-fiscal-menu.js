@@ -34,32 +34,32 @@ export class AonFiscalMenu extends AonSuiteMenu {
         };
         this.selectOptions= [{
             title: "Modelo 303",
-            action : () => alert("description")
+            action : () => GWT.load(GWT.MODEL_303)
         },{
             title: "Modelo 111",
-            action : () => alert("description")
+            action : () => GWT.load(GWT.MODEL_111)
         },{
             title: "Modelo 115",
-            action : () => alert("description")
+            action : () => GWT.load(GWT.MODEL_115)
         }];
         this.options = [{
             title: 'IVA AEAT',
             options: [ {
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_303)
             },{
                 description: "Modelo 349 ",
                 title: "Declaración recapitulativas de operaciones intracomunitarias",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_349)
             },{
                 description: "Modelo 390 ",
                 title: "Declaración resumen anual IVA",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_390)
             },{
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_347)
             },{
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
@@ -70,31 +70,31 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_111)
             },{
                 description: "Modelo 115 ",
                 title: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_115)
             },{
                 description: "Modelo 123 ",
                 title: "Retención e ingreso a cuenta sobre determinadas rendimientos del capital mobiliario o determinadas rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_123)
             },{
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_180)
             },{
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régimen de atribución de rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_184)
             },{
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_190)
             },{
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientosdel capital mobiliario, IS e IRNR sobre determinadas rentas",
-                action: () => alert("description")
+                action: () =>  GWT.load(GWT.MODEL_193)
             }]
         },{
             title: 'AEAT',
@@ -102,12 +102,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
                 title: "IRPF. Pago fraccionado. Empresarios y profesionales en estimación directa",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_130)
             },{
                 description: "Modelo 131 ",
                 description2: " |Profes./Empresar.",
                 title: "Pago fraccionado. Empresarios y profesionales en estimación objetiva",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_131)
             },{
                 description: "Modelo 200 ",
                 description2: " |Sociedades",
@@ -117,7 +117,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 202 ",
                 description2: " |Sociedades",
                 title: "Impuesto Sociedades. Pago fraccionado",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_202)
             }]
         },{
             title: 'IVA Forales',
@@ -128,13 +128,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 action: () => alert("description")
             },{
                 description: "Modelo 349 ",
-                description2: " |AEAT",
                 tite: "Declaración recapitulativa de operaciones intracomunitarias",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_349)
             },{
                 description: "Modelo 390 ",
                 title: "Declaración resume anual IVA",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_390)
             },{
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",
@@ -149,38 +148,38 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_111)
             },{
                 description: "Modelo 115 ",
                 tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanes",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_115)
             },{
                 description: "Modelo 123 ",
                 title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_123)
             },{
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_180)
             },{
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régimen de atribución de rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_184)
             },{
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_190)
             },{
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_193)
             }]
         },{
             title: 'LROE Bizkaia',
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_140)
             },{
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
@@ -191,15 +190,15 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_303)
             },{
                 description: "Modelo 349 ",
                 tite: "Declaración recapitulativa de operaciones intracomunitarias",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_349)
             },{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_111)
             },{
                 description: "Modelo 357 ",
                 title: "Declaración anual operaciones con terceras personas",
@@ -226,23 +225,19 @@ export class AonFiscalMenu extends AonSuiteMenu {
             },{
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimiento procedentes de arrendamiento de inmuebles Urbanos",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_180)
             },{
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régmien de atribución de rentas",
-                action: () => alert("description")
-            },{
-                description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régmien de atribución de rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_184)
             },{
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_190)
             },{
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_193)
             }]
         }];
     }
