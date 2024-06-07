@@ -369,6 +369,8 @@ export class AonHeader extends AonElement {
 			LS.removeDomain();
 
 			clearDurum();
+			let header = this.getElement("aonHeaderWeb");
+			header.style.backgroundColor = "#f0f0f0";
 			this.rootPanel(new AonParent());
 		});
 		if(this.activeTimecontrol) {
