@@ -718,31 +718,31 @@ public class Mod2002023DAO  {
 		}
 	}
 	
-	public static Mod2002023 getByYear(AONContext ctx, int year) {
-		return getByYear(ctx, year, true);
-	}
-	
-	public static Mod2002023 getByYear(AONContext ctx, int year, boolean initialize) {
-		Result<FsModel200Record> result = ctx.getDslContext()
-				.selectFrom(FS_MODEL200)
-				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
-				.and(FS_MODEL200.YEAR.equal(year))
-				.fetch();
-		FsModel200Record rec = null;
-		Mod2002023 mod200 = null; 
-		if (result != null && result.isNotEmpty()) {
-			rec = result.get(0);
-			mod200 = populateMod200(ctx,rec);
-		}
-		if (initialize) {
-			if (mod200 == null) {
-				createNewMod200(ctx, year);
-			} else {
-				initializeActiveMap(mod200);
-			}
-		}
-		return mod200;
-	}
+//	public static Mod2002023 getByYear(AONContext ctx, int year) {
+//		return getByYear(ctx, year, true);
+//	}
+//	
+//	public static Mod2002023 getByYear(AONContext ctx, int year, boolean initialize) {
+//		Result<FsModel200Record> result = ctx.getDslContext()
+//				.selectFrom(FS_MODEL200)
+//				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
+//				.and(FS_MODEL200.YEAR.equal(year))
+//				.fetch();
+//		FsModel200Record rec = null;
+//		Mod2002023 mod200 = null; 
+//		if (result != null && result.isNotEmpty()) {
+//			rec = result.get(0);
+//			mod200 = populateMod200(ctx,rec);
+//		}
+//		if (initialize) {
+//			if (mod200 == null) {
+//				createNewMod200(ctx, year);
+//			} else {
+//				initializeActiveMap(mod200);
+//			}
+//		}
+//		return mod200;
+//	}
 
 	private static Mod2002023 getMod200(FsModel200Record record) {
 		
@@ -895,7 +895,8 @@ public class Mod2002023DAO  {
 		// FALTA - CUANDO SE INICIALIZA EL MODELO Y SE LEEN LOS DATOS DEL EJERCICIO ANTERIOR, ESTA COGIENDO EL PRIMERO QUE ENCUENTRA, Y 
 		// REALMENTE DEBERIA COGER EL ULTIMO PRESENTADO O ALGO ASI. ADEMAS, SI YA EXISTE OTRO PARA EL 2023, SE DEBERIA HACER UNA COMPLEMENTARIA
 		// Y COPIAR TODOS LOS DATOS DEL MODELO ANTERIOR DEL 2023
-		Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
+		//Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
+		Mod2002022 old = Mod2002022DAO.getLastModel2022(ctx);
 		if (old != null && old.getId() != null) { 
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2022");
 			mod200.setEnterprise(old.getEnterprise());
@@ -934,7 +935,7 @@ public class Mod2002023DAO  {
 		ctx.log().info("------ [END OK] INITIALIZE NEW MOD 200");
 		return mod200;
 	}
-	
+
 	public static Mod2002023 initializeMod200(AONContext ctx, Mod2002023 mod200) {
 		try {
 			ctx.log().info("------ [START] INITIALIZE MOD 200");

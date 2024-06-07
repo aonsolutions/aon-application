@@ -16,7 +16,7 @@ public class Mod2002023Activation {
 	private static final String ECPN_NOR_OR_ABR = "C0075 || C0076";
 	private static final String ECPN_PYM = "C0077";
 	
-	public static EnumMap<Mod2002023Key,String> ACTIVE_EXPRESSION_MAP = new EnumMap<Mod2002023Key,String>(Mod2002023Key.class);
+	public static final EnumMap<Mod2002023Key,String> ACTIVE_EXPRESSION_MAP = new EnumMap<Mod2002023Key,String>(Mod2002023Key.class);
 
 	static { // BALANCE: ACTIVO		
 		ACTIVE_EXPRESSION_MAP.put(Mod2002023Key.BA103,BAL_NOR);

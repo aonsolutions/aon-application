@@ -397,7 +397,7 @@ public class Mod2002023Compute {
 	static { 
 		
 		// Entidades que forman parte de grupos de consolidación fiscal
-		// FALTA - EN EL PADIS ESTA BORRADO LA CUMPLIMENTACION AUTOMATICA DE ESTA CASILLA
+		// EN EL DOC PADIS ESTA BORRADO LA CUMPLIMENTACION AUTOMATICA DE ESTA CASILLA
 		// COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ1029,"(C0009 || C0010)?(LQ501+LQ1230-LQ1231+I0417-D0418):(0.0)");
 		
 		// Base imponible
@@ -416,8 +416,7 @@ public class Mod2002023Compute {
 		addBreakdown(Mod2002023LQ243Key.values(), Mod2002023Key.LQ1886, true, Mod2002023Key.LQ168 , Mod2002023Key.LQ1010 );
 		addBreakdown(Mod2002023LQ243Key.values(), Mod2002023Key.LQ1889, true, Mod2002023Key.LQ168 , Mod2002023Key.LQ1010 );
 		addBreakdown(Mod2002023LQ243Key.values(), Mod2002023Key.LQ216 , true, Mod2002023Key.LQ1886, Mod2002023Key.LQ1889);
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ267,"LQ266");
-		//COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ344,"LQ290-LQ2465");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ267,"LQ266");		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ344,"LQ290");
 		
 		// Base imponible		
@@ -523,11 +522,6 @@ public class Mod2002023Compute {
 		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832		
 		addBreakdown(Mod2002023BN588Key.values(), Mod2002023Key.BN635, true, Mod2002023Key.BN1626, Mod2002023Key.BN1683); 
 		addBreakdown(Mod2002023BN588Key.values(), Mod2002023Key.BN588, true, null, Mod2002023Key.BN1683);
-		
-		// FALTA - PAGINA 165 Y SIGUIENTES DEL DOCUMENTO PADIS, HAY CONTROLES CON MENSAJES DE ADVERTENCIA DE LAS CASILLAS 1039 Y 2314 CON LAS NUEVAS 
-		// CASILLAS DE NUMERO DE EPISODIOS. VER SI ES NECESARIO CONTROLARLO AQUI O LA VALIDACION O PRESENTACION GENERA MENSAJES DE ERROR
-		// TAMBIEN EN LAS PAGINAS 191 Y SIGUIENTES
-		// Y EN PAGINAS 368 Y SIGUIENTES ESTAN LAS ESPECIFICACIONES DE ESAS CASILLAS NUEVAS DE NUMERO DE PRODUCCIONES, SERIES Y NUMERO DE EPISODIOS
 		
 		// Casilla 1039: Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS)
 		addBreakdown(Mod2002023BN1039Key.values(), Mod2002023Key.BN1039);
@@ -984,15 +978,5 @@ public class Mod2002023Compute {
 			firstRow = false;
 		}		
 	}	
-	
-//	public static void main(String[] args) {
-//				
-//		for (int i = 0; i < COMPUTE_EXPRESSION_MAP.size(); i++) {
-//			System.out.println(
-//					COMPUTE_EXPRESSION_MAP.keySet().toArray()[i] + " -> " +
-//					COMPUTE_EXPRESSION_MAP.values().toArray()[i]   );			
-//		}
-//		
-//    }
 
 }

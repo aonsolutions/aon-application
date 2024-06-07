@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 public class Mod2002023Behaviour {
 	
-	public static EnumMap<Mod2002023Key,Boolean[]> BEHAVIOUR_KEYS_MAP = new EnumMap<Mod2002023Key,Boolean[]>(Mod2002023Key.class);
+	public static final EnumMap<Mod2002023Key,Boolean[]> BEHAVIOUR_KEYS_MAP = new EnumMap<Mod2002023Key,Boolean[]>(Mod2002023Key.class);
 	// Elemento 0 ---> isTitle?    : Hace que aparezca en negrita y la casilla desplazada a la derecha
 	// Elemento 1 ---> isDisabled? : Hace que la casilla esté deshabilitada
 

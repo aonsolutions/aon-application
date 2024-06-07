@@ -527,15 +527,25 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 	// Tipo de Gravamen (Casilla 558)
 	public double computeLQ558() throws AonCoreException {
 		
+		// Siempre que se marque la clave 00030, 00047, 00009, 00010 ó 00049 de caracteres, 
+		// aunque esté combinada con otros caracteres, el tipo de gravamen quedará abierto (en blanco), 
+		// sin validación, para su cumplimentación por el contribuyente
 		if ( isChecked(C0030) || 
 			 isChecked(C0047) ||
-			 isChecked(C0078) || 
-			 isChecked(C0081) ||
-			 isChecked(C0082) ||
-			 isChecked(C0056) ||
-			 isChecked(C0069) ||
-			 isChecked(C0084) )
+			 isChecked(C0009) || 
+			 isChecked(C0010) ||				 
+			 isChecked(C0049) )
 			return roundKey(LQ558);
+		
+//		if ( isChecked(C0030) || 
+//			 isChecked(C0047) ||
+//			 isChecked(C0078) || 
+//			 isChecked(C0081) ||
+//			 isChecked(C0082) ||
+//			 isChecked(C0056) ||
+//			 isChecked(C0069) ||
+//			 isChecked(C0084) )
+//			return roundKey(LQ558);
 		
 		if ( isChecked(C0088) ) return 23.0;
 		if ( isChecked(C0083) ) return 15.0;
@@ -561,8 +571,8 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
 		
-		if ( isChecked(C0009) ) return roundKey(LQ558);
-		if ( isChecked(C0010) ) return roundKey(LQ558);
+//		if ( isChecked(C0009) ) return roundKey(LQ558);
+//		if ( isChecked(C0010) ) return roundKey(LQ558);
 		
 		if ( isChecked(C0017) ) return roundKey(LQ558);
 		if ( isChecked(C0018) ) return roundKey(LQ558);
@@ -582,7 +592,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if ( isChecked(C0038) ) return 25.0;
 		
 		if ( isChecked(C0048) ) return 0.0;
-		if ( isChecked(C0049) ) return roundKey(LQ558);	
+//		if ( isChecked(C0049) ) return roundKey(LQ558);	
 		if ( isChecked(C0057) && !isChecked(C0006) && isChecked(C0034)) return 30.0;
 		if ( isChecked(C0057) ) return 25.0;
 		if ( isChecked(C0058) ) return 25.0;
@@ -992,12 +1002,16 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 	}
 	
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
+	// La clave 01033 (aumentos) sólo podrá tener contenido cuando la base imponible (clave 00552) sea negativa 
+	// (excepto en los supuestos de extinción de entidad (clave 00072) y de último período permitido para la adición) 
+	// y su importe máximo será el importe de dicha base negativa, excepto en los supuestos en que se cumplimente 
+	// la clave 01962 en cuyo caso podrá exceder por el importe consignado en esta casilla.
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002023Key.LQ552);
 		double lq1962 = getValue(Mod2002023Key.LQ1962);
 		
-		if (lq552>=0) {
+		if (lq552>=0 && !isChecked(C0072)) {
 			// Base imponible [552] positiva o cero, [col2] = 0 
 			return 0.0;
 		} else {
@@ -1093,6 +1107,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			double c00012 = roundKey(Mod2002023Key.CP0012);
 			double c00016 = roundKey(Mod2002023Key.CP0016);
 			
+			// FALTA - LAS ESPECIFICACIONES DE LA PAGINA 182 DEL DOC PADIS NO COINCIDEN CON LO QUE PONE EN LAS PAGINAS DE MAS ARRIBA DEL DOC PADIS
+			// POR AHORA PONGO LO QUE PONE EN LA PAGINAS DE MAS ARRIBA (CON RESPECTO AL CALCULO DE M1)
+			
 			double m1 = (c01330-c00778+c00813) * 0.15;
 
 			if (isChecked(C0071))
@@ -1100,8 +1117,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 
 			if (isChecked(C0024) || isChecked(C0034))
 				m1 = (c01330-c00778+c00813) * 0.18;			
-			
-			// FALTA - ADEMAS ESTAS ESPECIFICACIONES EN LA PAGINA 181 DEL DOC PADIS NO COINCIDEN CON LO QUE PONE EN LAS PAGINAS DE MAS ARRIBA DEL DOC PADIS
 			
 			if (isChecked(C0019))
 			    m1 = (c00562 - (c00558 / 100 * (c00012 + c00016))) * 0.60;			         

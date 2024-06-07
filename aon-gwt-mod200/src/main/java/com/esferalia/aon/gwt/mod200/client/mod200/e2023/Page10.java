@@ -185,7 +185,8 @@ public class Page10 extends PageAbs {
     			if (key == Mod2002023Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002023Key.LQ547, Mod2002023LQ547Key.values(), HEADERS_4, FOOTER_547);    				
 				} 
-    			if (key == Mod2002023Key.LQ1034 && callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0006)) {
+    			//if (key == Mod2002023Key.LQ1034 && callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0006)) {
+    			if (key == Mod2002023Key.LQ1034) {
 					row = paintKeyBreakdownLinkLQ1033(table, row);
 				}
 			}
@@ -281,19 +282,25 @@ public class Page10 extends PageAbs {
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
+		
 		if ((key == Mod2002023Key.LQ1032 || key == Mod2002023Key.LQ1887 || key == Mod2002023Key.LQ1890) && 
 			(callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0010))) {
 			return false;
 		}
+		
 		if (key == Mod2002023Key.LQ562 
 				&& (callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0030) 
 				|| callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0047))) {
 			return false;
 		}
-		// Si marca la casilla 00022 combinada con la clave 00006, 00013, 00085, 00063, 00071, 00083 y/ó 00088 de caracteres, la casilla 00562 quedará abierta (en blanco) para su cumplimentación manual
-		if (isChecked(C0022) && (isChecked(C0006) || isChecked(C0013) || isChecked(C0085) || isChecked(C0063) || isChecked(C0071) || isChecked(C0083) || isChecked(C0088))) {
-			return false;
-		}
+		
+		// Si marca la casilla 00022 combinada con la clave 00006, 00013, 00085, 00063, 00071, 00083 y/ó 00088 de caracteres,
+		// la casilla 00562 quedará abierta (en blanco) para su cumplimentación manual
+		if (key == Mod2002023Key.LQ562)
+			//if (isChecked(C0022) && (isChecked(C0006) || isChecked(C0013) || isChecked(C0085) || isChecked(C0063) || isChecked(C0071) || isChecked(C0083) || isChecked(C0088))) {
+			if (isChecked(C0022) && (isCheckedOr(C0006, C0013, C0085, C0063, C0071, C0083, C0088))) {
+				return false;
+			}
 		
 		if ((key == Mod2002023Key.LQ520 || key == Mod2002023Key.LQ521) && 
 			(callback.getMod200Object().getMod200().isChecked(Mod2002023Key.C0064))) {

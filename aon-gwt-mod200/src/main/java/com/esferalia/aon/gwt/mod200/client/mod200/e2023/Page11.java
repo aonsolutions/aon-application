@@ -21,7 +21,6 @@ public class Page11 extends PageAbs {
 			"Deducci\u00F3n pendiente",
 			"Tipo gravamen per\u00EDodo generaci\u00F3n",
 			"2023 deducci\u00F3n pendiente",
-//			AON.MSG.current() + " (**)",
 			AON.MSG.current(),
 			AON.MSG.futurePending()
 	};
@@ -29,12 +28,11 @@ public class Page11 extends PageAbs {
 	private static final String[] HEADERS_2 = new String[] {
 			null,
 			AON.MSG.generatedDeduction(),
-			AON.MSG.current() + " (**)",
+			AON.MSG.current(),
 			AON.MSG.futurePending()
 	};
 	
 	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2023.";
-	//private static final String FOOTER_2 = "(**) Para los contribuyentes cuyo importe neto de la cifra de negocios sea al menos de 20 millones de euros durante los 12 meses anteriores a la fecha en que se inicie el per\u00EDodo impositivo, el importe no podr\u00E1 exceder conjuntamente del 50% de la cuota \u00EDntegra del contribuyente (DA 15\u00AA LIS).";
 	
 	public Page11( Model2002023PageCallback callback ) {
 		super(callback);

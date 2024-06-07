@@ -164,7 +164,7 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.C0074, mod200old.getDoubleValue(Mod2002022Key.C0074))
 			
 			// IMPORTE NETO DE LA CIFRA DE NEGOCIOS
-			// FALTA - Este año solo hay valores 0, 1 y 2, luego si tenía un 3 se le pone un 2, excepto cooperativas (caracteres 17, 18, 19) que siguen teniendo todos los valores
+			// Este año solo hay valores 0, 1 y 2, luego si tenía un 3 se le pone un 2, excepto cooperativas (caracteres 17, 18, 19) que siguen teniendo todos los valores
 			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002023Key.VOLOPE, 
 					mod200old.getDoubleValue(Mod2002022Key.VOLOPE) == 3.0 && mod200old.getDoubleValue(Mod2002022Key.C0017) == 0.0 && mod200old.getDoubleValue(Mod2002022Key.C0018) == 0.0 && mod200old.getDoubleValue(Mod2002022Key.C0019) == 0.0 ? 2.0 : mod200old.getDoubleValue(Mod2002022Key.VOLOPE) )
 			
@@ -766,10 +766,6 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.BN1086, AonMathUtils.round(mod200old.getDoubleValue(Mod2002022Key.BN2479)/0.05)+
        			   																	   AonMathUtils.round(mod200old.getDoubleValue(Mod2002022Key.BN1384)/0.05)) // 2022
 			
-			// FALTA - APARTADO DEDUCCIONES I+D+i EXCLUIDAS DEL LIMITE (DESGLOSE 00082) NO ESTA PUESTO EN AÑOS ANTERIORES
-			// CREO QUE ES PORQUE NO HAY COLUMNA DE PENDIENTE, IGUAL SE PODRIA SACAR POR LA DIFERENCIA DE REDUCIDA - APLICADO - ABONADO
-			// TENIENDO EN CUENTA QUE LA REDUCIDA ES UN 0.8 DE LA PENDIENTE ??
-			
 		})
 
 		,PAG20 ( new IPropertyFiller[] {
@@ -817,8 +813,6 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ1109, mod200old.getDoubleValue(Mod2002022Key.LQ1111)) // 2021
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LQ1406, mod200old.getDoubleValue(Mod2002022Key.LQ1407)+mod200old.getDoubleValue(Mod2002022Key.LQ1731))  // 2022
 			
-			// FALTA - DOTACION DE LA RESERVA NO LO HE COPIADO NINGUN AÑO VER SI ESTE AÑO SE PUEDE COPIAR ALGO DEL AÑO PASADO
-			
 		})
 		
 		,PAG20TER ( new IPropertyFiller[] {
@@ -828,7 +822,6 @@ public class Mod2002023Import2022 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LM1529, mod200old.getDoubleValue(Mod2002022Key.LM1534)) // 2008 a 2015
 				
 			// Activos por impuesto diferido (AID). Art. 130 LIS
-			// FALTA - ESTO NO SE SI ESTA BIEN, PUES DE PENDIENTE HAY 3 COLUMNAS QUE TAMBIEN ESTAN CON LA MISMA DESCRIPCION, PERO LO ESTOY LLEVANDO A LA PRIMERA COLUMNA QUE TIENE OTRA DESCRIPCION
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LM1542, mod200old.getDoubleValue(Mod2002022Key.LM1549)+mod200old.getDoubleValue(Mod2002022Key.LM1550)+mod200old.getDoubleValue(Mod2002022Key.LM1551)) // 2016
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LM1552, mod200old.getDoubleValue(Mod2002022Key.LM1558)+mod200old.getDoubleValue(Mod2002022Key.LM1559)+mod200old.getDoubleValue(Mod2002022Key.LM1560)) // 2017
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002023Key.LM1754, mod200old.getDoubleValue(Mod2002022Key.LM1760)+mod200old.getDoubleValue(Mod2002022Key.LM1761)+mod200old.getDoubleValue(Mod2002022Key.LM1762)) // 2018
@@ -1131,21 +1124,72 @@ public class Mod2002023Import2022 {
 			throw new AonCoreException(e);
 		}
 	}
-
-//	public static Mod2002023 import2022(Mod2002022 mod200old) {
-//		
-//		try {
-//			// Creamos el objeto Mod200 del ejercicio actual, donde importaremos los datos del ejercicio anterior
-//			Mod2002023 mod200new = new Mod2002023();
-//			import2022(mod200new, mod200old);
-//			return mod200new;
-//		} catch (Exception e) {
-//			throw new AonCoreException(e);
-//		}
-//		
-//	}
 	
-	// ---- PRUEBAS ---- 
+// -------------------- PRUEBAS --------------------
+	
+	public static void main(String[] argv) {
+		
+		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
+		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
+		try {			
+			Mod2002022 mod200old = new Mod2002022();
+
+			// PRUEBA - Inicializamos todas las claves con sus numeros
+
+			mod200old.setBalanceType(2); // PYMES
+			mod200old.setPygType(2); // PYMES
+			mod200old.setEcpnType(3); // No consta
+
+			for (Mod2002022Key key : Mod2002022Key.values()) {
+				try {
+					setDoubleValue2022(mod200old, key, Double.parseDouble(key.name().substring(2)));
+				} catch (NumberFormatException e) {
+					// do nothing
+				}
+			}
+			for (Mod2002022KeyDC key : Mod2002022KeyDC.values()) {
+				try {
+					setDoubleValue2022(mod200old, key, Double.parseDouble(key.name().substring(2)));
+				} catch (NumberFormatException e) {
+					// do nothing
+				}
+			}
+
+			// Prueba base imponible negativa (casilla 552)
+			setDoubleValue2022(mod200old, Mod2002022Key.LQ552, -552);
+
+			// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560)
+			setDoubleValue2022(mod200old, Mod2002022Key.C0017, 0);
+			setDoubleValue2022(mod200old, Mod2002022Key.C0018, 0);
+			setDoubleValue2022(mod200old, Mod2002022Key.C0019, 0);
+			setDoubleValue2022(mod200old, Mod2002022Key.LQ560, 0);
+
+			// FIN PRUEBA
+
+			Mod2002023 mod200new = import2022(mod200old);
+			toString(mod200new);
+				
+		}
+        catch (Exception e) {
+		    e.printStackTrace();
+        }
+		finally {
+			System.exit(0);
+		}
+	}
+	
+	private static Mod2002023 import2022(Mod2002022 mod200old) {
+		
+		try {
+			// Creamos el objeto Mod200 del ejercicio actual, donde importaremos los datos del ejercicio anterior
+			Mod2002023 mod200new = new Mod2002023();
+			import2022(mod200new, mod200old);
+			return mod200new;
+		} catch (Exception e) {
+			throw new AonCoreException(e);
+		}
+		
+	}
 	
 	private static String formatDate(Date d) {
 		if (d==null)
@@ -1296,56 +1340,6 @@ public class Mod2002023Import2022 {
 		
 	}
 	
-//	public static void main(String[] argv) {
-//		
-//		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
-//		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
-//		try {			
-//			Mod2002022 mod200old = new Mod2002022();
-//
-//			// PRUEBA - Inicializamos todas las claves con sus numeros
-//
-//			mod200old.setBalanceType(2); // PYMES
-//			mod200old.setPygType(2); // PYMES
-//			mod200old.setEcpnType(3); // No consta
-//
-//			for (Mod2002022Key key : Mod2002022Key.values()) {
-//				try {
-//					setDoubleValue2022(mod200old, key, Double.parseDouble(key.name().substring(2)));
-//				} catch (NumberFormatException e) {
-//					// nothing
-//				}
-//			}
-//			for (Mod2002022KeyDC key : Mod2002022KeyDC.values()) {
-//				try {
-//					setDoubleValue2022(mod200old, key, Double.parseDouble(key.name().substring(2)));
-//				} catch (NumberFormatException e) {
-//					//// nothing
-//				}
-//			}
-//
-//			// Prueba base imponible negativa (casilla 552)
-//			setDoubleValue2022(mod200old, Mod2002022Key.LQ552, -552);
-//
-//			// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560)
-//			setDoubleValue2022(mod200old, Mod2002022Key.C0017, 0);
-//			setDoubleValue2022(mod200old, Mod2002022Key.C0018, 0);
-//			setDoubleValue2022(mod200old, Mod2002022Key.C0019, 0);
-//			setDoubleValue2022(mod200old, Mod2002022Key.LQ560, 0);
-//
-//			// FIN PRUEBA
-//
-//			Mod2002023 mod200new = import2022(mod200old);
-//			toString(mod200new);
-//				
-//		}
-//        catch (Exception e) {
-//		    e.printStackTrace();
-//        }
-//		finally {
-//			System.exit(0);
-//		}
-//	}
 	
 }
 

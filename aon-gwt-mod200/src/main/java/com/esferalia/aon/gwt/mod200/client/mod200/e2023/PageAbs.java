@@ -560,5 +560,13 @@ public abstract class PageAbs extends ResizeComposite {
 		return callback.getMod200Object().getMod200().isChecked(key);
 	}
 	
+	protected boolean isCheckedOr(Mod2002023Key... keys) {
+		boolean result = false;
+		for (Mod2002023Key key : keys) {
+			result = result || callback.getMod200Object().getMod200().isChecked(key);
+		}
+		return result;
+	}
+	
 }
 
