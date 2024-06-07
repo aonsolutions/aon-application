@@ -481,10 +481,10 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.MOUSELEAVE, () => {
 			hoverDiv.style.display = 'none';
 		});
-
+		//alert(app.app)
 		a.appendChild(hoverDiv);
 		let div = this.createElement(TAG.DIV);
-		div.id = 'aaaaaaaaaaaaa' + app.app;
+		div.id = app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
