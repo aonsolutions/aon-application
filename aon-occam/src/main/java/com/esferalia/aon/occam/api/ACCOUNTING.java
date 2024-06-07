@@ -464,9 +464,8 @@ public class ACCOUNTING {
 	}
 
 
-	public static AccountingInvoice rectifyInvoice(String domainName, int domain, String userLogin, Integer invoiceId,
-			InvoiceRectificationData data) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+	public static AccountingInvoice rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().rectifyInvoice(ctx, invoiceId, data);
 		}
 	}
