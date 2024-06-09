@@ -22,8 +22,6 @@ export const APPLICATIONS = {
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
 
-
-
 export const AON_APPS = [ 
 	APP.AON_SOLUTIONS, 
 	APP.BIDOQ, 

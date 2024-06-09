@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -18,7 +19,6 @@ import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
@@ -52,6 +53,7 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
@@ -248,7 +250,7 @@ public class StatDAO {
 	}
 
 	
-	public static String getInvoicesReport(AONContext ctx, StatParams params) {
+	public static String getInvoicesReport(AONContext ctx, StatParams params, IDAOCallback callback) {
 		final Integer[] scopes = SecurityDAO.getUserScopes(ctx);
 		final LinkedList<Byte> types = new LinkedList<Byte>();
 		final LinkedList<Integer> categories = new LinkedList<Integer>();
@@ -298,45 +300,46 @@ public class StatDAO {
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
 		}
-		
-		return InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
-				"(M\u00E1x. 1000 Facturas)",
-				InvoiceDAO.getInvoiceDetails(ctx, 
-						p -> p.getDomainProperty().eq(ctx.getDomainId())
-							.and(scopes==null?null:p.getScopeProperty().in(scopes))							
-							.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
-							.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
-							.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
-							.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
-							.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
-							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
-							.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
-							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
-							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
-							.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
+		Stream<InvoiceDetail> stream = InvoiceDAO.getInvoiceDetailsExtended(ctx, 
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+				.and(scopes==null?null:p.getScopeProperty().in(scopes))							
+				.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
+				.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
+				.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
+				.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
+				.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
+				.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
+				.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
+				.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
+				.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
+				.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
+			,callback)
+			.map( d -> d.getDetail() )
+			// Filtro de product TAGS
+			.filter( det ->  tags.isEmpty() 
+					|| det.getItem() == null 
+					|| det.getItem().getProduct() == null 
+					|| ctx.getDslContext().fetchExists( ctx.getDslContext()
+						.select()
+						.from(PRODUCT_TAG)
+						.where(PRODUCT_TAG.PRODUCT.eq(det.getItem().getProduct().getId()))
+						.and(PRODUCT_TAG.TAG.in(tags)))
 					)
-					// Filtro de product TAGS
-					.filter( det ->  tags.isEmpty() 
-							|| det.getItem() == null 
-							|| det.getItem().getProduct() == null 
-							|| ctx.getDslContext().fetchExists( ctx.getDslContext()
-								.select()
-								.from(PRODUCT_TAG)
-								.where(PRODUCT_TAG.PRODUCT.eq(det.getItem().getProduct().getId()))
-								.and(PRODUCT_TAG.TAG.in(tags)))
-							)
-					// Filtro de Registry Segments
-					.filter( det ->  segments.isEmpty() 
-							|| ctx.getDslContext().fetchExists( ctx.getDslContext()
-								.select()
-								.from(RSEGMENT)
-								.where(RSEGMENT.REGISTRY.eq(det.getInvoice().getRegistry() )) 
-								.and(RSEGMENT.SEGMENT.in(segments)))
-							)
-					.limit(1000)	// Modificar subtitulo 
-					// ---------------
-					.collect(Collectors.toCollection(LinkedList::new))
-				);
+			// Filtro de Registry Segments
+			.filter( det ->  segments.isEmpty() 
+					|| ctx.getDslContext().fetchExists( ctx.getDslContext()
+						.select()
+						.from(RSEGMENT)
+						.where(RSEGMENT.REGISTRY.eq(det.getInvoice().getRegistry() )) 
+						.and(RSEGMENT.SEGMENT.in(segments)))
+					)
+			.limit(1000);
+		String result = InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
+				"(M\u00E1x. 1000 Facturas)",
+				stream.collect(Collectors.toCollection(LinkedList::new))
+				); 
+		stream.close();
+		return result;
 	}
 
 	

@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -270,7 +271,7 @@ public class InvoiceValidation {
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
 	 */
 	public static final BiConsumer<Invoice, AonConfigurationContext> SII = (inv,ctx) -> {
-		Invoice a = InvoiceDAO.getSiiInvoiceStream(ctx.getContext(), f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "").findFirst().orElse(new Invoice());
+		Invoice a = InvoiceSIIDAO.getSiiInvoiceStream(ctx.getContext(), f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "").findFirst().orElse(new Invoice());
 		if(a.getId() != null) {
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_SII.getMessage());
 		}

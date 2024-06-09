@@ -2,14 +2,12 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
-import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
@@ -17,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -24,15 +23,10 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
-import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -57,9 +51,9 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -92,6 +86,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -101,7 +96,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -121,7 +115,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -189,11 +182,6 @@ public class InvoiceDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_USER);}
 	}
 
-	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
-	public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_SUPPORT_ALIAS = REGISTRY.as("registry_support_seller");
-	
-	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
@@ -219,43 +207,6 @@ public class InvoiceDAO {
 			.where(whereConditions)
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE_DETAIL.LINE)
 			.fetch().stream().map(new InvoiceDetailFiller());
-	}
-	
-	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
-		Boolean intracomunitaria = "intracomunitarias".equals(sii);
-		Boolean bienes = "bienes".equals(sii);
-		Boolean cp = "cp_cobros_pagos".equals(sii) || "cp_cobros".equals(sii) || "cp_pagos".equals(sii);
-		
-		if(pending && !intracomunitaria && !cp && !bienes
-				&& !aceptada && !aceptadaErrores && !incorrecta && !anulada){
-			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);			
-			return ctx.getDslContext().select()
-				.from(INVOICE)
-				.leftOuterJoin(DATA_RESPONSE).on(INVOICE.ID.eq(DATA_RESPONSE.SOURCE_ID)
-						.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value())))
-				.where(INVOICE_PROPERTIES.getConditions(filter))
-				.and(DATA_RESPONSE.SOURCE_ID.isNull())
-				.limit(d.getPerPage())
-				.offset(d.getPerPage() * (d.getPage() -1))
-				.fetch().stream().map(new SiiInvoiceFiller(true));
-		} else {
-			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq(""); 
-			if(pending) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente"));
-			if(aceptada) c = cp ? c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Parcial")) : c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
-			if(aceptadaErrores) c = cp ? c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pagado")) : c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadoConErrores"));
-			if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
-			if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
-			String status = "status";
-			if(intracomunitaria)status =  "status_intra";
-			else if(cp) status = "status_cp";
-			else if(bienes) status = "status_bienes";
-			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
-					.join(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
-					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
-						.and(c))
-				, filter)
-				.fetch().stream().map(new SiiInvoiceFiller(false));
-		}
 	}
 	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {
@@ -376,16 +327,14 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.SOURCE_ID
 				,INVOICE_DETAIL.INVEST_ASSET
 				,INVOICE_DETAIL.PREPAYMENT
-				,SELLER_ALIAS.NAME
+				,SellerDAO.SELLER_ALIAS.ID
+				,SellerDAO.SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
 				,SCOPE.DESCRIPTION
 				,INVOICE_DETAIL.ID
 				,PRODUCT.CATEGORY
 				,ITEM.ID
-				,RSELLER.ID
-				,SELLER_ALIAS.ID
-				,SELLER_SUPPORT_ALIAS.NAME
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -401,14 +350,9 @@ public class InvoiceDAO {
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
-			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
+			.leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-			
-			.leftOuterJoin(RSELLER).on(RSELLER.REGISTRY.eq(INVOICE.REGISTRY))
-			.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
-			.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
-			
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
@@ -448,42 +392,30 @@ public class InvoiceDAO {
 			.map(new MinimalInvoiceFiller());
 	}
 
-	public static void getInvoicesFormatCSV(AONContext ctx,
-			InvoiceFilter filter, OutputStream out) {
-		getFullInvoices(ctx, filter).formatCSV(out,'\t',"");
-	}
-
-	public static void getInvoicesFormatHTML(AONContext ctx,
-			InvoiceFilter filter, OutputStream out) {
-		getFullInvoices(ctx, filter).formatHTML(out);
-	}
-
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
 		return getFullInvoices(ctx, filter)
 			.stream()
 			.map(new FullInvoiceDetailFiller());
 	}
-	
-	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
-		ArrayList<InvoiceDetail> invoiceDetails = getFullInvoices(ctx, filter)
+
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
+		return getFullInvoices(ctx, filter)
 			.stream()
+			.onClose(() -> { if (callback != null) callback.onFinish();})
 			.map(new FullInvoiceDetailFiller())
-			.collect(Collectors.toCollection(ArrayList::new));
-		
-		invoiceDetails.forEach(invoiceDetail -> invoiceDetail.setSegments(getRegistrySegments(ctx, invoiceDetail.getInvoice().getRegistry())));
-		
-		return invoiceDetails;
+			.map( d -> new InvoiceDetailExtended()
+				.setDetail(d)
+				.setSegments(
+					RegistryDAO.getRegistrySegmentNames(ctx, d.getInvoice().getRegistry())
+						.collect(Collectors.toCollection(LinkedList::new)
+					)
+				)
+				.setSellerSupport(
+					RegistryDAO.getRegistrySellerNames(ctx, d.getInvoice().getRegistry(), d.getInvoice().getIssueDate())
+						.collect(Collectors.joining(", ")))
+			);
 	}
 
-	private static LinkedList<String> getRegistrySegments(AONContext ctx, Integer id) {
-		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
-			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
-			.where(RSEGMENT.REGISTRY.eq(id))
-			.fetch(SEGMENT.NAME);
-		
-		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
@@ -593,7 +525,7 @@ public class InvoiceDAO {
 				.fetch().stream().map(new InvoiceTaxFiller());
 	}
 	
-	public static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
+	private static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().select()
 			.from(INVOICE_TAX)
 			.where(INVOICE_TAX.INVOICE_DETAIL.eq(id))
@@ -637,7 +569,7 @@ public class InvoiceDAO {
 					.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR)));
 	}
 	
-	public static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
+	static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record record) {
@@ -663,14 +595,14 @@ public class InvoiceDAO {
 	}
 	
 	
-	public static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+	static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record r) {
 			return buildInvoice(r);
 		}
 		
-		public static Invoice buildInvoice(Record r) {
+		static Invoice buildInvoice(Record r) {
 			return new Invoice()
 				.setId(r.getValue(INVOICE.ID))
 				.setDomain(r.getValue(INVOICE.DOMAIN))
@@ -722,19 +654,6 @@ public class InvoiceDAO {
 		}
 	}
 	
-	public static class SiiInvoiceFiller extends InvoiceFiller implements Function<Record,Invoice> {
-		Boolean pending;
-		public SiiInvoiceFiller(Boolean pending) {
-			this.pending = pending;
-		}
-		
-		@Override
-		public Invoice apply(Record r) {
-			return buildInvoice(r)
-				.setSiiStatus(pending ? "Pendiente" : r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));				
-		}	
-	}
-
 	private static class FullInvoiceDetailFiller extends Filler implements Function<Record,InvoiceDetail> {
 
 		@Override
@@ -775,8 +694,8 @@ public class InvoiceDAO {
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.build(r)
 					: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
-				.setSeller(checkField(r, SELLER_ALIAS.ID)
-					? new Seller().copy(RegistryFiller.build(r, SELLER_ALIAS))
+				.setSeller(checkField(r, SellerDAO.SELLER_ALIAS.ID)
+					? new Seller().copy(RegistryFiller.build(r, SellerDAO.SELLER_ALIAS))
 					: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
 				.setWorkplace( new Workplace()
 					.setId( r.getValue(INVOICE_DETAIL.WORKPLACE) )
@@ -786,9 +705,6 @@ public class InvoiceDAO {
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
-				.setSellerSupport(checkField(r, SELLER_SUPPORT_ALIAS.NAME)
-						? r.get(SELLER_SUPPORT_ALIAS.NAME)
-						: "")
 				;
 			
 		}
@@ -902,14 +818,14 @@ public class InvoiceDAO {
 
 	}
 	
-	public static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
+	static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
 
 		@Override
 		public InvoicingGroup apply(Record r) {
 			return buildInvoicingGroup(r);			
 		}
 		
-		public static InvoicingGroup buildInvoicingGroup(Record r) {
+		static InvoicingGroup buildInvoicingGroup(Record r) {
 			return new InvoicingGroup()
 					.setId(r.getValue(INVOICING_GROUP.ID))
 					.setDomain(r.getValue(INVOICING_GROUP.DOMAIN))
@@ -959,7 +875,7 @@ public class InvoiceDAO {
 				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
 	}
 	
-	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+	private static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
 		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}
 	
@@ -985,7 +901,7 @@ public class InvoiceDAO {
 				: INVOICE_TRACKING.SERIES.eq(series));
 	}
 	
-	public static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
+	private static int getTbaiNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = selectMaxInvoice(ctx, types, series)
 			.union(selectMaxInvoiceTracking(ctx, types, series))
 			.fetch()
@@ -1163,7 +1079,7 @@ public class InvoiceDAO {
 		return update(ctx, config, invoice, false);
 	}
 	
-	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
+	private static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
@@ -1254,7 +1170,7 @@ public class InvoiceDAO {
 		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
 	}
 	
-	public static void delete(AONContext ctx, AonConfiguration config, Integer id) {
+	private static void delete(AONContext ctx, AonConfiguration config, Integer id) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1446,7 +1362,7 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
+	private static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
 		Invoice inv = getInvoice(ctx, invoiceId);
 		if (inv == null) {
 			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1499,7 +1415,7 @@ public class InvoiceDAO {
 		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
 	}
 
-	public static void rectifyInvoiceDetails(Invoice inv) {
+	private static void rectifyInvoiceDetails(Invoice inv) {
 		for (InvoiceDetail detail : inv.getDetails()) {
 			detail.setId(null);
 			detail.setQuantity( AonMathUtils.round(detail.getQuantity() * (-1),3));	
@@ -1755,7 +1671,7 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
 
-	public static Condition getWhere(AccountingReportParams params) {
+	private static Condition getWhere(AccountingReportParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
 		
@@ -1895,7 +1811,7 @@ public class InvoiceDAO {
 			.map(new HeaderInvoiceFiller());
 	}
 
-	public static class HeaderInvoiceFiller  implements Function<Record,Invoice> {
+	private static class HeaderInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record record) {

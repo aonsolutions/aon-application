@@ -19,7 +19,7 @@ public interface IStats {
 
 	StatParams createStatParams(AONContext ctx);
 	StatData<String, String, Double> getStatData(AONContext ctx, StatParams params);
-	String getInvoicesReport(AONContext ctx, StatParams params);
+	String getInvoicesReport(AONContext ctx, StatParams params, IDAOCallback callback);
 	
 	
 	Stream<OldTask> getStatTaskStream(AONContext ctx, StatParams params);

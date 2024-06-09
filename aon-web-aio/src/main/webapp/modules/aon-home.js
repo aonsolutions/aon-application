@@ -87,9 +87,12 @@ export class AonHome extends AonElement {
 			aonHeader.setBackgroundColor(appColor);
 		});
 
+		
+
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
+		rootPanel.style.overflowY = "auto";
 		this.appendChild(rootPanel);
 
 		this.appendChild(aonMenu);
@@ -100,6 +103,8 @@ export class AonHome extends AonElement {
 		});
 
 		this.appendChild(rightPanel);
+
+		
 
 		let editButton = this.getElement('aonRightPanelEditButton');
 		let configButton = this.getElement('aonRightPanelConfigButton');

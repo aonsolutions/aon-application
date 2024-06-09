@@ -35,6 +35,9 @@ import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
 import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
+import { AonAcademyMenu } from './academy/aon-academy-menu.js';
+import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
+import { AonGarageMenu } from './garage/aon-garage-menu.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -201,6 +204,15 @@ export class AonNewMenu extends AonElement {
 			case MARKETING_MENU.app:
 				this.rootPanel(new AonMarketingMenu());
 				break;
+			case ACADEMY.app:
+				this.rootPanel(new AonAcademyMenu());
+				break;
+			case COMMERCE.app:
+				this.rootPanel(new AonCommerceMenu());
+				break;
+			case GARAGE.app:
+				this.rootPanel(new AonGarageMenu());
+				break;	
 			default/*Apps.HOME*/ :
 				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 				break;
@@ -368,12 +380,12 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 62px)`;
+			rightPanel.style.height = `calc(100vh - 61px)`;
 		
 		}
 		
 		rootPanel.style.marginTop = "69px";
-		rootPanel.style.height = `calc(100vh - 62px)`;
+		rootPanel.style.height = `calc(100vh - 61px)`;
 	}
 
 	hideTopNav() {
@@ -469,11 +481,10 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.MOUSELEAVE, () => {
 			hoverDiv.style.display = 'none';
 		});
-
+		//alert(app.app)
 		a.appendChild(hoverDiv);
-
 		let div = this.createElement(TAG.DIV);
-		div.id = 'aaaaaaaaaaaaa' + app.app;
+		div.id = app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
