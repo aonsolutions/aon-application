@@ -369,9 +369,37 @@ export class AonHeader extends AonElement {
 			LS.removeDomain();
 
 			clearDurum();
-			let header = this.getElement("aonHeaderWeb");
-			header.style.backgroundColor = "#f0f0f0";
 			this.rootPanel(new AonParent());
+
+			let header = this.getElement("aonHeaderWeb");
+			header.style.removeProperty("background-color");
+
+			let apps = this.getElement("aonMenuListAppImg-applications");
+			apps.style.color = "rgb(95, 99, 104)";
+
+			let headerapp = this.getElement("aonHeaderApp");
+			headerapp.style.display = "none";
+
+			let logo = this.getElement("aonLogo");
+			logo.style.display = "block";
+			logo.style.filter = "none";
+
+			let button1 = this.getElement("aonHeaderHelpButtonIconButton");
+			let button2 = this.getElement("aonHeaderConfigButtonIconButton");
+			let button3 = this.getElement("aonHeaderNotificationButtonIconButton");
+			let button4 = this.getElement("aonHeaderUserButtonIconButton");
+			let button5 = this.getElement("aonHeaderCompanyListButtonIconButton");
+			button1.style.color = "rgb(95, 99, 104)";
+			button2.style.color = "rgb(95, 99, 104)";
+			button3.style.color = "rgb(95, 99, 104)";
+			button4.style.color = "rgb(95, 99, 104)";
+			button5.style.color = "rgb(95, 99, 104)";
+
+			let enterprise = this.getElement("aonHeaderCompanyName");
+			enterprise.style.color = "rgb(95, 99, 104)";
+			let appss = this.getElement("applications");
+			appss.style.color = "rgb(95, 99, 104)";
+
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
