@@ -975,7 +975,10 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				throw new InvalidDataException(errors.getVisibleText());
 			}
 		}
-	public static void main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
+		
+		
+		
+	public static void __main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
 		try ( InputStream is = new FileInputStream("/home/ndiaz/Documentos/pvasesores.p12");
 				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
 			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/09/2023");

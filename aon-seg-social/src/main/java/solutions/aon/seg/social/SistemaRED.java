@@ -355,24 +355,23 @@ public class SistemaRED {
 
 	public static byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType, nss,
-				regimen, ccc, date);
+		return ServicioRED.getIDCPOST(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, date);
+//		return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType, nss,
+//				regimen, ccc, date);
 	}
 
 	public static byte[] getIDC(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
-					nss, regimen, ccc, date);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
+			return ServicioRED.getIDCPOST(certificateData, certificatePassword, certificateType,
+					regimen, ccc, nss, date);
+//			return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
+//					nss, regimen, ccc, date);
 	}
 
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try {
-			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
+			return ServicioRED.getIDCDatesPOST(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
 					ccc, nss);
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
@@ -385,7 +384,8 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDCDates(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
+		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
+//		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
 	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,

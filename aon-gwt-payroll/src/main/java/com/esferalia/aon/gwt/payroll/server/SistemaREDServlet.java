@@ -412,8 +412,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
                 }
             }
 
-            byte[] idc = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-                    naf, regime, ccc, startDate);
+            byte[] idc = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+                    regime, ccc, naf,startDate);
             
            Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(idc);
 

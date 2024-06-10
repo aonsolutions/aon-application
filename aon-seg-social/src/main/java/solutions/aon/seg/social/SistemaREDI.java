@@ -643,7 +643,7 @@ class SistemaREDI {
 		if(null != error) throw new IllegalArgumentException(error.getTextContent());		
 	}
 
-	public static Collection<Idc> getIDCDates(byte[] certificateData,
+	protected static Collection<Idc> getIDCDates(byte[] certificateData,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
@@ -652,7 +652,7 @@ class SistemaREDI {
 
 	// RETURNS A COLLECTION OF OBJECTS WITH THE DATE AND THE DESCRIPTION OF ALL TA
 	// CERTIFICATES
-	public static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
+	protected static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
 		Object[] arrFields= {affiliationNumber, regime, ccc};

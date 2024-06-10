@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+
 public class IdcParser {
 
 	public static void parse(File file, IdcParserListener listener) throws IOException, UnknownPDFException {
@@ -396,8 +397,8 @@ public class IdcParser {
 
 	// P. DELEG.-ACCIDENTE DE TRABAJO 04-04-2024 17-04-2024
 	protected static final Pattern TIPO_SUSPENSION_FECHAS = Pattern.compile(
-			"^(.*\\-)?(?<suspensionType>.*)\\s*(?<from>\\d{2}\\-\\d{2}\\-\\d{4})\\s*(?<to>\\d{2}\\-\\d{2}\\-\\d{4}).*$",
-			Pattern.CASE_INSENSITIVE);
+			"^(P\\.\\s*DELEG\\.\\-)?(?<suspensionType>.*?)\\s*(?<from>\\d{2}\\-\\d{2}\\-\\d{4})\\s*(?<to>\\d{2}\\-\\d{2}\\-\\d{4})?.*$",
+			Pattern.CASE_INSENSITIVE | Pattern.CANON_EQ);
 
 	// TIPO DE PECULIARIDAD PORCENTAJE/TIPO CUANTÍA/MES FRACCIÓN DE CUOTA DESDE
 	// HASTA CLV
