@@ -495,7 +495,7 @@ export class AonNewMenu extends AonElement {
 		div.style.backgroundColor = 'transparent';
 		let header = this.getElement("aonHeaderWeb");
 		if(app.app == "applications"){
-			if(!header.style.backgroundColor)
+			if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
 				div.style.color = "#5f6368";
 			else if(header.style.backgroundColor)
 				div.style.color = "white";

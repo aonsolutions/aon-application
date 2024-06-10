@@ -42,15 +42,19 @@ export class AonHome extends AonElement {
 
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
+		gradiantHeader.id = 'aonRootGradiantHeader';
 		this.appendChild(gradiantHeader);
 		let gradiantHeaderTop = this.createElement(TAG.DIV);
 		gradiantHeaderTop.className = 'aonRootGradiantHeaderTop';
+		gradiantHeaderTop.id = 'aonRootGradiantHeaderTop';
 		this.appendChild(gradiantHeaderTop);
 		let gradiantHeaderBottom = this.createElement(TAG.DIV);
 		gradiantHeaderBottom.className = 'aonRootGradiantHeaderBottom';
+		gradiantHeaderBottom.id = 'aonRootGradiantHeaderBottom';
 		this.appendChild(gradiantHeaderBottom);
 		let gradiantHeaderBlur = this.createElement(TAG.DIV);
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
+		gradiantHeaderBlur.id = 'aonRootGradiantHeaderBlur';
 		this.appendChild(gradiantHeaderBlur);
 
 		let aonHeader = new AonHeader();
