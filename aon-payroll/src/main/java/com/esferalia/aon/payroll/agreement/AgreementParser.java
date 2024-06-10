@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -125,11 +124,11 @@ public class AgreementParser {
 	            Element element = (Element) node;
 	            
 	            // From year
-				String startDateYear = element.getElementsByTagName("Aﾃ前_APLIC_DESDE").item(0).getTextContent();
+				String startDateYear = element.getElementsByTagName("AﾑO_APLIC_DESDE").item(0).getTextContent();
 				Integer startYear = Integer.parseInt(startDateYear);
 				
 				 // To year
-				String endDateYear = element.getElementsByTagName("Aﾃ前_APLIC_HASTA").item(0).getTextContent();
+				String endDateYear = element.getElementsByTagName("AﾑO_APLIC_HASTA").item(0).getTextContent();
 				Integer endYear = Integer.parseInt(endDateYear);
 				
 				Integer iteratorYear = startYear;
@@ -150,7 +149,7 @@ public class AgreementParser {
 		agreementPayments = new ArrayList<>();
 		
 		InputStream is = AgreementParser.class.getResourceAsStream("AgreementPayment.txt");
-		Scanner scaner = new Scanner(is, Charset.forName("UTF-8"));
+		Scanner scaner = new Scanner(is);
 		
 		while(scaner.hasNextLine()) {
 			String line = scaner.nextLine();
@@ -367,7 +366,7 @@ public class AgreementParser {
 					e.printStackTrace();
 				}
 				
-				String startDateYear = element.getElementsByTagName("Aﾃ前_APLIC_DESDE").item(0).getTextContent();
+				String startDateYear = element.getElementsByTagName("AﾑO_APLIC_DESDE").item(0).getTextContent();
 				Calendar startDateCal = Calendar.getInstance();
 				startDateCal.set(Calendar.YEAR, Integer.parseInt(startDateYear));
 				startDateCal.set(Calendar.MONTH, 0);
@@ -414,6 +413,7 @@ public class AgreementParser {
 	            }   
 	        }
 		}
+		System.out.println("----------");
 	}
 
 	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
@@ -479,7 +479,7 @@ public class AgreementParser {
 
 	    	            Element elementTSI = (Element) nodeTSI;
 	    	            
-	    	            String yearStr = elementTSI.getElementsByTagName("Aﾃ前").item(0).getTextContent();
+	    	            String yearStr = elementTSI.getElementsByTagName("AﾑO").item(0).getTextContent();
 	    	            Integer year = Integer.parseInt(yearStr);
 	    	            
 	    	            if(!selectedDates.contains(year))
@@ -587,8 +587,6 @@ public class AgreementParser {
 							   	    	            	try {
 							   	    	            		String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
 							   	    	            		
-//							   	    	            		System.out.println("------- LEVLE DATA ------\nName : " + name + "\nValue : " + value + "\nRealName : " + realName + "\nDate : " + startDate.getTime());
-								   	    	        		
 							   	    	            		if(null != elementTSI.getElementsByTagName("PERIODO"))
 								   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
 								   	    	            	else
@@ -847,9 +845,6 @@ public class AgreementParser {
 			// Agreement Payment
 			
 			for(String agreementConceptName : agreement.getAgreementConcepts()) {
-				
-//				System.out.println(agreementConceptName);
-				
 				AgreementPayment agreementPayment = getAgreementPayment(agreementConceptName);
 				
 				if(null != agreementPayment) {
@@ -1135,7 +1130,7 @@ public class AgreementParser {
 		name = name.replaceAll("\\*", "");
 		name = name.replaceAll("/", "_");
 		name = name.replaceAll(":", "_");
-		name = name.replaceAll("ﾂｺ", "");
+		name = name.replaceAll("ｺ", "");
 		name = name.replaceAll("%", "");
 		name = name.replaceAll("-", "_");
 		name = name.replaceAll("\\+", "");
