@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -77,7 +78,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 	private Label acumulateExpense = new Label();
 	private ListBox scope = new ListBox();
 	private ListBox workgroup = new ListBox();
-	private InlineLabel taskHolderLabel = new InlineLabel("Entidad");
+	private InlineLabel taskHolderLabel = new InlineLabel("Asignado a");
 	private ListBox taskHolder = new ListBox();
 	private Button active = new Button();
 	
@@ -243,41 +244,62 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
+		table.getElement().getStyle().setProperty("width", "30rem");
 		
 		table.setWidget(0, 0, new InlineLabel("Descripci\u00f3n"));
 		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
 		description.setValue(marketingCampaign.getDescription());
 		description.setMaxLength(64);
 		description.setStyleName(AON.CSS.aonInputText());
-		description.getElement().getStyle().setProperty("width", "-moz-available");
+		addInputStyle(description.getElement());
 
 		table.setWidget(0,1,description);
 		table.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
 		table.setWidget(1,0,new InlineLabel("Presupuesto"));
 		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		budget.setValue(marketingCampaign.getBudget());
-		table.setWidget(1,1,budget);
 		
-		table.setWidget(1,2,new InlineLabel("Presupuesto Acumulado"));
+		HTMLPanel budgetPanel = new HTMLPanel("");
+		budgetPanel.addStyleName(AON.CSS.aonItemFlex());
+		budgetPanel.addStyleName(AON.CSS.aonWidthAll());
+		budget.setValue(marketingCampaign.getBudget());
+		addInputStyle(budget.getElement());
+		budgetPanel.add(budget);
+		Label actionBudgets = new Label(" + " + AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		actionBudgets.addStyleName(AON.CSS.aonNowrap());
+		budgetPanel.add(actionBudgets);
+		table.setWidget(1,1,budgetPanel);
+		
+		table.setWidget(1,2,new InlineLabel("P. Acumulado"));
 		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
 		acumulateBudget.addStyleName(AON.CSS.aonTextRight());
-		acumulateBudget.setText(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + "\u20ac");
+		acumulateBudget.setText(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
+		acumulateBudget.addStyleName(AON.CSS.aonNowrap());
 		table.setWidget(1,3,acumulateBudget);
 		
 		table.setWidget(2,0,new InlineLabel("Gastos"));
 		table.getCellFormatter().setStyleName(2, 0, AON.CSS.aonTableLabel());
-		expense.setValue(marketingCampaign.getExpense());
-		table.setWidget(2,1,expense);
 		
-		table.setWidget(2,2,new InlineLabel("Gastos Acumulados"));
+		HTMLPanel expensePanel = new HTMLPanel("");
+		expensePanel.addStyleName(AON.CSS.aonItemFlex());
+		expensePanel.addStyleName(AON.CSS.aonWidthAll());
+		expense.setValue(marketingCampaign.getExpense());
+		addInputStyle(expense.getElement());
+		expensePanel.add(expense);
+		Label actionExpenses = new Label(" + " + AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		actionExpenses.addStyleName(AON.CSS.aonNowrap());
+		expensePanel.add(actionExpenses);
+		table.setWidget(2,1,expensePanel);
+		
+		table.setWidget(2,2,new InlineLabel("G. Acumulados"));
 		table.getCellFormatter().setStyleName(2, 2, AON.CSS.aonTableLabel());
 		acumulateExpense.addStyleName(AON.CSS.aonTextRight());
-		acumulateExpense.setText(AON.FMT.format(marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + "\u20ac");
+		acumulateExpense.setText(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
+		acumulateExpense.addStyleName(AON.CSS.aonNowrap());
 		table.setWidget(2,3,acumulateExpense);
 		
 		workgroup = new ListBox();
-		workgroup.getElement().getStyle().setProperty("width", "-moz-available");
+		addSelectStyle(workgroup.getElement());
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
 			if(workgroup.getSelectedIndex() == 0) {
@@ -296,6 +318,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		});
 		
 		taskHolder = new ListBox();
+		addSelectStyle(taskHolder.getElement());
 		taskHolder.addItem("-", "");
 		
 		getAviableWorkgroups(workgroups -> {
@@ -308,6 +331,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 					taskHolder.addItem("-", ""); 
 					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
 					setSelectedValueLB(taskHolder, null != marketingCampaign.getTaskHolder() ? marketingCampaign.getTaskHolder().getRegistry().toString() : null);
+					taskHolderLabel.setVisible(true);
 				});
 			} else {
 				taskHolder.setVisible(false);
@@ -315,7 +339,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 			}	
 		});
 		
-		table.setWidget(3,0,new InlineLabel("Grupo trabajo"));
+		table.setWidget(3,0,new InlineLabel("Grupo gesti\u00f3n"));
 		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
 		table.setWidget(3,1,workgroup);
 		
@@ -326,7 +350,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		table.setWidget(4,0,new InlineLabel(AON.MSG.scope()));
 		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
 		scope.clear();
-		scope.getElement().getStyle().setProperty("width", "-moz-available");
+		addSelectStyle(scope.getElement());
 		options.getConfiguration().getAvailableScopes().forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
 		scope.setStyleName(AON.CSS.aonInputText());
 		setSelectedValueLB(scope, null != marketingCampaign.getScope() ? marketingCampaign.getScope().getId().toString() : null);
@@ -338,6 +362,8 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		getEnableDisableButton(active, marketingCampaign.isActive());
 		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
 		table.setWidget(5,1,active);
+		
+		table.getColumnFormatter().getElement(0).getStyle().setProperty("width", "3rem");
 		
 		tablePanel.add( table );
 		
@@ -504,6 +530,18 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 	
 	private boolean isActiveToggleButton(Button button) {
 		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	}
+	
+	private void addInputStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.1rem");
+	}
+	
+	private void addSelectStyle(Element el) {
+		el.getStyle().setProperty("width", "-moz-available");
+		el.getStyle().setProperty("width", "-webkit-fill-available");
+		el.getStyle().setProperty("height", "1.2rem");
 	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {

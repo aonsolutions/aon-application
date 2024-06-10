@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.SistemaRED2AON.CalcsCallback;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
@@ -48,6 +50,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
@@ -180,52 +183,99 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(month).getTime());
 		java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(month).getTime() );
 		
-		try ( Connection connection = getConnection(req);
-			OutputStream os = resp.getOutputStream();
-			Writer writer = new OutputStreamWriter(os)){
-				AONContext aonContext = new AONContext(connection);								
-				Integer domainId = AonServletUtils.getDomainID(domainName);
-				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-				
-				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
-					
-					try {
-						Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-						
-						SistemaRED2AON.addCalcs(aonContext, 
-							userLogin, 
-							domainName, 
-							domainId, 
-							certificate.getData(), 
-							certificate.getPassword(), 
-							certificate.getType(), 
-							ccc.getRegime(), 
-							ccc.getCode(), 
-							startDate, 
-							endDate);
-						
-						SistemaRED2AON.addCalcs(aonContext, 
-							userLogin, 
-							domainName, 
-							domainId, 
-							certificate.getData(), 
-							certificate.getPassword(), 
-							certificate.getType(), 
-							ccc.getRegime(), 
-							ccc.getCode(), 
-							startDate, 
-							LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV);
+		List<CCC> cccs = Collections.emptyList();
 
-						writer.write(ccc.getCode());
-						writer.flush();
-					} catch ( Exception e ) {
+		Certificate certificate = null;
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+		
+		try ( Connection connection = getConnection(req)){
+				cccs = JooqEnterprise.getCCCs(connection, domainId);
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
+		}
+		
+		
+		CalcsCallback calcsCallback = new CalcsCallback() {
+			int cccEmployees = 0;
+			int saveEmployees = 0;
+
+			void progress(Salary salary) {
+				try {
+					if ( saveEmployees > 1) {
+						resp.getWriter().print(',');
 					}
-					
+					resp.getWriter().printf(
+							"{"
+							+ "'progress': %d, "
+							+ "'total': %d, "
+							+ "'employeeName': '%s'"
+							+ "}", 
+							saveEmployees,
+							cccEmployees,
+							salary.getEmployeeName()
+							);
+					resp.getWriter().flush();
+				} catch (IOException e) {
 				}
-				resp.setStatus(HttpServletResponse.SC_OK);
-				
 			}
+			
+			@Override
+			public void accept(Salary salary) {
+				AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary));
+				this.saveEmployees += 1;
+				progress(salary);
+			}
+			
+			@Override
+			public void start(int cccEmployees) {
+				this.cccEmployees += cccEmployees;
+			}
+		};
+		
+		resp.getWriter().print("[");
+		for ( CCC ccc: cccs ) {
+			
+			try {
+				
+				SistemaRED2AON.addCalcs(userLogin, 
+					domainName, 
+					domainId, 
+					certificate.getData(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					ccc.getRegime(), 
+					ccc.getCode(), 
+					startDate, 
+					endDate,
+					calcsCallback
+				);
+				
+				SistemaRED2AON.addCalcs(
+					userLogin, 
+					domainName, 
+					domainId, 
+					certificate.getData(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					ccc.getRegime(), 
+					ccc.getCode(), 
+					startDate, 
+					LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
+					calcsCallback
+					);
+
+				
+			} catch ( Exception e ) {
+			}
+			
+		}
+		
+		resp.getWriter().print("]");
+		resp.getWriter().flush();
+
+		resp.setStatus(HttpServletResponse.SC_OK);
+		
 	}
 	
 	private void doUp2DateReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{

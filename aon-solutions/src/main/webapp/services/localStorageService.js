@@ -13,6 +13,10 @@ export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
+export const SUITE = 'suite';
+export const RIGHT_PANEL = 'rightPanel';
+export const TOP_MENU = 'aonMenuTopnav';
+export const LEFT_MENU = 'aonMenuSidenav';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -29,6 +33,50 @@ export const getLanguage = () => get(AON_LANGUAGE);
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
     location.reload();
+}
+
+export const isTopMenu= () => {
+    let aon = getTopMenu();
+    return  CONSTANT.TRUE ==  aon;
+}
+
+export const isLeftMenu = () => {
+    let aon = getLeftMenu();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getTopMenu = () => {
+    return get (TOP_MENU);
+}
+
+export const setTopMenu = (value) => {
+    set(TOP_MENU, value);
+}
+
+export const getLeftMenu = () => {
+    return get (LEFT_MENU);
+}
+
+export const setLeftMenu = (value) => {
+    set(LEFT_MENU,value);
+} 
+
+export const isRightPanel= () => {
+    let aon = getRightPanel();
+    return  aon;
+}
+
+export const getRightPanel = () => {
+    return get(RIGHT_PANEL);
+}
+
+export const setRightPanel = (panel) => {
+    set(RIGHT_PANEL,panel);
+}
+
+
+export const removeRightPanel = () => {
+    remove(RIGHT_PANEL);
 }
 
 export const removeLanguage = () => {
@@ -146,8 +194,18 @@ export const isNewTheme = () => {
     return newTheme &&  CONSTANT.FALSE !== newTheme;
 }
 
-export const setNewTheme = (newTheme) => {
+export const setNewTheme = (newTheme, reload) => {
     set(NEW_THEME, newTheme);
+    if(reload) location.reload();
+}
+
+export const isSuite = () => {
+    const suite = get(SUITE);
+    return suite &&  CONSTANT.TRUE === suite;
+}
+
+export const setSuite = (suite) => {
+    set(SUITE, suite);
     location.reload();
 }
 

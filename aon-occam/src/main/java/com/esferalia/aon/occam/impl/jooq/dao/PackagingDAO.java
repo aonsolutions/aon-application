@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -53,7 +54,8 @@ public class PackagingDAO {
 	public static DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery, Integer product){
 		Item container = ItemDAO.getFull(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getSerialNumberProperty().eq(sscc)));
+			.and(f.getSerialNumberProperty().eq(sscc))
+			.and(f.getStatusProperty().eq(ProductStatus.ACTIVE.value())));
 		if(!container.isEmpty()) {
 			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(container.getId()));
 			if((!dp.isEmpty() && delivery == null)
@@ -391,13 +393,15 @@ public class PackagingDAO {
 		if(elaborationDetail.isEmpty()) {
 			String series = Integer.toString(AonDateUtils.getYear(new Date()));
 			Integer number = ElaborationDAO.getNextNumber(ctx, series);
+			String description = AonStringUtils.isBlank(packaging.getItem().getDescription())
+					? packaging.getItem().getProduct().getName() : packaging.getItem().getDescription();
 			elaboration = new Elaboration()
 					.setDomain(ctx.getDomainId())
 					.setSeries(series)
 					.setNumber(number)
 					.setDate(new Date())
 					.setItem(packaging.getBase())
-					.setDescription(packaging.getItem().getProduct().getName())
+					.setDescription(description)
 					.setWarehouse(warehouse)
 					.setQuantity(packaging.getQuantity())
 					.setStatus(ElaborationStatus.IN_PROGRESS)
@@ -473,7 +477,7 @@ public class PackagingDAO {
 				.setQuantity(p.getQuantity())
 				.setWarehouse(warehouse)
 				.setAddInfo("");
-			Integer compositionId = ElaborationDAO.insertElaborationDetailComposition(ctx, composition);
+			Integer compositionId = ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, composition);
 			composition.setId(compositionId);
 		
 			ItemComposition itemComposition = new ItemComposition()

@@ -46,6 +46,8 @@ public class CGPJ {
 	
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
+        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(5000);
 
         // Set request headers (optional)
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

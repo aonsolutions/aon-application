@@ -4,6 +4,7 @@ import * as MSG_CAT from './msg-cat.js';
 import * as MSG_ES from './msg-es.js';
 import * as MSG_GAL from './msg-gal.js';
 import * as MSG_DE from './msg-de.js';
+import * as MSG_FR from './msg-fr.js';
 import { Language } from '../models/Language.js';
 
 let language = localStorage.getItem('aon_language') || Language.SPANISH;
@@ -20,13 +21,16 @@ if(Language.ENGLISH === language) {
   MSG = MSG_GAL;
 } else if(Language.DEUTSCH == language){
   MSG = MSG_DE;
-} else {
+} else if(Language.FRENCH == language){
+  MSG = MSG_FR;
+}else {
   MSG = MSG_ES;
 }
 
 // ----- A
 
 export const ABOUT = MSG.ABOUT;
+export const ACADEMIES = MSG.ACADEMIES;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCESS_TO_YOUR_AON_ACCOUNT = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
@@ -48,6 +52,7 @@ export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
+export const ADD_NEW = MSG.ADD_NEW;
 export const ADD_REMARKS = MSG.ADD_REMARKS;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
@@ -120,17 +125,19 @@ export const CERTIFICATE = MSG.CERTIFICATE;
 export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
-export const CHANGE_PASSWORD = "Cambiar Contraseña"; //TODO
+export const CHANGE_PASSWORD = MSG.CHANGE_PASSWORD; 
 export const CHOOSE_A_DOMAIN = MSG.CHOOSE_A_DOMAIN;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
 export const CLOSE = MSG.CLOSE;
 export const CLOSE_SESSION = MSG.CLOSE_SESSION;
+export const CLOSED = MSG.CLOSED;
 export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
-export const COMMERCIAL = 'Comercial'; // TODO
+export const COMMERCE = MSG.COMMERCE;
+export const COMMERCIAL = MSG.COMMERCIAL;
 export const COMMERCIAL_NAME = 'Nombre Comercial'; // TODO
 export const COMMERCIAL_PRODUCT = 'Producto Comercial'; // TODO
 export const COMMUNICATE = "Comunicar";// TODO
@@ -152,6 +159,7 @@ export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONSOLE = 'Console'; 
 export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
+export const CONTACT_DATA2 = MSG.CONTACT_DATA2;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTAINER = MSG.CONTAINER;
 export const CONTRACT = MSG.CONTRACT;
@@ -209,6 +217,7 @@ export const DEUTSCH = MSG.DEUTSCH;
 export const DISCARDED = MSG.DISCARDED;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
+export const DOCUMENT_DATA = "Datos Documento";
 export const DOMAIN = "Dominio"; //TODO
 export const DOMAIN_PARENT = "Dominio Padre"; //TODO
 export const DOCUMENTARY = MSG.DOCUMENTARY;
@@ -249,6 +258,7 @@ export const EXPENSES = MSG.EXPENSES;
 export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const EXPIRED = MSG.EXPIRED;
+export const EXPIRED_SESSION = MSG.EXPIRED_SESSION;
 export const ESTIMATED_TIME = "Tiempo estimado";
 export const ERROR = 'Error';
 export const ERRORS = MSG.ERRORS;
@@ -258,18 +268,20 @@ export const EXPORTED = "Exportadas";
 
 // ----- F
 
+export const FAILED = "Fallido"; // TODO
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";//TODO
 export const FILTERS = "Filtros";//TODO
 export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
-export const FISCAL = 'Fiscal';//TODO
+export const FISCAL = MSG.FISCAL;
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 export const FROM = MSG.FROM;
+export const FRENCH = MSG.FRENCH;
 
 // ----- G
 
@@ -282,6 +294,7 @@ export const GROUP_DATA = MSG.GROUP_DATA;
 export const GROUP_MANAGEMENT = MSG.GROUP_MANAGEMENT;
 export const GROUP = MSG.GROUP;
 export const GROUPS = MSG.GROUPS;
+export const GROUPWARE = MSG.GROUPWARE;
 export const GROUPED = "Agrupadas";//TODO
 
 // ----- H
@@ -303,6 +316,8 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 // ----- I
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
+export const IN_PROGRESS = "En Progreso"; // TODO
+export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
@@ -322,6 +337,7 @@ export const INVOICE_CONFIGURATION = MSG.INVOICE_CONFIGURATION;
 export const INVOICE_DATA = MSG.INVOICE_DATA;
 export const INVOICE_ISSUED = MSG.INVOICE_ISSUED;
 export const INVOICE_NUMBER = MSG.INVOICE_NUMBER;
+export const INVOICE_DOCUMENT_NUMBER = MSG.INVOICE_DOCUMENT_NUMBER;
 export const INVOICE_OBJECT = MSG.INVOICE_OBJECT;
 export const INVOICE_PRINTING = MSG.INVOICE_PRINTING;
 export const INVOICE_RECEIVED = MSG.INVOICE_RECEIVED;
@@ -390,7 +406,7 @@ export const LOADING = MSG.LOADING;
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
 export const MARK_EXIT = MSG.MARK_EXIT;
-export const MARKETING = 'Marketing'; // TODO
+export const MARKETING = MSG.MARKETING;
 export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
@@ -434,6 +450,7 @@ export const NEW_WAREHOUSE= MSG.NEW_WAREHOUSE;
 export const NEXT = MSG.NEXT;
 export const NIF = MSG.NIF;
 export const NOT_LINKED = MSG.NOT_LINKED;
+export const NO_DATA = MSG.NO_DATA;
 export const NOT_LINKED1 = MSG.NOT_LINKED1;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
@@ -457,15 +474,16 @@ export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = MSG.OPTIONAL;
 export const OR_ACCESS = MSG.OR_ACCESS;
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
+export const OTHERS = "Otros";
 
 // ----- P
-
+export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
-export const PAYROLL = "Laboral";//TODO
+export const PAYROLL = MSG.PAYROLL;
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;
 export const PENDING = MSG.PENDING;
@@ -481,6 +499,7 @@ export const PERSONALIZED_THEME = 'Tema Personalizado';
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
 export const PORTAL = 'Portal';
+export const PORTAL_MENU = MSG.PORTAL_MENU;
 export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
 export const PREVIOUS = MSG.PREVIOUS;
@@ -509,6 +528,7 @@ export const PARENT = "Padre"; // TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
+export const QUICK_ACCESS = MSG.QUICK_ACCESS;
 export const QUERY = "Consulta"; //TODO
 export const QUESTION = "Pregunta"; //TODO
 export const QUESTIONS = "Preguntas"; // TODO
@@ -521,6 +541,7 @@ export const RECEIVED = MSG.RECEIVED;
 export const REGISTER = "Registro"; // TODO
 export const RECEIVEDS = MSG.RECEIVEDS;
 export const RECENTS = MSG.RECENTS;
+export const RECENTLY_OPENED = MSG.RECENTLY_OPENED;
 export const RECORD = MSG.RECORD;
 export const RECORD_INVOICE = MSG.RECORD_INVOICE;
 export const RECOVER_PASSWORD = 'Recuperar Contraseña'; // TODO
@@ -540,6 +561,8 @@ export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
 export const REMARKS = MSG.REMARKS;
 export const REMINDER = MSG.REMINDER;
+export const REOPEN = 'Reabrir';
+export const REOPENED = 'Reabierto';
 export const REPEAT_PASSWORD = 'Repetir Contraseña';
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
@@ -553,7 +576,6 @@ export const RESUME_COSTS = "Resumen Costes"; // TODO
 export const RETENTION_PANEL = 'Panel de IRPF';
 export const RETENTION_PERCENT = "% Retención"; 
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
-export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Régimen"; // TODO
 export const RGPD_URL = 'RGPD Url';
 export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; //TODO
@@ -566,6 +588,7 @@ export const SALES_PREPARATION = 'Preparación de Pedidos';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
+export const SCHEDULE = MSG.SCHEDULE;
 export const SEARCH = MSG.SEARCH;
 export const SECTION = 'Sección'; // TODO
 export const SEE_ALL = MSG.SEE_ALL;
@@ -587,6 +610,7 @@ export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';
 export const SHOW_FILE = MSG.SHOW_FILE;
+export const SIDE_MENU = MSG.SIDE_MENU;
 export const SIGN_IN = MSG.SIGN_IN;
 export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
 export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;
@@ -599,6 +623,7 @@ export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
 export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
+export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;
@@ -612,6 +637,8 @@ export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
+export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
+export const SELECT_COMPANY_TYPE = MSG.SELECT_COMPANY_TYPE;
 
 // ----- T
 
@@ -640,7 +667,7 @@ export const TOTAL = MSG.TOTAL;
 export const TOTAL_SUPPLIED = MSG.TOTAL_SUPPLIED;
 export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
-export const TREASURY = 'Tesoreria'; // TODO
+export const TREASURY = MSG.TREASURY; 
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
 export const TASK_TRAY = "Bandeja Tareas";//TODO
@@ -671,6 +698,7 @@ export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
 export const UTILITIES = MSG.UTILITIES;
+export const UPPER_MENU = MSG.UPPER_MENU;
 
 // ----- V
 
@@ -692,6 +720,7 @@ export const VOLUME = "Tomo";
 
 export const WAREHOUSE = MSG.WAREHOUSE;
 export const WAREHOUSES = MSG.WAREHOUSES;
+export const WELCOME = "Le damos la bienvenida a aon Solutions";//TODO
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
@@ -703,6 +732,9 @@ export const WRITE_A_DESCRIPTION = MSG.WRITE_A_DESCRIPTION;
 export const WRITE_A_NOTE = MSG.WRITE_A_NOTE;
 export const WRONG_CODE = 'Código Erróneo';
 export const WORKPLACE = "Centro de trabajo";//TODO
+export const WORKSHOPS = MSG.WORKSHOPS;
+export const WEEK_SCHEDULE = MSG.WEEK_SCHEDULE;
+export const WEEK_FRIDAY_SCHEDULE = MSG.WEEK_FRIDAY_SCHEDULE;
 // ----- X
 
 // ----- Y

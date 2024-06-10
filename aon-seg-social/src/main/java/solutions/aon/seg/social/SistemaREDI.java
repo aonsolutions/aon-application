@@ -925,7 +925,7 @@ class SistemaREDI {
 			}
 //		ACCEPT
 			{
-				htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ACEPTAR"));
+				htmlPage = clickAndCheckCode(htmlPage.getElementByName("SPM.ACC.ACEPTAR"));
 			}
 
 		return htmlPage;

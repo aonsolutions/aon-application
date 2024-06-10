@@ -593,8 +593,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioCoef(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, coef, fecha, callback);
 	}
 
-	public void cambioContrato(EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, fecha, callback);
+	public void cambioContrato(EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, partialityCoef, fecha, callback);
 	}
 	
 	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grupCtz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {

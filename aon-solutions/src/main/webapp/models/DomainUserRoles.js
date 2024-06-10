@@ -570,6 +570,21 @@ export class DomainUserRoles {
       && (this.isAdmin() || this.hasRole(Role.INVOFOX));
   }
 
+  // OCR INVOFOX
+
+  hasFacturae() {
+    return this.hasApp(App.FACTURAE);
+  }
+    
+  hasParentFacturae() {
+    return this.hasParentApp(App.FACTURAE);
+  }
+    
+  isFacturae() {
+    return (this.hasFacturae() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentFacturae()))
+      && (this.isAdmin() || this.hasRole(Role.FACTURAE));
+  }
+
   // SERES
 
   hasSeres() {
@@ -692,5 +707,22 @@ export class DomainUserRoles {
 
   isDomainPayer() {
     return this.domainPayer;
+  }
+
+
+  isOffice() {
+    return this.getDomain().getDomainType() == 'OFFICE';
+  }
+
+  isGarage(){
+    return this.getDomain().getDomainType() == 'GARAGE';
+  }
+
+  isAcademy(){
+    return this.getDomain().getDomainType() == 'ACADEMY';
+  }
+
+  isCommerce(){
+    return this.getDomain().getDomainType() == 'COMMERCE';
   }
 }

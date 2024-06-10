@@ -44,12 +44,17 @@ public final class IJsonNames {
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
+	public static final String API = "api";
+	public static final String API_KEY = "apiKey";
+	public static final String API_URL = "apiUrl";
 	public static final String APP = "app";
 	public static final String APPS = "apps";
 	public static final String ATTACH = "attach";
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
 	public static final String AUTH = "auth";
+	public static final String AUTO_ACCEPT = "autoAccept";
+	public static final String AUTO_RECORD = "autoRecord";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	public static final String AVAILABLE_BALANCE = "availableBalance";
@@ -205,6 +210,7 @@ public final class IJsonNames {
 	public static final String ENTRY_DATE = "entryDate";
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
+	public static final String ENVIRONMENT = "environment";
 	public static final String EPIGRAPH = "epigraph";
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
@@ -324,6 +330,7 @@ public final class IJsonNames {
 	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
 	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
+	public static final String LOGIN_REQUIRED = "loginRequired";
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
 	public static final String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
@@ -416,6 +423,7 @@ public final class IJsonNames {
 	public static final String PERIOD = "period";
 	public static final String PERISHABLE = "perishable";
 	public static final String PERSON = "person";
+	public static final String PERSONALIZED = "personalized";
 	public static final String PHONE = "phone";
 	public static final String PK_CODE = "pkCode";
 	public static final String PK_ID = "pkId";

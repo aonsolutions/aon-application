@@ -230,6 +230,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
+		@Override public Property<Double> getTotalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 
@@ -237,11 +238,6 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
 		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
 		
-		// INVOICE COMMUNICATION
-		@Override public Property<Integer> getRSellerIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
-		@Override public Property<Date> getRSellerStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
-		@Override public Property<Date> getRSellerEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}	
-		@Override public Property<Byte> getRSellerStatusProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.STATUS);}	
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -281,7 +277,8 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SELLER.STATUS);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.SCOPE);}
 		@Override public Property<Integer> getCommissionTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.COMMISSION_TYPE);}
-
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(SELLER.TASK_HOLDER);}
+		
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ID);}
 		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
@@ -291,6 +288,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+			
 	}
 	
 	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {

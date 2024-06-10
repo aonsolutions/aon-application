@@ -79,7 +79,10 @@ export class AonMobileElaborationList extends AonMobileList {
     }
     
     getFilter() {
-		return this.filter || {};
+		return this.filter || {
+            page:1,
+            perPage:30
+        };
 	}
 
     setFilter(filter) {		

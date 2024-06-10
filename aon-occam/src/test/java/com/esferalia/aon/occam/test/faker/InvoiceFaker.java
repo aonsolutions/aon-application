@@ -516,7 +516,7 @@ public class InvoiceFaker {
 		InvoiceDetail detail = new InvoiceDetail();
 		detail.setDomain(invoice.getDomain())
 			.setInvoice(invoice)
-			.setWorkPlace( params.getConfig().getWorkplaces().getFirst().getId() )
+			.setWorkplace( params.getConfig().getWorkplaces().getFirst() )
 			.setDescription(AonRandom.item(5, 50))
 			.setQuantity(AonRandom.getDouble(0, 10))
 			.setDiscountExpression( AonRandom.gt(10)

@@ -68,8 +68,10 @@ public enum MimeType implements Serializable {
     	for( MimeType mt : MimeType.values() ) {
     		if (mt.getName().equals(type) ) {
     			return mt;
-    		} else {    			
-    			if ( mt.getAliases() != null ) {
+    		} else {  
+    			if (AonStringUtils.equalsIgnoreCase(mt.getExtension(), type))
+    					return mt;
+    			else if ( mt.getAliases() != null ) {
     				
     				for( String alias : mt.getAliases() ) {
     					if  (AonStringUtils.equals(alias, type)) {

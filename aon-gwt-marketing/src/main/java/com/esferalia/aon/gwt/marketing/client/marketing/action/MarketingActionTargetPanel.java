@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.action;
 
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -13,8 +14,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
+import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.watson.mutable.MutableInt;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -27,6 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -49,10 +54,12 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	private int lastScrollPos = 0;
 	
 	private MarketingActionTargetParams params;
+	private Seller seller;
+	private Workgroup workgroup;
 	
 	private static enum COLS {
 		DES("Cliente Potencial"						,"auto"  ,null)
-		, COM(AON.MSG.comments()					,"250px" ,null)
+		, COM(AON.MSG.comments()					,"37rem" ,null)
 		, STA(AON.MSG.status()						,"150px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
 		;
@@ -81,7 +88,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		}
 	}
 
-	public MarketingActionTargetPanel(MarketingActionTargetParams params) {
+	public MarketingActionTargetPanel(MarketingActionTargetParams params, Seller seller,  Workgroup workgroup) {
 		
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonPaddingBottom());
@@ -90,6 +97,8 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
+		this.seller = seller;
+		this.workgroup = workgroup;
 
 		container = new SimplePanel();
 		setWidget(container);
@@ -207,30 +216,35 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private void paintRow(final int r, MarketingActionTarget marketingActionTarget) {
 		int col = 0;
-		boolean myMarketingActionTarget =  marketingActionTarget == null || AonNumberUtils.equals(marketingActionTarget.getDomain().getId() , params.getDomain()); 
-		if (myMarketingActionTarget) {
-			paintActiveRow(r,col,marketingActionTarget);
-		} else {
-			paintInactiveRow(r,col,marketingActionTarget);
-		}
-	}
-
-	private void paintInactiveRow(final int r, int col, MarketingActionTarget marketingActionTarget) {		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getComments()));
-		col++;
-		
-		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));
-		col++;
+		paintActiveRow(r,col,marketingActionTarget);
 	}
 
 	private void paintActiveRow(final int r, int col, MarketingActionTarget marketingActionTarget) {
 		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
 		col++;
 		
-		tab.setWidget(r, col, new Label(marketingActionTarget.getComments()));
+		HTMLPanel commentsPanel = new HTMLPanel("");
+		commentsPanel.setStyleName(AON.CSS.aonItemFlex());
+		commentsPanel.getElement().getStyle().setProperty("justify-content", "space-between");
+		
+		Label comments = new Label(marketingActionTarget.getComments());
+		comments.setTitle(marketingActionTarget.getComments());
+		comments.getElement().getStyle().setProperty("max-width", "35rem");
+		comments.getElement().getStyle().setProperty("white-space", "nowrap");
+		comments.getElement().getStyle().setProperty("overflow", "hidden");
+		comments.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+		commentsPanel.add(comments);
+		
+		if(AonStringUtils.isNotBlank(marketingActionTarget.getComments()) && marketingActionTarget.getComments().length() > 100) {
+			AonTableButton showFullComment = new AonTableButton("Ver comentario completo", AON.CSS.aonIconComment());
+			showFullComment.addClickHandler(e -> {
+        		AonDialog dialog = new AonDialog(marketingActionTarget.getName() + " (Comentarios)", new Label(marketingActionTarget.getComments()));
+    			dialog.info();
+			});
+			commentsPanel.add(showFullComment);
+		}
+		
+		tab.setWidget(r, col, commentsPanel);
 		col++;
 		
 		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));
@@ -239,6 +253,62 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		
+		if(marketingActionTarget.hasProjectCommercial()) {
+			AonTableButton deleteProjectCommercial;
+			deleteProjectCommercial = new AonTableButton("Eliminar Operaci\u00f3n Comercial", AON.CSS.aonIconWorkOff());
+			deleteProjectCommercial.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					deleteProjectCommercial.setEnabled(false);
+					AonDialog dialog = new AonDialog("Eliminaci\u00f3n Operaci\u00f3n Comercial",
+							new HTML("Se va a proceder a eliminar la operaci\u00f3n comercial del cliente potencial <b>" + marketingActionTarget.getName() + "</b> de la acci\u00f3n <b>" + marketingActionTarget.getMarketingAction().getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+					
+					dialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							deleteProjectCommercial.setEnabled(true);
+						}
+	
+						@Override
+						public void onAccept() {
+							deleteProjectCommercial(marketingActionTarget);
+						}
+					});
+				}
+			});
+			buttonContainer.add(deleteProjectCommercial);
+		} else {
+			AonTableButton createProjectCommercial;
+			createProjectCommercial = new AonTableButton("Crear Operaci\u00f3n Comercial", AON.CSS.aonIconWorkAdd());
+			createProjectCommercial.setEnabled(null != this.seller);
+			if(null == this.seller) createProjectCommercial.setTitle("No se puede crear una operaci\u00f3n comercial si la acci\u00f3n no esta asignada a nadie");
+			createProjectCommercial.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					createProjectCommercial.setEnabled(false);
+					AonDialog dialog = new AonDialog("Crear Operaci\u00f3n Comercial",
+							new HTML("Se va a proceder a crear una operaci\u00f3n comercial para el cliente potencial <b>" + marketingActionTarget.getName() + "</b> de la acci\u00f3n <b>" + marketingActionTarget.getMarketingAction().getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la creaci\u00f3n\u003f."));
+					
+					dialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							createProjectCommercial.setEnabled(true);
+						}
+	
+						@Override
+						public void onAccept() {
+							createProjectCommercial(marketingActionTarget, seller, workgroup);
+						}
+					});
+				}
+			});
+			buttonContainer.add(createProjectCommercial);
+		}
+		
 		AonTableButton button;
 		button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 		button.addClickHandler( new ClickHandler() {
@@ -246,7 +316,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				button.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Acci\u00f3n",
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cliente Potencial",
 						new HTML("Se va a proceder a eliminar al cliente potencial <b>" + marketingActionTarget.getName() + "</b> de la acci\u00f3n <b>" + marketingActionTarget.getMarketingAction().getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 				
 				dialog.confirm(new AonAcceptDialogCallback() {
@@ -263,7 +333,6 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 				});
 			}
 		});
-		
 		
 		buttonContainer.add(button);
 		
@@ -322,6 +391,151 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			}
 		});
 	}
+
+	private void deleteProjectCommercial(MarketingActionTarget marketingActionTarget) {
+		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProjectCommercial(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				
+				marketingActionTarget.setActionTargetStatus((byte)0); // Pendiente
+				COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
+					
+					@Override
+					public void onSuccess(MarketingActionTarget marketingActionTarget) {	
+						resetSearchOffset();
+						reloadMarketingAction();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						onShowErrorMessage("Error saveMarketingActionTarget(): " + caught.getMessage());
+					}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error borrado: " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void createProjectCommercial(MarketingActionTarget marketingActionTarget, Seller seller, Workgroup workgroup) {
+		if(marketingActionTarget.getActionTargetStatus() == (byte)0) { // Pendiente
+			
+			if(seller == null) {
+				onShowLoadingMessage("Creando operaciones comerciales para cada lead de la acción " + marketingActionTarget.getName() + " ...");
+				
+				COMMON_SERVICE.getNextLinealSellerByWorkgroup(params.getDomainName(), params.getDomain(), params.getUser(), workgroup.getId(), new AsyncCallback<Seller>() {
+					
+					@Override
+					public void onSuccess(Seller seller) {
+						ProjectCommercial projectCommercial = new ProjectCommercial()
+								.copy(new Project()
+									.setDomain(marketingActionTarget.getDomain())
+									.setRegistry(marketingActionTarget.get())
+									.setName(marketingActionTarget.getMarketingAction().getDescription())
+									.setDate(new Date())
+									.setTas(false)
+									.setCommercial(true)
+									.setReservation(false)
+									.setActive(true)
+								)
+								.setTarget(marketingActionTarget.getId())
+								.setSeller(seller.getId())
+								.setComments(marketingActionTarget.getComments())
+								.setSource((byte)3)
+								.setStatus((byte)0)
+								.setStatusDate(new Date())
+								.setProbability(0);
+						
+						COMMON_SERVICE.saveProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), projectCommercial, new AsyncCallback<ProjectCommercial>() {
+							
+							@Override
+							public void onSuccess(ProjectCommercial projectCommercial) {
+								marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
+								COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
+									
+									@Override
+									public void onSuccess(MarketingActionTarget marketingActionTarget) {
+										onShowSuccessMessage("Operaci\u00f3n comercial creada correctamente");
+										reloadMarketingAction();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										onShowErrorMessage("Error saveMarketingActionTarget(): " + caught.getMessage());
+									}
+								});
+							}
+				
+							@Override
+							public void onFailure(Throwable caught) {
+								onShowErrorMessage("Error saveProjectCommercial(): " + caught.getMessage());
+							}
+							
+						} );
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						onShowErrorMessage("Error getNextLinealSellerByWorkgroup(): " + caught.getMessage());
+					}
+					
+				});	
+			} else {
+				onShowLoadingMessage("Creando operaciones comerciales para cada lead de la acción " + marketingActionTarget.getName() + " ...");
+			
+				ProjectCommercial projectCommercial = new ProjectCommercial()
+						.copy(new Project()
+							.setDomain(marketingActionTarget.getDomain())
+							.setRegistry(marketingActionTarget.get())
+							.setName(marketingActionTarget.getMarketingAction().getDescription())
+							.setDate(new Date())
+							.setTas(false)
+							.setCommercial(true)
+							.setReservation(false)
+							.setActive(true)
+						)
+						.setTarget(marketingActionTarget.getId())
+						.setSeller(seller.getId())
+						.setComments(marketingActionTarget.getComments())
+						.setSource((byte)3)
+						.setStatus((byte)0)
+						.setStatusDate(new Date())
+						.setProbability(0);
+				
+				COMMON_SERVICE.saveProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), projectCommercial, new AsyncCallback<ProjectCommercial>() {
+					
+					@Override
+					public void onSuccess(ProjectCommercial projectCommercial) {
+						marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
+						COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
+							
+							@Override
+							public void onSuccess(MarketingActionTarget marketingActionTarget) {
+								onShowSuccessMessage("Operaci\u00f3n comercial creada correctamente");
+								reloadMarketingAction();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								onShowErrorMessage("Error saveMarketingActionTarget(): " + caught.getMessage());
+							}
+						});
+					}
+		
+					@Override
+					public void onFailure(Throwable caught) {
+						onShowErrorMessage("Error saveProjectCommercial(): " + caught.getMessage());
+					}
+					
+				} );
+				
+			}
+		}
+	}
 	
 	public void resetSearchOffset() {
 		offset.setValue(0);
@@ -329,6 +543,8 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	protected abstract void reloadMarketingAction();
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract void onShowLoadingMessage(String loadingMessage);
+	protected abstract void onShowSuccessMessage(String successMessage);
 	
 }
 

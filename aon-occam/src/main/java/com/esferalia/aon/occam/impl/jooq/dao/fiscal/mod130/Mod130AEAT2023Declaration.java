@@ -45,7 +45,7 @@ public class Mod130AEAT2023Declaration extends Mod130Declaration {
 	private static final double C16_MAX_VALUE = 660.14;
 
 	public static boolean accept(Mod130 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2023; 
+		return mod.isAEAT() && mod.getYear() == 2023; 
 	}
 	@Override
 	IMod130KeyDAO[] getKeys() {

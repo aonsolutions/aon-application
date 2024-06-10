@@ -29,7 +29,9 @@ public class OCRLoginJSON {
 		if (json == null) return null; 
 		return new OCRLogin()
 			.setToken(OCRJSONUtils.getString(json, OCRNames.TOKEN))
-			.setExpiration(OCRJSONUtils.getString(json, OCRNames.EXPIRATION));
+			.setExpiration(OCRJSONUtils.getString(json, OCRNames.EXPIRATION))
+			.setUpdatePassword(OCRJSONUtils.getBoolean(json, OCRNames.UPDATE_PASSWORD))
+			.setUser(OCRUserJSON.from(OCRJSONUtils.getObject(json, OCRNames.USER)));
 	}
 	
 	public static JSONArray to(List<OCRLogin> list) {

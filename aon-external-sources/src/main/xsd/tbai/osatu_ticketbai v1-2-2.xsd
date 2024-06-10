@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:TB="urn:ticketbai:emision" xmlns:T="urn:ticketbai:osatu" targetNamespace="urn:ticketbai:osatu">
+
+	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2-2.xsd" />
+
+	<element name="OsatuTicketBAI">
+		<complexType>
+			<sequence>
+				<element name="Cabecera" type="T:CabeceraType" />
+				<element name="IDFactura" type="T:IDFacturaType" />
+				<element name="OsatuOtrosDatosTributarios" type="T:OsatuOtrosDatosTributariosType" minOccurs="0" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="CabeceraType">
+		<sequence>
+			<element name="IDVersion" type="T:IDVersionType" />
+		</sequence>
+	</complexType>
+	<complexType name="IDFacturaType">
+		<sequence>
+			<element name="NIF" type="TB:NIFType" />
+			<element name="SerieFactura" type="TB:TextMax20Type" minOccurs="0" />
+			<element name="NumFactura" type="TB:TextMax20Type" />
+			<element name="FechaExpedicionFactura" type="TB:FechaType" />
+		</sequence>
+	</complexType>
+	<complexType name="OsatuOtrosDatosTributariosType">
+		<sequence>
+			<element name="ReferenciaExterna" type="T:TextMax60Type" minOccurs="0" />
+			<element name="Inmuebles" type="T:InmueblesType" minOccurs="0" />
+			<element name="ImporteTransmisionInmueblesSujetoAIVA" type="TB:ImporteSgn12.2Type" minOccurs="0" />
+			<element name="NIFRepresentante" type="TB:NIFType" minOccurs="0" />
+			<element name="NIFRepresentanteContraparte" type="TB:NIFType" minOccurs="0" />
+			<element name="NumRegistroAcuerdoFacturacion" type="T:TextMax15Type" minOccurs="0" />
+			<element name="EntidadSucedida" type="T:EntidadSucedidaType" minOccurs="0" />
+			<element name="Cupon" type="T:SiType" minOccurs="0" />
+		</sequence>
+	</complexType>
+	<complexType name="InmueblesType">
+		<sequence>
+			<element name="DetalleInmueble" type="T:DetalleInmuebleType" minOccurs="1" maxOccurs="1000" />
+		</sequence>
+	</complexType>
+	<complexType name="DetalleInmuebleType">
+		<sequence>
+			<element name="SituacionInmueble" type="T:SituacionInmuebleEnum" />
+			<element name="ReferenciaCatastral" type="T:TextMax25Type" minOccurs="0" />
+		</sequence>
+	</complexType>
+	<complexType name="EntidadSucedidaType">
+		<sequence>
+			<element name="NIF" type="TB:NIFType" />
+			<element name="ApellidosNombreRazonSocial" type="TB:TextMax120ObligatorioType" />
+		</sequence>
+	</complexType>
+	<simpleType name="IDVersionType">
+		<restriction base="string">
+			<enumeration value="1.0" />
+		</restriction>
+	</simpleType>
+	<!-- Cadena de 15 caracteres -->
+	<simpleType name="TextMax15Type">
+		<restriction base="string">
+			<maxLength value="15" />
+		</restriction>
+	</simpleType>
+	<!-- Cadena de 25 caracteres -->
+	<simpleType name="TextMax25Type">
+		<restriction base="string">
+			<maxLength value="25" />
+		</restriction>
+	</simpleType>
+	<!-- Cadena de 60 caracteres -->
+	<simpleType name="TextMax60Type">
+		<restriction base="string">
+			<maxLength value="60" />
+		</restriction>
+	</simpleType>
+	<simpleType name="SituacionInmuebleEnum">
+		<restriction base="string">
+			<enumeration value="1">
+				<annotation>
+					<documentation>Euskadin eta Nafarroan izan ezik katastro erreferentzia Espainiako beste zernahi tokitan duen higiezina - Inmueble con referencia catastral situado en cualquier punto del territorio español, excepto País Vasco y Navarra</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="2">
+				<annotation>
+					<documentation>Euskal Autonomia Erkidegoan edo Nafarroako Foru Erkidegoan kokatutako erreferentzia katastrala edo zenbaki finkoa duen ondasun higiezina - Inmueble situado en la Comunidad Autónoma del País Vasco o en la Comunidad Foral de Navarra</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="3">
+				<annotation>
+					<documentation>Aurreko egoeretako edozeinetan sartutako higiezina, baina erreferentzia katastralik edo zenbaki finkorik gabea - Inmueble en cualquiera de las situaciones anteriores pero sin referencia catastral</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="4">
+				<annotation>
+					<documentation>Atzerrian kokatutako higiezina - Inmueble situado en el extranjero</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="SiType">
+		<restriction base="string">
+			<enumeration value="S" />
+		</restriction>
+	</simpleType>
+</schema>

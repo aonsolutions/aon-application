@@ -72,6 +72,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		, EXP("Gastos"								,"110px" ,null)
 		, STD("F. Inicio"							,"100px" ,null)
 		, END("F. Fin"								,"100px" ,null)
+		, COM("A. Comercial"						,"120px" ,null)
 		, SUR("Cuestionario"						,"120px" ,null)
 		, TGT("C. Potenciales"						,"100px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
@@ -401,6 +402,9 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 		endDate.addStyleName(AON.CSS.aonWidthAll());
 		endDate.setValue(marketingAction.getEndDate());
 		tab.setWidget(r, col, endDate);
+		col++;
+		
+		tab.setWidget(r, col, new Label(marketingAction.getTaskHolder() == null ? "" : marketingAction.getTaskHolder().getName()));
 		col++;
 		
 		tab.setWidget(r, col, new Label(marketingAction.getSurvey() == null ? "" : marketingAction.getSurvey().getDescription()));

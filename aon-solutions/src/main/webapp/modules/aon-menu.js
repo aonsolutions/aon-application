@@ -220,6 +220,7 @@ export class AonMenu extends AonElement {
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
+		ul.style.cursor = "pointer";
 
 		let li = this.createElement(TAG.LI);
 		li.style.textAlign =  'right';

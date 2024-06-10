@@ -437,6 +437,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		Double ssTrabSS			= e.getSsTrabSS().orElse(null);
 		Double irpfSS			= e.getIrpfSS().orElse(null);
 		Double deduccionesSS	= e.getDeduccionesSS().orElse(null);
+		Double inKindSS	   	  	= e.getInKindSS().orElse(null);
 		Double liquidoSS		= e.getLiquidoSS().orElse(null);
 		Double ssEmpresaSS		= e.getSsEmprSS().orElse(null);
 		Double bonificacionesSS	= e.getBonificacionesSS().orElse(null);
@@ -471,6 +472,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("S.S. Trab."), toLatinNumber(ssTrabSS));
 		table.fillCell(table.getColumn("I.R.P.F"), toLatinNumber(irpfSS));
 		table.fillCell(table.getColumn("Otr. ded."), toLatinNumber(deduccionesSS));
+		table.fillCell(table.getColumn("Ret. Esp."), toLatinNumber(inKindSS));
 		table.fillCell(table.getColumn("Liquido"), toLatinNumber(liquidoSS));
 		table.fillCell(table.getColumn("S.S. Empr."), toLatinNumber(ssEmpresaSS));
 		table.fillCell(table.getColumn("Bonif."), toLatinNumber(bonificacionesSS));
@@ -484,7 +486,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("S.S. Trab."), 		getColor(ssTrab, ssTrabSS));
 		table.paintCell(table.getColumn("I.R.P.F"), 		getColor(irpf, irpfSS));
 		table.paintCell(table.getColumn("Otr. ded."),  		getColor(deducciones, deduccionesSS));
-		table.paintCell(table.getColumn("inKind"),			BLACK);
+		table.paintCell(table.getColumn("Ret. Esp."),		getColor(inKind, inKindSS));
 		table.paintCell(table.getColumn("Liquido"),			getColor(liquido, liquidoSS));
 		table.paintCell(table.getColumn("S.S. Empr."),		getColor(ssEmpresa, ssEmpresaSS));
 		table.paintCell(table.getColumn("Bonif."),			getColor(bonificaciones, bonificacionesSS));

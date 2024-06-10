@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountDetail;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountTransactions;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
@@ -525,10 +526,12 @@ public class AonNordigen  {
 				for (String accId : accs) {
 					try {
 						NordigenAccountMetadata metadata = getAccountMetadata(token, accId);
-						if (metadata != null && AonStringUtils.equalsIgnoreCase(iban, metadata.getIban())) {
+						NordigenAccountDetail detail = NordigenAPI.getDetail(token.getAccess(), accId);
+						if (metadata != null && AonStringUtils.equalsIgnoreCase(iban, metadata.getIban()) && detail.getCurrency().equals("EUR")) {
 							return metadata;
 						}
 					} catch (Exception e) {
+						
 					}
 				}
 			}

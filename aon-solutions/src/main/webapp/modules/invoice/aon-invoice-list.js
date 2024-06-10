@@ -4,7 +4,7 @@ import { AonSelect } from '../../components/aon-select.js';
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
 	 sendInvoiceMail, downloadInvoices, getAeatCertificates, getInvofoxDocuments, getInvofoxDocument, recordInvoices } from '../../services/service.js';
-import { Invoice } from './Invoice.js';
+import { Invoice, getDocumentNumber } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
@@ -30,7 +30,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	set id(id) {
-		this.setAttribute(CONSTANT.FILTER, id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	constructor () {
@@ -54,11 +54,14 @@ export class AonInvoiceList extends AonElement {
 		aonInvoiceTable.selectable = 'true';
 		aonInvoiceTable.setApp(INVOICE);
 		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
-		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
-		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');
-		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '10%');
-		aonInvoiceTable.addColumn('', 'icons', 'icons', '10%');
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
+		if (this.getFilter().status === 'accounting' && this.getFilter().type != 'sales') {
+			aonInvoiceTable.addColumn(MSG.INVOICE_DOCUMENT_NUMBER, 'string', 'documentNumber', '150px');
+		}
+		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
+		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
+		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
+		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
 
 		this.init();
 		aonInvoiceTable.addEventListener('more', () => {
@@ -75,6 +78,25 @@ export class AonInvoiceList extends AonElement {
 		});
 	}
 
+	paintAccountingRow(idx, invoice) {
+		if(!invoice.name){
+			invoice.name = invoice.type === 'emitida'
+				? (invoice.receiver ? invoice.receiver.name : '')
+				: (invoice.sender ? invoice.sender.name : '');
+		}
+		invoice.paymethod = invoice.finances && invoice.finances.length > 0
+			? this.getPaymethod(invoice.finances[0].paymethod) : '';
+		let date = new Date(invoice.date);
+		let day = date.getDate();
+		let month = date.getMonth() + 1;
+		let year = date.getFullYear();
+		invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
+		invoice.documentNumber =  getDocumentNumber(invoice);
+		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+		invoice.icons = this.buildRowIcons(invoice); 
+		aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+	}
+
 	loadMore() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let filter = this.getFilter();
@@ -87,21 +109,7 @@ export class AonInvoiceList extends AonElement {
 					this.more = false;
 				addInvoices(invoices);
 				invoices.forEach((invoice, i) => {
-					if(!invoice.name){
-						invoice.name = invoice.type === 'emitida'
-							? (invoice.receiver ? invoice.receiver.name : '')
-							: (invoice.sender ? invoice.sender.name : '');
-					}
-					invoice.paymethod = invoice.finances && invoice.finances.length > 0
-						? this.getPaymethod(invoice.finances[0].paymethod) : '';
-					let date = new Date(invoice.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-					invoice.icons = this.buildRowIcons(invoice); 
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
+					this.paintAccountingRow(i, invoice);
 				});
 			});
 		} else if(aonInvoiceTable && this.invofoxFilter && this.getDur().isInvofox()) {
@@ -120,11 +128,11 @@ export class AonInvoiceList extends AonElement {
 				let day = date.getDate();
 				let month = date.getMonth() + 1;
 				let year = date.getFullYear();
-				invoice.dateTable = day + '/' + month + '/' + year;
-			
+				invoice.referenceTable = invoice.reference;
+				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
 				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+			invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 				invoice.icons = this.buildRowIcons(invoice);
-
 				aonInvoiceTable.addRow(invoice, () => {
 					getInvofoxDocument(invoice.id).then( doc => {
 						this.aonInvoice(doc, i);
@@ -154,21 +162,7 @@ export class AonInvoiceList extends AonElement {
 				aonInvoiceTable.selected = [];
 				this.removeInvoiceActions();
 				invoices.forEach((invoice, i) => {
-					if(!invoice.name){
-						invoice.name = invoice.type === 'emitida'
-							? (invoice.receiver ? invoice.receiver.name : '')
-							: (invoice.sender ? invoice.sender.name : '');
-					}
-					invoice.paymethod = invoice.finances && invoice.finances.length > 0
-						? this.getPaymethod(invoice.finances[0].paymethod) : '';
-					let date = new Date(invoice.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-					invoice.icons = this.buildRowIcons(invoice); 
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
+					this.paintAccountingRow(i, invoice);
 				});
 			});
 

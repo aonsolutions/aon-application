@@ -419,13 +419,13 @@ public class FillerDAO {
 					.setScope(r.getValue(domain.SCOPE))
 					.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
 					.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT))))
-			
 				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
 					.setId(r.getValue(parent.ID))
 					.setName(r.getValue(parent.NAME)))
 				.setShared(r.getValue(USER.SHARED) == 1)
 				.setCompany(company)
-				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))));
+				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))))
+				.setLogin(r.getValue(USER.LOGIN));
 		}
 	}
 	

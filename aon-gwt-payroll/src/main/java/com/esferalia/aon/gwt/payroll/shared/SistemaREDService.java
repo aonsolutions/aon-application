@@ -28,6 +28,23 @@ public interface SistemaREDService {
 		END_DATE,
 	}
 	
+	public static class JsSistemaREDProgess extends JavaScriptObject {
+		protected JsSistemaREDProgess() {
+		}
+		
+		public final native int getTotal() /*-{
+			return this.total;
+		}-*/;
+		
+		public final native int getProgress() /*-{
+			return this.progress;
+		}-*/;
+
+		public final native String getEmployeeName() /*-{
+			return this.employeeName;
+		}-*/;
+	}
+
 	public static class JsSistemaREDResults extends JavaScriptObject {
 		protected JsSistemaREDResults() {
 		}

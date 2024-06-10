@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -103,7 +104,7 @@ public class TediResult implements Serializable {
 		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.PNG.getName())); 
 	}
 
-	public void add(TediError error) {
+	public void add(InvoiceError  error) {
 		getAccountingInvoice().add(error);
 	}
 
@@ -111,7 +112,7 @@ public class TediResult implements Serializable {
 		getAccountingInvoice().clearMessages();
 	}
 
-	public List<TediError> getMessages() {
+	public List<InvoiceError> getMessages() {
 		return getAccountingInvoice().getMessages();
 	}
 

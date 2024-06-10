@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 
@@ -32,7 +33,7 @@ public class TaskHolderDAO {
 	private TaskHolderDAO() {
 	
 	}
-	
+    public static final com.esferalia.aon.jooq.tables.Registry TASK_HOLDER_ALIAS = REGISTRY.as("registry_task_holder");
 	private static final TaskHolderPropertiesDAO TASK_HOLDER_PROPERTIES = new TaskHolderPropertiesDAO();
 	public static class TaskHolderPropertiesDAO extends RegistryPropertiesDAO implements TaskHolderProperties {
 		
@@ -184,6 +185,17 @@ public class TaskHolderDAO {
 			r.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
 	
 		return r.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
+	}
+
+	public static List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx) {
+		List<Integer> sellerTaskHolders = ctx.getDslContext().selectDistinct(SELLER.TASK_HOLDER)
+			.from(SELLER)
+			.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
+			.fetch(SELLER.TASK_HOLDER);
+		
+		Stream<TaskHolder> taskHolders = getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		
+		return taskHolders.filter(taskHolder -> !sellerTaskHolders.contains(taskHolder.getId())).collect(Collectors.toList());
 	}
 
 	// *************************************************

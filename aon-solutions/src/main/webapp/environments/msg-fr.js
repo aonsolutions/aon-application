@@ -1,0 +1,528 @@
+// ----- A
+
+export const ABOUT = 'Acerca de';
+export const ACADEMIES = 'Academias';
+export const ACCEPT = 'Aceptar';
+export const ACCESS = 'Acceso';
+export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede a tu cuenta de AON';
+export const ACCOUNT = 'Cuenta';
+export const ACCOUNTED = 'Contabilizada';
+export const ACCOUNTEDS = 'Contabilizadas';
+export const ACCOUNTING = 'Comptabilité';
+export const ACTIVATE = 'Activar';
+export const ACTIVE = 'Activo';
+export const ACTIVES = 'Activas'
+export const ACTIVITY = 'Actividad';
+export const ACTIVITY_SUMMARY = 'Resumen de Actividades';
+export const ADD = 'Añadir';
+export const ADD_CATEGORY = 'Añadir Categoría';
+export const ADD_COMMENT = 'Añadir Comentario';
+export const ADD_COMPOSITION = 'Añadir Composición';
+export const ADD_FILE = 'Adjuntar Fichero';
+export const ADD_INVOICE = 'Añadir Factura';
+export const ADD_NEW = "Ajouter nouveau";
+export const ADD_REMARKS = 'Añadir Observaciones';
+export const ADD_TAG = 'Añadir Etiqueta';
+export const ADD_TAX = 'Añadir Impuesto';
+export const ADD_TYPE = 'Añadir Tipo';
+export const ADDITIONAL_HIRING = "Contratación adicional";
+export const ADDITIONAL_INFORMATION = 'Información Adicional';
+export const ADDRESS = 'Dirección';
+export const ALL = 'Todo';
+export const ALL1 = 'Todos';
+export const ALL_FILES = 'Todos los Ficheros';
+export const AMOUNT = 'Importe';
+export const API_DOCUMENTATION = 'Documentación API';
+export const APPLICATIONS = 'Aplicaciones';
+export const ASESOR = 'Asesor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastra o selecciona el fichero';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastra o selecciona el fondo';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastra o selecciona el logo';
+export const AVAILABLE = 'Disponible';
+
+
+// ----- B
+
+export const BACK = 'Atrás';
+export const BACKGROUND_ADJUST = 'Ajustar Fondo';
+export const BARCODE = 'Código de Barras';
+export const BANK = 'Banco';
+export const BANKS = 'Bancos';
+export const BASE = 'Base';
+export const BASQUE = 'Euskera';
+export const BILLING = 'Facturación';
+export const BILLABLE_USERS = "Usuarios facturables";
+export const BLOCKED_POPUP = "Ventana bloqueada!";
+export const BOOKING = 'Contratación';
+export const BOOKING_PANEL = 'Panel de Contratación';
+export const BOX_CRITERION = 'Criterio de Caja';
+export const BUDGET = 'Presupuesto';
+export const BUDGETS = 'Presupuestos';
+export const BUSINESS_NAME = 'Razón Social';
+
+// ----- C
+
+export const CANCEL = 'Cancelar';
+export const CATALAN = 'Catalán';
+export const CATEGORY = 'Categoría';
+export const CATEGORIES = 'Categorías';
+export const CERTIFICATE = 'Certificado';
+export const CERTIFICATES = 'Certificados';
+export const CHANGE_TYPE = 'Cambiar Tipo';
+export const CHARGES_AND_PAYMENTS = 'Cobros y Pagos';
+export const CHANGE_PASSWORD = 'Cambiar contraseña';
+export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
+export const CITY = 'Ciudad';
+export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
+export const CLASSIC_VIEW = 'Vista Clásica';
+export const CLOSE = 'Cerrar';
+export const CLOSE_SESSION = 'Fermer la session';
+export const CLOSED = 'Fermé';
+export const CODE = 'Código';
+export const COMMENT = 'Comentario';
+export const COMMENTS = 'Comentarios';
+export const COMMERCE = 'Comercio';
+export const COMMUNICATION = 'Comunicación';
+export const COMUNICA = "Comunic@";// TODO
+export const COMPANIES = 'Empresas';
+export const COMPANY = 'Empresa';
+export const COMPANY_COSTS = 'Costes de Empresa';
+export const COMPANY_MANAGEMENT = 'Gestión de Empresas';
+export const COMPANY_SELECTION = 'Selección de Empresa';
+export const COMPONENTS = 'Componentes';
+export const COMMERCIAL = 'Commercial';
+export const CONCEPT = 'Concepto';
+export const CONCEPTS = 'Conceptos';
+export const CONFIDENTIAL = 'Confidencial';
+export const CONFIGURATION = 'Configuración';
+export const CONTACT = 'Contacto';
+export const CONTACT_DATA = 'Datos contacto';
+export const CONTACT_DATA2 = "Données de contact";
+export const CONTACTS = 'Contactos';
+export const CONTAINER = 'Envase';
+export const CONTRACT = 'Contratar';
+export const CONTRACTED_PRODUCTS = "Productos contratados";
+export const CONTRACTED_USERS = "Usuarios contratados";
+export const CONTRACT_PAYROLL = 'Contrato';
+export const CONTRACTS = 'Contratos';
+export const COPIED_TO_CLIPBOARD = "Copiado al portapapeles";
+export const COPY = "Copiar";
+export const COUNTRY = 'País';
+export const CREATE = 'Crear';
+export const CREDITOR = 'Acreedor';
+export const CREDITORS = 'Acreedores';
+export const CUSTOM_VIEW = 'Vista Personalizada';
+export const CUSTOMER = 'Cliente';
+export const CUSTOMER_SEARCH = 'Búsqueda de cliente';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND  = "No se encontraron clientes relacionados con este dominio";
+export const CUSTOMER_SEARCH_NOT_FOUND = 'No se encontraron clientes relacionados con esta búsqueda';
+export const CUSTOMERS = 'Clientes';
+
+// ----- D
+
+export const DATE = 'Fecha';
+export const DEACTIVATE = 'Desactivar';
+export const DELETE = 'Borrar';
+export const DELETE_BACKGROUND_CONFIRM = 'Estás seguro de eliminar el fondo';
+export const DELETE_CATEGORY = 'Borrar Categoría';
+export const DELETE_CONFIRM = "Estás seguro de eliminar";
+export const DELETE_FILE = 'Borrar Fichero';
+export const DELETE_FILE_CONFIRM = 'Estás seguro de eliminar el fichero';
+export const DELETE_FOREVER = 'Borrar Definitivamente';
+export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'La Factura se ha borrado Definitivamente.';
+export const DELETE_LOGO_CONFIRM = 'Estás seguro de eliminar el logo';
+export const DELETE_TAG = 'Borrar Etiqueta';
+export const DELETE_TAX = 'Borrar Impuesto';
+export const DELETE_WAREHOUSE = 'Borrar Almacén';
+export const DELETED_DATA = "Los datos se han eliminado correctamente";
+export const DESCRIPTION = 'Descripción';
+export const DETAILED = 'Detallado';
+export const DEUTSCH = 'Alemán';
+export const DISCARDED = 'Descartadas';
+export const DOCUMENT = 'Documento';
+export const DOCUMENTS = 'Documentos';
+export const DOCUMENTARY = 'Documentaire';
+export const DOMAIN_SEARCH = "Búsqueda de dominio";
+export const DOWNLOAD = 'Descargar';
+export const DOWNLOAD_FILE = 'Descargar Fichero';
+export const DOWNLOAD_FILES = 'Descargar Ficheros';
+export const DOWNLOAD_INVOICE = 'Descargar Factura';
+export const DOWNLOAD_INVOICES = 'Descargar Facturas';
+export const DUPLICATE = 'Duplicar';
+export const DUPLICATE_INVOICE = 'Duplicar Factura';
+export const DURATION = "Duración";
+
+// ----- E
+
+export const EDIT = 'Editar';
+export const EDIT_CATEGORY = 'Editar Categoría';
+export const EDIT_FILE = 'Editar Fichero';
+export const EDIT_FILES = 'Editar Ficheros';
+export const EDIT_TAG = 'Editar Etiqueta';
+export const EDIT_WAREHOUSE = 'Editar Almacén';
+export const EMAIL = 'Email';
+export const EMPLOYEE = 'Empleado';
+export const END_DATE = 'Fecha Fin';
+export const ENGLISH = 'Inglés';
+export const ENTERPRISE = 'Empresa';
+export const ENTRY = 'Entrada';
+export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
+export const EXIT = 'Salida';
+export const EXPENSE = 'Gasto';
+export const EXPENSES = 'Gastos';
+export const EXPIRATIONS = 'Vencimientos';
+export const EXPIRED = 'Expirado';
+export const EXPIRED_SESSION = 'La session a expiré';
+export const ERRORS = 'Errores';
+
+// ----- F
+
+export const FAX = 'Fax';
+export const FISCAL = 'Fiscal';
+export const FILE = 'Fichero';
+export const FILE_DATA = 'Datos del Fichero';
+export const FILTER = "Filtro";
+export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
+export const FOOTER = 'Pie';
+export const FROM = 'Desde';
+export const FRENCH = 'Français';
+
+// ----- G
+
+export const GALICIAN = 'Gallego';
+export const GENERAL_INFORMATION = 'Información General';
+export const GET_INVOICE = 'Obtener Factura';
+export const GET_INVOICES = 'Obtener Facturas';
+export const GROUP_DATA = 'Datos del Grupo';
+export const GROUP_MANAGEMENT = 'Gestión de Grupos';
+export const GROUP = 'Grupo';
+export const GROUPWARE = 'Dossier';
+export const GROUPS = 'Grupos';
+
+// ----- H
+
+export const HEADER = 'Cabecera';
+export const HELP = 'Aide';
+export const HIRING = 'Contratación';
+export const HIRING_DATA = "Datos de contratación";
+export const HOLDER = 'Titular';
+export const HOLDERS = 'Titulares';
+export const HOME = "Début";
+export const HOURS = "Horas";
+export const HISTORIC = "Historial";
+
+// ----- I
+
+export const IN_DEVELOPMENT = 'Esta opción está en desarrollo...';
+export const INACTIVE = 'Inactivo';
+export const INACTIVES = 'Inactivas';
+export const INBOX = 'Bandeja de Entrada';
+export const INCLUDE_COMPANY_DATA = 'Incluir Datos de Empresa';
+export const INCLUDE_LOGO = 'Incluir Logo';
+export const INFORMATION = 'Información';
+export const INVESTMENT = 'Inversión';
+export const INVOICE = 'Factura';
+export const INVOICE_CONCEPTS =  'Conceptos Factura';
+export const INVOICE_CONFIGURATION = 'Configuración de Facturas';
+export const INVOICE_DATA = 'Datos Factura';
+export const INVOICE_ISSUED = 'Factura Emitida';
+export const INVOICE_NUMBER = 'Número Factura';
+export const INVOICE_OBJECT = 'Objeto de Factura';
+export const INVOICE_PRINTING = 'Impresión de Facturas';
+export const INVOICE_RECEIVED = 'Factura Recibida';
+export const INVOICES = 'Facture';
+export const IRPF = 'IRPF';
+export const IS_REQUIRED = 'es obligatorio';
+export const IS_NOT_VALID_EMAIL = 'no es un email válido';
+export const ISSUED = 'Emitida';
+export const ISSUEDS = 'Emitidas';
+
+// ----- J
+
+// ----- K
+
+// ----- L
+
+export const LABORAL_COSTS = 'Resumen Laboral';
+export const LANGUAGE = 'Idioma';
+export const LAST = 'Última';
+export const LAST_LOCATION = 'Última ubicación';
+export const LAST_STATUS = 'Último estado';
+export const LINK = 'Vincular';
+export const LINK_CLIENT = "Vincular Cliente";
+export const LINKING = "Vinculación";
+export const LINKED = 'Vinculado';
+export const LINKED1 = 'Vinculados';
+export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
+export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
+export const LOADING = 'Cargando';
+export const LOCATION = 'Ubicación';
+
+// ----- M
+
+export const MARKETING = 'Marketing';
+export const MARK_ENTRY = 'Marcar Entrada';
+export const MARK_EXIT = 'Marcar Salida';
+export const MANAGEMENT = 'Gestión';
+export const MODEL_111 = 'Modelo 111';
+export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
+export const MODEL_190 = 'Modelo 190';
+export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
+export const MY_DATA = 'Mis Datos';
+export const MY_MANAGER = 'Mi Gestor';
+export const MY_USER = 'Mi Usuario';
+export const UPPER_MENU = `Menu d'en-tête`;
+
+// ----- N
+
+export const NAME = 'Nombre';
+export const NEW = 'Nuevo';
+export const NEW_COMPANY = 'Nueva Empresa';
+export const NEW_DOCUMENT = 'Nuevo Documento';
+export const NEW_EMPLOYEE = 'Nuevo Empleado';
+export const NEW_EXPENSE = 'Nuevo Gasto';
+export const NEW_INVOICE = 'Nueva Factura';
+export const NEW_ISSUED_INVOICE = 'Nueva Factura Emitida';
+export const NEW_PRODUCT = 'Nuevo Producto';
+export const NEW_RECEIVED_INVOICE = 'Nueva Factura Recibida';
+export const NEW_REQUEST = 'Nueva Solicitud';
+export const NEW_TICKET = 'Nuevo Ticket';
+export const NEW_WAREHOUSE = 'Nuevo Almacén';
+export const NEXT = 'Siguiente';
+export const NIF = 'NIF';
+export const NO_DATA = `Il n'y a aucune information`;
+export const NOT_LINKED = 'No vinculado';
+export const NOT_LINKED1 = 'No vinculados';
+export const NOTIFICATION = 'Notificación';
+export const NOTIFICATIONS = 'Notificaciones';
+export const NOTES = 'Notes';
+export const NOTE = 'Nota';
+export const NUMBER = 'Número';
+export const NUMBER_OF_USERS = 'Número de usuarios';
+
+// ----- O
+
+export const OCR = 'OCR';
+export const OBSERVATION = 'Observación';
+export const OFFICE = 'Despacho';
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Solo dominios sin cliente vinculado";
+export const ONLY_PORTAL = 'Solo Portal';
+export const OPEN = 'Abrir';
+export const OPEN_MENU = 'Abrir Menú';
+export const OPEN_REQUESTS = 'Solicitudes Abiertas';
+export const OPTIONAL = "Opcional"; 
+export const OPTIONS = 'Opciones';
+export const OR_ACCESS = 'o ACCEDE';
+export const OTHER_SERVICES = 'Otros Servicios';
+
+// ----- P
+
+export const PARENT_APPS = 'Aplicaciones del padre';
+export const PAUSE = 'Pausa';
+export const PASSWORD = 'Contraseña';
+export const PAYMETHOD = 'Forma de Pago';
+export const PAYROLL = "Travail";
+export const PAYSHEET = 'Nómina';
+export const PAYSHEETS = 'Nóminas';
+export const PENDING = 'Pendiente';
+export const PENDING_DOCUMENTS = 'Documentos Pendientes';
+export const PENDING_INVOICES = 'Facturas Pendientes';
+export const PENDING_REVIEW = 'Pendiente de Revisión';
+export const PENDING_TASKS = 'Tareas Pendientes';
+export const PENDINGS = 'Pendiente';
+export const PERMISSIONS = 'Permisos';
+export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menu portail"
+export const POSTAL_CODE = 'Código Postal';
+export const POSTAL_CODE_MIN = 'C.P.';
+export const PREVIOUS = 'Anterior';
+export const PRICE = 'Precio';
+export const PRINT = 'Imprimir';
+export const PRINT_INVOICE = 'Imprimir Factura';
+export const PROCESSED_MOVEMENT = "El alta se ha procesado correctamente";
+export const PRODUCT = 'Producto';
+export const PRODUCT_NOT_EMPTY = "El producto no puede estar vacío";
+export const PRODUCT_MUST_BE_SELECTED = "Es obligatorio seleccionar un producto";
+export const PRODUCTS = 'Productos';
+export const PROVINCE = 'Provincia';
+
+// ----- Q
+
+export const QUICK_ACCESS = "Accès rapides";
+export const QUANTITY = 'Cantidad';
+export const QUOTA = 'Cuota';
+
+// ----- R
+
+export const RADIO = "Radio";
+export const RECEIVED = 'Recibida';
+export const RECEIVEDS = 'Recibidas';
+export const RECENTS = 'Recientes';
+export const RECENTLY_OPENED = "Récemment ouvert";
+export const RECORD = 'Contabilizar';
+export const RECORD_INVOICE = 'Contabilizar Factura';
+export const RECTIFIED = 'Rectificativa';
+export const RECTIFY = 'Rectificar';
+export const RECTIFY_INVOICE =  'Rectificar Factura';
+export const REFERENCE = 'Referencia';
+export const REGISTERED_TRADEMARK = 'Marca Registrada';
+export const REGISTERED_TRADEMARK_AON = `c'est une marque déposée de AON SOLUTIONS, S.L.`;
+export const REJECT = 'Rechazar';
+export const REJECT_INVOICE = 'Rechazar Factura';
+export const REJECT_INVOICES = 'Rechazar Facturas';
+export const REJECTED = 'Rechazada';
+export const REJECTED_INVOICES = 'Facturas Rechazadas';
+export const REJECTEDS = 'Rechazadas';
+export const REMARKS = 'Observaciones';
+export const REMINDER = 'Recordatorio';
+export const REQUEST = 'Solicitud';
+export const REQUESTS = 'Solicitudes';
+export const REQUESTS_SENT = 'Solicitudes Enviadas';
+export const REQUESTS_RECEIVED = 'Solicitudes Recibidas';
+export const RESTORE = 'Restaurar';
+export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
+export const RESTORE_INVOICE = 'Restaurar Factura';
+export const RESTORE_INVOICES = 'Restaurar Facturas';
+export const RESUME_COSTS = "Resumen de costes";
+export const REVIEW = 'Revisar';
+
+// ----- S
+
+export const SAVE = 'Guardar';
+export const SAVED_DATA = "Los datos se han guardado correctamente";
+export const SCOPE =  'Ámbito';
+export const SCHEDULE = "Horarie";
+export const SEARCH = 'Chercher';
+export const SEE_ALL = 'Ver Todas';
+export const SEND = 'Enviar';
+export const SEND_FILE = 'Enviar Fichero';
+export const SEND_FILES = 'Enviar Ficheros';
+export const SEND_INVOICE = 'Enviar Factura';
+export const SEND_INVOICES = 'Enviar Facturas';
+export const SEPA_FILES = 'Ficheros SEPA';
+export const SERIE = 'Serie';
+export const SERVICE = 'Servicio';
+export const SERVICES = 'Servicios';
+export const SETTING =  'Configuration';
+export const SHARED = 'Compartidas';
+export const SHOW_FILE = 'Mostrar Fichero';
+export const SIDE_MENU = 'Menu latéral';
+export const SIGN_IN = 'Iniciar Sesión';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Sin Contraseña';
+export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
+export const SII = 'SII';
+export const SII_TICKETBAI = 'SII / TicketBAI';
+export const SIZE = 'Tamaño';
+export const SPANISH = 'Castellano';
+export const STATISTICS = 'Estadísticas';
+export const STATUS = "Estado";
+export const STATUS_NOT_EMPTY = "El estado no puede quedar vacío";
+export const SUITE_MENU = "Menu suite";
+export const SUPPLIED = 'Suplidos';
+export const SUPPLIER = 'Proveedor';
+export const SUPPLIERS = 'Proveedores';
+export const SUPPORT = 'Support';
+export const SURCHARGE = 'Recargo';
+export const SURNAME = 'Apellidos';
+export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
+export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
+
+// ----- T
+
+export const TAG = 'Etiqueta';
+export const TAGS = 'Etiquetas';
+export const TAX = 'Impuesto';
+export const TAX_BASE = 'Base Imponible';
+export const TAXES_DETAIL= 'Detalle Impuestos';
+export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
+export const TICKET = 'Ticket';
+export const TICKETBAI = 'TicketBAI';
+export const TICKETS = 'Tickets';
+export const TIMECONTROL = 'Control Horarie'; 
+export const TITLE = 'Título';
+export const TITULAR_DATA = 'Datos del Titular';
+export const TO = 'Hasta';
+export const TO_TRASH = 'Enviar a la Papelera';
+export const TODAY = 'Hoy';
+export const TOMORROW = 'Mañana';
+export const TOOLS = 'Herramientas';
+export const TOTAL = 'Total';
+export const TOTAL_SUPPLIED = 'Total Suplidos';
+export const TRANSACTION_TYPE = 'Tipo de Transacción';
+export const TREASURY = 'Trésor public';
+export const TRASH = 'Papelera';
+export const TYPE = 'Tipo';
+export const TYPES = 'Tipos';
+
+// ----- U
+
+export const UNLINK = "Desvincular";
+export const UNLINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
+export const UNLINK_CLIENT = "Desvincular cliente";
+export const UNLINKED = "Sin vincular";
+export const UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
+export const UPLOAD = 'Subir';
+export const UPLOAD_FILE = 'Subir Fichero';
+export const UPLOAD_INVOICE = 'Subir Factura';
+export const USER = 'Utilisateur';
+export const USER_DATA = 'Datos del Usuario';
+export const USER_MANAGEMENT = 'Gestión de Usuarios';
+export const USERS = 'Usuarios';
+export const UTILITIES = 'Utilidades';
+
+// ----- V
+
+export const VAT = 'IVA';
+export const VERSION = 'Versión';
+export const VIEW_PAYROLL = "Ver nómina";
+export const VIEW_PAYROLLS = "Ver nóminas";
+
+// ----- W
+
+export const WAREHOUSE = 'Entrepôt';
+export const WAREHOUSES = 'Almacenes';
+export const WEB = 'Web';
+export const WITHHOLDING = 'Retención';
+export const WORKGROUP = 'Grupo de trabajo';
+export const WORKSHOPS = 'Talleres';
+export const WRITE_YOUR_TITLE = "Escribe tu título aquí";
+export const WRITE_A_COMMENT =  "Escribe un comentario";
+export const WRITE_A_DESCRIPTION = "Escribe una descripción";
+export const WRITE_A_NOTE =  "Escribe una nota";
+export const WEEK_SCHEDULE = "Du lundi au jeudi de 8:00 à 15:00";
+export const WEEK_FRIDAY_SCHEDULE = "Vendredi de 8:00 à 14:00";
+
+// ----- X
+
+// ----- Y
+
+export const YEAR = 'Año';
+export const YESTERDAY = 'Ayer';
+
+// ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Domingo";
+export const MONDAY = "Lunes"; 
+export const TUESDAY = "Martes";
+export const WEDNESDAY = "Miércoles";
+export const THURSDAY = "Jueves"; 
+export const FRIDAY = "Viernes"; 
+export const SATURDAY = "Sábado"; 
+
+//-------------MONTHS
+export const JANUARY = "Enero"; 
+export const FEBRUARY = "Febrero"; 
+export const MARCH = "Marzo"; 
+export const APRIL = "Abril"; 
+export const MAY = "Mayo"; 
+export const JUNE = "Junio"; 
+export const JULY = "Julio"; 
+export const AUGUST = "Agosto";
+export const SEPTEMBER = "Septiembre";
+export const OCTOBER = "Octubre"; 
+export const NOVEMBER = "Noviembre"; 
+export const DECEMBER = "Diciembre"; 

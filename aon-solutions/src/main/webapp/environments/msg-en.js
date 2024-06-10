@@ -1,6 +1,7 @@
 // ----- A
 
 export const ABOUT = 'About';
+export const ACADEMIES = 'Academies';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Acces to your AON account';
@@ -19,6 +20,7 @@ export const ADD_COMMENT = 'Add Comment';
 export const ADD_COMPOSITION = 'Add Composition';
 export const ADD_FILE = 'Add File';
 export const ADD_INVOICE = 'Add Invoice';
+export const ADD_NEW = "Add new";
 export const ADD_REMARKS = 'Add Remarks';
 export const ADD_TAG = 'Add Tag';
 export const ADD_TAX = 'Add Tax';
@@ -67,15 +69,19 @@ export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';
 export const CHARGES_AND_PAYMENTS = 'Charges and Payments';
+export const CHANGE_PASSWORD = 'Change password';
 export const CHOOSE_A_DOMAIN = 'Choose a domain, please';
 export const CITY = 'City';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
 export const CLOSE = 'Close';
 export const CLOSE_SESSION = 'Logout';
+export const CLOSED = 'Closed'
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
+export const COMMERCE = 'Commerce';
+export const COMMERCIAL = 'Commercial';
 export const COMMUNICATION = 'Communication';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -89,6 +95,7 @@ export const CONFIDENTIAL = 'Confidential';
 export const CONFIGURATION = 'Configuration';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
+export const CONTACT_DATA2 = "Contact information";
 export const CONTACTS = 'Contacts';
 export const CONTAINER = 'Container';
 export const CONTRACT = 'Contract';
@@ -163,6 +170,7 @@ export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
+export const EXPIRED_SESSION = 'Session expired';
 export const ERRORS = 'Errors';
 
 // ----- F
@@ -173,8 +181,10 @@ export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
 export const FIND_LINKED_DOMAINS = "Find linked domains";
+export const FISCAL = 'Fiscal';
 export const FOOTER = 'Footer';
 export const FROM = 'From';
+export const FRENCH = 'French';
 
 // ----- G
 
@@ -185,6 +195,7 @@ export const GET_INVOICES = 'Get Invoices';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
+export const GROUPWARE = 'Groupware';
 export const GROUPS = 'Groups';
 
 // ----- H
@@ -248,6 +259,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Mark Entry';
 export const MARK_EXIT = 'Mark Exit';
 export const MANAGEMENT = 'Management';
@@ -277,6 +289,7 @@ export const NEW_TICKET = 'New Ticket';
 export const NEW_WAREHOUSE = 'New Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
+export const NO_DATA = 'There is no data';
 export const NOT_LINKED = 'Not linked';
 export const NOT_LINKED1 = 'Not linked';
 export const NOTIFICATION = 'Notification';
@@ -318,6 +331,7 @@ export const PENDING_TASKS = 'Pending Tasks';
 export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
+export const PORTAL_MENU = "Portal menu"
 export const POSTAL_CODE = 'Postal Code';
 export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
@@ -333,6 +347,7 @@ export const PROVINCE = 'Province';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Quick access";
 export const QUANTITY = 'Quantity';
 export const QUOTA = 'Quota';
 
@@ -342,6 +357,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Received';
 export const RECEIVEDS = 'Received';
 export const RECENTS = 'Recents';
+export const RECENTLY_OPENED = "Recently opened";
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFIED = 'Rectified';
@@ -374,6 +390,7 @@ export const REVIEW = 'Review';
 export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
+export const SCHEDULE = "Schedule";
 export const SEARCH = 'Search';
 export const SEE_ALL = 'See All';
 export const SEND = 'Send';
@@ -388,6 +405,7 @@ export const SERVICES = 'Services';
 export const SETTING = 'Setting';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIDE_MENU = 'Side menu';
 export const SIGN_IN = 'Sign in';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Sign in without Password';
 export const SIGN_IN_WITH_CERTIFICATE = 'Sign in with Cetificate';
@@ -398,6 +416,7 @@ export const SPANISH = 'Spanish';
 export const STATISTICS = 'Statistics';
 export const STATUS = "Status";
 export const STATUS_NOT_EMPTY = "Status cannot be empty";
+export const SUITE_MENU = "Suite menu";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
@@ -405,6 +424,8 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
+export const SELECT_LANGUAGE = "Select Language";
+export const SELECT_COMPANY_TYPE = "Select company type";
 
 // ----- T
 
@@ -429,6 +450,7 @@ export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
 export const TRANSACTION_TYPE = 'Transaction Type';
 export const TRASH = 'Trash';
+export const TREASURY = 'Treasury';
 export const TYPE = 'Type';
 export const TYPES = 'Types';
 
@@ -447,6 +469,7 @@ export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
 export const UTILITIES = 'Utilities';
+export const UPPER_MENU = "Header menu";
 
 // ----- V
 
@@ -462,10 +485,13 @@ export const WAREHOUSES = 'Warehouses';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';
+export const WORKSHOPS = 'Workshops';
 export const WRITE_YOUR_TITLE = "Write your title here";
 export const WRITE_A_COMMENT =  "Write a comment";
 export const WRITE_A_DESCRIPTION = "Write a description";
 export const WRITE_A_NOTE =  "Write a note";
+export const WEEK_SCHEDULE = "Monday to Thursday from 8:00 a.m. to 3:00 p.m.";
+export const WEEK_FRIDAY_SCHEDULE = "Friday from 8:00 a.m. to 2:00 p.m.";
 
 // ----- X
 

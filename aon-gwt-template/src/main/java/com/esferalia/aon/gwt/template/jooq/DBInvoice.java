@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.jooq;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -11,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Record;
 import org.jooq.Result;
@@ -30,6 +33,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -38,14 +42,24 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO.InvoiceDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceTaxDAO.InvoiceTaxFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO.InvoiceAddressFiller;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DBInvoice {
 	
@@ -158,4 +172,61 @@ public class DBInvoice {
 		}
 		return url;
 	}
+	
+	private static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+
+		@Override
+		public Invoice apply(Record r) {
+			return buildInvoice(r);
+		}
+		
+		static Invoice buildInvoice(Record r) {
+			return new Invoice()
+				.setId(r.getValue(INVOICE.ID))
+				.setDomain(r.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(INVOICE.TYPE)))
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
+				.setRegistry( r.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
+				.setScope(checkField(r, SCOPE.ID)
+						? ScopeFiller.buildScope(r)
+						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
+				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
+						? EnterpriseActivityFiller.build(r)
+						: new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
+				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
+				.setProject(r.getValue(INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
+				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
+				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
+				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
+				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
+				.setTotal(r.getValue(INVOICE.TOTAL))	
+				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setSeller(getValue(r, INVOICE.SELLER))
+				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
+				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
+				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER));
+		}
+	}
+	
 }
