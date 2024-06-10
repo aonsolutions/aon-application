@@ -205,6 +205,7 @@ public class BankServlet extends AonApiHttpServlet {
 			movements = AonNordigen.getMovements(token, occam, nordigenTrueAccount, lastAccessedDate, linked);
 			movementsJson = movementsToJson(movements, nordigenTrueAccount);
 			movementsJsonArray.put(movementsJson);
+			//905325d3-bc92-47b4-801e-84b39461ffa7 
 		}
 
 		return movementsJsonArray;
@@ -246,8 +247,13 @@ public class BankServlet extends AonApiHttpServlet {
 			List<NordigenBankAccount> accounts = nc.getAccounts();
 			for (int i = 0; i < accounts.size(); i++) {
 				RegistryBank bank = accounts.get(i).getRbank();
+				if(accounts.get(i).isLinked()) {				
 				array.put(RegistryBankJSON.toJSON(bank).put("logo",
-						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")));
+						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")).put("SyncStatus", "sync"));
+				}else {
+				array.put(RegistryBankJSON.toJSON(bank).put("logo",
+						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")).put("SyncStatus", ""));
+				}
 			}
 			return array;
 		} catch (Exception e) {
@@ -261,13 +267,14 @@ public class BankServlet extends AonApiHttpServlet {
 				.setUser(api.getUser().getLogin());
 		NordigenConfiguration nc;
 		List<NordigenBankAccount> linkedAccounts;
-		List<RegistryBank> rbanks = new ArrayList<>();
+		JSONArray array = new JSONArray();
 			nc = AonNordigen.getConfiguration(occam);
 			linkedAccounts = nc.getLinkedAccounts();
 			for (int i = 0; i < linkedAccounts.size(); i++) {
-				rbanks.add(linkedAccounts.get(i).getRbank());
+				RegistryBank bank = linkedAccounts.get(i).getRbank();
+				array.put(RegistryBankJSON.toJSON(bank).put("SyncStatus", "sync"));
 			}
-		return RegistryBankJSON.toJSON(rbanks);
+		return array;
 	}
 
 	private static JSONArray getUnlinkedAccounts(AonApiData api) {
@@ -275,13 +282,14 @@ public class BankServlet extends AonApiHttpServlet {
 				.setUser(api.getUser().getLogin());
 		NordigenConfiguration nc;
 		List<NordigenBankAccount> unLinkedAccounts;
-		List<RegistryBank> rbanks = new ArrayList<>(); 
 			nc = AonNordigen.getConfiguration(occam);
 			unLinkedAccounts = nc.getUnlinkedAccounts();
+			JSONArray array = new JSONArray();
 			for (int i = 0; i < unLinkedAccounts.size(); i++) {
-				rbanks.add(unLinkedAccounts.get(i).getRbank());
+				RegistryBank bank = unLinkedAccounts.get(i).getRbank();
+				array.put(RegistryBankJSON.toJSON(bank).put("SyncStatus", ""));
 			}
-		return RegistryBankJSON.toJSON(rbanks);
+		return array;
 	}
 
 	private static JSONObject getUrlForLinkBankToNordigen(AonApiData api, String iban) {
