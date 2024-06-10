@@ -864,9 +864,8 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("addressMunicipality")
 	void onAddressMunicipalityChangeValue(ChangeEvent event) {
-		String addressMunicipalityStr = municipalities
-				.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
-		onEmployeeAddressMunicipalityChange(addressMunicipalityStr);
+//		String addressMunicipalityStr = municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
+		onEmployeeAddressMunicipalityChange(addressMunicipality.getSelectedValue());
 	}
 
 	@UiHandler("mobile")
