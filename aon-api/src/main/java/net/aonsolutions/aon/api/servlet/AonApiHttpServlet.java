@@ -265,11 +265,16 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
     protected void addCorsHeader(HttpServletResponse response) {
-    	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
-        response.addHeader(IConstants.ACCESS_CONTROL_EXPOSE_HEADERS, IConstants.AUTHENTICATION);
-        response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+        if(!response.containsHeader(IConstants.ACCESS_CONTROL_EXPOSE_HEADERS) && !response.containsHeader(IConstants.AUTHENTICATION))
+        	response.addHeader(IConstants.ACCESS_CONTROL_EXPOSE_HEADERS, IConstants.AUTHENTICATION);
+        if(!response.containsHeader(IConstants.ACCESS_CONTROL_MAX_AGE))
+        	response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
     }
 	
 	protected void giveBack(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
