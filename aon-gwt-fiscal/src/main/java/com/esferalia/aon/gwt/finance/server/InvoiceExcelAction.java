@@ -13,10 +13,11 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class InvoiceExcelAction extends AbsExcelAction implements Consumer<InvoiceDetail> {
+public class InvoiceExcelAction extends AbsExcelAction implements Consumer<InvoiceDetailExtended> {
 	
     
     private List<String> tags; 
@@ -160,7 +161,8 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	}
 	
 	@Override
-	public void accept(InvoiceDetail detail) {
+	public void accept(InvoiceDetailExtended detailExtended ) {
+		InvoiceDetail detail = detailExtended.getDetail();
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		alignCenter( addCell( detail.getInvoice().getType().getDescription() ) );
@@ -197,11 +199,11 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getWorkplace() == null ? null : detail.getWorkplace().getDescription() );
 		addCell( detail.getProjectName() );
 		addCell( detail.getSeller()!=null? detail.getSeller().getName() : null );
-		addCell( detail.getSellerSupport()!=null? detail.getSellerSupport() : null );
+		addCell( detailExtended.getSellerSupport()!=null? detailExtended.getSellerSupport() : null );
 		
 		String segments = "";
-		if(null != detail.getSegments()) {
-			for (String segment : detail.getSegments()) { segments += segment + ", "; }
+		if(null != detailExtended.getSegments()) {
+			for (String segment : detailExtended.getSegments()) { segments += segment + ", "; }
 	        // Remove the trailing comma and space
 			if(AonStringUtils.isNotBlank(segments)) segments = segments.substring(0, segments.length() - 2);
 		}

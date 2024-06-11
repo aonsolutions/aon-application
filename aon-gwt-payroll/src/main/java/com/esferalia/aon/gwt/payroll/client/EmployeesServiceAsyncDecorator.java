@@ -895,9 +895,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void cambioContrato(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void cambioContrato(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioContrato(currentDomainName, user, employeeContractInfo, tc2, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioContrato(currentDomainName, user, employeeContractInfo, tc2, partialityCoef, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

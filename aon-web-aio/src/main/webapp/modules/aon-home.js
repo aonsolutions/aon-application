@@ -42,15 +42,19 @@ export class AonHome extends AonElement {
 
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
+		gradiantHeader.id = 'aonRootGradiantHeader';
 		this.appendChild(gradiantHeader);
 		let gradiantHeaderTop = this.createElement(TAG.DIV);
 		gradiantHeaderTop.className = 'aonRootGradiantHeaderTop';
+		gradiantHeaderTop.id = 'aonRootGradiantHeaderTop';
 		this.appendChild(gradiantHeaderTop);
 		let gradiantHeaderBottom = this.createElement(TAG.DIV);
 		gradiantHeaderBottom.className = 'aonRootGradiantHeaderBottom';
+		gradiantHeaderBottom.id = 'aonRootGradiantHeaderBottom';
 		this.appendChild(gradiantHeaderBottom);
 		let gradiantHeaderBlur = this.createElement(TAG.DIV);
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
+		gradiantHeaderBlur.id = 'aonRootGradiantHeaderBlur';
 		this.appendChild(gradiantHeaderBlur);
 
 		let aonHeader = new AonHeader();
@@ -87,9 +91,12 @@ export class AonHome extends AonElement {
 			aonHeader.setBackgroundColor(appColor);
 		});
 
+		
+
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
+		rootPanel.style.overflowY = "auto";
 		this.appendChild(rootPanel);
 
 		this.appendChild(aonMenu);
@@ -100,6 +107,8 @@ export class AonHome extends AonElement {
 		});
 
 		this.appendChild(rightPanel);
+
+		
 
 		let editButton = this.getElement('aonRightPanelEditButton');
 		let configButton = this.getElement('aonRightPanelConfigButton');

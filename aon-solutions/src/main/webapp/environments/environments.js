@@ -45,5 +45,6 @@ import * as MATERIAL_ICONS from './materialIcons.js';
 import * as AON_ICONS from './aonIcons.js';
 import * as CONSTANT from './constants.js';
 import * as API from './aonApi.js';
+import * as APPPARAMS from './appParams.js';
 
-export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT, API};
+export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT, API, APPPARAMS};

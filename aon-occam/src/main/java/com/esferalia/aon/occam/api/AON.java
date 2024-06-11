@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -90,6 +89,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
@@ -214,6 +214,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -1942,23 +1943,16 @@ public class AON {
 			return getFinance().getLastSaleInvoice(ctx, serie);
 		}
 	}
-	
-	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
-			Integer domainId, String login, InvoiceFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceDetails(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(String domainName, Integer domainId, String login, InvoiceFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvoiceDetailsList(ctx, filter);
-		}
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(Occam occam, InvoiceFilter filter) {
+		final CloseableAONContext ctx = AONContext.getAONContext(occam);
+		return getFinance().getInvoiceDetailsExtended(ctx, filter,() -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<InvoiceDetail> getInvoiceDetailStream(String domainName, Integer domainId, String login,
@@ -3827,14 +3821,8 @@ public class AON {
 	}
 
 	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName,domain,userLogin);
-			return getStats().getInvoicesReport(ctx, params);
-		} finally {
-			if (ctx != null) 
-				ctx.close();
-		}
+		CloseableAONContext ctx = AONContext.getAONContext(domainName,domain,userLogin);
+		return getStats().getInvoicesReport(ctx, params, () -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<OldTask> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){

@@ -5,9 +5,6 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
@@ -21,11 +18,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -38,14 +32,7 @@ public class InvoiceReport extends MainEntryPoint {
 			.create(InvoiceReportBinder.class);
 
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-	@UiField
-	ResultsPanel resultsPanel;
-	@UiField
-	MinimizePanel footPanel;
-	@UiField
 	Panel formContainer;
-	
 	@UiField
 	ListBox entity;
 
@@ -85,10 +72,6 @@ public class InvoiceReport extends MainEntryPoint {
 	@UiField
 	CheckBox deliveryStatusInvoiced;
 	
-	
-	private int domain;
-	private int enterprise;
-
 	@UiField(provided=true)
 	FormPanel diskForm;
 	@UiField
@@ -104,6 +87,8 @@ public class InvoiceReport extends MainEntryPoint {
 	Hidden domainId;
 	@UiField
 	Hidden domainName;
+	@UiField
+	Hidden user;
 
 	@Override
 	public void onModuleLoad() {
@@ -123,16 +108,11 @@ public class InvoiceReport extends MainEntryPoint {
 		entity.setSelectedIndex(0);
 		onChangeEntity(null);
 		
-		//SelectElement select = entity.getElement().cast();
-		//select.getOptions().getItem(2).setDisabled(true);
-		//select.getOptions().getItem(3).setDisabled(true);
-		//select.getOptions().getItem(4).setDisabled(true);
-		//select.getOptions().getItem(5).setDisabled(true);
-
 		fromDate.getTextBox().setName(IRequestParamsNames.FROM_DATE);
 		toDate.getTextBox().setName(IRequestParamsNames.TO_DATE);
 		domainId.setName(IRequestParamsNames.DOMAIN_ID);
 		domainName.setName(IRequestParamsNames.DOMAIN_NAME);
+		user.setName(IRequestParamsNames.USER);
 		
 		invoiceTypeSales.setName(IRequestParamsNames.INVOICE_TYPE_SALES);
 		invoiceTypePurchases.setName(IRequestParamsNames.INVOICE_TYPE_PURCHASES);
@@ -190,16 +170,6 @@ public class InvoiceReport extends MainEntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
-
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
 
 	// -------------------------------------------------------------- UiHandler
 	@UiHandler("entity")
@@ -261,50 +231,9 @@ public class InvoiceReport extends MainEntryPoint {
 			
 			domainId.setValue(String.valueOf(getCurrentDomain()));
 			domainName.setValue(getCurrentDomainName());
+			user.setValue(getCurrentUser());
 			diskForm.submit();
 		}
 	}
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
-	private void cleanErrorMessage() {
-		closeFootPanel();
-	}
-
-	private void showErrorMessage(String msg) {
-		showResultsPanel();
-		addErrorMessage(msg);
-	}
-
-	private void addErrorMessage(String msg) {
-		SimplePanel panel = new SimplePanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
-	}
 }

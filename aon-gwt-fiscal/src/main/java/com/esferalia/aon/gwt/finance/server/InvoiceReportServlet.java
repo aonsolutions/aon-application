@@ -6,11 +6,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -37,6 +39,7 @@ public class InvoiceReportServlet extends HttpServlet {
 		try {
 			String domainName = req.getParameter( IRequestParamsNames.DOMAIN_NAME);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
+			String login = req.getParameter( IRequestParamsNames.USER);
 			
 			String registryParam = req.getParameter(IRequestParamsNames.REGISTRY_ID);
 			Integer registryId = AonStringUtils.isNotBlank(registryParam)? AonNumberUtils.toint(registryParam) :null;
@@ -52,7 +55,6 @@ public class InvoiceReportServlet extends HttpServlet {
 			final Date toDate = (AonStringUtils.isNotBlank(toDateParam))
 					?DATE_FORMAT.parse(toDateParam)
 					:null;
-			String login = AonServletUtils.getRequestUser(req);
 					
 			InvoiceExcelAction action = new InvoiceExcelAction();
 			List<String> tags = AON.getProductTags(domainName, domainId,login);
@@ -132,8 +134,12 @@ public class InvoiceReportServlet extends HttpServlet {
 
 			User user = AON.getUser(domainName, domainId, login ); 
 			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(login);
 			
-			AON.getInvoiceDetailsList(domainName, domainId, login,
+			Stream<InvoiceDetailExtended> stream = AON.getInvoiceDetailsExtended(occam,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))
@@ -145,30 +151,15 @@ public class InvoiceReportServlet extends HttpServlet {
 							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))
 							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))
 							.and(workplaces.length==0?p.getIdProperty().isNotNull():p.getWorkplaceProperty().in(workplaces))
-							.and(
-									p.getRSellerIdProperty().isNull().or(
-										(
-											p.getRSellerStartDateProperty().between(new java.sql.Date(fromDate.getTime()), new java.sql.Date(toDate.getTime()))
-											.or(
-													p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
-													.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))		
-											)
-										)
-										.and(p.getRSellerStatusProperty().eq((byte)0))
-									)
-							)
-//							.and(p.getRSellerIdProperty().isNull().or(
-//									p.getRSellerStartDateProperty().le(new java.sql.Date(fromDate.getTime()))
-//									.and(p.getRSellerEndDateProperty().isNull().or(p.getRSellerEndDateProperty().ge(new java.sql.Date(toDate.getTime()))))	
-//									.and(p.getRSellerStatusProperty().eq((byte)0))	
-//							))
 							;
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	
 						return f;
 					}
-					)
-			.forEach(action);
+				)
+			;
+			stream.forEach(action);
+			stream.close();
 			
 			String fileName = "Facturas";
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());

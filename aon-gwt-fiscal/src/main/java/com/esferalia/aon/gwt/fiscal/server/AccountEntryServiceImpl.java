@@ -59,6 +59,11 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 		return ACCOUNTING.getFinanceEntry(occam, accountEntry);
 	}
 
+	@Override
+	public AccountingInvoice rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data) throws AonCoreException {
+		return ACCOUNTING.rectifyInvoice(occam, invoiceId, data);
+	}
+
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -122,11 +127,6 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	@Override
 	public AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) {
 		return ACCOUNTING.getRegistryLastAccountingInvoice(domainName, domain, user, registryId);
-	}
-
-	@Override
-	public AccountingInvoice rectifyInvoice(String domainName, int domain, String user, Integer invoiceId, InvoiceRectificationData data) throws AonCoreException {
-		return ACCOUNTING.rectifyInvoice(domainName, domain, user, invoiceId, data);
 	}
 
 	@Override

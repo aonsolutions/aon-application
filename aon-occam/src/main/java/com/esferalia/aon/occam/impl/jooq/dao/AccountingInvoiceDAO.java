@@ -1437,7 +1437,7 @@ public class AccountingInvoiceDAO {
 			&& AonNumberUtils.notEquals( ai.getInvoice().getRegistry() , registry);  
 			
 		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry) )
-			.filter( r -> r.getType().getInvoiceType() == type )
+			.filter( r -> r.getType().getInvoiceType() == ((type == InvoiceType.UNDEDUCTIBLE)?InvoiceType.EXPENSES:type))
 			.findFirst()
 			.orElseThrow( () -> new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\""));
 

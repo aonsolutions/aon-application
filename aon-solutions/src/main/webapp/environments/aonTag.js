@@ -227,3 +227,9 @@ export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
+
+export const AON_ACADEMY_MENU = 'aon-academy-menu';
+
+export const AON_COMMERCE_MENU = 'aon-commerce-menu';
+
+export const AON_GARAGE_MENU = 'aon-garage-menu';
