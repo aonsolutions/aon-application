@@ -28,7 +28,6 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0047;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0048;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0049;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0056;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0057;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0058;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0063;
@@ -37,13 +36,12 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0069;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0071;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0072;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0078;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0079;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0080;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0081;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0082;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0083;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0084;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0085;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0088;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ520;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ521;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ552;
@@ -53,8 +51,6 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ559;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ560;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.LQ562;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0088;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key.C0085;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -82,8 +78,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod2002023MVELContext implements Map<String, Object> {
-	
-	// FALTA - ESTA CLASE SERA NECESARIO REVISARLA CUANDO PUBLIQUE LOS CALCULOS EN EL DOCUMENTO PADIS
 	
 	private Map<String, AccountBalance> accounts;
 	private Map<String, Object> context;
@@ -537,16 +531,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			 isChecked(C0049) )
 			return roundKey(LQ558);
 		
-//		if ( isChecked(C0030) || 
-//			 isChecked(C0047) ||
-//			 isChecked(C0078) || 
-//			 isChecked(C0081) ||
-//			 isChecked(C0082) ||
-//			 isChecked(C0056) ||
-//			 isChecked(C0069) ||
-//			 isChecked(C0084) )
-//			return roundKey(LQ558);
-		
 		if ( isChecked(C0088) ) return 23.0;
 		if ( isChecked(C0083) ) return 15.0;
 		if ( isChecked(C0063) ) return 15.0;
@@ -571,9 +555,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
 		
-//		if ( isChecked(C0009) ) return roundKey(LQ558);
-//		if ( isChecked(C0010) ) return roundKey(LQ558);
-		
 		if ( isChecked(C0017) ) return roundKey(LQ558);
 		if ( isChecked(C0018) ) return roundKey(LQ558);
 		
@@ -592,7 +573,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if ( isChecked(C0038) ) return 25.0;
 		
 		if ( isChecked(C0048) ) return 0.0;
-//		if ( isChecked(C0049) ) return roundKey(LQ558);	
 		if ( isChecked(C0057) && !isChecked(C0006) && isChecked(C0034)) return 30.0;
 		if ( isChecked(C0057) ) return 25.0;
 		if ( isChecked(C0058) ) return 25.0;
@@ -749,22 +729,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
-//			if (isChecked(C0071) || isChecked(C0083)) {
-//				return round(lq552*15/100);
-//			}
-//			if (isChecked(C0057) && !isChecked(C0063)) {
-//				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100) + (lq521 * 0));		
-//			}
 			if (isChecked(C0057)) {
 				return round((lq553 * lq558 / 100) + ((lq554-lq521) * 25 / 100) + (lq521 * 0));		
 			}
-//			if (isChecked(C0063)) {
-//				if (lq552<=getLimit(LIM_1)){
-//					return round( lq552*15/100);			
-//				} else {
-//					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
-//				}
-//			}
 			if (lq558 == 20 || lq558 == 25) {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
@@ -951,10 +918,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		return 0.0;
 	}
 	
-	public double computeUT1330() throws AonCoreException {
-		// FALTA - CREO QUE TAMBIEN HAY QUE COMPROBAR SI ESTA MARCADO LA 0085 ADEMAS DE LA 0013, REVISARLO BIEN EN EL DOCUMENTO PADIS
+	public double computeUT1330() throws AonCoreException {		
 		// La clave UT1330 será igual a la LQ1330 
-		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
+		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0085) || isChecked(Mod2002023Key.C0014))
 		{
 			double x = roundKey(Mod2002023Key.LQ1330);
 			
@@ -974,10 +940,11 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		else return 0.0;
 	}
 	
-	// FALTA - NUEVAS CASILLAS DE TOTALES DEL APARTADO B.6 DE UTES
+	// Nuevas casillas de totales del apartado B.6 DE UTES (casillas 1277 y 1278)
+	
 	public double computeUT1277() throws AonCoreException {
 		
-		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
+		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0085) || isChecked(Mod2002023Key.C0014))
 		{
 			double x = 0;
 			for (UteBase b : mod200.getUteBases()) {				
@@ -990,7 +957,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 	
 	public double computeUT1278() throws AonCoreException {
 		
-		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0014))
+		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0085) || isChecked(Mod2002023Key.C0014))
 		{
 			double x = 0;
 			for (UteBase b : mod200.getUteBases()) {				
@@ -1276,8 +1243,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN229,
 			Mod2002023Key.BN235,
 			Mod2002023Key.BN2098,
-			Mod2002023Key.BN2207,
-			Mod2002023Key.BN762,
+			Mod2002023Key.BN2207,			
 			Mod2002023Key.BN759,			
 			Mod2002023Key.BN781,
 			Mod2002023Key.BN787,

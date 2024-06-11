@@ -988,7 +988,7 @@ public class Mod2002023DAO  {
 			
 			// Agrupaciones de interés económico y UTES - Relación de Socios
 			// Dejarlo vacio si no se ha marcado el carácter 00013 o 00014
-			if (mod200.isNotChecked(Mod2002023Key.C0013) && mod200.isNotChecked(Mod2002023Key.C0014)) {
+			if (mod200.isNotChecked(Mod2002023Key.C0013) && mod200.isNotChecked(Mod2002023Key.C0085) && mod200.isNotChecked(Mod2002023Key.C0014)) {
 				mod200.getUteParticipations().clear(); 
 			}
 			

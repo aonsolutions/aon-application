@@ -301,7 +301,7 @@ public class Mod2002023Writer {
 		line.append(AonFiscalFileUtils.unsigned(percent, 7, 4));
 	}
 
-	// UTES - Información de detalle de EP o UTE que operen en el extranjero...
+	// UTES - Información de detalle de EP 
 	private static void addUteForeign(Writer line, Mod2002023 mod200, int index) throws IOException {
 		String identification = "";
 		String country = "";
@@ -345,6 +345,33 @@ public class Mod2002023Writer {
 			document = list.get(index);
 		}
 		line.append(AonFiscalFileUtils.text(document, 9));
+	}
+	
+	// F. Identificación del titular real de la entidad  
+	private static void addTitularReal(Writer line, Mod2002023 mod200, int index) throws IOException {
+		int documentType = 0;          // Tipo documento identificativo (0-No es aplicable, 1-DNI, NIF o NIE, 2-TIN, 3-Pasaporte, 4-Otro)                       
+		String document = "";          // NIF/código de identificación extranjero            
+		String name = "";              // Apellidos y nombre                                 
+		String documentCountry = "";   // País de expedición del documento de identificación  
+		Date birthDate = null;         // Fecha de nacimiento                                
+		String residenceCountry = "";  // País de residencia                                  
+		String nationality = "";       // Nacionalidad
+		if (index < mod200.getTitularReal().size()) {
+			documentType = mod200.getTitularReal().get(index).getDocumentType();                                 
+			document = mod200.getTitularReal().get(index).getDocument();                     
+			name = mod200.getTitularReal().get(index).getName();                                              
+			documentCountry = mod200.getTitularReal().get(index).getDocumentCountry();  
+			birthDate = mod200.getTitularReal().get(index).getBirthDate();                                         
+			residenceCountry = mod200.getTitularReal().get(index).getResidenceCountry();                                  
+			nationality = mod200.getTitularReal().get(index).getNationality();              
+		}
+		line.append(AonFiscalFileUtils.text(documentType,1));                        
+		line.append(AonFiscalFileUtils.text(document,18));                    
+		line.append(AonFiscalFileUtils.text(name,40));                                             
+		line.append(AonFiscalFileUtils.text((documentType == 1 ? "" : documentCountry), 2));   
+		line.append(AonFiscalFileUtils.dateZero(birthDate));                                        
+		line.append(AonFiscalFileUtils.text(residenceCountry,2));                                   
+		line.append(AonFiscalFileUtils.text(nationality,2));            
 	}
 	
 	// Añade al writer todas las casillas que contenga el desglose que se le pasa en keysProvider
@@ -525,7 +552,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0066, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0078, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0056, 1, 0)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0083, 1, 0)
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0083, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0006, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0015, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0079, 1, 0)
@@ -561,6 +588,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0063, 1, 0)				
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0071, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0088, 1, 0)
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0083, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0070, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0059, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0065, 1, 0)
@@ -583,13 +611,12 @@ public class Mod2002023Writer {
 					else line.append("0"); 
 				 }
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 1.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - inferior a 20 millones de euros
-				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 2.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros pero inferior a 60 millones de euros
-				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 3.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 60 millones de euros				
+				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002023Key.VOLOPE) >= 2.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros
 				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text((Country.safeIso2(mod200.getUltimateDocumentCountry())=="ES"?"":Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text((Country.safeIso2(mod200.getUltimateDocumentCountry()).equals("ES")?"":Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0041, 9, 2)
@@ -652,13 +679,12 @@ public class Mod2002023Writer {
 				(line, mod200, label) -> {
 					boolean isComplementary = false; // Indicador de pagina complementaria
 					int c = 0;  // Contador para Entidades menores
-					int d = 0;  // Contador para Información de detalle de EP o UTE
+					int d = 0;  // Contador para Información de detalle de EP
 					int s1 = 0; // E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS) - NIF de la sociedad/es disuelta/s
 					int s2 = 0; // E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS) - NIF de la/las IIC donde reinvierte
+					int t = 0;  // F. Identificación del titular real de la entidad 
 					
-					// FALTA - NUEVO APARTADO IDENTIFICACION DEL TITULAR REAL
-					
-					while (!isComplementary || c < mod200.getMinorEntities().size() || d < mod200.getUteForeign().size() || s1 < mod200.getSicav1().size() || s2 < mod200.getSicav2().size()) {
+					while (!isComplementary || c < mod200.getMinorEntities().size() || d < mod200.getUteForeign().size() || s1 < mod200.getSicav1().size() || s2 < mod200.getSicav2().size() || t < mod200.getTitularReal().size()) {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");
 						
@@ -676,11 +702,12 @@ public class Mod2002023Writer {
 						
 						for (int i = 1; i <= 5; i++) {
 							addNIF(line, mod200.getSicav2(), s2++); // E. Socios de SICAV - NIF de la/las IIC donde reinvierte
-						}						
+						}
+						
+						addTitularReal(line, mod200, t++); // F. Identificación del titular real de la entidad (solo 1 por pagina)
 						
 						line.append(AonFiscalFileUtils.text(isComplementary ? "" : mod200.getSecretary().getName(), 21));    // Secretario - Apellidos y Nombre
 						line.append(AonFiscalFileUtils.text(isComplementary ? "" : mod200.getSecretary().getDocument(), 9)); // Secretario - NIF
-//						line.append(AonFiscalFileUtils.dateZero(isComplementary ? null : mod200.getSecretary().getIrnr()));  // FALTA - ESTE DATO NO ESTA EN EL MODELO ESTE AÑO
 						addLegalRepresentative(line, mod200, isComplementary ? 5 : 0);  // No hay mas de 3 representantes legales, por lo tanto si es hoja complementaria se le pasa 5 para que se rellene con espacios o ceros
 						addLegalRepresentative(line, mod200, isComplementary ? 5 : 1);
 						addLegalRepresentative(line, mod200, isComplementary ? 5 : 2);
@@ -1320,21 +1347,16 @@ public class Mod2002023Writer {
 		
 		, PAG13("T20013000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
-				,(line, mod200, label) -> line.append(" ")
-						        
+				,(line, mod200, label) -> line.append(" ")						        
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023CorrectionKey.values(), Mod2002023Key.D0370, Mod2002023Key.D0414)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.I0417)				
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.D0418)
-				
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.D0418)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ578)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ579)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1029)
-				// NO ESTA EN EL FICHERO - ,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ814)  // Base imponible negativa pendiente de integración en periodos siguientes (DA 19ª LIS)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1030)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1031)
-				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(153)) // Reservado para la AEAT
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(47)) // Reservado para la AEAT
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1031)				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1400,10 +1422,10 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN581)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN582)
 				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT 
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT
-				,(line, mod200, label) -> line.append(" ") // Inoperatividad del orden de cumplimentación de las deducciones del Tramo 2 
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(165)) // Reservado para la AEAT
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT 
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT
+ 
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1426,7 +1448,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN1041)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN619)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN592)				
-				
+				,(line, mod200, label) -> line.append(" ") // Inoperatividad del orden de cumplimentación de las deducciones del Tramo 2				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN1785)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN1786)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.BN1787)
@@ -1496,8 +1518,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ2489) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Líquido a ingresar - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS - Estado 
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ3242) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Líquido a ingresar - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS - D. Forales/Navarra (Totales)
 				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces( 34)) // Reservado para la AEAT
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(166)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1563,7 +1584,7 @@ public class Mod2002023Writer {
 		, PAG17("T20017000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023BN588Key.values(), Mod2002023Key.BN466, Mod2002023Key.BN1371)
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023BN588Key.values(), Mod2002023Key.BN466, Mod2002023Key.BN889)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 		})
@@ -1576,7 +1597,7 @@ public class Mod2002023Writer {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");						
 						
-						addBreakdown(line, mod200, Mod2002023BN588Key.values(), Mod2002023Key.BN2190, Mod2002023Key.BN2192, isComplementary);
+						addBreakdown(line, mod200, Mod2002023BN588Key.values(), Mod2002023Key.BN1369, Mod2002023Key.BN2192, isComplementary);
 						
 						for (int i = 1; i <= 6; i++) {
 							addNIF(line, mod200.getFilmProductions(), c++);
@@ -1623,7 +1644,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
-
+    
 		, PAG20("T20020000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
@@ -1735,15 +1756,17 @@ public class Mod2002023Writer {
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoIII()), 22));   // Documentación presentada por el Anexo III (Ajustes y deducciones)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoIV()), 22));    // Documentación presentada por el Anexo IV (Personal investigador)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoVric()), 22));  // Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
-						                                                                                          // FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoVI()), 22));    // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoV()), 22));     // Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustCanarias()), 13));  // Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustActivos()), 13));   // Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 						
-						// FALTA - NUEVO APARTADO INVERSIONES EN PRODUCCIONES CINEMATOGRAFICAS O SERIES AUDIOVISUALES
-						// Producciones cinematográficas (excepto series audiovisuales)
-						// Series audiovisuales
-						// Número de capítulos
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRG01, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Producciones cinematográficas (excepto series audiovisuales)
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRG02, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Series audiovisuales
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRG03, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Número de episodios
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRC01, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen fiscal Canarias: Producciones cinematográficas (excepto series audiovisuales)
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRC02, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen fiscal Canarias: Series audiovisuales
+						addUnSignedKey(line, mod200, Mod2002023Key.IPCRC03, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen fiscal Canarias: Número de episodios
 						
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
@@ -1765,17 +1788,21 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})
 		
-		, PAG22B("T20022B00", new IPropertyFiller[] {  // FALTA - NUEVA PAGINA 22 BIS CON LOS APARTADOS DE RIIB 
+		, PAG22B("T20022B00", new IPropertyFiller[] {   
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023RIIB_1Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - RIIB
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.RB2918)		    // Importe de la dotación RIIB con cargo a beneficios de 2023		
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023RIIB_2Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - Inversiones anticipadas
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002023RIIB_2Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - Inversiones anticipadas				
+				,(line, mod200, label) -> line.append(mod200.isCooperativa() && mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 2.0?"1":"0")  // Régimen de cooperativas - Información adicional para el cálculo de límites de compensación de cuotas - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros
+				,(line, mod200, label) -> line.append(mod200.isCooperativa() && mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 3.0?"1":"0")  // Régimen de cooperativas - Información adicional para el cálculo de límites de compensación de cuotas - INCN de al menos 60 millones de euros				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(198)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})
 
 		// [...] NO ESTA EN EL MODELO - Página 23: Operaciones fusión, escisión, canje de valores.
+		
+		
 
 		// FALTA - ESTA PAGINA 24 TIENE UN MONTON DE CAMPOS NUEVOS Y LA RELACION DE SOCIOS AHORA SE TRASLADA A UNA PAGINA NUEVA 24 BIS, NOS ESPERAREMOS HASTA LA ORDEN DEFINITIVA PARA VER SI REALMENTE SE MANTIENE ASI
 		, PAG24("T20024000", new IPropertyFiller[] { 
@@ -1975,12 +2002,12 @@ public class Mod2002023Writer {
 						|| (mod200.getDoubleValue(Mod2002023Key.C0019) == 1);
 			}
 			
-			// FALTA - SUPONGO QUE LA NUEVA PAGINA 22 BIS TAMBIEN SALDRA SOLO SI ESTA MARCADO RIIB
+			// FALTA - SUPONGO QUE LA NUEVA PAGINA 22 BIS TAMBIEN SALDRA SOLO SI ESTA MARCADO RIIB O COOPERATIVAS
 
 			// Página 24. Agrupaciones de interes económico y UTES (regimen especial).
-			// Caracteres 013 o 014 marcados
+			// Caracteres 013, 085 o 014 marcados
 			if (this == Pages2023.PAG24) { // FALTA - SI AL FINAL TAMBIEN LLEVA LA NUEVA PAGINA 24 BIS, SUPONGO QUE TAMPOCO SALDRA SI NO ES UTE
-				addPage = (mod200.isChecked(Mod2002023Key.C0013) || mod200.isChecked(Mod2002023Key.C0014));
+				addPage = (mod200.isChecked(Mod2002023Key.C0013) || mod200.isChecked(Mod2002023Key.C0085) || mod200.isChecked(Mod2002023Key.C0014));
 			}
 
 			// Página 26. Tributación Conjunta. Caracter 028 marcado
