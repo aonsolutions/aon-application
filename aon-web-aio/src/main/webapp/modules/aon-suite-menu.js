@@ -41,6 +41,7 @@ export class AonSuiteMenu extends AonElement {
 	}
 
 	build() {
+
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
         this.appendChild(divFlex);
@@ -167,6 +168,7 @@ export class AonSuiteMenu extends AonElement {
         content.id = this.CONTENT;
         content.style.height = "calc(-61px + 100vh)";
         content.style.width = "100%";
+        content.style.overflowY = "auto";
         content.style.backgroundColor = "rgb(250, 249, 248)";
         divFlex.appendChild(content);
 
@@ -242,29 +244,55 @@ export class AonSuiteMenu extends AonElement {
     }
 
     buildCard(opt, i,div){
-        let card = new AonCard();
-		card.id = "card" + i;
-		card.title = opt.title;
-		card.style.minWidth = "375px";
-        card.style.maxWidth = "375px";      
+        if(opt.visible!=undefined && opt.visible == true){
+            let card = new AonCard();
+            card.id = "card" + i;
+            card.title = opt.title;
+            card.style.minWidth = "375px";
+            card.style.maxWidth = "375px";      
 
-        card.style.display = "flex";
-        card.style.maxHeight = "375px";
-		card.style.marginLeft = "10px";
-        //card.style.marginTop = "20px";
-        div.appendChild(card);
-		
-        let cardDiv = this.getElement(card.CARD);
-		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv.style.borderRadius = '2px';
-        cardDiv.style.minWidth = "375px";
+            card.style.display = "flex";
+            card.style.maxHeight = "375px";
+            card.style.marginLeft = "10px";
+            //card.style.marginTop = "20px";
+            div.appendChild(card);
+            
+            let cardDiv = this.getElement(card.CARD);
+            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+            cardDiv.style.borderRadius = '2px';
+            cardDiv.style.minWidth = "375px";
+            
+            let divGeneral = this.createDiv();
+            opt.options.forEach((v) =>{
+                divGeneral.appendChild(this.buildCardData(v));
+            })
         
-        let divGeneral = this.createDiv();
-        opt.options.forEach((v) =>{
-            divGeneral.appendChild(this.buildCardData(v));
-        })
-	
-		card.setContent(divGeneral);
+            card.setContent(divGeneral); 
+        }else if(opt.visible == undefined){
+            let card = new AonCard();
+            card.id = "card" + i;
+            card.title = opt.title;
+            card.style.minWidth = "375px";
+            card.style.maxWidth = "375px";      
+
+            card.style.display = "flex";
+            card.style.maxHeight = "375px";
+            card.style.marginLeft = "10px";
+            //card.style.marginTop = "20px";
+            div.appendChild(card);
+            
+            let cardDiv = this.getElement(card.CARD);
+            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+            cardDiv.style.borderRadius = '2px';
+            cardDiv.style.minWidth = "375px";
+            
+            let divGeneral = this.createDiv();
+            opt.options.forEach((v) =>{
+                divGeneral.appendChild(this.buildCardData(v));
+            })
+        
+            card.setContent(divGeneral); 
+        }
     }
 
     buildCardData(value) {
@@ -300,7 +328,6 @@ export class AonSuiteMenu extends AonElement {
         });
 
         span.addEventListener(EVENT.CLICK, value.action);
-
 		return div;
 	}
 
