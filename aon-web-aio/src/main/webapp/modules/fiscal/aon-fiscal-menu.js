@@ -1,4 +1,5 @@
 import { MSG, CSS, EVENT, TAG, APPPARAMS } from 'aonsolutions/environments/environments.js'; 
+import { isAEAT, isAlava, isGipu, isBizk, isNavarra } from './fakeParams.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 
@@ -70,6 +71,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }];
         this.options = [{
             title: 'IVA AEAT',
+            visible: isAEAT,
             options: [ {
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
@@ -93,6 +95,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF AEAT',
+            visible: isAEAT,
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -124,6 +127,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'AEAT',
+            visible: isAEAT,
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
@@ -147,6 +151,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IVA Forales',
+            visible: isAlava || isGipu || isBizk,
             options: [{
                 description: "Modelo 303 ",
                 description2: " |320 Gipuzkoa",
@@ -171,6 +176,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF Forales',
+            visible: isAlava || isGipu || isBizk,
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -202,6 +208,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'LROE Bizkaia',
+            visible: isBizk,
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
@@ -213,6 +220,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IVA Navarra',
+            visible: isNavarra,
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
@@ -236,6 +244,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF Navarra',
+            visible: isNavarra,
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
