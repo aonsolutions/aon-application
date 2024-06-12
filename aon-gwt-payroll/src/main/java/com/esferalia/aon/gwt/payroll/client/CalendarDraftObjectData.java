@@ -174,7 +174,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 						CalendarDraftObjectData.this.colors = 0;
 						CalendarDraftObjectData.this.calendarDraftObject = result;
 						List<HolidayDraft> list = calendarDraftObject.getHolidays();
-						list.forEach(hliday -> Window.alert(hliday.getId() + " --> " + hliday.getDescription()));
+//						list.forEach(hliday -> Window.alert(hliday.getId() + " --> " + hliday.getDescription()));
 						CalendarDraftObjectData.this.initHolidayList(list);
 						cb.onSuccess(CalendarDraftObjectData.this);
 					}
@@ -331,7 +331,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		Iterator<HolidayDraft> iterator = holidays.iterator();
 		while (iterator.hasNext()) {
 			HolidayDraft draft = iterator.next();
-			Window.alert("initHolidayList --> " + draft.getId() + " != " + getHolidayDescription() + " --> " + (!draft.getId().equals(getHolidayDescription())));
+//			Window.alert("initHolidayList --> " + draft.getId() + " != " + getHolidayDescription() + " --> " + (!draft.getId().equals(getHolidayDescription())));
 			if (!draft.getId().equals(getHolidayDescription()) /*draft.getDomain() == 0*/)
 				this.generalHolidays.add(draft);
 			else
@@ -340,14 +340,14 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	private void addPropertyCalendar(HolidayDraft draft) {			
-		Window.alert("addPropertyCalendar");
+//		Window.alert("addPropertyCalendar");
 		if(conteinsId(draft.getId()) == false) {
 			MyHolidayDraft myDraftAux = new MyHolidayDraft();
 			myDraftAux.setId(draft.getId());
 			myDraftAux.setHoliday(draft.getHoliday());
 			myDraftAux.setDescription(draft.getDescription());
 			myDraftAux.setMap(draft.getHolidaysMap());
-			Window.alert("addPropertyCalendar myHolidaysDrafts Insert");
+//			Window.alert("addPropertyCalendar myHolidaysDrafts Insert");
 			myHolidaysDrafts.add(myDraftAux);
 		}
 	}
@@ -394,7 +394,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	public void addHoliday(Date date, String description) {
-		Window.alert("addHoliday myHolidaysDrafts isEmpty : " + myHolidaysDrafts.isEmpty());
+//		Window.alert("addHoliday myHolidaysDrafts isEmpty : " + myHolidaysDrafts.isEmpty());
 		if (myHolidaysDrafts.isEmpty())
 			myHolidaysDrafts.add(initMyDrafts());
 		
