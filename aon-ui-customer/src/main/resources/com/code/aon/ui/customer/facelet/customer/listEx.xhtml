@@ -9,87 +9,137 @@
 
 	<ui:define name="content">
 		<aon:form id="customerList">
-
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
-				<ui:param name="controller" value="#{customer}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:if test="#{customer.showAlumnData}">
-						<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
-							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-excel">
-							<f:param name="reportKey" value="alumnList" />
-							<f:param name="outputFormat" value="MS Excel" />
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="alumnReport-report" value="#{bundle.aon_listing}"
-							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="alumnList" />
-							<f:param name="outputFormat" value="PDF" />
-						</aon:htmlCommandLink>
-					</aon:if>
-					<aon:if test="#{!customer.showAlumnData}">
-						<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
-							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-excel">
-							<f:param name="reportKey" value="customerReport" />
-							<f:param name="outputFormat" value="MS Excel" />
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="customerReport2-excel-report" value="&#160;" 
-							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-excel">
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="customerReport-report" value="#{bundle.aon_listing}"
-							target="_new" rendered="#{!customer.nevv}"
-							action="#{report.onExecute}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="customerReport" />
-							<f:param name="outputFormat" value="PDF" />
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="customerReport2-report" value="#{bundle.aon_listing}"
-                            target="_new" rendered="#{!customer.nevv}"
-                            action="#{customer.onNewReport}"
-                            disabled="#{customer.to != null}"
-                            accesskey="#{bundle.aon_key_print}"
-                            styleClass="aon-finding-toolbar-item aon-icon-pdf">
-                        </aon:htmlCommandLink>
-					</aon:if>
-					<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
-						value="#{bundle.aon_detailed_listing}" 
-						target="_new" rendered="#{!customer.nevv}"
-						actionListener="#{customer.onDetailReport}"
-						disabled="#{customer.to != null}"
-						accesskey="#{bundle.aon_key_print}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel">
-					</aon:htmlCommandLink>
-				</ui:define>
-			</ui:decorate>
-
-			<aon:div styleClass="aon-scroll-area">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			
+			<aon:if test="#{!app.standAlone}" >
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 					<ui:param name="controller" value="#{customer}" />
-					<ui:define name="columns">
-						<ui:include src="/com/code/aon/ui/customer/facelet/customer/listExtended.xhtml" />
-						<ui:insert name="moreColumns"/>
+					<ui:define name="additionalToolbarContent">
+						<aon:if test="#{customer.showAlumnData}">
+							<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
+								target="_new" rendered="#{!customer.nevv}"
+								action="#{report.onExecute}"
+								disabled="#{customer.to != null}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-excel">
+								<f:param name="reportKey" value="alumnList" />
+								<f:param name="outputFormat" value="MS Excel" />
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="alumnReport-report" value="#{bundle.aon_listing}"
+								target="_new" rendered="#{!customer.nevv}"
+								action="#{report.onExecute}"
+								disabled="#{customer.to != null}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+								<f:param name="reportKey" value="alumnList" />
+								<f:param name="outputFormat" value="PDF" />
+							</aon:htmlCommandLink>
+						</aon:if>
+						<aon:if test="#{!customer.showAlumnData}">
+							<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
+								target="_new" rendered="#{!customer.nevv}"
+								action="#{report.onExecute}"
+								disabled="#{customer.to != null}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-excel">
+								<f:param name="reportKey" value="customerReport" />
+								<f:param name="outputFormat" value="MS Excel" />
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="customerReport2-excel-report" value="&#160;" 
+								target="_new" rendered="#{!customer.nevv}"
+								action="#{report.onExecute}"
+								disabled="#{customer.to != null}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-excel">
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="customerReport-report" value="#{bundle.aon_listing}"
+								target="_new" rendered="#{!customer.nevv}"
+								action="#{report.onExecute}"
+								disabled="#{customer.to != null}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+								<f:param name="reportKey" value="customerReport" />
+								<f:param name="outputFormat" value="PDF" />
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="customerReport2-report" value="#{bundle.aon_listing}"
+	                            target="_new" rendered="#{!customer.nevv}"
+	                            action="#{customer.onNewReport}"
+	                            disabled="#{customer.to != null}"
+	                            accesskey="#{bundle.aon_key_print}"
+	                            styleClass="aon-finding-toolbar-item aon-icon-pdf">
+	                        </aon:htmlCommandLink>
+						</aon:if>
+						<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
+							value="#{bundle.aon_detailed_listing}" 
+							target="_new" rendered="#{!customer.nevv}"
+							actionListener="#{customer.onDetailReport}"
+							disabled="#{customer.to != null}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-excel">
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
-			</aon:div>
+				<aon:div styleClass="aon-scroll-area">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{customer}" />
+						
+						<ui:param name="skipCustomerId" value="#{app.standAlone}" />
+						
+						<ui:define name="columns">
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/listExtended.xhtml" />
+							<ui:insert name="moreColumns"/>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:if>
+			
+			<aon:if test="#{app.standAlone}" >
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/appToolbar.xhtml" >
+					<ui:param name="controller" value="#{customer}" />
+					<ui:param name="filterController" value="#{customer}" />
+					<ui:param name="filterReRender" value="customerListContainer" />
+					<ui:param name="filterContainer" value="customerFilterContainer" />
+					<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
+					
+				</ui:decorate>
+				<aon:div  styleClass="aon-scroll-area"  style="display: flex; flex-direction: row; "  >
+					
+					<aon:div id="customerListContainer"  style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4" >
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+							<ui:param name="controller" value="#{customer}" />
+							
+							<ui:param name="skipCustomerId" value="#{app.standAlone}" />
+							
+							<ui:define name="columns">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/listExtended.xhtml" />
+								<ui:insert name="moreColumns"/>
+							</ui:define>
+						</ui:decorate>
+					</aon:div>
+	
+					<aon:div id="customerFilterContainer" style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 4" >
+							<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/filterEx.xhtml" >
+								<ui:param name="searchReRender" value="customerListContainer" />
+								<ui:define name="moreSearchBasicContent">
+									<aon:if test="#{customer.showAlumnData}">
+										<aon:outputText value="&#160;" />
+										<aon:div>
+											<aon:selectBooleanCheckbox id="customer_showComments"
+												value="#{customerSearch.showComments}"/>
+											<aon:outputLabel for="customer_showComments"
+												value="#{bundle.aon_see} #{bundle.aon_remark}" />
+										</aon:div>
+									</aon:if>
+								</ui:define>
+							</ui:decorate>
+					</aon:div>
+	
+				</aon:div>
+			</aon:if>
 	
 		</aon:form>
 	</ui:define>
 </ui:composition>
+

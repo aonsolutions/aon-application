@@ -4,24 +4,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:insert name="messages" >
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-	</ui:insert>
-	
-	<aon:if test="#{!app.standAlone}" >
-		<ui:insert name="menu" >
-			<ui:include src="/facelet/homepage/menu.xhtml" />
-		</ui:insert>
-	</aon:if>
-	
 	<aon:componentGroup
 		family="javax.faces.Command"
 		rendered="#{aonRole.guest}"
 		method="#{aonRole.renderedCommand}">
  	 	
-		<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
-			<ui:insert name="content" />
-		</aon:div>
+		<ui:insert name="filterContent" />
 	  	
 	</aon:componentGroup>
 

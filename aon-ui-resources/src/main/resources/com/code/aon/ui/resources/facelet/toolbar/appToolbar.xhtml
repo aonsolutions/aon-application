@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/appToolbarEx.xhtml" >
+		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_list}" />
+		<aon:valueParam name="toolbarID" default="#{controller.beanName}Toolbar" />	
+		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
+		<aon:methodParam name="searchAction" default="#{controller.searchAction}" />
+		<aon:valueParam name="resetLabel" default="#{bundle.aon_reset}" />		
+		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
+		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />									
+	</ui:include>
+	
+</ui:composition>
