@@ -41,6 +41,7 @@ export class AonSuiteMenu extends AonElement {
 	}
 
 	build() {
+
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
         this.appendChild(divFlex);
@@ -130,7 +131,8 @@ export class AonSuiteMenu extends AonElement {
         sideMenu.appendChild(this.buildSideNavRow(MSG.RECENTLY_OPENED,"schedule"));
         sideMenu.appendChild(this.buildSideNavRow(this.last,"quick_reference_all"));
 
-        this.buildSideNavCard(sideMenu,"1");
+        if(this.cardData)
+            this.buildSideNavCard(sideMenu,"1");
 
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
@@ -139,31 +141,34 @@ export class AonSuiteMenu extends AonElement {
 
         sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, "folder_managed"));
 
-        let uploadButton = new AonButton();
-        uploadButton.id = this.UPLOAD_BUTTON;
-        uploadButton.icon = "publish";
-        uploadButton.title = "Cargar archivo";
-        uploadButton.color = "transparent";
-        uploadButton.style.display = "block";
-        uploadButton.style.width = "222px";
-        uploadButton.style.border = "2px dashed rgba(0, 0, 0, 0.1)";
-        uploadButton.style.borderRadius = "5px";
-        uploadButton.style.marginLeft = "12px";
-        uploadButton.style.marginTop = "20px";
-        sideMenu.appendChild(uploadButton);
-        let text = this.getElement(uploadButton.TEXT);
-        let icon = this.getElement(uploadButton.ICON);
-        let button = this.getElement(uploadButton.BUTTON);
-        text.className= CSS.AON_CARD_TEXT;
-        text.style.fontWeight = "normal";
-        icon.style.color = "rgb(72,70,68)";
-        button.style.boxShadow = "none";
-        this.setButtonHover(uploadButton);
-              
+        if(!this.uploadButton){
+            let uploadButton = new AonButton();
+            uploadButton.id = this.UPLOAD_BUTTON;
+            uploadButton.icon = "publish";
+            uploadButton.title = "Cargar archivo";
+            uploadButton.color = "transparent";
+            uploadButton.style.display = "block";
+            uploadButton.style.width = "222px";
+            uploadButton.style.border = "2px dashed rgba(0, 0, 0, 0.1)";
+            uploadButton.style.borderRadius = "5px";
+            uploadButton.style.marginLeft = "12px";
+            uploadButton.style.marginTop = "20px";
+            sideMenu.appendChild(uploadButton);
+            let text = this.getElement(uploadButton.TEXT);
+            let icon = this.getElement(uploadButton.ICON);
+            let button = this.getElement(uploadButton.BUTTON);
+            text.className= CSS.AON_CARD_TEXT;
+            text.style.fontWeight = "normal";
+            icon.style.color = "rgb(72,70,68)";
+            button.style.boxShadow = "none";
+            this.setButtonHover(uploadButton);
+        }
+      
         let content = this.createDiv();
         content.id = this.CONTENT;
         content.style.height = "calc(-61px + 100vh)";
         content.style.width = "100%";
+        content.style.overflowY = "auto";
         content.style.backgroundColor = "rgb(250, 249, 248)";
         divFlex.appendChild(content);
 
@@ -239,29 +244,55 @@ export class AonSuiteMenu extends AonElement {
     }
 
     buildCard(opt, i,div){
-        let card = new AonCard();
-		card.id = "card" + i;
-		card.title = opt.title;
-		card.style.minWidth = "375px";
-        card.style.maxWidth = "375px";      
+        if(opt.visible!=undefined && opt.visible == true){
+            let card = new AonCard();
+            card.id = "card" + i;
+            card.title = opt.title;
+            card.style.minWidth = "375px";
+            card.style.maxWidth = "375px";      
 
-        card.style.display = "flex";
-        card.style.maxHeight = "330px";
-		card.style.marginLeft = "10px";
-        //card.style.marginTop = "20px";
-        div.appendChild(card);
-		
-        let cardDiv = this.getElement(card.CARD);
-		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv.style.borderRadius = '2px';
-        cardDiv.style.minWidth = "375px";
+            card.style.display = "flex";
+            card.style.maxHeight = "375px";
+            card.style.marginLeft = "10px";
+            //card.style.marginTop = "20px";
+            div.appendChild(card);
+            
+            let cardDiv = this.getElement(card.CARD);
+            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+            cardDiv.style.borderRadius = '2px';
+            cardDiv.style.minWidth = "375px";
+            
+            let divGeneral = this.createDiv();
+            opt.options.forEach((v) =>{
+                divGeneral.appendChild(this.buildCardData(v));
+            })
         
-        let divGeneral = this.createDiv();
-        opt.options.forEach((v) =>{
-            divGeneral.appendChild(this.buildCardData(v));
-        })
-	
-		card.setContent(divGeneral);
+            card.setContent(divGeneral); 
+        }else if(opt.visible == undefined){
+            let card = new AonCard();
+            card.id = "card" + i;
+            card.title = opt.title;
+            card.style.minWidth = "375px";
+            card.style.maxWidth = "375px";      
+
+            card.style.display = "flex";
+            card.style.maxHeight = "375px";
+            card.style.marginLeft = "10px";
+            //card.style.marginTop = "20px";
+            div.appendChild(card);
+            
+            let cardDiv = this.getElement(card.CARD);
+            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+            cardDiv.style.borderRadius = '2px';
+            cardDiv.style.minWidth = "375px";
+            
+            let divGeneral = this.createDiv();
+            opt.options.forEach((v) =>{
+                divGeneral.appendChild(this.buildCardData(v));
+            })
+        
+            card.setContent(divGeneral); 
+        }
     }
 
     buildCardData(value) {
@@ -297,7 +328,6 @@ export class AonSuiteMenu extends AonElement {
         });
 
         span.addEventListener(EVENT.CLICK, value.action);
-
 		return div;
 	}
 

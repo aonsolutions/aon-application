@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -138,6 +140,7 @@ public class PensionPlanAFI {
 				empl.put("FAB", fab);
 				
 				Double amount = contract.get(SALARY_PAYMENT.QUOTE);
+				amount = roundToTwoDecimals(amount);
 				final String odl = "ODL00000000000000      0000      " + AonStringUtils.leftPad(amount.toString().split("\\.")[0], 4, '0') + AonStringUtils.rightPad(AonStringUtils.substring(amount.toString().split("\\.")[1], 0, 2), 2, '0')  + entidadGestora + "000                       ";
 				empl.put("ODL", odl);
 				
@@ -176,6 +179,13 @@ public class PensionPlanAFI {
 		System.out.println(agrarianJSON);
 		return agrarianJSON;
 	}
+	
+	public static double roundToTwoDecimals(Double value) {
+		if(null == value) return 0.00;
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 	
 	private static String getCCCRegimeCode(Byte cccRegime) {
 		switch (cccRegime) {

@@ -246,3 +246,8 @@ export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
 
 export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
 
+export const AON_ACADEMY_MENU = 'aon-academy-menu';
+
+export const AON_COMMERCE_MENU = 'aon-commerce-menu';
+
+export const AON_GARAGE_MENU = 'aon-garage-menu';

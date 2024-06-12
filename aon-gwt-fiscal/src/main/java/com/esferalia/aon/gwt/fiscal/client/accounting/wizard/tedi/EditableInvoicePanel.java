@@ -440,76 +440,71 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				labelsPanel.add(rectLabel);
 			}
 			if (!guest 
-					 && !invoiceCallback.getInvoice().getInvoice().isRectifier() 
-					 && !invoiceCallback.getInvoice().isUndeductible()) {
-						AonTableButton rectify  = new AonTableButton(AON.MSG.rectifyInvoice(),AON.CSS.aonIconSwap());
-						rectify.addStyleName(AON.CSS.aonMarginLeft());
-						rectify.addClickHandler(new ClickHandler() {
+				 && !invoiceCallback.getInvoice().getInvoice().isRectifier() 
+				 && !invoiceCallback.getInvoice().isUndeductible()) {
+					AonTableButton rectify  = new AonTableButton(AON.MSG.rectifyInvoice(),AON.CSS.aonIconSwap());
+					rectify.addStyleName(AON.CSS.aonMarginLeft());
+					rectify.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							final InvoiceRectificationData data = new InvoiceRectificationData();
+							data.setIssueDate(invoiceCallback.getInvoice().getInvoice().getIssueDate());
+							data.setType(invoiceCallback.getInvoice().getInvoice().getType());
+							data.setRectificationtype(RectificationType.NORMAL_RECTIFIER);
+							data.setSettleFinances(true);
+							final AonCustomDialog dialog = new AonCustomDialog();
+							dialog.setCaption(AON.MSG.rectifyInvoice());
 							
-							@Override
-							public void onClick(ClickEvent event) {
-								final InvoiceRectificationData data = new InvoiceRectificationData();
-								data.setIssueDate(invoiceCallback.getInvoice().getInvoice().getIssueDate());
-								data.setType(invoiceCallback.getInvoice().getInvoice().getType());
-								data.setRectificationtype(RectificationType.NORMAL_RECTIFIER);
-								data.setSettleFinances(true);
-								final AonCustomDialog dialog = new AonCustomDialog();
-								dialog.setCaption(AON.MSG.rectifyInvoice());
+							final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
+							rectPanel.show(invoiceCallback
+									,data
+									, new InvoiceRectificationDataPanelCallback() {
 								
-								final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
-								rectPanel.show(invoiceCallback.getCurrentDomainName()
-										,invoiceCallback.getCurrentDomainId()
-										,invoiceCallback.getCurrentUser()
-										,invoiceCallback.getConfiguration()
-										,data
-										, new InvoiceRectificationDataPanelCallback() {
-									
-									@Override
-									public void onCancel() {
-										dialog.hide();
-									}
-									
-									@Override
-									public void onAccept(InvoiceRectificationData data) {
-										ACCOUNT_ENTRY_SERVICE.rectifyInvoice(invoiceCallback.getCurrentDomainName()
-												,invoiceCallback.getCurrentDomainId()
-												,invoiceCallback.getCurrentUser()
-												,invoiceCallback.getInvoice().getInvoice().getId()
-												,data
-												,new AsyncCallback<AccountingInvoice>() {
-											
-											@Override
-											public void onSuccess(AccountingInvoice result) {
-												dialog.hide();
-												if (result != null) {
-													SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
-												} else {
-													invoiceCallback.getModule().onError("Error al rectificar la factura.");	
-												}
+								@Override
+								public void onCancel() {
+									dialog.hide();
+								}
+								
+								@Override
+								public void onAccept(InvoiceRectificationData data) {
+									ACCOUNT_ENTRY_SERVICE.rectifyInvoice(invoiceCallback.getOccam()
+											,invoiceCallback.getInvoice().getInvoice().getId()
+											,data
+											,new AsyncCallback<AccountingInvoice>() {
+										
+										@Override
+										public void onSuccess(AccountingInvoice result) {
+											dialog.hide();
+											if (result != null) {
+												SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+											} else {
+												invoiceCallback.getModule().onError("Error al rectificar la factura.");	
 											}
-											
-											@Override
-											public void onFailure(Throwable caught) {
-												dialog.hide();
-												invoiceCallback.getModule().onError(caught.getMessage());
-											}
-										});	
-									}
-								});
-								dialog.add( rectPanel );
-								dialog.center();
-								dialog.show();
-								
-								Scheduler.get().scheduleDeferred(new Command() {
-									public void execute() {
-										rectPanel.setFocus(true);
-									}
-								});		
-								
-							}
-						});
-						labelsPanel.add(rectify);
-					}
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											dialog.hide();
+											invoiceCallback.getModule().onError(caught.getMessage());
+										}
+									});	
+								}
+							});
+							dialog.add( rectPanel );
+							dialog.center();
+							dialog.show();
+							
+							Scheduler.get().scheduleDeferred(new Command() {
+								public void execute() {
+									rectPanel.setFocus(true);
+								}
+							});		
+							
+						}
+					});
+					labelsPanel.add(rectify);
+				}
 			
 		}
 		regTable.add(labelsPanel);

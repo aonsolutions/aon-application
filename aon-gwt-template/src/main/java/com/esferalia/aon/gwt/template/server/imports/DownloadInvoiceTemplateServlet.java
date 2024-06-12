@@ -89,7 +89,7 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
     	
     	Date to = JsonUtils.getDate(json, IJsonNames.TO);
     	if(to != null) {
-    		filter = filter.and(f.getStartIssueDateProperty().ge(to));
+    		filter = filter.and(f.getEndIssueDateProperty().le(to));
     	}
 	
 		List<Integer> ids = toList(json.optJSONArray("ids"));

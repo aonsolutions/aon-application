@@ -3,13 +3,13 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonErrorPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -17,7 +17,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -49,12 +48,9 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		}
 	}
 	
-	private DateBoxEx issueDate; 
+	private AonDateBox issueDate; 
 	
-	
-	public void show(final String domainName,final int domain
-			, final String user
-			, final AonConfiguration config
+	public void show(final InvoicePanelCallback invoiceCallback
 			, final InvoiceRectificationData data
 			, final InvoiceRectificationDataPanelCallback callback) {
 		setWidth("500px");
@@ -63,21 +59,17 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		
 		FlowPanel rootPanel = new FlowPanel();
 		
-		final ErrorPanel errorPanel = new ErrorPanel();
+		final AonErrorPanel errorPanel = new AonErrorPanel();
 		rootPanel.add(errorPanel);
 		
 		FlowPanel tablePanel = new FlowPanel();
 		tablePanel.setStyleName(AON.CSS.aonScrollArea());
 		
-		KeyUpHandler keyUpHandler = new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					callback.onCancel();	
-				}
+		KeyUpHandler keyUpHandler = event -> {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+				callback.onCancel();	
 			}
 		};
-
 		
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
@@ -85,7 +77,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.rectifyInvoiceDate()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		issueDate = new DateBoxEx();
+		issueDate = new AonDateBox();
 		issueDate.setValue(data.getIssueDate());
 		issueDate.getTextBox().addKeyUpHandler( keyUpHandler);
 		issueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -105,7 +97,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			
 			FlowPanel panel = new FlowPanel();
 			final ListBox seriesBox = new ListBox();
-			final IntegerBox number = new IntegerBox();
+			final AonIntegerBox number = new AonIntegerBox();
 			
 			seriesBox.addKeyUpHandler(keyUpHandler);
 			seriesBox.addItem(" ---- ", "");
@@ -115,9 +107,40 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 					data.setSeries(seriesBox.getSelectedIndex() == 0 ? null : seriesBox.getSelectedValue());
 					initializeFinanceService();
 					financeService.getInvoiceNextNumber(
-							 domainName
-							,domain
-							,user
+						 invoiceCallback.getOccam().getDomainName()
+						,invoiceCallback.getOccam().getDomain()
+						,invoiceCallback.getOccam().getUser()
+						,new Byte[]{data.getType().value()}
+						,data.getSeries()
+						, new AsyncCallback<Integer>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								errorPanel.showError(caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Integer result) {
+								number.setValue(result,false,true);
+								data.setNumber(result);
+							}
+						});
+				}
+			});
+
+			int i = 0;
+			 
+			if (invoiceCallback.getConfiguration() != null && invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries() != null) {
+				for (String series : invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries()) {
+					seriesBox.addItem(series,series);
+					if (i == 0) {
+						seriesBox.setSelectedIndex(1);
+						data.setSeries(series);
+						initializeFinanceService();
+						financeService.getInvoiceNextNumber(
+							 invoiceCallback.getOccam().getDomainName()
+							,invoiceCallback.getOccam().getDomain()
+							,invoiceCallback.getOccam().getUser()
 							,new Byte[]{data.getType().value()}
 							 , data.getSeries()
 							, new AsyncCallback<Integer>() {
@@ -133,36 +156,6 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 									data.setNumber(result);
 								}
 							});
-				}
-			});
-
-			int i = 0;
-			if (config.getInvoiceRectificationSalesSeries() != null) {
-				for (String series : config.getInvoiceRectificationSalesSeries()) {
-					seriesBox.addItem(series,series);
-					if (i == 0) {
-						seriesBox.setSelectedIndex(1);
-						data.setSeries(series);
-						initializeFinanceService();
-						financeService.getInvoiceNextNumber(
-								 domainName
-								,domain
-								,user
-								,new Byte[]{data.getType().value()}
-								 , data.getSeries()
-								, new AsyncCallback<Integer>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										errorPanel.showError(caught.getMessage());
-									}
-
-									@Override
-									public void onSuccess(Integer result) {
-										number.setValue(result,false,true);
-										data.setNumber(result);
-									}
-								});
 					}
 					i++;
 				}
@@ -172,13 +165,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			number.setStyleName(AON.CSS.aonMarginLeftSep());
 			number.addStyleName(AON.CSS.aonInputText());
 			number.addKeyUpHandler(keyUpHandler);
-			number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Integer> event) {
-					data.setNumber(event.getValue());
-				}
-			});
+			number.addValueChangeHandler(event -> data.setNumber(event.getValue()));
 			number.setVisibleLength(8);
 			number.setMaxLength(8);
 			panel.add(number);
@@ -191,12 +178,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			TextBox referenceCode = new TextBox();
 			referenceCode.setStyleName(AON.CSS.aonInputText());
 			referenceCode.addKeyUpHandler(keyUpHandler);
-			referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					data.setReferenceCode(event.getValue());
-				}
-			});
+			referenceCode.addValueChangeHandler(event -> data.setReferenceCode(event.getValue()));
 			referenceCode.setVisibleLength(15); 
 			referenceCode.setMaxLength(32);
 			table.setWidget(row,1,referenceCode);
@@ -233,7 +215,6 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			}
 		});
 		table.setWidget(row,1,settleFinance);
-		row++;
 
 		tablePanel.add( table );
 		rootPanel.add( tablePanel );
@@ -245,13 +226,9 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
     	okButton.addKeyUpHandler( keyUpHandler);
-    	okButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				callback.onAccept(data);
-			}
+    	okButton.addClickHandler(event -> {
+			okButton.setEnabled(false);
+			callback.onAccept(data);
 		});
     	
     	buttons.add(okButton);
@@ -261,13 +238,9 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addKeyUpHandler( keyUpHandler);
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				callback.onCancel();
-			}
+    	cancelButton.addClickHandler(event -> {
+			cancelButton.setEnabled(false);
+			callback.onCancel();
 		});
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
