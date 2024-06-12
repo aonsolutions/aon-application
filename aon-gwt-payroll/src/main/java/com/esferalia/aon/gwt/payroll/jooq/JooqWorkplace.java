@@ -123,11 +123,15 @@ public class JooqWorkplace {
 			
 			if(null != workplaceCalendarId) {
 				Record calendarRecord = dslContext.select().from(CALENDAR).where(CALENDAR.ID.eq(workplaceCalendarId)).fetchOne();
-				Record parentHolidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(calendarRecord.get(CALENDAR.HOLIDAY))).fetchOne();
-				if(null != parentHolidayRecord.get(HOLIDAY.HOLIDAY_)) {
-					Record holidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(parentHolidayRecord.get(HOLIDAY.HOLIDAY_))).fetchOne();
-					workplaceCalendar = holidayRecord.get(HOLIDAY.DESCRIPTION);
-				}
+				
+				Record holidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(calendarRecord.get(CALENDAR.HOLIDAY))).fetchOne();
+				workplaceCalendar = holidayRecord.get(HOLIDAY.DESCRIPTION);
+				
+//				Record parentHolidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(calendarRecord.get(CALENDAR.HOLIDAY))).fetchOne();
+//				if(null != parentHolidayRecord.get(HOLIDAY.HOLIDAY_)) {
+//					Record holidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(parentHolidayRecord.get(HOLIDAY.HOLIDAY_))).fetchOne();
+//					workplaceCalendar = holidayRecord.get(HOLIDAY.DESCRIPTION);
+//				}
 			}
 		}
 		

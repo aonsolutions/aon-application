@@ -48,6 +48,7 @@ public class JooqContractClauses {
 		// Contract Clauses
 		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
 			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId))
+			.orderBy(CONTRACT_CLAUSE.LINE)
 			.fetch();
 		
 		for(Record clauseRecord : clauseRecords) {
@@ -64,7 +65,7 @@ public class JooqContractClauses {
 			contractClauses.add(contractClause);
 		}
 		
-		contractClauses.sort((o1, o2) -> o1.getLineNumber().compareTo(o2.getLineNumber()));
+		//contractClauses.sort((o1, o2) -> o1.getLineNumber().compareTo(o2.getLineNumber()));
 		
 		return contractClauses;
 	}
