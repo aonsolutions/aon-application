@@ -32,7 +32,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
+import org.jooq.DatePart;
+import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.SelectSeekStep1;
 import org.jooq.TableField;
@@ -85,6 +88,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.stat.FeeChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.InvoiceChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.TaskChartTypeVisitor;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class StatDAO {
@@ -94,6 +98,7 @@ public class StatDAO {
 	private static final String SELLER_STR = "seller";
 	private static final String WORKPLACE_STR = "workplace";
 	private static final String PERIOD_STR = "period";
+	private static final String RESULT = "Resultado";
 
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
@@ -636,6 +641,43 @@ public class StatDAO {
 		.orderBy(FINANCE.DUE_DATE.asc())
 		.forEach(record -> {
 			stat.put(record.value2().toString() + "/" + record.value3().toString(), record.value1() == 0 ? "cobro" : "pago", record.value4().doubleValue());
+		});
+		return stat;
+	}
+	
+	public static StatData<String, String, Double> getInvoiceStat(AONContext ctx, InvoiceFilter invoiceFilter) {
+		StatData<String, String, Double> stat = new StatData<>();
+		Collection<Condition> whereConditions = new ArrayList<>();
+		final Field<Integer> year = DSL.extract(INVOICE.ISSUE_DATE, DatePart.YEAR);
+		final Field<Integer> month = DSL.extract(INVOICE.ISSUE_DATE, DatePart.MONTH);
+		final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+		whereConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		Condition condition = PRODUCT.TYPE.ne((byte) 5).or(PRODUCT.TYPE.isNull());
+		ctx.getDslContext().select(year, month, INVOICE.TYPE, sum)
+		.from(INVOICE)
+		.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+		.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+		.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+		.where(whereConditions)
+		.and(condition)
+		.groupBy(year, month, INVOICE.TYPE)
+		.orderBy(year, DSL.decode()
+				   .when(INVOICE.TYPE.equal((byte) 1), 0)
+				   .when(INVOICE.TYPE.equal((byte) 0), 1)
+				   .when(INVOICE.TYPE.equal((byte) 2), 2)
+				   .when(INVOICE.TYPE.equal((byte) 3), 3))
+		.fetch()
+		.stream()
+		.forEach(rec -> {
+			InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+			String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
+			double amount = rec.getValue(sum).doubleValue();
+			if (stat.get(monthKey, RESULT) != null) {
+				Double d = stat.get(monthKey, RESULT);
+				d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+				stat.put(monthKey, RESULT, d);
+			}
+			stat.put(monthKey, type.getDescription(), amount);
 		});
 		return stat;
 	}

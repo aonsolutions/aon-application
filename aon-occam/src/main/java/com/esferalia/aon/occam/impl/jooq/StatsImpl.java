@@ -75,5 +75,10 @@ public class StatsImpl implements IStats {
 	public StatData<String, String, Double> getFinanceStat(AONContext ctx, FinanceFilter financeFilter){
 		return StatDAO.getFinanceStat(ctx, financeFilter);
 	}
+	
+	@Override
+	public StatData<String, String, Double> getInvoiceStat(AONContext ctx, InvoiceFilter invoiceFilter){
+		return StatDAO.getInvoiceStat(ctx, invoiceFilter);
+	}
 
 }

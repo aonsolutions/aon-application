@@ -3819,6 +3819,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static StatData<String, String, Double> getInvoiceStat(String domainName, Integer domainId, String user, InvoiceFilter invoiceFilter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,user);
+			return getStats().getInvoiceStat(ctx, invoiceFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
 
 	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
 		CloseableAONContext ctx = AONContext.getAONContext(domainName,domain,userLogin);

@@ -40,4 +40,6 @@ public interface IStats {
 			ItemFilter itemFilter, ElaborationFilter elaborationFilter);
 	
 	StatData<String, String, Double> getFinanceStat(AONContext ctx, FinanceFilter financeFilter);
+	
+	StatData<String, String, Double> getInvoiceStat(AONContext ctx, InvoiceFilter invoiceFilter);
 }
