@@ -4,6 +4,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<script type="text/javascript" > 
@@ -15,9 +16,6 @@
 				style.removeProperty('display');
 			else
 				style.display = 'none';
-			
-			
-			
 		}
 		
 		//]]>
@@ -87,8 +85,9 @@
  -->						
 					<aon:inputText 
 						size="30"
-						id="#{toolbarID}-smart-filter" 
+						id="smartFilterInputText" 
 						value="#{filterController.smartFilter}"
+						style="text-transform : none;"
 						styleClass="aon-finding-toolbar-item button" >
 						
 						<a4j:support 
@@ -99,16 +98,27 @@
 						ignoreDupResponses="true"
 						reRender="#{filterReRender}"
 						eventsQueue="#{toolbarID}FilterKeyUp" 
-						oncomplete="javascript:showSearchResults(#{filterReRender})"
 						onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
-						></a4j:support>
+						>
+							<f:setPropertyActionListener target="#{filterController.onSmartFilter}" value="#{true}" />
+						</a4j:support>
 					
 					</aon:inputText>
+
+					<rich:jQuery 
+						timing="immediate"
+						selector="#smartFilterInputText"
+						query="setAttribute('placeholder', 'Buscar en mis clientes') " />
+					<script type="text/javascript" > 
+						//<![CDATA[
+							#{rich:element('smartFilterInputText')}.setAttribute('placeholder', 'Buscar en mis clientes');
+						//]]>
+					</script>
 
 					<aon:commandLink 
 						reRender="none"
 						immediate="true"
-						id="#{toolbarID}-search"
+						id="filterShowButton"
 						accesskey="#{bundle.aon_key_search}" 
 						title="#{bundle.aon_key_search_accelerator}" 
 						styleClass="aon-finding-toolbar-item button"

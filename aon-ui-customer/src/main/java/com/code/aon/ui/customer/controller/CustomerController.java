@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.DocumentException;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,7 +74,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomerController.class);
 	
-	private String smartFilter = "Hello World!!!";
+	private String smartFilter = "";
 
 	private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
@@ -133,21 +134,24 @@ public class CustomerController extends CustomerListController implements ICusto
 	
 	public void setSmartFilter(String smartFilter) {
 		this.smartFilter = smartFilter;
-		
+	}
+	
+	public void setOnSmartFilter(boolean filter ) {
 		try {
-			addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_NAME, smartFilter);
-			addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_ALIAS, smartFilter);
-			addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT, smartFilter);
-			System.out.println(getCriteria().toString());
-			onSearch(null);
-			onAfterFilter(null);
+			clearCriteria();
+			if ( AonStringUtils.isNotBlank(smartFilter) ) {
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_NAME, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_ALIAS, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT, smartFilter);
+			}
+			onSearch( new ActionEvent(FacesContext.getCurrentInstance().getViewRoot()) );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSmartFilter: ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	
+
 	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
 		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);
 		if ( expression != null ) {
@@ -247,11 +251,6 @@ public class CustomerController extends CustomerListController implements ICusto
     public void onAlumnEditSearch(ActionEvent event){
     	super.onEditSearch(event);
     	setShowAlumnData(true);
-    }
-    
-    public void onAfterFilter(ActionEvent event) {
-    	super.onAfterSearch(event);
-    	super.onEditSearch(event);
     }
     
 	public void onCustomerHistory(ActionEvent e){
