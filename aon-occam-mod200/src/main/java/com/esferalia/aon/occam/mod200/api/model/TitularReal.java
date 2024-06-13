@@ -8,14 +8,14 @@ public class TitularReal implements Serializable  {
 	
 	private static final long serialVersionUID = 2566371506127574634L;
 	
-	private int documentType;          // Tipo documento identificativo (0-No es aplicable, 1-DNI, NIF o NIE, 2-TIN, 3-Pasaporte, 4-Otro)                       
+	private int documentType;          // Tipo documento identificativo (0-No es aplicable, 1-DNI, NIF o NIE, 2-TIN, 3-Pasaporte, 4-Otro). Se graba en el campo representative de la tabla                        
 	private String document;           // NIF/código de identificación extranjero            
 	private String name;               // Apellidos y nombre                                 
-	private String documentCountry;    // País de expedición del documento de identificación  
-	private Date birthDate;            // Fecha de nacimiento                                
-	private String residenceCountry;   // País de residencia                                  
-	private String nationality;        // Nacionalidad       
-	
+	private String documentCountry;    // País de expedición del documento de identificación. Se graba en el campo country de la tabla   
+	private Date birthDate;            // Fecha de nacimiento. Se graba en el campo notary_date de la tabla                                
+	private String residenceCountry;   // País de residencia. Se graba en el campo residence de la tabla                                  
+	private String nationality;        // Nacionalidad. Se graba en el campo notary de la tabla
+
 	public int getDocumentType() {
 		return documentType;
 	}

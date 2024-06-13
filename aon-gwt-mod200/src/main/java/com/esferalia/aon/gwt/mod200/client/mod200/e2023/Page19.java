@@ -63,7 +63,6 @@ public class Page19 extends PageAbs {
 
 		// B) Datos Económicos
 		
-		//FlexTable table1 = addTable(AON.MSG.ute2());
 		FlexTable table1 = addTable("B) Datos Econ\u00F3micos");
 		int row = 0;
 		paintKey(table1, Mod2002023Key.UT500 , row++);
@@ -73,30 +72,17 @@ public class Page19 extends PageAbs {
 		paintKey(table1, Mod2002023Key.UT1330, row++);
 		
 		// Deducción para evitar la doble imposición
-		paintDescription(table1, AON.MSG.ute31(), row++, 0, true);		
+		paintDescription(table1, AON.MSG.ute31(), row++, 0, false);		
 		panelB6 = new FlowPanel();
 		paintB6Panel();
 		table1.setWidget(row++, 0, panelB6);
 
-//		paintKey(table1, Mod2002023Key.UTC01, row++);
-//		paintDescription(table1, AON.MSG.ute4(), row++, 0, false);
-//		paintKey(table1, Mod2002023Key.UTC02, row++);
-//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-//		paintKey(table1, Mod2002023Key.UTC03, row++);
-//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-//		paintKey(table1, Mod2002023Key.UT062, row++);
-//		paintDescription(table1, AON.MSG.ute5(), row++, 0, false);
-//		paintKey(table1, Mod2002023Key.UTC04, row++);
-//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-//		paintKey(table1, Mod2002023Key.UTC05, row++);
-//		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-		
 		row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
 		row = paintTable(table1, row, UTE_KEYS_B81, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
-		row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones");
+		row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones:");
 		
 		paintKey(table1, Mod2002023Key.UT062, row++);
-		paintDescription(table1, AON.MSG.ute5(), row++, 0, true);
+		paintDescription(table1, AON.MSG.ute5(), row++, 0, false);
 		paintKey(table1, Mod2002023Key.UT070, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		paintKey(table1, Mod2002023Key.UT072, row++); table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
@@ -113,7 +99,7 @@ public class Page19 extends PageAbs {
 	
 	private int paintTable(FlexTable table1, int row, Mod2002023Key[][] keys, String title, String... headers) {
 		
-		paintDescription(table1, title, row, 0, true); 
+		paintDescription(table1, title, row, 0, false); 
 		int col = 1;
 		for (String header : headers) {
 			addHeaderCell(table1, row, col++, header, true);	

@@ -1474,8 +1474,6 @@ public enum Mod2002023Key implements IMod200Key {
 	,UT1228  // B) Datos económicos - 3.- Reserva capitaliz. no aplicada por la entidad          
 	,UT552   // B) Datos económicos - 4.- Base imponible                                          
 	,UT1330  // B) Datos económicos - 5.- Base imponible minorada o incrementada                  
-	
-	// FALTA - ESTAS DOS CASILLAS DE TOTALES DEL APARTADO B.6, VER SI LAS PONEMOS TAMBIEN EN LA PANTALLA O NO HACE FALTA, A VER COMO SE QUEDA AL FINAL EN EL MODELO
 	,UT1277  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Base de la deducción
 	,UT1278  // B) Datos económicos - 6.- Deduc. evitar doble imposición: Total: Importe de la deducción
 	

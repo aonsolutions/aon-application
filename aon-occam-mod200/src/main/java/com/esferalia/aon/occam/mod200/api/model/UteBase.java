@@ -8,7 +8,7 @@ public class UteBase implements Serializable {
 	
 	private double base;
 	private double percent;
-	private double amount; // A partir del ejercicio 2023 añaden el importe de la deducción
+	private double amount; // A partir del ejercicio 2023 añaden el importe de la deducción. Se graba en el campo incomes de la tabla
 
 	public double getPercent() {
 		return percent;

@@ -132,8 +132,8 @@ public class Mod2002023DAO  {
 		,UTE_BASE( 
 			(mod,reg) -> mod.getUteBases().add(new UteBase()
 				.setPercent(reg.getPercent())
-				.setBase(reg.getNominalValue())))
-				// FALTA - AÑADIR EL IMPORTE DE LA DEDUCCION QUE TENGO QUE VER EN QUE CAMPO LO PONGO 
+				.setBase(reg.getNominalValue())
+				.setAmount(reg.getIncomes() == null ? 0.0 : reg.getIncomes())))
 		,GROUP_ENTITIES(
 			(mod,reg) -> mod.getGroupEntities().add(new GroupEntitie()				
 					.setDocument(reg.getDocument())					
@@ -151,10 +151,14 @@ public class Mod2002023DAO  {
 		,SICAV_2( 
 			(mod,reg) -> mod.getSicav2().add(reg.getDocument()))
 		,TITULAR_REAL(
-				(mod,reg) -> mod.getTitularReal().add(new TitularReal()				
-						.setDocument(reg.getDocument())					
-						.setName( reg.getName())))
-         		// FALTA - RESTO DE CAMPOS DEL TITULAR REAL, A VER DONDE LOS GRABO EN LA TABLA  
+			(mod,reg) -> mod.getTitularReal().add(new TitularReal()
+					.setDocument(reg.getDocument())					
+					.setName( reg.getName()) 
+					.setDocumentType(reg.getRepresentative())
+					.setDocumentCountry(reg.getCountry())
+					.setBirthDate(reg.getNotaryDate())
+					.setResidenceCountry(reg.getResidence())
+					.setNationality(reg.getNotary()) ))
 		;
 		
 		private IPopulater populater;
@@ -464,8 +468,8 @@ public class Mod2002023DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002023RegistryType.UTE_BASE.byteValue());
-				detail.setNominalValue(ute.getBase());
-				// FALTA - IMPORTE DE LA DEDUCCION QUE NO SE A QUE CAMPO LO LLEVARE
+				detail.setNominalValue(ute.getBase());				
+				detail.setIncomes(ute.getAmount());
 				detail.setPercent(ute.getPercent());
 				list.add(detail);
 			}
@@ -549,7 +553,11 @@ public class Mod2002023DAO  {
 				detail.setType(Mod2002023RegistryType.TITULAR_REAL.byteValue());
 				detail.setDocument(tr.getDocument());
 				detail.setName(tr.getName());
-				// FALTA - RESTO DE CAMPOS DEL TITULAR REAL
+				detail.setRepresentative((byte) tr.getDocumentType());
+				detail.setCountry(tr.getDocumentCountry());
+				detail.setNotaryDate(AonDateUtils.toSql(tr.getBirthDate()));
+				detail.setResidence(tr.getResidenceCountry());
+				detail.setNotary(tr.getNationality());
 				list.add(detail);
 			}
 		}

@@ -394,9 +394,8 @@ public class Mod2002023Compute {
 	
 	static { 
 		
-		// Entidades que forman parte de grupos de consolidación fiscal
-		// EN EL DOC PADIS ESTA BORRADO LA CUMPLIMENTACION AUTOMATICA DE ESTA CASILLA
-		// COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ1029,"(C0009 || C0010)?(LQ501+LQ1230-LQ1231+I0417-D0418):(0.0)");
+		// Entidades que forman parte de grupos de consolidación fiscal		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ1029,"(C0009 || C0010)?(LQ501+LQ1230-LQ1231+I0417-D0418):(0.0)");
 		
 		// Base imponible
 		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.LQ550,"computeLQ550()");

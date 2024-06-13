@@ -263,12 +263,15 @@ public class Mod2002023Writer {
 	// UTES - Deducción para evitar la doble imposicion
 	private static void addUteBase(Writer line, Mod2002023 mod200, int index) throws IOException {
 		double base = 0;
+		double amount = 0;
 		double percent = 0;
 		if (index < mod200.getUteBases().size()) {
 			base = mod200.getUteBases().get(index).getBase();
+			amount = mod200.getUteBases().get(index).getAmount();
 			percent = mod200.getUteBases().get(index).getPercent();
 		}
 		line.append(AonFiscalFileUtils.signedZero(base, DS, DD));
+		line.append(AonFiscalFileUtils.signedZero(amount, DS, DD));
 		line.append(AonFiscalFileUtils.unsigned(percent, 5, 2));
 	}
 
@@ -425,13 +428,17 @@ public class Mod2002023Writer {
 	}
 
     private static void addBreakdownFromConstants(Writer l, Mod2002023 m, Mod2002023Key[][] keys) throws IOException {
+    	addBreakdownFromConstants(l, m, keys, false);
+	}
+    
+    private static void addBreakdownFromConstants(Writer l, Mod2002023 m, Mod2002023Key[][] keys, boolean isComplementary) throws IOException {
 		
     	for (int i=0; i<keys.length; i++) {
     		if (keys[i] != null)
     		 for (int j=0; j<keys[i].length; j++) {
     		    Mod2002023Key key = keys[i][j];
 				if (key != null) {
-					addSignedKey(l, m, key);
+					addSignedKey(l, m, key, isComplementary);
 				}    		    
     		 }
     	}
@@ -1802,15 +1809,11 @@ public class Mod2002023Writer {
 
 		// [...] NO ESTA EN EL MODELO - Página 23: Operaciones fusión, escisión, canje de valores.
 		
-		
-
-		// FALTA - ESTA PAGINA 24 TIENE UN MONTON DE CAMPOS NUEVOS Y LA RELACION DE SOCIOS AHORA SE TRASLADA A UNA PAGINA NUEVA 24 BIS, NOS ESPERAREMOS HASTA LA ORDEN DEFINITIVA PARA VER SI REALMENTE SE MANTIENE ASI
 		, PAG24("T20024000", new IPropertyFiller[] { 
 				(line, mod200, label) -> {
 					boolean isComplementary = false; // Indicador de pagina complementaria
 					int i1 = 0; // Contador para Deducción para Evitar la doble imposición
-					int i2 = 0; // Contador para Relación de Socios
-					while (!isComplementary || i1 < mod200.getUteBases().size() || i2 < mod200.getUteParticipations().size() ) {
+					while (!isComplementary || i1 < mod200.getUteBases().size()) {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");
 		
@@ -1821,20 +1824,20 @@ public class Mod2002023Writer {
 						addSignedKey(line, mod200, Mod2002023Key.UT552, isComplementary);
 						addSignedKey(line, mod200, Mod2002023Key.UT1330, isComplementary);
 		
-						for (int i = 1; i <= 4; i++) {
+						// B6.- Deducción para evitar la doble imposición
+						for (int i = 1; i <= 4; i++) {      
 							addUteBase(line, mod200, i1++);
-						}
-		
-//						addSignedKey(line, mod200, Mod2002023Key.UTC01, isComplementary);
-//						addSignedKey(line, mod200, Mod2002023Key.UTC02, isComplementary);
-//						addSignedKey(line, mod200, Mod2002023Key.UTC03, isComplementary);
-						addSignedKey(line, mod200, Mod2002023Key.UT062, isComplementary);
-//						addSignedKey(line, mod200, Mod2002023Key.UTC04, isComplementary);
-//						addSignedKey(line, mod200, Mod2002023Key.UTC05, isComplementary);
-		
-						for (int i = 1; i <= 10; i++) {
-							addUteParticipation(line, mod200, i2++);
-						}
+						}						
+						addSignedKey(line, mod200, Mod2002023Key.UT1277, isComplementary); // B6.- Deduc. evitar doble imposición: Total: Base de la deducción [01277]
+						addSignedKey(line, mod200, Mod2002023Key.UT1278, isComplementary); // B6.- Deduc. evitar doble imposición: Total: Importe de la deducción [01278]
+						
+						addBreakdownFromConstants(line, mod200, Mod2002023Constants.UTE_KEYS_B7, isComplementary);  // B7.- Bonificaciones 
+						addBreakdownFromConstants(line, mod200, Mod2002023Constants.UTE_KEYS_B81, isComplementary); // B8.- Deducciones generadas en el periodo impositivo
+						addBreakdownFromConstants(line, mod200, Mod2002023Constants.UTE_KEYS_B82, isComplementary); // Información adicional para el cálculo del límite de deducciones
+						
+						addSignedKey(line, mod200, Mod2002023Key.UT062, isComplementary);  // B9.- Retenciones e ingresos a cuenta  [00062]
+						addSignedKey(line, mod200, Mod2002023Key.UT070, isComplementary);  // B10.- Dividendos y participaciones. a) Ejercicios que no haya tributado en régimen especial [00070]
+						addSignedKey(line, mod200, Mod2002023Key.UT072, isComplementary);  // B10.- Dividendos y participaciones. b) Ejercicios que haya tributado en régimen especial [00072]
 								
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
@@ -1844,7 +1847,27 @@ public class Mod2002023Writer {
 				} 
 			})
 		
-		// FALTA - PAGINA 24 BIS - NUEVA PAGINA QUE TENDRA LA RELACION DE SOCIOS Y UN NUEVO APARTADO DE PARTICIPES DE AGRUPACIONES DE INTERES ECONOMICO Y UTES. ESPERAR A VER SI REALMENTE CREAN ESOS APARTADOS NUEVOS
+		, PAG24B("T20024B00", new IPropertyFiller[] { 
+				(line, mod200, label) -> {
+					boolean isComplementary = false; // Indicador de pagina complementaria
+					int i1 = 0; // Contador para Relación de Partícipes					 
+					while (!isComplementary || i1 < mod200.getUteParticipations().size() ) {
+						addStartLabel(line, label);
+						line.append(isComplementary ? "C" : " ");
+						
+						for (int i = 1; i <= 10; i++) {
+							addUteParticipation(line, mod200, i1++);
+						}
+						
+						// FALTA - PARTICIPES DE AGRUPACIONES...
+								
+						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
+		
+						isComplementary = true;
+						addEndLabel(line, label);
+					}
+				} 
+			})
 
 		// [...] NO ESTA EN EL MODELO - Página 25: Régimen especial de transparencia fiscal internacional
 
@@ -1996,23 +2019,22 @@ public class Mod2002023Writer {
 
 			// Página 22. Regimen especial de la reserva para inversiones en Canarias y Cooperativas
 			if (this == Pages2023.PAG22) {
-				addPage = (mod200.getDoubleValue(Mod2002023Key.C0029) == 1)
-						|| (mod200.getDoubleValue(Mod2002023Key.C0017) == 1)
-						|| (mod200.getDoubleValue(Mod2002023Key.C0018) == 1)
-						|| (mod200.getDoubleValue(Mod2002023Key.C0019) == 1);
-			}
+				addPage = ( mod200.isChecked(Mod2002023Key.C0029) || mod200.isCooperativa() );
+			}			
 			
-			// FALTA - SUPONGO QUE LA NUEVA PAGINA 22 BIS TAMBIEN SALDRA SOLO SI ESTA MARCADO RIIB O COOPERATIVAS
+			// Página 22 BIS. Regimen especial de la reserva para inversiones en Illes Balears y Cooperativas
+			if (this == Pages2023.PAG22B) {
+				addPage = ( mod200.isChecked(Mod2002023Key.C0086) || mod200.isCooperativa() );
+			}
 
-			// Página 24. Agrupaciones de interes económico y UTES (regimen especial).
-			// Caracteres 013, 085 o 014 marcados
-			if (this == Pages2023.PAG24) { // FALTA - SI AL FINAL TAMBIEN LLEVA LA NUEVA PAGINA 24 BIS, SUPONGO QUE TAMPOCO SALDRA SI NO ES UTE
+			// Página 24. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013, 085 o 014 marcados
+			if (this == Pages2023.PAG24 || this == Pages2023.PAG24B) { 
 				addPage = (mod200.isChecked(Mod2002023Key.C0013) || mod200.isChecked(Mod2002023Key.C0085) || mod200.isChecked(Mod2002023Key.C0014));
 			}
 
 			// Página 26. Tributación Conjunta. Caracter 028 marcado
 			if (this == Pages2023.PAG26) {
-				addPage = (mod200.getDoubleValue(Mod2002023Key.C0028) == 1);
+				addPage = (mod200.isChecked(Mod2002023Key.C0028));
 			}
 			
 			// Páginas 26B: Solo si hay algún importe en la pagina
