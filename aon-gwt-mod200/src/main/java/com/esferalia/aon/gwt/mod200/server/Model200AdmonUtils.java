@@ -59,7 +59,9 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2023.Mod2002023Writer;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
@@ -370,10 +372,19 @@ public class Model200AdmonUtils {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
 		try {
-			if (fm instanceof Mod2002022) {
-				Mod2002022 mod = (Mod2002022) fm;
-				Mod2002022Writer.fillWriter(mod, writer);
+			// FALTA - LO PONGO SEGUN EL EJERCICIO
+			switch (fm.getYear()) {
+				case 2022:
+					Mod2002022Writer.fillWriter((Mod2002022) fm, writer);				
+					break;
+				case 2023:
+					Mod2002023Writer.fillWriter((Mod2002023) fm, writer);				
+					break;
 			}
+//			if (fm instanceof Mod2002022) {
+//				Mod2002022 mod = (Mod2002022) fm;
+//				Mod2002022Writer.fillWriter(mod, writer);
+//			}
 		} catch (IOException e) {
 			throw new AonCoreException(e);
 		}
@@ -395,6 +406,8 @@ public class Model200AdmonUtils {
 				.setUser(aeatParams.getUser());
 		if (fm instanceof Mod2002022) {
 			Mod2002022 mod = (Mod2002022) fm;
+			// FALTA - QUE POSIBILIDAD HABRIA DE PONER ESTO EN MODEL200 Y QUE SEA COMUN A TODOS LOS EJERCICIOS ??
+			//         SI NO LO PONGO, SERA NECESARIO PONERLO EN EL 2023
 			MODEL2002022.aeatPresentation(occam, mod, aeatResponse);
 		}
 		giveDataResponseDataBack(resp, aeatParams, fm);
