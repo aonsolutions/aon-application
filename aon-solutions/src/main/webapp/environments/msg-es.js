@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Añadir Comentario';
 export const ADD_COMPOSITION = 'Añadir Composición';
 export const ADD_FILE = 'Adjuntar Fichero';
 export const ADD_INVOICE = 'Añadir Factura';
+export const ADD_NEW = "Agregar nuevo";
 export const ADD_REMARKS = 'Añadir Observaciones';
 export const ADD_TAG = 'Añadir Etiqueta';
 export const ADD_TAX = 'Añadir Impuesto';
@@ -171,6 +172,7 @@ export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
+export const EXPIRED_SESSION = 'Sesión expirada';
 export const ERRORS = 'Errores';
 
 // ----- F
@@ -224,6 +226,7 @@ export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
 export const INVOICE_CONFIGURATION = 'Configuración de Facturas';
 export const INVOICE_DATA = 'Datos Factura';
+export const INVOICE_DOCUMENT_NUMBER = 'Número Documento';
 export const INVOICE_ISSUED = 'Factura Emitida';
 export const INVOICE_NUMBER = 'Número Factura';
 export const INVOICE_OBJECT = 'Objeto de Factura';
@@ -290,6 +293,7 @@ export const NEW_TICKET = 'Nuevo Ticket';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
+export const NO_INFORMATION = 'No hay información'
 export const NOT_LINKED = 'No vinculado';
 export const NOT_LINKED1 = 'No vinculados';
 export const NOTIFICATION = 'Notificación';
@@ -331,6 +335,7 @@ export const PENDING_TASKS = 'Tareas Pendientes';
 export const PENDINGS = 'Pendiente';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menú portal"
 export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
@@ -346,6 +351,7 @@ export const PROVINCE = 'Provincia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Accesos rápidos";
 export const QUANTITY = 'Cantidad';
 export const QUOTA = 'Cuota';
 
@@ -355,6 +361,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recientes';
+export const RECENTLY_OPENED = "Abierto recientemente";
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar Factura';
 export const RECTIFIED = 'Rectificativa';
@@ -413,6 +420,7 @@ export const SPANISH = 'Castellano';
 export const STATISTICS = 'Estadísticas';
 export const STATUS = "Estado";
 export const STATUS_NOT_EMPTY = "El estado no puede quedar vacío";
+export const SUITE_MENU = "Menú suite";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';

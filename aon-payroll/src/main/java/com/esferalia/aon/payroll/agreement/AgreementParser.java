@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -149,7 +150,8 @@ public class AgreementParser {
 		agreementPayments = new ArrayList<>();
 		
 		InputStream is = AgreementParser.class.getResourceAsStream("AgreementPayment.txt");
-		Scanner scaner = new Scanner(is);
+//		Scanner scaner = new Scanner(is);
+		Scanner scaner = new Scanner(is, Charset.forName("UTF-8"));
 		
 		while(scaner.hasNextLine()) {
 			String line = scaner.nextLine();
@@ -846,6 +848,8 @@ public class AgreementParser {
 			
 			for(String agreementConceptName : agreement.getAgreementConcepts()) {
 				AgreementPayment agreementPayment = getAgreementPayment(agreementConceptName);
+				
+				System.out.println(agreementConceptName + " --> " + agreementPayment);
 				
 				if(null != agreementPayment) {
 					

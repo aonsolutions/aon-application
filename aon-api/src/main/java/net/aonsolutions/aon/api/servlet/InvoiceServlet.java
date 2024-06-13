@@ -450,9 +450,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	Filter filter =  f.getDomainProperty().eq(domainId);
     
     	if(invoiceFilter.getDescription() != null) {
-    		filter = filter.and(
-    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
+    		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
+        			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getSeriesProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getRegistryDocumentProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			;
+    		if (AonStringUtils.isNumeric(invoiceFilter.getDescription())) {
+   				Integer i = AonNumberUtils.toInteger( invoiceFilter.getDescription() );
+   				Double d = AonNumberUtils.toDouble( invoiceFilter.getDescription() );
+				ft = ft.or (f.getNumberProperty().like(i))
+					.or (f.getTotalProperty().like(d));
+   			}
+    		filter = filter.and( ft );
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
@@ -625,6 +634,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
+		json.put(IJsonNames.SERIES, invoice.getSeries());
+		json.put(IJsonNames.SERIE, invoice.getSeries());
+		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		return json;
 	}
 	

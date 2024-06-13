@@ -103,6 +103,10 @@ public class DefaultPayrollFuseBox {
 		return getSumByCras(allPayments, IN_KIND_CRAS);
 	}
 	
+	public static List<PDFPayment> getInKindPayments(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getPaymentsByCras(allPayments, IN_KIND_CRAS);
+	}
+
 	public static List<PDFPayment> getIndemns(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
 		return getPaymentsByCras(allPayments, INDEMN_CRAS);
 	}

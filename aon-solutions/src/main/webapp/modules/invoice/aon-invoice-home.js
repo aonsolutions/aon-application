@@ -301,7 +301,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingIssued.addEventListener(EVENT.MOUSELEAVE, () => pendingIssued.style.backgroundColor = 'transparent');
 		pendingIssued.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer'}
 		));
 
 		let pendingIssuedNumber = this.createDiv();
@@ -345,7 +345,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceived.addEventListener(EVENT.MOUSELEAVE, () => pendingReceived.style.backgroundColor = 'transparent');
 		pendingReceived.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'ne+issuer'}
 		));
 
 		let pendingReceivedNumber = this.createDiv();
@@ -388,7 +388,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingTicket.addEventListener(EVENT.MOUSELEAVE, () => pendingTicket.style.backgroundColor = 'transparent');
 		pendingTicket.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['ticket'], companyActsLike:'ne+issuer'}
 		));
 
 		let pendingTicketNumber = this.createDiv();
@@ -472,7 +472,7 @@ export class AonInvoiceHome extends AonElement {
 		trash.addEventListener(EVENT.MOUSELEAVE, () => trash.style.backgroundColor = 'transparent');
 		trash.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.DRAFT},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['discarded', 'rejected', 'error']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['error']}
 		));
 
 		div.appendChild(trash);

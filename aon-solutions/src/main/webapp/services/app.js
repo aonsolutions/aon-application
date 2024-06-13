@@ -12,6 +12,7 @@ export const TIMECONTROL = {
   description: MSG.TIMECONTROL,
   tag: MSG_ES.TIMECONTROL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
+  newIcon: AON_ICONS.AON_NEW_TIMECONTROL,
   color: "#D1C36D",
   backgroundColor: "rgba(209, 195, 109, .2)",
   hover: 'aonTimecontrolHover',
@@ -46,6 +47,7 @@ export const ACCOUNTING = {
   description: MSG.ACCOUNTING,
   tag: MSG_ES.ACCOUNTING,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
+  newIcon: AON_ICONS.AON_NEW_ACCOUNTING,
   symbol: MATERIAL_ICONS.CALCULATE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -76,8 +78,10 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
+  newIcon: AON_ICONS.AON_NEW_FISCAL,
   symbol: MATERIAL_ICONS.EURO_SYMBOL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
+  newColor: "#FB982E",
   backgroundColor: '#fef3e7',
   hover: 'aonFiscalHover',
   access: [
@@ -106,8 +110,10 @@ export const PAYROLL = {
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
+  newIcon: AON_ICONS.AON_NEW_PAYROLL,
   symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
+  newColor: "#33A9A9",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
   access: [
@@ -243,7 +249,9 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
-  color: LS.isNewTheme() ? "var(--aonDocumental)" : "#6986BB",
+  newIcon: AON_ICONS.AON_NEW_DOCUMENTAL,
+  color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
+  newColor: "#EF6292",
   backgroundColor: 'var(--aonDocumentalBackground)',
   hover: 'aonDocumentalHover',
   access: [
@@ -277,6 +285,7 @@ export const WAREHOUSE = {
   description: MSG.WAREHOUSE,
   tag: MSG_ES.WAREHOUSE,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
+  newIcon: AON_ICONS.AON_NEW_WAREHOUSE,
   symbol: MATERIAL_ICONS.INVENTORY_2,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -299,7 +308,9 @@ export const INVOICE = {
   description: MSG.INVOICES,
   tag: MSG_ES.INVOICES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
+  newIcon: AON_ICONS.AON_NEW_INVOICE,
   color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
+  newColor: "#4F91FF", 
   backgroundColor: '#ebf2ff',
   hover: 'aonInvoiceHover',
   access: [
@@ -344,7 +355,9 @@ export const MESSENGER = {
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
+  newIcon: AON_ICONS.AON_NEW_MESSENGER,
   color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
+  newColor: "#f6655a",
   backgroundColor: '#feedec',
   hover: 'aonMessengerHover',
   access: [
@@ -387,6 +400,7 @@ export const NOTES = {
   app: "note",
   title: MSG.NOTES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
+  newIcon: AON_ICONS.AON_NEW_NOTES,
   color: "#ffc000",
   backgroundColor: "rgba(255, 192, 0, .2)",
   hover: 'aonSidenavHover',
@@ -467,6 +481,17 @@ export const OCR = {
   price: " ",
 };
 
+export const FACTURAE = {
+  app: "facturae",
+  title: "Factura Electrónica",
+  description: "Factura Electrónica.",
+  icon: AON_ICONS.AON_APP,
+  color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
+  price: " ",
+};
+
 
 export const INVOFOX = {
   app: "invofox",
@@ -514,6 +539,7 @@ export const CONSOLE = {
 export const OFFICE = {
   app: "office",
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
+  newIcon: AON_ICONS.AON_NEW_OFFICE,
   symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: "Despacho",
   color: "black",
@@ -843,8 +869,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE };
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE};
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,

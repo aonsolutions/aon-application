@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -87,9 +86,10 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -201,18 +201,19 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -1723,6 +1724,12 @@ public class AON {
 		}
 	}
 	
+	public static List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getRegistry().getRAddInfoAviableAttributes(ctx, f -> f.getDomainProperty().eq(domain));
+		}
+	}
+	
 	public static RegistryAddInfo save(Domain domain, User user, RegistryAddInfo registryAddInfo) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getRegistry().saveRegistryAddInfo(ctx, registryAddInfo);
@@ -1866,17 +1873,6 @@ public class AON {
 			return getFinance().updateInvoice(ctx, invoice);
 		}
 	}
-
-	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().insertInvoiceDetail(ctx, invoiceDetail);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
 	public static void deleteInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
@@ -1946,23 +1942,16 @@ public class AON {
 			return getFinance().getLastSaleInvoice(ctx, serie);
 		}
 	}
-	
-	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
-			Integer domainId, String login, InvoiceFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceDetails(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(String domainName, Integer domainId, String login, InvoiceFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvoiceDetailsList(ctx, filter);
-		}
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(Occam occam, InvoiceFilter filter) {
+		final CloseableAONContext ctx = AONContext.getAONContext(occam);
+		return getFinance().getInvoiceDetailsExtended(ctx, filter,() -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<InvoiceDetail> getInvoiceDetailStream(String domainName, Integer domainId, String login,
@@ -2120,21 +2109,13 @@ public class AON {
 		}
 	}
 
-	public static Integer getInvoiceNextNumber(
-			String domainName, Integer domainId, String login,
-			Byte[] types, String series) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Integer getInvoiceNextNumber(String domainName, Integer domainId, String login, Byte[] types, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceNextNumber(ctx, types,series);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login,
-			InvoiceType type, String series) {
+	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login, InvoiceType type, String series) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoiceMinNumber(ctx, type, series);
 		}
@@ -3839,14 +3820,8 @@ public class AON {
 	}
 
 	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName,domain,userLogin);
-			return getStats().getInvoicesReport(ctx, params);
-		} finally {
-			if (ctx != null) 
-				ctx.close();
-		}
+		CloseableAONContext ctx = AONContext.getAONContext(domainName,domain,userLogin);
+		return getStats().getInvoicesReport(ctx, params, () -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<OldTask> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
@@ -5209,6 +5184,12 @@ public class AON {
 			return getRegistry().getSellerList(ctx, params);
 		}
 	}
+	
+	public static Integer getSellerListCount(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerListCount(ctx, params);
+		}
+	}
 
 	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
@@ -5622,6 +5603,12 @@ public class AON {
 	public static RegistryMedia deleteRMedia(String domainName, Integer domainId, String login, Integer registry) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().deleteRMedia(ctx, registry);
+		}
+	}
+	
+	public static void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			getRegistry().deleteRegistryMedia(ctx, id);
 		}
 	}
 	
@@ -8059,33 +8046,33 @@ public class AON {
 		}
 	}	
 	
-	public static Stream<InvoiceTracking> getInvoiceTrackingStream(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingStream(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
 		}
 	}
 	
-	public static List<InvoiceTracking> getInvoiceTrackingList(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingList(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking getInvoiceTracking(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static InvoiceCommunicationTracking getInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTracking(ctx, filter);
+			return getFinance().getInvoiceCommunicationTracking(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
+	public static InvoiceCommunicationTracking saveInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+			return getFinance().saveInvoiceCommunicationTracking(ctx, invoiceCommunicationTracking);
 		}
 	}
 	
-	public static void deleteInvoiceTracking(String schema, Integer invoiceId) {
+	public static void deleteInvoiceCommunicationTracking(String schema, Integer invoiceId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
-			getFinance().deleteInvoiceTracking(ctx, invoiceId);
+			getFinance().deleteInvoiceCommunicationTracking(ctx, invoiceId);
 		}
 	}	
 

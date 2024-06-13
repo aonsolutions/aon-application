@@ -28,6 +28,9 @@ public interface AccountEntryService extends RemoteService {
 	AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) throws AonCoreException;
 	AccountingInvoice initializeInvoice(Occam occam, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException;
 	LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(Occam occam, String query) throws AonCoreException;
+	FinanceEntry save(Occam occam, FinanceEntry financeEntry) throws AonCoreException;
+	FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) throws AonCoreException;
+	AccountingInvoice rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data) throws AonCoreException;
 
 	//	-----------------------------------
 
@@ -41,11 +44,8 @@ public interface AccountEntryService extends RemoteService {
 	AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException;
 	AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) throws AonCoreException;
 	AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) throws AonCoreException;
-	AccountingInvoice rectifyInvoice(String domainName, int domain, String user, Integer id, InvoiceRectificationData data) throws AonCoreException;
 	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String user, Date from, Date to) throws AonCoreException;
 	String getSalaryFormatted(String domainName, int domain, String user, Date from, Date to) throws AonCoreException;
-	FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) throws AonCoreException;
-	FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) throws AonCoreException;
 	IAccountEntryWrapper  updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException;
 	LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) throws AonCoreException;
 

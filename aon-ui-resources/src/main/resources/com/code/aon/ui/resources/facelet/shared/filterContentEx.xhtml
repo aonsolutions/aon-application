@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div styleClass="aon-scroll-area">
+		
+		<aon:div styleClass="aon-panelGrid-search">
+			<aon:div styleClass="aon-panelGrid-search-info">
+				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+				<h:outputLink style="font-size:1em;font-weight:bold;float:right;" value="#" >
+					<aon:outputText value="[?]" />
+					<rich:componentControl for="searchHelp" event="onclick" operation="show"/>													
+				</h:outputLink>				
+			</aon:div>			
+			
+			<aon:panelGrid id="#{searchContentID}" columns="1">
+				<ui:insert name="searchContent" />
+				<aon:if test="#{!skipSearchButton}">
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-filter-lookup-button" >
+						<aon:commandButton id="#{searchButtonId}"
+							title="#{bundle.aon_key_search_accelerator}"
+							value="#{bundle.aon_search}" 
+							styleClass="aon-search-lookup-button"
+							action="#{searchAction}" 
+							actionListener="#{searchActionListener}"
+							reRender="#{searchReRender}"
+							onclick="#{searchOnClick}" 
+							oncomplete="#{searchOnComplete}"
+							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							
+							<aon:if test="#{!skipAfterSearch}" >
+								<aon:actionListener method="#{afterSearchActionListener}" />
+							</aon:if>
+							<aon:if test="#{!disableSearchHotKey}" >
+								<aon:actionHotKey key="return" />
+							</aon:if>
+						
+						</aon:commandButton> 
+					</aon:div>	
+				</aon:if>			
+			</aon:panelGrid>
+			
+			<aon:if test="#{!skipFocusFirst}">
+				<rich:jQuery timing="onload"
+					selector="##{searchContentID} :input:visible:enabled:first"
+					query="focus()" />
+			</aon:if>					
+			
+		</aon:div>		
+		
+		<ui:insert name="additionalSearchContent"/>
+		
+	</aon:div>
+	
+	<aon:if test="#{!skipHelpWindow}">
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/searchHelp.xhtml" />
+	</aon:if>
+	
+</ui:composition>

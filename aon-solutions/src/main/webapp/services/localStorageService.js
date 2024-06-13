@@ -194,9 +194,9 @@ export const isNewTheme = () => {
     return newTheme &&  CONSTANT.FALSE !== newTheme;
 }
 
-export const setNewTheme = (newTheme) => {
+export const setNewTheme = (newTheme, reload) => {
     set(NEW_THEME, newTheme);
-    location.reload();
+    if(reload) location.reload();
 }
 
 export const isSuite = () => {

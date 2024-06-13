@@ -94,7 +94,7 @@ public abstract class ContractAttachDialog extends AonCustomDialog {
 	Hidden userLoginHidden = new Hidden("login", Wnd.getCurrentUser());
 	Hidden currentDomainHidden = new Hidden("domain", Wnd.getCurrentDomainNameURL());
 	Hidden attachIdHidden = new Hidden("attachId", "");
-	Hidden contractIdHidden = new Hidden("contractId", "");
+	Hidden contractIdHidden = new Hidden("attachModule", "");
 	Hidden descriptionHidden = new Hidden("description", "");
 	Hidden typeHidden = new Hidden("type", "");
 	Hidden securityHidden = new Hidden("security", "");

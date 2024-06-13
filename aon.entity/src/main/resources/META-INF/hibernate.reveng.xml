@@ -66,6 +66,7 @@
 
 	<table-filter match-name="contract_doc" exclude="true" />	
 	<table-filter match-name="invoice_doc" exclude="true" />
+	<table-filter match-name="invoice_tracking" exclude="true" />	
 	<table-filter match-name="delivery_packaging" exclude="true" />
 	<table-filter match-name="sales_info" exclude="true" />
 	<table-filter match-name="delivery_info" exclude="true" />

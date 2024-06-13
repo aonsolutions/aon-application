@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class MarketingAction implements Serializable {
@@ -13,12 +14,7 @@ public class MarketingAction implements Serializable {
 		EMAIL("Correo Electr\u00f3nico", 2),
 		MAIL("Correo", 4),
 		BULLETIN("Boletin", 5),
-		META("Meta", 6),
-		INSTAGRAM("Instagram", 7),
-		LINKEDIN("LinkedIn", 8),
-		WEB("Web Corporativa", 9),
-		LANDING("Landing Page", 10),
-		OTHER("Otros", 11),
+		INCOMING("Incoming", 6)
 		;
 		
 		private String description;
@@ -43,7 +39,41 @@ public class MarketingAction implements Serializable {
 					return MarketingActionMediaType.values()[i];
 			}
 			
-			return MarketingActionMediaType.OTHER;
+			return MarketingActionMediaType.PHONE;
+		}
+		
+	}
+	
+	public static enum MarketingSellerDistribution {
+		MANUAL("Manual", 0),
+		AUTOMATIC("Autom\u00e1tico", 1),
+//		WORK("Carga Trabajo", 2),
+//		CALENDAR("Calendario Laboral", 3)
+		;
+		
+		private String description;
+		private Integer value;
+
+		MarketingSellerDistribution(String description, Integer value) {
+			this.description = description;
+			this.value = value;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public Integer getValue() {
+			return value;
+		}
+		
+		public static MarketingSellerDistribution getSellerDistribution(Integer value) {
+			for(int i=0; i<MarketingSellerDistribution.values().length; i++) {
+				if(MarketingSellerDistribution.values()[i].getValue() == value)
+					return MarketingSellerDistribution.values()[i];
+			}
+			
+			return MarketingSellerDistribution.MANUAL;
 		}
 		
 	}
@@ -54,6 +84,7 @@ public class MarketingAction implements Serializable {
 	private Integer domain;
 	private MarketingCampaign marketingCampaign;
 	private MarketingActionMediaType mediaType;
+	private Tag tag;
 	private Date startDate;
 	private Date endDate;
 	private String description;
@@ -65,6 +96,8 @@ public class MarketingAction implements Serializable {
 	private Survey survey;
 	private Integer newsletter;
 	private Integer news;
+	
+	private MarketingSellerDistribution sellerDistribution;
 	
 	private List<MarketingActionTarget> targets;
 	
@@ -96,6 +129,13 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setMediaType(MarketingActionMediaType mediaType) {
 		this.mediaType = mediaType;
+		return this;
+	}
+	public Tag getTag() {
+		return tag;
+	}
+	public MarketingAction setTag(Tag tag) {
+		this.tag = tag;
 		return this;
 	}
 	public Date getStartDate() {
@@ -166,6 +206,13 @@ public class MarketingAction implements Serializable {
 	}
 	public MarketingAction setTaskHolder(TaskHolder taskHolder) {
 		this.taskHolder = taskHolder;
+		return this;
+	}
+	public MarketingSellerDistribution getSellerDistribution() {
+		return null == sellerDistribution ? MarketingSellerDistribution.MANUAL : sellerDistribution;
+	}
+	public MarketingAction setSellerDistribution(MarketingSellerDistribution sellerDistribution) {
+		this.sellerDistribution = sellerDistribution;
 		return this;
 	}
 	public boolean isDeleted() {

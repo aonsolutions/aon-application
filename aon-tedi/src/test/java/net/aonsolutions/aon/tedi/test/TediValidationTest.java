@@ -19,8 +19,9 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -30,10 +31,9 @@ import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.ewok.TediRegistry;
 import es.translogia.tedi.json.TediInvoiceJSON;
-import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.TediParser;
 
-public class TediValidationTest {
+class TediValidationTest {
 
 	@AfterEach
 	public void afterEach() {
@@ -49,7 +49,7 @@ public class TediValidationTest {
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(hasProperty("code", equalTo(TediErrorMessages.C001.toString()))));
+		MatcherAssert.assertThat(result.getMessages(), hasItem(hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString()))));
 	}
 	
 	@Test
@@ -62,8 +62,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C003.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.SERIES)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.SERIES)))
 				)));
 	}
 
@@ -77,8 +77,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C003.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.NUMBER)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.NUMBER)))
 				)));
 	}
 
@@ -91,8 +91,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-					 hasProperty("code", equalTo(TediErrorMessages.C002.toString()))		
-					,hasProperty("context", hasProperty("key",is(TediContextKey.REFERENCE_CODE)))
+					 hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))		
+					,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.REFERENCE_CODE)))
 						)));
 	}
 
@@ -105,8 +105,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C001.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.ISSUE_DATE)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.ISSUE_DATE)))
 				)));
 	}
 
@@ -125,8 +125,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C001.toString())),
-				hasProperty("context", hasProperty("key",is(TediContextKey.REGISTRY)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString())),
+				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.REGISTRY)))
 				)));
 	}
 	
@@ -145,8 +145,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C002.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.RDOCUMENT)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT)))
 				)));
 	}
 
@@ -166,8 +166,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C004.toString())),
-				hasProperty("context", hasProperty("key",is(TediContextKey.RDOCUMENT)))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C004.toString())),
+				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT)))
 				)));
 	}
 
@@ -186,8 +186,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C003.toString())),
-				hasProperty("context", hasProperty("key",is(TediContextKey.RDOCUMENT_COUNTRY))))))
+				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString())),
+				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT_COUNTRY))))))
 				;
 	}
 
@@ -206,8 +206,8 @@ public class TediValidationTest {
 //		Assert.assertNotNull(result.getMessages());
 //		printMessages(result.getMessages());
 //		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
-//				hasProperty("code", equalTo(TediErrorMessages.C001.toString())),
-//				hasProperty("context", hasProperty("key",is(TediContextKey.RNAME))))));
+//				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString())),
+//				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RNAME))))));
 //	}
 
 	@Test
@@ -225,8 +225,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C002.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.RNAME))))));
+				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RNAME))))));
 	}
 
 	@Test
@@ -247,8 +247,8 @@ public class TediValidationTest {
 		assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C002.toString()))
-				,hasProperty("context", hasProperty("key",is(TediContextKey.ADDRESS))))));
+				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
+				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.ADDRESS))))));
 	}
 
 	@Test
@@ -269,15 +269,15 @@ public class TediValidationTest {
 		MatcherAssert.assertThat(result.getMessages(), 
 			hasItem(
 				allOf(
-					 hasProperty("code", equalTo(TediErrorMessages.C002.toString()))		
+					 hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))		
 					,hasProperty("context", 
 						allOf( 
-							hasProperty("key",is(TediContextKey.DETAIL_DESCRIPTION))
+							hasProperty("key",is(InvoiceErrorKey.DETAIL_DESCRIPTION))
 							,hasProperty("line",is(1))
 		 )))));
 	}
 
-	private void printMessages(List<TediError> messages) {
+	private void printMessages(List<InvoiceError> messages) {
 		if (messages != null && messages.size()>0) {
 			System.out.println();
 			System.out.println("\t\t"
@@ -301,7 +301,7 @@ public class TediValidationTest {
 					+"|" + AonStringUtils.repeat("-", 80)
 					+"|"
 					);
-			for (TediError e : messages) {
+			for (InvoiceError e : messages) {
 				System.out.println("\t\t"
 						+"|" + AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4)
 						+"|" + AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5)

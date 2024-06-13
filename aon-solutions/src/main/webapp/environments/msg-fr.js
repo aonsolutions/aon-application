@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Añadir Comentario';
 export const ADD_COMPOSITION = 'Añadir Composición';
 export const ADD_FILE = 'Adjuntar Fichero';
 export const ADD_INVOICE = 'Añadir Factura';
+export const ADD_NEW = "Ajouter nouveau";
 export const ADD_REMARKS = 'Añadir Observaciones';
 export const ADD_TAG = 'Añadir Etiqueta';
 export const ADD_TAX = 'Añadir Impuesto';
@@ -171,6 +172,7 @@ export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
+export const EXPIRED_SESSION = 'La session a expiré';
 export const ERRORS = 'Errores';
 
 // ----- F
@@ -290,6 +292,7 @@ export const NEW_TICKET = 'Nuevo Ticket';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
+export const NO_DATA = `Il n'y a aucune information`;
 export const NOT_LINKED = 'No vinculado';
 export const NOT_LINKED1 = 'No vinculados';
 export const NOTIFICATION = 'Notificación';
@@ -331,6 +334,7 @@ export const PENDING_TASKS = 'Tareas Pendientes';
 export const PENDINGS = 'Pendiente';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
+export const PORTAL_MENU = "Menu portail"
 export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
@@ -346,6 +350,7 @@ export const PROVINCE = 'Provincia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Accès rapides";
 export const QUANTITY = 'Cantidad';
 export const QUOTA = 'Cuota';
 
@@ -355,6 +360,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recientes';
+export const RECENTLY_OPENED = "Récemment ouvert";
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar Factura';
 export const RECTIFIED = 'Rectificativa';
@@ -413,6 +419,7 @@ export const SPANISH = 'Castellano';
 export const STATISTICS = 'Estadísticas';
 export const STATUS = "Estado";
 export const STATUS_NOT_EMPTY = "El estado no puede quedar vacío";
+export const SUITE_MENU = "Menu suite";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';

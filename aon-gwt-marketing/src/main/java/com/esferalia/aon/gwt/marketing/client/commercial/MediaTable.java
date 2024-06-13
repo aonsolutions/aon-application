@@ -8,9 +8,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel.AonMediaPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -134,7 +137,7 @@ public abstract class MediaTable extends ScrollPanel {
 		moreData.setValue(0);
 	}
 	
-	private void onSearch() {
+	public void onSearch() {
 		enableMoreData();
 		search();
 	}
@@ -198,6 +201,7 @@ public abstract class MediaTable extends ScrollPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				event.stopPropagation();
 				button.setEnabled(false);
 				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Media",
 						new HTML("Se va a proceder a eliminar el medio <b>" + registryMedia.getValue() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -219,6 +223,8 @@ public abstract class MediaTable extends ScrollPanel {
 		buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> onUpdateRMedia(registryMedia), ClickEvent.getType());
+		
 		tab.addRow(row, new Label(registryMedia.getMedia().getDescription()), COLS.TYP.getColWidth());
 		tab.addRow(row, new Label(registryMedia.getValue()), COLS.VAL.getColWidth());
 		
@@ -275,6 +281,28 @@ public abstract class MediaTable extends ScrollPanel {
 				onShowErrorMessage("Error borrado: " + caught.getMessage());
 			}
 		});
+	}
+	
+	private void onUpdateRMedia(RegistryMedia registryMedia) {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Editar Contacto");
+		
+		final AonMediaPanel marketingCampaignPanel = new AonMediaPanel( domainName, domain, user, registryMedia, new AonMediaPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(RegistryMedia media) {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

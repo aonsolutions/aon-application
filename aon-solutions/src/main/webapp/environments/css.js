@@ -216,12 +216,7 @@ export const AON_TEXTAREA_BOX_LABEL_SPAN_ERROR = 'aonTextareaBoxLabelSpanError'
 export const AON_TEXTAREA_MSG = 'aonTextareaMsg';
 export const AON_TEXTAREA_MSG_ERROR = 'aonTextareaMsgError';
 
-// aon-access-card.css
-export const AON_ACCESS_CARD = 'aonAccessCard';
-export const AON_ACCESS_CARD_CONTENT = 'aonAccessCardContent';
-export const AON_ACCESS_CARD_LINE = 'aonAccessCardLine';
-export const AON_ACCESS_CARD_TEXT_DIV = 'aonAccessCardTextDiv';
-export const AON_ACCESS_CARD_TEXT = 'aonAccessCardText';
+// 
 
 export const AON_DASHBOARD = 'aonDashboard';
 export const AON_UPLOAD_PANEL = 'aonUploadPanel';

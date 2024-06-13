@@ -826,10 +826,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				if (isEndContract())
 					onEndContract(settleReasonLB.getSelectedValue());
 				if (isChangeContract()) {
-					onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
-					// For transform comunications ¿why?
-//					if(!isPartialityCoefContract() && afiChangesMap.getChangeValue("TC2").endsWith("9"))
-//						onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+					onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());	
 				} if (isQuoteContract())
 					onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
 				if (isOcupationContract())
@@ -841,7 +838,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				
 				// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
 				if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
-					onChangeContract(this.tc2Original, afiChangesMap.getChangeDate());
+					onChangeContract(this.tc2Original, (null == this.partialityCoefOriginal ? null : this.partialityCoefOriginal.toString()), afiChangesMap.getChangeDate());
 			}
 			
 			// Solo recargar la informacion del empleado si la fecha de modificacion es
@@ -905,7 +902,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	protected abstract void onQuoteContract(String quoteGroup, Date date);
 
-	protected abstract void onChangeContract(String contract, Date date);
+	protected abstract void onChangeContract(String contract, String partialityCoef, Date date);
 
 	protected abstract void onEndContract(String settleReason);
 

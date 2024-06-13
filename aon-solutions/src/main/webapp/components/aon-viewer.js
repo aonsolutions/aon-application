@@ -10,6 +10,7 @@ export class AonViewer extends AonElement {
 	AON_TEXT_DIV;
 	AON_VIEWER_DIV;
 	AON_CANVAS_DIV;
+	AON_CANVAS_IFRAME;
 	PDF;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -51,10 +52,19 @@ export class AonViewer extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		let divCanvas = this.createElement(TAG.DIV);
+
+		let iframeCanvas = this.createElement(TAG.IFRAME);
+		iframeCanvas.id = this.AON_CANVAS_IFRAME;
+		iframeCanvas.style.width = '100%';
+		iframeCanvas.style.height = '100%';
+		iframeCanvas.style.border = 'none';
+		this.appendChild(iframeCanvas);
+
+		let divCanvas = this.createIFrameElement(TAG.DIV);
 		divCanvas.id = this.AON_CANVAS_DIV;
 		divCanvas.style.width = '100%';
-		this.appendChild(divCanvas);
+		this.getIFrameBody().appendChild(divCanvas);
+
 
 		if (this.type && this.type.includes('pdf')) {
 			this.printPdf();
@@ -86,6 +96,7 @@ export class AonViewer extends AonElement {
 		this.AON_IMG_DIV  = "aonViewerImgDiv";
 		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
 		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";	
+		this.AON_CANVAS_IFRAME  = "aonViewerCanvasIFrame";	
 	}
 	removeButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
@@ -144,7 +155,7 @@ export class AonViewer extends AonElement {
 			aiba.icon = "zoom_out_map";
 			aiba.background = "#f1f1f1";
 			aiba.addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
+				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = 1;
 				this.printPdf(this._scale);
 			});
@@ -158,7 +169,7 @@ export class AonViewer extends AonElement {
 			aibz.icon = "zoom_in";
 			aibz.background = "#f1f1f1";
 			aibz.addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
+				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = this._scale - 0.25;
 				this.printPdf(this._scale);
 			});
@@ -171,7 +182,7 @@ export class AonViewer extends AonElement {
 			aibzm.icon = "zoom_out";
 			aibzm.background = "#f1f1f1";
 			aibzm.addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
+				this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 				this._scale = this._scale + 0.25;
 				this.printPdf(this._scale);
 			});
@@ -282,17 +293,24 @@ export class AonViewer extends AonElement {
 	// }
 	
 	printPdf(zoom) {
-		document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 
-		
- 		const div = this.getElement(this.AON_CANVAS_DIV);
+
+		this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
+		this.getIFrameDocument().querySelectorAll(`${TAG.DIV}.${CSS.PDFJS_TEXT_LAYER}`).forEach((item, i) => item.remove());
+
+ 		const div = this.getIFrameElement(this.AON_CANVAS_DIV);
 		div.className = CSS.PDFJS_PDF_VIEWER; 
 		//div.style.setProperty('--scale-factor', scale.toString());
+
 
 		const width = this.getAttribute('width');
 		
 		this.wait4PdfJsLib().then(pdfjsLib => {
 			
+		    pdfjsLib.pageColorsBackground="#000";
+		    pdfjsLib.pageColorsForeground="#FFF";
+		    pdfjsLib.forcePageColors=true; 
+    			
 			pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
 			
 	
@@ -306,8 +324,8 @@ export class AonViewer extends AonElement {
 			//	}
 			//	,withCredentials: true
 			// ))});
-	
-			const loadingTask = pdfjsLib.getDocument(this.file);
+			const url = new URL(this.file, window.location.href);
+			const loadingTask = pdfjsLib.getDocument( url.toString() );
 			
 			loadingTask.promise.then( (pdf) =>  {
 				this.PDF = pdf;
@@ -326,7 +344,7 @@ export class AonViewer extends AonElement {
 						oldTextlayerDiv.parentElement.removeChild(oldTextlayerDiv);
 					}
 					
-					const canvas = this.createElement(TAG.CANVAS);
+					const canvas = this.createIFrameElement(TAG.CANVAS);
 					canvas.id = 'canvas' + pageNumber;
 					canvas.style.border = '1px solid #ebebeb';
 					// Append the canvas to the pdf container div
@@ -344,17 +362,25 @@ export class AonViewer extends AonElement {
 	 					
 	 					div.style.setProperty("--scale-factor", viewport.scale);
 
-						const context = canvas.getContext('2d');
+						const context = canvas.getContext('2d',  
+						{ 
+							alpha: false, 
+							colorSpace: "display-p3", 
+						});
 						canvas.height = viewport.height;
 						canvas.width = viewport.width;
 						
-						let textLayerDiv = this.createElement(TAG.DIV);
+						console.log(JSON.stringify(context));
+						
+						const canvasOffset = this.getIFrameOffset(canvas);
+						
+						let textLayerDiv = this.createIFrameElement(TAG.DIV);
 						textLayerDiv.id = 'textLayerDiv' + pageNumber;
 						textLayerDiv.className = CSS.PDFJS_TEXT_LAYER;
 					    textLayerDiv.style.width = `${viewport.width}px`;
 					    textLayerDiv.style.height = `${viewport.height}px`;
-						textLayerDiv.style.top = `${canvas.offsetTop}px`;
-						textLayerDiv.style.left = `${canvas.offsetLeft}px`;
+						textLayerDiv.style.top = `${canvasOffset.top - 8 * (zoom || 1) }px`;
+						textLayerDiv.style.left =`${canvasOffset.left - 8 * (zoom || 1) }px`;
 
 						div.appendChild(textLayerDiv);
 						
@@ -370,16 +396,17 @@ export class AonViewer extends AonElement {
 						
 						this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
 							// clean viewer implicit styles.
+							console.log('Clean viewer implicit styles');
 							document.body.style.setProperty('background-color', 'transparent');
 							
 							page.getTextContent().then((textContent) => {
-								pdfjsLib.renderTextLayer({
-									textDivs: [],
-									viewport: viewport,
-									container: textLayerDiv,
-									textContentSource: textContent
+								const textLayer = new pdfjsLib.TextLayer({
+									viewport : viewport ,
+									container : textLayerDiv,
+									textContentSource : textContent
 								});
-								console.log(JSON.stringify(textContent));
+								textLayer.render();
+
 								let text = textContent.items.map( item => item.str).join();
 								this.dispatchEvent(new CustomEvent(EVENT.PRINT_PDF_PAGE, {
 									detail:{
@@ -431,6 +458,31 @@ export class AonViewer extends AonElement {
 
 			textLayerDiv.appendChild(itemSpan);
 		});
+	}
+	
+	getIFrameHead(){
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME);
+		return iframe.contentDocument.head;
+	}
+
+	getIFrameBody(){
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME);
+		return iframe.contentDocument.body;
+	}
+
+	getIFrameDocument(){
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME);
+		return iframe.contentDocument;
+	}
+	
+	getIFrameElement(id) {
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME);
+		return iframe.contentDocument.getElementById(id);
+	}
+
+	createIFrameElement(tag) {
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME);
+		return iframe.contentDocument.createElement(tag);
 	}
 
 	createIframe(){
@@ -499,16 +551,16 @@ export class AonViewer extends AonElement {
 			const timeout = 100;// 10 seg
 			let interval = setInterval(()=> {
 				i++;
-				let element = this.querySelector(`script[src='${PDFJS_PDF_URL}']` );
-				let { pdfjsLib } = globalThis;
+				let element = this.getIFrameDocument().querySelector(`script[src='${PDFJS_PDF_URL}']` );
+				let { pdfjsLib } = this.getElement(this.AON_CANVAS_IFRAME).contentWindow;
 				if (element && pdfjsLib) {
 					clearInterval(interval);
 					resolve(pdfjsLib);
 				} else if (!element) { // CREATE ELEMENT
-					let script = document.createElement("script");
+					let script = this.createIFrameElement("script");
 					script.type = "module";
 					script.src = PDFJS_PDF_URL;
-					this.appendChild(script);
+					this.getIFrameHead().appendChild(script);
 				}  else if(i >= timeout){
 					clearInterval(interval);
 					reject("Element empty");
@@ -519,13 +571,13 @@ export class AonViewer extends AonElement {
 	
 	loadCSS( href ) {
 	    return new Promise((resolve, reject)=>{
-			if ( document.querySelector(`link[href='${href}']`)){
+			if ( this.getIFrameDocument().querySelector(`link[href='${href}']`)){
 				resolve();
 			} else {
-		        const link = document.createElement(TAG.LINK);
+		        const link =this.createIFrameElement(TAG.LINK);
 		        link.href = href;
 		        link.rel  = 'stylesheet';
-		        document.head.appendChild(link);
+		        this.getIFrameHead().appendChild(link);
 		        link.onload = function() { 
 		            resolve(); 
 		            console.log( 'CSS has loaded!' ); 
@@ -546,6 +598,26 @@ export class AonViewer extends AonElement {
 		
 		return screenPPI;
 	}
+	
+	getOffset( el ) {
+	    var _x = 0;
+	    var _y = 0;
+	    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+	        _x += el.offsetLeft - el.scrollLeft;
+	        _y += el.offsetTop - el.scrollTop;
+	        el = el.offsetParent;
+	    }
+	    return { top: _y, left: _x };
+	}	
+	
+	getIFrameOffset(el) {
+		const iframe = this.getElement(this.AON_CANVAS_IFRAME)
+		const rect = el.getBoundingClientRect();
+		return {
+		  left: rect.left + iframe.contentWindow.scrollX,
+		  top: rect.top + iframe.contentWindow.scrollY
+		};
+	}	
 
 }
 if (!window.customElements.get(TAG.AON_VIEWER)) {

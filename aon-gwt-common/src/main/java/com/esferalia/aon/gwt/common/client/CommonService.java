@@ -32,9 +32,11 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -49,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -175,6 +178,7 @@ public interface CommonService extends RemoteService {
 	List<News> getNewsSuggestion(String domainName, int domain, String user) throws AonCoreException;
 	List<Newsletter> getNewsletterSuggestion(String domainName, int domain, String user) throws AonCoreException;
 	List<Survey> getSurveySuggestion(String domainName, int domain, String user) throws AonCoreException;
+	List<Tag> getTagSuggestion(String domainName, int domain, String user, TagType tagType) throws AonCoreException;
 	
 	// **************************************************
 	// ************************ [MARKETING ACTION TARGET]
@@ -196,6 +200,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	Seller getSellerByTaskHolder(String domainName, int domain, String user, int taskHolder) throws AonCoreException;
+	Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException;
 	ProjectCommercial saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial) throws AonCoreException;
 	void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial) throws AonCoreException;
 
@@ -204,6 +209,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	List<Seller> getSellers(SellerParams params) throws AonCoreException;
+	Integer getSellersCount(SellerParams params) throws AonCoreException;
 	Seller getSeller(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	Seller saveSeller(String domainName, int domain, String user, Seller seller) throws AonCoreException;
 	void deleteSeller(String domainName, int domain, String user, Integer sellerId) throws AonCoreException;
@@ -227,10 +233,12 @@ public interface CommonService extends RemoteService {
 	RegistryAddInfo getRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	RegistryAddInfo saveRegistryAddInfo(String domainName, Integer domain, String user, RegistryAddInfo registryAddInfo) throws AonCoreException;
 	void deleteRegistryAddInfo(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String user) throws AonCoreException;
 	
 	List<Attach> getRegistryAttaches(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
 	Attach getRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Attach saveRegistryAttach(String domainName, Integer domain, String user, Attach attach) throws AonCoreException;
 	void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<Category> getAviableCategories(String domainName, Integer domainId, String user) throws AonCoreException;
 
 }

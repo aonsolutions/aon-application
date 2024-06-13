@@ -33,6 +33,7 @@ public class BankStatementControllerListener extends ControllerAdapter {
 	public void beforeModelSearched(ControllerEvent event) throws ControllerListenerException {
 		BankStatementController controller = (BankStatementController)event.getController();
 		controller.clearCheckedBankStatement();
+		controller.resetErrors();
 	}
 
 	@Override

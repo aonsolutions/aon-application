@@ -37,18 +37,14 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 public class JooqCalendar {
 
 	private static Settings SETTINGS = null;
+	
+	// Festives listBox
 
-	public static Map<Integer, String> getHolidayDescription(Connection conn,
-			Integer parentDomain, Integer domain) throws IllegalArgumentException {
-
-		return getHolidayDescription(DSL.using(conn, getDefaultSettings()), parentDomain,
-				domain);
+	public static Map<Integer, String> getHolidayDescription(Connection conn, Integer parentDomain, Integer domain) throws IllegalArgumentException {
+		return getHolidayDescription(DSL.using(conn, getDefaultSettings()), parentDomain, domain);
 	}
 
-	private static Map<Integer, String> getHolidayDescription(
-			DSLContext dslContext, Integer parentDomain, Integer domain)
-			throws IllegalArgumentException {
-
+	private static Map<Integer, String> getHolidayDescription(DSLContext dslContext, Integer parentDomain, Integer domain) throws IllegalArgumentException {
 		List<HolidayRecord> result = dslContext.selectFrom(HOLIDAY)
 				.where(HOLIDAY.DOMAIN.eq(0))
 				.or(HOLIDAY.DOMAIN.eq(parentDomain))
@@ -69,11 +65,10 @@ public class JooqCalendar {
 
 		return map;
 	}
+	
+	// Get Calendar
 
-	public static CalendarDraft getCalendar(Connection conn,
-			Integer workplaceId, Integer pattern, Integer year)
-			throws IllegalArgumentException {
-
+	public static CalendarDraft getCalendar(Connection conn, Integer workplaceId, Integer pattern, Integer year) throws IllegalArgumentException {
 		if (pattern == null) {
 			// It's my first time here
 			return getCalendar(DSL.using(conn, getDefaultSettings()), year,
@@ -106,6 +101,8 @@ public class JooqCalendar {
 			if (calendar != null) {
 
 				Integer holiday = record.getValue(CALENDAR.HOLIDAY);
+				
+				calendarDraft.setCalendarHoliday(holiday);
 
 				while (holiday != null)
 					holiday = loadHoliday(dslContext, year, holidays, holiday);
@@ -119,6 +116,8 @@ public class JooqCalendar {
 			calendarDraft.setDayType(5, DayType.valueOf(record.getValue(CALENDAR.FRIDAY)));
 			calendarDraft.setDayType(6, DayType.valueOf(record.getValue(CALENDAR.SATURDAY)));
 		}
+		
+		holidays.forEach(h -> System.out.println(h.getId() + " --> " + h.getDescription()));
 		
 		calendarDraft.setHolidayDrafts(holidays);
 		return calendarDraft;
@@ -192,11 +191,44 @@ public class JooqCalendar {
 			}
 		}
 	}
+	
+	public static void updateHolidayCalendar(Connection conn, Integer domainID, int workplaceId, Integer holidayId, DayType daysTypes []) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 
-	public static void insertHolidays(Connection conn, Integer domain,
-			Integer workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map, DayType daysTypes [])
-			throws IllegalArgumentException {
+		Result<PayrollWorkplaceRecord> resultRecords = dslContext
+				.selectFrom(PAYROLL_WORKPLACE)
+				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
+				.orderBy(PAYROLL_WORKPLACE.ID.desc())
+				.fetch();
+		
+		if (!resultRecords.isEmpty()) {
+			PayrollWorkplaceRecord payrollWorkplace = resultRecords.get(0);
+			
+			Integer calendar = payrollWorkplace.getCalendar();
+			
+			if(null == calendar) {
+				dslContext.insertInto(CALENDAR)
+					.set(CALENDAR.DOMAIN, domainID)
+					.set(CALENDAR.HOLIDAY, holidayId)
+					.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
+					.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
+					.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
+					.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
+					.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
+					.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
+					.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
+					.execute();
+			} else {
+				dslContext.update(CALENDAR)
+					.set(CALENDAR.HOLIDAY, holidayId)
+					.where(CALENDAR.ID.eq(calendar))
+					.execute();
+			}
+		}
+	}
+
+	public static void insertHolidays(Connection conn, Integer domain, Integer workplaceId, String holidayDescription,
+			Integer selectedHoliday, Map<Date, String> map, DayType daysTypes [], Integer year) throws IllegalArgumentException {
 
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 
@@ -205,11 +237,15 @@ public class JooqCalendar {
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
 				.orderBy(PAYROLL_WORKPLACE.ID.desc())
 				.fetch();
+		
+		map.entrySet().forEach(entry -> System.out.println(entry.getValue() + " --> " + entry.getKey()));
 
 		if (resultRecords.isEmpty()) { // No hay registro del workplace en
 			// payroll_workplace
+//			insertHolidayWithoutCalendar(dslContext, domain, workplaceId,
+//					holidayDescription, selectedHoliday, map);
 			insertHolidayWithoutCalendar(dslContext, domain, workplaceId,
-					holidayDescription, holidayListBox, map);
+					selectedHoliday, holidayDescription, map, year);
 		} else { // Hay un registro en payroll_workplace
 				
 				PayrollWorkplaceRecord result = resultRecords.get(0);
@@ -219,23 +255,46 @@ public class JooqCalendar {
 				if (calendar == null) {
 
 					HolidayRecord holiday = getHolidayRecord(dslContext,
-							holidayListBox);
+							selectedHoliday);
 
-					InsertSetMoreStep<HolidayRecord> insert = dslContext
+//					InsertSetMoreStep<HolidayRecord> insert = dslContext
+//							.insertInto(HOLIDAY).set(HOLIDAY.DOMAIN, domain)
+//							.set(HOLIDAY.DESCRIPTION, holidayDescription);
+//
+//					if (selectedHoliday >= 0)
+//						insert = insert.set(HOLIDAY.HOLIDAY_,
+//								holiday.getValue(HOLIDAY.ID));
+//
+//					Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne()
+//							.getId();
+
+//					Integer calendarId = 
+//							dslContext.insertInto(CALENDAR)
+//							.set(CALENDAR.DOMAIN, domain)
+//							.set(CALENDAR.HOLIDAY, holidayId)
+//							.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
+//							.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
+//							.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
+//							.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
+//							.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
+//							.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
+//							.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
+//						.returning(CALENDAR.ID).fetchOne().getId();
+
+					Integer holidayId = null;
+					
+					if(null == holiday) {
+						holidayId = dslContext
 							.insertInto(HOLIDAY).set(HOLIDAY.DOMAIN, domain)
-							.set(HOLIDAY.DESCRIPTION, holidayDescription);
-
-					if (holidayListBox >= 0)
-						insert = insert.set(HOLIDAY.HOLIDAY_,
-								holiday.getValue(HOLIDAY.ID));
-
-					Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne()
+							.set(HOLIDAY.DESCRIPTION, holidayDescription)
+							.returning(HOLIDAY.ID).fetchOne()
 							.getId();
-
+					}
+					
 					Integer calendarId = 
 							dslContext.insertInto(CALENDAR)
 							.set(CALENDAR.DOMAIN, domain)
-							.set(CALENDAR.HOLIDAY, holidayId)
+							.set(CALENDAR.HOLIDAY, null == holidayId ? holiday.getId() : holidayId)
 							.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
 							.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
 							.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
@@ -245,84 +304,102 @@ public class JooqCalendar {
 							.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
 						.returning(CALENDAR.ID).fetchOne().getId();
 
+					
 					dslContext.update(PAYROLL_WORKPLACE)
 							.set(PAYROLL_WORKPLACE.CALENDAR, calendarId)
 							.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
 							.execute();
 
-					insertHolidayDetail(dslContext, domain, holidayId, map);
+					insertHolidayDetail(dslContext, domain, null == holidayId ? holiday.getId() : holidayId, map, year);
 				}
 
 				else { // Calendar en Payroll_workplace no es NULL
 
-					dslContext
-					.update(CALENDAR)
-					.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
-					.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
-					.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
-					.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
-					.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
-					.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
-					.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
-					.where(CALENDAR.ID.eq(result
-							.getValue(PAYROLL_WORKPLACE.CALENDAR)))
-					.execute();
-
-					Record holidayResult = dslContext
-							.select()
-							.from(HOLIDAY)
-							.rightOuterJoin(CALENDAR)
-							.on(HOLIDAY.ID.eq(CALENDAR.HOLIDAY))
-							.where(CALENDAR.ID.eq(result
-									.getValue(PAYROLL_WORKPLACE.CALENDAR)))
-							.fetchOne();
-
-					if (holidayResult != null) {
-
-						Integer hDomain = holidayResult
-								.getValue(HOLIDAY.DOMAIN);
-
-						if (hDomain == 0) {
-							// Si Holiday tiene domain=0 tengo que insertar un
-							// holiday propio
-							Integer holidayIdAux = dslContext
-									.insertInto(HOLIDAY)
-									.set(HOLIDAY.DOMAIN, domain)
-									.set(HOLIDAY.DESCRIPTION,
-											holidayDescription)
-									.set(HOLIDAY.HOLIDAY_,
-											holidayResult
-													.getValue(HOLIDAY.HOLIDAY_))
-									.returning(HOLIDAY.ID).fetchOne().getId();
-
-							dslContext
-									.update(CALENDAR)
-									.set(CALENDAR.HOLIDAY, holidayIdAux)
-									.where(CALENDAR.ID.eq(result
-											.getValue(PAYROLL_WORKPLACE.CALENDAR)))
-									.execute();
-
-							insertHolidayDetail(dslContext, domain,
-									holidayIdAux, map);
-
-						}
-
-						else {
-							// Holiday tiene domain != 0
-							HolidayRecord id = getHolidayRecord(dslContext,
-									holidayListBox);
-
-							dslContext
-									.update(HOLIDAY)
-									.set(HOLIDAY.HOLIDAY_, id == null ? null : id.getValue(HOLIDAY.ID))
-									.where(HOLIDAY.ID.eq(holidayResult
-											.getValue(CALENDAR.HOLIDAY)))
-									.execute();
-
-							insertHolidayDetail(dslContext, domain,
-									holidayResult.getValue(HOLIDAY.ID), map);
-						}
+					HolidayRecord holiday = getHolidayRecord(dslContext, selectedHoliday);
+					
+					Integer holidayId = null;
+					
+					if(null == holiday) {
+						holidayId = dslContext
+							.insertInto(HOLIDAY).set(HOLIDAY.DOMAIN, domain)
+							.set(HOLIDAY.DESCRIPTION, holidayDescription)
+							.returning(HOLIDAY.ID).fetchOne()
+							.getId();
 					}
+					
+					dslContext
+						.update(CALENDAR)
+						.set(CALENDAR.HOLIDAY, null == holidayId ? holiday.getId() : holidayId)
+						.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
+						.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
+						.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
+						.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
+						.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
+						.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
+						.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
+						.where(CALENDAR.ID.eq(calendar))
+					.execute();
+					
+					
+					insertHolidayDetail(dslContext, domain, null == holidayId ? holiday.getId() : holidayId, map, year);
+
+//					HolidayRecord holiday = getHolidayRecord(dslContext, selectedHoliday);
+//					
+//					Record holidayResult = dslContext
+//							.select()
+//							.from(HOLIDAY)
+//							.rightOuterJoin(CALENDAR)
+//							.on(HOLIDAY.ID.eq(CALENDAR.HOLIDAY))
+//							.where(CALENDAR.ID.eq(result
+//									.getValue(PAYROLL_WORKPLACE.CALENDAR)))
+//							.fetchOne();
+//
+//					if (holidayResult != null) {
+//
+//						Integer hDomain = holidayResult
+//								.getValue(HOLIDAY.DOMAIN);
+//
+//						if (hDomain == 0) {
+//							// Si Holiday tiene domain=0 tengo que insertar un
+//							// holiday propio
+//							Integer holidayIdAux = dslContext
+//									.insertInto(HOLIDAY)
+//									.set(HOLIDAY.DOMAIN, domain)
+//									.set(HOLIDAY.DESCRIPTION,
+//											holidayDescription)
+//									.set(HOLIDAY.HOLIDAY_,
+//											holidayResult
+//													.getValue(HOLIDAY.HOLIDAY_))
+//									.returning(HOLIDAY.ID).fetchOne().getId();
+//
+//							dslContext
+//									.update(CALENDAR)
+//									.set(CALENDAR.HOLIDAY, holidayIdAux)
+//									.where(CALENDAR.ID.eq(result
+//											.getValue(PAYROLL_WORKPLACE.CALENDAR)))
+//									.execute();
+//
+//							insertHolidayDetail(dslContext, domain,
+//									holidayIdAux, map);
+//
+//						}
+//
+//						else {
+//							// Holiday tiene domain != 0
+//							HolidayRecord id = getHolidayRecord(dslContext,
+//									selectedHoliday);
+//
+//							dslContext
+//									.update(HOLIDAY)
+//									.set(HOLIDAY.HOLIDAY_, id == null ? null : id.getValue(HOLIDAY.ID))
+//									.where(HOLIDAY.ID.eq(holidayResult
+//											.getValue(CALENDAR.HOLIDAY)))
+//									.execute();
+//
+//							insertHolidayDetail(dslContext, domain,
+//									holidayResult.getValue(HOLIDAY.ID), map);
+//						}
+//					}
 				}
 			}
 		}
@@ -335,23 +412,32 @@ public class JooqCalendar {
 	}
 
 	private static void insertHolidayWithoutCalendar(DSLContext dslContext,
-			Integer domain, Integer workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map)
+			Integer domain, Integer workplaceId,
+			Integer selectedHoliday, String holidayDescription, Map<Date, String> map, Integer year)
 			throws IllegalArgumentException {
 
 		// NO HAY REGISTRO DEL WORKPLACE EN PAYROLL_WORKPLACE
-		InsertSetMoreStep<HolidayRecord> insert = dslContext
+//		InsertSetMoreStep<HolidayRecord> insert = dslContext
+//				.insertInto(HOLIDAY).set(HOLIDAY.DOMAIN, domain)
+//				.set(HOLIDAY.DESCRIPTION, holidayDescription);
+//
+//		if (holidayListBox >= 0)
+//			insert = insert.set(HOLIDAY.HOLIDAY_, holidayListBox);
+//
+//		Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne().getId();
+		
+		Integer holidayId = null;
+		
+		if(selectedHoliday <= 0)
+			holidayId = dslContext
 				.insertInto(HOLIDAY).set(HOLIDAY.DOMAIN, domain)
-				.set(HOLIDAY.DESCRIPTION, holidayDescription);
-
-		if (holidayListBox >= 0)
-			insert = insert.set(HOLIDAY.HOLIDAY_, holidayListBox);
-
-		Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne().getId();
-
+				.set(HOLIDAY.DESCRIPTION, holidayDescription)
+				.returning(HOLIDAY.ID).fetchOne()
+				.getId();
+		
 		Integer calendarId = dslContext.insertInto(CALENDAR)
 				.set(CALENDAR.DOMAIN, domain)
-				.set(CALENDAR.HOLIDAY, holidayId)
+				.set(CALENDAR.HOLIDAY, null == holidayId ? selectedHoliday : holidayId)
 				.returning(CALENDAR.ID).fetchOne().getId();
 
 		dslContext.insertInto(PAYROLL_WORKPLACE)
@@ -359,22 +445,28 @@ public class JooqCalendar {
 				.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceId)
 				.set(PAYROLL_WORKPLACE.CALENDAR, calendarId).execute();
 
-		insertHolidayDetail(dslContext, domain, holidayId, map);
+		insertHolidayDetail(dslContext, domain, selectedHoliday, map, year);
 	}
 
 	private static void insertHolidayDetail(DSLContext dslContext,
-			Integer domain, Integer holidayId, Map<Date, String> map)
+			Integer domain, Integer holidayId, Map<Date, String> map, Integer year)
 			throws IllegalArgumentException {
 		
-		for (Date date : map.keySet()) {
-			
-			dslContext
+		// Delete all holiday details
+		dslContext
 			.delete(HOLIDAY_DETAIL)
 			.where(HOLIDAY_DETAIL.HOLIDAY.eq(holidayId))
-			.and(HOLIDAY_DETAIL.DATE.eq(new java.sql.Date(date.getTime())))
+			.and(HOLIDAY_DETAIL.DATE.like("%" + year + "%"))
 			.execute();
-		}
-				
+		
+//		for (Date date : map.keySet()) {
+//			
+//			dslContext
+//			.delete(HOLIDAY_DETAIL)
+//			.where(HOLIDAY_DETAIL.HOLIDAY.eq(holidayId))
+//			.and(HOLIDAY_DETAIL.DATE.eq(new java.sql.Date(date.getTime())))
+//			.execute();
+//		}		
 
 		for (Date date : map.keySet()) {
 			dslContext

@@ -67,6 +67,8 @@ public class Rawdoc2AccountingInvoice {
 				invoice.setId(null);
 			}
 			invoice = AON_SOLUTIONS.validateInvoice(domain, user, invoice);
+			// Se pone a 0 porque es rawdoc / ocr y hasta que no se grabe no tiene que tener un número asignado.
+			invoice.setNumber(0);
 			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
 		} else {
 			invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoice.getId());
@@ -94,10 +96,8 @@ public class Rawdoc2AccountingInvoice {
 	}
 	
 	public static AccountingInvoice tedi2Aon(Domain domain, User user, Invoice invoice, JSONObject ti)  {
-		System.out.println( "JSON" );
-		System.out.println( ti.toString(1) );
-
-		
+//		System.out.println( "JSON" );
+//		System.out.println( ti.toString(1) );
 		Occam occam = new Occam( )
 			.setDomainName( domain.getName())
 			.setDomain(domain.getId())
@@ -139,7 +139,7 @@ public class Rawdoc2AccountingInvoice {
 				}
 
 				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
+					//.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)

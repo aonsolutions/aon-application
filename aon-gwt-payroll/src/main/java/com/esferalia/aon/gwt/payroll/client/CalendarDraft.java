@@ -94,12 +94,10 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		
 		public DayMenu() {
 			
-			addEventMenuItem = addItem("A\u00F1dir festivo", new AddEventCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addEventMenuItem = addItem("A\u00F1dir festivo", new AddEventCommand(), AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			addEventMenuItem.ensureDebugId("addEventMenuItem");
 			
-			deleteEventMenuItem = addItem("Eliminar festivo", new DeleteEventCommand(), 
-					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			deleteEventMenuItem = addItem("Eliminar festivo", new DeleteEventCommand(), AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			deleteEventMenuItem.ensureDebugId("hourMenuItem");
 			
 		}
@@ -211,6 +209,8 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	// ----------------------------------------------- UiFields 
 
 	@UiField
+	ScrollPanel legendScrollPanel;
+	@UiField
 	VerticalPanel leyend;
 	@UiField
 	DockLayoutPanel mainPanel;
@@ -260,6 +260,8 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		toolbar = getToolbarPanel();
 		initWidget(uiBinder.createAndBindUi(this));
 		mainPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		legendScrollPanel.setHeight((Window.getClientHeight() - 300) + "px");
+		
 		dayMenu = new DayMenu();
 	}
 
@@ -267,25 +269,19 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 	@UiHandler("calendarPanel")
 	void onCalendarPanelAttach(AttachEvent event) {
-		scrollPanel.getParent().getElement().getStyle()
-				.setOverflow(Overflow.VISIBLE);
-		scrollPanel.getParent().getElement().getStyle()
-				.setPosition(Position.STATIC);
+		scrollPanel.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+		scrollPanel.getParent().getElement().getStyle().setPosition(Position.STATIC);
 
 		yearLabel.setText(String.valueOf(getYear(new Date())));
 	}
 
-	
-
 	@UiHandler("nextYearButton")
 	void onClickNextYearButton(ClickEvent event) {
-
-		Integer year = Integer.parseInt(yearLabel.getText());
-		yearLabel.setText(String.valueOf(++year));
 
 		if (saveButton.isEnabled()) {
 			calendarDraftObjectData.saveHolidayDraft(
 					Integer.parseInt(holidayList.getSelectedValue()),
+					Integer.parseInt(yearLabel.getText()),
 					new AsyncCallback<Void>() {
 
 						@Override
@@ -295,28 +291,33 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 						@Override
 						public void onSuccess(Void result) {
+							Integer year = Integer.parseInt(yearLabel.getText());
+							yearLabel.setText(String.valueOf(++year));
+
 							saveButton.setEnabled(false);
 							loadCalendarPanelWithYearChange(null,
 									Integer.parseInt(yearLabel.getText()),
 									calendarDraftObjectData);
 						}
 					});
-		} else
+		} else {
+			Integer year = Integer.parseInt(yearLabel.getText());
+			yearLabel.setText(String.valueOf(++year));
+
 			loadCalendarPanelWithYearChange(null,
 					Integer.parseInt(yearLabel.getText()),
 					calendarDraftObjectData);
+		}
 
 	}
 
 	@UiHandler("lastYearButton")
 	void onClickLastYearButton(ClickEvent event) {
 
-		Integer year = Integer.parseInt(yearLabel.getText());
-		yearLabel.setText(String.valueOf(--year));
-
 		if (saveButton.isEnabled()) {
 			calendarDraftObjectData.saveHolidayDraft(
 					Integer.parseInt(holidayList.getSelectedValue()),
+					Integer.parseInt(yearLabel.getText()),
 					new AsyncCallback<Void>() {
 
 						@Override
@@ -326,15 +327,23 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 						@Override
 						public void onSuccess(Void result) {							
+							Integer year = Integer.parseInt(yearLabel.getText());
+							yearLabel.setText(String.valueOf(--year));
+
 							loadCalendarPanelWithYearChange(null,
 									Integer.parseInt(yearLabel.getText()),
 									calendarDraftObjectData);
 						}
 					});
-		} else
+		} else {
+			Integer year = Integer.parseInt(yearLabel.getText());
+			yearLabel.setText(String.valueOf(--year));
+
 			loadCalendarPanelWithYearChange(null,
 					Integer.parseInt(yearLabel.getText()),
 					calendarDraftObjectData);
+		}
+		
 	}
 	
 	private void setEnableSaveButton() {
@@ -414,10 +423,8 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		
 		CalendarDraft.this.calendarPanel.clear();
 		CalendarDraft.this.calendarDraftObjectData = result;
-		CalendarDraft.this.calendarPanel.add(result
-				.getCalendar());
-		CalendarDraft.this.calendarDraftObjectData
-				.insertHolidays();
+		CalendarDraft.this.calendarPanel.add(result.getCalendar());
+		CalendarDraft.this.calendarDraftObjectData.insertHolidays();
 		CalendarDraft.this.getItemLoadIndex();
 		CalendarDraft.this.initializeLegendPanel();
 		
@@ -470,8 +477,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 					public void onSuccess(CalendarDraftObjectData result) {
 						CalendarDraft.this.enableButtons = new EnableButtons(result);
 						CalendarDraft.this.calendarDraftObjectData = result;
-						CalendarDraft.this.calendarDraftObjectData
-							.addCalendarListener(CalendarDraft.this);
+						CalendarDraft.this.calendarDraftObjectData.addCalendarListener(CalendarDraft.this);
 						initOnSuccess(result);
 					}
 				});
@@ -521,20 +527,29 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 		List<HolidayDraft> list = calendarDraftObjectData.getListHolidayDraft();
 		ListIterator<HolidayDraft> iterator = list.listIterator(list.size());
+		
 		legendVerticalPanel.clear();
 		
 		legendVerticalPanel.add(
-				addNotWorkLegend(false,
+			addNotWorkLegend(
+				false,
 				"No Laborables", 
-				style.notWork()));
+				style.notWork()
+			)
+		);
 
 		int contador = 0;
 		while (iterator.hasPrevious()) {
 			HolidayDraft draft = iterator.previous();
 
-			legendVerticalPanel.add(addHolidaysLegend(false,
-					draft.getDescription(), draft.getHolidaysMap(),
-					getStyle(contador++)));
+			legendVerticalPanel.add(
+				addHolidaysLegend(
+					false,
+					draft.getDescription(),
+					draft.getHolidaysMap(),
+					getStyle(contador++)
+				)
+			);
 		}
 
 		List<MyHolidayDraft> myDrafts = calendarDraftObjectData.getMyDrafts();
@@ -543,14 +558,18 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		while (draftIterator.hasNext()) {
 			MyHolidayDraft draft = draftIterator.next();
 
-			legendVerticalPanel.add(addHolidaysLegend(true,
-					draft.getDescription(), draft.getGeneralMap(),
-					getStyle(contador++)));
+			legendVerticalPanel.add(
+				addHolidaysLegend(
+					true,
+					draft.getDescription(), 
+					draft.getGeneralMap(),
+					getStyle(contador++)
+				)
+			);
 		}
 	}
 
-	private DisclosurePanel createDisclosurePanel(boolean open, String title,
-			String pStyle) {
+	private DisclosurePanel createDisclosurePanel(boolean open, String title, String pStyle) {
 		DisclosurePanel disclosurePanel = new DisclosurePanel();
 		disclosurePanel.setStylePrimaryName(style.disclosurePanel());
 		disclosurePanel.setAnimationEnabled(true);
@@ -764,12 +783,25 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		toolbar.add(holidayLabel);
 		
 		holidayList.addChangeHandler(e -> {
-			saveButton.setEnabled(true);		
-			Integer value = Integer.parseInt(holidayList.getSelectedValue());
+			Integer holidayId = Integer.parseInt(holidayList.getSelectedValue());
+			calendarDraftObjectData.updateHolidayCalendar(holidayId, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {}
+
+				@Override
+				public void onSuccess(Void result) {
+					loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+				}
+			});
 			
-			calendarDraftObjectData.assignHoliday2Draft(value);
-			
-			loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+//			saveButton.setEnabled(true);		
+//			Integer value = Integer.parseInt(holidayList.getSelectedValue());
+//			
+//			calendarDraftObjectData.assignHoliday2Draft(value);
+//			
+//			
+//			loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
 		});
 		toolbar.add(holidayList);
 		
@@ -814,7 +846,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	
 	private void onSave(ClickEvent e) {
 		Integer id = Integer.parseInt(holidayList.getSelectedValue());
-		calendarDraftObjectData.saveHolidayDraft(id, new AsyncCallback<Void>() {
+		calendarDraftObjectData.saveHolidayDraft(id, Integer.parseInt(yearLabel.getText()), new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}

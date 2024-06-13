@@ -1445,7 +1445,7 @@ public abstract class AgreementPreview extends Composite {
 
 	private void categoryTableWidth() {
 //		levelGrid.setWidth("100%");
-		levelGrid.getColumnFormatter().setWidth(0, "120px");
+		levelGrid.getColumnFormatter().setWidth(0, "350px");
 		levelGrid.getColumnFormatter().setWidth(2, "15px");
 	}
 

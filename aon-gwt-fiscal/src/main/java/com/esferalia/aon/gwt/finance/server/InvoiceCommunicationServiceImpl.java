@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -321,10 +321,10 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 	
 	@Override
-	public List<InvoiceTracking> getInvoiceTrackingList(String domainName, int domainId, String login, Integer invoice) {
+	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(String domainName, int domainId, String login, Integer invoice) {
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
-		return AON.getInvoiceTrackingList(domain, user, f -> f.getInvoiceProperty().eq(invoice));
+		return AON.getInvoiceCommunicationTrackingList(domain, user, f -> f.getInvoiceProperty().eq(invoice));
 	}
 	
 	public String getRequestUrl(String domainName, int domainId, String login, Integer dataResponse) {

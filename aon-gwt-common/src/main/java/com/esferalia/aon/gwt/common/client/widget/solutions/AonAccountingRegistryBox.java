@@ -19,8 +19,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
@@ -32,11 +30,9 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -49,14 +45,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonAccountingRegistryBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<AccountingRegistry>, HasAllFocusHandlers
-	,HasAllKeyHandlers, HasEnabled {
+public class AonAccountingRegistryBox extends ResizeComposite implements HasValue<String>, HasDescription, Focusable, HasSelectionHandlers<AccountingRegistry>, HasAllFocusHandlers ,HasAllKeyHandlers, HasEnabled {
 	
 	protected static final String BEGIN_STRONG = "<strong>";
 	protected static final String END_STRONG = "</strong>";
@@ -64,16 +56,17 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 14;
 
-	private AccountingRegistryServiceAsync SERVICE;
+	private static final AccountingRegistryServiceAsync SERVICE;
+	static {
+		AccountingRegistryServiceAsync commonServiceRaw = GWT.create(AccountingRegistryService.class);
+		SERVICE = new AccountingRegistryServiceAsyncDecorator(commonServiceRaw);
+	}
 
-//	private Integer id;
-//	private String description;
 	private AccountingRegistry accountingRegistry;
 	
 	private FlowPanel rooPanel; 
 	private SuggestBox accountingRegistryBox;
 	private TextBox accountingRegistryTextBox;
-//	private AonTableButton dataButton;
 	private AonTableButton dataBisButton;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
@@ -134,21 +127,10 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		public AccountingRegistry getAccountingRegistry() {
 			return accountingRegistry;
 		}
-		
 	}
 	
-//	public AonAccountingRegistryBox(final String domainName, final int domain,final String user) {
-//		this(domainName,domain,user,null,true);
-//	}
-//	public AonAccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config) {
-//		this(domainName,domain,user,config,true);
-//	}
-	
 	public AonAccountingRegistryBox(AonModuleOptions<?> options, boolean showDescription) {
-		AccountingRegistryServiceAsync commonServiceRaw = GWT.create(AccountingRegistryService.class);
-		SERVICE = new AccountingRegistryServiceAsyncDecorator(commonServiceRaw);
 		
-//		dataButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
 		dataBisButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -195,69 +177,41 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		descriptionLabel.addStyleName(AON.CSS.aonMarginLeft() );
 		descriptionLabel.addStyleName(AON.CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
-//		dataButton.getElement().setTabIndex(-1);
+		
 		dataBisButton.getElement().setTabIndex(-1);
 		
-		accountingRegistryBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				AccountingRegistrySuggestion selected = (AccountingRegistrySuggestion) event.getSelectedItem();
-				select( selected.getAccountingRegistry() );
+		accountingRegistryBox.addSelectionHandler(event -> {
+			AccountingRegistrySuggestion selected = (AccountingRegistrySuggestion) event.getSelectedItem();
+			select( selected.getAccountingRegistry() );
+		});
+		accountingRegistryBox.addKeyUpHandler( event -> {
+			if ( isControlF3(event) || isPlusKeyAlone(event) ) {
+				showDialog(options,null);
 			}
 		});
-		accountingRegistryBox.addKeyUpHandler( new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ( isControlF3(event) || isPlusKeyAlone(event) ) {
-					showDialog(options,null);
-				}
+		accountingRegistryBox.addValueChangeHandler( event -> {
+			if ( AonStringUtils.isBlank( accountingRegistryBox.getValue() )) {
+				select( null );	
 			}
 		});
-		accountingRegistryBox.addValueChangeHandler( new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if ( AonStringUtils.isBlank( accountingRegistryBox.getValue() )) {
-					select( null );	
-				}
-			}
-		});
-//		dataButton.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				showDialog(options,null);
-//			}
-//		});
 		
-		dataBisButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				showNewDialog(options);
-			}
-		});
+		dataBisButton.addClickHandler(event -> showNewDialog(options));
 
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.CSS.aonNowrap() );
 		rooPanel.addStyleName(AON.CSS.aonFlexBlockInline());
 		rooPanel.addStyleName(AON.CSS.aonInline() );
 		rooPanel.add(accountingRegistryBox);
-//		rooPanel.add(dataButton);
 		rooPanel.add(dataBisButton);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
 	}
 	
 	private boolean isControlF3(KeyUpEvent event) {
-		return (
-			(event.isControlKeyDown() || event.isControlKeyDown())
-			&& event.getNativeKeyCode() == KeyCodes.KEY_F3);
+		return (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3);
 	}
 	private boolean isPlusKeyAlone(KeyUpEvent event) {
-		return (event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS 
-			|| event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS)
+		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS
 				&& AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue());
 	}
 	
@@ -272,8 +226,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			accountingRegistryTextBox.removeStyleName(AON.CSS.aonInputTextError() );
 			descriptionLabel.setText(accountingRegistry.getName());
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-//			dataButton.removeStyleName(AON.CSS.aonIconAdd());
-//			dataButton.addStyleName(AON.CSS.aonIconEdit());
 			dataBisButton.addStyleName(AON.CSS.aonIconEdit());
 		} else {
 			this.accountingRegistry = accountingRegistry;
@@ -284,8 +236,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			}
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-//			dataButton.addStyleName(AON.CSS.aonIconAdd());
-//			dataButton.removeStyleName(AON.CSS.aonIconEdit());
 			dataBisButton.addStyleName(AON.CSS.aonIconAdd());
 			dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 		}
@@ -299,8 +249,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			accountingRegistryTextBox.setValue(accountingRegistry.getAccountCode(),fireEvents);
 			descriptionLabel.setText(accountingRegistry.getName());
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-//			dataButton.removeStyleName(AON.CSS.aonIconAdd());
-//			dataButton.addStyleName(AON.CSS.aonIconEdit());
 			dataBisButton.removeStyleName(AON.CSS.aonIconAdd());
 			dataBisButton.addStyleName(AON.CSS.aonIconEdit());
 		} else {
@@ -313,8 +261,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			accountingRegistryTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-//			dataButton.addStyleName(AON.CSS.aonIconAdd());
-//			dataButton.removeStyleName(AON.CSS.aonIconEdit());
 			dataBisButton.addStyleName(AON.CSS.aonIconAdd());
 			dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 		}
@@ -329,8 +275,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		this.accountingRegistry = null;
 		descriptionLabel.setText(null);
 		descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-//		dataButton.addStyleName(AON.CSS.aonIconAdd());
-//		dataButton.removeStyleName(AON.CSS.aonIconEdit());
 		dataBisButton.addStyleName(AON.CSS.aonIconAdd());
 		dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 	}
@@ -350,13 +294,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	public String getValue() {
 		return accountingRegistryBox.getValue();
 	}
-
-//	public void setValue(Integer id, String code,String description) {
-//		this.id = id;
-//		this.description = description;
-//		this.descriptionLabel.setText(description);
-//		setValue(code,false);
-//	}
 
 	@Override
 	public void setValue(String value) {
@@ -504,11 +441,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	accountPanel.setFocus(true);
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> accountPanel.setFocus(true));		
 	}
 	
 	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar) {
@@ -554,7 +487,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			id = this.accountingRegistry.getId();
 			type = this.accountingRegistry.getType();
 		}
-		final AonAccountingRegistryFullPanel AccountingRegistryFullPanel = new AonAccountingRegistryFullPanel(options, type, id
+		final AonAccountingRegistryFullPanel accountingRegistryFullPanel = new AonAccountingRegistryFullPanel(options, type, id
 				, new AonAccountingRegistryFullPanelCallback() {
 
 					@Override
@@ -576,15 +509,11 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 					}
 			
 		});		
-		dialog.add( AccountingRegistryFullPanel );
+		dialog.add( accountingRegistryFullPanel );
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	AccountingRegistryFullPanel.setFocus(true);
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> accountingRegistryFullPanel.setFocus(true));		
 	}
 
 }

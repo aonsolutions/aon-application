@@ -133,6 +133,7 @@ public interface IRegistry {
 	public RegistryMedia get(AONContext ctx, RegistryMediaFilter filter);
 	public RegistryMedia save(AONContext ctx, RegistryMedia media);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
+	public void deleteRegistryMedia(AONContext ctx, Integer id);
 
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
@@ -144,6 +145,7 @@ public interface IRegistry {
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
 
 	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params);
+	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params);
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	
@@ -221,6 +223,7 @@ public interface IRegistry {
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo);
+	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter);
 	
 	// ------------------- RDIRSTAFF
 	

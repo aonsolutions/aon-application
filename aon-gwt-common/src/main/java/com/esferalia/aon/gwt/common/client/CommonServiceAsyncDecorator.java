@@ -32,9 +32,11 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -49,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -421,6 +424,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getSurveySuggestion(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getTagSuggestion(String domainName, int domain, String user, TagType tagType, AsyncCallback<List<Tag>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTagSuggestion(domainName, domain, user, tagType, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// **************************************************
 	// ************************ [MARKETING ACTION TARGET]
 	// **************************************************
@@ -473,6 +482,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getSellerByTaskHolder(domainName, domain, user, taskHolder, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup, AsyncCallback<Seller> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getNextLinealSellerByWorkgroup(domainName, domain, user, workgroup, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void saveProjectCommercial(String domainName, int domain, String user, ProjectCommercial projectCommercial, AsyncCallback<ProjectCommercial> callback) throws AonCoreException {
@@ -494,6 +509,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSellers(SellerParams params, AsyncCallback<List<Seller>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSellers(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getSellersCount(SellerParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -611,6 +632,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getRAddInfoAviableAttributes(String domainName, Integer domain, String user, AsyncCallback<List<String>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRAddInfoAviableAttributes(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getRegistryAttaches(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<Attach>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getRegistryAttaches(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
@@ -632,6 +659,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteRegistryAttach(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAviableCategories(String domainName, Integer domain, String user, AsyncCallback<List<Category>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableCategories(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

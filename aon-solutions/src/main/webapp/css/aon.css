@@ -53,6 +53,18 @@
 
 }
 
+/* Estilos para ocultar la barra de desplazamiento en todos los elementos */
+* {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Ocultar la barra de desplazamiento en navegadores basados en WebKit (Chrome, Safari) */
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 *, ::after, ::before {
   box-sizing: border-box;
 }
@@ -895,6 +907,10 @@
 }
 
 .aonContent::-webkit-scrollbar {
+  display: none;
+}
+
+.aonContentBeta::-webkit-scrollbar {
   display: none;
 }
 
@@ -1797,9 +1813,6 @@ label.rating:hover {
   white-space: nowrap;
 }
 
-aon-access-card{
-  width: 100%;
-}
 
 /*
 ********************************************
@@ -2023,11 +2036,6 @@ aon-access-card{
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
-  }
-
-  aon-access-card{
-    width: auto;
-    min-width: 22rem;
   }
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
