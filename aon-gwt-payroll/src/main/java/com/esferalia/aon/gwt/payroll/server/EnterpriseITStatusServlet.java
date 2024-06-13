@@ -1,13 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,7 +36,7 @@ public class EnterpriseITStatusServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+	
 		String login  = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 		
@@ -55,8 +53,9 @@ public class EnterpriseITStatusServlet extends HttpServlet {
 			from = simpleDateFormat.parse(req.getParameter(Parameter.START_DATE.name ()));
 			to = simpleDateFormat.parse(req.getParameter(Parameter.END_DATE.name()));
 			
+			Writer out = new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
 			
-			resp.getOutputStream().println("[");
+			out.write("[");
 			ITStatusUtils.getEnterpriseEmployeesITs(domain, user, from, to, (employee, notInAON, notInTGSS, inBothList, inTgss) -> {
 				try {
 					JSONObject employeeObject = new JSONObject();
@@ -133,14 +132,16 @@ public class EnterpriseITStatusServlet extends HttpServlet {
 					employeeObject.put("itsInTgss", itsInTgssArray);
 					
 					
-					resp.getOutputStream().print(employeeObject.toString());
-					resp.getOutputStream().print(",");
-					resp.getOutputStream().flush();
+					
+					
+					out.write(employeeObject.toString());
+					out.write(",");
+					out.flush();
 					
 				} catch (IOException e) {
 				}
 			});
-			resp.getOutputStream().print("]");
+			out.write("]");
 
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -149,27 +150,5 @@ public class EnterpriseITStatusServlet extends HttpServlet {
 		}
 					
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		JSONObject employeeObject = new JSONObject();
-//		employeeObject.put("naf", "1234567890");
-//		employeeObject.put("ccc", "9876543210");
-//		employeeObject.put("name", "XXX xxxxx");
-//
-//		JSONArray itsNotInAonArray = new JSONArray();
-//		itsNotInAonArray.put( new JSONObject().put("start", "01-01-2022") );
-//		itsNotInAonArray.put( new JSONObject().put("start", "01-01-2023") );
-//		
-//		employeeObject.put("its", itsNotInAonArray);
-//		
-//		JSONArray itsNotInTGSS = new JSONArray();
-//		itsNotInTGSS.put( new JSONObject().put("start", "01-01-2022") );
-//		itsNotInTGSS.put( new JSONObject().put("start", "01-01-2023") );
-//		
-//		employeeObject.put("_its", itsNotInTGSS);
-//		
-//		System.out.println(employeeObject.toString());
-//		
-//	}
+
 }

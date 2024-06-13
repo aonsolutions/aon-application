@@ -200,34 +200,34 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 				+" it "+ reason 
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getStartDate()) 
 				+" ) no encontrada en aon Solutions."
-			   +" Pulse"
+//			   +" Pulse"
 			)
 		);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor add = new Anchor("aqu\u00ed");
-		add.addClickHandler(e -> onSaveITPart(status));
-		
-		add.getElement().getStyle().setColor("blue");
-		add.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-		
-		horizontalPanel.add(add);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para guardar en aon Solutions o"));
-		
-		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor remove = new Anchor("aqu\u00ed");
-		if(this.isUserComunica) {
-			remove.addClickHandler(e -> onRemoveITPartToSS(status));
-			remove.getElement().getStyle().setColor("red");
-		} else {
-			remove.getElement().getStyle().setColor("grey");
-		}
-
-		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-		
-		horizontalPanel.add(remove);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para eliminar en SISTEMA RED."));
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		Anchor add = new Anchor("aqu\u00ed");
+//		add.addClickHandler(e -> onSaveITPart(status));
+//		
+//		add.getElement().getStyle().setColor("blue");
+//		add.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+//		
+//		horizontalPanel.add(add);
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		horizontalPanel.add(new Label("para guardar en aon Solutions o"));
+//		
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		Anchor remove = new Anchor("aqu\u00ed");
+//		if(this.isUserComunica) {
+//			remove.addClickHandler(e -> onRemoveITPartToSS(status));
+//			remove.getElement().getStyle().setColor("red");
+//		} else {
+//			remove.getElement().getStyle().setColor("grey");
+//		}
+//
+//		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+//		
+//		horizontalPanel.add(remove);
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		horizontalPanel.add(new Label("para eliminar en SISTEMA RED."));
 	}
 	
 	
@@ -240,33 +240,33 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 				+" it " + reason
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getStartDate()) 
 				+" ) no encontrada en SISTEMA RED."
-			   +" Pulse"
+//			   +" Pulse"
 			)
 		);
 		
-		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor anchor = new Anchor("aqu\u00ed");
-		if(this.isUserComunica) {
-			anchor.addClickHandler(e -> onOpenITPart(status) );
-			anchor.getElement().getStyle().setColor("blue");
-		} else {
-			anchor.getElement().getStyle().setColor("grey");
-		}
-		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-		
-		horizontalPanel.add(anchor);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para comunicar o"));
-		
-		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor remove = new Anchor("aqu\u00ed");
-		
-		remove.addClickHandler(e -> onRemoveITPartToAon(status));
-		remove.getElement().getStyle().setColor("red");
-		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-		horizontalPanel.add(remove);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para eliminar en aon Solutions."));
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		Anchor anchor = new Anchor("aqu\u00ed");
+//		if(this.isUserComunica) {
+//			anchor.addClickHandler(e -> onOpenITPart(status) );
+//			anchor.getElement().getStyle().setColor("blue");
+//		} else {
+//			anchor.getElement().getStyle().setColor("grey");
+//		}
+//		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+//		
+//		horizontalPanel.add(anchor);
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		horizontalPanel.add(new Label("para comunicar o"));
+//		
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		Anchor remove = new Anchor("aqu\u00ed");
+//		
+//		remove.addClickHandler(e -> onRemoveITPartToAon(status));
+//		remove.getElement().getStyle().setColor("red");
+//		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+//		horizontalPanel.add(remove);
+//		horizontalPanel.add(new HTML("&nbsp;"));
+//		horizontalPanel.add(new Label("para eliminar en aon Solutions."));
 	}
 
 	@Override

@@ -57,6 +57,7 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDEmployeeIT;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDIT;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.Parameter;
+import com.esferalia.aon.gwt.payroll.shared.StringEscapeUtils;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -95,6 +96,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -192,23 +194,24 @@ public abstract class ITWidget extends ResizeComposite {
 					if (response.isEmpty()) {
 						return;
 					}
-
 					try {
 						JsArray<JsSistemaREDEmployeeIT> employeeITs = null;
-						if(response.endsWith("]")) {
+						if (response.endsWith("]")) {
 							employeeITs = eval("(" + response + ")");
-						}else {
+						} else {
 							employeeITs = eval("(" + response + "])");
 						}
-
 						JsSistemaREDEmployeeIT employeeIT = employeeITs.get(employeeITs.length() - 1);
-							if (employeeIT.getItsInTgss().length() == 0) {
-								AonMessagePanel.showLoading(messagePanel, "Actualizando las ITs del empleado " + employeeIT.getName() + " , ninguna IT encontrada");
-							} else {
-								AonMessagePanel.showLoading(messagePanel,
-										"Actualizando las ITs del empleado " + employeeIT.getName() + " , ITs encontradas en TGSS: " + employeeIT.getItsInTgss().length());
-							}
-	
+						if (employeeIT.getItsInTgss().length() == 0) {
+							AonMessagePanel.showLoading(messagePanel,SafeHtmlUtils.fromTrustedString("Actualizando las ITs del empleado "
+											+ employeeIT.getName() + " , ninguna IT encontrada."));
+						} else {
+							AonMessagePanel.showLoading(messagePanel, SafeHtmlUtils.fromTrustedString(
+									"Actualizando las ITs del empleado "
+											+ employeeIT.getName() + " , ITs encontradas en TGSS: "
+											+ employeeIT.getItsInTgss().length()));
+						}
+
 						if (employeeIT.getItsNotInAon().length() != 0) {
 							showResultsPanel();
 							showFootPanel();
@@ -217,17 +220,15 @@ public abstract class ITWidget extends ResizeComposite {
 								ItNotExist itNotExistInAon = new ItNotExist();
 								JsSistemaREDIT sistemaRedIT = itsNotInAon.get(i);
 								EmployeeIT employee = new EmployeeIT();
-					
-						        employee.setCcc(sistemaRedIT.getCcc())
-								        .setDni(sistemaRedIT.getDni())
-								        .setName(sistemaRedIT.getName())
-								        .setNss(sistemaRedIT.getNss())
-								        .setRegime(sistemaRedIT.getRegime())
-								        .setType(ContractLeaveType.valueOf(sistemaRedIT.getType()))
-								        .setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()));
-						        
-								if(sistemaRedIT.getEndDate() != null) {
-							    	employee.setEndDate(dateFormat.parse(sistemaRedIT.getEndDate()));
+
+								employee.setCcc(sistemaRedIT.getCcc()).setDni(sistemaRedIT.getDni())
+										.setName(sistemaRedIT.getName()).setNss(sistemaRedIT.getNss())
+										.setRegime(sistemaRedIT.getRegime())
+										.setType(ContractLeaveType.valueOf(sistemaRedIT.getType()))
+										.setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()));
+
+								if (sistemaRedIT.getEndDate() != null) {
+									employee.setEndDate(dateFormat.parse(sistemaRedIT.getEndDate()));
 								}
 
 								itNotExistInAon.setEmployeeIT(employee);
@@ -244,25 +245,21 @@ public abstract class ITWidget extends ResizeComposite {
 								JsSistemaREDIT sistemaRedIT = itsNotInTgss.get(i);
 								EmployeeIT employee = new EmployeeIT();
 
-								employee.setCcc(sistemaRedIT.getCcc())
-										.setDni(sistemaRedIT.getDni())
-										.setName(sistemaRedIT.getName())
-										.setNss(sistemaRedIT.getNss())
+								employee.setCcc(sistemaRedIT.getCcc()).setDni(sistemaRedIT.getDni())
+										.setName(sistemaRedIT.getName()).setNss(sistemaRedIT.getNss())
 										.setRegime(sistemaRedIT.getRegime())
 										.setType(ContractLeaveType.valueOf(sistemaRedIT.getType()))
 										.setId(Integer.parseInt(sistemaRedIT.getId()))
-								        .setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()));
+										.setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()));
 
-						        if(sistemaRedIT.getEndDate() != null) {
-						        	employee.setEndDate(dateFormat.parse(sistemaRedIT.getEndDate()));
-						        }
-								
+								if (sistemaRedIT.getEndDate() != null) {
+									employee.setEndDate(dateFormat.parse(sistemaRedIT.getEndDate()));
+								}
+
 								itNotExistInTgss.setEmployeeIT(employee);
 								results.itNotExist(itNotExistInTgss);
 							}
 						}
-							
-					
 
 					} catch (Exception e) {
 					}
@@ -271,15 +268,17 @@ public abstract class ITWidget extends ResizeComposite {
 						return;
 					}
 
-					Scheduler.get().scheduleDeferred(  () -> AonMessagePanel.showSuccess(messagePanel, "Its actualizadas"));
+					Scheduler.get()
+							.scheduleDeferred(() -> AonMessagePanel.showSuccess(messagePanel, "Its actualizadas"));
 				}
 
 			});
 
 			xhr.send(requestDataBuffer.toString());
-			
+
 			resultsPanel.setWidget(results);
 		}
+
 	}
 
 	class TGSSContextMenu extends ContextMenu {
