@@ -1859,7 +1859,15 @@ public class Mod2002023Writer {
 							addUteParticipation(line, mod200, i1++);
 						}
 						
-						// FALTA - PARTICIPES DE AGRUPACIONES...
+						// FALTA - PARTICIPES DE AGRUPACIONES... POR AHORA LE RELLENO CON ESPACIOS Y CEROS
+						line.append(AonFiscalFileUtils.spaces(57));
+						line.append(AonFiscalFileUtils.zeros(346));
+						line.append(AonFiscalFileUtils.spaces(57));
+						line.append(AonFiscalFileUtils.zeros(346));
+						line.append(AonFiscalFileUtils.spaces(57));
+						line.append(AonFiscalFileUtils.zeros(346));
+						line.append(AonFiscalFileUtils.zeros(340));						
+						// -------------------------------------------------------------------------------						
 								
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
