@@ -105,7 +105,8 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 			try (InputStream is = s3Object.getObjectContent()) {
 				messageResults = getHtmlMessage(is, messageIds.get(i));
-				handleTask(sources.get(i), dests.get(0), messageResults.get(0), messageResults.get(1), messageResults.get(2));
+				handleTask(sources.get(i), dests.get(0), messageResults.get(0), messageResults.get(1), messageResults.get(2), messageResults.get(3));
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -125,6 +126,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		Map<String, String> attachesNames = new HashMap<>();
 		Map<String, String> base64 = new HashMap<>();
 		String html = "";
+		String textPlain = "";
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
 		String subjectArray[] = mimeMessage.getHeader("Subject");
@@ -132,7 +134,12 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		System.out.println(subject);
 		Multipart multipart = (Multipart) mimeMessage.getContent();
 		for (int i = 0; i < multipart.getCount(); i++) {
-			 //System.out.println(multipart.getContentType());
+			 System.out.println(multipart.getContentType());
+			 if (multipart.getContentType().startsWith("multipart/alternative")) {
+				textPlain =  multipart.getBodyPart(0).getContent().toString();
+				html =  multipart.getBodyPart(1).getContent().toString();
+			 }
+			 System.out.println(multipart.getBodyPart(i).getContent().toString());
 			BodyPart bodyPart = multipart.getBodyPart(i);
 			System.out.println(multipart.getBodyPart(i).getFileName());
 			if(multipart.getBodyPart(i).getFileName() != null ) fileNames.add(multipart.getBodyPart(i).getFileName());
@@ -143,6 +150,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 				System.out.println(m.getBodyPart(0).getContentType());
 				BodyPart b = m.getBodyPart(0);
 				Multipart m2 = (Multipart) b.getContent();
+				textPlain = m2.getBodyPart(0).getContent().toString();
 				html =  m2.getBodyPart(1).getContent().toString();
 				BodyPart bAttach = m.getBodyPart(1);
 				System.out.println(m.getBodyPart(1).getContent());
@@ -152,23 +160,24 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 			if (bodyPart.getContentType().startsWith("multipart/alternative")) {
 				Multipart m = (Multipart) bodyPart.getContent();
+				textPlain = m.getBodyPart(0).getContent().toString();
 				html = m.getBodyPart(1).getContent().toString();
 				System.out.println(html);
 			}
 		}
 		
-		for (int i = 0; i < attachIdList.size(); i++) {
-			attachesNames.put(attachIdList.get(i), fileNames.get(i));
-		}
+		
 		
 		StringBuilder newHtml = new StringBuilder(html);
+		System.out.println(textPlain);
 		System.out.println(attachIdList);
 		imagesWithURL = formatUrlToImages(messageId, attachIdList, attachesNames);
-		String finalHtml = replaceAttachIds(newHtml, imagesWithURL, attachesNames);
+		String finalHtml = escapeEmojis(replaceAttachIds(newHtml, imagesWithURL, attachesNames));
 		String attaches = attachString(imagesWithURL, attachesNames, base64);
 		result.add(finalHtml);
 		result.add(subject);
 		result.add(attaches);
+		result.add(textPlain);
         
 		System.out.println(finalHtml);
 		
@@ -179,7 +188,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 	
 
 
-	private static void handleTask(String from, String domainTo, String message, String subject, String attaches)
+	private static void handleTask(String from, String domainTo, String message, String subject, String attaches, String query)
 			throws URISyntaxException, IOException, InterruptedException, ConnectException {
 		
 		try {
@@ -246,7 +255,25 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 						    .setEmail(from);
 						    
 					if(!attaches.isEmpty()) AonTask.addTaskWorkflow(company.getDomain().getName(), user.getLogin(), attachWorkflow);
-						    
+					
+					String tokenGpt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME";
+					String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", tokenGpt).getString("uuid");
+					if(query.contains("image:")) query = query.replaceAll("\\[.*?\\]", "").trim();
+					String messageGpt = GptTrainerApi.createMessage(sessUuid, token, query);
+					if(message.startsWith("gpt")) messageGpt = messageGpt.replace("gpt_trainer_ai_function_x_call", "");
+					System.out.println(messageGpt);
+					
+					
+					TaskWorkflow gptWorkflow = new TaskWorkflow();
+				    gptWorkflow.setCreationUser(user.getLogin())
+				    .setCreationDate(new Date())
+				    .setTask(task.getId())
+				    .setTaskHolder(taskHolderList.get(0))
+				    .setComment(messageGpt)
+				    .setType(TaskWorkflowType.COMMENT)
+				    .setEmail(from);
+					
+				    AonTask.addTaskWorkflow(company.getDomain().getName(), user.getLogin(), gptWorkflow);  
 						   
 
 				} else {
@@ -474,7 +501,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 	            		+ "    display: none;\n"
 	            		+ "}\n"
 	            		+ "        /* Imagen dentro del contenedor pop-up */\n"
-	            		+ "." + entry.getKey() + "{\n"
+	            		+ "." + entry.getKey() + " " + "img" + "{\n"
 	            		+ "max-width: 300px;\n"
 	            		+ "max-height: 200px;\n"
 	            		+ "box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;\n"
@@ -607,7 +634,7 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		for (String attachId : attachIds) {
 			if(attachesNames.get(attachId) != null) {
 			imagesWithURL.put(attachId, "https://jkmoqwh5wdc2adjdbyjj2sc6eq0donyi.lambda-url.eu-west-1.on.aws/soporte/"
-					+ messageId + "/" + attachId + "/" + attachesNames.get(attachId));
+					 + messageId + "/" + attachId + "/" + attachesNames.get(attachId));
 			}
 		}
 
@@ -621,13 +648,34 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
     	.build();
 		HttpResponse<String> response = HttpClient.newHttpClient().send(httpRequest, BodyHandlers.ofString());
 	}
+	
+	private static String escapeEmojis(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            int codePoint = text.codePointAt(i);
+            if (Character.isSupplementaryCodePoint(codePoint)) {
+                sb.append("&#x").append(Integer.toHexString(codePoint)).append(";");
+                i++; 
+            } else {
+                sb.append((char) codePoint);
+            }
+        }
+        return sb.toString();
+    }
 
 	public static void main(String[] args) throws FileNotFoundException, IOException, MessagingException, URISyntaxException, InterruptedException, NoSuchAlgorithmException {
-		String messageId = "rtef9svrhhfmo82sahfnobmsg5gd7gosdhqubmo1";
-		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/rtef9svrhhfmo82sahfnobmsg5gd7gosdhqubmo1")) {
+		String messageId = "i34tp3rihp79d18c7t26bqfq07g560ca9v45gpg1";
+		String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME"
+	   ;String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", token).getString("uuid");
+		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/i34tp3rihp79d18c7t26bqfq07g560ca9v45gpg1")) {
 			List<String> messageResults = new ArrayList<>();
 			messageResults = getHtmlMessage(is, messageId);
-			handleTask("anderysalma@gmail.com", "soporte@issues-test.aonsolutions.org", messageResults.get(0), messageResults.get(1), messageResults.get(2));
+			handleTask("anderysalma@gmail.com", "soporte@issues-test.aonsolutions.org", messageResults.get(0), messageResults.get(1), messageResults.get(2), messageResults.get(3));
+			String query = messageResults.get(3);
+			if(query.contains("image:")) query = query.replaceAll("\\[.*?\\]", "").trim();
+			String message = GptTrainerApi.createMessage(sessUuid, token, query);
+			if(message.startsWith("gpt")) message = message.replace("gpt_trainer_ai_function_x_call", "");
+			System.out.println(message);
 		}
 
 	}
