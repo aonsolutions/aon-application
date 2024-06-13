@@ -8,9 +8,9 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="customerList">
 			
 			<aon:if test="#{!app.standAlone}" >
+				<aon:form id="customerListForm">
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 					<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
@@ -92,9 +92,12 @@
 						</ui:define>
 					</ui:decorate>
 				</aon:div>
+				</aon:form>
 			</aon:if>
 			
 			<aon:if test="#{app.standAlone}" >
+				<aon:form id="customerToolbarForm">
+				<aon:div id="customerToolbarContainer" >
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/appToolbar.xhtml" >
 					<ui:param name="controller" value="#{customer}" />
@@ -104,6 +107,10 @@
 					<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 					
 				</ui:decorate>
+				</aon:div>
+				</aon:form>
+				
+				<aon:form id="customerListForm">
 				<aon:div  styleClass="aon-scroll-area"  style="display: flex; flex-direction: row; "  >
 					
 					<aon:div id="customerListContainer"  style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4" >
@@ -121,7 +128,7 @@
 	
 					<aon:div id="customerFilterContainer" style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 4; display: none" >
 							<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/filterEx.xhtml" >
-								<ui:param name="searchReRender" value="customerListContainer" />
+								<ui:param name="searchReRender" value="customerListContainer,customerToolbarContainer" />
 								<ui:define name="moreSearchBasicContent">
 									<aon:if test="#{customer.showAlumnData}">
 										<aon:outputText value="&#160;" />
@@ -137,9 +144,9 @@
 					</aon:div>
 	
 				</aon:div>
+				</aon:form>
 			</aon:if>
 	
-		</aon:form>
 	</ui:define>
 </ui:composition>
 

@@ -8,6 +8,11 @@
 	template="/facelet/templates/aon.ui.filter.xhtml">
 
 	<ui:define name="filterContent">
+		<aon:inputText
+			id="onEditSearch"
+			style="display:none;" 
+			valueChangeListener="#{customer.onEditSearch}"
+		/>
 		<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/shared/filterContent.xhtml">
