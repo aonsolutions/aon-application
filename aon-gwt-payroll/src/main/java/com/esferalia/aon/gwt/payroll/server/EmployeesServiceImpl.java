@@ -609,14 +609,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription, Integer holidayListBox,
-			Map<Date, String> map, CalendarDraft.DayType daysTypes[]) throws IllegalArgumentException {
+			Map<Date, String> map, CalendarDraft.DayType daysTypes[], Integer year) throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
 			JooqCalendar.insertHolidays(conn, domainID, workplaceId, holidayDescription, holidayListBox, map,
-					daysTypes);
+					daysTypes, year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void updateHolidayCalendar(String domain, int workplaceId, Integer holidayId, CalendarDraft.DayType daysTypes[]) throws IllegalArgumentException {
+
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			JooqCalendar.updateHolidayCalendar(conn, domainID, workplaceId, holidayId, daysTypes);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

@@ -3,14 +3,17 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
-	<aon:column alias="Customer.id"
-		styleClass="aon-editDataTable-numberColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_id}" />
-		</f:facet>
-		<aon:outputText value="#{to.id}" />
-	</aon:column>
+	
+	
+	<aon:if test="#{!skipCustomerId}">
+		<aon:column alias="Customer.id"
+			styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_id}" />
+			</f:facet>
+			<aon:outputText value="#{to.id}" />
+		</aon:column>
+	</aon:if>
 
 	<aon:column alias="Customer.registry.document"
 		styleClass="aon-editDataTable-textColumn">

@@ -34,6 +34,7 @@ public class CalendarDraft implements Serializable {
 			NOT_WORKING_DAY
 	};
 	
+	private Integer calendarHoliday;
 	
 	public DayType getDayType(int weekDay){
 		return daysTypes[weekDay];
@@ -53,6 +54,12 @@ public class CalendarDraft implements Serializable {
 	
 	public void setHolidayDrafts(List<HolidayDraft> holidayDrafts) {
 		this.holidayDrafts = holidayDrafts;
+	}
+	public Integer getCalendarHoliday() {
+		return calendarHoliday;
+	}
+	public void setCalendarHoliday(Integer calendarHoliday) {
+		this.calendarHoliday = calendarHoliday;
 	}
 	
 }

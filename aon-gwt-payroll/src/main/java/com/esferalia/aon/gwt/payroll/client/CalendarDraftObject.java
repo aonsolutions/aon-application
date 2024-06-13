@@ -137,12 +137,28 @@ public class CalendarDraftObject implements Calendar.Listener {
 	}
 
 	public void saveHolidaysAndDays(String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map, 
-			CalendarDraft.DayType dayTypes[],
+			Integer holidayId, Map<Date, String> map, 
+			CalendarDraft.DayType dayTypes[], Integer year,
 			final AsyncCallback<Void> cb) {
 
 		employeesService.saveHolidaysAndDays(workplaceId, holidayDescription,
-				holidayListBox, map, dayTypes,new AsyncCallback<Void>() {
+				holidayId, map, dayTypes, year, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						cb.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						cb.onSuccess(result);
+					}
+				});
+	}
+	
+	public void updateHolidayCalendar(Integer holidayId, CalendarDraft.DayType dayTypes[], final AsyncCallback<Void> cb) {
+
+		employeesService.updateHolidayCalendar(workplaceId, holidayId, dayTypes, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -196,6 +212,10 @@ public class CalendarDraftObject implements Calendar.Listener {
 	
 	public Calendar getCalendar() {
 		return (this.calendar != null) ? calendar : new Calendar(4);
+	}
+	
+	public Integer getCalendarHoliday() {
+		return calendarDraft.getCalendarHoliday();
 	}
 
 	private void initCalendarObject() {

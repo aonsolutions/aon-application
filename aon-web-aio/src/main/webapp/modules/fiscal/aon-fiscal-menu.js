@@ -1,4 +1,5 @@
 import { MSG, CSS, EVENT, TAG, APPPARAMS } from 'aonsolutions/environments/environments.js'; 
+import { getApplicationParameters} from 'aonsolutions/services/applicationParameterService.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 
@@ -9,46 +10,64 @@ export class AonFiscalMenu extends AonSuiteMenu {
     ROOT_PANEL;
     RIGHT_PANEL;
     APP_PARAMS;
+    isAlava;
+    isBizk;
+    isGipu;
+    isNavarra;
+    isAEAT;
 
     constructor () {
         super();
     }
 
-    connectedCallback () {
+    async connectedCallback() {
         this.clear();
-        this.comercialInitialize()
+        await this.getAppParams(); // Esperar a que se resuelva getAppParams
+        this.comercialInitialize(); // Llamar a comercialInitialize después de obtener los parámetros
         this.initialize();
         this.build();
         this.setTitle("Opciones fiscales");
     }
-
-    async getAppParams(){
-		if(!this.APP_PARAMS.length){
-			try {
-				await getApplicationParameters({
-					params:[
-                        APPPARAMS.FS_DEFAULT_ADMINISTRATION
-					]
-				}).then(params=>{
-					let newResp = [];
-					params
-					.filter(p => p.value)
-					.forEach(p => 
-						newResp[p.name] = p.value,
-                        alert(newResp[p.name] = p.value) 
-					);
-					this.APP_PARAMS = newResp;
-				});
-			} catch (e) {
-				console.log("error getAppParams", e);
-			}
-		}
-		return this.APP_PARAMS;
-	}
+    
+    async getAppParams() {
+        let response = 9999;
+        this.isAlava = false;
+        this.isBizk = false;
+        this.isGipu = false;
+        this.isNavarra = false;
+        this.isAEAT = false;
+        try {
+            const params = await getApplicationParameters({
+                params: [APPPARAMS.FS_DEFAULT_ADMINISTRATION]
+            });
+    
+            params
+                .filter(p => p.value)
+                .forEach(p => {
+                    response = p.value;
+                    alert(response);
+                    if (response == 0) this.isAlava = true;
+                    if (response == 1) this.isBizk = true;
+                    if (response == 2) this.isGipu = true;
+                    if (response == 3) this.isNavarra = true;
+                    if (response == 4) this.isAEAT = true;
+                });
+        } catch (e) {
+            console.log("error getAppParams", e);
+        }
+    }
+       
 
     comercialInitialize() {
-        this.APP_PARAMS = [];
-        this.AON_MENU = 'aonMenu';
+        alert("Álava "+ this.isAlava);
+        alert("Bizkaia "+ this.isBizk);
+        alert("Gipu "+ this.isGipu);
+        alert("Navarra "+this.isNavarra);
+        alert("AEAT "+this.isAEAT);
+        if(this.isAlava == false && this.isBizk == false && this.isGipu == false && this.isNavarra == false && this.isAEAT == false)
+            this.allFalse = true;
+        else
+            this.allFalse = false;
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
@@ -70,6 +89,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         }];
         this.options = [{
             title: 'IVA AEAT',
+            visible: this.isAEAT,
             options: [ {
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
@@ -93,6 +113,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF AEAT',
+            visible: this.isAEAT,
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -124,6 +145,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'AEAT',
+            visible: this.isAEAT,
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
@@ -147,6 +169,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IVA Forales',
+            visible: this.isAlava || this.isGipu || this.isBizk,
             options: [{
                 description: "Modelo 303 ",
                 description2: " |320 Gipuzkoa",
@@ -171,6 +194,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF Forales',
+            visible: this.isAlava || this.isGipu || this.isBizk,
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -202,6 +226,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'LROE Bizkaia',
+            visible: this.isBizk,
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
@@ -213,6 +238,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IVA Navarra',
+            visible: this.isNavarra,
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
@@ -236,6 +262,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }]
         },{
             title: 'IRPF Navarra',
+            visible: this.isNavarra,
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",

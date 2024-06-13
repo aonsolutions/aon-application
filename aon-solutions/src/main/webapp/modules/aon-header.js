@@ -718,6 +718,7 @@ export class AonHeader extends AonElement {
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
 				span.style.minHeight = '21px';
+				span.style.color = "white";
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }
