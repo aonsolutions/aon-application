@@ -275,7 +275,7 @@ public class Mod2002023Writer {
 		line.append(AonFiscalFileUtils.unsigned(percent, 5, 2));
 	}
 
-	// UTES - Relación de Socios
+	// UTES - Relación de Participes
 	private static void addUteParticipation(Writer line, Mod2002023 mod200, int index) throws IOException {
 		String document = "";
 		String rpte = "0";
@@ -375,6 +375,92 @@ public class Mod2002023Writer {
 		line.append(AonFiscalFileUtils.dateZero(birthDate));                                        
 		line.append(AonFiscalFileUtils.text(residenceCountry,2));                                   
 		line.append(AonFiscalFileUtils.text(nationality,2));            
+	}
+	
+	// UTES - Relación de Participes
+	private static void addUteParticipationBis(Writer line, Mod2002023 mod200, int index) throws IOException {
+		String document = "";
+		String name = "";
+		String province = "";
+		int entityType = 0;  // Datos de la participada: Tipo de entidad
+		int imputationCriteria = 0; // Criterio de imputación art. 46.2 LIS		
+		double c01279 = 0;  // Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo                                                                                                       
+		double c01455 = 0;  // Datos relativos a la participación: Valoración de la participación al final del período impositivo                                                                                                          
+		double c01456 = 0;  // Datos relativos a la participación: Ingresos financieros de la participación                                                                                                                                
+		double c01458 = 0;  // Importes imputados: Importe del resultado contable imputado                                                                                                                                                 
+		double c01459 = 0;  // Importes imputados: Gastos financieros netos imputados                                                                                                                                                      
+		double c01460 = 0;  // Importes imputados: Reserva de capitalización que no haya sido aplicada imputada                                                                                                                            
+		double c01461 = 0;  // Importes imputados: Base imponible imputada                                                                                                                                                                 
+		double c01467 = 0;  // Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas                                                                                       
+		double c01468 = 0;  // Importes imputados: Importe bonificación generada de las bases de bonificación imputadas                                                                                                                    
+		double c01523 = 0;  // Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas                                                                           
+		double c01601 = 0;  // Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas                                      
+		double c01638 = 0;  // Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas   
+		double c01639 = 0;  // Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas                                                                                           
+		double c01640 = 0;  // Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas                                                                
+		double c01743 = 0;  // Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas                      
+		double c01909 = 0;  // Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas                                                                    
+		double c01910 = 0;  // Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente                                                                                
+		double c01911 = 0;  // Importes imputados: Retenciones e ingresos a cuenta imputados                                                                                                                                               
+		double c01912 = 0;  // Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación                                                         
+		double c01934 = 0;  // Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación                                                        
+		
+		if (index < mod200.getUteParticipationsBis().size()) {
+			document = mod200.getUteParticipationsBis().get(index).getDocument();
+			name = mod200.getUteParticipationsBis().get(index).getName();
+			province = getProvinceCountry(mod200.getUteParticipationsBis().get(index).getProvince(),mod200.getUteParticipationsBis().get(index).getCountry());
+			entityType = mod200.getUteParticipationsBis().get(index).getEntityType();          
+			imputationCriteria = mod200.getUteParticipationsBis().get(index).getImputationCriteria();		
+			c01279 = mod200.getUteParticipationsBis().get(index).getC01279();            
+			c01455 = mod200.getUteParticipationsBis().get(index).getC01455();            
+			c01456 = mod200.getUteParticipationsBis().get(index).getC01456();            
+			c01458 = mod200.getUteParticipationsBis().get(index).getC01458();            
+			c01459 = mod200.getUteParticipationsBis().get(index).getC01459();            
+			c01460 = mod200.getUteParticipationsBis().get(index).getC01460();            
+			c01461 = mod200.getUteParticipationsBis().get(index).getC01461();            
+			c01467 = mod200.getUteParticipationsBis().get(index).getC01467();            
+			c01468 = mod200.getUteParticipationsBis().get(index).getC01468();            
+			c01523 = mod200.getUteParticipationsBis().get(index).getC01523();            
+			c01601 = mod200.getUteParticipationsBis().get(index).getC01601();            
+			c01638 = mod200.getUteParticipationsBis().get(index).getC01638();            
+			c01639 = mod200.getUteParticipationsBis().get(index).getC01639();            
+			c01640 = mod200.getUteParticipationsBis().get(index).getC01640();            
+			c01743 = mod200.getUteParticipationsBis().get(index).getC01743();            
+			c01909 = mod200.getUteParticipationsBis().get(index).getC01909();            
+			c01910 = mod200.getUteParticipationsBis().get(index).getC01910();            
+			c01911 = mod200.getUteParticipationsBis().get(index).getC01911();            
+			c01912 = mod200.getUteParticipationsBis().get(index).getC01912();            
+			c01934 = mod200.getUteParticipationsBis().get(index).getC01934();            
+		}
+		line.append(AonFiscalFileUtils.text(document,15));
+		line.append(AonFiscalFileUtils.text(name,40));
+		line.append(AonFiscalFileUtils.text(province,2));
+		line.append(entityType==1 ? "1" : "0"); // Tipo de entidad: Agrupación de interés económico española
+		line.append(entityType==2 ? "1" : "0"); // Tipo de entidad: Agrupación europea de interés económico
+		line.append(entityType==3 ? "1" : "0"); // Tipo de entidad: Unión temporal de empresas
+		line.append(entityType==4 ? "1" : "0"); // Tipo de entidad: Colaboraciones en el extranjero análogas a las uniones temporales
+		line.append(imputationCriteria==1 ? "1" :"0"); // Partícipes de agrupaciones de interés económico y UTES - Entidad 1ª - Criterio de imputación art. 46.2 LIS: En la fecha de finalización del periodo impositivo de la entidad
+		line.append(imputationCriteria==2 ? "1" :"0"); // Partícipes de agrupaciones de interés económico y UTES - Entidad 1ª - Criterio de imputación art. 46.2 LIS: En el siguiente periodo impositivo
+		line.append(AonFiscalFileUtils.signedZero(c01279, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01455, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01456, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01458, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01459, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01460, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01461, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01467, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01468, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01523, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01601, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01638, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01639, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01640, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01743, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01909, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01910, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01911, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01912, DS, DD));            
+		line.append(AonFiscalFileUtils.signedZero(c01934, DS, DD));            
 	}
 	
 	// Añade al writer todas las casillas que contenga el desglose que se le pasa en keysProvider
@@ -1850,25 +1936,45 @@ public class Mod2002023Writer {
 		, PAG24B("T20024B00", new IPropertyFiller[] { 
 				(line, mod200, label) -> {
 					boolean isComplementary = false; // Indicador de pagina complementaria
-					int i1 = 0; // Contador para Relación de Partícipes					 
-					while (!isComplementary || i1 < mod200.getUteParticipations().size() ) {
+					int i1 = 0; // Contador para Relación de Partícipes
+					int i2 = 0; // Contador para Partícipes de Agrupaciones de interés económico y UTES 
+					
+					while (!isComplementary || i1 < mod200.getUteParticipations().size() || i2 < mod200.getUteParticipationsBis().size() ) {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");
 						
+						// Relación de Partícipes
 						for (int i = 1; i <= 10; i++) {
 							addUteParticipation(line, mod200, i1++);
 						}
 						
-						// FALTA - PARTICIPES DE AGRUPACIONES... POR AHORA LE RELLENO CON ESPACIOS Y CEROS
-						line.append(AonFiscalFileUtils.spaces(57));
-						line.append(AonFiscalFileUtils.zeros(346));
-						line.append(AonFiscalFileUtils.spaces(57));
-						line.append(AonFiscalFileUtils.zeros(346));
-						line.append(AonFiscalFileUtils.spaces(57));
-						line.append(AonFiscalFileUtils.zeros(346));
-						line.append(AonFiscalFileUtils.zeros(340));						
-						// -------------------------------------------------------------------------------						
-								
+						// Partícipes de Agrupaciones de interés económico y UTES
+						for (int i = 1; i <= 3; i++) {
+							addUteParticipationBis(line, mod200, i2++);
+						}						
+						
+						// TOTALES Partícipes de Agrupaciones de interés económico y UTES
+						addSignedKey(line, mod200, Mod2002023Key.UT1279, isComplementary);  // Total - Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo 
+						addSignedKey(line, mod200, Mod2002023Key.UT1455, isComplementary);  // Total - Datos relativos a la participación: Valoración de la participación al final del período impositivo
+						addSignedKey(line, mod200, Mod2002023Key.UT1456, isComplementary);  // Total - Datos relativos a la participación: Ingresos financieros de la participación
+						addSignedKey(line, mod200, Mod2002023Key.UT1458, isComplementary);  // Total - Importes imputados: Importe del resultado contable imputado
+						addSignedKey(line, mod200, Mod2002023Key.UT1459, isComplementary);  // Total - Importes imputados: Gastos financieros netos imputados
+						addSignedKey(line, mod200, Mod2002023Key.UT1460, isComplementary);  // Total - Importes imputados: Reserva de capitalización que no haya sido aplicada imputada
+						addSignedKey(line, mod200, Mod2002023Key.UT1461, isComplementary);  // Total - Importes imputados: Base imponible imputada
+						addSignedKey(line, mod200, Mod2002023Key.UT1467, isComplementary);  // Total - Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1468, isComplementary);  // Total - Importes imputados: Importe bonificación generada de las bases de bonificación imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1523, isComplementary);  // Total - Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1601, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1638, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1639, isComplementary);  // Total - Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1640, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1743, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1909, isComplementary);  // Total - Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas
+						addSignedKey(line, mod200, Mod2002023Key.UT1910, isComplementary);  // Total - Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente
+						addSignedKey(line, mod200, Mod2002023Key.UT1911, isComplementary);  // Total - Importes imputados: Retenciones e ingresos a cuenta imputados
+						addSignedKey(line, mod200, Mod2002023Key.UT1912, isComplementary);  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación
+						addSignedKey(line, mod200, Mod2002023Key.UT1934, isComplementary);  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación
+							
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
 						isComplementary = true;

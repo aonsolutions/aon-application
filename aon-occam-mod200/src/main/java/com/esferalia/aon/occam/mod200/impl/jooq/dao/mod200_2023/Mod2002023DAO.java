@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.mod200.api.model.TitularReal;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
+import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Character;
@@ -159,6 +160,14 @@ public class Mod2002023DAO  {
 					.setBirthDate(reg.getNotaryDate())
 					.setResidenceCountry(reg.getResidence())
 					.setNationality(reg.getNotary()) ))
+		,UTE_PARTICIPATION_BIS( 
+				(mod,reg) -> mod.getUteParticipationsBis().add(new UteParticipationBis()					
+					.setDocument(reg.getDocument())
+					.setName(reg.getName())
+					.setProvince(reg.getProvince())
+					.setCountry(reg.getCountry())
+					// FALTA - RESTO DE CAMPOS
+					))
 		;
 		
 		private IPopulater populater;
@@ -558,6 +567,22 @@ public class Mod2002023DAO  {
 				detail.setNotaryDate(AonDateUtils.toSql(tr.getBirthDate()));
 				detail.setResidence(tr.getResidenceCountry());
 				detail.setNotary(tr.getNationality());
+				list.add(detail);
+			}
+		}
+		
+		// Partícipes de agrupaciones de interés económico y UTES
+		if (mod200.getUteParticipationsBis() != null) {
+			for ( UteParticipationBis ute : mod200.getUteParticipationsBis() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002023RegistryType.UTE_PARTICIPATION_BIS.byteValue());
+				detail.setDocument(ute.getDocument());
+				detail.setName(ute.getName());
+				detail.setProvince((byte) ute.getProvince());
+				detail.setCountry(ute.getCountry());
+				// FALTA - RESTO DE CAMPOS				
 				list.add(detail);
 			}
 		}

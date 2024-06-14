@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.mod200.api.model.TitularReal;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
+import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod2002023 extends Mod200 {
@@ -70,7 +71,7 @@ public class Mod2002023 extends Mod200 {
 	private LinkedList<String> sicav2 = new LinkedList<>();                                // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
 	private LinkedList<TitularReal> titularReal = new LinkedList<>();                      // F. Identificación del titular real de la entidad
 	
-	// FALTA - NUEVO APARTADO EN UTES - Partícipes de agrupaciones de interés económico y UTES
+	private LinkedList<UteParticipationBis> uteParticipationsBis = new LinkedList<>();     // FALTA - NUEVO APARTADO EN UTES - Partícipes de agrupaciones de interés económico y UTES
 	
 	private String devType;
 	private String payType;
@@ -267,6 +268,12 @@ public class Mod2002023 extends Mod200 {
 	}
 	public void setTitularReal(LinkedList<TitularReal> titularReal) {
 		this.titularReal = titularReal;		
+	}
+	public LinkedList<UteParticipationBis> getUteParticipationsBis() {
+		return uteParticipationsBis;
+	}
+	public void setUteParticipationsBis(LinkedList<UteParticipationBis> uteParticipationsBis) {
+		this.uteParticipationsBis = uteParticipationsBis;		
 	}
 	public String getDevType() {
 		return devType;
