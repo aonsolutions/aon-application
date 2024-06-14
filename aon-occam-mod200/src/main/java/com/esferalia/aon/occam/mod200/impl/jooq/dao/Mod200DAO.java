@@ -16,16 +16,12 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
-import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod200DAO {
 	

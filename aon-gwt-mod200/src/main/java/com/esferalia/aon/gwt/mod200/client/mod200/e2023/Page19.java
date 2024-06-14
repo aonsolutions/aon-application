@@ -192,7 +192,7 @@ public class Page19 extends PageAbs {
 		
 	}
 	
-	// C) Relación de socios
+	// C) Relación de partícipes
 	private void paintB11Panel() {
 		
 		panelB11.clear();

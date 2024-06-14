@@ -903,6 +903,7 @@ public class Mod2002023DAO  {
 		// FALTA - CUANDO SE INICIALIZA EL MODELO Y SE LEEN LOS DATOS DEL EJERCICIO ANTERIOR, ESTA COGIENDO EL PRIMERO QUE ENCUENTRA, Y 
 		// REALMENTE DEBERIA COGER EL ULTIMO PRESENTADO O ALGO ASI. ADEMAS, SI YA EXISTE OTRO PARA EL 2023, SE DEBERIA HACER UNA COMPLEMENTARIA
 		// Y COPIAR TODOS LOS DATOS DEL MODELO ANTERIOR DEL 2023
+		// ESTO SE CAMBIA PARA QUE COJA EL ULTIMO PRESENTADO DEL EJERCICIO 2022 (POR SI EN EL EJERCICIO 2022 SE PRESENTARON COMPLEMENTARIAS DEL MODELO)
 		//Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
 		Mod2002022 old = Mod2002022DAO.getLastModel2022(ctx);
 		if (old != null && old.getId() != null) { 
@@ -998,6 +999,11 @@ public class Mod2002023DAO  {
 			// Dejarlo vacio si no se ha marcado el carácter 00013 o 00014
 			if (mod200.isNotChecked(Mod2002023Key.C0013) && mod200.isNotChecked(Mod2002023Key.C0085) && mod200.isNotChecked(Mod2002023Key.C0014)) {
 				mod200.getUteParticipations().clear(); 
+			}
+			
+			// Volumen de operaciones: Si no es cooperativa y estaba marcado el 3, ponerle el 2 (este año solo hay 2 opciones, excepto cooperativas)			
+			if (mod200.getDoubleValue(Mod2002023Key.VOLOPE) == 3.0 && mod200.isNotChecked(Mod2002023Key.C0017) && mod200.isNotChecked(Mod2002023Key.C0018) && mod200.isNotChecked(Mod2002023Key.C0019)) {
+				mod200.setDoubleValue(Mod2002023Key.VOLOPE, 2.0);
 			}
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002023Key)
@@ -1202,7 +1208,6 @@ public class Mod2002023DAO  {
 		ctx.put(Mod2002023Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-	// FALTA - POSIBILIDAD DE LLEVAR ESTO A OTRO SITIO PARA QUE SIRVA DE FORMA COMUN A TODOS LOS AÑOS
 	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
 	public static Mod2002023 aeatPresentation(AONContext ctx, Mod2002023 mod, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {

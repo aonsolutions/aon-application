@@ -336,8 +336,8 @@ public class Mod2002023Writer {
 			document = mod200.getGroupEntities().get(index).getDocument();
 			country = mod200.getGroupEntities().get(index).getCountry();
 		}
-		line.append(AonFiscalFileUtils.text(document,15));                          // NIF 
-		line.append(AonFiscalFileUtils.text((country == "ES" ? "" : country), 2));  // Pais (solo se pone pais si no es España)
+		line.append(AonFiscalFileUtils.text(document,15));                          // NIF
+		line.append(AonFiscalFileUtils.text(("ES".equals(country) ? "" : country), 2));  // Pais (solo se pone pais si no es España)
 	}
 
 	// Cifra de Negocios - Nif establecimientos permanentes
@@ -623,7 +623,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text((Country.safeIso2(mod200.getUltimateDocumentCountry()).equals("ES")?"":Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002023Key.C0041, 9, 2)
@@ -1363,7 +1363,7 @@ public class Mod2002023Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1029)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1030)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002023Key.LQ1031)				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 

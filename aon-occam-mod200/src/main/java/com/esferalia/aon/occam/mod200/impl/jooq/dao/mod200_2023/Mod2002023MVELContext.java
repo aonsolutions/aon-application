@@ -617,6 +617,15 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		if (isChecked(C0022) && (isChecked(C0006) || isChecked(C0013) || isChecked(C0085) || isChecked(C0063) || isChecked(C0071) || isChecked(C0083) || isChecked(C0088))) {
 			return getValue(LQ562);
 		}
+		
+		if (isChecked(C0057)) {
+			double lq521 = roundKey(LQ521);
+			if (round(lq1330-lq521) > 0) {
+				return round((lq1330 - lq521) * lq558 /100);
+			}
+			return 0;
+		}
+		
 		if (isChecked(C0006) && isChecked(C0034)) {
 			return round(lq1330 * lq558 / 100);			
 		}
@@ -649,17 +658,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			if (lq520>0) return round(lq520 * lq558 /100);
 			return 0;
 		}
-        // FALTA - PROBAR ESTE CASO 0057 Y 0006, CON IMPORTE EN CASILLA 521 A VER COMO LO CALCULA EL PADIS, SERIA VER EXACTAMENTE EL PARRAFO SIGUIENTE:
-//		Si marca la casilla 00057 y Siempre que la (01330 - 00521) > 0:
-//		Cuando esté combinada con la clave 00006 (empresa de reducida dimensión), o clave 00063 (aplicable el tipo de gravamen reducido para entidades 
-//		de nueva creación), o clave 00071, o clave 00083, o clave 00088 => sustituir todas las referencias a la 01330 por (01330- 00521)
-		if (isChecked(C0057)) {
-			double lq521 = roundKey(LQ521);
-			if (round(lq1330-lq521) > 0) {
-				return round((lq1330 - lq521) * lq558 /100);
-			}
-			return 0;
-		}
+		
 		// Cálculo de la cuota integra con caracter general
 		return round(lq1330 * lq558 / 100);
 	}
@@ -1074,9 +1073,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			double c00012 = roundKey(Mod2002023Key.CP0012);
 			double c00016 = roundKey(Mod2002023Key.CP0016);
 			
-			// FALTA - LAS ESPECIFICACIONES DE LA PAGINA 182 DEL DOC PADIS NO COINCIDEN CON LO QUE PONE EN LAS PAGINAS DE MAS ARRIBA DEL DOC PADIS
-			// POR AHORA PONGO LO QUE PONE EN LA PAGINAS DE MAS ARRIBA (CON RESPECTO AL CALCULO DE M1)
-			
 			double m1 = (c01330-c00778+c00813) * 0.15;
 
 			if (isChecked(C0071))
@@ -1422,7 +1418,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1898,
 			Mod2002023Key.BN1929,
 			Mod2002023Key.BN2191,
-//			Mod2002023Key.BN881,  // FALTA - EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
+//			Mod2002023Key.BN881,  // EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
 			Mod2002023Key.BN867,
 			Mod2002023Key.BN940,
 			Mod2002023Key.BN192,
