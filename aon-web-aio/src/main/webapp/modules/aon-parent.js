@@ -160,7 +160,18 @@ export class AonParent extends AonElement {
 	}
 
 	build() {
-		
+
+		let button1 = this.getElement("aonHeaderHelpButtonIconButton");
+		let button2 = this.getElement("aonHeaderConfigButtonIconButton");
+		let button3 = this.getElement("aonHeaderNotificationButtonIconButton");
+		let button4 = this.getElement("aonHeaderUserButtonIconButton");
+		let button5 = this.getElement("aonHeaderCompanyListButtonIconButton");
+		button1.style.color = "rgb(95, 99, 104)";
+		button2.style.color = "rgb(95, 99, 104)";
+		button3.style.color = "rgb(95, 99, 104)";
+		button4.style.color = "rgb(95, 99, 104)";
+		button5.style.color = "rgb(95, 99, 104)";
+	
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.appendChild(parentDiv);
@@ -259,7 +270,7 @@ export class AonParent extends AonElement {
 		});
 		
 		parentDiv.appendChild(welcomeDiv);
-		parentDiv.appendChild(companyDiv);
+		parentDiv.appendChild(companyDiv);		
 	}
 
 	loadMore() {
