@@ -134,9 +134,6 @@ public class CustomerController extends CustomerListController implements ICusto
 	
 	public void setSmartFilter(String smartFilter) {
 		this.smartFilter = smartFilter;
-	}
-	
-	public void setOnSmartFilter(boolean filter ) {
 		try {
 			clearCriteria();
 			if ( AonStringUtils.isNotBlank(smartFilter) ) {
@@ -150,6 +147,9 @@ public class CustomerController extends CustomerListController implements ICusto
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	public void setOnSmartFilter(boolean filter ) {
 	}
 
 	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
@@ -253,7 +253,11 @@ public class CustomerController extends CustomerListController implements ICusto
     	setShowAlumnData(true);
     }
     
-	public void onCustomerHistory(ActionEvent e){
+    public void onEditSearch(ValueChangeEvent event){
+    	super.onEditSearch(new ActionEvent(event.getComponent()));
+    }
+
+    public void onCustomerHistory(ActionEvent e){
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
