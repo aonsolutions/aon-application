@@ -4,12 +4,13 @@ import static com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType.NOT_WOR
 import static com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType.WORKING_DAY;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class CalendarDraft implements Serializable {
 	
+	
+	private static final long serialVersionUID = 1L;
 	
 	public static enum DayType {
 		WORKING_DAY,
@@ -23,7 +24,6 @@ public class CalendarDraft implements Serializable {
 		}
 	}
 
-	private List<HolidayDraft> holidayDrafts;
 	private DayType daysTypes [] = {
 			NOT_WORKING_DAY,
 			WORKING_DAY,
@@ -35,6 +35,7 @@ public class CalendarDraft implements Serializable {
 	};
 	
 	private Integer calendarHoliday;
+	private List<HolidayDraft> holidayDrafts;
 	
 	public DayType getDayType(int weekDay){
 		return daysTypes[weekDay];
@@ -55,9 +56,11 @@ public class CalendarDraft implements Serializable {
 	public void setHolidayDrafts(List<HolidayDraft> holidayDrafts) {
 		this.holidayDrafts = holidayDrafts;
 	}
+	
 	public Integer getCalendarHoliday() {
 		return calendarHoliday;
 	}
+	
 	public void setCalendarHoliday(Integer calendarHoliday) {
 		this.calendarHoliday = calendarHoliday;
 	}
