@@ -22,8 +22,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
 
     async connectedCallback() {
         this.clear();
-        await this.getAppParams(); // Esperar a que se resuelva getAppParams
-        this.comercialInitialize(); // Llamar a comercialInitialize después de obtener los parámetros
+        await this.getAppParams(); 
+        this.comercialInitialize();
         this.initialize();
         this.build();
         this.setTitle("Opciones fiscales");
@@ -45,7 +45,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 .filter(p => p.value)
                 .forEach(p => {
                     response = p.value;
-                    alert(response);
                     if (response == 0) this.isAlava = true;
                     if (response == 1) this.isBizk = true;
                     if (response == 2) this.isGipu = true;
@@ -59,11 +58,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
        
 
     comercialInitialize() {
-        alert("Álava "+ this.isAlava);
-        alert("Bizkaia "+ this.isBizk);
-        alert("Gipu "+ this.isGipu);
-        alert("Navarra "+this.isNavarra);
-        alert("AEAT "+this.isAEAT);
         if(this.isAlava == false && this.isBizk == false && this.isGipu == false && this.isNavarra == false && this.isAEAT == false)
             this.allFalse = true;
         else

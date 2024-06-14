@@ -494,30 +494,39 @@ export class AonNewMenu extends AonElement {
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
 		let header = this.getElement("aonHeaderWeb");
-		if(app.app == "applications"){
-			if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
-				div.style.color = "#5f6368";
-			else if(header.style.backgroundColor)
-				div.style.color = "white";
-			else 
-				div.style.color = "#5f6368";
-			div.addEventListener("mouseover", () => {
-				div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+		let welcome = this.getElement("aonCompanyTabFilter");
+		if(welcome && app.app == "applications"){
+			div.addEventListener("click", (event) => {
+				event.preventDefault(); 
+				event.stopPropagation();
 			});
-			div.addEventListener("mouseleave", () => {
-				div.style.backgroundColor = "transparent";
-			});
-		} else{
-			div.addEventListener('mouseover', () => {
-				div.style.backgroundColor = 'white';
-			});
-			div.addEventListener('mouseout', () => {
-				div.style.backgroundColor = 'transparent';
-			});
+		}else{
+			if(app.app == "applications"){
+				div.addEventListener('click', () =>{
+					rootPanel.style.backgroundColor = "transparent";
+				})
+				if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
+					div.style.color = "#5f6368";
+				else if(header.style.backgroundColor)
+					div.style.color = "white";
+				else 
+					div.style.color = "#5f6368";
+				div.addEventListener("mouseover", () => {
+					div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+				});
+				div.addEventListener("mouseleave", () => {
+					div.style.backgroundColor = "transparent";
+				});
+			} else{
+				div.addEventListener('mouseover', () => {
+					div.style.backgroundColor = 'white';
+				});
+				div.addEventListener('mouseout', () => {
+					div.style.backgroundColor = 'transparent';
+				});
+			}
 		}
-
 		
-
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
