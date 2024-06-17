@@ -300,7 +300,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingIssued.addEventListener(EVENT.MOUSEOVER, () => pendingIssued.style.backgroundColor = '#f1f1f1');
 		pendingIssued.addEventListener(EVENT.MOUSELEAVE, () => pendingIssued.style.backgroundColor = 'transparent');
 		pendingIssued.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.INBOX, type: 'emitida'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer'}
 		));
 
@@ -344,7 +344,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceived.addEventListener(EVENT.MOUSEOVER, () => pendingReceived.style.backgroundColor = '#f1f1f1');
 		pendingReceived.addEventListener(EVENT.MOUSELEAVE, () => pendingReceived.style.backgroundColor = 'transparent');
 		pendingReceived.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.INBOX, type: 'recibida'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'ne+issuer'}
 		));
 
@@ -387,7 +387,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingTicket.addEventListener(EVENT.MOUSEOVER, () => pendingTicket.style.backgroundColor = '#f1f1f1');
 		pendingTicket.addEventListener(EVENT.MOUSELEAVE, () => pendingTicket.style.backgroundColor = 'transparent');
 		pendingTicket.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+			{status: CONSTANT.INBOX, type: 'ticket'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['ticket'], companyActsLike:'ne+issuer'}
 		));
 
