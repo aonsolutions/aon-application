@@ -192,6 +192,7 @@ public class FiscalModelUtils {
 		p.add(a);
 		return p;
 	}
+	
 //	@Deprecated
 //	public static ImageResource getStatusImage(FiscalStatus status) {
 //		if (status == FiscalStatus.FINISHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
