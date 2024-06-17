@@ -138,6 +138,7 @@ export class AonRightPanel extends AonElement {
     }
 
     open(height,marginTop,boxShadow){
+        let welcome = this.getElement("aonCompanyTabFilter");
         this.getRightPanel().style.visibility = "visible";
         if(height) this.getRightPanel().style.height = height;
         else this.getRightPanel().style.height = "";
@@ -145,6 +146,8 @@ export class AonRightPanel extends AonElement {
         else this.getRightPanel().style.marginTop = "65px";
         if (boxShadow) this.getRightPanel().style.boxShadow = boxShadow;
         else this.getRightPanel().style.boxShadow = "";
+        if(welcome) this.getRightPanel().style.marginTop = "0px";
+        else this.getRightPanel().style.marginTop = "65px";
     }
 
     toogle() {

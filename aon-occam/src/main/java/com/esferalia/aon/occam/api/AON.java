@@ -1093,8 +1093,11 @@ public class AON {
 
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getCompanyStream(ctx, filter);
+			return getCompanyStream(ctx, filter);
 		}
+	}
+	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
+		return getRegistry().getCompanyStream(ctx, filter);
 	}
 	
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter, Integer page, Integer perPage){
@@ -1125,6 +1128,10 @@ public class AON {
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
 		return getCompanyStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Company());
+	}
+	public static Company getCompany(AONContext ctx, CompanyFilter filter){
+		return getCompanyStream(ctx, filter)
 				.findFirst().orElse(new Company());
 	}
 
@@ -7892,10 +7899,14 @@ public class AON {
 		
 	public static InvofoxConfiguration getInvofoxConfiguration(String domainName, Integer domainId, String login) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvofoxConfiguration(ctx);
+			return getInvofoxConfiguration(ctx);
 		}
 	}
 	
+	public static InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
+		return getFinance().getInvofoxConfiguration(ctx);
+	}
+
 	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, User user, InvofoxConfiguration config) {
 		return saveInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
 	}
