@@ -230,6 +230,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			return response.getDocument()
 					.map(doc -> InvofoxServlet.toInvoice(doc,companyDocument))
 					.map(invoice -> fillRegistry(aonContext, ocrInvoice, invoice))
+					.map(invoice -> fillReferenceCode(ocrInvoice, invoice))
 					.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 					.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
 					.map(invoice -> fillCategory(aonContext, invoice)).map(invoice -> fillActivity(aonContext, invoice))
@@ -531,11 +532,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		} catch (OCRUndefinedTypeException e) {
 
 		}
-		try {
-			OCRInvoiceBuilder.fillReferenceCode(ocrInvoice, invoice);
-		} catch (OCRZeroValueException | OCRBlankValueException e) {
-		}
-
+		
+		fillReferenceCode(ocrInvoice, invoice);
 		OCRInvoiceBuilder.fillBreakdown(ocrInvoice, invoice);
 		OCRInvoiceBuilder.fillWithHolding(ocrInvoice, invoice);
 		OCRInvoiceBuilder.fillDetails(ocrInvoice, invoice);
@@ -566,6 +564,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		}
 		return invoice;
 
+	}
+
+	private static Invoice fillReferenceCode(OCRInvoice ocrInvoice, Invoice invoice) {
+		try {
+			OCRInvoiceBuilder.fillReferenceCode(ocrInvoice, invoice);
+		} catch (OCRZeroValueException | OCRBlankValueException e) {
+		}
+		return invoice;
 	}
 
 	private static final JSONObject getFileJSON(OCRDocument ocrDocument) {
