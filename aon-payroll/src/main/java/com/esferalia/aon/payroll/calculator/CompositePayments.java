@@ -62,10 +62,14 @@ public class CompositePayments<T extends IContractPayment> extends
 
 		private Iterator<IContractPayment> nextImpl() {
 			while (iterator.hasNext()) {
-				T payment = iterator.next();
-				Iterator<IContractPayment> next = visit(payment);
-				if (next.hasNext()) {
-					return next;
+				try {
+					T payment = iterator.next();
+					Iterator<IContractPayment> next = visit(payment);
+					if (next.hasNext()) {
+						return next;
+					}
+				} catch ( IllegalArgumentException e) {
+					// Illegal start & end dates.
 				}
 			}
 			return EmptyIterator.EMPTY_ITERATOR;
