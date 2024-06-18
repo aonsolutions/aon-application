@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class DiaryImport extends ImportUtils {
@@ -351,7 +352,7 @@ public class DiaryImport extends ImportUtils {
  	}
  	
  	private boolean isContrapartida(String value) {
- 		return compare(IConstants.CONTRAPARTIDA, IConstants.CONTRAP);
+ 		return compare(value, IConstants.CONTRAPARTIDA, IConstants.CONTRAP);
  	}
  	
  	private boolean isContrapartidaDescription(String value) {
@@ -416,35 +417,12 @@ public class DiaryImport extends ImportUtils {
 			ae.getEntry().setPeriodStatus(ap.getStatus());
 			
 			for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
-				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
-				user.getLogin(), ae.getEntry().getDetails().get(i).getAccountCode());
-				if(acc == null) {
-					Occam occam = new Occam()
-									.setDomain(domain.getId())
-									.setDomainName(domain.getName())
-									.setUser(user.getLogin());
-					
-					Account account = new Account()
-							.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
-							.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
-							.setAlias("")
-							.setDomain(domain.getId())
-							.setActive(true);
-					
-					List<Account> lowLevels = ACCOUNTING.generateLowerLevels(occam, account, 1);
-					if (!lowLevels.isEmpty()) {
-						LinkedList<String> warnList = new LinkedList<>();
-						warnList.add("Se autogeneraron las siguientes cuentas:");
-						lowLevels.forEach(ll -> warnList.add(ll.getCode()));
-						error.setTextWarning(warnList);
-						error.setError(true);
-					}
-					
-					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
-				}
+				Account acc = ensureAccount(domain,user,error,ae,i,ae.getEntry().getDetails().get(i).getAccountCode());
 				ae.getEntry().getDetails().get(i).setAccount(acc.getId());
-				if(i > 0) {
-				//	ae.getEntry().getDetails().get(i-1).setBalancingAccount(acc.getId());
+				String balAccount = ae.getEntry().getDetails().get(i).getBalancingAccountCode();
+				if (AonStringUtils.isNotBlank( balAccount )) {
+					Account balAcc = ensureAccount(domain,user,error,ae,i,balAccount);
+					ae.getEntry().getDetails().get(i).setBalancingAccount(balAcc.getId());
 				}
 			}
 			if(ae.getEntry().getEntryType() == null) {
@@ -472,5 +450,34 @@ public class DiaryImport extends ImportUtils {
  		}
 		error.setLine(index);
 		return error;
+	}
+
+	private static Account ensureAccount(Domain domain, User user, Error error, AccountEntryImportClass ae, Integer i, String accountCode) {
+		Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), accountCode);
+		if(acc == null) {
+			Occam occam = new Occam()
+							.setDomain(domain.getId())
+							.setDomainName(domain.getName())
+							.setUser(user.getLogin());
+			
+			Account account = new Account()
+					.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
+					.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
+					.setAlias("")
+					.setDomain(domain.getId())
+					.setActive(true);
+			
+			List<Account> lowLevels = ACCOUNTING.generateLowerLevels(occam, account, 1);
+			if (!lowLevels.isEmpty()) {
+				LinkedList<String> warnList = new LinkedList<>();
+				warnList.add("Se autogeneraron las siguientes cuentas:");
+				lowLevels.forEach(ll -> warnList.add(ll.getCode()));
+				error.setTextWarning(warnList);
+				error.setError(true);
+			}
+			
+			acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
+		}
+		return acc;
 	}
 }

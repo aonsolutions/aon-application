@@ -8,7 +8,7 @@
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	</ui:insert>
 	
-	<aon:if test="#{!sessionScope['skipMenu']}" >
+	<aon:if test="#{!app.standAlone}" >
 		<ui:insert name="menu" >
 			<ui:include src="/facelet/homepage/menu.xhtml" />
 		</ui:insert>
