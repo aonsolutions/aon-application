@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
@@ -91,7 +92,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes[])
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes[], Integer year)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -1145,6 +1146,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateHolidayCalendar(String domain, int workplaceId, Integer holidayId, DayType[] daysTypes)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		

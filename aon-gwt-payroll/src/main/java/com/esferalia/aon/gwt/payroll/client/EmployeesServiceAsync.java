@@ -48,6 +48,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EmployeesServiceAsync extends AgreementServiceAsync, StatisticsServiceAsync,
 		CalendarServiceAsync, EmployeeEventsServiceAsync{
+	
 	void getEnterprise(String domain, String user, AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 

@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -797,6 +798,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void fillBasicCopy(String currentDomainName, Integer contractId, Integer contractType,
 					String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void updateHolidayCalendar(String currentDomainName, int workplaceId, Integer holidayId, DayType[] dayTypes,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

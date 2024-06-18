@@ -384,20 +384,15 @@ export class AonHeader extends AonElement {
 			logo.style.display = "block";
 			logo.style.filter = "none";
 
-			let button1 = this.getElement("aonHeaderHelpButtonIconButton");
-			let button2 = this.getElement("aonHeaderConfigButtonIconButton");
-			let button3 = this.getElement("aonHeaderNotificationButtonIconButton");
-			let button4 = this.getElement("aonHeaderUserButtonIconButton");
-			let button5 = this.getElement("aonHeaderCompanyListButtonIconButton");
-			button1.style.color = "rgb(95, 99, 104)";
-			button2.style.color = "rgb(95, 99, 104)";
-			button3.style.color = "rgb(95, 99, 104)";
-			button4.style.color = "rgb(95, 99, 104)";
-			button5.style.color = "rgb(95, 99, 104)";
-
+			let rootPanel = this.getElement("rootPanel");
+			rootPanel.style.backgroundColor = "transparent";
 			let enterprise = this.getElement("aonHeaderCompanyName");
 			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
+			appss.addEventListener("click", (event) => {
+				event.preventDefault(); 
+				event.stopPropagation();
+			});
 			appss.style.color = "rgb(95, 99, 104)";
 
 		});
@@ -718,6 +713,7 @@ export class AonHeader extends AonElement {
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
 				span.style.minHeight = '21px';
+				span.style.color = "white";
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }

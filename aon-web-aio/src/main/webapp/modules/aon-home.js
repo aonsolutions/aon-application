@@ -98,7 +98,6 @@ export class AonHome extends AonElement {
 		rootPanel.className = "rootPanel";
 		rootPanel.style.overflowY = "auto";
 		this.appendChild(rootPanel);
-
 		this.appendChild(aonMenu);
 
 		let rightPanel = new AonRightPanel();

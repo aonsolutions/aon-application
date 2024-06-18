@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.Loader;
@@ -43,7 +42,7 @@ public class ContractFill {
 			Date comunicationDate, 
 			Map<String, String> contractOtherInfo, 
 			Map<String, String> contractFillInfo, 
-			TreeMap<String, String> contractClauses) throws IllegalArgumentException {
+			HashMap<String, String> contractClauses) throws IllegalArgumentException {
 		
 		if(null == contractType)
 			throw new IllegalArgumentException("El tipo de contrato no esta definido.");
@@ -68,7 +67,7 @@ public class ContractFill {
 			Date comunicationDate,
 			Map<String, String> contractOtherInfo, 
 			Map<String, String> contractFillInfo, 
-			TreeMap<String, String> contractClauses) throws IllegalArgumentException {
+			HashMap<String, String> contractClauses) throws IllegalArgumentException {
 		
 		if(null == contractType)
 			throw new IllegalArgumentException("El tipo de contrato no esta definido.");
@@ -224,7 +223,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -310,7 +309,7 @@ public class ContractFill {
 		}
 	}
 	
-	private static byte[] fillIndefiniteCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillIndefiniteCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -463,7 +462,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillFormationContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillFormationContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -549,7 +548,7 @@ public class ContractFill {
 		}
 	}
 	
-	private static byte[] fillFormationCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillFormationCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -638,7 +637,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -725,7 +724,7 @@ public class ContractFill {
 		}
 	}
 	
-	private static byte[] fillPracticeCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillPracticeCopyBasic(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -815,7 +814,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillTemporalContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillTemporalContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -900,7 +899,7 @@ public class ContractFill {
 		}
 	}
 	
-	private static byte[] fillTemporalCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
+	private static byte[] fillTemporalCopyBasic(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, HashMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -1079,7 +1078,7 @@ public class ContractFill {
 	    }
 	}
 	
-	public static void setAditionalClauses(PDField field, TreeMap<String, String> contractClauses) throws IOException {
+	public static void setAditionalClauses(PDField field, HashMap<String, String> contractClauses) throws IOException {
 	    String clauses = "\n";
 		for(Entry<String, String> entry : contractClauses.entrySet()) {
 			System.out.println("setAditionalClauses  --> " + entry.getKey());
