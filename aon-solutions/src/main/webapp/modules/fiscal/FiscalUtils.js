@@ -35,8 +35,8 @@ const getModelNew = (model)=> {
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
   let color = "";
 
-  const statusHtml = createStatus(model.status);
-  
+  const statusHtml = createStatusDot(model.status);
+    
   if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
     color = "fin";
   } else if("FINISHED" === model.status) {
@@ -47,6 +47,8 @@ const getModelNew = (model)=> {
   if(newModel === "111" && model.administration === "ALAVA") {
     modelText = "110";
   } 
+
+  let hacienda = getModelTerritory(model.administration);
 
   const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
   
@@ -59,51 +61,88 @@ const getModelNew = (model)=> {
     statusText,
     statusHtml,
     lettersHtml,
-    newModel
+    newModel,
+    hacienda
   }
 
 }
 
-const createStatus = (modeStatus) => {
-  let colorStatus;
+const getModelTerritory = (territory) => {
+  switch (territory) {
+    case "COMMON_TERRITORY":
+      return "AEAT";
+    default:
+      return territory.charAt(0) + territory.slice(1).toLowerCase();
+  }
+}
 
-  switch (modeStatus) {
+const createStatusDot = (status) => {
+  let statusPanel = document.createElement(TAG.DIV);
+  statusPanel.style.display = "flex";
+  statusPanel.style.gap = ".5rem";
+  statusPanel.style.alignItems = "center";
+  statusPanel.style.fontWeight = "bold";
+  statusPanel.style.maxWidth = "6rem";
+  statusPanel.title = TAX_ENUMS.TAX_STATUS[status];
+
+  let span = document.createElement(TAG.DIV);
+  span.style.width = "10px";
+  span.style.height = "10px";
+  span.style.borderRadius = "50%";
+
+  switch (status) {
     case "PENDING":
-      colorStatus = "lightgray";
+      span.title = "Pendiente";
+      span.style.backgroundColor = "lightgray";
       break;
     case "FINISHED":
-      colorStatus = "rgb(227, 255, 171)";
+      span.title = "Finalizado";
+      span.style.backgroundColor = "rgb(227, 255, 171)";
       break;
-    case "BATCHED":      
-      colorStatus = "black";
+    case "BATCHED":
+      span.title = "En Lote";
+      span.style.backgroundColor = "black";
       break;
     case "BLOCKED":
-      colorStatus = "black";
+      span.title = "Bloqueado";
+      span.style.backgroundColor = "black";
       break;
     case "SENT":
-      colorStatus = "transparent";
+      span.title = "Presentado";
+      span.style.backgroundColor = "rgb(62, 201, 70)";
       break;
     case "MISSING":
-      colorStatus = "black";
+      span.title = "Desconocido";
+      span.style.backgroundColor = "black";
       break;
     case "CUSTOMER_CHECK":
-      colorStatus = "lightyellow";
+      span.title = "Envio a cliente";
+      span.style.backgroundColor = "lightyellow";
       break;
     case "CUSTOMER_ACCEPTED":
-      colorStatus = "rgb(233, 255, 219)";
+      span.title = "Aceptado por cliente";
+      span.style.backgroundColor = "rgb(233, 255, 219)";
       break;
     case "CUSTOMER_REJECTED":
-      //span.style.backgroundColor = "darkred";
-      colorStatus = "darkred";
+      span.title = "Rechazado por cliente";
+      span.style.backgroundColor = "darkred";
       break;
     default:
-      //span.style.backgroundColor = "black";
-      colorStatus = "black";
+      span.title = "";
+      span.style.backgroundColor = "black";
       break;
   }
 
-  return /*html*/`<div style="padding: 0.5rem;border-radius: 0.2rem;background-color: ${colorStatus};font-weight: bold;max-width: 6rem;text-align: center;" title="${TAX_ENUMS.TAX_STATUS[modeStatus]}">${TAX_ENUMS.TAX_STATUS[modeStatus]}</div>`;
+  let description = document.createElement(TAG.SPAN);
+  description.innerText = TAX_ENUMS.TAX_STATUS[status];
 
+  statusPanel.appendChild(span);
+  statusPanel.appendChild(description);
+
+  let elementHTML = document.createElement(TAG.DIV);
+  elementHTML.appendChild(statusPanel);
+
+  return elementHTML.innerHTML;
 }
 
 const groupBy = (list, keyGetter) =>{

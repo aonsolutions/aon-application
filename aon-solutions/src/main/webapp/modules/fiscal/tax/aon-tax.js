@@ -114,6 +114,7 @@ export class AonTax extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "6%");
       aonTable.addColumn("Modelo", "", "modelText", "20%");
+      aonTable.addColumn("Hacienda", "", "hacienda", "10%");
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
       if(LS.isNewTheme()) {
@@ -466,7 +467,7 @@ export class AonTax extends AonElement {
     if(!["FINISHED", "SENT"].includes(res.status))
       return ;
 
-    res.icon = MATERIAL_ICONS.PRINT;
+    res.icon = MATERIAL_ICONS.PDF;
     res.icon_color = "grey";
     res.fn = () => this.getPdf(res);
   }
