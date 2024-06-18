@@ -216,6 +216,7 @@ export const PHONE = 'phone';
 export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';
 export const PRECISION_MANUFACTURING = 'precision_manufacturing';
 export const PRINT = 'print';
+export const PDF = 'picture_as_pdf';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
 export const PEOPLE = 'people';

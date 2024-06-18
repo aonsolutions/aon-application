@@ -409,7 +409,6 @@ public abstract class AgreementPreview extends Composite {
 
 	// Toolbar
 
-	
 	private AonToolbarSmallButton newLevelBtn;
 	private AonToolbarSmallButton newDateBtn;
 	private AonToolbarSmallButton deleteDateBtn;
@@ -474,7 +473,7 @@ public abstract class AgreementPreview extends Composite {
 		if(!agreement.getSortedDates().isEmpty())
 			startDate = agreement.getSortedDates().stream().findFirst().get();
 		
-		AgreementPaymentEditor paymentDialog = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(),startDate) {
+		AgreementPaymentEditor paymentDialog = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate) {
 			
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment,
@@ -1790,6 +1789,7 @@ public abstract class AgreementPreview extends Composite {
 					setSelectedValueLB(periodicityLB, payDescription);
 					periodicityLB.addChangeHandler(e -> {
 						checkPaymentExtra(payment, periodicityLB.getSelectedValue());
+						
 						setAgreementPreview(agreement);
 						setHasChange(true);
 					});
@@ -2023,6 +2023,7 @@ public abstract class AgreementPreview extends Composite {
 				newExtra.setEndDate(getAnualEndDate(issueDate));
 
 				agreement.addExtra(newExtra);
+
 				payment.setModify(true);
 
 			} else {
@@ -2033,6 +2034,14 @@ public abstract class AgreementPreview extends Composite {
 				extra.setEndDate(getAnualEndDate(issueDate));
 
 				payment.setModify(true);
+			}
+			
+			if (AonStringUtils.containsIgnoreCase(issueDate, "03")) {
+				payment.setMonth((short) 2);
+			} else if (AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+				payment.setMonth(AonStringUtils.containsIgnoreCase(issueDate, "6") ? (short) 5 : (short) 6);
+			} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+				payment.setMonth((short) 11);
 			}
 
 			setAgreementPreview(agreement);
@@ -2109,52 +2118,146 @@ public abstract class AgreementPreview extends Composite {
 		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
 
 		if (null != extra) {
-			if (AonStringUtils.equals(periodicity, "Prorrat."))
+			if (AonStringUtils.equals(periodicity, "Prorrat.")) {
 				extra.setDeleted(true);
-			else if (AonStringUtils.equals(periodicity, "Anual"))
-				checkAnualExtra(extra);
+				payment.setMonth(null);
+				
+				checkProrratPair(extra);
+			} else if (AonStringUtils.equals(periodicity, "Anual"))
+				checkAnualExtra(payment, extra);
 			else if (AonStringUtils.equals(periodicity, "Semestral"))
-				checkSemestralExtra(extra);
+				checkSemestralExtra(payment, extra);
 
 			payment.setModify(true);
 		}
 	}
 
-	private void checkAnualExtra(AgreementExtra extra) {
+	private void checkAnualExtra(Payment payment, AgreementExtra extra) {
 		extra.setDeleted(false);
 		String issueDate = extra.getIssueDate();
 		if (AonStringUtils.isNotBlank(issueDate)) {
 			if (AonStringUtils.containsIgnoreCase(issueDate, "03")) {
 				extra.setStartDate("01/01 -1");
 				extra.setEndDate("31/12 -1");
+				
+				payment.setMonth((short) 2);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "6")
 					|| AonStringUtils.containsIgnoreCase(issueDate, "7")) {
 				extra.setStartDate("01/07 -1");
 				extra.setEndDate("30/06");
+				
+				payment.setMonth(AonStringUtils.containsIgnoreCase(issueDate, "6") ? (short) 5 : (short) 6);
+				
+				checkAnualPair(extra);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
 				extra.setStartDate("01/01");
 				extra.setEndDate("31/12");
+				
+				payment.setMonth((short) 11);
+				
+				checkAnualPair(extra);
 			}
 		}
 	}
 
-	private void checkSemestralExtra(AgreementExtra extra) {
+	private void checkSemestralExtra(Payment payment, AgreementExtra extra) {
 		extra.setDeleted(false);
 		String issueDate = extra.getIssueDate();
 		if (AonStringUtils.isNotBlank(issueDate)) {
 			if (AonStringUtils.containsIgnoreCase(issueDate, "03")) {
 				extra.setStartDate("01/07 -1");
 				extra.setEndDate("31/12 -1");
+				
+				payment.setMonth((short) 2);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "6")
 					|| AonStringUtils.containsIgnoreCase(issueDate, "7")) {
 				extra.setStartDate("01/01");
 				extra.setEndDate("30/06");
+				
+				payment.setMonth(AonStringUtils.containsIgnoreCase(issueDate, "6") ? (short) 5 : (short) 6);
+				
+				checkSemestralPair(extra);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
 				extra.setStartDate("01/07");
 				extra.setEndDate("31/12");
+				
+				payment.setMonth((short) 11);
+				
+				checkSemestralPair(extra);
 			}
 		}
 
+	}
+
+	private void checkProrratPair(AgreementExtra extra) {
+		// Find extra pair
+		Optional<AgreementExtra> extraPair = getExtraPair(extra);
+		if(extraPair.isPresent()) { 
+			extraPair.get().setDeleted(true);
+			
+			Payment extraPairPayment = agreement.getPaymentById(extraPair.get().getAgreementPayment());
+			extraPairPayment.setMonth(null);
+			extraPairPayment.setModify(true);
+		}
+	}
+
+	private void checkAnualPair(AgreementExtra extra) {
+		// Find extra pair
+		Optional<AgreementExtra> extraPair = getExtraPair(extra);
+		
+		if(extraPair.isPresent()) {
+			Payment extraPairPayment = agreement.getPaymentById(extraPair.get().getAgreementPayment());
+			
+			if (AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "6")
+					|| AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "7")) {
+				extraPair.get().setStartDate("01/07 -1");
+				extraPair.get().setEndDate("30/06");
+				
+				extraPairPayment.setMonth(AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "6") ? (short) 5 : (short) 6);
+			} else if (AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "12")) {
+				extraPair.get().setStartDate("01/01");
+				extraPair.get().setEndDate("31/12");
+				
+				extraPairPayment.setMonth((short) 11);
+			}
+			
+			extraPairPayment.setModify(true);
+		}
+	}
+
+	private void checkSemestralPair(AgreementExtra extra) {
+		// Find extra pair
+		Optional<AgreementExtra> extraPair = getExtraPair(extra);
+		
+		if(extraPair.isPresent()) {
+			Payment extraPairPayment = agreement.getPaymentById(extraPair.get().getAgreementPayment());
+			
+			if (AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "6")
+					|| AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "7")) {
+				extraPair.get().setStartDate("01/01");
+				extraPair.get().setEndDate("30/06");
+				
+				extraPairPayment.setMonth(AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "6") ? (short) 5 : (short) 6);
+			} else if (AonStringUtils.containsIgnoreCase(extraPair.get().getIssueDate(), "12")) {
+				extraPair.get().setStartDate("01/07");
+				extraPair.get().setEndDate("31/12");
+				
+				extraPairPayment.setMonth((short) 11);
+			}
+			
+			extraPairPayment.setModify(true);
+		}
+	}
+
+	private Optional<AgreementExtra> getExtraPair(AgreementExtra extra) {
+		String issueDate = extra.getIssueDate();
+		if (AonStringUtils.containsIgnoreCase(issueDate, "6")
+				|| AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+			return agreement.getExtras().stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "12")).findFirst();
+		} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+			return agreement.getExtras().stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "7")).findFirst();
+		}
+		return Optional.of(null);
 	}
 
 	private String getPayLongDescription(Payment payment) {
@@ -2168,11 +2271,6 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getExtraPeriodLongTitle(AgreementExtra extra) {
-//		if (AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "03"))
-//			return "Anual";
-//		if (AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")
-//				&& !AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1"))
-//			return "Anual";
 
 		try {
 			String startDate = extra.getStartDate();
@@ -2182,8 +2280,9 @@ public abstract class AgreementPreview extends Composite {
 			endDate = AonStringUtils.containsIgnoreCase(endDate, "-1") ? endDate.split(" ")[0] : endDate;
 			
 			try {
-				Date start = new Date(AonStringUtils.containsIgnoreCase(startDate, "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(startDate.split("/")[1]) - 1, Integer.parseInt(startDate.split("/")[0]));
-				Date end = new Date(AonStringUtils.containsIgnoreCase(endDate, "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(endDate.split("/")[1]) - 1, Integer.parseInt(endDate.split("/")[0]));
+				Date start = new Date(AonStringUtils.containsIgnoreCase( extra.getStartDate(), "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(startDate.split("/")[1]) - 1, Integer.parseInt(startDate.split("/")[0]));
+				Date end = new Date(AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1") ? (new Date().getYear() - 1)  : new Date().getYear(), Integer.parseInt(endDate.split("/")[1]) - 1, Integer.parseInt(endDate.split("/")[0]));
+				
 				int monthsBetween = monthsBetween(start, end);
 				
 				switch (monthsBetween) {
