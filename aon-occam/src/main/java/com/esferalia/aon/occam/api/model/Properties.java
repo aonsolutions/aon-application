@@ -1344,6 +1344,7 @@ public interface Properties {
 	
 	public interface ContractExtendedDataProperties extends ContractProperties{
 		Property<String> getPersonFullNameProperty();
+		Property <Byte> getSalaryType();
 	}
 	
 	public interface DocProperties{

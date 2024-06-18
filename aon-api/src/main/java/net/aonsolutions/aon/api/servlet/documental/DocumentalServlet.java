@@ -1,7 +1,11 @@
 package net.aonsolutions.aon.api.servlet.documental;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
@@ -32,6 +36,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.ZipUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiDocumentalServlet", urlPatterns = { "/ms/api/documental/*" })
@@ -51,6 +56,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				break;
 			case "/files":
 				response(req, resp, getFiles(api));
+				break;
+			case "/count":
+				response(req, resp, getFilesCount(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -109,7 +117,6 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	
 	private JSONArray getFiles(AonApiData api) {
 		JSONArray array = new JSONArray();
-		
 		Integer page = JsonUtils.getInteger(api.getData(), com.esferalia.aon.occam.api.model.IJsonNames.PAGE);
 		Integer perPage = JsonUtils.getInteger(api.getData(), "per_page");
 		Options options = new Options()
@@ -122,6 +129,38 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			array.put(attachToJSON(a));
 		});
 		return array;
+	}
+	
+	private long getFilesCount(AonApiData api) {
+		return AON.getDocumentalRegistryAttachCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> attachFilter(api, f),AttachType.REGISTRY, false);
+	}
+	
+	private byte[] getFilesWithCompression(AonApiData api) {
+	    // Obtener archivos
+	    ArrayList<File> fileList = new ArrayList<>();
+	    Integer page = JsonUtils.getInteger(api.getData(), com.esferalia.aon.occam.api.model.IJsonNames.PAGE);
+	    Integer perPage = JsonUtils.getInteger(api.getData(), "per_page");
+	    Options options = new Options().setPage(page).setPerPage(perPage);
+
+	    // Obtener archivos adjuntos y agregarlos a la lista de archivos
+	    AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+	            f -> attachFilter(api, f), AttachType.REGISTRY, false, options)
+	            .forEach(a -> {
+	                // Aquí asumo que attachToFiles(a) convierte el objeto adjunto a un archivo
+	                fileList.addAll((Collection<? extends File>) attachToJSON(a));
+	            });
+
+	    // Comprimir archivos
+	    byte[] compressedFiles = null;
+	    try {
+	        // Comprimir archivos en un array de bytes
+	        compressedFiles = ZipUtils.compress(fileList.toArray(new File[0]));
+	    } catch (IOException e) {
+	        e.printStackTrace(); // Manejo de errores: puedes ajustarlo según tus necesidades
+	    }
+
+	    return compressedFiles;
 	}
     
 	private Filter attachFilter(AonApiData api, AttachProperties f) {

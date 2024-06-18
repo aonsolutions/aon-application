@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -176,6 +178,44 @@ public class PAYROLL {
 				ctx.close();
 			}
 		}
+	}
+	
+	public static long getContractCount(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getContractCount(ctx, filter);
+		}finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+
+	}
+	
+	public static List<AuxSalaryInfo> getEmployeeSalary(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getEmployeeSalary(ctx, filter, page, perPage);
+		}finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
+	public static long getEmployeeSalaryCount(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getEmployeeSalaryCount(ctx, filter);
+		}finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+
 	}
 	
 	public static LinkedList<Contract> getContractList(String domainName, Integer domainId, String login, ContractFilter filter) {

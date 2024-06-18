@@ -3119,6 +3119,20 @@ public class AON {
 		}
 	}
 	
+	public static long getDocumentalRegistryAttachCount(String domainName, Integer domainId, String login, AttachFilter filter,AttachType attachType, Boolean withData) {
+		long result = 0;
+		try {
+			CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login);
+			if (attachType.equals(AttachType.REGISTRY)) {
+				result =  getAttachment().getDocumentalRegistryAttachCount(ctx, filter, withData);
+			}
+		} catch (Exception e) {
+			return 0;
+		}
+		return result;
+		
+	}
+	
 	public static void setAttach(String domainName, Integer domainId, String login, byte[] data, Integer attachId, AttachType attachType) {
 		CloseableAONContext ctx = null;
 		try {
