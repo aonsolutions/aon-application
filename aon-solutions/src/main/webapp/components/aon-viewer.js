@@ -59,20 +59,39 @@ export class AonViewer extends AonElement {
 		iframeCanvas.style.height = '100%';
 		iframeCanvas.style.border = 'none';
 		this.appendChild(iframeCanvas);
-
-		let divCanvas = this.createIFrameElement(TAG.DIV);
-		divCanvas.id = this.AON_CANVAS_DIV;
-		divCanvas.style.width = '100%';
-		this.getIFrameBody().appendChild(divCanvas);
-
-
-		if (this.type && this.type.includes('pdf')) {
-			this.printPdf();
-		} else if (this.type && this.type.includes('image')) {
-			this.printImage();
-		} else if (this.type) {
-			this.notSupport(this.type);
+		
+		iframeCanvas.onload = () => {
+				let divCanvas = this.createIFrameElement(TAG.DIV);
+				divCanvas.id = this.AON_CANVAS_DIV;
+				divCanvas.style.width = '100%';
+				this.getIFrameBody().appendChild(divCanvas);
+				if (this.type && this.type.includes('pdf')) {
+					this.printPdf();
+				} else if (this.type && this.type.includes('image')) {
+					this.printImage();
+				} else if (this.type) {
+					this.notSupport(this.type);
+				}
+    	}
+		try {
+			let divCanvas = this.createIFrameElement(TAG.DIV);
+			divCanvas.id = this.AON_CANVAS_DIV;
+			divCanvas.style.width = '100%';
+			this.getIFrameBody().appendChild(divCanvas);
+			if (this.type && this.type.includes('pdf')) {
+				this.printPdf();
+			} else if (this.type && this.type.includes('image')) {
+				this.printImage();
+			} else if (this.type) {
+				this.notSupport(this.type);
+			}
+		} catch ( err ) {
+			console.log(err);			
 		}
+		
+
+		
+
 
 		let div = this.createElement(TAG.DIV);
 		div.id = this.AON_VIEWER_DIV;
@@ -294,7 +313,6 @@ export class AonViewer extends AonElement {
 	
 	printPdf(zoom) {
 
-
 		this.getIFrameDocument().querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
 		this.getIFrameDocument().querySelectorAll(`${TAG.DIV}.${CSS.PDFJS_TEXT_LAYER}`).forEach((item, i) => item.remove());
 
@@ -362,11 +380,7 @@ export class AonViewer extends AonElement {
 	 					
 	 					div.style.setProperty("--scale-factor", viewport.scale);
 
-						const context = canvas.getContext('2d',  
-						{ 
-							alpha: false, 
-							colorSpace: "display-p3", 
-						});
+						const context = canvas.getContext('2d');
 						canvas.height = viewport.height;
 						canvas.width = viewport.width;
 						
@@ -390,16 +404,20 @@ export class AonViewer extends AonElement {
 							viewport: viewport
 						};
 						const renderTask = page.render(renderContext);
-						renderTask.promise.then( ()=> {
+						renderTask.promise
+						.then( ()=> {
 							console.log('Page rendered');
-						});
+						})
+						.catch( err => console.log('Error rendering page: ' + err ))
+						;
 						
 						this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
 							// clean viewer implicit styles.
 							console.log('Clean viewer implicit styles');
 							document.body.style.setProperty('background-color', 'transparent');
 							
-							page.getTextContent().then((textContent) => {
+							page.getTextContent()
+							.then((textContent) => {
 								const textLayer = new pdfjsLib.TextLayer({
 									viewport : viewport ,
 									container : textLayerDiv,
@@ -414,7 +432,9 @@ export class AonViewer extends AonElement {
 										page: pageNumber
 									}
 								}));
-							});
+							})
+							.catch( err => console.log('Error rendering text layer : ' + err ))
+							;
 						});
 			
 					});
