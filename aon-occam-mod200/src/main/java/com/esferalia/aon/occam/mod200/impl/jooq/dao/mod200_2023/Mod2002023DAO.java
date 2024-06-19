@@ -166,7 +166,28 @@ public class Mod2002023DAO  {
 					.setName(reg.getName())
 					.setProvince(reg.getProvince())
 					.setCountry(reg.getCountry())
-					// FALTA - RESTO DE CAMPOS
+					.setEntityType(reg.getRepresentative())		
+					.setImputationCriteria(reg.getPercent().intValue())										
+					.setC01279(reg.getNominalValue())		
+					.setC01455(reg.getBookValue())		
+					.setC01456(reg.getIncomes())		    
+					.setC01458(reg.getResult())	
+					.setC01459(reg.getOtherAmounts())		    
+					.setC01460(reg.getReserve())						
+					.setC01461(reg.getCapital())							
+					.setC01467(reg.getAValue())				
+					.setC01468(reg.getBValue())			
+					.setC01523(reg.getCValue())			
+					.setC01601(reg.getCcValue())
+					.setC01638(reg.getDValue())		
+					.setC01639(reg.getDdValue())		
+					.setC01640(reg.getEValue())
+					.setC01743(reg.getUValue())
+					.setC01909(reg.getVValue())
+					.setC01910(reg.getWValue())
+					.setC01911(reg.getXValue())
+					.setC01912(reg.getYValue())
+					.setC01934(reg.getZValue())					
 					))
 		;
 		
@@ -327,6 +348,7 @@ public class Mod2002023DAO  {
 			 .set(FS_MODEL200.CREATION_USER, mod200.getCreationUser())
 			 .set(FS_MODEL200.CREATION_DATE, AonDateUtils.toTimestamp(mod200.getCreationDate()))
 			 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
+			 .set(FS_MODEL200.NRS_ANEXOVI, mod200.getNrsAnexoVI())
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -582,7 +604,29 @@ public class Mod2002023DAO  {
 				detail.setName(ute.getName());
 				detail.setProvince((byte) ute.getProvince());
 				detail.setCountry(ute.getCountry());
-				// FALTA - RESTO DE CAMPOS				
+				detail.setRepresentative((byte) ute.getEntityType());    
+				detail.setPercent((double) ute.getImputationCriteria()); 
+				detail.setNominalValue(ute.getC01279());
+				detail.setBookValue(ute.getC01455());
+				detail.setIncomes(ute.getC01456());
+				detail.setResult(ute.getC01458());
+				detail.setOtherAmounts(ute.getC01459());
+				detail.setReserve(ute.getC01460());
+				detail.setCapital(ute.getC01461());
+				detail.setAValue(ute.getC01467());
+				detail.setBValue(ute.getC01468());
+				detail.setCValue(ute.getC01523());
+				detail.setCcValue(ute.getC01601());
+				detail.setDValue(ute.getC01638());
+				detail.setDdValue(ute.getC01639());
+				detail.setEValue(ute.getC01640());
+				detail.setUValue(ute.getC01743());
+				detail.setVValue(ute.getC01909());
+				detail.setWValue(ute.getC01910());
+				detail.setXValue(ute.getC01911());
+				detail.setYValue(ute.getC01912());
+				detail.setZValue(ute.getC01934());
+
 				list.add(detail);
 			}
 		}
@@ -683,6 +727,7 @@ public class Mod2002023DAO  {
 		 .set(FS_MODEL200.MODIFICATION_USER, mod200.getModificationUser())
 		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))
 		 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
+		 .set(FS_MODEL200.NRS_ANEXOVI, mod200.getNrsAnexoVI())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -827,6 +872,7 @@ public class Mod2002023DAO  {
 		mod200.setModificationUser(record.getModificationUser());
 		mod200.setModificationDate(record.getModificationDate());
 	    mod200.setFsModel(record.getFsModel());
+	    mod200.setNrsAnexoVI(record.getNrsAnexovi());
 		return mod200;
 	}
 	
@@ -925,10 +971,6 @@ public class Mod2002023DAO  {
 	
 	public static Mod2002023 initializeNewMod200(AONContext ctx, Mod2002023 mod200) {
 		
-		// FALTA - CUANDO SE INICIALIZA EL MODELO Y SE LEEN LOS DATOS DEL EJERCICIO ANTERIOR, ESTA COGIENDO EL PRIMERO QUE ENCUENTRA, Y 
-		// REALMENTE DEBERIA COGER EL ULTIMO PRESENTADO O ALGO ASI. ADEMAS, SI YA EXISTE OTRO PARA EL 2023, SE DEBERIA HACER UNA COMPLEMENTARIA
-		// Y COPIAR TODOS LOS DATOS DEL MODELO ANTERIOR DEL 2023
-		// ESTO SE CAMBIA PARA QUE COJA EL ULTIMO PRESENTADO DEL EJERCICIO 2022 (POR SI EN EL EJERCICIO 2022 SE PRESENTARON COMPLEMENTARIAS DEL MODELO)
 		//Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
 		Mod2002022 old = Mod2002022DAO.getLastModel2022(ctx);
 		if (old != null && old.getId() != null) { 
@@ -1020,10 +1062,16 @@ public class Mod2002023DAO  {
 				mod200.getEstablishments().clear(); 
 			}
 			
-			// Agrupaciones de interés económico y UTES - Relación de Socios
-			// Dejarlo vacio si no se ha marcado el carácter 00013 o 00014
+			// Agrupaciones de interés económico y UTES - Relación de Partícipes (apartado C)
+			// Dejarlo vacio si no se ha marcado el carácter 00013, 00085 o 00014
 			if (mod200.isNotChecked(Mod2002023Key.C0013) && mod200.isNotChecked(Mod2002023Key.C0085) && mod200.isNotChecked(Mod2002023Key.C0014)) {
-				mod200.getUteParticipations().clear(); 
+				mod200.getUteParticipations().clear();				
+			}
+			
+			// Agrupaciones de interés económico y UTES - Partícipes
+			// Dejarlo vacio si no se ha marcado el carácter 00089
+			if (mod200.isNotChecked(Mod2002023Key.C0089)) {				
+				mod200.getUteParticipationsBis().clear();
 			}
 			
 			// Volumen de operaciones: Si no es cooperativa y estaba marcado el 3, ponerle el 2 (este año solo hay 2 opciones, excepto cooperativas)			

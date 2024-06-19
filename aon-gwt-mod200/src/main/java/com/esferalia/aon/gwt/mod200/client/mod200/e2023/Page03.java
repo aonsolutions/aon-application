@@ -107,6 +107,7 @@ public class Page03 extends PageAbs {
 			deleteButton.addClickHandler(event -> {
 				callback.getMod200Object().getMod200().getParticipationsOut().remove(idx);
 				paint();
+				calculate();
 				callback.markAsDirty();
 			});
 			otherInputs.add(deleteButton);

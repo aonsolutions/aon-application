@@ -2141,9 +2141,14 @@ public class Mod2002023Writer {
 				addPage = ( mod200.isChecked(Mod2002023Key.C0086) || mod200.isCooperativa() );
 			}
 
-			// Página 24. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013, 085 o 014 marcados
-			if (this == Pages2023.PAG24 || this == Pages2023.PAG24B) { 
+			// Página 24. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013, 085, 014 marcados
+			if (this == Pages2023.PAG24) { 
 				addPage = (mod200.isChecked(Mod2002023Key.C0013) || mod200.isChecked(Mod2002023Key.C0085) || mod200.isChecked(Mod2002023Key.C0014));
+			}
+			
+			// Página 24 BIS. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013, 085, 014, 089 marcados
+			if (this == Pages2023.PAG24B) { 
+				addPage = (mod200.isChecked(Mod2002023Key.C0013) || mod200.isChecked(Mod2002023Key.C0085) || mod200.isChecked(Mod2002023Key.C0014) || mod200.isChecked(Mod2002023Key.C0089));
 			}
 
 			// Página 26. Tributación Conjunta. Caracter 028 marcado

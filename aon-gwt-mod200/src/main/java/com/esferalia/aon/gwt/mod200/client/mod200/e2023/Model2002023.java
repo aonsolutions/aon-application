@@ -657,7 +657,7 @@ public class Model2002023 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.deducibleLimitation()));
 		linkContainer.add(new WestFocusPanel(18,"R\u00E9gimen especial Canarias, R\u00E9gimen especial Illes Balears"));
 		linkContainer.add(new WestFocusPanel(19,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
-		linkContainer.add(new WestFocusPanel(20,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
+		linkContainer.add(new WestFocusPanel(20,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial), Part\u00EDcipes de AIE y UTES"));
 		linkContainer.add(new WestFocusPanel(21,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
 		linkContainer.add(new WestFocusPanel(22,AON.MSG.idDocument()));		
 

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -232,16 +233,16 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		percent = new AonDoubleBox();
 		percent.setMaxLength(6);
-		percent.addValueChangeHandler(event -> setModified(true));
+		percent.addValueChangeHandler(event -> doubleValueChanged(percent));
 		
 		nominalValue = new AonDoubleBox();
-		nominalValue.addValueChangeHandler(event -> setModified(true));
+		nominalValue.addValueChangeHandler(event -> doubleValueChanged(nominalValue));
 		
 		bookValue = new AonDoubleBox();
-		bookValue.addValueChangeHandler(event -> setModified(true));
+		bookValue.addValueChangeHandler(event -> doubleValueChanged(bookValue));
 		
 		incomes = new AonDoubleBox();
-		incomes.addValueChangeHandler(event -> setModified(true));		
+		incomes.addValueChangeHandler(event -> doubleValueChanged(incomes));		
 		
 		addRow(tab2, AON.MSG.partMsg4(), percent);
 		addRow(tab2, Mod2002023Key.P1501.getDescription(), nominalValue);
@@ -262,21 +263,21 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(tab3);
 		
 		aValue = new AonDoubleBox();                         
-		aValue.addValueChangeHandler(event -> eValueCompute());
+		aValue.addValueChangeHandler(event -> eValueCompute(aValue));
 		
 		bValue = new AonDoubleBox();                                 
-		bValue.addValueChangeHandler(event -> eValueCompute());
+		bValue.addValueChangeHandler(event -> eValueCompute(bValue));
 
 		cValue = new AonDoubleBox(); 
-		cValue.addValueChangeHandler(event -> eValueCompute());
+		cValue.addValueChangeHandler(event -> eValueCompute(cValue));
 		
 		dValue = new AonDoubleBox();         
-		dValue.addValueChangeHandler(event -> eValueCompute());
+		dValue.addValueChangeHandler(event -> eValueCompute(dValue));
 		
 		eValue = new AonDoubleBox();          
 
 		fValue = new AonDoubleBox();                                                       
-		fValue.addValueChangeHandler(event -> setModified(true));	
+		fValue.addValueChangeHandler(event -> doubleValueChanged(fValue));	
 		
 		addRow(tab3, Mod2002023Key.P1504.getDescription()+" (**)", aValue);
 		addRow(tab3, Mod2002023Key.P1506.getDescription(), bValue);
@@ -301,16 +302,16 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(tab4);
 		
 		capital = new AonDoubleBox();
-		capital.addValueChangeHandler(event -> setModified(true));
+		capital.addValueChangeHandler(event -> doubleValueChanged(capital));
 		
 		reserve = new AonDoubleBox();
-		reserve.addValueChangeHandler(event -> setModified(true));		
+		reserve.addValueChangeHandler(event -> doubleValueChanged(reserve));		
 
 		otherAmounts = new AonDoubleBox();
-		otherAmounts.addValueChangeHandler(event -> setModified(true));		
+		otherAmounts.addValueChangeHandler(event -> doubleValueChanged(otherAmounts));		
 
 		result = new AonDoubleBox();
-		result.addValueChangeHandler(event -> setModified(true));		
+		result.addValueChangeHandler(event -> doubleValueChanged(result));		
 		
 		addRow(tab4, AON.MSG.partMsg14(), capital);
 		addRow(tab4, AON.MSG.partMsg15(), reserve);
@@ -343,9 +344,10 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 	}
 	
-	private void eValueCompute() {
+	private void eValueCompute(AonDoubleBox text) {
+		doubleValueChanged(text);
 		eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
-		setModified(true);
+//		setModified(true);
 	}
 	
 	private Label getSubtitle(String text) {
@@ -371,5 +373,12 @@ public class ParticipationPanel extends AonCustomDialog {
 		label.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(label);
     }
+    
+	private void doubleValueChanged(AonDoubleBox text) {
+		if (AonStringUtils.isEmpty(text.getText())) {
+			text.setValue(0.0,false);
+		}
+		setModified(true);
+	}
 
 }
