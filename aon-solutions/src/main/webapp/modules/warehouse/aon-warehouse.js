@@ -19,6 +19,8 @@ import { AonSwitch } from '../../components/aon-switch.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
+import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
+import { AonProductList } from '../product/aon-product-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -259,13 +261,13 @@ export class AonWarehouse extends AonElement {
 	aonProducts() {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(this.isMobile()
-			? new AonMobileProductList() : new AonCarrierList());
+			? new AonMobileProductList() : new AonProductList());
 	}
 
-	aonProducts() {
+	aonPackages() {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(this.isMobile()
-			? new AonMobileProductList() : new AonCarrierList());
+			? new AonMobileProductList() : new AonProductList());
 	}
 
 }

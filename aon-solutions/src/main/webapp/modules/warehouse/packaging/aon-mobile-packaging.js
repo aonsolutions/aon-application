@@ -172,6 +172,13 @@ export class AonMobilePackaging extends AonElement {
 		let container = this.createSelect(this.PACKAGING_CONTAINER, "Contenedor");
 		container.setAlias("id", "name");
 
+		container.addEventListener(EVENT.SELECT, (event) => {
+			quantity.value = event.detail.itemComposition[0].quantity;
+			this.contenedor = container.value;
+			this.packaging.container = event.detail;
+			this.packaging.quantity = event.detail.itemComposition[0].quantity;
+		});
+
 		table.addCell(container, 2);
 
 		product.addEventListener(EVENT.CHANGE, () => this.changeProduct());
