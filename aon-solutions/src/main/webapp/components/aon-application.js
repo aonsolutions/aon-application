@@ -456,6 +456,77 @@ export class AonApplication extends AonElement {
     return null;
   }
 
+  addSidenavSelectOptions(data, options) {
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    if(data && data.id && sidenav){
+      let div = this.getElement(sidenav.id + data.id);
+      
+      if(div){
+
+        let selectDiv = this.createElement(TAG.DIV);
+        selectDiv.classList.add("aonAppMenuSidenavListBeta");
+        selectDiv.style.display = "flex";
+        selectDiv.style.gap = ".5rem";
+        selectDiv.style.alignItems = "center";
+        div.appendChild(selectDiv);
+
+        if(options){
+          let option = options[0];
+          if(option.icon){
+            let i = this.createElement(TAG.I);
+            i.id = data.id + 'icon';
+            let iconClass = "material-icons";
+            if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+            if(option.icon_color) {
+              i.title = option.id;
+              i.color = option.icon_color;
+              i.style.color = option.icon_color;
+            }
+            if(option.icon_class) iconClass = option.icon_class;
+            i.className = `${iconClass} aonVerticalMiddle`;
+            i.innerHTML = option.icon;
+  
+            selectDiv.appendChild(i);
+          }
+        }
+
+        const idSelect = div.id + "Select";
+        let select =  this.getElement(idSelect); 
+        if(!select){
+          select = this.createElement('select');
+          select.id = idSelect;
+          select.style.background = "none";
+          select.style.border = "none";
+          select.style.cursor = "pointer";
+
+          selectDiv.appendChild(select);
+        }
+        options.forEach((option, i) => {
+          this.addSidenavSelectOptionsValue(data, option, select);
+        });
+        select.addEventListener('change', () => {
+          let yearSelected = JSON.parse(select.value);
+          let filteredYears = options.filter(option => option.name == yearSelected);
+          let optionFiltered = filteredYears[0];
+          optionFiltered.fn();
+         
+        });
+        return select;
+      }
+    }
+    return null;
+  }
+
+  addSidenavSelectOptionsValue(data, option, select) {
+    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    select = select || this.getElement(sidenavId + data.id + "Select");
+
+    let optYear = this.createElement('option');
+    optYear.value = JSON.stringify(option.name);
+    optYear.innerHTML = option.name;
+    select.appendChild(optYear);
+  }
+
   removeSidenavById(id){
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(sidenav){
@@ -687,6 +758,12 @@ export class AonApplication extends AonElement {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, data.options || []);
+  }
+
+  addSelectSidenav(data, newButton) {
+    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    this.addSidenavOptionsTitle(data, newButton);
+    this.addSidenavSelectOptions(data, data.options || []);
   }
 
   buildOptionsMenu(el, options) {

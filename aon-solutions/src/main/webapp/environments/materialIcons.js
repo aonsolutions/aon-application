@@ -114,6 +114,7 @@ export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DICTIONARY = 'dictionary';
+export const DOCUMENT_SCANNER = 'document_scanner';
 export const DONE = 'done';
 
 // ----- E
