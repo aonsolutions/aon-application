@@ -313,6 +313,7 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildMenuTopnav() {
+		const showAllApps = LS.isAppMenu();
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		let div = this.createElement(TAG.DIV);
 		div.style.display = 'flex';
@@ -320,23 +321,37 @@ export class AonNewMenu extends AonElement {
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
 		div.style.height = '100%';
-		
-		if(!LS.isLeftMenu()) {
+	
+		if (!LS.isLeftMenu()) {
 			div.appendChild(this.buildTopApp(HOME));
 		}
-
+	
+		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+	
 		for (let item in TOP_MENU_APPS) {
-			if (this.isApp(TOP_MENU_APPS[item])) {
-					let app = TOP_MENU_APPS[item];
-					div.appendChild(this.buildTopApp(app));
+			let app = TOP_MENU_APPS[item];
+	
+			if (!this.isApp(app)) {
+				if (!showAllApps || excludedApps.includes(app.app)) {
+					continue;
+				} else {
+					let appElement = this.buildTopApp(app);
+					appElement.style.color = "grey";
+					app.color = "grey";
+					div.appendChild(appElement);
+					continue;
+				}
 			}
-			
+	
+			let appElement = this.buildTopApp(app);
+			div.appendChild(appElement);
 		}
-
+	
+		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
 	}
 
-	reloadTopNav(){
+	reloadTopNav() {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		this.clearElement(aonMenuTopnav);
 		this.buildMenuTopnav();
@@ -489,6 +504,7 @@ export class AonNewMenu extends AonElement {
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
+		div.title = app.title;
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
@@ -807,38 +823,24 @@ export class AonNewMenu extends AonElement {
 		this.expanded = expanded;
 	}
 
-
 	getBackgroundHover(backgroundColor) {
-		//alert(this.backgroundColor);
-		//alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
 		return backgroundColor && !this.isLightColor(this.hexToRgb(backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
 	}
 
 	isLightColor(colorString) {
-		// Extraer los valores RGB del string
 		const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
 		const [r, g, b] = rgba;
-	
-		// Calcular el brillo relativo
 		const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-		return brightness > 128;  // Umbral: 128
+		return brightness > 128;
 	}
 	
 	hexToRgb(hex) {
-		// Eliminar el símbolo '#' si está presente
 		hex = hex.replace(/^#/, '');
-
-		// Comprobar si el color es en formato corto (#RGB)
-		if (hex.length === 3) {
+		if (hex.length === 3)
 			hex = hex.split('').map(c => c + c).join('');
-		}
-
-		// Extraer los componentes rojo, verde y azul
 		const r = parseInt(hex.substring(0, 2), 16);
 		const g = parseInt(hex.substring(2, 4), 16);
 		const b = parseInt(hex.substring(4, 6), 16);
-
-		// Devolver el color en formato RGB
 		return `rgb(${r}, ${g}, ${b})`;
 	}
 
@@ -851,8 +853,29 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isCommerce();
 		if (GARAGE.app === app.app)
 			return this.getDur().isGarage();
-		return true;
+		if (OFFICE.app === app.app)
+			return this.getDur().isOffice();
 
+		if (COMMERCIAL_MENU.app === app.app)
+			return this.getDur().isCommercial();
+		if (MANAGEMENT_MENU.app === app.app)
+			return this.getDur().isManagement();
+		if (TREASURY_MENU.app === app.app)
+			return this.getDur().isTreasury();
+		if (WAREHOUSE_MENU.app === app.app)
+			return this.getDur().isWarehouse();
+		if (GROUPWARE_MENU.app === app.app)
+			return this.getDur().isGroupware();
+		if (ACCOUNTING_MENU.app === app.app)
+			return this.getDur().isAccounting();
+		if (FISCAL_MENU.app === app.app)
+			return this.getDur().isFiscal();
+		if (PAYROLL_MENU.app === app.app)
+			return this.getDur().isPayroll();
+		if (MARKETING_MENU.app === app.app)
+			return this.getDur().isMarketing();
+		
+		return true;
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
 		else if (MenuApps.FISCAL.app === app.app)

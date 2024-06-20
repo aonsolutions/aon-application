@@ -372,6 +372,7 @@ export class AonNewLogin extends AonElement {
 
         LS.setLeftMenu(true);
         LS.setTopMenu(true);
+        LS.setAppMenu(false);
         getCompanies().then(companies => {
           this.getModule().stopLoading();
           

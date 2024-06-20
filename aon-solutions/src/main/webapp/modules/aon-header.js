@@ -390,7 +390,7 @@ export class AonHeader extends AonElement {
 			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
 			appss.addEventListener("click", (event) => {
-				event.preventDefault(); 
+				event.preventDefault();
 				event.stopPropagation();
 			});
 			appss.style.color = "rgb(95, 99, 104)";
