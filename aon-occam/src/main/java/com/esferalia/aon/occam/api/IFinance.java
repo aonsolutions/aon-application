@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -204,7 +205,7 @@ public interface IFinance {
 	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
 	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
-	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter, Integer page, Integer perPage, boolean ticket);
+	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter, Integer page, Integer perPage, boolean ticket, RawdocOrder order);
 	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket);
 	
 	// 	***********************************************

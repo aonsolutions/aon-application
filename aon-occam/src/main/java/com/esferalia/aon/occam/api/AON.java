@@ -163,6 +163,9 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -5980,9 +5983,9 @@ public class AON {
 		}
 	}
 	
-	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter);
+			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter, order);
 		}
 	}
 	
@@ -7554,9 +7557,9 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket ){
+	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket, RawdocOrder order){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket);
+			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket, order);
 		}
 	}
 	
@@ -7693,11 +7696,11 @@ public class AON {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter);
+			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter, order);
 		} finally {
 			if (ctx != null)
 				ctx.close();

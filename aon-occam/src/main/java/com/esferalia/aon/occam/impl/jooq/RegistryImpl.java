@@ -38,6 +38,8 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
@@ -166,9 +168,9 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
-	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){
 		return ctx.getDslContext().transactionResult(
-				configuration -> CreditorSupplierDAO.getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter));
+				configuration -> CreditorSupplierDAO.getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter, order));
 	}
 	
 	@Override
@@ -754,9 +756,9 @@ public class RegistryImpl implements IRegistry{
 	// *************************************** [CUSTOMER]
 	// **************************************************
 	@Override
-	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> CreditorSupplierDAO.getCustomerStream(ctx, filter, ofs, limit, globalFilter));
+				configuration -> CreditorSupplierDAO.getCustomerStream(ctx, filter, ofs, limit, globalFilter, order));
 	}
 	@Override
 	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {

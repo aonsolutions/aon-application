@@ -36,6 +36,8 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
@@ -137,7 +139,7 @@ public interface IRegistry {
 	public void deleteRegistryMedia(AONContext ctx, Integer id);
 
 	// ------------------- CUSTOMER
-	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter);
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order);
 	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter);
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
@@ -180,7 +182,7 @@ public interface IRegistry {
 	public long getCreditorsCount(AONContext ctx, CreditorFilter filter);
 	
 	// ------------------- CREDITOR UNION SUPPLIER
-	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter);
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order);
 	public long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter);
 
 	// ------------------- TARGET

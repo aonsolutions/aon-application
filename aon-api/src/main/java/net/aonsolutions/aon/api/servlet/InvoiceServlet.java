@@ -32,7 +32,10 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
+import com.esferalia.aon.occam.api.model.PropertyOrders.InvoicePropertyOrders;
+import com.esferalia.aon.occam.api.model.PropertyOrders.RawdocPropertyOrders;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Order;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -503,13 +506,68 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
 		JSONArray jsArray = new JSONArray();
 		AON_SOLUTIONS.getInvoiceNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter))
+				f -> invoiceFilter(f, api.getDomain().getId(), filter), o -> invoiceOrder(api, o))
 		.forEach(invoice -> {
 			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
 		}
 		);
 		return jsArray;
 	}
+	
+	private Order invoiceOrder(AonApiData api, InvoicePropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DATE)) {
+					aux = orderArray[i].equals("asc") ? o.getStartIssueDatePropertyName().orderBy().ASC() : o.getStartIssueDatePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.TOTAL)) {
+					aux = orderArray[i].equals("asc") ? o.getTotalPropertyName().orderBy().ASC() : o.getTotalPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.REFERENCE)) {
+					aux = orderArray[i].equals("asc") ? o.getReferenceCodePropertyName().orderBy().ASC() : o.getReferenceCodePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+		}
+		return order;
+	}
+	
+	private Order rawdocOrder(AonApiData api, RawdocPropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DATE)) {
+					aux = orderArray[i].equals("asc") ? o.getStartIssueDatePropertyName().orderBy().ASC() : o.getStartIssueDatePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.TOTAL)) {
+					aux = orderArray[i].equals("asc") ? o.getTotalPropertyName().orderBy().ASC() : o.getTotalPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.REFERENCE)) {
+					aux = orderArray[i].equals("asc") ? o.getReferenceCodePropertyName().orderBy().ASC() : o.getReferenceCodePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+		}
+		return order;
+	}
+	
 	
 	private JSONArray getRawdocNewPortal(AonApiData api) {
 	    JSONArray jsArray = new JSONArray();
@@ -521,7 +579,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	    Integer perPage = api.getData().optInt("per_page");
 	    boolean ticket = api.getData().optBoolean("ticket");
 	    AON.getRawdocNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-	            f -> rawdocFilter(f,api.getDomain().getId() , filter), page, perPage, ticket).forEach(rawdoc ->{
+	            f -> rawdocFilter(f,api.getDomain().getId() , filter), page, perPage, ticket, o -> rawdocOrder(api, o)).forEach(rawdoc ->{
 	                JSONObject json = rawdoc2json(rawdoc, api);
 	                jsArray.put(json);
 	            });

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.tools.json.JSONValue;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
@@ -47,6 +50,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.RawdocPropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -60,6 +64,7 @@ public class RawdocDAO {
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
+	private static final RawdocPropertyOrdersDAO RAWDOC_PROPERTY_ORDERS = new RawdocPropertyOrdersDAO();
 	
 	private static class RawdocPropertiesDAO implements RawdocProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RawdocFilter filter) {
@@ -181,25 +186,19 @@ public class RawdocDAO {
 	
 	
 	public static SelectConditionStep<Record> prepareQuery(AONContext ctx , RawdocFilter filter, boolean ticket) {
-		System.out.println(ctx.getDslContext()
-				.select( SELECT_FIELDS )
-				.from(RAWDOC)
-				.where(RAWDOC_PROPERTIES.getConditions(filter)).getSQL());
 		SelectConditionStep<Record> query = ctx.getDslContext()
 				.select().
 				from(RAWDOC).
 				where(RAWDOC_PROPERTIES.getConditions(filter));
-		if(ticket) {
-			query.and(RAWDOC.JSON.like("%\"type\":\"ticket\"%")).orderBy(RAWDOC.CREATION_DATE.desc());
-		}else {
-			query.and(RAWDOC.JSON.notLike("%\"type\":\"ticket\"%")).orderBy(RAWDOC.CREATION_DATE.desc());
-
-		}
 		return query;
 	}
 	
-	public static Stream<Rawdoc> getRawdocNewPortal(AONContext ctx , RawdocFilter filter , Integer page, Integer perPage, boolean ticket){
-		return prepareQuery(ctx, filter, ticket).limit(perPage)
+	public static Stream<Rawdoc> getRawdocNewPortal(AONContext ctx , RawdocFilter filter , Integer page, Integer perPage, boolean ticket, RawdocOrder order){
+		System.out.println(prepareQuery(ctx, filter, ticket).orderBy(RAWDOC_PROPERTY_ORDERS.getOrders(order)).limit(perPage).getSQL());
+		Collection<SortField<?>> collection = RAWDOC_PROPERTY_ORDERS.getOrders(order);
+		return prepareQuery(ctx, filter, ticket)
+				.orderBy(RAWDOC_PROPERTY_ORDERS.getOrders(order))
+				.limit(perPage)
 				.offset(perPage * (page -1)).
 				fetch().
 				stream().

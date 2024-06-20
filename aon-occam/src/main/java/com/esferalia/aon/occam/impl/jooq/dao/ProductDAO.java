@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Order.ProductOrder;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.ProductPropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO.TaxFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
@@ -42,6 +44,7 @@ import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 public class ProductDAO {
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ProductPropertyOrdersDAO PRODUCT_PROPERTY_ORDER_DAO = new ProductPropertyOrdersDAO();
 	public static final com.esferalia.aon.jooq.tables.Tax VAT_ALIAS = TAX.as("vat");
 	public static final com.esferalia.aon.jooq.tables.Tax RETENTION_ALIAS = TAX.as("retention");
 
@@ -103,17 +106,19 @@ public class ProductDAO {
 				.count();
 	}
 	
-	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage, ProductOrder order){	
+		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage), Optional.of(order));
 	}
 	
 	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter) {
-		return getStream(ctx, filter, Optional.empty(), Optional.empty());
+		return getStream(ctx, filter, Optional.empty(), Optional.empty(), Optional.empty());
 	}
 	
-	private static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Optional<Integer> page, Optional<Integer> perPage) {
+	private static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Optional<Integer> page, Optional<Integer> perPage, Optional<ProductOrder> order) {
 		SelectConditionStep<Record> query = select(ctx, filter);
-		
+		if(order.isPresent()) {
+			query.orderBy(PRODUCT_PROPERTY_ORDER_DAO.getOrders(order.get()));
+		}
 		if(page.isPresent() && perPage.isPresent()) {
 			Integer per = perPage.get();
 			Integer p = page.get();
