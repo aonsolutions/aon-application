@@ -17,8 +17,7 @@ public class Page15 extends PageAbs {
 	private AonTextBox nrsAnexoV;
 	private AonTextBox nrsAnexoVric;
 	private AonTextBox justActivos;
-	// FALTA - POR AHORA NO LO MUESTRO EN PANTALLA HASTA QUE NO AÑADA EL CAMPO
-//	private AonTextBox nrsAnexoVI;
+	private AonTextBox nrsAnexoVI;
 
 	public Page15( Model2002023PageCallback callback ) {
 		super(callback);
@@ -89,16 +88,16 @@ public class Page15 extends PageAbs {
 		});
 		otherInputs.add(nrsAnexoVric);
 		
-		// FALTA - Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-//		nrsAnexoVI = new AonTextBox();
-//		nrsAnexoVI.setVisibleLength(22);
-//		nrsAnexoVI.setMaxLength(22);
-//		nrsAnexoVI.setValue(callback.getMod200Object().getMod200().getNrsAnexoVI());
-//		nrsAnexoVI.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().setNrsAnexoVI(nrsAnexoVI.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(nrsAnexoVI);		
+		// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+		nrsAnexoVI = new AonTextBox();
+		nrsAnexoVI.setVisibleLength(22);
+		nrsAnexoVI.setMaxLength(22);
+		nrsAnexoVI.setValue(callback.getMod200Object().getMod200().getNrsAnexoVI());
+		nrsAnexoVI.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoVI(nrsAnexoVI.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(nrsAnexoVI);		
 
 		// Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 		nrsAnexoV = new AonTextBox();
@@ -152,9 +151,8 @@ public class Page15 extends PageAbs {
 		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoVric);
 		
-		// FALTA
-//		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo VI (RIIB: Inversiones anticipadas)", ++row, 0, false);
-//		table2.setWidget(row, 1, nrsAnexoVI);
+		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo VI (RIIB: Inversiones anticipadas)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoVI);
 		
 		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", ++row, 0, false);
 		table2.setWidget(row, 1, nrsAnexoV);

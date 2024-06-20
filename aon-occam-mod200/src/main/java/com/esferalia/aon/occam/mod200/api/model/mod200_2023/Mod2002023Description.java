@@ -741,5 +741,31 @@ public class Mod2002023Description {
 		DESCRIPTION_MAP.put(Mod2002023Key.IPCRC03, "R\u00E9gimen fiscal Canarias: N\u00FAmero de episodios");		
 	}
 	
+	
+	static {
+		// Partícipes de agrupaciones de interés económico y UTES (cumplimentación voluntaria) - Datos relativos a la participación e Importes imputados
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1279, "Valoraci\u00F3n de la participaci\u00F3n al comienzo del per\u00EDodo impositivo");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1455, "Valoraci\u00F3n de la participaci\u00F3n al final del per\u00EDodo impositivo");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1456, "Ingresos financieros de la participaci\u00F3n");		 
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1458, "Importe del resultado contable imputado");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1459, "Gastos financieros netos imputados");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1460, "Reserva de capitalizaci\u00F3n que no haya sido aplicada imputada");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1461, "Base imponible imputada");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1467, "Importe de la deducci\u00F3n generada por bases de deducci\u00F3n para evitar la doble imposici\u00F3n imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1468, "Importe bonificaci\u00F3n generada de las bases de bonificaci\u00F3n imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1523, "Importe de la deducci\u00F3n generada por activos fijos por bases de deducci\u00F3n por inversi\u00F3n en Canarias imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1601, "Importe de la deducci\u00F3n generada de investigaci\u00F3n y desarrollo e innovaci\u00F3n tecnol\u00F3gica por bases de deducci\u00F3n por inversi\u00F3n en Canarias imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1638, "Importe de la deducci\u00F3n generada de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales por deducciones por inversi\u00F3n en Canarias imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1639, "Importe de la deducci\u00F3n generada del resto de deducciones por inversi\u00F3n en Canarias imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1640, "Importe de la deducci\u00F3n generada de investigaci\u00F3n y desarrollo e innovaci\u00F3n tecnol\u00F3gica por bases de deducci\u00F3n imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1743, "Importe de la deducci\u00F3n generada de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales por bases de deducci\u00F3n imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1909, "Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducci\u00F3n imputadas");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1910, "Importe del resto de deducciones generadas por bases de deducci\u00F3n imputadas no mencionadas anteriormente");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1911, "Retenciones e ingresos a cuenta imputados");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1912, "Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisici\u00F3n de la participaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002023Key.UT1934, "Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisici\u00F3n de la participaci\u00F3n");
+	}
+	
+	
 }
 

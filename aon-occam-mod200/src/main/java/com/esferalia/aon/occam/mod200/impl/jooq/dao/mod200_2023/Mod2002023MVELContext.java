@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
+import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023KeyDC;
@@ -953,7 +954,6 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 		}
 		else return 0.0;
 	}
-	
 	public double computeUT1278() throws AonCoreException {
 		
 		if (isChecked(Mod2002023Key.C0013) || isChecked(Mod2002023Key.C0085) || isChecked(Mod2002023Key.C0014))
@@ -965,6 +965,269 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			return round(x);
 		}
 		else return 0.0;
+	}
+	
+	// Casillas de totales del apartado Partícipes de agrupaciones de interés económico y UTES
+	
+	public double computeUT1279() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01279();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}
+	public double computeUT1455() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01455();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1456() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01456();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1458() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01458();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1459() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01459();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1460() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01460();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1461() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01461();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1467() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01467();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1468() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01468();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1523() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01523();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1601() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01601();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1638() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01638();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1639() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01639();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1640() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01640();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1743() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01743();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1909() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01909();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1910() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01910();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1911() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01911();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1912() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01912();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
+	}	
+	public double computeUT1934() throws AonCoreException {
+		
+		if (isChecked(Mod2002023Key.C0089))
+		{
+			double x = 0;
+			for (UteParticipationBis up : mod200.getUteParticipationsBis()) {				
+				x = x + up.getC01934();
+			}
+			return round(x);			
+		}
+		else return 0.0;
+		
 	}
 	
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
@@ -1514,6 +1777,8 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			Mod2002023Key.BN1391,
 			Mod2002023Key.BN2757,
 			Mod2002023Key.BN2762
-	};	
+	};
+	
+	
 			
 }

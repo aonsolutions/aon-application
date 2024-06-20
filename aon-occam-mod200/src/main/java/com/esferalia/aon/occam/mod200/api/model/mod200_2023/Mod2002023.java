@@ -69,9 +69,8 @@ public class Mod2002023 extends Mod200 {
 	private LinkedList<String> filmProductions = new LinkedList<>();                       // Información adicional producciones cinematográficas españolas y espectáculos en vivo
 	private LinkedList<String> sicav1 = new LinkedList<>();                                // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
 	private LinkedList<String> sicav2 = new LinkedList<>();                                // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
-	private LinkedList<TitularReal> titularReal = new LinkedList<>();                      // F. Identificación del titular real de la entidad
-	
-	private LinkedList<UteParticipationBis> uteParticipationsBis = new LinkedList<>();     // FALTA - NUEVO APARTADO EN UTES - Partícipes de agrupaciones de interés económico y UTES
+	private LinkedList<TitularReal> titularReal = new LinkedList<>();                      // F. Identificación del titular real de la entidad	
+	private LinkedList<UteParticipationBis> uteParticipationsBis = new LinkedList<>();     // Partícipes de agrupaciones de interés económico y UTES
 	
 	private String devType;
 	private String payType;
@@ -84,8 +83,6 @@ public class Mod2002023 extends Mod200 {
 	private String nrsAnexoV;
 	private String nrsAnexoVric;
 	private String justActivos;
-	
-	// FALTA - NUEVA CASILLA PARA PRESENTACION DE DOCUMENTACION (HABRA QUE AÑADIR CAMPO EN fs_model200)
 	private String nrsAnexoVI; // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
