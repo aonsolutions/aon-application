@@ -260,7 +260,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
-                action: () => GWT.load(GWT.MODEL_110)
+                action: () => GWT.load(GWT.MODEL_111)
             },{
                 description: "Modelo 759/760 ",
                 tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
