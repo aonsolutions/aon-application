@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -41,6 +42,7 @@ import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
@@ -74,6 +76,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomerController.class);
 	
+
 	private String smartFilter = "";
 
 	private boolean showAlumnData;
@@ -81,6 +84,7 @@ public class CustomerController extends CustomerListController implements ICusto
     private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
+	
 	
 	
 	public boolean isCeconsulting() {

@@ -9,6 +9,10 @@
         <component-class>org.ajax4jsf.component.html.HtmlAjaxOutputPanel</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.Scroll</component-type>
+        <component-class>com.code.aon.faces.component.richfaces.scroll.HtmlScroll</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.PanelGrid</component-type>
         <component-class>javax.faces.component.html.HtmlPanelGrid</component-class>
     </component>
