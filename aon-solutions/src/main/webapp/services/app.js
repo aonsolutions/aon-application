@@ -869,7 +869,7 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE};
+export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllApps = {
