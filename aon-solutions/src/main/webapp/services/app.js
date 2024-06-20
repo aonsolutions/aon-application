@@ -472,7 +472,7 @@ export const ALMA = {
 
 export const OCR = {
   app: "ocr",
-  title: "OCR | Asistente Registro Facturas",
+  title: "Asistente Reconocimiento de Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
@@ -495,11 +495,13 @@ export const FACTURAE = {
 
 export const INVOFOX = {
   app: "invofox",
-  title: "OCR | INVOFOX",
-  description: "Gestor OCR | INVOFOX.",
-  icon: AON_ICONS.AON_OCR,
-  icon: 'invofox',
-  color: "#35A86C",
+  title: "OCR",
+  description: "Gestor OCR",
+  // Not working.. why?
+  // icon: AON_ICONS.AON_DOCUMENT_SCANNER,
+  // newIcon: AON_ICONS.AON_DOCUMENT_SCANNER,
+  logo: "../assets/img/document_scanner.png",
+  color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
