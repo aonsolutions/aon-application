@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,9 +55,9 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
-import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOSUSTITUCIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOSUSTITUCIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOPIABASICATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEMPRESAINSERCIONTYPE;
@@ -72,7 +73,6 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.NOMBREAPELLIDOSTYPE;
-import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContrata {
@@ -1545,15 +1545,14 @@ public class JooqContrata {
 	private static DATOSCOPIABASICATYPE createDatosCopiaBasica(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try {
 			DATOSCOPIABASICATYPE datos = null;
-			SEPEUtils utils = SEPEUtils.getInstance();
 			String tc2 = employeeContractInfo.getContractInfo().getContractType();
 			if( tc2.equals("402") || tc2.equals("990") ){
 				if( tc2.equals("990") ){
 					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
 					datos.setINDCONTRATOALTADIRECCION("S");
 				}
-				Date start = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
-				Date end = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
+				Date start = getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
+				Date end = getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
 				if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
 					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
 					datos.setINDCONTRATOESCRITO("S");
@@ -1787,6 +1786,24 @@ public class JooqContrata {
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
 		return c;
+	}
+
+	private static Date getDateWithResettedHours(Date date, boolean resetToZero) {
+		if (date != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			if (resetToZero) {
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+			} else {
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+			}
+			return cal.getTime();
+		}
+		return null;
 	}
 	
 }
