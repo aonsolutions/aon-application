@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -450,22 +449,7 @@ public class Page19 extends PageAbs {
 		
 		panelPar2.add(grid);
 		panelPar2.add(addButton);
-		
-		// FALTA - PRUEBA PINTAR TOTALES
-//		panelPar2.add(getSubtitle(AON.MSG.totals()));
-//		
-//		FlexTable tab1 = new FlexTable();
-//		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab1.addStyleName(AON.CSS.aonBlockCenter());
-//		panelPar2.add(tab1);
-//		
-//		int row = 0;
-//		for (final Mod2002023Key key : Mod2002023Constants.UTE_PARTICIPATION_BIS_KEYS) {
-//			if (callback.getMod200Object().isVisible(key)) {
-//				row = paintKey(tab1, key, row);
-//			}
-//		}
-		
+	
 	}
 	
 }
