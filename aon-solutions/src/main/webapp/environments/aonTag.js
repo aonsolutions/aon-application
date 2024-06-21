@@ -228,6 +228,24 @@ export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
 
+export const AON_JSF_APP = 'aon-jsf-app' ;
+
+export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
+
+export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
+
+export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
+
+export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
+
+export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
+
+export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
+
+export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
+
+export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
+
 export const AON_ACADEMY_MENU = 'aon-academy-menu';
 
 export const AON_COMMERCE_MENU = 'aon-commerce-menu';

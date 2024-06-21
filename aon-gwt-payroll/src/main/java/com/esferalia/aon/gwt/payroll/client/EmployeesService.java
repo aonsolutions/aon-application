@@ -292,7 +292,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			String coef, Date fecha) throws IllegalArgumentException;
 
 	void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			String tc2, Date fecha) throws IllegalArgumentException;
+			String tc2, String partialityCoef, Date fecha) throws IllegalArgumentException;
 
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String grupCtz, Date fecha) throws IllegalArgumentException;

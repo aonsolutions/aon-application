@@ -64,6 +64,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** APP CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>app</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.AppController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** DESKTOP CONTROLLER **** -->
 	<managed-bean>
 		<managed-bean-name>desktop</managed-bean-name>

@@ -631,7 +631,7 @@ public class DomainEnterprisesServiceAsync {
 	
 	// --------------------------- Enterprise Context
 	
-	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
+	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
 	}
 	

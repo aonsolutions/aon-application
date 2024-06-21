@@ -66,6 +66,13 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		AON.start();
 		fsa.getFinanceEntry(occam, accountEntry, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.rectifyInvoice(occam, invoiceId, data, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -128,12 +135,6 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	public void getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.getRegistryLastAccountingInvoice(domainName, domain, user, registryId, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void rectifyInvoice(String domainName, int domain, String user, Integer invoiceId, InvoiceRectificationData data, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.rectifyInvoice(domainName, domain, user, invoiceId, data, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -47,6 +48,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
@@ -256,10 +258,10 @@ public class OCRInvoiceBuilder {
 	}
 	
 	private static final Consumer<OCRContext> INVOICE_TYPE = ocr -> {
-	    fillTtype(ocr.getOCRDocument(), ocr.getOCRInvoice(), ocr.getConfig().getCompany().getDocument(), ocr.getInvoice());
+		fillInvoiceType(ocr.getOCRDocument(), ocr.getOCRInvoice(), ocr.getConfig().getCompany().getDocument(), ocr.getInvoice());
 	};
 	
-	public static final void fillTtype(OCRDocument ocrDocument, OCRInvoice ocrInvoice, String companyDocument, Invoice invoice) {
+	public static final void fillInvoiceType(OCRDocument ocrDocument, OCRInvoice ocrInvoice, String companyDocument, Invoice invoice) {
 		Optional<OCRType> optType = ocrDocument.getType();
 		if (optType.isPresent()) {
 			OCRType ocrType = optType.get();
@@ -397,16 +399,44 @@ public class OCRInvoiceBuilder {
 			String reference = optReference.orElse(null);
 			if (!invoice.isSales()) {
 				invoice.setReferenceCode(reference);		
-			} 
+			} else {
+				Pair<String,Integer> seriesNumber = guessSeriesNumber(reference);
+				invoice.setSeries( seriesNumber.getLeft());
+				invoice.setNumber( seriesNumber.getRight());
+			}
 		} else { 
 			invoice.setNumber(0);
 			throw new OCRZeroValueException();
 		}
-		if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+		
+		if (!invoice.isSales() && AonStringUtils.isBlank(invoice.getReferenceCode())) {
+			throw new OCRBlankValueException();
+		}
+		if (invoice.isSales() && invoice.getNumber() == 0) {
 			throw new OCRBlankValueException();
 		}
 	}
 	
+	private static Pair<String,Integer> guessSeriesNumber( String reference) {
+		String reverseNumber = AonStringUtils.reverse( reference )
+			.chars()
+			.takeWhile( Character::isDigit )
+			.mapToObj( i -> (char) i)
+			.collect(Collector.of(
+				    StringBuilder::new,
+				    StringBuilder::append,
+				    StringBuilder::append,
+				    StringBuilder::toString));
+		String numberStr = AonStringUtils.reverse( reverseNumber );
+		String rawSeries = AonStringUtils.replace(reference,numberStr,"");
+		String series = "";
+		if (!AonStringUtils.isBlank(rawSeries)) {
+			String sep = AonStringUtils.substring(rawSeries,  -1);
+			series = AonStringUtils.substringBeforeLast( rawSeries, sep );
+		}
+		return new Pair<>( series, AonNumberUtils.toInteger(numberStr) );
+	}
+
 	private static final Consumer<OCRContext> INVOICE_TOTAL = ocr -> {
 	    fillTotal(ocr.getOCRInvoice(), ocr.getInvoice());
 	};
@@ -1165,13 +1195,34 @@ public class OCRInvoiceBuilder {
 	// ****************************************************************************
 	// ****************************************************************************
 	// ****************************************************************************
-
+	
 	public static void main(String[] args) {
-		String iban = "ES37.0075.4626.4606.0065.8206";
-		System.out.println("(1) " + iban);
-		iban = iban.replaceAll("[^A-Za-z0-9]", "");
-//		iban = iban.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}]", "");
-		System.out.println("(1) " + iban);
+		String[] references = new String[] { 
+			"2024/000001",
+			"R-2024/000001",
+			"20A/000001",
+			"A2024/000001",
+			"24/000001",
+			"/000001",
+			"000001",
+			"2024-000001",
+			"2024 000001",
+			"2024_000001",
+		};
+		
+		AonCollectionUtils.stream(references)
+			.map( ref -> {
+				System.out.print( ref + " ---> ");
+				return ref;
+			})
+			.map( ref -> guessSeriesNumber( ref ))
+			.forEach( p -> System.out.println( p.getLeft() + " - " + p.getRight() ) );
+		
+		
 	}
 }
  
+
+
+
+

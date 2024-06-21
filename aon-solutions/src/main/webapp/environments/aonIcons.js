@@ -15,6 +15,7 @@ export const AON_CAU = 'aon_cau';
 export const AON_COMUNICA = 'aon_comunica';
 export const AON_CONVENIOS = 'aon_convenios';
 export const AON_DOCUMENTAL = 'aon_documental';
+export const AON_DOCUMENT_SCANNER = 'aon_document_scanner';
 export const AON_NEW_DOCUMENTAL = 'aon_new_documental';
 export const AON_HELP = 'aon_help';
 export const AON_INVOICE = 'aon_invoice';

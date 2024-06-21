@@ -332,8 +332,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		});	
 	}
 	
-	public void cambioContrato(String tc2, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.cambioContrato(employeeContractData, tc2, date, new AsyncCallback<Void>() {
+	public void cambioContrato(String tc2, String partialityCoef, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioContrato(employeeContractData, tc2, partialityCoef, date, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {

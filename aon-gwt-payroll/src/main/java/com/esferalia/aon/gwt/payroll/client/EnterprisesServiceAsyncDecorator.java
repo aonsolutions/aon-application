@@ -960,7 +960,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> callback) {
+	public void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> callback) throws IllegalArgumentException  {
 		AON.start();
 		enterprisesServiceAsync.getEnterpriseContext(currentDomainName, new AsyncCallbackWrapper<>(callback));
 	}

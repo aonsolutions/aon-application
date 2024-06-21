@@ -503,7 +503,12 @@ export class AonDesktop extends AonElement {
 		
 		if(this.getDur().isAccounting()) {
 			// PyG Card
-			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+			let defaultYear = new Date().getFullYear();
+
+			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+				defaultYear = defaultYear - 1;
+
+			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly", defaultYear);
 			aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 
 			let pygCard = new AonCard();

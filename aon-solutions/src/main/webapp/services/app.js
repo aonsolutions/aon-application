@@ -113,7 +113,7 @@ export const PAYROLL = {
   newIcon: AON_ICONS.AON_NEW_PAYROLL,
   symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
-  newColor: "#33A9A9",
+  newColor: "var(--aonPayroll)",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
   access: [
@@ -472,7 +472,7 @@ export const ALMA = {
 
 export const OCR = {
   app: "ocr",
-  title: "OCR | Asistente Registro Facturas",
+  title: "Asistente Reconocimiento de Facturas",
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
@@ -495,11 +495,13 @@ export const FACTURAE = {
 
 export const INVOFOX = {
   app: "invofox",
-  title: "OCR | INVOFOX",
-  description: "Gestor OCR | INVOFOX.",
-  icon: AON_ICONS.AON_OCR,
-  icon: 'invofox',
-  color: "#35A86C",
+  title: "OCR",
+  description: "Gestor OCR",
+  // Not working.. why?
+  // icon: AON_ICONS.AON_DOCUMENT_SCANNER,
+  // newIcon: AON_ICONS.AON_DOCUMENT_SCANNER,
+  logo: "../assets/img/document_scanner.png",
+  color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
@@ -869,7 +871,7 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE};
+export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
 
 export const AllApps = {

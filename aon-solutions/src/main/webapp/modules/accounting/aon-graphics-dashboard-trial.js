@@ -93,6 +93,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
       null,
       this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
     );
+
     let lastPeriod = this.PERIODS.find(
       (p) => new Date(p.initiationDate).getTime() == lastDateTime
     );
@@ -148,7 +149,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
         let optYear = this.createElement('option');
         optYear.value = JSON.stringify(element);
         optYear.innerHTML = element.name;
-        if(this.filter.year === element.name){
+        if(this.filter.year == element.name){
           optYear.selected = true;
         }
         yearelect.appendChild(optYear);
@@ -156,6 +157,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
       yearelect.addEventListener('change', () => {
         let period = JSON.parse(yearelect.value);
+       
         this.filter.year = period.name;
         this.selectedPeriod = period;
         this.draw();
@@ -271,6 +273,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
   }
 
   async getData() {
+
     if (this.filter) {
       this.selectedPeriod = this.PERIODS.find(
         (p) => p.name == this.filter.year

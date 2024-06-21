@@ -140,6 +140,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	HTMLPanel extraPanel;
 
 	@UiField
+	HTMLPanel extraPeriodPanel;
+	
+	@UiField
 	ListBox extraStartDateMonth;
 	
 	@UiField
@@ -237,6 +240,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				checkDatesPanelShown();
 				
 				if(null != extra && !extra.isDeleted()) fillExtra();
+				extraPeriodPanel.setVisible(null != extra && !extra.isDeleted());
 				
 				showHideAdvanceOptions();
 				showDialog();
@@ -270,6 +274,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		initializeExtraListBoxes();
 		extraPanel.setVisible(null != extra || payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005));
 		extraIssueDate.getElement().setPropertyString("placeholder", "dd/mm");
+		extraIssueDate.addValueChangeHandler(e -> {
+			extraPeriodPanel.setVisible(AonStringUtils.isNotBlank(extraIssueDate.getValue()));
+		});
 	}
 	
 	private void initializeExtraListBoxes() {
@@ -617,7 +624,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		extraEndDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? 1 : 0);
 		
 		extraIssueDate.setValue(extra.getIssueDate());
-		
 	}
 
 	// ----------------------------------------- ShowDialog

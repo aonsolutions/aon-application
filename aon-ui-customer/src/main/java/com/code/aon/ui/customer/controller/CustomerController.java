@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -36,14 +37,18 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.ExtendedPageDataModel;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.master.CustomerDB;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -57,6 +62,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.DocumentException;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,11 +76,16 @@ public class CustomerController extends CustomerListController implements ICusto
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomerController.class);
 	
-    private boolean showAlumnData;
+
+	private String smartFilter = "";
+
+	private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
+	
+	
 	
 	public boolean isCeconsulting() {
 		return AonUtil.getDomainName().contains("ceconsulting");
@@ -119,6 +130,37 @@ public class CustomerController extends CustomerListController implements ICusto
 
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Customer)getTo());
+	}
+	
+	public String getSmartFilter() {
+		return smartFilter;
+	}
+	
+	public void setSmartFilter(String smartFilter) {
+		this.smartFilter = smartFilter;
+		try {
+			clearCriteria();
+			if ( AonStringUtils.isNotBlank(smartFilter) ) {
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_NAME, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_ALIAS, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT, smartFilter);
+			}
+			onSearch( new ActionEvent(FacesContext.getCurrentInstance().getViewRoot()) );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSmartFilter: ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void setOnSmartFilter(boolean filter ) {
+	}
+
+	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
+		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);
+		if ( expression != null ) {
+			criteria.addOrExpression(expression);
+		}
 	}
 
 	protected boolean isAccountSynchronizable(Customer customer) {
@@ -215,7 +257,11 @@ public class CustomerController extends CustomerListController implements ICusto
     	setShowAlumnData(true);
     }
     
-	public void onCustomerHistory(ActionEvent e){
+    public void onEditSearch(ValueChangeEvent event){
+    	super.onEditSearch(new ActionEvent(event.getComponent()));
+    }
+
+    public void onCustomerHistory(ActionEvent e){
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
