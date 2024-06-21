@@ -113,7 +113,7 @@ export const PAYROLL = {
   newIcon: AON_ICONS.AON_NEW_PAYROLL,
   symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
-  newColor: "#33A9A9",
+  newColor: "var(--aonPayroll)",
   backgroundColor: '#e8f5f5',
   hover: 'aonPayrollHover',
   access: [
