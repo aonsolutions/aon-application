@@ -128,7 +128,7 @@
 							</g:row>
 						</g:Grid>
 		
-						<g:ScrollPanel>
+						<g:ScrollPanel ui:field="legendScrollPanel">
 							<g:VerticalPanel ui:field="legendVerticalPanel" styleName="{style.legend}" />
 						</g:ScrollPanel>
 		

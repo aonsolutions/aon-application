@@ -504,8 +504,13 @@ export class Invoice {
   }
 
   setWithholdingType(withholdingType) {
-    this.calculateWithholdingFromTax(withholdingType);
-    this.calculateTotalFromTax();
+    if(this.isNacional() && !this.isExempt()) {
+      this.calculateWithholdingFromTax(withholdingType);
+      this.calculateTotalFromTax();
+    } else {
+      this.calculateWithholdingFromDetail(withholdingType);
+      this.calculateTotalFromDetail();
+    }
     return this;
   }
 

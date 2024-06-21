@@ -541,8 +541,6 @@ export class AonFiscalCard extends AonElement {
       default:
         return "";
     }
-
-    return span;
   }
 
   get getFilterModels() {

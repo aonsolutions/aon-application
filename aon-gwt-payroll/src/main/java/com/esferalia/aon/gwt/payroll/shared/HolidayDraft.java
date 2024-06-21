@@ -3,16 +3,11 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class HolidayDraft implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1325839155341913285L;
 	
 	private Integer domain;
