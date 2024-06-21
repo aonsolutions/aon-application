@@ -179,11 +179,9 @@ export class AonIconButton extends AonElement {
     }
     let header = this.getElement("aonHeaderWeb");
     if (!this.getAttribute("noHover")) {
-      console.log("Color 1: "+background);
       this.getButton().addEventListener("mouseover", () => {
-        console.log("Color 2: "+this.getButton().style.backgroundColor);
         this.getButton().style.backgroundColor = this.getBackgroundHover();
-      });
+    });
       
       this.getButton().addEventListener("mouseleave", () => {
         this.getButton().style.backgroundColor = background;
@@ -226,8 +224,6 @@ export class AonIconButton extends AonElement {
 
 
   getBackgroundHover() {
-    //alert(this.backgroundColor);
-    //alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
     return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
   }
 
@@ -276,30 +272,24 @@ export class AonIconButton extends AonElement {
   }
 
   isLightColor(colorString) {
-    // Extraer los valores RGB del string
     const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
     const [r, g, b] = rgba;
 
-    // Calcular el brillo relativo
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness > 128;  // Umbral: 128
+    return brightness > 128; 
   }
 
   hexToRgb(hex) {
-    // Eliminar el símbolo '#' si está presente
     hex = hex.replace(/^#/, '');
 
-    // Comprobar si el color es en formato corto (#RGB)
     if (hex.length === 3) {
       hex = hex.split('').map(c => c + c).join('');
     }
 
-    // Extraer los componentes rojo, verde y azul
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    // Devolver el color en formato RGB
     return `rgb(${r}, ${g}, ${b})`;
   }
 
