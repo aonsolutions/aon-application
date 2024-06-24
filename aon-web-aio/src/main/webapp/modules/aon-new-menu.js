@@ -235,7 +235,7 @@ export class AonNewMenu extends AonElement {
 			header.style.removeProperty("background-color");
 
 			let apps = this.getElement("aonMenuListAppImg-applications");
-			apps.style.color = "rgb(95, 99, 104)";
+			apps.style.color = "var(--aonHeaderButtonColor)";
 
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
@@ -245,22 +245,22 @@ export class AonNewMenu extends AonElement {
 			logo.style.filter = "none";
 
 			let header1 = this.getElement("aonHeaderCompanyName")
-			header1.style.color = "rgb(95, 99, 104)";
+			header1.style.color = "var(--aonHeaderButtonColor)";
 
 			let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
-			header2.style.color = "rgb(95, 99, 104)";
+			header2.style.color = "var(--aonHeaderButtonColor)";
 
 			let header3 = this.getElement("aonHeaderHelpButtonIconButton")
-			header3.style.color = "rgb(95, 99, 104)";
+			header3.style.color = "var(--aonHeaderButtonColor)";
 
 			let header4 = this.getElement("aonHeaderConfigButtonIconButton")
-			header4.style.color = "rgb(95, 99, 104)";
+			header4.style.color = "var(--aonHeaderButtonColor)";
 
 			let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
-			header5.style.color = "rgb(95, 99, 104)";
+			header5.style.color = "var(--aonHeaderButtonColor)";
 
 			let header6 = this.getElement("aonHeaderUserButtonIconButton")
-			header6.style.color = "rgb(95, 99, 104)";
+			header6.style.color = "var(--aonHeaderButtonColor)";
 			
 		}
 	}

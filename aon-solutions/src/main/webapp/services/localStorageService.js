@@ -18,6 +18,8 @@ export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
 export const APP_MENU = 'aonConfigSwitchApps';
+export const DARK_MENU = 'aonConfigDarkSwitch';
+export const WHITE_BRAND = 'aonConfigWhiteBrandSwitch';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -73,6 +75,32 @@ export const getAppMenu= () => {
 
 export const setAppMenu= (value) => {
     set(APP_MENU, value);
+}
+
+export const isDarkTheme= () => {
+    let aon = getDarkTheme();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getDarkTheme= () => {
+    return get (DARK_MENU);
+}
+
+export const setDarkTheme= (value) => {
+    set(DARK_MENU, value);
+}
+
+export const isWhiteBrand = () => {
+    let aon = getWhiteBrand();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getWhiteBrand = () => {
+    return get (WHITE_BRAND);
+}
+
+export const setWhiteBrand = (value) => {
+    set(WHITE_BRAND, value);
 }
 
 export const isRightPanel= () => {

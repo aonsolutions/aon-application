@@ -133,6 +133,7 @@ export class AonHeader extends AonElement {
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.style.display = "none";
 		aonHeaderCompany.style.height = "14px";
+		aonHeaderCompany.style.color = "var(--aonHeaderButtonColor)"
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
