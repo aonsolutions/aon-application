@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -109,10 +110,19 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		String maxDefinedUsersString = AonNumberUtils.emptyIfNull(maxDefinedUsers);
 		userLabel = new InlineLabel( definedUsersString + " / " + maxDefinedUsersString );
 		
+		FlowPanel anchorPanel = new FlowPanel();
+		AonTableButton copyAnchor = new AonTableButton("Copiar en el portapapeles", AON.CSS.aonIconCopy());
+		copyAnchor.addClickHandler(e -> copyToClipboard( domain.getName()) );
+
 		nameAnchor = new Anchor(domain.getName());
 		nameAnchor.setStyleName(AON.CSS.aonClickableLabel());
+		nameAnchor.addStyleName(AON.CSS.aonMarginLeft());
 		nameAnchor.setHref("https://" + domain.getName());
 		nameAnchor.setTarget("_blank");
+		
+		
+		anchorPanel.add(copyAnchor);
+		anchorPanel.add(nameAnchor);
 		
 		descriptionLabel = new InlineLabel(AonStringUtils.abbreviate(domain.getDescription(), 50));
 		descriptionLabel.setTitle(domain.getDescription());
@@ -197,7 +207,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( parentIdLabel, AON.CSS.aonTextCenter())
 			.addCell( heredityLabel , AON.CSS.aonTextCenter())
 			.addCell( userLabel , AON.CSS.aonTextCenter())
-			.addCell( nameAnchor )
+			.addCell( anchorPanel )
 			.addCell( descriptionLabel )
 			.addCell( lastAccessLabel )
 			.addCell( expirationDateBox )
@@ -218,6 +228,18 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		duplicateButton.setVisible( callback.isAdvancedMode() );
 		
 	}
+
+	private native void  copyToClipboard(String copyText) /*-{
+		try {
+			if (!navigator.clipboard) {
+				window.alert("Clipboard access not allowed");
+				return;
+			};
+		    navigator.clipboard.writeText(copyText);
+		  } catch (err) {
+		    console.error('Failed to copy to clipboard: ', err);
+		  }
+	}-*/;
 
 	public Integer getId() {
 		return id;

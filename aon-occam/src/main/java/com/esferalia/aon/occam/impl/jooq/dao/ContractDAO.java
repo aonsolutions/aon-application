@@ -36,14 +36,19 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.*;
 
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
@@ -55,6 +60,7 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractExtendedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractSimplifiedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.AgreementLevelCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertiesDAO;
@@ -72,7 +78,7 @@ public class ContractDAO {
 	public static final Field<Double> SALARY_CGC_BASE = DSL.field("salary", Double.class);
 	public static final Field<Double> MARK_TOTAL_TIME = DSL.field("mark", Double.class);
 	public static final Field<String> CONTRACT_TYPE = DSL.field("contract_type", String.class);
-	public static final Field<String> PERSON_FULL_NAME = DSL.field("person_full_name", String.class);
+	public static final Field<String> PERSON_FULL_NAME = DSL.field("'person_full_name'", String.class);
 	
 	// -------------------- CONTRACT
 	
@@ -88,28 +94,131 @@ public class ContractDAO {
 			, filter).fetch().stream().map(new ContractFiller());		
 	}
 	
+	public static Stream<ContractExtendedData> getContractSimplifiedData(AONContext ctx, ContractExtendedDataFilter filter,  Integer page, Integer perPage){
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select(CONTRACT.ID)
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+				.select(REGISTRY.DOCUMENT)
+				.from(CONTRACT)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME.asc())
+				.limit(perPage).offset(perPage * (page -1))
+				.fetch()
+				.stream()
+				.map(new ContractSimplifiedDataFiller());
+	} 
+	
+	public static long getContractCount(AONContext ctx, ContractExtendedDataFilter filter) {
+		return ctx.getDslContext()
+				.select(CONTRACT.ID)
+				.from(CONTRACT)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();		
+	}
+	
+	private static Record getWorkplaceRecord(DSLContext dslContext, Integer contractId) {
+		return dslContext.select()
+				.from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(
+						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+						.where(CONTRACT.ID.eq(contractId))))
+				.fetchOne();
+	}
+	
+	private static Integer getEnterpriseId(DSLContext dslContext, Integer contractId) {
+		return dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(
+						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+							.where(CONTRACT.ID.eq(contractId))
+				)).fetchOne()
+				.get(WORKPLACE.ENTERPRISE);
+	}
+	
+	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+		List<AuxSalaryInfo> salaryList = new ArrayList<>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+		Result<Record> results = ctx.getDslContext().select()
+			        .from(SALARY)
+			        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+			        .limit(perPage)
+					.offset(perPage * (page -1))
+			        .fetch();
+		 
+		 for (Record salaryRecord : results) {
+		        AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
+		        salaryInfo.setId(salaryRecord.get(SALARY.ID));
+				salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+				salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+				Date startDate = salaryRecord.get(SALARY.START_DATE);
+		        Date endDate = salaryRecord.get(SALARY.END_DATE);
+		        salaryInfo.setStartDate(dateFormat.format(startDate));
+		        salaryInfo.setEndDate(dateFormat.format(endDate));
+				salaryInfo.setType(salaryRecord.get(SALARY.TYPE));
+				salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+				salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+				salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+				salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+				salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+				
+				Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+				Integer enterpriseId = getEnterpriseId(ctx.getDslContext(), contractId);
+				Record workplaceRecord = getWorkplaceRecord(ctx.getDslContext(), contractId);
+				
+				String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+				Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+				
+				salaryInfo.setWorkplaceName(workplaceName);
+				salaryInfo.setWorkplaceId(workplaceId);
+				salaryInfo.setEnterpriseId(enterpriseId);
+		    
+				salaryList.add(salaryInfo);
+		    }
+
+		return salaryList;
+	}
+	
+	public static long getEmployeeSalaryCount(AONContext ctx , ContractExtendedDataFilter filter) {
+		return ctx.getDslContext().select()
+		        .from(SALARY)
+		        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+		        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+		        .fetch().stream().count();
+	}
+	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);
 		Field<Integer> totalTime = DSL.field("total_time", Integer.class);
-		Field<Date> salaryMaxDate = DSL.field("max_date", Date.class);
-		Field<Date> cdMaxDate = DSL.field("cd_max_date", Date.class);
 		Field<String> rDocument = DSL.field("rDocument", String.class);
+		Field<Integer> rnSalary = DSL.field("rnSalary", Integer.class);
+		Field<Integer> idSalary = DSL.field("idSalary", Integer.class);
+		Field<Double> salaryAmount = DSL.field("salaryAmount", Double.class);
+		Field<Integer> rnContractData = DSL.field("rnContractData", Integer.class);
+		Field<Integer> idContractData = DSL.field("idContractData", Integer.class);
+		Field<String> expressionCD = DSL.field("expressionCD", String.class);
 		Table<?> registryTable = REGISTRY.as("registryTable");
 		Table<?> salary = SALARY.as("s");
 		Table<?> contractData = CONTRACT_DATA.as("cd");
 		Table<?> tm = Timecontrol.TIMECONTROL.as("tm");
 		
-		Select<?> subQ1 = DSL.select(DSL.max(SALARY.END_DATE).as(salaryMaxDate))
-				.select(SALARY.CONTRACT)
-				.from(SALARY)
-				.groupBy(SALARY.CONTRACT);
+		Select<?> subQ1 = DSL.select(SALARY.CONTRACT.as(idSalary))
+				.select(SALARY.CGC_BASE.as(salaryAmount))
+				.select(DSL.rowNumber().over(DSL.partitionBy(SALARY.CONTRACT).orderBy(SALARY.END_DATE.desc())).as(rnSalary))
+				.from(SALARY);
 		
-		Select<?> subQ2 = DSL.select(DSL.max(CONTRACT_DATA.START_DATE).as(cdMaxDate))
-				.select(CONTRACT_DATA.CONTRACT)
+		Select<?> subQ2 = DSL.select(CONTRACT_DATA.CONTRACT.as(idContractData))
+				.select(CONTRACT_DATA.EXPRESSION.as(expressionCD))
+				.select(DSL.rowNumber().over(DSL.partitionBy(CONTRACT_DATA.CONTRACT).orderBy(CONTRACT_DATA.START_DATE.desc())).as(rnContractData))
 				.from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.like("TC2"))
-				.groupBy(CONTRACT_DATA.CONTRACT);
+				.where(CONTRACT_DATA.NAME.eq("TC2"));
 		
 		Select<?> subQ3 = DSL.select(
 					DSL.coalesce(
@@ -132,28 +241,20 @@ public class ContractDAO {
 				.select(CONTRACT.START_DATE)
 				.select(CONTRACT.END_DATE)
 				.select(REGISTRY.DOCUMENT)
-				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
+				.select(subQ2.asTable().as(contractData).field(expressionCD).as(CONTRACT_TYPE))
 				.select(CONTRACT.DOMAIN)
 				.select(CONTRACT.PERSON)
 				.select(CONTRACT.WORKPLACE)
 				.select(WORKPLACE.DESCRIPTION)
-				.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class).as(SALARY_CGC_BASE))
+				.select(subQ1.asTable().as(salary).field(salaryAmount).as(SALARY_CGC_BASE))
 				.select(subQ3.asTable().as(tm).field(totalTime).as(MARK_TOTAL_TIME))
 				.from(CONTRACT)
 				.join(WORKPLACE).onKey()
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.leftJoin(subQ1.asTable().as(salary))
-						.on(CONTRACT.ID.eq(salary.field(SALARY.CONTRACT)))
-				.leftJoin(SALARY)
-						.on(SALARY.CONTRACT.eq(CONTRACT.ID)
-						.and(DSL.year(salaryMaxDate).eq(DSL.year(SALARY.END_DATE)))
-						.and(DSL.month(salaryMaxDate).eq(DSL.month(SALARY.END_DATE))))
+					.on(CONTRACT.ID.eq(subQ1.asTable().as(salary).field(idSalary)).and(subQ1.asTable().as(salary).field(rnSalary).eq(1)))
 				.leftJoin(subQ2.asTable().as(contractData))
-						.on(subQ2.asTable().as(contractData).field(CONTRACT_DATA.CONTRACT).eq(CONTRACT.ID))
-				.leftJoin(CONTRACT_DATA)
-						.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID)
-						.and(subQ2.asTable().as(contractData).field(cdMaxDate).eq(CONTRACT_DATA.START_DATE))
-						.and(CONTRACT_DATA.NAME.eq("TC2")))
+					.on(CONTRACT.ID.eq(subQ2.asTable().as(contractData).field(idContractData)).and(subQ2.asTable().as(contractData).field(rnContractData).eq(1)))
 				.leftJoin(subQ3.asTable().as(tm)).on(subQ3.asTable().as(tm).field(rDocument).eq(REGISTRY.DOCUMENT))
 				.groupBy(CONTRACT.ID)
 				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))

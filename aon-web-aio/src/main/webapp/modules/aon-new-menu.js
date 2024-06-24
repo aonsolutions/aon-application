@@ -1,11 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import { getDomainUserRoles } from 'aonsolutions/services/service.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
-import { AonDocumentalAyudat } from 'aonsolutions/modules/documental/ayudat/aon-documental-ayudat.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
@@ -16,20 +14,35 @@ import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
 import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
-import { AonSaltra } from 'aonsolutions/modules/laboral/aon-saltra.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
 import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
-import { AonBooking } from 'aonsolutions/modules/marketplace/aon-booking.js';
 import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
 import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
 import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
 import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
+import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
 
-import { AonParent } from './aon-parent.js';
 import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
+import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
+import { AonManagementMenu } from './management/aon-management-menu.js';
+import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
+import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
+import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
+import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
+import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
+import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
+import { AonAcademyMenu } from './academy/aon-academy-menu.js';
+import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
+import { AonGarageMenu } from './garage/aon-garage-menu.js';
+
+//	Falla la compilación por esta línea que no se usa. REVISAR!!
+// import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
+//
+
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -114,61 +127,144 @@ export class AonNewMenu extends AonElement {
 		//}
 	}
 
-	appSelection(app) {
-		
-		switch (app.app) {
-			case Apps.CONSOLE.app:
-				this.rootPanel(new AonConsole());
-				break;
-			case Apps.DOCUMENTAL.app:
-				this.rootPanel(new AonDocumental());
-				break;
-			case Apps.ACCOUNTING.app:
-				this.rootPanel(new AonAccounting());
-				break;
-			case Apps.FISCAL.app:
-				this.rootPanel(new AonFiscal());
-				break;
-			case Apps.PAYROLL.app:
-				this.rootPanel(new AonLaboral());
-				break;
-			case Apps.COMUNICA.app:
-				this.rootPanel(new AonComunica());
-				break;
-			case Apps.INVOICE.app:
-				this.rootPanel(new AonInvoicePanel());
-				break;
-			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonTimecontrol());
-				break;
-			case Apps.MESSENGER.app:
-				this.rootPanel(new AonMessenger());
-				break;
-			case AuxApps.TOOLS.app:
-				this.buildAppMenu(AuxApps.TOOLS);
-				break;
-			case Apps.NOTES.app:
-				this.rootPanel(new AonNotes());
-				break;
-			case Apps.OFFICE.app:
-				this.rootPanel(new AonOfficePanel());
-				break;
-			case Apps.WAREHOUSE.app:
-				this.rootPanel(new AonWarehouse());
-				break;
-			case Apps.MARKETING.app:
-				this.rootPanel(new AonMarketing());
-				break;
-			case HomeApps.HOME.app:
-				this.rootPanel(new AonParent());
-				break;
-			default/*Apps.HOME*/ :
-				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
-				break;
+	appSelection(app, sidenav) {
+		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
+			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+		} else {
+			switch (app.app) {
+				case HOME.app:
+					this.rootPanel(new AonDesktop());
+					break;
+				case Apps.CONSOLE.app:
+					this.rootPanel(new AonConsole());
+					break;
+				case Apps.DOCUMENTAL.app:
+					this.rootPanel(new AonDocumental());
+					break;
+				case Apps.ACCOUNTING.app:
+					this.rootPanel(new AonAccounting());
+					break;
+				case Apps.FISCAL.app:
+					this.rootPanel(new AonFiscal());
+					break;
+				case Apps.PAYROLL.app:
+					this.rootPanel(new AonLaboral());
+					break;
+				case Apps.COMUNICA.app:
+					this.rootPanel(new AonComunica());
+					break;
+				case Apps.INVOICE.app:
+					this.rootPanel(new AonInvoicePanel());
+					break;
+				case Apps.TIMECONTROL.app:
+					this.rootPanel(new AonTimecontrol());
+					break;
+				case Apps.MESSENGER.app:
+					this.rootPanel(new AonMessenger());
+					break;
+				case AuxApps.TOOLS.app:
+					this.buildAppMenu(AuxApps.TOOLS);
+					break;
+				case Apps.NOTES.app:
+					this.rootPanel(new AonNotes());
+					break;
+				case Apps.OFFICE.app:
+					this.rootPanel(new AonOfficePanel());
+					break;
+				case Apps.WAREHOUSE.app:
+					this.rootPanel(new AonWarehouse());
+					break;
+				case Apps.MARKETING.app:
+					this.rootPanel(new AonMarketing());
+					break;
+				case HomeApps.HOME.app:
+					this.rootPanel(new AonDesktop());
+					break;
+				case ACCOUNTING_MENU.app:
+					this.rootPanel(new AonAccountingMenu());
+					break;
+				case COMMERCIAL_MENU.app:
+					this.rootPanel(new AonCommercialMenu());
+					break;
+				case GROUPWARE_MENU.app:
+					this.rootPanel(new AonGroupwareMenu());
+					break;
+				case MANAGEMENT_MENU.app:
+					this.rootPanel(new AonManagementMenu());
+					break;
+				case TREASURY_MENU.app:
+					this.rootPanel(new AonTreasuryMenu());
+					break;
+				case WAREHOUSE_MENU.app:
+					this.rootPanel(new AonWarehouseMenu());
+					break;
+				case FISCAL_MENU.app:
+					this.rootPanel(new AonFiscalMenu());
+					break;
+				case PAYROLL_MENU.app:
+					this.rootPanel(new AonPayrollMenu());
+					break;
+				case MARKETING_MENU.app:
+					this.rootPanel(new AonMarketingMenu());
+					break;
+				case ACADEMY.app:
+					this.rootPanel(new AonAcademyMenu());
+					break;
+				case COMMERCE.app:
+					this.rootPanel(new AonCommerceMenu());
+					break;
+				case GARAGE.app:
+					this.rootPanel(new AonGarageMenu());
+					break;
+				default/*Apps.HOME*/:
+					this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					break;
 		}
 		
-		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: app } ));
 	}
+	
+		let detail = {
+			app,
+			sidenav
+		};
+		if(!(!this.isApp(app) && !excludedApps.includes(app.app)))
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+		else{
+			let header = this.getElement("aonHeaderWeb");
+			header.style.removeProperty("background-color");
+
+			let apps = this.getElement("aonMenuListAppImg-applications");
+			apps.style.color = "rgb(95, 99, 104)";
+
+			let headerapp = this.getElement("aonHeaderApp");
+			headerapp.style.display = "none";
+
+			let logo = this.getElement("aonLogo");
+			logo.style.display = "block";
+			logo.style.filter = "none";
+
+			let header1 = this.getElement("aonHeaderCompanyName")
+			header1.style.color = "rgb(95, 99, 104)";
+
+			let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+			header2.style.color = "rgb(95, 99, 104)";
+
+			let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+			header3.style.color = "rgb(95, 99, 104)";
+
+			let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+			header4.style.color = "rgb(95, 99, 104)";
+
+			let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+			header5.style.color = "rgb(95, 99, 104)";
+
+			let header6 = this.getElement("aonHeaderUserButtonIconButton")
+			header6.style.color = "rgb(95, 99, 104)";
+			
+		}
+	}
+	
 
 	build() {
 		let aonMenuLefttop = this.createElement(TAG.DIV);
@@ -218,6 +314,7 @@ export class AonNewMenu extends AonElement {
 		appDiv.id = `aonMenuLeftop-${app.app}`;
 		appDiv.style.width = '68px';
 		appDiv.style.backgroundColor = 'transparent';
+		appDiv.style.cursor = "pointer";
 		appDiv.appendChild(this.buildApp(app, {height:'48px'}));
 		div.appendChild(appDiv);
 
@@ -231,7 +328,8 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-		ul.style.marginTop = '8px';
+		ul.style.marginTop = '11px';
+
 		ul.style.listStyle = 'none';
 		
 		for (let item in MENU_APPS) {
@@ -257,31 +355,45 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildMenuTopnav() {
+		const showAllApps = LS.isAppMenu();
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
-
 		let div = this.createElement(TAG.DIV);
 		div.style.display = 'flex';
 		div.style.flexDirection = 'row';
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
 		div.style.height = '100%';
-		
-		if(!LS.isLeftMenu()) {
+	
+		if (!LS.isLeftMenu()) {
 			div.appendChild(this.buildTopApp(HOME));
 		}
-
+	
+		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+	
 		for (let item in TOP_MENU_APPS) {
-			if (this.isApp(TOP_MENU_APPS[item])) {
-					let app = TOP_MENU_APPS[item];
-					div.appendChild(this.buildTopApp(app));
+			let app = TOP_MENU_APPS[item];
+	
+			if (!this.isApp(app)) {
+				if (!showAllApps || excludedApps.includes(app.app)) {
+					continue;
+				} else {
+					let appElement = this.buildTopApp(app);
+					appElement.style.color = "grey";
+					app.color = "grey";
+					div.appendChild(appElement);
+					continue;
+				}
 			}
-			
+	
+			let appElement = this.buildTopApp(app);
+			div.appendChild(appElement);
 		}
-
+	
+		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
 	}
 
-	reloadTopNav(){
+	reloadTopNav() {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		this.clearElement(aonMenuTopnav);
 		this.buildMenuTopnav();
@@ -325,12 +437,12 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
 		if(rightPanel){
 			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 62px)`;
+			rightPanel.style.height = `calc(100vh - 61px)`;
 		
 		}
 		
 		rootPanel.style.marginTop = "69px";
-		rootPanel.style.height = `calc(100vh - 62px)`;
+		rootPanel.style.height = `calc(100vh - 61px)`;
 	}
 
 	hideTopNav() {
@@ -361,7 +473,7 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -382,7 +494,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		//icon.style.visibility = "hidden";
-		aonlogo.style.left = '50px';
+		aonlogo.style.left = '52px';
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
 	}
@@ -395,11 +507,11 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app, style,sidenav) {
+	buildApp(app, style, sidenav) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app);
+			this.appSelection(app, sidenav);
 		});
 		a.classList.add('aonMenuApp');
 
@@ -410,7 +522,7 @@ export class AonNewMenu extends AonElement {
 		}
 		hoverDiv.style.display = 'none';
 		hoverDiv.classList.add('aonMenuAppHover');
-
+		
 		a.addEventListener(EVENT.MOUSEOVER, () => {
 			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
 				hoverDiv.style.position = 'fixed';
@@ -426,39 +538,71 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.MOUSELEAVE, () => {
 			hoverDiv.style.display = 'none';
 		});
-
+		
+		//alert(app.app)
 		a.appendChild(hoverDiv);
-
 		let div = this.createElement(TAG.DIV);
+		div.id = app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
 		div.style.alignItems = 'center';
 		div.style.justifyContent = 'center';
+		div.title = app.title;
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.backgroundColor = 'transparent';
-		div.addEventListener('mouseover', () => {
-			div.style.backgroundColor = 'white';
-		});
-		div.addEventListener('mouseout', () => {
-			div.style.backgroundColor = 'transparent';
-		});
-
+		let header = this.getElement("aonHeaderWeb");
+		let welcome = this.getElement("aonCompanyTabFilter");
+		if(welcome && app.app == "applications"){
+			div.addEventListener("click", (event) => {
+				event.preventDefault(); 
+				event.stopPropagation();
+			});
+		}else{
+			if(app.app == "applications"){
+				div.addEventListener('click', () =>{
+					rootPanel.style.backgroundColor = "transparent";
+				})
+				if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
+					div.style.color = "#5f6368";
+				else if(header.style.backgroundColor)
+					div.style.color = "white";
+				else 
+					div.style.color = "#5f6368";
+				div.addEventListener("mouseover", () => {
+					div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+				});
+				div.addEventListener("mouseleave", () => {
+					div.style.backgroundColor = "transparent";
+				});
+			} else{
+				div.addEventListener('mouseover', () => {
+					div.style.backgroundColor = 'white';
+				});
+				div.addEventListener('mouseout', () => {
+					div.style.backgroundColor = 'transparent';
+				});
+			}
+		}
+		
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
-			if(app.color) icon.style.color = app.color;
+			if(app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
 			icon.style.padding = "4px";
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
 		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon = app.icon;
-			aonIcon.color = style?.color || app.color;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = style?.color || appColor;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
@@ -476,14 +620,37 @@ export class AonNewMenu extends AonElement {
 				let span = this.createElement(TAG.SPAN);
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
 				span.style.textAlign = 'center';
+				if (MenuApps.TIMECONTROL.app === app.app) {
+					app.title = 'Ctr. Horario'
+				}
+
 				span.style.minHeight = '26px';
+				
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }
 		}
-
+		/*
+		if(app.color == "grey"){
+			alert(app.color);
+			div.addEventListener("click", () =>{
+				alert("Entra en el listener");
+				let header = this.getElement("aonHeaderWeb");
+				header.style.backgroundColor = "red";
+	
+				let apps = this.getElement("aonMenuListAppImg-applications");
+				apps.style.color = "rgb(95, 99, 104)";
+	
+				let headerapp = this.getElement("aonHeaderApp");
+				headerapp.style.display = "none";
+	
+				let logo = this.getElement("aonLogo");
+				logo.style.display = "block";
+				logo.style.filter = "none";
+			})
+		}
+		*/
 		a.appendChild(div);
-
 		return a;
 	}
 
@@ -689,7 +856,8 @@ export class AonNewMenu extends AonElement {
 				return '#da002a';
 			} else return '#3a85c3';
 		}
-		return app.color ? app.color : '#f1f1f1';
+		const appColor = app.newColor || app.color;
+		return appColor ? appColor : '#f1f1f1';
 	}
 
 	addApp(app) {
@@ -704,24 +872,8 @@ export class AonNewMenu extends AonElement {
 	}
 
 	close() {
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		aonMenuSidenav.style.transitionDuration = '0ms';
-		aonMenuSidenav.style.width = '0px';
-		this.getRootPanel().style.marginLeft = '0px';
-		this.removeAttribute('opened');
-		this.toolbarClose();
-	}
-
-	toolbarClose() {
-		let application = this.getApplication();
-		if (application) {
-			let toolbar = application.getToolbar();
-			if (toolbar) {
-				let toolSection = toolbar.getToolSection();
-				if (toolSection)
-					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
-			}
-		}
+		this.hideSideNav();
+		this.hideTopNav();
 	}
 
 	isExpanded() {
@@ -730,6 +882,27 @@ export class AonNewMenu extends AonElement {
 
 	setExpanded(expanded) {
 		this.expanded = expanded;
+	}
+
+	getBackgroundHover(backgroundColor) {
+		return backgroundColor && !this.isLightColor(this.hexToRgb(backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+	}
+
+	isLightColor(colorString) {
+		const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
+		const [r, g, b] = rgba;
+		const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+		return brightness > 128;
+	}
+	
+	hexToRgb(hex) {
+		hex = hex.replace(/^#/, '');
+		if (hex.length === 3)
+			hex = hex.split('').map(c => c + c).join('');
+		const r = parseInt(hex.substring(0, 2), 16);
+		const g = parseInt(hex.substring(2, 4), 16);
+		const b = parseInt(hex.substring(4, 6), 16);
+		return `rgb(${r}, ${g}, ${b})`;
 	}
 
 	isApp(app) {
@@ -741,8 +914,29 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isCommerce();
 		if (GARAGE.app === app.app)
 			return this.getDur().isGarage();
-		return true;
+		if (OFFICE.app === app.app)
+			return this.getDur().isOffice();
 
+		if (COMMERCIAL_MENU.app === app.app)
+			return this.getDur().isCommercial();
+		if (MANAGEMENT_MENU.app === app.app)
+			return this.getDur().isManagement();
+		if (TREASURY_MENU.app === app.app)
+			return this.getDur().isTreasury();
+		if (WAREHOUSE_MENU.app === app.app)
+			return this.getDur().isWarehouse();
+		if (GROUPWARE_MENU.app === app.app)
+			return this.getDur().isGroupware();
+		if (ACCOUNTING_MENU.app === app.app)
+			return this.getDur().isAccounting();
+		if (FISCAL_MENU.app === app.app)
+			return this.getDur().isFiscal();
+		if (PAYROLL_MENU.app === app.app)
+			return this.getDur().isPayroll();
+		if (MARKETING_MENU.app === app.app)
+			return this.getDur().isMarketing();
+		
+		return true;
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
 		else if (MenuApps.FISCAL.app === app.app)
@@ -810,9 +1004,11 @@ export class AonNewMenu extends AonElement {
 		let element = a;
 		do {
 			element = element.parentElement;
-		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
-		return element.id == this.AON_MENU_TOPNAV;
-	}	
+		} while (element && element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		
+		return element && element.id == this.AON_MENU_TOPNAV;
+	}
+		
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

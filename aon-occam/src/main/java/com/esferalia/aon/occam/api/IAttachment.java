@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
@@ -28,6 +29,7 @@ public interface IAttachment {
 	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter);
+	public long getDocumentalRegistryAttachCount(AONContext ctx, AttachFilter filter, Boolean withData);
 
 	public void setRegistryAttachStream(AONContext ctx, Integer attachId, byte[] data);
 	public void setContractAttachStream(AONContext ctx, Integer attachId, byte[] data);

@@ -76,7 +76,6 @@ public class Lroe140_2_1Test {
 		invoiceDetail.setDescription("Description");
 		invoiceDetail.setQuantity(1.0);
 		invoiceDetail.setPrice(10.0);
-		invoiceDetail.setSurcharge(0.0);
 		invoiceDetail.setLine((short) 0);
 		invoiceDetail.setDiscountExpression("0.0");
 		

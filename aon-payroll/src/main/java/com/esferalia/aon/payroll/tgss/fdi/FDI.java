@@ -83,13 +83,17 @@ public class FDI {
 						+ "                            724      ");
 
 		// ODT
+		
+		String category = contract.get(CONTRACT.CATEGORY_DESCRIPTION);
+		if(AonStringUtils.isBlank(category)) category = "CATEGORIA SIN DEFINIR";
+		
 		fieJson.put("ODT",
-				"ODT" + StringUtils.rightPad(contract.get(CONTRACT.CATEGORY_DESCRIPTION).toUpperCase(), 50, ' ')
+				"ODT" + StringUtils.rightPad(category.toUpperCase(), 50, ' ')
 						+ "                 ");
 
 		// ODT
 		fieJson.put("FUN",
-				"FUN" + StringUtils.rightPad("Propias de " + contract.get(CONTRACT.CATEGORY_DESCRIPTION), 67, ' '));
+				"FUN" + StringUtils.rightPad("Propias de " + category, 67, ' '));
 
 		// DIT
 		fieJson.put("DIT",

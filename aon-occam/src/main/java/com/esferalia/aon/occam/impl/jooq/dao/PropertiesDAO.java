@@ -45,6 +45,7 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
@@ -64,6 +65,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.jooq.tables.Raddinfo;
@@ -116,6 +118,7 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
@@ -231,10 +234,17 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
-		@Override public Property<String> getTotalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.cast(SQLDataType.VARCHAR));}
-		@Override public Property<String> getDateNewPortalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR));}
-
-
+		@Override public Property<String> getTotalStringProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getDateNewPortalProperty() {return new FilterDAO.PropertyDAO<>(
+				DSL.concat(
+						DSL.splitPart(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 3),
+						DSL.val("/"),
+						DSL.splitPart(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 2),
+						DSL.val("/"),
+						DSL.splitPart(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 1)
+					)
+				);}
+		@Override public Property<Double> getTotalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 
@@ -242,11 +252,6 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
 		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
 		
-		// INVOICE COMMUNICATION
-		@Override public Property<Integer> getRSellerIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
-		@Override public Property<Date> getRSellerStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
-		@Override public Property<Date> getRSellerEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}	
-		@Override public Property<Byte> getRSellerStatusProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.STATUS);}	
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -911,6 +916,13 @@ public class PropertiesDAO {
 		}
 		
 		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
+
+		@Override
+		public Property<Byte> getSalaryType() {
+			return new FilterDAO.PropertyDAO<>(SALARY.TYPE);
+		}
+		
+		
 	}
 	
 	protected static class ContractDocPropertiesDAO implements ContractDocProperties{

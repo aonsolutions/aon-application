@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
@@ -27,7 +29,11 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(ContractServlet.class.getName());
 	
 	public static final String CONTRACT_LIST = "/";
-	public static final String CONTRACT_BY_ID = "/:id";
+	public static final String CONTRACT_BY_ID = "/one/:id";
+	public static final String CONTRACT_LIST_SIMPLIFIED = "/simple";
+	public static final String CONTRACT_COUNT = "/count";
+	public static final String EMPLOYEE_SALARY = "/salary";
+	public static final String EMPLOYEE_SALARY_COUNT = "/salary_count";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -46,6 +52,10 @@ public class ContractServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(CONTRACT_LIST, ContractServlet::getContractList)
 				.addRoute(CONTRACT_BY_ID, ContractServlet::getContractById)
+				.addRoute(CONTRACT_LIST_SIMPLIFIED, ContractServlet::getContractSimplifiedList)
+				.addRoute(CONTRACT_COUNT, ContractServlet::getContractCount)
+				.addRoute(EMPLOYEE_SALARY,ContractServlet::getEmployeeSalaries)
+				.addRoute(EMPLOYEE_SALARY_COUNT, ContractServlet::getEmployeeSalariesCount)
 				.apply();
 			
 			response(req, resp, object);
@@ -67,12 +77,54 @@ public class ContractServlet extends AonApiHttpServlet {
 		return array;
 	}
 	
+	private static JSONArray getContractSimplifiedList(AonApiData api) {
+		LOGGER.info("GET SIMPLIFIED LIST METHOD");
+		JSONObject params = api.getData();
+		JSONArray array = new JSONArray();
+		PAYROLL.getContractSimplifiedDataStream(api.getDomain().getName() , api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api),
+				params.optInt(IJsonNames.PAGE), 
+				params.optInt(IJsonNames.PER_PAGE)).forEach(element -> {
+					array.put(ContractExtendedDataJSON.toJSONSimple(element));
+				});
+		
+		return array;
+	}
+	
+	private static long getContractCount(AonApiData api) {
+		LOGGER.info("GET COUNT METHOD");
+		return PAYROLL.getContractCount(api.getDomain().getName() , api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api));
+	}
+	
+	private static JSONArray getEmployeeSalaries(AonApiData api) {
+		 JSONArray array = new JSONArray();
+		 	Integer page = api.getData().optInt("page");
+		 	Integer perPage = api.getData().optInt("per_page");
+		    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+		            f -> buildFilter(f, api) , page, perPage);
+		    for (AuxSalaryInfo s : salaryList) {
+		        array.put(toJSONSalaryInfo(s));
+		    }
+		    return array;
+	}
+	
+	private static long getEmployeeSalariesCount(AonApiData api) {
+		LOGGER.info("GET COUNT METHOD");
+		return PAYROLL.getEmployeeSalaryCount(api.getDomain().getName() , api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api));
+	}
+	
+	
 	private static Filter buildFilter(ContractExtendedDataProperties properties, AonApiData api) {
 		JSONObject params = api.getData();
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
 		String name = JsonUtils.getString(params, IJsonNames.NAME);
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
+		Integer contractId = JsonUtils.getInteger(params, "contract");
+		byte salaryType = JsonUtils.getByte(params, "salary_type");
+		Integer auxSalaryType = (int) salaryType;
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
 		if(name != null) {
@@ -99,12 +151,37 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(from != null) {
 			filter = filter.and(properties.getStartDateProperty().le(AonDateUtils.toSql(from)));
 		}
+		
+		if(contractId != null) {
+			filter = filter.and(properties.getIdProperty().eq(contractId));
+		}
+		
+		if(auxSalaryType != null && contractId != null) {
+			filter = filter.and(properties.getSalaryType().eq(salaryType));
+		}
 		return filter;
 	}
 	
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
 		return new JSONObject();
+	}
+	
+	private static JSONObject toJSONSalaryInfo(AuxSalaryInfo salaryInfo) {
+		return new JSONObject().put("contract", salaryInfo.getContract())
+			.put("domain", salaryInfo.getDomain())
+			.put("employeeName", salaryInfo.getEmployeeName())
+			.put("enterpriseId",salaryInfo.getEnterpriseId())
+			.put("enterpriseName", salaryInfo.getEnterpriseName())
+			.put("id", salaryInfo.getId())
+			.put("totalDeduction", salaryInfo.getTotalDeduction())
+			.put("totalLiquid", salaryInfo.getTotalLiquid())
+			.put("totalPayment", salaryInfo.getTotalPayment())
+			.put("type", salaryInfo.getType())
+			.put("workplaceId", salaryInfo.getWorkplaceId())
+			.put("workplaceName", salaryInfo.getWorkplaceName())
+			.put("startDate", salaryInfo.getStartDate())
+	        .put("endDate", salaryInfo.getEndDate());
 	}
 	
 }

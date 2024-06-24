@@ -8,7 +8,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Stream;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -28,38 +31,61 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.ExtendedPageDataModel;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.master.CustomerDB;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.itextpdf.text.DocumentException;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.customer.report.CustomerReportPDF;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
 	
-	private final static Logger LOGGER = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomerController.class);
 	
-    private boolean showAlumnData;
+
+	private String smartFilter = "";
+
+	private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
+	
+	
 	
 	public boolean isCeconsulting() {
 		return AonUtil.getDomainName().contains("ceconsulting");
@@ -104,6 +130,37 @@ public class CustomerController extends CustomerListController implements ICusto
 
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Customer)getTo());
+	}
+	
+	public String getSmartFilter() {
+		return smartFilter;
+	}
+	
+	public void setSmartFilter(String smartFilter) {
+		this.smartFilter = smartFilter;
+		try {
+			clearCriteria();
+			if ( AonStringUtils.isNotBlank(smartFilter) ) {
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_NAME, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_ALIAS, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT, smartFilter);
+			}
+			onSearch( new ActionEvent(FacesContext.getCurrentInstance().getViewRoot()) );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSmartFilter: ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void setOnSmartFilter(boolean filter ) {
+	}
+
+	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
+		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);
+		if ( expression != null ) {
+			criteria.addOrExpression(expression);
+		}
 	}
 
 	protected boolean isAccountSynchronizable(Customer customer) {
@@ -200,7 +257,11 @@ public class CustomerController extends CustomerListController implements ICusto
     	setShowAlumnData(true);
     }
     
-	public void onCustomerHistory(ActionEvent e){
+    public void onEditSearch(ValueChangeEvent event){
+    	super.onEditSearch(new ActionEvent(event.getComponent()));
+    }
+
+    public void onCustomerHistory(ActionEvent e){
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
@@ -309,7 +370,7 @@ public class CustomerController extends CustomerListController implements ICusto
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
 		List<ITransferObject> list = targetBean.getList(criteria);
-		if(list.size()>0)
+		if(!list.isEmpty())
 			return ((Target)list.get(0)).getId();
 		return -1;
 	}
@@ -318,5 +379,67 @@ public class CustomerController extends CustomerListController implements ICusto
 		Customer customer = (Customer)getTo();
 		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
+	
+	public String onNewReport() throws ManagerBeanException, IOException, DocumentException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		OutputStream out = response.getOutputStream();
+		
+		Occam occam = new Occam()
+				.setDomainName(  AonUtil.getDomainName() )
+				.setDomain(  DomainManager.getCurrentDomain() )
+				.setUser(  AonUtil.getRemoteUser() )
+				;
+	
+		Stream <CustomerFull> customers = 
+		AonCollectionUtils.stream(getManagerBean().getList(getCriteria()))
+			.map(to -> (Customer) to)
+			.map(this::toCustomerFull );
+		CustomerReportPDF c = new CustomerReportPDF();
+		c.printReportPDF(occam, out, customers);
+		response.flushBuffer();
+		context.responseComplete();
+		return null;
+	}
+
+	private CustomerFull toCustomerFull(Customer customer) {
+		CustomerFull customerFull = new CustomerFull();
+		com.esferalia.aon.occam.api.model.Customer occamCustomer = new com.esferalia.aon.occam.api.model.Customer();
+		
+		occamCustomer.setDocument(customer.getRegistry().getDocument());
+		occamCustomer.setAlias(customer.getRegistry().getAlias());
+		occamCustomer.setDocumentCountry(toOccamCountry(customer.getRegistry().getDocumentCountry()));
+		occamCustomer.setId(customer.getRegistry().getId());
+		occamCustomer.setName(customer.getRegistry().getName());
+		customerFull.setRegistry(occamCustomer);
+		
+		try {
+			com.code.aon.registry.RegistryMedia phone = customer.getRegistry().getPhone();
+			if (phone != null) {
+				customerFull.addMedia(new RegistryMedia().setMedia(MediaType.FIXED_PHONE).setValue(phone.getValue()));
+			}
+		} catch (ManagerBeanException e) {
+			// Sin telefono
+		}
+		
+		occamCustomer.setStatus(customerStatusToRegistryStatus(customer.getStatus()));
+		
+		return customerFull;
+
+	}
+
+	private Country toOccamCountry(com.code.aon.common.enumeration.Country documentCountry) {
+		return Country.safeValueOf( documentCountry.getValue() );
+	}
+	
+	
+	
+	private static RegistryStatus customerStatusToRegistryStatus( CustomerStatus cs ) {
+		if(cs== null) {
+			return null;
+		}
+		return RegistryStatus.valueOf( cs.toString() );
+	}
+
 	
 }

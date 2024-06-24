@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -88,9 +87,10 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -163,6 +163,9 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -202,18 +205,19 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -1092,8 +1096,11 @@ public class AON {
 
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getCompanyStream(ctx, filter);
+			return getCompanyStream(ctx, filter);
 		}
+	}
+	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
+		return getRegistry().getCompanyStream(ctx, filter);
 	}
 	
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter, Integer page, Integer perPage){
@@ -1124,6 +1131,10 @@ public class AON {
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
 		return getCompanyStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Company());
+	}
+	public static Company getCompany(AONContext ctx, CompanyFilter filter){
+		return getCompanyStream(ctx, filter)
 				.findFirst().orElse(new Company());
 	}
 
@@ -1724,6 +1735,12 @@ public class AON {
 		}
 	}
 	
+	public static List<String> getRAddInfoAviableAttributes(String domainName, Integer domain, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getRegistry().getRAddInfoAviableAttributes(ctx, f -> f.getDomainProperty().eq(domain));
+		}
+	}
+	
 	public static RegistryAddInfo save(Domain domain, User user, RegistryAddInfo registryAddInfo) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getRegistry().saveRegistryAddInfo(ctx, registryAddInfo);
@@ -1867,17 +1884,6 @@ public class AON {
 			return getFinance().updateInvoice(ctx, invoice);
 		}
 	}
-
-	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().insertInvoiceDetail(ctx, invoiceDetail);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
 	public static void deleteInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
@@ -1947,23 +1953,16 @@ public class AON {
 			return getFinance().getLastSaleInvoice(ctx, serie);
 		}
 	}
-	
-	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
-			Integer domainId, String login, InvoiceFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceDetails(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static ArrayList<InvoiceDetail> getInvoiceDetailsList(String domainName, Integer domainId, String login, InvoiceFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvoiceDetailsList(ctx, filter);
-		}
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(Occam occam, InvoiceFilter filter) {
+		final CloseableAONContext ctx = AONContext.getAONContext(occam);
+		return getFinance().getInvoiceDetailsExtended(ctx, filter,() -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<InvoiceDetail> getInvoiceDetailStream(String domainName, Integer domainId, String login,
@@ -2121,21 +2120,13 @@ public class AON {
 		}
 	}
 
-	public static Integer getInvoiceNextNumber(
-			String domainName, Integer domainId, String login,
-			Byte[] types, String series) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Integer getInvoiceNextNumber(String domainName, Integer domainId, String login, Byte[] types, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceNextNumber(ctx, types,series);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login,
-			InvoiceType type, String series) {
+	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login, InvoiceType type, String series) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoiceMinNumber(ctx, type, series);
 		}
@@ -3131,6 +3122,20 @@ public class AON {
 		}
 	}
 	
+	public static long getDocumentalRegistryAttachCount(String domainName, Integer domainId, String login, AttachFilter filter,AttachType attachType, Boolean withData) {
+		long result = 0;
+		try {
+			CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login);
+			if (attachType.equals(AttachType.REGISTRY)) {
+				result =  getAttachment().getDocumentalRegistryAttachCount(ctx, filter, withData);
+			}
+		} catch (Exception e) {
+			return 0;
+		}
+		return result;
+		
+	}
+	
 	public static void setAttach(String domainName, Integer domainId, String login, byte[] data, Integer attachId, AttachType attachType) {
 		CloseableAONContext ctx = null;
 		try {
@@ -3838,16 +3843,21 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
+	
+	public static StatData<String, String, Double> getInvoiceStat(String domainName, Integer domainId, String user, InvoiceFilter invoiceFilter){
 		CloseableAONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName,domain,userLogin);
-			return getStats().getInvoicesReport(ctx, params);
+			ctx = AONContext.getAONContext(domainName,domainId,user);
+			return getStats().getInvoiceStat(ctx, invoiceFilter);
 		} finally {
 			if (ctx != null) 
 				ctx.close();
 		}
+	}
+
+	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
+		CloseableAONContext ctx = AONContext.getAONContext(domainName,domain,userLogin);
+		return getStats().getInvoicesReport(ctx, params, () -> {if (ctx != null) ctx.close();});
 	}
 	
 	public static Stream<OldTask> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
@@ -5216,6 +5226,12 @@ public class AON {
 			return getRegistry().getSellerList(ctx, params);
 		}
 	}
+	
+	public static Integer getSellerListCount(SellerParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellerListCount(ctx, params);
+		}
+	}
 
 	public static Seller saveSeller(String domainName, int domain, String user, Seller seller) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
@@ -5632,6 +5648,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteRegistryMedia(String domainName, Integer domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			getRegistry().deleteRegistryMedia(ctx, id);
+		}
+	}
+	
 	// ------------------------------------- RNOTE
 
 	// ----- RNOTE GET
@@ -5975,9 +5997,9 @@ public class AON {
 		}
 	}
 	
-	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+	public static Stream<CreditorSupplier> getSupplierCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter);
+			return getRegistry().getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter, order);
 		}
 	}
 	
@@ -7549,9 +7571,9 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket ){
+	public static Stream<Rawdoc> getRawdocNewPortal(String domainName, int domain, String user, RawdocFilter filter, Integer page, Integer perPage, boolean ticket, RawdocOrder order){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket);
+			return getFinance().getRawdocNewPortal(ctx, filter, page , perPage, ticket, order);
 		}
 	}
 	
@@ -7688,11 +7710,11 @@ public class AON {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+	public static Stream<Customer> getCustomerList(String domainName, int domain, String user, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter);
+			return getRegistry().getCustomerList(ctx, filter, ofs, limit, globalFilter, order);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -7894,10 +7916,14 @@ public class AON {
 		
 	public static InvofoxConfiguration getInvofoxConfiguration(String domainName, Integer domainId, String login) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvofoxConfiguration(ctx);
+			return getInvofoxConfiguration(ctx);
 		}
 	}
 	
+	public static InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
+		return getFinance().getInvofoxConfiguration(ctx);
+	}
+
 	public static InvofoxConfiguration saveInvofoxConfiguration(Domain domain, User user, InvofoxConfiguration config) {
 		return saveInvofoxConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
 	}
@@ -8132,33 +8158,33 @@ public class AON {
 		}
 	}	
 	
-	public static Stream<InvoiceTracking> getInvoiceTrackingStream(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingStream(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingStream(ctx, filter);
 		}
 	}
 	
-	public static List<InvoiceTracking> getInvoiceTrackingList(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTrackingList(ctx, filter);
+			return getFinance().getInvoiceCommunicationTrackingList(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking getInvoiceTracking(Domain domain, User user, InvoiceTrackingFilter filter) {
+	public static InvoiceCommunicationTracking getInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTrackingFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getInvoiceTracking(ctx, filter);
+			return getFinance().getInvoiceCommunicationTracking(ctx, filter);
 		}
 	}
 	
-	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
+	public static InvoiceCommunicationTracking saveInvoiceCommunicationTracking(Domain domain, User user, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+			return getFinance().saveInvoiceCommunicationTracking(ctx, invoiceCommunicationTracking);
 		}
 	}
 	
-	public static void deleteInvoiceTracking(String schema, Integer invoiceId) {
+	public static void deleteInvoiceCommunicationTracking(String schema, Integer invoiceId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
-			getFinance().deleteInvoiceTracking(ctx, invoiceId);
+			getFinance().deleteInvoiceCommunicationTracking(ctx, invoiceId);
 		}
 	}	
 

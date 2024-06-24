@@ -3,7 +3,7 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING,  DELIVERY, TAGS, CARRIER, PRODUCT, PACKAGE } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../../services/warehouseService.js';
@@ -18,6 +18,9 @@ import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
 import * as LS from '../../services/localStorageService.js';
+import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
+import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
+import { AonProductList } from '../product/aon-product-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -61,6 +64,7 @@ export class AonWarehouse extends AonElement {
 
 		if(!this.isMobile()) this.buildWarehouseOptions();
 		this.buildElaborationOptions();
+		//this.buildOtherOptions();
 	}
 
 	buildWarehouseOptions() {
@@ -161,6 +165,10 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().addSidenavOptions3(WarehouseSidenav.ELABORATION);
 	}
 
+	buildOtherOptions() {
+		this.getApplication().addSidenavOptions3(WarehouseSidenav.OTHER);
+	}
+
 	selectOption(option) {
 		switch(option.id){
 		case ELABORATION.id:
@@ -178,6 +186,13 @@ export class AonWarehouse extends AonElement {
 		case CARRIER.id:
 			this.aonCarriers();
 			break;
+		case PRODUCT.id:
+			this.aonProducts();
+			break;
+		case PACKAGE.id:
+			this.aonPackages();
+			break;
+	
 		default:
 			this.aonElaboration();
 			break;
@@ -192,7 +207,11 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().getToolbar().option = MSG.ELABORATION;
 		this.getApplication().removeFloatOption();
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
-		this.getApplication().setContent(new AonMobileElaborationList());
+		this.getApplication().setContent(new AonMobileElaborationList()
+			// this.isMobile()
+			// ? new AonMobileElaborationList()
+			// : new AonElaborationList()
+		);
 	}
 	
 	addElaboration(){
@@ -223,9 +242,9 @@ export class AonWarehouse extends AonElement {
 				aonDelivery.setDelivery(r);
 				this.getApplication().setContent(aonDelivery);
 			});
-		} else this.getApplication().setContent(new AonMobileDeliveryList());
-			// this.isMobile()
-			// ? new AonMobileDeliveryList() : new AonDeliveryList());
+		} else this.getApplication().setContent(
+			// new AonMobileDeliveryList());
+			this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
 	}
 
 	aonDeliveryTag() {
@@ -237,6 +256,18 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(this.isMobile()
 			? new AonMobileCarrierList() : new AonCarrierList());
+	}
+
+	aonProducts() {
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(this.isMobile()
+			? new AonMobileProductList() : new AonProductList());
+	}
+
+	aonPackages() {
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(this.isMobile()
+			? new AonMobileProductList() : new AonProductList());
 	}
 
 }

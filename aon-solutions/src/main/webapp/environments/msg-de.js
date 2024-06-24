@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Kommentar Hinzufügen';
 export const ADD_COMPOSITION = 'Komposition Hinzufügen';
 export const ADD_FILE = 'Datei Hinzufügen';
 export const ADD_INVOICE = 'Rechnung Hinzufügen';
+export const ADD_NEW = "Neue hinzufügen";
 export const ADD_REMARKS = 'Beobachtungen Hinzufügen';
 export const ADD_TAG = 'Tag Hinzufügen';
 export const ADD_TAX = 'Steuern Hinzufügen';
@@ -75,6 +76,7 @@ export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
 export const CLOSE = 'nah dran';
 export const CLOSE_SESSION = 'Ausloggen';
+export const CLOSED = 'Geschlossen';
 export const CODE = 'Code';
 export const COMMENT = 'Kommentar';
 export const COMMENTS = 'Kommentare';
@@ -167,6 +169,7 @@ export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Abgelaufen';
+export const EXPIRED_SESSION = 'Sitzung abgelaufen';
 export const ERRORS = 'Fehler';
 
 // ----- F
@@ -284,6 +287,7 @@ export const NEW_TICKET = 'Neue Ticket';
 export const NEW_WAREHOUSE = 'Neue Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
+export const NO_DATA = 'Keine Daten verfügbar';
 export const NOT_LINKED = 'Nicht verbunden';
 export const NOT_LINKED1 = 'Nicht verbunden';
 export const NOTIFICATION = 'Benachrichtigung';
@@ -324,6 +328,7 @@ export const PENDING_TASKS = 'Ausstehende Aufgaben';
 export const PENDINGS = 'Ausstehende';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
+export const PORTAL_MENU = "Portalmenü";
 export const POSTAL_CODE = 'Postal Code';
 export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
@@ -339,6 +344,7 @@ export const PROVINCE = 'Province';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Schneller Zugang";
 export const QUANTITY = 'Quantity';
 export const QUOTA = 'Quota';
 
@@ -348,6 +354,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Received';
 export const RECEIVEDS = 'Received';
 export const RECENTS = 'Recents';
+export const RECENTLY_OPENED = "Vor kurzem eröffnet";
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFIED = 'Rectified';
@@ -406,6 +413,7 @@ export const SPANISH = 'Spanish';
 export const STATISTICS = 'Statistics';
 export const STATUS = "Status";
 export const STATUS_NOT_EMPTY = "Der Status darf nicht leer sein";
+export const SUITE_MENU = "Menü Suite";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';

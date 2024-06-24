@@ -32,7 +32,10 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
+import com.esferalia.aon.occam.api.model.PropertyOrders.InvoicePropertyOrders;
+import com.esferalia.aon.occam.api.model.PropertyOrders.RawdocPropertyOrders;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Order;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -503,13 +506,68 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
 		JSONArray jsArray = new JSONArray();
 		AON_SOLUTIONS.getInvoiceNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-				f -> invoiceFilter(f, api.getDomain().getId(), filter))
+				f -> invoiceFilter(f, api.getDomain().getId(), filter), o -> invoiceOrder(api, o))
 		.forEach(invoice -> {
 			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
 		}
 		);
 		return jsArray;
 	}
+	
+	private Order invoiceOrder(AonApiData api, InvoicePropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DATE)) {
+					aux = orderArray[i].equals("asc") ? o.getStartIssueDatePropertyName().orderBy().ASC() : o.getStartIssueDatePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.TOTAL)) {
+					aux = orderArray[i].equals("asc") ? o.getTotalPropertyName().orderBy().ASC() : o.getTotalPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.REFERENCE)) {
+					aux = orderArray[i].equals("asc") ? o.getReferenceCodePropertyName().orderBy().ASC() : o.getReferenceCodePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+		}
+		return order;
+	}
+	
+	private Order rawdocOrder(AonApiData api, RawdocPropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DATE)) {
+					aux = orderArray[i].equals("asc") ? o.getStartIssueDatePropertyName().orderBy().ASC() : o.getStartIssueDatePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.TOTAL)) {
+					aux = orderArray[i].equals("asc") ? o.getTotalPropertyName().orderBy().ASC() : o.getTotalPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.REFERENCE)) {
+					aux = orderArray[i].equals("asc") ? o.getReferenceCodePropertyName().orderBy().ASC() : o.getReferenceCodePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+		}
+		return order;
+	}
+	
 	
 	private JSONArray getRawdocNewPortal(AonApiData api) {
 	    JSONArray jsArray = new JSONArray();
@@ -521,7 +579,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	    Integer perPage = api.getData().optInt("per_page");
 	    boolean ticket = api.getData().optBoolean("ticket");
 	    AON.getRawdocNewPortal(api.getDomain().getName(), api.getDomain().getId(), "api", 
-	            f -> rawdocFilter(f,api.getDomain().getId() , filter), page, perPage, ticket).forEach(rawdoc ->{
+	            f -> rawdocFilter(f,api.getDomain().getId() , filter), page, perPage, ticket, o -> rawdocOrder(api, o)).forEach(rawdoc ->{
 	                JSONObject json = rawdoc2json(rawdoc, api);
 	                jsArray.put(json);
 	            });
@@ -710,11 +768,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
-    	
-    	if(!AonStringUtils.isBlank(invoiceFilter.getDescription())) {
-    		filter = filter.and(
-    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
+    
+    	if(invoiceFilter.getDescription() != null) {
+    		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
+        			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getSeriesProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			.or(f.getRegistryDocumentProperty().like("%" + invoiceFilter.getDescription() + "%"))
+        			;
+    		if (AonStringUtils.isNumeric(invoiceFilter.getDescription())) {
+   				Integer i = AonNumberUtils.toInteger( invoiceFilter.getDescription() );
+   				Double d = AonNumberUtils.toDouble( invoiceFilter.getDescription() );
+				ft = ft.or (f.getNumberProperty().like(i))
+					.or (f.getTotalProperty().like(d));
+   			}
+    		filter = filter.and( ft );
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
@@ -745,7 +812,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	
     	if(!AonStringUtils.isBlank(invoiceFilter.getGlobal())) {
     		Filter filter3 = f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%")
-    				.or(f.getTotalProperty().like("%" + invoiceFilter.getGlobal() + "%"))
+    				.or(f.getTotalStringProperty().like("%" + invoiceFilter.getGlobal() + "%"))
     				.or(f.getReferenceCodeProperty().like("%" + invoiceFilter.getGlobal() + "%"))
     				.or(f.getDateNewPortalProperty().like("%" + invoiceFilter.getGlobal() +"%"));
     		filter = filter.and(filter3);
@@ -917,6 +984,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				? InvoiceStatus.SCORED.name().toLowerCase() 
 				: InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.TYPE, invoice.getType().getTediName());
+		json.put(IJsonNames.SERIES, invoice.getSeries());
+		json.put(IJsonNames.SERIE, invoice.getSeries());
+		json.put(IJsonNames.NUMBER, invoice.getNumber());
 		return json;
 	}
 	
@@ -1378,13 +1448,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private static void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente está vacio.");
+			throw new Exception("El Documento del cliente estï¿½ vacio.");
 		}
 			
 		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
 				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente no es válido.");
+			throw new Exception("El Documento del cliente no es vï¿½lido.");
 		}
 	}
 	

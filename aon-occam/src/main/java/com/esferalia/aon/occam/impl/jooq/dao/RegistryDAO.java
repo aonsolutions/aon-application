@@ -3,6 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -30,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryDAO {
@@ -248,6 +252,30 @@ public class RegistryDAO {
 		
 	}
 
+	public static Stream<String> getRegistrySegmentNames(AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select(SEGMENT.NAME)
+			.from(SEGMENT)
+			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+			.where(RSEGMENT.REGISTRY.eq(registry))
+			.fetch(SEGMENT.NAME)
+			.stream();
+	}
+	
+	public static Stream<String> getRegistrySellerNames(AONContext ctx, Integer registry, java.util.Date date) {
+		return ctx.getDslContext()
+			.select(REGISTRY.NAME)
+			.from(RSELLER)
+			.leftOuterJoin(REGISTRY).on(RSELLER.SELLER.eq(REGISTRY.ID))
+			.where( RSELLER.REGISTRY.eq(registry))
+			.and( RSELLER.START_DATE.isNull().or( RSELLER.START_DATE.le( AonDateUtils.toSql (date) ) ) )
+			.and( RSELLER.END_DATE.isNull().or( RSELLER.END_DATE.ge( AonDateUtils.toSql(date) ) ) )
+			.and(RSELLER.STATUS.eq( (byte) 0))
+			.fetch(REGISTRY.NAME)
+			.stream()
+		;
+	}
+	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

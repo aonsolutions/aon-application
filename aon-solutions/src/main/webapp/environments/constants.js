@@ -66,6 +66,7 @@ export const CHANGE_PASSWORD = 'changePassword';
 export const CHANGE_TYPE = 'changeType';
 export const CHARGES_PAYMENTS = 'chargesPayments';
 export const CHECKED = 'checked';
+export const CLOSED = 'closed';
 export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMMENTS = 'comments';
@@ -126,6 +127,7 @@ export const EXPORTED = "exported";
 
 // ----- F
 
+export const FAIL = 'fail';
 export const FALSE = 'false';
 export const FARMER = 'farmer';
 export const FILE = 'file';
@@ -154,6 +156,7 @@ export const IBAN = 'iban';
 export const ICON = 'icon';
 export const ICON_BUTTON = 'iconButton';
 export const ID = 'id';
+export const IN_PROGRESS = 'inProgress';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
 export const INVEST_ASSET = 'investAsset';
@@ -223,14 +226,17 @@ export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
+export const OTHER = 'other';
 
 // ----- P
 
+export const PACKAGE = 'package';
 export const PACKAGING = 'packaging';
 export const PASSWORD = 'password';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
+export const PENDING = 'pending';
 export const PENDING_CORRECTION = 'pendingCorrection';
 export const PENDING_DECISSION = 'pendingDecission';
 export const PENDINGS = 'pendings';
@@ -282,11 +288,12 @@ export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';
 export const REMARKS = 'remarks';
 export const RENTING = 'renting';
-export const RETENTION_PANEL = 'retentionPanel';
-export const RETENTION_PERCENT = 'retentionPercent';
+export const REOPEN = 'reopen';
 export const REQUIRED = 'required';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
+export const RETENTION_PANEL = 'retentionPanel';
+export const RETENTION_PERCENT = 'retentionPercent';
 export const ROOT = 'root';
 export const ROOT_PANEL = 'rootPanel';
 export const ROW = 'row';

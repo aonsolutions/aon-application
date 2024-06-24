@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -17,14 +17,16 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -38,12 +40,12 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -52,6 +54,7 @@ import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -70,8 +73,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
@@ -79,8 +84,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceTrackingDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -136,7 +141,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
+				configuration -> InvoiceSIIDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
 	}
 		
 	@Override
@@ -164,8 +169,8 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public ArrayList<InvoiceDetail> getInvoiceDetailsList(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceDetailsList(ctx, filter);
+	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
+		return InvoiceDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
 	@Override
@@ -449,12 +454,6 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-		InvoiceDAO.insertInvoiceDetail(ctx, invoiceDetail));		
-	}
-
-	@Override
 	public Finance insertFinance(AONContext ctx, Finance finance) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			FinanceDAO.getFinance(ctx, FinanceDAO.insert(ctx, finance))
@@ -587,8 +586,8 @@ public class FinanceImpl implements IFinance {
 				-> RawdocDAO.getFull(ctx, filter, offset, limit));
 	}
 	@Override
-	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter , Integer page, Integer perPage , boolean ticket){
-		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocNewPortal(ctx, filter , page, perPage ,ticket));
+	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter , Integer page, Integer perPage , boolean ticket, RawdocOrder order){
+		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocNewPortal(ctx, filter , page, perPage ,ticket, order));
 	}
 	@Override
 	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
@@ -769,15 +768,15 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking) {
+	public InvoiceCommunicationTracking saveInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.save(ctx, invoiceTracking));				
+				configuration -> InvoiceCommunicationTrackingDAO.save(ctx, invoiceCommunicationTracking));				
 	}
 	
 	@Override
-	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId) {
+	public void deleteInvoiceCommunicationTracking(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(
-				configuration -> InvoiceTrackingDAO.delete(ctx, invoiceId));
+				configuration -> InvoiceCommunicationTrackingDAO.delete(ctx, invoiceId));
 	}
 
 	@Override
@@ -799,21 +798,21 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceTracking> getInvoiceTrackingStream(AONContext ctx, InvoiceTrackingFilter filter) {
+	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.getStream(ctx, filter));				
+				configuration -> InvoiceCommunicationTrackingDAO.getStream(ctx, filter));				
 	}
 
 	@Override
-	public List<InvoiceTracking> getInvoiceTrackingList(AONContext ctx, InvoiceTrackingFilter filter) {
+	public List<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingList(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.getList(ctx, filter));		
+				configuration -> InvoiceCommunicationTrackingDAO.getList(ctx, filter));		
 	}
 
 	@Override
-	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter) {
+	public InvoiceCommunicationTracking getInvoiceCommunicationTracking(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceTrackingDAO.get(ctx, filter));		
+				configuration -> InvoiceCommunicationTrackingDAO.get(ctx, filter));		
 	}
 	
 	// ---------- BOOKING CHECK

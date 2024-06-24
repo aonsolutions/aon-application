@@ -26,6 +26,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -37,6 +39,8 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.CustomerPropertyOrdersDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.SupplierCreditorPropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -45,6 +49,8 @@ public class CreditorSupplierDAO {
 	private static final CreditorPropertiesDAO CREDITOR_PROPERTIES = new CreditorPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
+	private static final CustomerPropertyOrdersDAO CUSTOMER_PROPERTY_ORDERS = new CustomerPropertyOrdersDAO(); 
+	private static final SupplierCreditorPropertyOrdersDAO SUPPLIER_CREDITOR_PROPERTY_ORDERS = new SupplierCreditorPropertyOrdersDAO(); 
 	private static final Field<String> type = DSL.field(DSL.name("typeRegistry"), String.class);
 	
 	public static long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {
@@ -54,9 +60,9 @@ public class CreditorSupplierDAO {
 			.count();
 	}
 	
-	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter, int offset, int limit, String globalFilter){
+	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter, int offset, int limit, String globalFilter, CustomerOrder order){
 		return prepareQueryCustomer(ctx, filter, globalFilter)
-				.orderBy(REGISTRY.NAME)
+				.orderBy(CUSTOMER_PROPERTY_ORDERS.getOrders(order))
 				.limit(limit)
 				.offset(limit * (offset -1))
 				.fetch()
@@ -98,12 +104,12 @@ public class CreditorSupplierDAO {
 			.count();
 	}
 	
-	public static Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+	public static Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){
 		return ctx.getDslContext()
 			.select(DSL.asterisk())
 			.from(prepareQuery(ctx, filter, filter2, globalFilter).asTable(REGISTRY))
 			.groupBy(REGISTRY.ID)
-			.orderBy(REGISTRY.NAME)
+			.orderBy(SUPPLIER_CREDITOR_PROPERTY_ORDERS.getOrders(order))
 			.limit(limit)
 			.offset(limit * (offset -1))
 			.fetch()

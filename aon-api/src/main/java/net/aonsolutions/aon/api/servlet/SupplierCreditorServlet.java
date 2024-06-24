@@ -15,16 +15,17 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CreditorSupplierJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Order;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
-import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
-import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
-import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
+import com.esferalia.aon.occam.api.model.PropertyOrders.CustomerPropertyOrders;
+import com.esferalia.aon.occam.api.model.PropertyOrders.SupplierCreditorPropertyOrders;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 
@@ -85,7 +86,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		JSONArray result = CustomerJSON.toJSON(AON.getCustomerList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> genericFilter(api, api.getData(), f),
-				page, perPage, globalFilter));
+				page, perPage, globalFilter, o -> customerOrder(api, o)));
 		if (api.getData().opt("additional_info") != null) {
 			result = getAdditionalInfo(api, result);
 	    }
@@ -105,7 +106,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		JSONArray result = CreditorSupplierJSON.toJSON(AON.getSupplierCreditorStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), page, perPage, globalFilter));
+			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), page, perPage, globalFilter, o -> supplierCreditorOrder(api, o)));
 		if (api.getData().opt("additional_info") != null) {
 			result = getAdditionalInfo(api, result);
 	    }
@@ -161,5 +162,53 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
             obj.put("media", RegistryMediaJSON.toJSON(registryMedia));
         }
         return result;
+	}
+	
+	private static Order customerOrder(AonApiData api, CustomerPropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DOCUMENT)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryDocumentPropertyName().orderBy().ASC() : o.getRegistryDocumentPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.NATIONALITY)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNationalityPropertyName().orderBy().ASC() : o.getRegistryNationalityPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getRegistryNamePropertyName().orderBy().ASC();
+		}
+		return order;
+	}
+	
+	private static Order supplierCreditorOrder(AonApiData api, SupplierCreditorPropertyOrders o) {
+		Order order = null, aux;
+		String[] orderByArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER_BY).split(";");
+		String[] orderArray = JsonUtils.optString(api.getData(), IJsonNames.ORDER).split(";");
+		if(orderByArray.length == orderArray.length) {
+			for(int i = 0; i < orderByArray.length; i++) {
+				if(orderByArray[i].equals(IJsonNames.NAME)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNamePropertyName().orderBy().ASC() : o.getRegistryNamePropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.DOCUMENT)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryDocumentPropertyName().orderBy().ASC() : o.getRegistryDocumentPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				} else if(orderByArray[i].equals(IJsonNames.NATIONALITY)) {
+					aux = orderArray[i].equals("asc") ? o.getRegistryNationalityPropertyName().orderBy().ASC() : o.getRegistryNationalityPropertyName().orderBy().DESC();
+					order = order == null ? aux : order.and(aux);
+				}
+			}
+		}
+		if(order == null) {
+			order = o.getRegistryNamePropertyName().orderBy().ASC();
+		}
+		return order;
 	}
 }

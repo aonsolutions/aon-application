@@ -148,7 +148,9 @@ public class PackagingDAO {
 		List<Item> containers = ItemDAO.getList(ctx, f -> f.getIdProperty().in(items));
 		for (int i = 0; i < containers.size(); i++) {
 			Integer id = containers.get(i).getId();
-			List<ItemComposition> icList = ItemCompositionDAO.getList(ctx, f -> f.getItemProperty().eq(id));
+			List<ItemComposition> icList = ItemCompositionDAO.getList(ctx, f -> 
+				f.getItemProperty().eq(id)
+				.and(f.getCompositionItemProperty().eq(item.getId())));
 			containers.get(i).setItemComposition(icList);
 		}
 		containers = containers.stream().filter(f -> f.getItemComposition().size() == 1).collect(Collectors.toCollection(LinkedList::new));
@@ -393,13 +395,15 @@ public class PackagingDAO {
 		if(elaborationDetail.isEmpty()) {
 			String series = Integer.toString(AonDateUtils.getYear(new Date()));
 			Integer number = ElaborationDAO.getNextNumber(ctx, series);
+			String description = AonStringUtils.isBlank(packaging.getItem().getDescription())
+					? packaging.getItem().getProduct().getName() : packaging.getItem().getDescription();
 			elaboration = new Elaboration()
 					.setDomain(ctx.getDomainId())
 					.setSeries(series)
 					.setNumber(number)
 					.setDate(new Date())
 					.setItem(packaging.getBase())
-					.setDescription(packaging.getItem().getProduct().getName())
+					.setDescription(description)
 					.setWarehouse(warehouse)
 					.setQuantity(packaging.getQuantity())
 					.setStatus(ElaborationStatus.IN_PROGRESS)

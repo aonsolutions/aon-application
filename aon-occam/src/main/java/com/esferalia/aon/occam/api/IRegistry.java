@@ -36,6 +36,8 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
@@ -134,9 +136,10 @@ public interface IRegistry {
 	public RegistryMedia get(AONContext ctx, RegistryMediaFilter filter);
 	public RegistryMedia save(AONContext ctx, RegistryMedia media);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
+	public void deleteRegistryMedia(AONContext ctx, Integer id);
 
 	// ------------------- CUSTOMER
-	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter);
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order);
 	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter);
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
@@ -147,6 +150,7 @@ public interface IRegistry {
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
 
 	public List<Seller> getSellerList(CloseableAONContext ctx, SellerParams params);
+	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params);
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	
@@ -178,7 +182,7 @@ public interface IRegistry {
 	public long getCreditorsCount(AONContext ctx, CreditorFilter filter);
 	
 	// ------------------- CREDITOR UNION SUPPLIER
-	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter);
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order);
 	public long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter);
 
 	// ------------------- TARGET
@@ -197,6 +201,7 @@ public interface IRegistry {
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
+	public Stream<AonCompany> getCompanyWithRolesStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage);
 	public Company saveCompany(AONContext ctx, Company company);
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);
@@ -230,6 +235,7 @@ public interface IRegistry {
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo);
+	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter);
 	
 	// ------------------- RDIRSTAFF
 	

@@ -48,6 +48,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EmployeesServiceAsync extends AgreementServiceAsync, StatisticsServiceAsync,
 		CalendarServiceAsync, EmployeeEventsServiceAsync{
+	
 	void getEnterprise(String domain, String user, AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 
@@ -311,7 +312,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			String coef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
-			String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+			String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String grupCtz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;

@@ -129,7 +129,8 @@ public class ElaborationDAO {
 	public static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Options... options){
 		if(options.length > 0) 
 			return getStream(ctx, filter, options[0]);
-		return select(ctx, filter).fetch().stream().map(new ElaborationFiller());
+		return select(ctx, filter).orderBy(ELABORATION.DATE.desc())
+				.fetch().stream().map(new ElaborationFiller());
 	}
 	
 	private static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Options options){

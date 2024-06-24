@@ -23,11 +23,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -249,7 +249,7 @@ public class JooqContractPDF {
 				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
-				TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+				HashMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
 				
 				FormativeLevel formativeLevel = new FormativeLevel();
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -271,7 +271,7 @@ public class JooqContractPDF {
 			Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 			
-			TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+			HashMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
 			
 			FormativeLevel formativeLevel = new FormativeLevel();
 			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -582,9 +582,11 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (fill - clauses)
 	
-	private static TreeMap<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
-		TreeMap<String, String> contractClausesMap = new TreeMap<>();
-		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getLineNumber() + " - " + contractClause.getName(), contractClause.getDescription()));
+	private static HashMap<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
+		HashMap<String, String> contractClausesMap = new LinkedHashMap<>();
+		for(ContractClause contractClause : contractClauses) {
+			contractClausesMap.put(contractClause.getLineNumber() + " - " + contractClause.getName(), contractClause.getDescription());
+		}
 		return contractClausesMap;
 	}
 	

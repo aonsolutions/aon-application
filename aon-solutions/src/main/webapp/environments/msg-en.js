@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Add Comment';
 export const ADD_COMPOSITION = 'Add Composition';
 export const ADD_FILE = 'Add File';
 export const ADD_INVOICE = 'Add Invoice';
+export const ADD_NEW = "Add new";
 export const ADD_REMARKS = 'Add Remarks';
 export const ADD_TAG = 'Add Tag';
 export const ADD_TAX = 'Add Tax';
@@ -75,6 +76,7 @@ export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
 export const CLOSE = 'Close';
 export const CLOSE_SESSION = 'Logout';
+export const CLOSED = 'Closed'
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
@@ -168,6 +170,7 @@ export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
+export const EXPIRED_SESSION = 'Session expired';
 export const ERRORS = 'Errors';
 
 // ----- F
@@ -286,6 +289,7 @@ export const NEW_TICKET = 'New Ticket';
 export const NEW_WAREHOUSE = 'New Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
+export const NO_DATA = 'There is no data';
 export const NOT_LINKED = 'Not linked';
 export const NOT_LINKED1 = 'Not linked';
 export const NOTIFICATION = 'Notification';
@@ -327,6 +331,7 @@ export const PENDING_TASKS = 'Pending Tasks';
 export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
+export const PORTAL_MENU = "Portal menu"
 export const POSTAL_CODE = 'Postal Code';
 export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
@@ -342,6 +347,7 @@ export const PROVINCE = 'Province';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Quick access";
 export const QUANTITY = 'Quantity';
 export const QUOTA = 'Quota';
 
@@ -351,6 +357,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Received';
 export const RECEIVEDS = 'Received';
 export const RECENTS = 'Recents';
+export const RECENTLY_OPENED = "Recently opened";
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFIED = 'Rectified';
@@ -409,6 +416,7 @@ export const SPANISH = 'Spanish';
 export const STATISTICS = 'Statistics';
 export const STATUS = "Status";
 export const STATUS_NOT_EMPTY = "Status cannot be empty";
+export const SUITE_MENU = "Suite menu";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';

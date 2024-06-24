@@ -609,14 +609,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription, Integer holidayListBox,
-			Map<Date, String> map, CalendarDraft.DayType daysTypes[]) throws IllegalArgumentException {
+			Map<Date, String> map, CalendarDraft.DayType daysTypes[], Integer year) throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
 			JooqCalendar.insertHolidays(conn, domainID, workplaceId, holidayDescription, holidayListBox, map,
-					daysTypes);
+					daysTypes, year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void updateHolidayCalendar(String domain, int workplaceId, Integer holidayId, CalendarDraft.DayType daysTypes[]) throws IllegalArgumentException {
+
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			JooqCalendar.updateHolidayCalendar(conn, domainID, workplaceId, holidayId, daysTypes);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -6706,7 +6726,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void cambioContrato(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String tc2, Date fecha) throws IllegalArgumentException {
+	public void cambioContrato(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			// Domain, parentDomain and User id
@@ -6733,6 +6753,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 //					employeeContractInfo.getEmployeeInfo().getSecondSurName());
 //
 //			System.out.println(employeeAux.getNss());
+			
+			// Parse coef
+			if(AonStringUtils.isNotBlank(partialityCoef)) {
+				Double coefD = Double.parseDouble(partialityCoef);
+				if (coefD != null) {
+					coefD = coefD * 1000;
+					String coefStr = coefD.intValue() + "";
+					partialityCoef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
+				}
+			}
 
 			// cambioContratoCoef
 			SistemaRED.cambioContratoCoef(new ByteArrayInputStream(certificate.getData()),
@@ -6741,7 +6771,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeContractInfo.getEmployeeInfo().getSsNumber(), fecha, Optional.of(tc2), null);
+					employeeContractInfo.getEmployeeInfo().getSsNumber(), fecha, Optional.of(tc2), partialityCoef);
 
 		} catch (Exception e) {
 			e.printStackTrace();

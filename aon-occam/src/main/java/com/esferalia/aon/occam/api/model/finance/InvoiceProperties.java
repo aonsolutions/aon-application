@@ -38,8 +38,9 @@ public interface InvoiceProperties extends Serializable {
 	Property<Integer> getPosShiftroperty();	
 	Property<Date> getTaxDateProperty();
 	Property<Byte> getVatAccrualPayment();
-	Property<String> getTotalProperty();
+	Property<String> getTotalStringProperty();
 	Property<String> getDateNewPortalProperty();
+	Property<Double> getTotalProperty();
 
 	Property<Timestamp> getCreationDateProperty();
 	Property<String> getCreationUserProperty();
@@ -50,9 +51,4 @@ public interface InvoiceProperties extends Serializable {
 	Property<Byte> getInvoiceInfoTypeProperty();
 	Property<Byte> getInvoiceInfoStatusProperty();
 	
-	// RSELLER DATES (FOR GLOBAL STATICS)
-	Property<Integer> getRSellerIdProperty();
-	Property<java.sql.Date> getRSellerStartDateProperty();
-	Property<java.sql.Date> getRSellerEndDateProperty();
-	Property<Byte> getRSellerStatusProperty();
 }

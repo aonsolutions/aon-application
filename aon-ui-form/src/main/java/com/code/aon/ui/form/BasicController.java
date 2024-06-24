@@ -108,6 +108,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	/** A list that contains the selected objects of the model. */
 	private Set<Serializable> checkList;	
 
+	private int scroll;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -1546,5 +1548,38 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void setPage(int page) {
 		this.page = page;
 	}
+	
+	public int getScroll() {
+		return scroll;
+	}
+	
+	public void setScroll(int scroll) {
+		this.scroll = scroll;
+	}
+	
+	public void onScroll(ActionEvent event) throws ManagerBeanException  {
+		if ( scroll == 0 ) {
+			onScrollTop();
+		}
+		else {
+			onScrollBottom();
+		}
+	}
+
+	private void onScrollTop() throws ManagerBeanException  {
+		ExtendedPageDataModel pageModel = (ExtendedPageDataModel) getModel();
+		int prevPage =  Math.max(getPage() - 1  , 1 );
+		//pageModel.update(prevPage, getPageLimit());
+		setPage(prevPage);
+	}
+
+	private void onScrollBottom() throws ManagerBeanException  {
+		ExtendedPageDataModel pageModel = (ExtendedPageDataModel) getModel();
+		int lastPage = ( getRowCount() / getPageLimit() )  - 1;
+		int nextPage =  Math.min(getPage() + 1 , lastPage );
+		//pageModel.update(nextPage, getPageLimit());
+		setPage(nextPage);
+	}
+	
 	
 }

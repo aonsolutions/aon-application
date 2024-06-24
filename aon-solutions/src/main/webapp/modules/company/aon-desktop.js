@@ -27,13 +27,11 @@ import { getNoteCount } from '../../services/noteService.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { Attach } from '../../models/Attach.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
-import { AonTab } from '../../components/aon-tab.js';
 import { AonNewUpload } from '../../components/aon-new-upload.js'
 import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
-import { AonAccessCard } from '../../components/aon-access-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
@@ -505,7 +503,12 @@ export class AonDesktop extends AonElement {
 		
 		if(this.getDur().isAccounting()) {
 			// PyG Card
-			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly");
+			let defaultYear = new Date().getFullYear();
+
+			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+				defaultYear = defaultYear - 1;
+
+			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly", defaultYear);
 			aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 
 			let pygCard = new AonCard();
@@ -698,31 +701,6 @@ export class AonDesktop extends AonElement {
 			messengerCard.firstChild.style.minHeight = "420px";
 			messengerCard.firstChild.children.item(1).style.height = "315px";
 			messengerCard.firstChild.style.margin = '0';
-		}
-
-		// Fast Access Panel
-		if(company.parentId || company.type !== 'CONSULTANCY'){
-
-			let fastAccessPanel = this.createElement(TAG.DIV);
-			fastAccessPanel.className = CSS.FLEX_ROW;
-			fastAccessPanel.style.gap = '1rem';
-			fastAccessPanel.style.flexWrap = 'wrap';
-			fastAccessPanel.id = "fastAccessPanel";
-			dashboard.appendChild(fastAccessPanel);
-
-			for (let key in Apps){
-				const app = Apps[key];
-				if(this.isApp(app)) {
-					this.addAccess(app, fastAccessPanel);
-				}
-			}
-			for(let key2 in ClassicApps) {
-				const app = ClassicApps[key2];
-				if(this.isApp(app)) {
-					this.addAccess(app, fastAccessPanel);
-				}
-			}
-
 		}
 	}
 
@@ -1030,20 +1008,6 @@ export class AonDesktop extends AonElement {
 				aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
 			}, 100);
 		}
-	}
-
-	addAccess(app, parent){
-		// App Access
-		let appAccess = new AonAccessCard();
-		appAccess.id = app.title;
-		parent.appendChild(appAccess);
-		appAccess.addContent({
-			title: app.title ? app.title : "No definido",
-			icon: app.icon,
-			logo: app.logo,
-			color: app.color || "#000000",
-			colorRGBA: app.backgroundColor || "transparent"
-		}, () => this.appSelection(app.app));
 	}
 
 	createAppList(parent, company){

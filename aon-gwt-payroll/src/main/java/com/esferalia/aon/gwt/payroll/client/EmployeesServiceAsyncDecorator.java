@@ -552,11 +552,18 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 
 	@Override
 	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[],
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[], Integer year,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.saveHolidaysAndDays(domain, workplaceId, holidayDescription,
-				holidayListBox, map, dayTypes,new AsyncCallbackWrapper<Void>(callback));
+				holidayListBox, map, dayTypes, year, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void updateHolidayCalendar(String domain, int workplaceId, Integer holidayId, CalendarDraft.DayType dayTypes[],
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.updateHolidayCalendar(domain, workplaceId, holidayId, dayTypes, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -895,9 +902,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void cambioContrato(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void cambioContrato(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioContrato(currentDomainName, user, employeeContractInfo, tc2, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioContrato(currentDomainName, user, employeeContractInfo, tc2, partialityCoef, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

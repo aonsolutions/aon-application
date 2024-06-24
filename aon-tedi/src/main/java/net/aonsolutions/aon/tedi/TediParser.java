@@ -28,10 +28,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -388,7 +389,7 @@ public class TediParser {
 		if (ctx.getAonConfiguration() != null && ctx.getAonConfiguration().getWorkplaces() != null && ctx.getAonConfiguration().getWorkplaces().size() > 0) {
 			ctx.getTediResult().getAccountingInvoice().setWorkplace(ctx.getAonConfiguration().getWorkplaces().get(0).getId()); 	
 		} else {
-			ctx.getTediResult().add( TediErrorMessages.C016.err(TediContextKey.WORKPLACE));
+			ctx.getTediResult().add( InvoiceErrorMessages.C016.err(InvoiceErrorKey.WORKPLACE));
 		}
 	};
 	
@@ -416,7 +417,7 @@ public class TediParser {
 			}
 			if (allRegistries.size() > 0) {
 				ctx.getTediResult().setPosibleRegistries(allRegistries);
-				ctx.getTediResult().add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+				ctx.getTediResult().add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 			}
 		}
 
@@ -447,13 +448,13 @@ public class TediParser {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.EXPENSES );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
 					}
 				}
 			}
@@ -475,30 +476,30 @@ public class TediParser {
 			invoice.setRegistryName(result.getTedi().getRegistry().getName());
 			invoice.setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
 		}
-		if (ctx.getAONContext() != null) {
+		if (ctx.getAONContext() != null && AonStringUtils.isNotEmpty( invoice.getRegistryDocument() )) {
 			LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
 					.getAccountingRegistries(ctx.getAONContext(), f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 					.filter(filterExpression)
 					.collect(Collectors.toCollection(LinkedList::new));
 			if (registries != null && registries.size() > 0) {
-				if (registries.size() == 1) {
+				if (registries.size() == 	1) {
 					AccountingRegistry ar = registries.get(0);
 					AccountingInvoice ai = result.getAccountingInvoice();
 					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId()));
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 					.setTransaction(ar.getTransaction());
 					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), ctx.getAonConfiguration()));
 					return true;
 				} else {
 					result.setPosibleRegistries(registries);
-					result.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+					result.add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 				}
 			}
 		}
 		if (result.getInvoice().getRegistryDocumentCountry() == null) {
 			result.getInvoice().setRegistryDocumentCountry(Country.ES);
-			result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+			result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
 		}
 		return false;
 	}		
@@ -509,7 +510,7 @@ public class TediParser {
 			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
 				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
 				ctx.getTediResult().getInvoice().setSeries( series );	
-				ctx.getTediResult().add( TediErrorMessages.C003.inf(TediContextKey.SERIES,TediContextKey.SERIES.getDescription(), series ));	
+				ctx.getTediResult().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
 			}
 		}
 	};
@@ -520,7 +521,7 @@ public class TediParser {
 			if (result.getTedi().getNumber() != null) {
 				result.getInvoice().setNumber(result.getTedi().getNumber());
 			} else {
-				result.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+				result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
 				result.getInvoice().setNumber(0);
 			}
 		}
@@ -834,7 +835,7 @@ public class TediParser {
 
 	private static Consumer<TediParserContext> INVOICE_SETTLED_MANUALLY = (ctx) -> {
 		if (ctx.getTediResult().getTedi().getInsight() != null && ctx.getTediResult().getTedi().getInsight().isSettledManually()) {
-			ctx.getTediResult().add( TediErrorMessages.C017.inf(TediContextKey.BASES_QUOTAS,TediContextKey.BASES_QUOTAS.getDescription()));
+			ctx.getTediResult().add( InvoiceErrorMessages.C017.inf(InvoiceErrorKey.BASES_QUOTAS,InvoiceErrorKey.BASES_QUOTAS.getDescription()));
 		}		
 	};
 

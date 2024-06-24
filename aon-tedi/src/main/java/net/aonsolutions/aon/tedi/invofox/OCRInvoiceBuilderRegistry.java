@@ -4,21 +4,20 @@ import java.util.LinkedList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 
-import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder.OCRContext;
 
 class OCRInvoiceBuilderRegistry {
@@ -36,16 +35,15 @@ class OCRInvoiceBuilderRegistry {
 	
 		protected boolean fillRegistry(OCRContext ocr, Predicate<AccountingRegistry> filterExpression) {
 		    try {
-			OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), ocr.getConfig(), filterExpression, ocr.getInvoice());
-			return true;
+				OCRInvoiceBuilderRegistry.fillRegistry(ocr.getCtx(), ocr.getConfig(), filterExpression, ocr.getInvoice());
+				return true;
 		    } catch (OCRTooManyOwnersException e) {
-			ocr.add(TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+		    	ocr.add(InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 		    } catch (OCROwnerNotFoundException e) {
 		    }
 		    if (ocr.getInvoice().getRegistryDocumentCountry() == null) {
-			ocr.getInvoice().setRegistryDocumentCountry(Country.ES);
-			ocr.add(TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,
-				TediContextKey.RDOCUMENT_COUNTRY.getDescription(), Country.ES.getIso2()));
+				ocr.getInvoice().setRegistryDocumentCountry(Country.ES);
+				ocr.add(InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(), Country.ES.getIso2()));
 		    }
 		    return false;
 		}		

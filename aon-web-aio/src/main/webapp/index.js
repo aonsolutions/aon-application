@@ -11,8 +11,6 @@ import 'aonsolutions/css/aon-grid.css';
 import 'aonsolutions/css/aon-mobile.css';
 import './css/aon.css';
 import 'aonsolutions/css/aon-figma.css';
-import 'aonsolutions/css/aon-access-card.css';
-
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -42,8 +40,18 @@ const load = () => {
     document.body.appendChild(new AonModule());
     loadScripts(); 
     window.loadScripts = () => loadScripts();
+    loadTheme();
 
 	console.debug("Fantastic aonSolutions loaded :-).")
+}
+
+const loadTheme = () => {
+	let params = new URLSearchParams(document.location.search);
+	let theme = params.get('theme');
+	if (theme) {
+		let url = `css/theme/${theme}.css`;
+	    loadLink(url, 'stylesheet', 'text/css');
+    }
 }
 
 const favicon = () => {

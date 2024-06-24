@@ -29,7 +29,8 @@ module.exports = {
 	resolve: {
     	alias: {
       		aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
-      		aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/')
+      		aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
+          aonparent: path.resolve(__dirname, 'src/main/webapp/modules/aon-parent.js')
     	}
   	}
 };

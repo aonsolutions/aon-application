@@ -38,6 +38,8 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.SurveyFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
+import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
@@ -166,9 +168,9 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
-	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter){
+	public Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){
 		return ctx.getDslContext().transactionResult(
-				configuration -> CreditorSupplierDAO.getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter));
+				configuration -> CreditorSupplierDAO.getSupplierCreditorStream(ctx, filter, filter2, offset, limit, globalFilter, order));
 	}
 	
 	@Override
@@ -244,6 +246,12 @@ public class RegistryImpl implements IRegistry{
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.deleteRMedia(ctx, registry));
+	}
+	
+	@Override
+	public void deleteRegistryMedia(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryMediaDAO.delete(ctx, id));
 	}
 	
 	@Override
@@ -397,6 +405,12 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> SellerDAO.getList(ctx, params));
 	}
+	
+	@Override
+	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getListCount(ctx, params));
+	}
 
 	@Override
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller) {
@@ -518,6 +532,12 @@ public class RegistryImpl implements IRegistry{
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> CompanyDAO.getCompanyStream(ctx, auth, page, perPage));
+	}
+	
+	@Override
+	public Stream<AonCompany> getCompanyWithRolesStream(AONContext ctx, byte[] auth, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CompanyDAO.getCompanyWithRolesStream(ctx, auth, page, perPage));
 	}
 	
 	@Override
@@ -705,7 +725,12 @@ public class RegistryImpl implements IRegistry{
 		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, raddinfoId));
 	}
 	
-
+	@Override
+	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter){
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getRAddInfoAviableAttributes(ctx, filter));
+	}
+	
 	@Override
 	public RegistryAddInfo saveRegistryAddInfo(AONContext ctx, RegistryAddInfo registryAddInfo) {
 		return 	ctx.getDslContext().transactionResult(
@@ -713,7 +738,6 @@ public class RegistryImpl implements IRegistry{
 	}
 
 
-	
 	// -------------------- RDIRSTAFF
 
 	@Override
@@ -732,9 +756,9 @@ public class RegistryImpl implements IRegistry{
 	// *************************************** [CUSTOMER]
 	// **************************************************
 	@Override
-	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter) {
+	public Stream<Customer> getCustomerList(AONContext ctx, CustomerFilter filter, int ofs, int limit, String globalFilter, CustomerOrder order) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> CreditorSupplierDAO.getCustomerStream(ctx, filter, ofs, limit, globalFilter));
+				configuration -> CreditorSupplierDAO.getCustomerStream(ctx, filter, ofs, limit, globalFilter, order));
 	}
 	@Override
 	public long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {

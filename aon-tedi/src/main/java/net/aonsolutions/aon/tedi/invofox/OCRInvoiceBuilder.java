@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -24,10 +25,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -45,9 +48,8 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
-import net.aonsolutions.aon.tedi.TediErrorException;
-import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRInvoice;
@@ -92,7 +94,7 @@ public class OCRInvoiceBuilder {
 			return getResult().getInvoice();
 		}
 
-		public void add(TediError err) {
+		public void add(InvoiceError err) {
 			result.add(err);
 		}
 	}
@@ -236,7 +238,7 @@ public class OCRInvoiceBuilder {
 				ocr.getInvoice().setIssueDate(issueDate);
 				ocr.getInvoice().setTaxDate(issueDate);
 			} catch (ParseException e) {
-				ocr.add( TediErrorMessages.C001.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
+				ocr.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE,InvoiceErrorKey.ISSUE_DATE.getDescription()) );
 			}
 		}
 	};
@@ -256,10 +258,10 @@ public class OCRInvoiceBuilder {
 	}
 	
 	private static final Consumer<OCRContext> INVOICE_TYPE = ocr -> {
-	    fillTtype(ocr.getOCRDocument(), ocr.getOCRInvoice(), ocr.getConfig().getCompany().getDocument(), ocr.getInvoice());
+		fillInvoiceType(ocr.getOCRDocument(), ocr.getOCRInvoice(), ocr.getConfig().getCompany().getDocument(), ocr.getInvoice());
 	};
 	
-	public static final void fillTtype(OCRDocument ocrDocument, OCRInvoice ocrInvoice, String companyDocument, Invoice invoice) {
+	public static final void fillInvoiceType(OCRDocument ocrDocument, OCRInvoice ocrInvoice, String companyDocument, Invoice invoice) {
 		Optional<OCRType> optType = ocrDocument.getType();
 		if (optType.isPresent()) {
 			OCRType ocrType = optType.get();
@@ -284,7 +286,7 @@ public class OCRInvoiceBuilder {
 	    try {
 		fillRegistryDocument(ocr.getOCRInvoice(), ocr.getInvoice());
 	    } catch (OCRUndefinedTypeException e) {
-		ocr.add( TediErrorMessages.C018.err(TediContextKey.TYPE));
+		ocr.add( InvoiceErrorMessages.C018.err(InvoiceErrorKey.TYPE));
 	    }
 	};
 	
@@ -385,9 +387,9 @@ public class OCRInvoiceBuilder {
 	    try {
 	    	fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
 	    } catch (OCRZeroValueException e) {
-	    	ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+	    	ocr.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
 	    } catch (OCRBlankValueException e) {
-	    	ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
+	    	ocr.add( InvoiceErrorMessages.C001.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription()) );
 	    }
 	};
 	
@@ -397,16 +399,44 @@ public class OCRInvoiceBuilder {
 			String reference = optReference.orElse(null);
 			if (!invoice.isSales()) {
 				invoice.setReferenceCode(reference);		
-			} 
+			} else {
+				Pair<String,Integer> seriesNumber = guessSeriesNumber(reference);
+				invoice.setSeries( seriesNumber.getLeft());
+				invoice.setNumber( seriesNumber.getRight());
+			}
 		} else { 
 			invoice.setNumber(0);
 			throw new OCRZeroValueException();
 		}
-		if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+		
+		if (!invoice.isSales() && AonStringUtils.isBlank(invoice.getReferenceCode())) {
+			throw new OCRBlankValueException();
+		}
+		if (invoice.isSales() && invoice.getNumber() == 0) {
 			throw new OCRBlankValueException();
 		}
 	}
 	
+	private static Pair<String,Integer> guessSeriesNumber( String reference) {
+		String reverseNumber = AonStringUtils.reverse( reference )
+			.chars()
+			.takeWhile( Character::isDigit )
+			.mapToObj( i -> (char) i)
+			.collect(Collector.of(
+				    StringBuilder::new,
+				    StringBuilder::append,
+				    StringBuilder::append,
+				    StringBuilder::toString));
+		String numberStr = AonStringUtils.reverse( reverseNumber );
+		String rawSeries = AonStringUtils.replace(reference,numberStr,"");
+		String series = "";
+		if (!AonStringUtils.isBlank(rawSeries)) {
+			String sep = AonStringUtils.substring(rawSeries,  -1);
+			series = AonStringUtils.substringBeforeLast( rawSeries, sep );
+		}
+		return new Pair<>( series, AonNumberUtils.toInteger(numberStr) );
+	}
+
 	private static final Consumer<OCRContext> INVOICE_TOTAL = ocr -> {
 	    fillTotal(ocr.getOCRInvoice(), ocr.getInvoice());
 	};
@@ -476,10 +506,13 @@ public class OCRInvoiceBuilder {
 	    detail.setSource( InvoiceSource.TEDI );
 	}
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
-		ocr.getDetail().setWorkPlace( Optional.ofNullable(ocr.getConfig().getWorkplaces())
-				.flatMap( l -> l.stream().map(w -> w.getId())
-				.findFirst()).orElse(null));
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> {
+		ocr.getDetail().setWorkplace(
+			AonCollectionUtils.stream( ocr.getConfig().getWorkplaces() )
+				.findFirst()
+				.orElse(null)
+			);
+	};
 
 	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_QUANTITY = ocr -> {
 		BigDecimal quantity = ocr.getOcrLine().getQuantity().flatMap( d -> d.getValue() ).orElse(null);
@@ -720,13 +753,13 @@ public class OCRInvoiceBuilder {
 		ocr.getFinance().setInvoice(ocr.getInvoice());
 	private static final Consumer<OCRContextDetailFromDue> INVOICE_FINANCE_DUE_DATE = ocr -> {
 	    try {
-		fillFinanceDueDate(ocr.getOCRDue(), ocr.getFinance(), ocr.getInvoice());
-	    } catch (TediErrorException e) {
-		ocr.add(e.getTediError());
+	    	fillFinanceDueDate(ocr.getOCRDue(), ocr.getFinance(), ocr.getInvoice());
+	    } catch (InvoiceErrorException e) {
+	    	ocr.add(e.getInvoiceError());
 	    }
 	};
 	
-	private static final void fillFinanceDueDate(OCRInvoiceDue due, Finance finance, Invoice invoice) throws TediErrorException {
+	private static final void fillFinanceDueDate(OCRInvoiceDue due, Finance finance, Invoice invoice) throws InvoiceErrorException {
 		String dueDateString = due.getDate()
 			.flatMap( s -> s.getValue() ).orElse(null);
 		if (AonStringUtils.isNotBlank( dueDateString)) {
@@ -735,7 +768,7 @@ public class OCRInvoiceBuilder {
 				Date dueDate = formatter.parse(dueDateString);
 				finance.setDueDate(dueDate);
 			} catch (ParseException e) {
-				throw new TediErrorException( TediErrorMessages.C019.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
+				throw new InvoiceErrorException( InvoiceErrorMessages.C019.err(InvoiceErrorKey.ISSUE_DATE,InvoiceErrorKey.ISSUE_DATE.getDescription()) );
 			}
 		} else {
 		    finance.setDueDate(invoice.getIssueDate());
@@ -869,9 +902,9 @@ public class OCRInvoiceBuilder {
 		    finance.setInvoice(invoice);
 		    // INVOICE_FINANCE_DUE_DATE
 		    try {
-			fillFinanceDueDate(ocrInvoiceDue, finance, invoice);
-		    } catch (TediErrorException e) {
-			invoice.addMessage(e.getTediError());
+		    	fillFinanceDueDate(ocrInvoiceDue, finance, invoice);
+		    } catch (InvoiceErrorException e) {
+		    	invoice.addMessage(e.getInvoiceError());
 		    }
 		    // INVOICE_FINANCE_AMOUNT
 		    fillFinanceAmount(ocrInvoiceDue, finance);
@@ -1137,8 +1170,8 @@ public class OCRInvoiceBuilder {
 			if (opItem.isPresent()) {
 				invoiceDetail.setItem( opItem.get() );	
 			} else {
-				// Se busca la ´tulima cuanta contable del registry que se trata
-				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry());
+				// Se busca la ultima cuenta contable del registry que se trata
+				LinkedList<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
 				Account account = AonCollectionUtils.stream(accounts)
 					.findFirst()
 					.orElse(null);
@@ -1162,13 +1195,34 @@ public class OCRInvoiceBuilder {
 	// ****************************************************************************
 	// ****************************************************************************
 	// ****************************************************************************
-
+	
 	public static void main(String[] args) {
-		String iban = "ES37.0075.4626.4606.0065.8206";
-		System.out.println("(1) " + iban);
-		iban = iban.replaceAll("[^A-Za-z0-9]", "");
-//		iban = iban.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}]", "");
-		System.out.println("(1) " + iban);
+		String[] references = new String[] { 
+			"2024/000001",
+			"R-2024/000001",
+			"20A/000001",
+			"A2024/000001",
+			"24/000001",
+			"/000001",
+			"000001",
+			"2024-000001",
+			"2024 000001",
+			"2024_000001",
+		};
+		
+		AonCollectionUtils.stream(references)
+			.map( ref -> {
+				System.out.print( ref + " ---> ");
+				return ref;
+			})
+			.map( ref -> guessSeriesNumber( ref ))
+			.forEach( p -> System.out.println( p.getLeft() + " - " + p.getRight() ) );
+		
+		
 	}
 }
  
+
+
+
+

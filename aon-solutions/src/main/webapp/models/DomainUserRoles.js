@@ -252,6 +252,21 @@ export class DomainUserRoles {
       && !this.hasParentOldModule(OldModule.AON_ONE) && !this.hasParentApp(App.BASIC_MANAGEMENT);
   }
 
+  // MANAGEMENT
+
+  hasManagement() {
+    return this.hasApp(App.MANAGEMENT) || this.hasOldModule(OldModule.MANAGEMENT);
+  }
+
+  hasParentManagement() {
+    return this.hasParentApp(App.MANAGEMENT) || this.hasParentOldModule(OldModule.MANAGEMENT)
+  }
+
+  isManagement() {
+    return (this.hasManagement() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentManagement()))
+      && (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
+  }
+
   // ACCOUNTING
 
   hasAccounting() {
@@ -263,7 +278,6 @@ export class DomainUserRoles {
   }
 
 	isAccounting() {
-    
 		return (this.hasAccounting() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentAccounting()))
       && (this.isAdmin() || this.hasRole(Role.ACCOUNTING));
 	}
@@ -568,6 +582,21 @@ export class DomainUserRoles {
   isInvofox() {
     return (this.hasInvofox() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentInvofox()))
       && (this.isAdmin() || this.hasRole(Role.INVOFOX));
+  }
+
+  // OCR INVOFOX
+
+  hasFacturae() {
+    return this.hasApp(App.FACTURAE);
+  }
+    
+  hasParentFacturae() {
+    return this.hasParentApp(App.FACTURAE);
+  }
+    
+  isFacturae() {
+    return (this.hasFacturae() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentFacturae()))
+      && (this.isAdmin() || this.hasRole(Role.FACTURAE));
   }
 
   // SERES

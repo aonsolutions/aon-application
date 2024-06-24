@@ -32,7 +32,7 @@ export const ACCOUNTING_PERIOD = {
 
 export const ACCOUNT_ENTRY = {
   module: GWT_FISCAL,
-  entryPoint: 'AccountEntryModuleTEDI'
+  entryPoint: 'AccountEntryModule'
 };
 
 export const STATEMENT_REPORT = {
@@ -40,9 +40,24 @@ export const STATEMENT_REPORT = {
   entryPoint: 'StatementReportModule'
 };
 
+export const ACCOUNT_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountModule'
+};
+
 export const ACCOUNT_OPERATING_REPORT = {
   module: GWT_FISCAL,
   entryPoint: 'AccountOperatingReport'
+};
+
+export const ACCOUNT_TRIAL_BALANCE_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountTrialBalanceReport'
+};
+
+export const ACCOUNT_ANALYTICAL_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountAnalyticalReport'
 };
 
 export const JOURNAL_REPORT = {
@@ -73,6 +88,11 @@ export const IRPF_REPORT = {
 export const OPERATION_REPORT = {
   module: GWT_FISCAL,
   entryPoint: 'OperationReport'
+};
+
+export const AMORTIZATION_TYPE = {
+  module: GWT_FISCAL,
+  entryPoint: 'AmortizationType'
 };
 
 export const DEPOSIT = {
@@ -164,11 +184,123 @@ export const MODEL_111 = {
   entryPoint: 'Model111'
 };
 
+export const MODEL_115 = {
+  title: "Modelo 115",
+  name: "Modelo 115",
+  module: GWT_FISCAL,
+  entryPoint: 'Model115'
+};
+
+export const MODEL_123 = {
+  title: "Modelo 123",
+  name: "Modelo 123",
+  module: GWT_FISCAL,
+  entryPoint: 'Model123'
+};
+
+export const MODEL_130 = {
+  title: "Modelo 130",
+  name: "Modelo 130",
+  module: GWT_FISCAL,
+  entryPoint: 'Model130'
+};
+
+export const MODEL_131 = {
+  title: "Modelo 131",
+  name: "Modelo 131",
+  module: GWT_FISCAL,
+  entryPoint: 'Model131'
+};
+
+export const MODEL_140 = {
+  title: "Modelo 140",
+  name: "Modelo 140",
+  module: GWT_FISCAL,
+  entryPoint: 'Model140'
+};
+
+export const MODEL_180 = {
+  title: "Modelo 180",
+  name: "Modelo 180",
+  module: GWT_FISCAL,
+  entryPoint: 'Model180'
+};
+
+export const MODEL_184 = {
+  title: "Modelo 184",
+  name: "Modelo 184",
+  module: GWT_FISCAL,
+  entryPoint: 'Model184'
+};
+
 export const MODEL_190 = {
   title: MSG.MODEL_190_DESCRIPTION,
   name: MSG.MODEL_190_DESCRIPTION,
   module: GWT_FISCAL,
-  entryPoint: 'Model90'
+  entryPoint: 'Model190'
+};
+
+export const MODEL_193 = {
+  title:"Model 193",
+  name: "Model 193",
+  module: GWT_FISCAL,
+  entryPoint: 'Model193'
+};
+
+export const MODEL_200 = {
+  title:"Model 200",
+  name: "Model 200",
+  module: GWT_FISCAL,
+  entryPoint: 'Model200'
+};
+
+export const MODEL_202 = {
+  title:"Model 202",
+  name: "Model 202",
+  module: GWT_FISCAL,
+  entryPoint: 'Model202'
+};
+
+export const MODEL_240 = {
+  title:"Model 240",
+  name: "Model 240",
+  module: GWT_FISCAL,
+  entryPoint: 'Model240'
+};
+
+export const MODEL_303 = {
+  title: "Modelo 303. Autoliquidación de IVA",
+  name: "Modelo 303. Autoliquidación de IVA",
+  module: GWT_FISCAL,
+  entryPoint: 'Model303'
+};
+
+export const MODEL_347 = {
+  title: "Modelo 347",
+  name: "Modelo 347",
+  module: GWT_FISCAL,
+  entryPoint: 'Model347'
+};
+
+export const MODEL_349 = {
+  title: "Modelo 349",
+  name: "Modelo 349",
+  module: GWT_FISCAL,
+  entryPoint: 'Model349'
+};
+
+export const MODEL_390 = {
+  title: "Modelo 390",
+  name: "Modelo 390",
+  module: GWT_FISCAL,
+  entryPoint: 'Model390'
+};
+
+export const MODEL_SII = {
+  title: "Modelo SII",
+  name: "Modelo SII",
+  module: GWT_FISCAL,
+  entryPoint: 'Sii'
 };
 
 export const INVOICE_STAT = {

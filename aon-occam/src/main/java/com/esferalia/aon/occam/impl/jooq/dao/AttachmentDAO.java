@@ -94,7 +94,7 @@ public class AttachmentDAO {
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
 		RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID, RATTACH.CATEGORY,
-		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE};
+		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE, CATEGORY.ID, CATEGORY.DESCRIPTION, CATEGORY.DOMAIN, CATEGORY.NAME, CATEGORY.RATTACH, CATEGORY.SCOPE, CATEGORY.TYPE, CATEGORY.URL, SCOPE.ID, SCOPE.DESCRIPTION};
 
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] contractAttachWD = {CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT,
@@ -169,6 +169,7 @@ public class AttachmentDAO {
 						attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 						return attach;
 					}).toList();
+			
 		} else {
 			attachList = selectRegistryAttach(ctx, filter, withData) 
 			.orderBy(RATTACH.ATTACH_DATE.desc())
@@ -177,15 +178,31 @@ public class AttachmentDAO {
 				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 				return attach;
 			}).toList();
+			
+	
 		}
-
 		return attachList.stream();
 	}
 	
+	public static long getDocumentalRegistryAttachCount(AONContext ctx, AttachFilter filter, boolean withData) {
+		return selectRegistryAttach(ctx, filter, withData)
+				.fetch()
+				.stream()
+				.count();
+	}
+	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
-		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		if(withData) select = ctx.getDslContext().select().from(RATTACH); //.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
+		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		if(withData) select = ctx.getDslContext().select().from(RATTACH)
+				.leftOuterJoin(CATEGORY).on(CATEGORY.ID.eq(RATTACH.CATEGORY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(RATTACH.SCOPE));
+				//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		
+		return RATTACH_PROPERTIES.build(select, filter).fetch().stream().map(new RegistryAttachFiller());
 	}
 	
 	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){
@@ -233,10 +250,6 @@ public class AttachmentDAO {
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
 		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);
-		System.out.println(
-				DATA_ATTACH_PROPERTIES.build(select, filter)
-				.getSQL(ParamType.INLINED)
-				);
 		return DATA_ATTACH_PROPERTIES.build(select, filter).fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	

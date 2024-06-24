@@ -141,9 +141,13 @@ public class DomainEmployeesServiceAsync {
 	}
 
 	public void saveHolidaysAndDays(int workplaceId, String holidayDescription, Integer holidayListBox,
-			Map<Date, String> map, DayType[] dayTypes, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			Map<Date, String> map, DayType[] dayTypes, Integer year, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.saveHolidaysAndDays(getCurrentDomainName(), workplaceId, holidayDescription, holidayListBox, map,
-				dayTypes, callback);
+				dayTypes, year, callback);
+	}
+	
+	public void updateHolidayCalendar(int workplaceId, Integer holidayId, DayType[] dayTypes, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.updateHolidayCalendar(getCurrentDomainName(), workplaceId, holidayId, dayTypes, callback);
 	}
 
 	public void getContext(String domain, AgreementDraft agreementDraft, int levelId,
@@ -593,8 +597,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioCoef(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, coef, fecha, callback);
 	}
 
-	public void cambioContrato(EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, fecha, callback);
+	public void cambioContrato(EmployeeContractInfo employeeContractInfo, String tc2, String partialityCoef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, partialityCoef, fecha, callback);
 	}
 	
 	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grupCtz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {

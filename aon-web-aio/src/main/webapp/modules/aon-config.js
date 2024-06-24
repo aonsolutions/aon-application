@@ -9,6 +9,7 @@ export class AonConfig extends AonElement {
 
 	TOP_SWITCH;
 	LEFT_SWITCH;
+	APPS_SWITCH;
 	LANG_CARD;
 	TYPE_CARD;
 
@@ -29,6 +30,7 @@ export class AonConfig extends AonElement {
 		this.id = this.id || 'aonConfig';
 		this.TOP_SWITCH = this.id + 'SwitchTop';
 		this.LEFT_SWITCH = this.id + 'SwitchLeft';
+		this.APPS_SWITCH = this.id + 'SwitchApps';
 		this.LANG_CARD = this.id + 'HelpLangCard';
 		this.TYPE_CARD = this.id + 'TypeCard';
 	}
@@ -36,7 +38,7 @@ export class AonConfig extends AonElement {
 	build() {
 
 		let div = this.createDiv();
-		div.innerHTML = MSG.UPPER_MENU;
+		div.innerHTML = MSG.SUITE_MENU;
 		div.style.marginLeft = '10px';
 		div.style.position = "relative";
 		div.style.top = "-15px";
@@ -52,7 +54,7 @@ export class AonConfig extends AonElement {
 		div.appendChild(rightPanelSwitchTopButton);
 
 		let span2= this.createSpan();
-		span2.innerHTML = MSG.SIDE_MENU;
+		span2.innerHTML = MSG.PORTAL_MENU;
 		span2.style.marginLeft = '10px';
 		span2.style.position = "relative";
 		span2.style.top = '0px';
@@ -67,6 +69,22 @@ export class AonConfig extends AonElement {
 		rightPanelSwitchLeftButton.checked =  LS.isLeftMenu();
 		this.appendChild(rightPanelSwitchLeftButton);
 
+		let span3 = this.createSpan();
+		span3.innerHTML = "Mostrar todas las aplicaciones";
+		span3.style.left = '-81px';
+		span3.style.position = "relative";
+		span3.style.top = '35px';
+		this.appendChild(span3);
+
+		let rightPanelAppsButton = new AonSwitch();
+		rightPanelAppsButton.id = this.APPS_SWITCH;
+		rightPanelAppsButton.style.marginLeft = '10px';
+		rightPanelAppsButton.style.right = '30px';
+		rightPanelAppsButton.style.position = "absolute";
+		rightPanelAppsButton.style.top = '122px';
+		rightPanelAppsButton.checked = LS.isAppMenu();
+		this.appendChild(rightPanelAppsButton);
+
 		let rightPanelLangCard = new AonCard();
 		rightPanelLangCard.id = this.LANG_CARD;
 		rightPanelLangCard.title = MSG.SELECT_LANGUAGE;
@@ -78,6 +96,7 @@ export class AonConfig extends AonElement {
 		let cardDivv = this.getElement(rightPanelLangCard.CARD);
 		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
 		cardDivv.style.borderRadius = '2px';
+		cardDivv.style.marginTop = '50px';
 
 		let divGenerall = this.createDiv();
 		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
@@ -109,6 +128,12 @@ export class AonConfig extends AonElement {
 			
 	    });
 
+		rightPanelAppsButton.addEventListener(EVENT.CHANGE, () => {
+			LS.setAppMenu(rightPanelAppsButton.checked);
+			aonMenu.buildMenuTopnav();
+			aonMenu.reloadTopNav();
+		});
+		
 	}
 
 	buildLanguageData(value,language) {

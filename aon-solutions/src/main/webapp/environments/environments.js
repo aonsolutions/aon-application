@@ -2,7 +2,7 @@
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
-export const PDFJS_URL = "https://mozilla.github.io/pdf.js/";
+export const PDFJS_URL = "https://mozilla.github.io/pdf.js/legacy/";
 export const PDFJS_PDF_URL = `${PDFJS_URL}/build/pdf.mjs`;
 export const PDFJS_WORKER_URL = `${PDFJS_URL}/build/pdf.worker.mjs`;
 export const PDFJS_VIEWER_STYLESHEET_URL = `${PDFJS_URL}/web/viewer.css`;
@@ -45,5 +45,6 @@ import * as MATERIAL_ICONS from './materialIcons.js';
 import * as AON_ICONS from './aonIcons.js';
 import * as CONSTANT from './constants.js';
 import * as API from './aonApi.js';
+import * as APPPARAMS from './appParams.js';
 
-export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT, API};
+export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT, API, APPPARAMS};

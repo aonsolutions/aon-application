@@ -20,6 +20,7 @@ export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_COMPOSITION = 'Konposizioa Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_NEW = "Gehitu berria";
 export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
@@ -75,6 +76,7 @@ export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
 export const CLOSE = 'Itxi';
 export const CLOSE_SESSION = 'Saioa Itxi';
+export const CLOSED = 'Itxita';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
@@ -167,6 +169,7 @@ export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
+export const EXPIRED_SESSION = 'Saioa iraungi da';
 export const ERRORS = 'Akatsak';
 
 // ----- F
@@ -284,6 +287,7 @@ export const NEW_TICKET = 'Tiket Berria';
 export const NEW_WAREHOUSE = 'Biltegi Berria';
 export const NEXT = 'Hurrengoa';
 export const NIF = 'IFZ';
+export const NO_DATA = 'Ez dago daturik';
 export const NOT_LINKED = 'Estekatu gabea';
 export const NOT_LINKED1 = 'Estekatu gabeak';
 export const NOTIFICATION = 'Jakinarazpena';
@@ -323,6 +327,7 @@ export const PENDING_TASKS = 'Zain Dauden Zereginak';
 export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
+export const PORTAL_MENU = "Portaleko menua";
 export const POSTAL_CODE = 'Posta-kodea';
 export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
@@ -338,6 +343,7 @@ export const PROVINCE = 'Probintzia';
 
 // ----- Q
 
+export const QUICK_ACCESS = "Sarbide azkarra";
 export const QUANTITY = 'Kantitatea';
 export const QUOTA = 'Kuota';
 
@@ -347,6 +353,7 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
+export const RECENTLY_OPENED = "Berriki irekia";
 export const RECORD = 'Kontabilizatu';
 export const RECORD_INVOICE = 'Faktura Kontabilizatu';
 export const RECTIFIED = 'Zuzenketa';
@@ -405,6 +412,7 @@ export const SPANISH = 'Gaztelania';
 export const STATISTICS = 'Estatistikak';
 export const STATUS = "Egoera";
 export const STATUS_NOT_EMPTY = "Egoera ezin da hutsik geratu";
+export const SUITE_MENU = "Suite menua";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';

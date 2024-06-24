@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -405,6 +407,42 @@ public class CompanyDAO {
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 	
+	public static Stream<AonCompany> getCompanyWithRolesStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Byte[] roles = new Byte[]{AonRole.ENTERPRISE.value(), AonRole.EMPLOYEE.value()};
+		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
+		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		return ctx.getDslContext().select()
+			.from(COMPANY)
+			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
+			.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
+			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
+			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
+			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			.leftOuterJoin(USER_APP_ROLE).on(
+					USER_APP_ROLE.USER_ID.eq(USER.ID)
+					.and(USER_APP_ROLE.DOMAIN.eq(domain.ID)
+					.and(USER_APP_ROLE.ROLE.in(roles)))
+					)
+			.where(
+				USER.AUTH.eq(auth)
+				.and(
+					domain.ID.in(domains)
+					.or(
+						domain.PARENT.in(domains)
+						.and(
+							domain.SCOPE.isNull()
+							.or(domain.SCOPE.in(userScopes))
+						)
+					)
+				).and(USER_APP_ROLE.ID.isNotNull())
+			)
+			.groupBy(COMPANY.REGISTRY)
+			.orderBy(REGISTRY.NAME)
+			.fetch().stream().map(new AonCompanyFiller());
+	}
 	
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");

@@ -148,6 +148,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				response(req, resp, getFiscalMatrix(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/excel") ) {
 				responseFile(resp, "filename", getFiscalExcel(api), MimeType.MS_EXCEL_2007);
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/one") ) {
+				response(req, resp, getFiscalById(api));
 			} else {
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -169,6 +171,25 @@ public class FiscalServlet extends AonApiHttpServlet{
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
+		}
+	}
+	
+	private JSONObject getFiscalById(AonApiData api) {
+		try {			
+			CloseableAONContext ctx;
+			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			Integer id = api.getData().optInt(IJsonNames.ID);
+			String type = api.getData().optString(IJsonNames.TYPE);
+			FiscalModelType modelType = FiscalModelType.safeValueByName(type);
+			FiscalModel fs;
+			if(id != null && id != 0 && modelType != null) {
+				fs = getModel(ctx, FiscalModelType.M131, id);
+				return FiscalModelJSON.toJSON(fs);
+			} else {
+				throw new AonApiException("Error al obtener el modelo.");
+			}
+		} catch(Exception e) {
+			throw new AonApiException(e.getMessage());
 		}
 	}
 	

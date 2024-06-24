@@ -34,6 +34,7 @@ import org.jooq.impl.SQLDataType;
 
 import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.jooq.AonMaster;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -266,17 +268,42 @@ public class ConsoleDAO {
 				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
 				.execute();
 			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
-			String users = ctx.getDslContext()
-				.select(USER.LOGIN)
+			DomainRecord domainRecord = DomainDAO.getParentDomain(ctx, domainId);
+			Integer[] domains = (domainRecord == null || domainRecord.getParent() == null) 
+				? new Integer[]{domainId}
+				: new Integer[]{domainId,domainRecord.getParent()};
+			List<String> domainUsers = new LinkedList<>();
+			List<String> parentUsers = new LinkedList<>();
+			ctx.getDslContext()
+				.select(USER.DOMAIN, USER.LOGIN)
 				.from(USER)
-				.where(USER.DOMAIN.eq(domainId))
+				.where(USER.DOMAIN.in(domains))
 				.and(USER.ACTIVE.eq((byte) 1))
 				.limit(10)
 				.fetch()
 				.stream()
-				.map(rec -> "(" + rec.getValue(USER.LOGIN)+ ")")
-				.collect(Collectors.joining(", "));
-			return AonStringUtils.defaultIfBlank(users, "No hay usuarios activos en el dominio");
+				.forEach(rec -> {
+					if (domainId.equals(rec.getValue(USER.DOMAIN))) {
+						domainUsers.add (rec.getValue(USER.LOGIN));
+					} else {
+						parentUsers.add (rec.getValue(USER.LOGIN));
+					}
+				});
+			StringBuilder users = new StringBuilder();
+			if (AonCollectionUtils.isNotEmpty( parentUsers )) {
+				users.append("Usuarios del dominio padre: ");
+				AonCollectionUtils.stream( parentUsers )
+					.map( u -> "["+u+"] ")
+					.forEach( users::append );
+			}
+			if (AonCollectionUtils.isNotEmpty( domainUsers )) {
+				users.append("Usuarios del dominio: ");
+				AonCollectionUtils.stream( domainUsers )
+					.map( u -> "["+u+"] ")
+					.forEach( users::append );
+			}
+			
+			return AonStringUtils.defaultIfBlank(users.toString(), "No hay usuarios activos en el dominio");
 		}
 		
 	}

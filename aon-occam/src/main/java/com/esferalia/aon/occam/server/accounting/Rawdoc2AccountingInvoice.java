@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -59,14 +60,31 @@ public class Rawdoc2AccountingInvoice {
 		User user = new User().setLogin(login);
 		String status = JsonUtils.getString(json, IJsonNames.STATUS);
 		Invoice invoice = InvoiceJSON.fromJSON(json);
+		Rawdoc rawdoc = null;
 		if (invoice.getId() == null || isRawdoc(status)) {
+			if (isRawdoc(status) && invoice.getId() != null) {
+				rawdoc = AON.getRawdocFull(domainName, domainId, login, invoice.getId());
+				invoice.setId(null);
+			}
 			invoice = AON_SOLUTIONS.validateInvoice(domain, user, invoice);
+			// Se pone a 0 porque es rawdoc / ocr y hasta que no se grabe no tiene que tener un número asignado.
+			invoice.setNumber(0);
 			invoice.getDetails().stream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
 		} else {
 			invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoice.getId());
 		}
-		
-		return tedi2Aon(domain, user, invoice, json);
+		AccountingInvoice ai = tedi2Aon(domain, user, invoice, json); 
+		if(rawdoc != null && rawdoc.getId() != null) {
+			Attach attach = new Attach();
+			attach.setId(rawdoc.getId());
+			attach.setAttachType(AttachType.INVOICE);
+			attach.setMimeType( rawdoc.getMimeType() );
+			attach.setData(rawdoc.getData());
+			attach.setAttachURL("RAWDOC");
+			ai.setAttach(attach);
+			ai.setFromRawdoc(true);
+		}
+		return ai;
 	}
 	
 	private static RawdocStatus getRawdocStatus(String status) {
@@ -78,10 +96,8 @@ public class Rawdoc2AccountingInvoice {
 	}
 	
 	public static AccountingInvoice tedi2Aon(Domain domain, User user, Invoice invoice, JSONObject ti)  {
-		System.out.println( "JSON" );
-		System.out.println( ti.toString(1) );
-
-		
+//		System.out.println( "JSON" );
+//		System.out.println( ti.toString(1) );
 		Occam occam = new Occam( )
 			.setDomainName( domain.getName())
 			.setDomain(domain.getId())
@@ -110,17 +126,20 @@ public class Rawdoc2AccountingInvoice {
 
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				Account expAccount = getExpAccount(ctx, category , detail);
-				InvoiceTax detailTax = detail.getInvoiceTaxes().stream()
-					.filter(f -> f.getTaxType().equals(TaxType.VAT))
-					.findFirst()
-					.orElse(new InvoiceTax());
-				double base = detail.isPrepayment()? detail.getTaxableBase() : detailTax.getBase();
-				if (ai.isUndeductible()) {
-					base = detailTax.getBase() + detailTax.getQuota();
-					detail.setPrepayment( false );
+				InvoiceTax detailTax = new InvoiceTax(); 
+				double base = 0.0;
+				if (ai.isUndeductible() || detail.isPrepayment()) {
+					base = detail.getTaxableBase();	
+				} else {
+					detailTax = detail.getInvoiceTaxes().stream()
+						.filter(f -> f.getTaxType().equals(TaxType.VAT))
+						.findFirst()
+						.orElse(new InvoiceTax());
+					base = detailTax.getBase();
 				}
+
 				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
+					//.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)

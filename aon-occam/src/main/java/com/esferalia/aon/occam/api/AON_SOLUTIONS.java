@@ -39,6 +39,8 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
+import com.esferalia.aon.occam.api.model.Order.InvoiceOrder;
+import com.esferalia.aon.occam.api.model.Order.ProductOrder;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
@@ -449,6 +451,19 @@ public class AON_SOLUTIONS {
 		return stream;
 	}
 	
+	public static Stream<AonCompany> getCompanyWithRolesStream(String token, String schema, Integer page, Integer perPage) {	
+		AonToken aonToken = SECURITY.getAonToken(token);
+		Stream<AonCompany> stream = new LinkedList<AonCompany>().stream();
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		if(!AonStringUtils.isBlank(domain)) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				Stream<AonCompany> s = getRegistry().getCompanyWithRolesStream(ctx, aonToken.getAuth(), page, perPage);
+				stream = Stream.concat(stream, s);
+			}
+		} 
+		return stream;
+	}
+	
 	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		List<AonCompany> list = new ArrayList<>();
@@ -486,9 +501,9 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
-	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter, InvoiceOrder order) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getInvoiceNewPortal(ctx, filter);
+			return getApi().getInvoiceNewPortal(ctx, filter, order);
 		} 
 	}
 	
@@ -909,9 +924,9 @@ public class AON_SOLUTIONS {
 		return getProducts(domain.getName(), domain.getId(), login, filter);
 	}
 	
-	public static Stream<Product> getProducts(Domain domain, User user, ProductFilter filter, Integer page, Integer perPage) {
+	public static Stream<Product> getProducts(Domain domain, User user, ProductFilter filter, Integer page, Integer perPage, ProductOrder order) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
-			return getProduct().getProductStream(ctx, filter, page, perPage);
+			return getProduct().getProductStream(ctx, filter, page, perPage, order);
 		}
 	}
 	

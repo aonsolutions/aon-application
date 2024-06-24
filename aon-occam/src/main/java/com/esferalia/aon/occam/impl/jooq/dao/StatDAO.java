@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -18,7 +19,6 @@ import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,7 +32,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
+import org.jooq.DatePart;
+import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.SelectSeekStep1;
 import org.jooq.TableField;
@@ -40,6 +43,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
@@ -52,6 +56,7 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
@@ -83,6 +88,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.stat.FeeChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.InvoiceChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.TaskChartTypeVisitor;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class StatDAO {
@@ -92,6 +98,7 @@ public class StatDAO {
 	private static final String SELLER_STR = "seller";
 	private static final String WORKPLACE_STR = "workplace";
 	private static final String PERIOD_STR = "period";
+	private static final String RESULT = "Resultado";
 
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
@@ -248,7 +255,7 @@ public class StatDAO {
 	}
 
 	
-	public static String getInvoicesReport(AONContext ctx, StatParams params) {
+	public static String getInvoicesReport(AONContext ctx, StatParams params, IDAOCallback callback) {
 		final Integer[] scopes = SecurityDAO.getUserScopes(ctx);
 		final LinkedList<Byte> types = new LinkedList<Byte>();
 		final LinkedList<Integer> categories = new LinkedList<Integer>();
@@ -298,45 +305,46 @@ public class StatDAO {
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
 		}
-		
-		return InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
-				"(M\u00E1x. 1000 Facturas)",
-				InvoiceDAO.getInvoiceDetails(ctx, 
-						p -> p.getDomainProperty().eq(ctx.getDomainId())
-							.and(scopes==null?null:p.getScopeProperty().in(scopes))							
-							.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
-							.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
-							.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
-							.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
-							.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
-							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
-							.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
-							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
-							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
-							.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
+		Stream<InvoiceDetail> stream = InvoiceDAO.getInvoiceDetailsExtended(ctx, 
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+				.and(scopes==null?null:p.getScopeProperty().in(scopes))							
+				.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
+				.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
+				.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
+				.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
+				.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
+				.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
+				.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
+				.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
+				.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
+				.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
+			,callback)
+			.map( d -> d.getDetail() )
+			// Filtro de product TAGS
+			.filter( det ->  tags.isEmpty() 
+					|| det.getItem() == null 
+					|| det.getItem().getProduct() == null 
+					|| ctx.getDslContext().fetchExists( ctx.getDslContext()
+						.select()
+						.from(PRODUCT_TAG)
+						.where(PRODUCT_TAG.PRODUCT.eq(det.getItem().getProduct().getId()))
+						.and(PRODUCT_TAG.TAG.in(tags)))
 					)
-					// Filtro de product TAGS
-					.filter( det ->  tags.isEmpty() 
-							|| det.getItem() == null 
-							|| det.getItem().getProduct() == null 
-							|| ctx.getDslContext().fetchExists( ctx.getDslContext()
-								.select()
-								.from(PRODUCT_TAG)
-								.where(PRODUCT_TAG.PRODUCT.eq(det.getItem().getProduct().getId()))
-								.and(PRODUCT_TAG.TAG.in(tags)))
-							)
-					// Filtro de Registry Segments
-					.filter( det ->  segments.isEmpty() 
-							|| ctx.getDslContext().fetchExists( ctx.getDslContext()
-								.select()
-								.from(RSEGMENT)
-								.where(RSEGMENT.REGISTRY.eq(det.getInvoice().getRegistry() )) 
-								.and(RSEGMENT.SEGMENT.in(segments)))
-							)
-					.limit(1000)	// Modificar subtitulo 
-					// ---------------
-					.collect(Collectors.toCollection(LinkedList::new))
-				);
+			// Filtro de Registry Segments
+			.filter( det ->  segments.isEmpty() 
+					|| ctx.getDslContext().fetchExists( ctx.getDslContext()
+						.select()
+						.from(RSEGMENT)
+						.where(RSEGMENT.REGISTRY.eq(det.getInvoice().getRegistry() )) 
+						.and(RSEGMENT.SEGMENT.in(segments)))
+					)
+			.limit(1000);
+		String result = InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
+				"(M\u00E1x. 1000 Facturas)",
+				stream.collect(Collectors.toCollection(LinkedList::new))
+				); 
+		stream.close();
+		return result;
 	}
 
 	
@@ -633,6 +641,43 @@ public class StatDAO {
 		.orderBy(FINANCE.DUE_DATE.asc())
 		.forEach(record -> {
 			stat.put(record.value2().toString() + "/" + record.value3().toString(), record.value1() == 0 ? "cobro" : "pago", record.value4().doubleValue());
+		});
+		return stat;
+	}
+	
+	public static StatData<String, String, Double> getInvoiceStat(AONContext ctx, InvoiceFilter invoiceFilter) {
+		StatData<String, String, Double> stat = new StatData<>();
+		Collection<Condition> whereConditions = new ArrayList<>();
+		final Field<Integer> year = DSL.extract(INVOICE.ISSUE_DATE, DatePart.YEAR);
+		final Field<Integer> month = DSL.extract(INVOICE.ISSUE_DATE, DatePart.MONTH);
+		final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+		whereConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		Condition condition = PRODUCT.TYPE.ne((byte) 5).or(PRODUCT.TYPE.isNull());
+		ctx.getDslContext().select(year, month, INVOICE.TYPE, sum)
+		.from(INVOICE)
+		.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+		.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+		.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+		.where(whereConditions)
+		.and(condition)
+		.groupBy(year, month, INVOICE.TYPE)
+		.orderBy(year, DSL.decode()
+				   .when(INVOICE.TYPE.equal((byte) 1), 0)
+				   .when(INVOICE.TYPE.equal((byte) 0), 1)
+				   .when(INVOICE.TYPE.equal((byte) 2), 2)
+				   .when(INVOICE.TYPE.equal((byte) 3), 3))
+		.fetch()
+		.stream()
+		.forEach(rec -> {
+			InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+			String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
+			double amount = rec.getValue(sum).doubleValue();
+			if (stat.get(monthKey, RESULT) != null) {
+				Double d = stat.get(monthKey, RESULT);
+				d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+				stat.put(monthKey, RESULT, d);
+			}
+			stat.put(monthKey, type.getDescription(), amount);
 		});
 		return stat;
 	}

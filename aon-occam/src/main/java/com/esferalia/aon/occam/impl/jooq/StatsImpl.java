@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.IStats;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
@@ -31,8 +32,8 @@ public class StatsImpl implements IStats {
 	}
 
 	@Override
-	public String getInvoicesReport(AONContext ctx, StatParams params) {
-		return StatDAO.getInvoicesReport(ctx, params);
+	public String getInvoicesReport(AONContext ctx, StatParams params, IDAOCallback callback) {
+		return StatDAO.getInvoicesReport(ctx, params, callback);
 	}
 
 	@Override
@@ -73,6 +74,11 @@ public class StatsImpl implements IStats {
 	@Override
 	public StatData<String, String, Double> getFinanceStat(AONContext ctx, FinanceFilter financeFilter){
 		return StatDAO.getFinanceStat(ctx, financeFilter);
+	}
+	
+	@Override
+	public StatData<String, String, Double> getInvoiceStat(AONContext ctx, InvoiceFilter invoiceFilter){
+		return StatDAO.getInvoiceStat(ctx, invoiceFilter);
 	}
 
 }

@@ -17,6 +17,7 @@ export const SUITE = 'suite';
 export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
+export const APP_MENU = 'aonConfigSwitchApps';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -61,6 +62,19 @@ export const setLeftMenu = (value) => {
     set(LEFT_MENU,value);
 } 
 
+export const isAppMenu= () => {
+    let aon = getAppMenu();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getAppMenu= () => {
+    return get (APP_MENU);
+}
+
+export const setAppMenu= (value) => {
+    set(APP_MENU, value);
+}
+
 export const isRightPanel= () => {
     let aon = getRightPanel();
     return  aon;
@@ -73,7 +87,6 @@ export const getRightPanel = () => {
 export const setRightPanel = (panel) => {
     set(RIGHT_PANEL,panel);
 }
-
 
 export const removeRightPanel = () => {
     remove(RIGHT_PANEL);
@@ -194,9 +207,9 @@ export const isNewTheme = () => {
     return newTheme &&  CONSTANT.FALSE !== newTheme;
 }
 
-export const setNewTheme = (newTheme) => {
+export const setNewTheme = (newTheme, reload) => {
     set(NEW_THEME, newTheme);
-    location.reload();
+    if(reload) location.reload();
 }
 
 export const isSuite = () => {

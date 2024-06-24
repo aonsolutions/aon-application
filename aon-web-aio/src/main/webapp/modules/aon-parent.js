@@ -1,11 +1,8 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
-import {AonSign} from 'aonsolutions/modules/timecontrol/aon-sign.js';
-import { AonApplication } from 'aonsolutions/components/aon-application.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 
 export class AonParent extends AonElement {
@@ -54,8 +51,6 @@ export class AonParent extends AonElement {
 	}
 
 	init(filter) {
-
-		
 		//TODO: aonParent.startLoader();
 		this.build();
 		this.select(filter);
@@ -68,11 +63,16 @@ export class AonParent extends AonElement {
 		//TODO: aonParent.startLoader();
 		getCompanies()
 		.then( companies => {
-			this.selectTab(filter);		
-			//TODO: aonParent.stopLoader();
-			this.page = 1;
-			this.cleanCompanies();
-			this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+			if(companies.length === 1){
+				this.companySelection(companies[0], true);
+			} else {
+				this.getElement("aonMenu").close();
+				this.selectTab(filter);		
+				//TODO: aonParent.stopLoader();
+				this.page = 1;
+				this.cleanCompanies();
+				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+			}	
 		}, () => closeSession());
 
 		if(filter){
@@ -160,7 +160,18 @@ export class AonParent extends AonElement {
 	}
 
 	build() {
-		
+
+		let button1 = this.getElement("aonHeaderHelpButtonIconButton");
+		let button2 = this.getElement("aonHeaderConfigButtonIconButton");
+		let button3 = this.getElement("aonHeaderNotificationButtonIconButton");
+		let button4 = this.getElement("aonHeaderUserButtonIconButton");
+		let button5 = this.getElement("aonHeaderCompanyListButtonIconButton");
+		button1.style.color = "rgb(95, 99, 104)";
+		button2.style.color = "rgb(95, 99, 104)";
+		button3.style.color = "rgb(95, 99, 104)";
+		button4.style.color = "rgb(95, 99, 104)";
+		button5.style.color = "rgb(95, 99, 104)";
+	
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.appendChild(parentDiv);
@@ -259,7 +270,7 @@ export class AonParent extends AonElement {
 		});
 		
 		parentDiv.appendChild(welcomeDiv);
-		parentDiv.appendChild(companyDiv);
+		parentDiv.appendChild(companyDiv);		
 	}
 
 	loadMore() {
@@ -346,11 +357,11 @@ export class AonParent extends AonElement {
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
 		aonHeaderHelp.style.display = 'block';
 
-		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
-		aonHeaderSearch.style.display = 'none';
+		// let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
+		// aonHeaderSearch.style.display = 'none';
 
+		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
 		if(!LS.isNewTheme()) {
-			let aonHeaderHome = this.getElement(BASE_ID + 'Home');
 			aonHeaderHome.style.display = 'block';
 		}
 
@@ -363,6 +374,8 @@ export class AonParent extends AonElement {
 		if(!onlyOne){ 
 			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
+			let aonHeaderCompanyListButton = this.getElement(BASE_ID + 'CompanyListButton');
+			aonHeaderCompanyListButton.style.display = 'block';
 		} else {
 			aonHeaderHome.style.right = '140px';
 			aonHeaderCompany.style.right = '180px';
@@ -392,7 +405,7 @@ export class AonParent extends AonElement {
 }
 
 
-if(!window.customElements.get('aon-parent')){
-	console.log( 'Define <aon-parent> ^-^' );
-	window.customElements.define('aon-parent', AonParent);
+if(!window.customElements.get(TAG.AON_PARENT)){
+	console.log( 'Define <aon-new-parent> ^-^' );
+	window.customElements.define(TAG.AON_PARENT, AonParent);
 }

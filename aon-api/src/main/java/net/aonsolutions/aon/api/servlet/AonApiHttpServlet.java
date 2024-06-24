@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,7 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.auth0.jwt.JWT;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -27,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -261,15 +265,31 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
     protected void addCorsHeader(HttpServletResponse response) {
-    	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
-        response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+    	if(!response.containsHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS))
+    		response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+        if(!response.containsHeader(IConstants.ACCESS_CONTROL_EXPOSE_HEADERS) && !response.containsHeader(IConstants.AUTHENTICATION))
+        	response.addHeader(IConstants.ACCESS_CONTROL_EXPOSE_HEADERS, IConstants.AUTHENTICATION);
+        if(!response.containsHeader(IConstants.ACCESS_CONTROL_MAX_AGE))
+        	response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
     }
 	
-	protected void giveBack(HttpServletRequest req, HttpServletResponse resp,
-			Object object, JSONObject meta) {
+	protected void giveBack(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
 		try {
+			String token = req.getHeader(IConstants.SESSION_ID);
+			AonToken aonToken = SECURITY.isAonTokenAndIsNotExpired(token);
+				if(aonToken != null && !AonStringUtils.isBlank(token)) {
+					Date expirationDate;
+					Calendar calendar = Calendar.getInstance();
+					calendar.add(Calendar.MINUTE, 25);
+					expirationDate = calendar.getTime();
+					Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
+					String tokensito = AonToken.build(auth, expirationDate);
+					resp.addHeader(IConstants.AUTHENTICATION, tokensito);
+				}
 			String js = req.getParameter(IConstants.CALLBACK);
 			if(js != null){
 				resp.setContentType("application/javascript; charset=utf-8");     
@@ -286,7 +306,6 @@ public class AonApiHttpServlet extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-	
 
 	public JSONObject getRequestJSON(HttpServletRequest req){
 		StringBuilder bld = new StringBuilder();
