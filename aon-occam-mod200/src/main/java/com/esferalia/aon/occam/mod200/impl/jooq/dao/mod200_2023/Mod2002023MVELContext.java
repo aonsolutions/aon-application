@@ -732,6 +732,9 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			if (isChecked(C0057)) {
 				return round((lq553 * lq558 / 100) + ((lq554-lq521) * 25 / 100) + (lq521 * 0));		
 			}
+			if (isChecked(C0083)) {
+				return round(lq552*15/100);
+			}
 			if (lq558 == 20 || lq558 == 25) {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}

@@ -764,10 +764,10 @@ public class Mod2002023Compute {
 		addBreakdown(Mod2002023LM1494Key.values(), Mod2002023Key.LM1494, false);  // Fila de totales
 		
 		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC925 ,"RC922-RC923-RC924");		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC996 ,"RC1165-RC928-RC938");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC1175,"RC1744-RC1168-RC1172");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC1821,"RC2807-RC1745-RC1746");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC925 ,"RC922-RC923-RC924-RC1963");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC996 ,"RC1165-RC928-RC938-RC1985");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC1175,"RC1744-RC1168-RC1172-RC1986");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC1821,"RC2807-RC1745-RC1746-RC2430");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002023Key.RC2822,"RC927-RC2810");  
 		
 		// Régimen especial de la reserva para inversiones en las Illes Balears. La última columna no sigue la regla estandar y no tiene fila de totales

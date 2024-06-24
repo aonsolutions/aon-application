@@ -70,7 +70,7 @@ public class Page19 extends PageAbs {
 	
 	protected void calculate() {
 		// Forzar recalculo del modelo completo
-		callback.getMod200Object().doubleValueChanged(Mod2002023Key.UT1279, callback.getMod200Object().getDoubleValue(Mod2002023Key.UT1279));
+		callback.getMod200Object().calculate();
 	}
 
 	@Override
@@ -179,6 +179,7 @@ public class Page19 extends PageAbs {
 			base.setValue(callback.getMod200Object().getMod200().getUteBases().get(idx).getBase());
 			base.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getUteBases().get(idx).setBase(base.getValue());
+				calculate();
 				callback.markAsDirty();
 			});
 			otherInputs.add(base);
@@ -187,6 +188,7 @@ public class Page19 extends PageAbs {
 			amount.setValue(callback.getMod200Object().getMod200().getUteBases().get(idx).getAmount());
 			amount.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getUteBases().get(idx).setAmount(amount.getValue());
+				calculate();
 				callback.markAsDirty();
 			});
 			otherInputs.add(amount);
@@ -206,6 +208,7 @@ public class Page19 extends PageAbs {
 			deleteButton.addClickHandler(event -> {
 				callback.getMod200Object().getMod200().getUteBases().remove(idx);
 				paintB6Panel();
+				calculate();
 				callback.markAsDirty();
 			});
 			otherInputs.add(deleteButton);
