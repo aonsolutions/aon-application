@@ -27,12 +27,12 @@ public class InvoiceSeriesJSON {
 	
 	public static InvoiceSeries fromJSON(JSONObject json) {
 		return new InvoiceSeries()
-				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-				.setCount(JsonUtils.getInt(json, IJsonNames.COUNT))
-				.setFromNumber(JsonUtils.getInt(json, IJsonNames.FROM_NUMBER))
-				.setToNumber(JsonUtils.getInt(json, IJsonNames.TO_NUMBER))
-				.setSales(JsonUtils.getboolean(json, IJsonNames.SALES))
-				.setSeriesInfo(JsonUtils.getboolean(json, IJsonNames.SERIES_INFO));
+			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+			.setCount(JsonUtils.getInt(json, IJsonNames.COUNT))
+			.setFromNumber(JsonUtils.getInt(json, IJsonNames.FROM_NUMBER))
+			.setToNumber(JsonUtils.getInt(json, IJsonNames.TO_NUMBER))
+			.setSales(JsonUtils.getboolean(json, IJsonNames.SALES))
+		;
 	}
 	
 	public static JSONArray toJSON(List<InvoiceSeries> list) {
@@ -52,7 +52,7 @@ public class InvoiceSeriesJSON {
 				.put(IJsonNames.FROM_NUMBER, series.getFromNumber())
 				.put(IJsonNames.TO_NUMBER, series.getToNumber())
 				.put(IJsonNames.SALES, series.isSales())
-				.put(IJsonNames.SERIES_INFO, series.isSeriesInfo());
+				;
 	}
 
 }

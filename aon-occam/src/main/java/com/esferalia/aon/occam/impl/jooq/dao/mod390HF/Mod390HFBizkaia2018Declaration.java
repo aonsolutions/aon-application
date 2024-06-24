@@ -779,21 +779,19 @@ class Mod390HFBizkaia2018Declaration extends Mod390HFBizkaiaDeclaration {
 		int e = 0;
 		int r = 0;
 		for (InvoiceSeries series : seriesList) {
-			if (series.isSeriesInfo()) {
-				Mod390Key[][] keys = series.isSales()?eKeys:rKeys;
-				int idx = series.isSales()?e:r;
-				if (idx < 5) {
-					Mod390Key seriesKeys = keys[idx][0];
-					mod.putDescription(seriesKeys, series.getDescription());
-					Mod390Key fromKeys = keys[idx][1];
-					mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
-					Mod390Key toKeys = keys[idx][2];
-					mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
-					if (series.isSales()) {
-						++e;
-					} else {
-						++r;
-					}
+			Mod390Key[][] keys = series.isSales()?eKeys:rKeys;
+			int idx = series.isSales()?e:r;
+			if (idx < 5) {
+				Mod390Key seriesKeys = keys[idx][0];
+				mod.putDescription(seriesKeys, series.getDescription());
+				Mod390Key fromKeys = keys[idx][1];
+				mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
+				Mod390Key toKeys = keys[idx][2];
+				mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
+				if (series.isSales()) {
+					++e;
+				} else {
+					++r;
 				}
 			}
 		}

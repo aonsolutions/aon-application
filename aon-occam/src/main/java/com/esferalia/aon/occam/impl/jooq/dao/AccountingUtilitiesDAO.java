@@ -926,7 +926,7 @@ public class AccountingUtilitiesDAO {
 				StringBuffer msg = new StringBuffer();
 				boolean regenerable = false;
 				for (InvoiceSeries invoiceSeries : series) {
-					if (!invoiceSeries.isSales() && invoiceSeries.isSeriesInfo()) {
+					if (!invoiceSeries.isSales()) {
 						msg.append(invoiceSeries.getDescription());
 						msg.append("|");
 						msg.append(invoiceSeries.getCount());

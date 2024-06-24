@@ -31,7 +31,6 @@ import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
@@ -218,7 +217,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_FINANCE_ENTRY_POINT = "Finance";
 	private static final String FS_FINANCE_PAYROLL_ENTRY_POINT = "FinancePayroll";
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
-	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
 	private static final String FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT = "FBatchPaymentPayroll";
@@ -564,21 +562,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					VatReport vatReport = new VatReport();
 					vatReport.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT)) {
-			GWT.runAsync(InvoiceSeriesBreakdown.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					InvoiceSeriesBreakdown invoiceSeriesBreakdown = new InvoiceSeriesBreakdown();
-					invoiceSeriesBreakdown.onModuleLoad();
 				}
 				
 			});
