@@ -1003,6 +1003,8 @@
   transition: 0.5s;
   height: calc(100vh - 102px);
   overflow-y: auto;
+
+  
 }
 
 .aonContentBeta {
@@ -1014,6 +1016,8 @@
   overflow-y: auto;
   border-radius: 0px;
   background-color: #fafafa;
+  
+  
 }
 
 .aonSubContent {

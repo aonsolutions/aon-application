@@ -259,8 +259,8 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 					String tokenGpt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME";
 					String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", tokenGpt).getString("uuid");
 					if(query.contains("image:")) query = query.replaceAll("\\[.*?\\]", "").trim();
-					String messageGpt = GptTrainerApi.createMessage(sessUuid, token, query);
-					if(message.startsWith("gpt")) messageGpt = messageGpt.replace("gpt_trainer_ai_function_x_call", "");
+					String messageGpt = GptTrainerApi.createMessage(sessUuid, tokenGpt, query);
+					if(messageGpt.startsWith("gpt")) messageGpt = messageGpt.replace("gpt_trainer_ai_function_x_call", "");
 					System.out.println(messageGpt);
 					
 					
@@ -664,10 +664,10 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
     }
 
 	public static void main(String[] args) throws FileNotFoundException, IOException, MessagingException, URISyntaxException, InterruptedException, NoSuchAlgorithmException {
-		String messageId = "i34tp3rihp79d18c7t26bqfq07g560ca9v45gpg1";
+		String messageId = "bkm3o81qqd99dsoh2ksh0jo36b9nvpdn9iu2o4g1";
 		String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME"
 	   ;String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", token).getString("uuid");
-		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/i34tp3rihp79d18c7t26bqfq07g560ca9v45gpg1")) {
+		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/bkm3o81qqd99dsoh2ksh0jo36b9nvpdn9iu2o4g1")) {
 			List<String> messageResults = new ArrayList<>();
 			messageResults = getHtmlMessage(is, messageId);
 			handleTask("anderysalma@gmail.com", "soporte@issues-test.aonsolutions.org", messageResults.get(0), messageResults.get(1), messageResults.get(2), messageResults.get(3));
