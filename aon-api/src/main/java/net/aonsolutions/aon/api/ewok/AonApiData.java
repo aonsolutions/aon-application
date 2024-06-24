@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
+
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -11,11 +13,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class AonApiData implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String method;
 	private String token;
 	private Domain domain;
@@ -113,6 +112,16 @@ public class AonApiData implements Serializable{
 	public void setOptions(Options options) {
         this.options = options;
     }
+	
+	public Occam getOccam() {
+		if (getDomain() == null) throw new IllegalStateException("Domain not set!");
+		if (getUser() == null) throw new IllegalStateException("User not set!");
+		return new Occam()
+			.setDomain(getDomain().getId())
+			.setDomainName(getDomain().getName())
+			.setUser( getUser().getLogin() )
+		;
+	}
 	
 	public boolean isPredefinedToken() {
 		return "SIGd95770f269e711eb94390242ac130002".equals(getToken())
