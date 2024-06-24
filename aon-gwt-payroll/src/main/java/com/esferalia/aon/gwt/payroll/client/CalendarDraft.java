@@ -450,10 +450,11 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 						for (Integer id : sortedMap.keySet())
 							CalendarDraft.this.addItem2DraftMap(id, map.get(id));
+						
+						loadCalendarPanel(pattern, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
 					}
 				});
 
-		loadCalendarPanel(pattern, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
 	}
 	
 	// ----------------------------------------------- setCalendarDraftObject.Auxiliar Methods
@@ -462,8 +463,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		holidayList.addItem(item.trim(), id.toString());
 	}
 
-	private void loadCalendarPanel(Integer pattern, Integer year,
-			CalendarDraftObjectData calendarDraftData) {
+	private void loadCalendarPanel(Integer pattern, Integer year, CalendarDraftObjectData calendarDraftData) {
 
 		calendarDraftData.getHolidayCalendar(pattern, year,
 				new AsyncCallback<CalendarDraftObjectData>() {
@@ -513,7 +513,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	}
  
 	private void getItemLoadIndex() {
-		nameValueListBoxSelected = calendarDraftObjectData.getHolidayDescription();
+		nameValueListBoxSelected = calendarDraftObjectData.getHolidayId();
 		
 		for (int x = 0; x < holidayList.getItemCount(); x++) {
 			if (Integer.parseInt(holidayList.getValue(x)) == nameValueListBoxSelected)
@@ -854,9 +854,13 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 			@Override
 			public void onSuccess(Void result) {
 				saveButton.setEnabled(false);
-				loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+				reloadCalendar();
 			}
 		});
+	}
+	
+	private void reloadCalendar() {
+		setCalendarDraftObject(null, new CalendarDraftObjectData(calendarDraftObjectData.getWorkplaceId()));
 	}
 	
 	private void onAddEvent(ClickEvent e) {

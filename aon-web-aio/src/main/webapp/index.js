@@ -40,8 +40,18 @@ const load = () => {
     document.body.appendChild(new AonModule());
     loadScripts(); 
     window.loadScripts = () => loadScripts();
+    loadTheme();
 
 	console.debug("Fantastic aonSolutions loaded :-).")
+}
+
+const loadTheme = () => {
+	let params = new URLSearchParams(document.location.search);
+	let theme = params.get('theme');
+	if (theme) {
+		let url = `css/theme/${theme}.css`;
+	    loadLink(url, 'stylesheet', 'text/css');
+    }
 }
 
 const favicon = () => {

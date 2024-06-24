@@ -155,13 +155,13 @@
 	margin-left: 5px;
 	font-weight: normal;
 	font-size: 0.9em;
-	color: #000 !important; 
+	color: red !important; 
 }
 .aonSubMenu a:hover {
 	color: #E55302 !important;
 }
 .aonSubMenu a:visited {
-	color: #000 !important;
+	color: red !important;
 }
 
 .aon-panelGrid-search-body {

@@ -195,29 +195,29 @@ export class AonInvoiceHome extends AonElement {
 		div.style.flex = '1';
 		div.style.padding = '0px';
 
-		let pendingRecords = this.createDiv();
-		pendingRecords.id = 'pendingRecords';
-		pendingRecords.style.border = '1px solid #ebebeb';
-		pendingRecords.style.display = 'flex';
-		pendingRecords.style.flexDirection = 'column';
-		pendingRecords.style.justifyContent = 'center';
-		pendingRecords.style.gap = '3px';
-		pendingRecords.style.textAlign = 'center';
-		pendingRecords.style.padding = '8px';
-		pendingRecords.style.flex = '1';
-		pendingRecords.style.borderRadius = '5px';
-		pendingRecords.overflow = 'hidden';
-		pendingRecords.style.cursor = 'pointer';
-		pendingRecords.style.marginBottom ='3px';
-		pendingRecords.style.gridColumn = '1 / -1';
+		let pendingRecordsDiv = this.createDiv();
+		pendingRecordsDiv.id = 'pendingRecords';
+		pendingRecordsDiv.style.border = '1px solid #ebebeb';
+		pendingRecordsDiv.style.display = 'flex';
+		pendingRecordsDiv.style.flexDirection = 'column';
+		pendingRecordsDiv.style.justifyContent = 'center';
+		pendingRecordsDiv.style.gap = '3px';
+		pendingRecordsDiv.style.textAlign = 'center';
+		pendingRecordsDiv.style.padding = '8px';
+		pendingRecordsDiv.style.flex = '1';
+		pendingRecordsDiv.style.borderRadius = '5px';
+		pendingRecordsDiv.overflow = 'hidden';
+		pendingRecordsDiv.style.cursor = 'pointer';
+		pendingRecordsDiv.style.marginBottom ='3px';
+		pendingRecordsDiv.style.gridColumn = '1 / -1';
 
-		pendingRecords.addEventListener(EVENT.MOUSEOVER, () => pendingRecords.style.backgroundColor = '#f1f1f1');
-		pendingRecords.addEventListener(EVENT.MOUSELEAVE, () => pendingRecords.style.backgroundColor = 'transparent');
-		pendingRecords.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+		pendingRecordsDiv.addEventListener(EVENT.MOUSEOVER, () => pendingRecordsDiv.style.backgroundColor = '#f1f1f1');
+		pendingRecordsDiv.addEventListener(EVENT.MOUSELEAVE, () => pendingRecordsDiv.style.backgroundColor = 'transparent');
+		pendingRecordsDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status:'accounting', recorded: 'PENDING', page:1, per_page: 50}
 		));
 
-		div.appendChild(pendingRecords);
+		div.appendChild(pendingRecordsDiv);
 
 		let pendingRecordNumber = this.createDiv();
 		pendingRecordNumber.id = 'pendingRecordNumber';
@@ -227,7 +227,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecordNumber.style.lineHeight = '47px';
 		pendingRecordNumber.style.color = 'var(--aonGreen)';
 
-		pendingRecords.appendChild(pendingRecordNumber);
+		pendingRecordsDiv.appendChild(pendingRecordNumber);
 
 		let pendingRecordName = this.createDiv();
 		pendingRecordName.id = 'pendingRecordName';
@@ -235,30 +235,30 @@ export class AonInvoiceHome extends AonElement {
 		pendingRecordName.style.fontWeight = 'normal';
 		pendingRecordName.style.color = 'gray';
 		pendingRecordName.style.lineHeight = '21px';
-		pendingRecords.appendChild(pendingRecordName);
+		pendingRecordsDiv.appendChild(pendingRecordName);
 
 		// PENDING
-		let pending = this.createDiv();
-		pending.id = 'pending';
-		pending.style.border = '1px solid #ebebeb';
-		pending.style.flexDirection = 'column';
-		pending.style.justifyContent = 'center';
-		pending.style.gap = '3px';
-		pending.style.textAlign = 'center';
-		pending.style.padding = '8px';
-		pending.style.display = 'flex';
-		pending.style.borderRadius = '5px';
-		pending.overflow = 'hidden';
-		pending.style.marginBottom ='3px';
-		pending.style.gridColumn = '1 / -1';
-		div.appendChild(pending);
+		let pendingDiv = this.createDiv();
+		pendingDiv.id = 'pending';
+		pendingDiv.style.border = '1px solid #ebebeb';
+		pendingDiv.style.flexDirection = 'column';
+		pendingDiv.style.justifyContent = 'center';
+		pendingDiv.style.gap = '3px';
+		pendingDiv.style.textAlign = 'center';
+		pendingDiv.style.padding = '8px';
+		pendingDiv.style.display = 'flex';
+		pendingDiv.style.borderRadius = '5px';
+		pendingDiv.overflow = 'hidden';
+		pendingDiv.style.marginBottom ='3px';
+		pendingDiv.style.gridColumn = '1 / -1';
+		div.appendChild(pendingDiv);
 
 		let pendingNameRow = this.createDiv();
 		pendingNameRow.style.display = "flex";
 		pendingNameRow.style.flexDirection = "row";
 		pendingNameRow.style.justifyContent = "center";
 		pendingNameRow.style.alignItems = "left";
-		pending.appendChild(pendingNameRow);
+		pendingDiv.appendChild(pendingNameRow);
 	
 
 		let pendingName = this.createDiv();
@@ -277,30 +277,30 @@ export class AonInvoiceHome extends AonElement {
 		pendingCounterRow.style.flexDirection = "row";
 		pendingCounterRow.style.justifyContent = "center";
 		pendingCounterRow.style.alignItems = "left";
-		pending.appendChild(pendingCounterRow);
+		pendingDiv.appendChild(pendingCounterRow);
 
 		// PENDING OUTPUT
-		let pendingIssued = this.createDiv();
-		pendingIssued.id = 'pendingIssued';
-		pendingIssued.style.display = 'flex';
-		pendingIssued.style.flexDirection = 'column';
-		pendingIssued.style.justifyContent = 'center';
-		pendingIssued.style.gap = '8px';
-		pendingIssued.style.textAlign = 'center';
-		pendingIssued.style.padding = '8px';
-		pendingIssued.style.flexWrap = 'wrap';
-		pendingIssued.style.flexBasis = '33%';
-		pendingIssued.style.flexGrow = '1';
-		pendingIssued.style.borderRadius = '5px';
-		pendingIssued.overflow = 'hidden';
-		pendingIssued.style.cursor = 'pointer';
-		pendingIssued.style.marginBottom ='3px';
-		pendingCounterRow.appendChild(pendingIssued);
+		let pendingIssuedDiv = this.createDiv();
+		pendingIssuedDiv.id = 'pendingIssued';
+		pendingIssuedDiv.style.display = 'flex';
+		pendingIssuedDiv.style.flexDirection = 'column';
+		pendingIssuedDiv.style.justifyContent = 'center';
+		pendingIssuedDiv.style.gap = '8px';
+		pendingIssuedDiv.style.textAlign = 'center';
+		pendingIssuedDiv.style.padding = '8px';
+		pendingIssuedDiv.style.flexWrap = 'wrap';
+		pendingIssuedDiv.style.flexBasis = '33%';
+		pendingIssuedDiv.style.flexGrow = '1';
+		pendingIssuedDiv.style.borderRadius = '5px';
+		pendingIssuedDiv.overflow = 'hidden';
+		pendingIssuedDiv.style.cursor = 'pointer';
+		pendingIssuedDiv.style.marginBottom ='3px';
+		pendingCounterRow.appendChild(pendingIssuedDiv);
 
-		pendingIssued.addEventListener(EVENT.MOUSEOVER, () => pendingIssued.style.backgroundColor = '#f1f1f1');
-		pendingIssued.addEventListener(EVENT.MOUSELEAVE, () => pendingIssued.style.backgroundColor = 'transparent');
-		pendingIssued.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+		pendingIssuedDiv.addEventListener(EVENT.MOUSEOVER, () => pendingIssuedDiv.style.backgroundColor = '#f1f1f1');
+		pendingIssuedDiv.addEventListener(EVENT.MOUSELEAVE, () => pendingIssuedDiv.style.backgroundColor = 'transparent');
+		pendingIssuedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: 'emitida'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer'}
 		));
 
@@ -311,7 +311,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingIssuedNumber.style.fontSize = '36px';
 		pendingIssuedNumber.style.lineHeight = '47px';
 		pendingIssuedNumber.style.color = 'var(--aonOrange)';
-		pendingIssued.appendChild(pendingIssuedNumber);
+		pendingIssuedDiv.appendChild(pendingIssuedNumber);
 
 
 		let pendingIssuedName = this.createDiv();
@@ -320,31 +320,31 @@ export class AonInvoiceHome extends AonElement {
 		pendingIssuedName.style.fontWeight = 'normal';
 		pendingIssuedName.style.color = 'gray';
 		pendingIssuedName.style.lineHeight = '21px';
-		pendingIssued.appendChild(pendingIssuedName);
+		pendingIssuedDiv.appendChild(pendingIssuedName);
 
 		// PENDING RECEIVED
-		let pendingReceived = this.createDiv();
-		pendingReceived.id = 'pendingReceived';
-		pendingReceived.style.display = 'flex';
-		pendingReceived.style.flexDirection = 'column';
-		pendingReceived.style.justifyContent = 'center';
-		pendingReceived.style.gap = '8px';
-		pendingReceived.style.textAlign = 'center';
-		pendingReceived.style.padding = '8px';
-		pendingReceived.style.flexWrap = 'wrap';
-		pendingReceived.style.flexBasis = '33%';
-		pendingReceived.style.flexGrow = '1';
-		pendingReceived.style.borderRadius = '5px';
-		pendingReceived.overflow = 'hidden';
-		pendingReceived.style.cursor = 'pointer';
-		pendingReceived.style.marginBottom ='3px';
-		pendingReceived.style.marginLeft ='3px';
-		pendingCounterRow.appendChild(pendingReceived);
+		let pendingReceivedDiv = this.createDiv();
+		pendingReceivedDiv.id = 'pendingReceived';
+		pendingReceivedDiv.style.display = 'flex';
+		pendingReceivedDiv.style.flexDirection = 'column';
+		pendingReceivedDiv.style.justifyContent = 'center';
+		pendingReceivedDiv.style.gap = '8px';
+		pendingReceivedDiv.style.textAlign = 'center';
+		pendingReceivedDiv.style.padding = '8px';
+		pendingReceivedDiv.style.flexWrap = 'wrap';
+		pendingReceivedDiv.style.flexBasis = '33%';
+		pendingReceivedDiv.style.flexGrow = '1';
+		pendingReceivedDiv.style.borderRadius = '5px';
+		pendingReceivedDiv.overflow = 'hidden';
+		pendingReceivedDiv.style.cursor = 'pointer';
+		pendingReceivedDiv.style.marginBottom ='3px';
+		pendingReceivedDiv.style.marginLeft ='3px';
+		pendingCounterRow.appendChild(pendingReceivedDiv);
 
-		pendingReceived.addEventListener(EVENT.MOUSEOVER, () => pendingReceived.style.backgroundColor = '#f1f1f1');
-		pendingReceived.addEventListener(EVENT.MOUSELEAVE, () => pendingReceived.style.backgroundColor = 'transparent');
-		pendingReceived.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+		pendingReceivedDiv.addEventListener(EVENT.MOUSEOVER, () => pendingReceivedDiv.style.backgroundColor = '#f1f1f1');
+		pendingReceivedDiv.addEventListener(EVENT.MOUSELEAVE, () => pendingReceivedDiv.style.backgroundColor = 'transparent');
+		pendingReceivedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: 'recibida'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'ne+issuer'}
 		));
 
@@ -355,7 +355,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceivedNumber.style.fontSize = '36px';
 		pendingReceivedNumber.style.lineHeight = '47px';
 		pendingReceivedNumber.style.color = 'var(--aonOrange)';
-		pendingReceived.appendChild(pendingReceivedNumber);
+		pendingReceivedDiv.appendChild(pendingReceivedNumber);
 
 		let pendingReceivedName = this.createDiv();
 		pendingReceivedName.id = 'pendingReceivedName';
@@ -363,31 +363,31 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceivedName.style.fontWeight = 'normal';
 		pendingReceivedName.style.color = 'gray';
 		pendingReceivedName.style.lineHeight = '21px';
-		pendingReceived.appendChild(pendingReceivedName);
+		pendingReceivedDiv.appendChild(pendingReceivedName);
 
 		// PENDING TICKETS
-		let pendingTicket = this.createDiv();
-		pendingTicket.id = 'pendingTicket';
-		pendingTicket.style.display = 'flex';
-		pendingTicket.style.flexDirection = 'column';
-		pendingTicket.style.justifyContent = 'center';
-		pendingTicket.style.gap = '8px';
-		pendingTicket.style.textAlign = 'center';
-		pendingTicket.style.padding = '8px';
-		pendingTicket.style.flexWrap = 'wrap';
-		pendingTicket.style.flexBasis = '33%';
-		pendingTicket.style.flexGrow = '1';
-		pendingTicket.style.borderRadius = '5px';
-		pendingTicket.overflow = 'hidden';
-		pendingTicket.style.cursor = 'pointer';
-		pendingTicket.style.marginBottom ='3px';
-		pendingTicket.style.marginLeft ='3px';
-		pendingCounterRow.appendChild(pendingTicket);
+		let pendingTicketDiv = this.createDiv();
+		pendingTicketDiv.id = 'pendingTicket';
+		pendingTicketDiv.style.display = 'flex';
+		pendingTicketDiv.style.flexDirection = 'column';
+		pendingTicketDiv.style.justifyContent = 'center';
+		pendingTicketDiv.style.gap = '8px';
+		pendingTicketDiv.style.textAlign = 'center';
+		pendingTicketDiv.style.padding = '8px';
+		pendingTicketDiv.style.flexWrap = 'wrap';
+		pendingTicketDiv.style.flexBasis = '33%';
+		pendingTicketDiv.style.flexGrow = '1';
+		pendingTicketDiv.style.borderRadius = '5px';
+		pendingTicketDiv.overflow = 'hidden';
+		pendingTicketDiv.style.cursor = 'pointer';
+		pendingTicketDiv.style.marginBottom ='3px';
+		pendingTicketDiv.style.marginLeft ='3px';
+		pendingCounterRow.appendChild(pendingTicketDiv);
 
-		pendingTicket.addEventListener(EVENT.MOUSEOVER, () => pendingTicket.style.backgroundColor = '#f1f1f1');
-		pendingTicket.addEventListener(EVENT.MOUSELEAVE, () => pendingTicket.style.backgroundColor = 'transparent');
-		pendingTicket.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: CONSTANT.INBOX},
+		pendingTicketDiv.addEventListener(EVENT.MOUSEOVER, () => pendingTicketDiv.style.backgroundColor = '#f1f1f1');
+		pendingTicketDiv.addEventListener(EVENT.MOUSELEAVE, () => pendingTicketDiv.style.backgroundColor = 'transparent');
+		pendingTicketDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+			{status: CONSTANT.INBOX, type: 'ticket'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['ticket'], companyActsLike:'ne+issuer'}
 		));
 
@@ -398,7 +398,7 @@ export class AonInvoiceHome extends AonElement {
 		pendingTicketNumber.style.fontSize = '36px';
 		pendingTicketNumber.style.lineHeight = '47px';
 		pendingTicketNumber.style.color = 'var(--aonOrange)';
-		pendingTicket.appendChild(pendingTicketNumber);
+		pendingTicketDiv.appendChild(pendingTicketNumber);
 
 		let pendingTicketName = this.createDiv();
 		pendingTicketName.id = 'pendingTicketName';
@@ -406,76 +406,77 @@ export class AonInvoiceHome extends AonElement {
 		pendingTicketName.style.fontWeight = 'normal';
 		pendingTicketName.style.color = 'gray';
 		pendingTicketName.style.lineHeight = '21px';
-		pendingTicket.appendChild(pendingTicketName);
+		pendingTicketDiv.appendChild(pendingTicketName);
 
 		// REJECTED / TRASH
 
-		let pendingRevision = this.createDiv();
-		pendingRevision.id = 'pendingRevision';
-		pendingRevision.style.border = '1px solid #ebebeb';
-		pendingRevision.style.display = 'flex';
-		pendingRevision.style.flexDirection = 'column';
-		pendingRevision.style.justifyContent = 'center';
-		pendingRevision.style.gap = '3px';
-		pendingRevision.style.textAlign = 'center';
-		pendingRevision.style.padding = '8px';
-		pendingRevision.style.flex = '1';
-		pendingRevision.style.borderRadius = '5px';
-		pendingRevision.overflow = 'hidden';
-		pendingRevision.style.cursor = 'pointer';
-		pendingRevision.style.marginBottom ='3px';
+		let rejectedDiv = this.createDiv();
+		rejectedDiv.id = 'pendingRevision';
+		rejectedDiv.style.border = '1px solid #ebebeb';
+		rejectedDiv.style.display = 'flex';
+		rejectedDiv.style.flexDirection = 'column';
+		rejectedDiv.style.justifyContent = 'center';
+		rejectedDiv.style.gap = '3px';
+		rejectedDiv.style.textAlign = 'center';
+		rejectedDiv.style.padding = '8px';
+		rejectedDiv.style.flex = '1';
+		rejectedDiv.style.borderRadius = '5px';
+		rejectedDiv.overflow = 'hidden';
+		rejectedDiv.style.cursor = 'pointer';
+		rejectedDiv.style.marginBottom ='3px';
 
-		pendingRevision.addEventListener(EVENT.MOUSEOVER, () => pendingRevision.style.backgroundColor = '#f1f1f1');
-		pendingRevision.addEventListener(EVENT.MOUSELEAVE, () => pendingRevision.style.backgroundColor = 'transparent');
-		pendingRevision.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+		rejectedDiv.addEventListener(EVENT.MOUSEOVER, () => rejectedDiv.style.backgroundColor = '#f1f1f1');
+		rejectedDiv.addEventListener(EVENT.MOUSELEAVE, () => rejectedDiv.style.backgroundColor = 'transparent');
+		rejectedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.REJECTED},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['pendingDecission', 'discarded'], type: ['invoice', 'ticket']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50
+				, publicStatus:[CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED], type: ['invoice', 'ticket']}
 		));
 
 
-		div.appendChild(pendingRevision);
+		div.appendChild(rejectedDiv);
 
-		let pendingRevisionNumber = this.createDiv();
-		pendingRevisionNumber.id = 'pendingRevisionNumber';
-		pendingRevisionNumber.innerHTML = '0';
-		pendingRevisionNumber.style.fontWeight = 'bold';
-		pendingRevisionNumber.style.fontSize = '36px';
-		pendingRevisionNumber.style.lineHeight = '47px';
-		pendingRevisionNumber.style.color = 'var(--aonRed)';
-		pendingRevision.appendChild(pendingRevisionNumber);
+		let rejectedNumber = this.createDiv();
+		rejectedNumber.id = 'rejectedNumber';
+		rejectedNumber.innerHTML = '0';
+		rejectedNumber.style.fontWeight = 'bold';
+		rejectedNumber.style.fontSize = '36px';
+		rejectedNumber.style.lineHeight = '47px';
+		rejectedNumber.style.color = 'var(--aonRed)';
+		rejectedDiv.appendChild(rejectedNumber);
 
-		let pendingRevisionName = this.createDiv();
-		pendingRevisionName.id = 'pendingRevisionName';
-		pendingRevisionName.innerHTML = MSG.REJECTEDS;
-		pendingRevisionName.style.fontWeight = 'normal';
-		pendingRevisionName.style.color = 'gray';
-		pendingRevisionName.style.lineHeight = '21px';
-		pendingRevision.appendChild(pendingRevisionName);
+		let rejectedName = this.createDiv();
+		rejectedName.id = 'rejectedName';
+		rejectedName.innerHTML = MSG.REJECTEDS;
+		rejectedName.style.fontWeight = 'normal';
+		rejectedName.style.color = 'gray';
+		rejectedName.style.lineHeight = '21px';
+		rejectedDiv.appendChild(rejectedName);
 
 		// TRASH
-		let trash = this.createDiv();
-		trash.id = 'trash';
-		trash.style.border = '1px solid #ebebeb';
-		trash.style.display = 'flex';
-		trash.style.flexDirection = 'column';
-		trash.style.justifyContent = 'center';
-		trash.style.gap = '3px';
-		trash.style.textAlign = 'center';
-		trash.style.padding = '8px';
-		trash.style.flex = '1';
-		trash.style.borderRadius = '5px';
-		trash.overflow = 'hidden';
-		trash.style.cursor = 'pointer';
-		trash.style.marginBottom ='3px';
+		let trashDiv = this.createDiv();
+		trashDiv.id = 'trash';
+		trashDiv.style.border = '1px solid #ebebeb';
+		trashDiv.style.display = 'flex';
+		trashDiv.style.flexDirection = 'column';
+		trashDiv.style.justifyContent = 'center';
+		trashDiv.style.gap = '3px';
+		trashDiv.style.textAlign = 'center';
+		trashDiv.style.padding = '8px';
+		trashDiv.style.flex = '1';
+		trashDiv.style.borderRadius = '5px';
+		trashDiv.overflow = 'hidden';
+		trashDiv.style.cursor = 'pointer';
+		trashDiv.style.marginBottom ='3px';
 
-		trash.addEventListener(EVENT.MOUSEOVER, () => trash.style.backgroundColor = '#f1f1f1');
-		trash.addEventListener(EVENT.MOUSELEAVE, () => trash.style.backgroundColor = 'transparent');
-		trash.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
+		trashDiv.addEventListener(EVENT.MOUSEOVER, () => trashDiv.style.backgroundColor = '#f1f1f1');
+		trashDiv.addEventListener(EVENT.MOUSELEAVE, () => trashDiv.style.backgroundColor = 'transparent');
+		trashDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.DRAFT},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['error']}
+			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:[CONSTANT.DISCARDED]}
 		));
 
-		div.appendChild(trash);
+		div.appendChild(trashDiv);
 
 		let trashNumber = this.createDiv();
 		trashNumber.id = 'trashNumber';
@@ -484,15 +485,15 @@ export class AonInvoiceHome extends AonElement {
 		trashNumber.style.fontSize = '36px';
 		trashNumber.style.lineHeight = '47px';
 		trashNumber.style.color = 'var(--aonGray)';
-		trash.appendChild(trashNumber);
+		trashDiv.appendChild(trashNumber);
 
 		let trashName = this.createDiv();
 		trashName.id = 'trashName';
-		trashName.innerHTML = MSG.IN_TRASH;
+		trashName.innerHTML = MSG.IN_TRASH + "**";
 		trashName.style.fontWeight = 'normal';
 		trashName.style.color = 'gray';
 		trashName.style.lineHeight = '21px';
-		trash.appendChild(trashName);
+		trashDiv.appendChild(trashName);
 		
 		return div;
 	}
@@ -521,13 +522,13 @@ export class AonInvoiceHome extends AonElement {
 		let pendingTicketNumber = this.getElement('pendingTicketNumber');
 		if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
 		
-		let pendingRevision = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
-		let pendingRevisionNumber = this.getElement('pendingRevisionNumber');
-		if(pendingRevisionNumber) pendingRevisionNumber.innerHTML = pendingRevision;
+		let rejectedCounter = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
+		let rejectedNumber = this.getElement('rejectedNumber');
+		if(rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
 
-		let trash = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+		let trashCounter = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
 		let trashNumber = this.getElement('trashNumber');
-		if(trashNumber) trashNumber.innerHTML = trash;
+		if(trashNumber) trashNumber.innerHTML = trashCounter;
 	}
 
     aonInvoice(type, invoice) {

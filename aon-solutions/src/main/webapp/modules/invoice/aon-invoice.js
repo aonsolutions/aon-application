@@ -365,7 +365,11 @@ export class AonInvoice extends AonElement {
 		let invoiceToolbar = new AonToolbar();
 		invoiceToolbar.id = this.TOOLBAR;
 		invoiceToolbar.type = ToolbarType.SECONDARY;
-		invoiceToolbar.title = this.getInvoiceTitle();
+		let toolbarTitle = this.getInvoiceTitle()
+		if ( this.getInvoice() && this.getInvoice().status) {
+			toolbarTitle = toolbarTitle + " (" + this.getInvoice().status +")";
+		}
+		invoiceToolbar.title = toolbarTitle;
 		this.appendChild(invoiceToolbar);
 		invoiceToolbar.removeButtons();
 		invoiceToolbar.addButton2(ACTION.NEXT, () => this.nextInvoice());
@@ -470,10 +474,10 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.DISCARDED)) {
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-		} else if(this.getInvoice().isOcrStatus(CONSTANT.ERROR )) {
+		} else if(this.getInvoice().isOcrStatus(CONSTANT.DISCARDED )) {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeOcrInvoice());
 		}
@@ -1609,6 +1613,7 @@ export class AonInvoice extends AonElement {
 
 		irpfType.addEventListener(EVENT.SELECT, () => {
 			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.withholding = true;
 			this.invoice.setWithholdingType(detail);
 			this.reload();
 			if(this.autosave) this.save();
@@ -3122,7 +3127,7 @@ export class AonInvoice extends AonElement {
 		if(!this.getInvoice().isRejected() && !invofoxRejected)
 			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		if(this.isInvofoxInvoice()) {
-			this.setInvofoxState(CONSTANT.ERROR);
+			this.setInvofoxState(CONSTANT.DISCARDED);
 		} else {
 			this.getInvoice().status = CONSTANT.DRAFT;
 			this.save(MSG.MOVED_TO_TRASH);
@@ -3224,7 +3229,7 @@ export class AonInvoice extends AonElement {
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
-			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.REJECTED);	
+			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.ERROR);
 			this.updateCounter(OPTION.RAWDOC_DRAFT, undefined, -1);
 			this.back();
 		});

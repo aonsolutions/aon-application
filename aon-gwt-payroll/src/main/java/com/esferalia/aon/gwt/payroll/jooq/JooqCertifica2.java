@@ -531,7 +531,9 @@ public class JooqCertifica2 {
 					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
 
 			Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF)
-					.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty)).fetch();
+					.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty))
+					.and(RDIR_STAFF.REPRESENTATIVE_LABOR.eq((byte)1))
+					.fetch();
 
 			// Hay representante de empresa
 			if (staffRecords.isNotEmpty()) {

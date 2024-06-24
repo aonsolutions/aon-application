@@ -37,6 +37,10 @@
 	  background-color:  var(--colorNeutralBackground2,#fafafa)
 	}
 	
+	table td {
+		font-family: "Noto Sans", sans-serif !important;
+	}
+	
 	.aon-finding-subtitle {
 		display:none;
 	}
@@ -254,11 +258,11 @@
 	.aon-finding-title-toolbar,
 	.gwt-Selector .gwt-MenuBar-horizontal,
 	.gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
-		background: #fff;
 		border-top:none;
 		border-left:none;
 		border-right:none;
     	border-bottom: none;
+		background: transparent;
 	}	
 	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
 		cursor: pointer;
@@ -1199,6 +1203,7 @@
 		align-items: center;
 		display: inline-flex;
 		
+		border-radius: 4px;
 		font-size: var(--fontSizeBase300,14px);
 		font-weight: var(--fontWeightSemibold,400);
 		color: var(--colorNeutralForeground1,#242424);
@@ -1709,16 +1714,19 @@
 		background-size:28px;
 	}
 
+	.aon-scroll-area,
 	.aon-finding-title-toolbar + .aon-scroll-area {
 		padding-top: 0px;
 		overflow-y: scroll;
 		height: calc( 100vh - 169px);
 	} 
 
+	.aon-scroll-area .rich-table-thead tr ,
 	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
 		border-bottom: none;
 	}
 
+	.aon-scroll-area .rich-table-thead th ,
 	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
 		top: 0px;
 		padding-top: 8px;
@@ -1727,6 +1735,7 @@
 		background-color:  var(--colorNeutralBackground2,#fafafa);
 	}
 	
+	.aon-scroll-area .aon-panelGrid-search-info,
 	.aon-finding-title-toolbar + .aon-scroll-area .aon-panelGrid-search-info {
 		top: 0px;
 /* 		padding-top: 8px; */
@@ -2089,7 +2098,105 @@
 	.aon-file-upload-panel.highlight {
 		border-color: black;
 	}
+	
+	.aonCard tbody:first-of-type > tr {
+		display:block;
+	}
 
+	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-odd{
+		font-weight: 400;
+		display:inline-block;
+		
+  		border: none;
+	    top: 12px;
+ 	    left: 20px;
+	    position: relative;
+  		background-color: transparent;
+
+	}
+	
+	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-even {
+		width: 700px;
+	}
+	
+	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-even > div {
+		display: flex;
+		align-items: center;
+	}
+	
+	.aonCard tr td.aon-panelGrid-odd .aon-outputLabel,
+	.aonCard tr td.aon-panelGrid-odd .aon-outputText {
+		background: #fff;
+	    font-size: 12px;
+	    margin-left: 5px;
+	    padding-left: 5px;
+	    padding-right: 5px;
+
+    }   
+
+	.aonCard select,
+	.aonCard .aon-inputText,
+	.aonCard .aon-selectOneMenu,
+	.aonCard .aon-selectOneRadio,
+	.aonCard .aon-selectMultiCheckbox,
+	.aonCard .aon-lookupSuggestText,
+	.aonCard .aon-gotoCommandLink {
+		height: 35px;
+		font-size: 14px;
+		margin-left: 6px;
+		margin-right: 6px;
+		border-radius: 3px;
+		padding: 1px 2px 0px 15px;
+		border: 1px solid #d2d2d6;
+	}   
+	
+	.aonCard select,
+	.aonCard .aon-selectOneMenu,
+	.aonCard .aon-selectOneRadio {
+		height: 38px;
+		padding-right: 40px;
+	}   
+	
+	.aonCard .aon-lookup,
+	.aonCard .aon-gotoCommandLink,
+	.aonCard .aon-selectMultiCheckbox {
+		display: flex;
+		align-items: center;
+	}
+	
+	.aonCard .aon-selectMultiCheckbox label {
+	    font-size: 12px;
+	}
+	
+	
+	.aonCard select + span, 
+	.aonCard select + label, 
+	.aonCard .aon-inputText + span,
+	.aonCard .aon-inputText + label {
+    	top: -27px;
+    	left: 60px;
+		display : none;
+		position: relative;
+    	background-color: #fff;
+    } 
+	
+	.aonCard {
+	    margin: 10px;
+	    border-radius: 5px;
+	    padding: 15px 22px;
+    	background-color: #fff;
+	    border: 1px solid #ebebeb;
+	    color: rgb(66, 66, 66)
+	}
+	
+	.aonCardTitle {
+	    color: #262626;
+	    display: flex;
+	    font-size: 14px;
+	    font-weight: 600;
+	    margin-bottom: 15px;
+	}
+	
 	</style>
 
 	<script type="text/javascript">

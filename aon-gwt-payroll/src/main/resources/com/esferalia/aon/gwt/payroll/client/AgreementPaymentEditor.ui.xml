@@ -191,7 +191,7 @@
 							<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox} {style.inputHeight}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel styleName="{style.flex}" ui:field="extraPeriodPanel">
 						<g:HTMLPanel styleName="{style.element}">
 							<g:Label styleName="{style.title}">Fecha Incio Cotización</g:Label>
 							<g:HTMLPanel styleName="{style.flex}">
