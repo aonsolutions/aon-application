@@ -1,4 +1,8 @@
-
+:root {
+	--aonBlue: #FFF;
+	--aonBlack: #007bff;
+	--aonHeaderButtonColor: white;
+}
 .aonHeader {
 	--aonPayroll: #000;
 	background-color: #000;
