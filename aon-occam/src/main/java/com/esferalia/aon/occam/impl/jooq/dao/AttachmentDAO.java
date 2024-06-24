@@ -169,6 +169,7 @@ public class AttachmentDAO {
 						attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 						return attach;
 					}).toList();
+			
 		} else {
 			attachList = selectRegistryAttach(ctx, filter, withData) 
 			.orderBy(RATTACH.ATTACH_DATE.desc())
@@ -177,9 +178,17 @@ public class AttachmentDAO {
 				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 				return attach;
 			}).toList();
+			
+	
 		}
-
 		return attachList.stream();
+	}
+	
+	public static long getDocumentalRegistryAttachCount(AONContext ctx, AttachFilter filter, boolean withData) {
+		return selectRegistryAttach(ctx, filter, withData)
+				.fetch()
+				.stream()
+				.count();
 	}
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
@@ -241,10 +250,6 @@ public class AttachmentDAO {
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
 		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);
-		System.out.println(
-				DATA_ATTACH_PROPERTIES.build(select, filter)
-				.getSQL(ParamType.INLINED)
-				);
 		return DATA_ATTACH_PROPERTIES.build(select, filter).fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	

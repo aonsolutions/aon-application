@@ -36,13 +36,19 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.*;
 
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
@@ -103,6 +109,89 @@ public class ContractDAO {
 				.stream()
 				.map(new ContractSimplifiedDataFiller());
 	} 
+	
+	public static long getContractCount(AONContext ctx, ContractExtendedDataFilter filter) {
+		return ctx.getDslContext()
+				.select(CONTRACT.ID)
+				.from(CONTRACT)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();		
+	}
+	
+	private static Record getWorkplaceRecord(DSLContext dslContext, Integer contractId) {
+		return dslContext.select()
+				.from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(
+						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+						.where(CONTRACT.ID.eq(contractId))))
+				.fetchOne();
+	}
+	
+	private static Integer getEnterpriseId(DSLContext dslContext, Integer contractId) {
+		return dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(
+						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+							.where(CONTRACT.ID.eq(contractId))
+				)).fetchOne()
+				.get(WORKPLACE.ENTERPRISE);
+	}
+	
+	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+		List<AuxSalaryInfo> salaryList = new ArrayList<>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+		Result<Record> results = ctx.getDslContext().select()
+			        .from(SALARY)
+			        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+			        .limit(perPage)
+					.offset(perPage * (page -1))
+			        .fetch();
+		 
+		 for (Record salaryRecord : results) {
+		        AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
+		        salaryInfo.setId(salaryRecord.get(SALARY.ID));
+				salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+				salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+				Date startDate = salaryRecord.get(SALARY.START_DATE);
+		        Date endDate = salaryRecord.get(SALARY.END_DATE);
+		        salaryInfo.setStartDate(dateFormat.format(startDate));
+		        salaryInfo.setEndDate(dateFormat.format(endDate));
+				salaryInfo.setType(salaryRecord.get(SALARY.TYPE));
+				salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+				salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+				salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+				salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+				salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+				
+				Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+				Integer enterpriseId = getEnterpriseId(ctx.getDslContext(), contractId);
+				Record workplaceRecord = getWorkplaceRecord(ctx.getDslContext(), contractId);
+				
+				String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+				Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+				
+				salaryInfo.setWorkplaceName(workplaceName);
+				salaryInfo.setWorkplaceId(workplaceId);
+				salaryInfo.setEnterpriseId(enterpriseId);
+		    
+				salaryList.add(salaryInfo);
+		    }
+
+		return salaryList;
+	}
+	
+	public static long getEmployeeSalaryCount(AONContext ctx , ContractExtendedDataFilter filter) {
+		return ctx.getDslContext().select()
+		        .from(SALARY)
+		        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+		        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+		        .fetch().stream().count();
+	}
 	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();

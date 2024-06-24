@@ -369,7 +369,7 @@ public interface EnterprisesService extends RemoteService {
 
 	// --------------------------- Enterprise Context
 	
-	EnterpriseContext getEnterpriseContext(String currentDomainName);
+	EnterpriseContext getEnterpriseContext(String currentDomainName) throws IllegalArgumentException ;
 
 	List<SSBonusData> syncSSBonus(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 

@@ -45,6 +45,7 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
@@ -117,6 +118,7 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
@@ -914,6 +916,13 @@ public class PropertiesDAO {
 		}
 		
 		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
+
+		@Override
+		public Property<Byte> getSalaryType() {
+			return new FilterDAO.PropertyDAO<>(SALARY.TYPE);
+		}
+		
+		
 	}
 	
 	protected static class ContractDocPropertiesDAO implements ContractDocProperties{

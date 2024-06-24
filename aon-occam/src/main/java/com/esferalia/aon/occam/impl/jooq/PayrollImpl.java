@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IPayroll;
+import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -128,6 +130,21 @@ public class PayrollImpl implements IPayroll {
 	public Stream<ContractExtendedData> getContractSimplifiedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getContractSimplifiedData(ctx, filter, page, perPage));
+	}
+	
+	public long getContractCount(AONContext ctx, ContractExtendedDataFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getContractCount(ctx, filter));
+	}
+	
+	public List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer per_page) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getEmployeeSalary(ctx, filter, page, per_page));
+	}
+	
+	public long getEmployeeSalaryCount(AONContext ctx, ContractExtendedDataFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getEmployeeSalaryCount(ctx, filter));
 	}
 
 	public void deleteContracts(AONContext ctx, Integer ...contractIds) {

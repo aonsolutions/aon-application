@@ -160,3 +160,4 @@ public interface IRequestParamsNames {
 	String WORKPLACE_IDS = "workplaceIds";
 	
 }
+

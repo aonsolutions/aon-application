@@ -3652,21 +3652,33 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public EnterpriseContext getEnterpriseContext(String domainName) {
+	public EnterpriseContext getEnterpriseContext(String domainName) throws IllegalArgumentException  {
+		String errorMessage = "";
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
 			EnterpriseContext enterpriseContext = new EnterpriseContext();
-			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
-			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
-			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
-			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
-			enterpriseContext.setScopes(JooqWorkplace.getScopes(connection, domainId));
+			try { enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar centros de trabajo."; }
+			
+			try { enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar convenios."; }
+			
+			try { enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar actividades y cuentas de cotizacion"; }
+			
+			try { enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar metodos de pago."; }
+			
+			try { enterpriseContext.setScopes(JooqWorkplace.getScopes(connection, domainId)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar ambitos."; }
 			
 			return enterpriseContext;
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			if(AonStringUtils.isNotBlank(errorMessage)) throw new IllegalArgumentException(e.getMessage() + " -- " + errorMessage);
+			else throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 	

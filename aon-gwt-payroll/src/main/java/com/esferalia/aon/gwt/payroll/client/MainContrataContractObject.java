@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -104,7 +103,7 @@ public class MainContrataContractObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// Nothing to do here
+				failure.accept(caught);
 			}
 		});
 	}

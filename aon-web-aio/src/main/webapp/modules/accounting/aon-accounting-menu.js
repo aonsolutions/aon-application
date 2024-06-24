@@ -113,7 +113,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			},{
 				description: "Centros de Costo",
 				title: "Centros de Costo",
-				action: () => GWT.load(GWT.CostCenterModule)
+				action: () => alert("description")//GWT.load(GWT.CostCenterModule)
 			},{
 				description: "Ejercicios Contables",
 				title: "Ejercicios Contables",

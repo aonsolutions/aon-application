@@ -8,6 +8,7 @@ public class UteBase implements Serializable {
 	
 	private double base;
 	private double percent;
+	private double amount; // A partir del ejercicio 2023 añaden el importe de la deducción. Se graba en el campo incomes de la tabla
 
 	public double getPercent() {
 		return percent;
@@ -24,6 +25,15 @@ public class UteBase implements Serializable {
 
 	public UteBase setBase(double base) {
 		this.base = base;
+		return this;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public UteBase setAmount(double amount) {
+		this.amount = amount;
 		return this;
 	}
 
