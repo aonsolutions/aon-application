@@ -179,9 +179,7 @@ export class AonIconButton extends AonElement {
     }
     let header = this.getElement("aonHeaderWeb");
     if (!this.getAttribute("noHover")) {
-      console.log("Color 1: "+background);
       this.getButton().addEventListener("mouseover", () => {
-        console.log("Color 2: "+this.getButton().style.backgroundColor);
         this.getButton().style.backgroundColor = this.getBackgroundHover();
       });
       
