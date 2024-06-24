@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.PropertyOrders.ProductPropertyOrders;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.registry.BookingStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
@@ -375,23 +376,21 @@ public class ProductServlet extends AonApiHttpServlet {
 		Filter trueFilter;
 		String inputValue = api.getData().optString("global");
 		ArrayList<Integer> lista = new ArrayList<>();
-		
-		  if (inputValue != null && !inputValue.isEmpty()) {
-			  
-			  trueFilter = (f.getNameProperty().like("%" + inputValue + "%"));
-
-			  trueFilter = trueFilter.or(f.getCodeProperty().like("%" + inputValue + "%"));
-
-		        List<ProductCategory> category = AON.getProductCategoryStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-		                j -> j.getDomainProperty().eq(api.getDomain().getId()).and(j.getNameProperty().like("%" + inputValue + "%"))).collect(Collectors.toList());
-
-		        for (int i = 0; i < category.size(); i++) {
-		        	lista.add(category.get(i).getId());
-		        }
-		        trueFilter = trueFilter.or(f.getCategoryProperty().in(lista.toArray(Integer[] :: new)));
-	        	filter = filter.and(trueFilter);
+		if (inputValue != null && !inputValue.isEmpty()) {
+			trueFilter = (f.getNameProperty().like("%" + inputValue + "%"));
+			trueFilter = trueFilter.or(f.getCodeProperty().like("%" + inputValue + "%"));
+		    List<ProductCategory> category = AON.getProductCategoryStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+		    		j -> j.getDomainProperty().eq(api.getDomain().getId()).and(j.getNameProperty().like("%" + inputValue + "%"))).collect(Collectors.toList());
+		    for (int i = 0; i < category.size(); i++) {
+		    	lista.add(category.get(i).getId());
 		    }
-		  
+		    trueFilter = trueFilter.or(f.getCategoryProperty().in(lista.toArray(Integer[] :: new)));
+		    filter = filter.and(trueFilter);
+		}
+		if(!AonStringUtils.isEmpty(api.getData().optString("kind"))) {
+			filter = filter.and(f.getKindProperty().eq(ProductKind.safeValueOf(api.getData().optString("kind")).value())
+					.or(f.getKindProperty().eq(ProductKind.SALE_PURCHASE.value())));
+		}
 		return filter;
 	}
 	
