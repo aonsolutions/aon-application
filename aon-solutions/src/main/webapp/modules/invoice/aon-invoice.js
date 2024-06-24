@@ -1609,6 +1609,7 @@ export class AonInvoice extends AonElement {
 
 		irpfType.addEventListener(EVENT.SELECT, () => {
 			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.withholding = true;
 			this.invoice.setWithholdingType(detail);
 			this.reload();
 			if(this.autosave) this.save();

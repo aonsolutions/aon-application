@@ -1,0 +1,12 @@
+
+.aonHeader {
+	--aonPayroll: #000;
+	background-color: #000;
+}
+
+.aonMenuLeftop,
+.aonMenuTopnav,
+.aonMenuSidenav {
+	color: #FFF;
+	background-color: #000;
+}

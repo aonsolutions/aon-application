@@ -11,27 +11,66 @@
 		<aon:if test="#{lookup != null}">
 			<ui:param name="controller" value="#{lookup}"/>
 		</aon:if>
-	
-		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
-			<ui:include src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml" />
-			<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
-				<aon:outputLabel for="Customer_tariff_id"
-					value="#{bundle.report_tariff}" />
-				<aon:selectOneMenu id="Customer_tariff_id"
-					value="#{controller.to.tariff}">
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{configCollections.salesTariffs}" />
-				</aon:selectOneMenu>
+		
+		<aon:div 
+		style="#{ app.standAlone ? 'display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));' : '' }" >
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-500">
+				<aon:if test="#{app.standAlone}">
+					<aon:outputText styleClass="aonCardTitle" value="" />
+					<aon:outputText styleClass="aonCardTitle" value="Datos Generales" />
+				</aon:if>
+				<ui:include src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml" >
+					<ui:param name="skipId" value="#{true}" />
+				</ui:include>
+				<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
+					<aon:outputLabel for="Customer_tariff_id"
+						value="#{bundle.report_tariff}" />
+					<aon:selectOneMenu id="Customer_tariff_id"
+						value="#{controller.to.tariff}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.salesTariffs}" />
+					</aon:selectOneMenu>
+				</aon:if>
+				
+				<aon:if test="#{!app.standAlone}">
+					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
+					</ui:include>
+				</aon:if>
+			</aon:panelGrid>
+
+			<aon:if test="#{app.standAlone}">
+				<aon:panelGrid 
+				columns="2" 
+				styleClass="aonCard"
+				style="margin-bottom:auto;"
+				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-500"
+				>
+					<aon:if test="#{app.standAlone}">
+						<aon:outputText styleClass="aonCardTitle" value="" />
+						<aon:outputText styleClass="aonCardTitle" value="Datos de Contacto" />
+					</aon:if>
+					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
+					</ui:include>
+				</aon:panelGrid>
 			</aon:if>
-			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-				<ui:param name="controllerLookupListener" value="#{customerForm}"/>
-			</ui:include>
-		</aon:panelGrid>
-		<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-				<ui:param name="controllerLookupListener" value="#{customerForm}"/>
-			</ui:include>
-		</aon:if>	
+
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+				<aon:div styleClass="aonCard" >
+					<aon:if test="#{app.standAlone}">
+						<aon:outputText styleClass="aonCardTitle" value="Datos Financieros" />
+					</aon:if>
+
+					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
+					</ui:include>
+				</aon:div>
+			</aon:if>	
+		</aon:div>
 
 	
 

@@ -86,9 +86,31 @@ export class AonHome extends AonElement {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
 			}
+			
 			const appColor = app.newColor || app.color;
-			aonHeader.setColor(appColor && '#fff', appColor);
-			aonHeader.setBackgroundColor(appColor);
+			/*
+			let div = this.getElement(app.app);
+			if(appColor == "grey"){
+				div.addEventListener(EVENT.CLICK, () =>{
+					let header = this.getElement("aonHeaderWeb");
+					header.style.backgroundColor = "green";
+		
+					let apps = this.getElement("aonMenuListAppImg-applications");
+					apps.style.color = "rgb(95, 99, 104)";
+		
+					let headerapp = this.getElement("aonHeaderApp");
+					headerapp.style.display = "none";
+		
+					let logo = this.getElement("aonLogo");
+					logo.style.display = "block";
+					logo.style.filter = "none";
+				})
+			}else{
+			*/
+				aonHeader.setColor(appColor && '#fff', appColor);
+				aonHeader.setBackgroundColor(appColor);
+			//}
+			
 		});
 
 		

@@ -49,6 +49,7 @@ public class DownloadFDIServlet extends HttpServlet {
 			response.flushBuffer();
 		
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 		

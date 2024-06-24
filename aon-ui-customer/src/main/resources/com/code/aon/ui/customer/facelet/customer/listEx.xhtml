@@ -1,9 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -96,7 +97,33 @@
 			</aon:if>
 			
 			<aon:if test="#{app.standAlone}" >
+				<script type="text/javascript">
+				//<![CDATA[
+					function setScroll() {
+						var scroll = #{rich:element('customerListScroll')};
+						var container = #{rich:element('customerListContainer')};
+						scroll.value = container.scrollTop;
+					}
+
+					function adjustScroll(){
+						var container = #{rich:element('customerListContainer')};
+						/* container.scrollTop = 53 ; */
+ 						if ( container.scrollTop == 0 ) {
+							container.scrollTop += 8;
+						} else {
+							container.scrollTop -= 8;
+						}
+					}
+					
+					function scrollAtTopOrBottom() {
+						var container = #{rich:element('customerListContainer')};
+						return ( container.scrollTop == 0 ) || ( container.offsetHeight + container.scrollTop >= container.scrollHeight );
+					}
+				//]]>
+				</script>
+
 				<aon:form id="customerToolbarForm">
+				
 				<aon:div id="customerToolbarContainer" >
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/appToolbar.xhtml" >
@@ -111,11 +138,20 @@
 				</aon:form>
 				
 				<aon:form id="customerListForm">
-				<aon:div  styleClass="aon-scroll-area"  style="display: flex; flex-direction: row; "  >
+				
+				<aon:inputText id="customerListScroll" value="#{customer.scroll}" style="display:none" />
+				
+				<aon:div  styleClass="aon-scroll-area aon-scroll"  style="display: flex; flex-direction: row; " >
 					
-					<aon:div id="customerListContainer"  style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4" >
+					<aon:scroll 
+					id="customerListContainer"
+					style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4" 
+					>
+
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 							<ui:param name="controller" value="#{customer}" />
+							<ui:param name="rows" value="#{user.pageLimit}" />
+							<ui:param name="showDataScroller" value="#{false}" />
 							
 							<ui:param name="skipCustomerId" value="#{app.standAlone}" />
 							
@@ -123,8 +159,23 @@
 								<ui:include src="/com/code/aon/ui/customer/facelet/customer/listExtended.xhtml" />
 								<ui:insert name="moreColumns"/>
 							</ui:define>
+							
+							<ui:define name="_selectFooterContent">
+								<aon:outputText value="Clientes totales #{customer.rowCount} " />
+							</ui:define>
 						</ui:decorate>
-					</aon:div>
+						
+						<a4j:support 
+						event="onscroll"
+						limitToList="true"
+						oncomplete="adjustScroll()"
+						eventsQueue="customerListScroll"
+						reRender="#{customer.beanName}Data"
+						actionListener="#{customer.onScroll}"
+						onsubmit="if (scrollAtTopOrBottom()) { setScroll(); } else { return false; } "
+						/>
+	
+					</aon:scroll>
 	
 					<aon:div id="customerFilterContainer" style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 4; display: none" >
 							<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/filterEx.xhtml" >
@@ -142,7 +193,8 @@
 								</ui:define>
 							</ui:decorate>
 					</aon:div>
-	
+
+						
 				</aon:div>
 				</aon:form>
 			</aon:if>

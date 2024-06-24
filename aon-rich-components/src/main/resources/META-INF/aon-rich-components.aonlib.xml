@@ -47,6 +47,11 @@
     	<attribute name="layout" value="block"/>			
 	</component>
 
+	<component localName="scroll">
+    	<attribute name="layout" value="block"/>			
+	</component>
+
+
 	<component localName="panelGrid">
     	<attribute name="styleClass" value="aon-panelGrid" />
     	<attribute name="cellpadding" value="0" />	

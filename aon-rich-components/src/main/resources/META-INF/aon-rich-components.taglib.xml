@@ -12,6 +12,15 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>scroll</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.Scroll</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.scroll.ScrollHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>panelGrid</tag-name>
 		<component>
 			<component-type>
