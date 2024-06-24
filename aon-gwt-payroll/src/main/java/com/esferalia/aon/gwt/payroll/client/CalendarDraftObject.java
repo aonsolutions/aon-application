@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +67,8 @@ public class CalendarDraftObject implements Calendar.Listener {
 	// ----------------------------------------------- Variables
 
 	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	private Integer domainId;
 	private Integer workplaceId;
 	private Calendar calendar;
 	private Integer year;
@@ -80,22 +81,27 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public CalendarDraftObject(Integer workplaceId) {
 		this.listeners = new ArrayList<Listener>();
 		this.workplaceId = workplaceId;
+		enterprisesService.getDomain(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer domain) {
+				domainId = domain;
+			}
+			
+			@Override
+			public void onFailure(Throwable arg0) {}
+		});
 	}
 
 	// ----------------------------------------------- DataBase Methods
 
-	public Map<Integer, String> loadListBoxItems(
-			final AsyncCallback<Map<Integer, String>> cb) {
-
-		if (listBoxItems != null)
-			return listBoxItems;
-		else
-			return loadListBox(cb);
+	public Map<Integer, String> loadListBoxItems(final AsyncCallback<Map<Integer, String>> cb) {
+		return listBoxItems != null ? listBoxItems : loadListBox(cb);
 	}
 	
 	private Map<Integer, String> loadListBox(final AsyncCallback<Map<Integer, String>> cb) {
 		
-		CalendarDraftObject.this.listBoxItems = new HashMap<Integer, String>();
+		this.listBoxItems = new HashMap<Integer, String>();
 		
 		employeesService.getHolidayDescription(new AsyncCallback<Map<Integer,String>>() {
 
@@ -106,20 +112,19 @@ public class CalendarDraftObject implements Calendar.Listener {
 
 			@Override
 			public void onSuccess(Map<Integer, String> map) {				
-				CalendarDraftObject.this.listBoxItems.putAll(map);
+				listBoxItems.putAll(map);
 				cb.onSuccess(map);
 			}
 		});
+		
 		return listBoxItems;
 	}
 	
-	public void getHolidayCalendar(Integer pattern, Integer year,
-			final AsyncCallback<CalendarDraftObject> cb) {
+	public void getHolidayCalendar(Integer selectedHoliday, Integer year, final AsyncCallback<CalendarDraftObject> cb) {
 		
 		this.year = year;
 		
-		employeesService.getCalendar(workplaceId, pattern, year,
-				new AsyncCallback<com.esferalia.aon.gwt.payroll.shared.CalendarDraft>() {
+		employeesService.getCalendar(workplaceId, selectedHoliday, year, new AsyncCallback<com.esferalia.aon.gwt.payroll.shared.CalendarDraft>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -136,40 +141,37 @@ public class CalendarDraftObject implements Calendar.Listener {
 				});
 	}
 
-	public void saveHolidaysAndDays(String holidayDescription,
-			Integer holidayId, Map<Date, String> map, 
-			CalendarDraft.DayType dayTypes[], Integer year,
-			final AsyncCallback<Void> cb) {
+	public void saveHolidaysAndDays(String holidayDescription, Integer holidayId, Map<Date, String> map,  CalendarDraft.DayType dayTypes[], Integer year, final AsyncCallback<Void> cb) {
+		
+		employeesService.saveHolidaysAndDays(workplaceId, holidayDescription, holidayId, map, dayTypes, year, new AsyncCallback<Void>() {
 
-		employeesService.saveHolidaysAndDays(workplaceId, holidayDescription,
-				holidayId, map, dayTypes, year, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				cb.onFailure(caught);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						cb.onFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						cb.onSuccess(result);
-					}
-				});
+			@Override
+			public void onSuccess(Void result) {
+				cb.onSuccess(result);
+			}
+			
+		});
 	}
 	
 	public void updateHolidayCalendar(Integer holidayId, CalendarDraft.DayType dayTypes[], final AsyncCallback<Void> cb) {
 
 		employeesService.updateHolidayCalendar(workplaceId, holidayId, dayTypes, new AsyncCallback<Void>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						cb.onFailure(caught);
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				cb.onFailure(caught);
+			}
 
-					@Override
-					public void onSuccess(Void result) {
-						cb.onSuccess(result);
-					}
-				});
+			@Override
+			public void onSuccess(Void result) {
+				cb.onSuccess(result);
+			}
+		});
 	}
 	
 	public void deletePropertyHoliday(Integer id, Date date, final AsyncCallback<Void> cb) {
@@ -192,6 +194,10 @@ public class CalendarDraftObject implements Calendar.Listener {
 
 	public DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
+	}
+	
+	public Integer getDomainId() {
+		return domainId;
 	}
 
 	public Integer getWorkplaceId() {

@@ -235,7 +235,7 @@ public interface EnterprisesServiceAsync {
 	
 	// --------------------------- Enterprise Context
 	
-	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback);
+	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback) throws IllegalArgumentException ;
 	
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;

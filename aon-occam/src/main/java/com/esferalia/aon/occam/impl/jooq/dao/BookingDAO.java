@@ -25,7 +25,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -181,8 +183,50 @@ public class BookingDAO {
 			domainApp.setActive(false);
 		}
 
-		if (!domainApp.isEmpty())
+		if (!domainApp.isEmpty()) {
 			SecurityDAO.saveDomainApp(ctx, domainApp);
+			if(AonApp.INVOFOX.equals(app)) {
+				saveChildInvofoxApp(ctx, app, active);
+				saveInvofoxUserAppRole(ctx, ctx.getDomainId(), active);
+			}
+		}
+	}
+	
+	
+	private static void saveChildInvofoxApp(AONContext ctx, AonApp app, boolean active) {
+		List<Domain> domainList = DomainDAO.getDomainList(ctx, f -> f.getParentProperty().eq(ctx.getDomainId()));
+		domainList.stream().forEach(domain -> {
+			DomainApp domainApp = SecurityDAO
+					.getDomainAppStream(ctx,
+							f -> f.getDomainProperty().eq(domain.getId()).and(f.getAppProperty().eq(app.value())))
+					.findFirst().orElse(new DomainApp());
+
+			if (active) {
+				domainApp.setDomain(domain.getId()).setApp(app).setActive(true);
+			} else if (!domainApp.isEmpty()) {
+				domainApp.setActive(false);
+			}
+
+			if (!domainApp.isEmpty()) {
+				SecurityDAO.saveDomainApp(ctx, domainApp);
+				saveInvofoxUserAppRole(ctx, domain.getId(), active);
+			}
+		});
+	}
+	
+	private static void saveInvofoxUserAppRole(AONContext ctx, Integer domain, boolean active) {
+		UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(domain))
+		.forEach(user -> {
+			UserAppRole role = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain)
+					.and(f.getUserIdProperty().eq(user.getId()))
+					.and(f.getRoleProperty().eq(AonRole.INVOFOX.value()))).findFirst().orElse(new UserAppRole());
+			if(active && role.getId() == null) {
+				role.setDomain(domain).setRole(AonRole.INVOFOX).setUser(user.getId());
+				SecurityDAO.insertUserAppRole(ctx, role);				
+			} else if(role.getId() != null && !active) {
+				SecurityDAO.deleteUserAppRole(ctx, f -> f.getIdProperty().eq(role.getId()));
+			}
+		});
 	}
 
 	private static void saveBookingHistory(AONContext ctx, Booking booking) {

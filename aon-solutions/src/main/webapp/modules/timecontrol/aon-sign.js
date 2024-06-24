@@ -42,7 +42,6 @@ export class AonSign extends AonElement {
     this.TIME_ID = "TIME_ID";
     this.applicationEl = this.getApplication();
     this.parent = this.parent || false;
-    console.log("PARENT -> " + this.parent);
     getTaskHolder({reload:true});
     if(this.isMobile()){
       getPosition().catch(console.error);  // GET POSITION

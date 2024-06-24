@@ -70,27 +70,27 @@ export const requestInvofox = (method, url, sendData, fn) => {
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
-        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
       } else {
-        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
       }
     };
     xhr.onerror = () => {
-      console.log("Request failed");
+      console.error("Request failed");
     };
   } catch (error) {
-    console.log("error");
+    console.error("error");
     fn(undefined, error);
   }
 }
@@ -102,27 +102,27 @@ export const request = (method, url, token, sendData, fn) => {
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
-        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
       } else {
-        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
       }
     };
     xhr.onerror = () => {
-      console.log("Request failed");
+      console.error("Request failed");
     };
   } catch (error) {
-    console.log("error");
+    console.error("error");
     fn(undefined, error);
   }
 };
@@ -134,27 +134,27 @@ export const requestXml = (method, url, sendData, fn) => {
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
-        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
       } else {
-        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
       }
     };
     xhr.onerror = () => {
-      console.log("Request failed");
+      console.error("Request failed");
     };
   } catch (error) {
-    console.log("error");
+    console.error("error");
     fn(undefined, error);
   }
 };
@@ -172,27 +172,27 @@ export const requestSig = (method, url, token, sendData, fn) => {
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
-        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
       } else {
-        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
       }
     };
     xhr.onerror = () => {
-      console.log("Request failed");
+      console.error("Request failed");
     };
   } catch (error) {
-    console.log("error");
+    console.error("error");
     fn(undefined, error);
   }
 };
@@ -209,27 +209,27 @@ export const requestPro = (method, url, sendData, fn) => {
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
-        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
       } else {
-        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
       }
     };
     xhr.onerror = () => {
-      console.log("Request failed");
+      console.error("Request failed");
     };
   } catch (error) {
-    console.log("error");
+    console.error("error");
     fn(undefined, error);
   }
 };
@@ -252,7 +252,7 @@ export const requestFile = (method, url, sendData, fn) => {
       }
     };
     xhr.send(JSON.stringify(sendData));
-    xhr.onerror = () => {console.log("error");};
+    xhr.onerror = () => {console.error("error");};
   } catch (error) {
     fn(undefined, error);
   }
@@ -475,7 +475,7 @@ export const openFileDesktop = (url) => {
       const openWindow =  window.open(url, '_blank');
       if(openWindow) return openWindow;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
   throw new Error(MSG.BLOCKED_POPUP);
 }

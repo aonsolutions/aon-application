@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
@@ -43,7 +42,6 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -59,7 +57,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.delivery.DeliveryInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -215,18 +212,6 @@ public class WarehouseImpl implements IWarehouse {
 	public LinkedList<Department> getDepartmentList(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
 				WarehouseDAO.getDepartmentList(ctx, workplaceId, filter));
-	}
-	
-	@Override
-	public LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
-		return ctx.getDslContext().transactionResult(configuration ->
-				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
-	}
-	
-	@Override
-	public Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter){
-		return ctx.getDslContext().transactionResult(configuration ->
-				SeriesDAO.getSeries(ctx, filter));
 	}
 	
 	@Override

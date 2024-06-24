@@ -113,8 +113,10 @@ export class AonFiscal extends AonElement {
       options: ejercicios
 		};
 
-      application.addSidenavOptions3(data);
+      // application.addSidenavOptions3(data);
 
+      console.log("addSelectSidenav");
+      application.addSelectSidenav(data);
 
       let periods = this.getDataForKey(mdls, 'period')
       .sort()

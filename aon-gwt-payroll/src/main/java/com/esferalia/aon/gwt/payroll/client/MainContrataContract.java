@@ -894,7 +894,9 @@ public class MainContrataContract extends MainEntryPoint {
 					setTableHeights();
 					checkStatus(this.mainContrataContractObject);
 				}, 
-				f -> {}
+				f -> {
+					AonMessagePanel.showError(messageContainer, "Error contratos: " + f.getMessage());
+				}
 		);
 
 		this.mainContrataContractObject.getContextInfo(
@@ -904,7 +906,13 @@ public class MainContrataContract extends MainEntryPoint {
 					employeeDataGrid.redraw();
 					initWorkplaceLB();
 					contextLoaded = true;
-				}, f -> {}
+				}, f -> {
+					AonMessagePanel.showError(messageContainer, "Error contexto: " + f.getMessage());
+					setTableHeights();
+					employeeDataGrid.redraw();
+					initWorkplaceLB();
+					contextLoaded = true;
+				}
 		);
 
 	}

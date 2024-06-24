@@ -16,7 +16,7 @@ import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.Series;
 
 public class WarehouseTransferController extends HeaderObjectController implements IAuditableController {
 	
