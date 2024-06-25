@@ -113,9 +113,6 @@ export class AonFiscal extends AonElement {
       options: ejercicios
 		};
 
-      // application.addSidenavOptions3(data);
-
-      console.log("addSelectSidenav");
       application.addSelectSidenav(data);
 
       let periods = this.getDataForKey(mdls, 'period')
@@ -127,12 +124,25 @@ export class AonFiscal extends AonElement {
         name:TAX_ENUMS.TAX_PERIOD[period],
         clickable:true,
         fn: ()=>{
-          this._filter.period = this._filter.period  === period ? undefined : period;
+          this._filter.period = period;
           this.addBackgroundSidenav();
           this.showView(FISCAL_VIEWS.AON_TAX);
         },
       }));
 
+      // Add all periods
+      let allPeriod = {
+        name: "Todos",
+        icon: MATERIAL_ICONS.EVENT,
+        clickable:true,
+        id: "Todos",
+        fn: ()=>{
+          this._filter.period = undefined;
+          this.addBackgroundSidenav();
+          this.showView(FISCAL_VIEWS.AON_TAX);
+        },
+      };
+      periods.unshift(allPeriod);
      
       let data2 = {
         id: "Periodo",
@@ -141,7 +151,7 @@ export class AonFiscal extends AonElement {
         app: FISCAL,
         options: periods
       };
-      application.addSidenavOptions3(data2);
+      application.addSelectSidenav(data2);
 
       let models = this.getModelsNoRepeat(mdls).map(model=> ({
           ...FiscalOptions.AON_TAX, 
