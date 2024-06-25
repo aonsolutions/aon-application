@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.invoice.InvofoxConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
@@ -587,10 +586,41 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject rawdoc2json(Rawdoc rawdoc, AonApiData api) {
-	    JSONObject json = new JSONObject(rawdoc.getJson());
-	    json.put(IJsonNames.ID, rawdoc.getId());
-	    json.put(IJsonNames.STATUS, rawdoc.getStatus() != null ? rawdoc.getStatus().getName() : IConstants.INBOX);
-	    if(rawdoc.getMimeType() != null){
+		JSONObject json = new JSONObject();
+		JSONObject jsonInvoice = new JSONObject(rawdoc.getJson());
+		JSONArray taxes = jsonInvoice.optJSONArray(IJsonNames.TAXES);
+		Double taxableBase = 0.0;
+		Double retentionPercentage = 0.0;
+		Double surchargeQuota = 0.0;
+		Double vatQuota = 0.0;
+		if(taxes != null) {
+			for(int i = 0; i < taxes.length(); i++) {
+				if(taxes.optJSONObject(i).optString(IJsonNames.WITHHOLDING_TYPE).isEmpty()) {
+					taxableBase = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					retentionPercentage = taxes.optJSONObject(i).optDouble(IJsonNames.PERCENTAGE);
+				} else {
+					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					surchargeQuota += a.isNaN() ? 0 : a;
+					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					vatQuota += b.isNaN() ? 0 : b;
+				}
+			}
+		}
+		json.put(IJsonNames.ID, rawdoc.getId());
+		json.put(IJsonNames.DATE, jsonInvoice.optString(IJsonNames.DATE));
+		json.put(IJsonNames.REFERENCE, jsonInvoice.optString(IJsonNames.REFERENCE));
+		json.put(IJsonNames.NAME, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.NAME) );
+		json.put(IJsonNames.BASE, taxableBase);
+		json.put(IJsonNames.RETENTION_PERCENT, retentionPercentage);
+		json.put(IJsonNames.SURCHARGE_QUOTA, surchargeQuota);
+		json.put(IJsonNames.QUOTA, vatQuota);
+		json.put(IJsonNames.TOTAL, jsonInvoice.optDouble(IJsonNames.TOTAL));
+		json.put(IJsonNames.TYPE, jsonInvoice.optString(IJsonNames.TYPE));
+		json.put(IJsonNames.STATUS, InvoiceStatus.PENDING.name().toLowerCase());
+		json.put(IJsonNames.NUMBER, jsonInvoice.optString(IJsonNames.NUMBER));
+		json.put(IJsonNames.SERIE, jsonInvoice.optString(IJsonNames.SERIE));
+		json.put(IJsonNames.EMAIL, false);
+		if(rawdoc.getMimeType() != null){
 	        JSONObject data = new JSONObject();
 	        data.put("domain_name", api.getDomain().getName());
 	        data.put("domain_id", api.getDomain().getId());
@@ -603,9 +633,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	        f.put("url", url);
 	        f.put("path", url);
 	        f.put("content_type", rawdoc.getMimeType().getName());
-	        json.put("file", f);
+	        json.put(IJsonNames.FILE, f);
 	    }
-	    return json; 
+		return json;
 	}
 	
 	private long getRawdocCount(AonApiData api) {
@@ -996,6 +1026,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.DATE, invoice.getIssueDate());
 		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
 		json.put(IJsonNames.NAME, invoice.getRegistryName());
+		json.put(IJsonNames.BASE, invoice.getTaxableBase());
+		json.put(IJsonNames.RETENTION_PERCENT, invoice.getRetentionPercentage());
+		json.put(IJsonNames.SURCHARGE_QUOTA, invoice.getSurchargeQuota());
+		json.put(IJsonNames.QUOTA, invoice.getVatQuota());
 		json.put(IJsonNames.TOTAL, invoice.getTotal());
 		json.put(IJsonNames.TYPE, invoice.getType());
 		json.put(IJsonNames.STATUS, invoice.isRecorded() 
