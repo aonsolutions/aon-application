@@ -86,6 +86,8 @@ export class AonMobileElaboration extends AonElement {
 	}
 
 	build() {
+		this.getApplication().removeToolbarOptions();
+
 		let toolbar = new AonToolbar();
 		toolbar.id = this.ELABORATION_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
