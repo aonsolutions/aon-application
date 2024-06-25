@@ -30,6 +30,10 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
+  --aonHeaderHoverLightColor: rgba(255, 255, 255, 0.15);
+  --aonHeaderHoverDarkColor: rgba(0, 0, 0, 0.05);
+  --aonTopMenuAvailable: var(--aonBlue);
+
   --aonInvoice: #4F91FF;
   --aonInvoiceBackground: #ebf2ff;
 

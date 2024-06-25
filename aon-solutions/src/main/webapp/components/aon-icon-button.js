@@ -1,6 +1,7 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, TAG } from "../environments/environments.js";
 import { AonIcon } from "./aon-icon.js";
+import * as LS from '../services/localStorageService.js';
 
 export class AonIconButton extends AonElement {
   BUTTON;
@@ -189,6 +190,8 @@ export class AonIconButton extends AonElement {
           this.getButton().style.color = "#5f6368";
         else if(header.style.backgroundColor&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"||this.getButton().id=="aonHeaderCompanyListButtonIconButton"))
           this.getButton().style.color = "white";
+        else if(LS.isDarkTheme()) 
+          this.getButton().style.color = "white";
         else 
           this.getButton().style.color = "#5f6368";
       });
@@ -224,7 +227,7 @@ export class AonIconButton extends AonElement {
 
 
   getBackgroundHover() {
-    return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+    return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "var(--aonHeaderHoverLightColor)" : "var(--aonHeaderHoverDarkColor)";
   }
 
   clear() {

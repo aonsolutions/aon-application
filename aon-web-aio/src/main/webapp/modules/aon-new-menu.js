@@ -554,37 +554,7 @@ export class AonNewMenu extends AonElement {
 		div.style.backgroundColor = 'transparent';
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
-		if(welcome && app.app == "applications"){
-			div.addEventListener("click", (event) => {
-				event.preventDefault(); 
-				event.stopPropagation();
-			});
-		}else{
-			if(app.app == "applications"){
-				div.addEventListener('click', () =>{
-					rootPanel.style.backgroundColor = "transparent";
-				})
-				if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
-					div.style.color = "#5f6368";
-				else if(header.style.backgroundColor)
-					div.style.color = "white";
-				else 
-					div.style.color = "#5f6368";
-				div.addEventListener("mouseover", () => {
-					div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
-				});
-				div.addEventListener("mouseleave", () => {
-					div.style.backgroundColor = "transparent";
-				});
-			} else{
-				div.addEventListener('mouseover', () => {
-					div.style.backgroundColor = 'white';
-				});
-				div.addEventListener('mouseout', () => {
-					div.style.backgroundColor = 'transparent';
-				});
-			}
-		}
+		
 		
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
@@ -650,6 +620,46 @@ export class AonNewMenu extends AonElement {
 			})
 		}
 		*/
+
+		if(welcome && app.app == "applications"){
+			div.addEventListener("click", (event) => {
+				event.preventDefault(); 
+				event.stopPropagation();
+			});
+		}else{
+			if(app.app == "applications"){
+				div.title = MSG.APPLICATIONS;
+				div.addEventListener('click', () =>{
+					rootPanel.style.backgroundColor = "transparent";
+				})
+				if(!header.style.backgroundColor||header.style.backgroundColor == "#f0f0f0")
+					div.style.color = "#5f6368";
+				else if(header.style.backgroundColor)
+					div.style.color = "white";
+				else 
+					div.style.color = "#5f6368";
+				div.addEventListener("mouseover", () => {
+					div.style.backgroundColor = this.getBackgroundHover(header.style.backgroundColor);
+				});
+				div.addEventListener("mouseleave", () => {
+					div.style.backgroundColor = "transparent";
+				});
+			} else{
+				div.addEventListener('mouseover', () => {
+					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
+					div.style.backgroundColor = 'white';
+					if(LS.isDarkTheme()&& app.color== "var(--aonTopMenuAvailable)"){
+						div.style.color = "var(--aonBlack)";						
+						img.style.color = "var(--aonBlack)";
+					}
+				});
+				div.addEventListener('mouseout', () => {
+					div.style.backgroundColor = 'transparent';
+					div.style.color = "var(--aonTopMenuAvailable)";
+					img.style.color = "var(--aonTopMenuAvailable)";
+				});
+			}
+		}
 		a.appendChild(div);
 		return a;
 	}

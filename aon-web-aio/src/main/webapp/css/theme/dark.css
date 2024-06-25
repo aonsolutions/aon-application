@@ -1,7 +1,10 @@
 :root {
-	--aonBlue: #FFF;
+	--aonBlue: black;
 	--aonBlack: #007bff;
-	--aonHeaderButtonColor: white;
+	--aonHeaderButtonColor: var(--aonBlack);
+	--aonHeaderHoverLightColor: rgba(0, 0, 0, 0.05);
+	--aonHeaderHoverDarkColor: rgba(0, 0, 0, 0.05);
+	--aonTopMenuAvailable: var(--aonWhite);
 }
 .aonHeader {
 	--aonPayroll: #000;
