@@ -9,14 +9,12 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FinanceServiceAsync {
 
 	// --------------------------------------------------------------- INVOICE SERIES
-	void getInvoiceSeries(String domainName, int domainId, String  user, Date from, Date to, boolean taxDate,AsyncCallback<LinkedList<InvoiceSeries>> callback );
 	void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series, AsyncCallback<Integer> callback);
 	
 	// --------------------------------------------------------------- REGISTRY BANKS
