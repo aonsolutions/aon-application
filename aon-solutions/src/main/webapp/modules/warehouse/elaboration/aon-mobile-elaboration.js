@@ -128,6 +128,7 @@ export class AonMobileElaboration extends AonElement {
 	}
 
   	buildElaboration(parent){
+		this.getApplication().removeToolbarOptions();
 		this.buildElaborationGeneral(parent);
 		this.buildElaborationComposition(parent);
 	}
