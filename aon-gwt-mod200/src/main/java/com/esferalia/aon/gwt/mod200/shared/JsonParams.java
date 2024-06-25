@@ -1,30 +1,15 @@
 package com.esferalia.aon.gwt.mod200.shared;
 
-import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountParams;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainParams;
-import com.esferalia.aon.occam.api.model.FinanceParams;
-import com.esferalia.aon.occam.api.model.RegistryParams;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
 public class JsonParams extends JSONObject {
-	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
+//	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	// FALTA - CREO QUE SOLO SE USA EL DE LA AEAT
-	 
 //	public static String convert(RegistryParams params) {
 //		JSONObject json = new JSONObject();
 //		JSONNull JSON_NULL = JSONNull.getInstance();
