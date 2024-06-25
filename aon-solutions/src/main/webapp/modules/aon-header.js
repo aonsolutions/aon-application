@@ -156,6 +156,7 @@ export class AonHeader extends AonElement {
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
 		aonHeaderCompanyList.style.display = "none";
+		aonHeaderCompanyList.title = "Listado de empresas";
 
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
 		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
@@ -166,6 +167,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
+		aonHeaderHelp.title = MSG.HELP;
 
 		let aonHeaderHelpButton = new AonIconButton();
 		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
@@ -177,6 +179,7 @@ export class AonHeader extends AonElement {
 		if(this.newTheme){
 			let aonHeaderConfig = this.createElement(TAG.SPAN);
 			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+			aonHeaderConfig.title = MSG.CONFIGURATION;
 
 			let aonHeaderConfigButton = new AonIconButton();
 			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
@@ -189,6 +192,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
+		aonHeaderNotiication.title = MSG.NOTIFICATIONS;
 		if(this.newTheme){
 			let aonHeaderNotificationButton = new AonIconButton();
 			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
@@ -201,6 +205,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
 		aonHeaderUser.id = this.AON_HEADER_USER;
+		aonHeaderUser.title = MSG.USER;
 		
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
@@ -390,10 +395,13 @@ export class AonHeader extends AonElement {
 			let enterprise = this.getElement("aonHeaderCompanyName");
 			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
-			appss.addEventListener("click", (event) => {
-				event.preventDefault();
-				event.stopPropagation();
-			});
+			let welcome = this.getElement("aonCompanyTabFilter");
+			if(welcome){
+				appss.addEventListener("click", (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+				});
+			}
 			appss.style.color = "rgb(95, 99, 104)";
 
 		});
@@ -508,8 +516,10 @@ export class AonHeader extends AonElement {
 
 	buildLogo() {
 		let aonLogo = this.getElement('aonLogo');
-
-		aonLogo.src = '../assets/aon-logo.svg';
+		if(LS.isDarkTheme())
+			aonLogo.src = '../assets/aon-white-logo.svg';
+		else if(!LS.isDarkTheme())
+			aonLogo.src = '../assets/aon-black-logo.svg';
 
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){

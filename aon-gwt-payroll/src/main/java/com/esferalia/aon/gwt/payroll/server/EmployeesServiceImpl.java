@@ -5994,7 +5994,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					String naf = contract.getPersonSsNumber();
 					String regime = contract.getEnterpriseCCCRegime().getCode();	
 					
-			byte[] data = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), naf, regime, ccc, date);
+			byte[] data = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();

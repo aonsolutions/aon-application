@@ -180,8 +180,8 @@ public class AonComunica {
 			
 			Date startDate = parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) <= 0 ? employee.getStartDate() : new Date();
 			
-			byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
-					employee.getNaf(), employee.getRegime(), employee.getCcc(), startDate);
+			byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
+					 employee.getRegime(), employee.getCcc(), employee.getNaf(), startDate);
 			ContractAttach attach = new ContractAttach()
 			.setDomain(domain.getId())
 			.setContract(employee.getEmployeeId())

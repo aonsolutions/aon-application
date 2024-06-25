@@ -49,7 +49,7 @@ export const ACCOUNTING = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
   newIcon: AON_ICONS.AON_NEW_ACCOUNTING,
   symbol: MATERIAL_ICONS.CALCULATE,
-  color: "#002469",
+  color: "var(--aonAccounting)",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonAccountingHover',
   access: [
@@ -544,7 +544,7 @@ export const OFFICE = {
   newIcon: AON_ICONS.AON_NEW_OFFICE,
   symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: "Despacho",
-  color: "black",
+  color: "var(--aonTopMenuSpecial)",
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'aonSidenavHover',
   domainType: true,
@@ -775,7 +775,7 @@ export const ACADEMY = {
   icon: AON_ICONS.AON_ACADEMY,
   symbol: MATERIAL_ICONS.DICTIONARY,
   title: "Academia",
-  color: "black",
+  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -784,7 +784,7 @@ export const GARAGE = {
   icon: AON_ICONS.AON_GTA,
   symbol: MATERIAL_ICONS.CAR_REPAIR,
   title: "Taller",
-  color: "black",
+  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -793,7 +793,7 @@ export const COMMERCE = {
   icon: AON_ICONS.AON_COMMERCE,
   symbol: MATERIAL_ICONS.POINT_OF_SALE,
   title: "Comercio",
-  color: "black",
+  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -835,7 +835,7 @@ export const PACK_FISCAL_ACCOUNTING = {
   icon: AON_ICONS.AON_PACK,
   title: "Pack Tributación",
   subtitle: " Fiscal | Contabilidad",
-  color: "#002469",
+  color: "var(--aonAccounting)",
   apps: [Apps.FISCAL, Apps.ACCOUNTING],
   price: " ", 
 };
