@@ -456,6 +456,79 @@ export class AonApplication extends AonElement {
     return null;
   }
 
+  addSidenavSelectOptionsTitle(data, newButton) {
+    let sidenav = this.isMobile()
+      ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
+      : this.getElement(this.SIDENAV);
+    let div = this.createElement(TAG.DIV);
+    div.id = sidenav.id + data.id;
+    div.style.paddingBottom = "10px";
+    sidenav.appendChild(div);
+
+    if(data.button && !this.isMobile()) {
+      let buttonDiv = this.createElement(TAG.DIV);
+      buttonDiv.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
+      buttonDiv.style.right = "0px";
+      buttonDiv.style.position = "absolute";
+      let button = new AonIconButton();
+      button.icon = data.button.icon;
+      button.id = div.id + data.button.id;
+      buttonDiv.appendChild(button);
+      div.appendChild(buttonDiv);
+      button.addEventListener(EVENT.CLICK, data.button.fn);
+    }
+    if (newButton && !this.isMobile()) {
+      let addButton = this.createElement(TAG.DIV);
+      addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
+      addButton.style.right = "0px";
+      addButton.style.position = "absolute";
+      let aonIconButton = new AonIconButton();
+      aonIconButton.icon = "add";
+      aonIconButton.id = div.id + "NewButton";
+      addButton.appendChild(aonIconButton);
+      div.appendChild(addButton);
+      this.getElement(div.id + "NewButton").addEventListener(EVENT.CLICK, newButton);
+    }
+
+    let sidenavTitle = this.createElement(TAG.DIV);
+    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+    sidenavTitle.id = "aonSidenavTitle"+data.id;
+    sidenavTitle.title = data.name;
+    sidenavTitle.style.cursor = "pointer";
+    sidenavTitle.style.userSelect = "none";
+    sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
+
+    let arrowTitleSpan = this.createElement(TAG.SPAN);
+    arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
+    arrowTitleSpan.style.borderColor = data.app && data.app.color ? data.app.color : 'black';
+
+    let arrowTitle = this.createElement("i");
+    arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+    arrowTitle.className = "material-icons aonVerticalMiddle";
+    sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
+
+    sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+      const selectDiv = this.getElement(sidenav.id + data.id + "SelectDiv");
+      if(selectDiv){
+        selectDiv.classList.toggle(CSS.ELEMENT_HIDDEN);
+        if(selectDiv.classList.contains(CSS.ELEMENT_HIDDEN)){
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+          sidenavTitle.style.marginBottom = "0";
+        } else {
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+          sidenavTitle.style.marginBottom = "10px";
+        }
+      }
+    });  
+
+    let span = this.createElement(TAG.SPAN);
+    span.innerHTML = data.name.toUpperCase();
+    sidenavTitle.appendChild(span);
+
+    div.appendChild(sidenavTitle);
+    return div;
+  }
+
   addSidenavSelectOptions(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
@@ -464,10 +537,15 @@ export class AonApplication extends AonElement {
       if(div){
 
         let selectDiv = this.createElement(TAG.DIV);
+        selectDiv.id = div.id + "SelectDiv";
         selectDiv.classList.add("aonAppMenuSidenavListBeta");
         selectDiv.style.display = "flex";
         selectDiv.style.gap = ".5rem";
         selectDiv.style.alignItems = "center";
+        selectDiv.style.border = "1px solid rgb(221, 221, 221)";
+        selectDiv.style.borderRadius = "5px";
+        selectDiv.style.padding = "5px";
+        selectDiv.style.margin = "0 20px";
         div.appendChild(selectDiv);
 
         if(options){
@@ -498,6 +576,7 @@ export class AonApplication extends AonElement {
           select.style.background = "none";
           select.style.border = "none";
           select.style.cursor = "pointer";
+          select.style.width = "100%";
 
           selectDiv.appendChild(select);
         }
@@ -762,7 +841,7 @@ export class AonApplication extends AonElement {
 
   addSelectSidenav(data, newButton) {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
-    this.addSidenavOptionsTitle(data, newButton);
+    this.addSidenavSelectOptionsTitle(data, newButton);
     this.addSidenavSelectOptions(data, data.options || []);
   }
 
