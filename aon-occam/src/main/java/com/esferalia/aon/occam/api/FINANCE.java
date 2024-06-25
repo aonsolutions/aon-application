@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.List;
+
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -20,6 +23,15 @@ public class FINANCE {
 		return new FinanceImpl();
 	}
 
+	// -------------------------------------------------------------- [INVOICE SERIES]
+	public static List<InvoiceSeries> getInvoiceSalesSeries(Occam occam, int domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoiceSalesSeries(ctx,domainId);
+		}
+	}
+	
+	// ------------------------------------------------------------------- [UTILITIES]
+	
 	public static FinanceUtilitiesResult missingFinanceInvoices(Occam occam, Domain domain,FinanceUtilitiesParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam.getDomainName(), domain.getId(), occam.getUser());) {
 			return getFinance().missingFinanceInvoices(ctx,params);

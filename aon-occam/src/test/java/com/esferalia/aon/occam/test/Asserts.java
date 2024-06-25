@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -1211,4 +1212,14 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsInvoiceSeries(InvoiceSeries expected, InvoiceSeries actual) {
+		assertEqualsNulls( "InvoiceSeries", expected, actual);
+		if (expected != null ) {
+			assertEquals("Description",expected.getDescription(), actual.getDescription());
+			assertEquals("Sales",expected.isSales(), actual.isSales());
+			assertEquals("FromNumber", expected.getFromNumber(), actual.getFromNumber());
+			assertEquals("ToNumber", expected.getToNumber(), actual.getToNumber());
+			assertEquals("Count", expected.getCount(), actual.getCount());
+		}
+	}
 }

@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	JsonSeriesTest.class,
+	JsonInvoiceSeriesTest.class,
 	JsonAccountTest.class,
 	JsonAccountPeriodTest.class,
 	JsonAccountingReportParamsTest.class,

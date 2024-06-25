@@ -8432,18 +8432,6 @@ public class AON {
 	/// ****************************************************************
 	/// ****************************************************************
 	
-	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
-			int domainId, String login, Date from, Date to, boolean taxDate) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
-		}
-	}
-	public static List<InvoiceSeries> getInvoiceSalesSeries(String domainName, int domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSalesSeries(ctx);
-		}
-	}
-
 	public static LinkedList<Series> getSeriesDeliveryList(String domainName,
 			Integer domainId, String login, Integer scopeId) {
 		CloseableAONContext ctx = null;
