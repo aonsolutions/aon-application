@@ -159,6 +159,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 //import com.google.api.client.util.Objects;
 
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -807,7 +808,6 @@ public class EmployeesServiceHelper {
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getEnterpriseCCCRegime().getCode();	
 		
-//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
 		List<Date> dates = new ArrayList<Date>();

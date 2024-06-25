@@ -378,8 +378,8 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
-					appElement.style.color = "grey";
-					app.color = "grey";
+					appElement.style.color = "var(--aonTopMenuNotAvailable)";
+					app.color = "var(--aonTopMenuNotAvailable)";
 					div.appendChild(appElement);
 					continue;
 				}

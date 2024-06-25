@@ -33,12 +33,14 @@ import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -206,5 +208,10 @@ public interface ICommon {
 	public List<ApplicationParameter> getCostCenters(CloseableAONContext ctx);
 	public void saveCostCenter(CloseableAONContext ctx, ApplicationParameter costCenter);
 	public void deleteCostCenter(CloseableAONContext ctx, Integer id);
+	
+	// SERIES
+	Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter);
+	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
+	
 
 }

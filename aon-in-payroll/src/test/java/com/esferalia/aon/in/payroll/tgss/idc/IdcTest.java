@@ -80,7 +80,9 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -6314,6 +6316,152 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcXXXIV() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIV.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+			
+			assertEquals(1, employeeIts.size());
+			for (EmployeeIT employeeIT : employeeIts) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("04-04-2024");
+				Date dateTo = simpleDateFormat.parse("17-04-2024");
+				assertEquals( dateFrom , employeeIT.getStartDate());
+				assertEquals( dateTo , employeeIT.getEndDate().get());
+				assertEquals( "41017063249" , employeeIT.getCcc());
+				assertEquals( "411118345860" , employeeIT.getNss());
+				assertEquals( "0111" , employeeIT.getRegime());
+				assertEquals( "JUAN JOSE ROSENDO AMATE" , employeeIT.getName().get());
+				assertEquals( "047349485Y" , employeeIT.getDni().get());
+				assertEquals( ContractLeaveType.ACCIDENTE_LABORAL , employeeIT.getType());
+			}
+			
+		} 
+	}
+
+	@Test
+	public void testIdcXXV() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXV.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+			
+			assertEquals(1, employeeIts.size());
+			for (EmployeeIT employeeIT : employeeIts) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("09-10-2022");
+				Date dateTo = simpleDateFormat.parse("28-01-2023");
+				assertEquals( dateFrom , employeeIT.getStartDate());
+				assertEquals( dateTo , employeeIT.getEndDate().get());
+				assertEquals( "29136287700" , employeeIT.getCcc());
+				assertEquals( "111060977833" , employeeIT.getNss());
+				assertEquals( "0111" , employeeIT.getRegime());
+				assertEquals( "NAZARET CENA ROMERO" , employeeIT.getName().get());
+				assertEquals( "032068178Z" , employeeIT.getDni().get());
+				assertEquals( ContractLeaveType.MATERNIDAD , employeeIT.getType());
+			}
+		}
+	}
+	
+	@Test
+	public void testIdcX() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcX.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+			
+			List<EmployeeIT> employeeItsList = new ArrayList<>(employeeIts);
+			Collections.sort(employeeItsList, ( it1, it2 ) -> it1.getStartDate().compareTo(it2.getStartDate()));
+			
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date firstDateFrom = simpleDateFormat.parse("24-08-2020");
+			Date firstDateTo = simpleDateFormat.parse("24-08-2020");
+			Date secondDateFrom = simpleDateFormat.parse("25-08-2020");
+			Date secondDateTo = simpleDateFormat.parse("21-10-2020");
+			Date thirdDateFrom = simpleDateFormat.parse("20-05-2021");
+			Date thirdDateTo = simpleDateFormat.parse("23-05-2021");
+			
+			EmployeeIT employeeIt1 = employeeItsList.get(0);
+			assertEquals( firstDateFrom , employeeIt1.getStartDate());
+			assertEquals( firstDateTo , employeeIt1.getEndDate().get());
+			assertEquals( "28220848984" , employeeIt1.getCcc());
+			assertEquals( "281521001362" , employeeIt1.getNss());
+			assertEquals( "0163" , employeeIt1.getRegime());
+			assertEquals( "FRANCIS LEONARDO VASQUEZ AGUILAR" , employeeIt1.getName().get());
+			assertEquals( "0Y6672958M" , employeeIt1.getDni().get());
+			assertEquals( ContractLeaveType.ACCIDENTE_LABORAL, employeeIt1.getType());
+			
+			EmployeeIT employeeIt2 = employeeItsList.get(1);
+			assertEquals( secondDateFrom , employeeIt2.getStartDate());
+			assertEquals( secondDateTo , employeeIt2.getEndDate().get());
+			assertEquals( "28220848984" , employeeIt2.getCcc());
+			assertEquals( "281521001362" , employeeIt2.getNss());
+			assertEquals( "0163" , employeeIt2.getRegime());
+			assertEquals( "FRANCIS LEONARDO VASQUEZ AGUILAR" , employeeIt2.getName().get());
+			assertEquals( "0Y6672958M" , employeeIt2.getDni().get());
+			assertEquals( null, employeeIt2.getType());
+			
+			EmployeeIT employeeIt3 = employeeItsList.get(2);
+			assertEquals( thirdDateFrom , employeeIt3.getStartDate());
+			assertEquals( thirdDateTo , employeeIt3.getEndDate().get());
+			assertEquals( "28220848984" , employeeIt3.getCcc());
+			assertEquals( "281521001362" , employeeIt3.getNss());
+			assertEquals( "0163" , employeeIt3.getRegime());
+			assertEquals( "FRANCIS LEONARDO VASQUEZ AGUILAR" , employeeIt3.getName().get());
+			assertEquals( "0Y6672958M" , employeeIt3.getDni().get());
+			assertEquals( ContractLeaveType.ENFERMEDAD_COMUN , employeeIt3.getType());
+			
+		} 
+	}
+
+	@Test
+	public void testIdcVII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcVII.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+
+			assertEquals(1, employeeIts.size());
+			for (EmployeeIT employeeIT : employeeIts) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+				Date dateFrom = simpleDateFormat.parse("20-05-2021");
+				assertEquals( dateFrom , employeeIT.getStartDate());
+				assertEquals( "05102994184" , employeeIT.getCcc());
+				assertEquals( "051009890558" , employeeIT.getNss());
+				assertEquals( "0111" , employeeIT.getRegime());
+				assertEquals( "IRENE PORTERO SUAREZ" , employeeIT.getName().get());
+				assertEquals( "021165158Y" , employeeIT.getDni().get());
+				assertEquals( ContractLeaveType.RIESGO_EMBARAZO , employeeIT.getType());
+			}
+		} 
+	}
+	
+	@Test
+	public void testIdcXXXIII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIII.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+
+			assertEquals(0, employeeIts.size());
+		} 
+	}
+	
+	@Test
+	public void testIdcErroneo() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcErroneo.pdf")) {
+			EmployeeITListener employeeITListener = new EmployeeITListener();
+			IdcParser.parse(is, employeeITListener);
+			Collection<EmployeeIT> employeeIts = employeeITListener.getEmployeeITs();
+
+			assertEquals(0, employeeIts.size());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}

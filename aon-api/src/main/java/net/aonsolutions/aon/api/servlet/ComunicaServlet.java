@@ -411,7 +411,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			LOGGER.info("IDC-DATES END "+date);
 		}
 		
-		return ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+		return SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
@@ -744,7 +744,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		
-		byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+		byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
 				nss, regime, ccc, date);
 				
 		return EmployeeJSON.toJSON(EmployeeParse.IdcToEmployeeOccam(fileByte));
@@ -895,7 +895,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				try {
 					Date now = new Date();
 					Date newDate = date.compareTo(now) > 0 ? now : date;
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
 					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -949,7 +949,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				try {
 					Date now = new Date();
 					Date newDate = date.compareTo(now) > 0 ? now : date;
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
 					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);

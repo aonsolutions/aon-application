@@ -1197,9 +1197,9 @@ public class SistemaRED2AON {
 		});
 
         return EmployeeParse.IdcToEmployeeOccam(
-    		ServicioRED.getIDCPOST(
+    		SistemaRED.getIDC(
 				new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-                naf, regime, ccc, startDate
+                regime, ccc, naf, startDate
             )
         );
 	}

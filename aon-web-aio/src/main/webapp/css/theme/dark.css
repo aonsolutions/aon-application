@@ -1,12 +1,12 @@
 :root {
-	--aonBlue: black;
-	--aonBlack: #007bff;
-	--aonHeaderButtonColor: var(--aonBlack);
-	--aonHeaderHoverLightColor: rgba(0, 0, 0, 0.05);
-	--aonHeaderHoverDarkColor: rgba(0, 0, 0, 0.05);
+	--aonAccounting: var(--aonWhite);
+	--aonAccountingBackground: rgba(0, 36, 105, .2);
+
 	--aonTopMenuAvailable: var(--aonWhite);
+	--aonTopMenuSpecial: var(--aonClearBlue);
 }
 .aonHeader {
+	--aonBlue: black;
 	--aonPayroll: #000;
 	background-color: #000;
 }
@@ -16,4 +16,5 @@
 .aonMenuSidenav {
 	color: #FFF;
 	background-color: #000;
+	
 }

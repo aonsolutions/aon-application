@@ -1,5 +1,6 @@
 :root{
   --aonBlue: #002469;
+  --aonClearBlue: #4F91FF;
   --aonOrange: #e6970a;
   --aonGreen: #169873;
   --aonRed: #f6655a;
@@ -30,11 +31,11 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
-  --aonHeaderHoverLightColor: rgba(255, 255, 255, 0.15);
-  --aonHeaderHoverDarkColor: rgba(0, 0, 0, 0.05);
-  --aonTopMenuAvailable: var(--aonBlue);
+  --aonTopMenuAvailable : var(--aonBlue);
+  --aonTopMenuNotAvailable : var(--aonGray);
+  --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonInvoice: #4F91FF;
+  --aonInvoice: var(--aonClearBlue);
   --aonInvoiceBackground: #ebf2ff;
 
   --aonDocumental: #EF6292;
@@ -52,7 +53,7 @@
   --aonTimecontrol: #D1C36D;
   --aonTimecontrolBackground: rgba(209, 195, 109, .2);
 
-  --aonAccounting: #002469;
+  --aonAccounting: var(--aonBlue);
   --aonAccountingBackground: rgba(0, 36, 105, .2);
   
   --aonHeaderBackground: #f0f0f0;
