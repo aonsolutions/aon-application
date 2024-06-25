@@ -648,15 +648,18 @@ export class AonNewMenu extends AonElement {
 				div.addEventListener('mouseover', () => {
 					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
 					div.style.backgroundColor = 'white';
-					if(LS.isDarkTheme()&& app.color== "var(--aonTopMenuAvailable)"){
-						div.style.color = "var(--aonBlack)";						
-						img.style.color = "var(--aonBlack)";
+					if(LS.isDarkTheme()){
+						div.style.color = "var(--aonBlack)";
+						if(app.color== "var(--aonTopMenuAvailable)")						
+							img.style.color = "var(--aonBlack)";
 					}
 				});
 				div.addEventListener('mouseout', () => {
 					div.style.backgroundColor = 'transparent';
-					div.style.color = "var(--aonTopMenuAvailable)";
-					img.style.color = "var(--aonTopMenuAvailable)";
+					if(LS.isDarkTheme() && app.color == "var(--aonTopMenuAvailable)"){
+						div.style.color = "var(--aonTopMenuAvailable)";
+						img.style.color = "var(--aonTopMenuAvailable)";
+					}
 				});
 			}
 		}

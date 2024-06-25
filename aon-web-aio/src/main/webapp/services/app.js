@@ -13,12 +13,14 @@ export const APPS = {
 	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
+	color: "var(--aonTopMenuAvailable)",
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
 	home : true,
 	app: CONSTANT.APPLICATIONS,
+	color: "var(--aonTopMenuAvailable)",
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
 
