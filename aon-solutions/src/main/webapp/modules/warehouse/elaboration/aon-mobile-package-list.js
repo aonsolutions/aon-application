@@ -1,5 +1,5 @@
 import { AonMobileList } from '../../../components/aon-mobile-list.js';
-import { MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
 import { AonMobilePackage } from './aon-mobile-package.js';
 
 export class AonMobilePackageList extends AonMobileList {
@@ -14,18 +14,31 @@ export class AonMobilePackageList extends AonMobileList {
     connectedCallback () {
         this.initialize();
         this.init();
+        this.buildSearch()
     }
 
     initialize() {
 
     }
 
-    init() {
+    buildSearch(){
+		const btnSearch = this.getApplication().addSearchOption();
+		let searchFn = (event) => this.search(event.detail);
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+    }
+
+    search(detail) {
+        let value = detail.search;
+        this.init(value);
+	}
+
+    init(searchValue) {
         this.build();
         if(this.packages.length <= 0){
             this.empty();
         }
-        this.packages.forEach((packaging, i) => this.addRow(packaging, i));
+        if(searchValue) this.packages.filter(f => f.item.serialNumber.includes(searchValue)).forEach((packaging, i) => this.addRow(packaging, i));
+        else this.packages.forEach((packaging, i) => this.addRow(packaging, i));
     }
 
     addRow(packaging, i) {

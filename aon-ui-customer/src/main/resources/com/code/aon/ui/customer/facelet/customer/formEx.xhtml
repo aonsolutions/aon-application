@@ -21,7 +21,10 @@
 					</ui:include>								
 				</aon:if>			
 				<aon:if test="#{!customer.nevv}">
-					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
+					<aon:div 
+					style="#{ app.standAlone ? 'display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));' : '' }" >
+					<aon:panelGrid id="dataTable" columns="4" 
+						styleClass="aon-width-all aonCard"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
 							aon-panelGrid-odd aon-width-120,
@@ -33,14 +36,16 @@
 						</ui:include>
 					</aon:panelGrid>
 
-					<aon:div id="personInfoDiv">
-						<ui:include src="/com/code/aon/ui/customer/facelet/customer/formPersonContent.xhtml" >
-							<ui:param name="controller" value="#{customer}" />
-						</ui:include>
-					</aon:div>
+					<aon:if test="#{(aonConfiguration.bean.customer.showPerson) and (controller.to.registry.type == 'NATURAL')}">
+						<aon:div id="personInfoDiv" styleClass="aonCard" >
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/formPersonContent.xhtml" >
+								<ui:param name="controller" value="#{customer}" />
+							</ui:include>
+						</aon:div>
+					</aon:if>
 					
 					<aon:panelGrid id="infoDataTable"
-						styleClass="aon-margin-top aon-width-all" columns="2"
+						styleClass="aon-margin-top aon-width-all aonCard" columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
 						<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
@@ -55,7 +60,7 @@
 
 						<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData or aonConfiguration.bean.customer.showDeliveryData}">
 							<aon:outputText value="#{bundle.customer_invoicing_info}" />
-							<aon:div>
+							<aon:div styleClass="aon-selectMultiCheckbox" >
 								<aon:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
 									<aon:outputText	styleClass="aon-margin-left aon-bold"
 										value="#{bundle.config_series_deliveries}:" />
@@ -80,7 +85,7 @@
 
 						<aon:if test="#{company.ediSupportEnabled or company.EInvoice}">
 							<aon:outputText value="#{bundle.aon_edi}" title="#{bundle.aon_edi_title}" />
-							<aon:div id="eInvoice-panel">
+							<aon:div id="eInvoice-panel" styleClass="aon-selectMultiCheckbox" >
 								<aon:if test="#{company.EInvoice}">
 									<aon:selectBooleanCheckbox id="Customer_eInvoice"
 										styleClass="aon-margin-left" value="#{customer.to.EInvoice}"
@@ -171,6 +176,8 @@
 
 					</aon:panelGrid>
 
+					</aon:div>
+					
 					<aon:panelTabSet id="customerTab" selectedTab="#{customer.selectedTab}">
 
 						<aon:panelTab id="address"	label="#{bundle.registry_address_module}">

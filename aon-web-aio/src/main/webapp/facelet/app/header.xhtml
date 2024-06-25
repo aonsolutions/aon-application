@@ -2106,11 +2106,22 @@
 	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-odd{
 		font-weight: 400;
 		display:inline-block;
-		background-color: #fff;
+		
+  		border: none;
+	    top: 12px;
+ 	    left: 20px;
+	    position: relative;
+  		background-color: transparent;
+
 	}
 	
-	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-even{
+	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-even {
 		width: 700px;
+	}
+	
+	.aonCard tbody:first-of-type > tr > td.aon-panelGrid-even > div {
+		display: flex;
+		align-items: center;
 	}
 	
 	.aonCard tr td.aon-panelGrid-odd .aon-outputLabel,
@@ -2121,18 +2132,17 @@
 	    padding-left: 5px;
 	    padding-right: 5px;
 
-	    top: 12px;
- 	    left: 20px;
-	    position: relative;
     }   
 
 	.aonCard select,
 	.aonCard .aon-inputText,
 	.aonCard .aon-selectOneMenu,
 	.aonCard .aon-selectOneRadio,
-	.aonCard .aon-selectMultiCheckbox {
-		height: 47px;
-		font-size: 17px;
+	.aonCard .aon-selectMultiCheckbox,
+	.aonCard .aon-lookupSuggestText,
+	.aonCard .aon-gotoCommandLink {
+		height: 35px;
+		font-size: 14px;
 		margin-left: 6px;
 		margin-right: 6px;
 		border-radius: 3px;
@@ -2143,10 +2153,11 @@
 	.aonCard select,
 	.aonCard .aon-selectOneMenu,
 	.aonCard .aon-selectOneRadio {
-		height: 50px;
+		height: 38px;
 		padding-right: 40px;
 	}   
 	
+	.aonCard .aon-lookup,
 	.aonCard .aon-gotoCommandLink,
 	.aonCard .aon-selectMultiCheckbox {
 		display: flex;
@@ -2175,7 +2186,7 @@
 	    padding: 15px 22px;
     	background-color: #fff;
 	    border: 1px solid #ebebeb;
-	    
+	    color: rgb(66, 66, 66)
 	}
 	
 	.aonCardTitle {

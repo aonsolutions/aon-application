@@ -9,7 +9,6 @@ import { saveAuthDevice } from 'aonsolutions/services/authDeviceService.js';
 import 'aonsolutions/css/aon-css-utils.css';
 import 'aonsolutions/css/aon-grid.css';
 import 'aonsolutions/css/aon-mobile.css';
-import './css/aon.css';
 import 'aonsolutions/css/aon-figma.css';
 
 window.setPosition = (pos) => setPosition(pos);
@@ -40,9 +39,22 @@ const load = () => {
     document.body.appendChild(new AonModule());
     loadScripts(); 
     window.loadScripts = () => loadScripts();
+    loadTheme();
 
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
+
+export const loadTheme = (theme) => {
+    if (LS.isDarkTheme()) {
+        let url = `css/theme/dark.css`;
+        loadLink(url, 'stylesheet', 'text/css');
+    } else if(!LS.isDarkTheme()){
+        let defaultThemeUrl = 'aonsolutions/css/aon.css';
+        loadLink(defaultThemeUrl, 'stylesheet', 'text/css');
+    }
+    
+}
+
 
 const favicon = () => {
 	let url = 'assets/favicon.ico';

@@ -1,12 +1,13 @@
 import { AonMobileList } from '../../../components/aon-mobile-list.js';
-import { EVENT, MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
-import { getElaboration, getElaborations } from '../../../services/warehouseService.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
+import { elaborationStatuses } from '../../../models/elaboration/elaborationStatus.js';
+import { getElaboration, getElaborations, getWarehouses } from '../../../services/warehouseService.js';
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
 
 export class AonMobileElaborationList extends AonMobileList {
 
     more;
-
+    filtro;
     constructor () {
         super();
     }
@@ -15,6 +16,7 @@ export class AonMobileElaborationList extends AonMobileList {
         this.initialize();
         this.init();
         this.addEventListener(EVENT.MORE, this.moreFn);
+        this.buildSearch();
     }
 
     moreFn = () => {
@@ -29,18 +31,70 @@ export class AonMobileElaborationList extends AonMobileList {
 
     initialize() {
         this.more = true;
-        this.filter = this.filter || {
+        this.filtro = this.filtro || {
             page:1,
             perPage:30
         }
     }
 
+	buildSearch(){
+		const btnSearch = this.getApplication().addSearchOption();
+		let searchFn = (event) => this.search(event.detail);
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+
+		getWarehouses().then(warehouses => {
+			let options = [{
+				type: CONSTANT.DATE,
+				name: "startDate",
+				id: "startDate",
+				title: MSG.FROM,
+			  },
+			  {
+				type: CONSTANT.DATE,
+				name: "endDate",
+				id: "endDate",
+				title: MSG.TO,
+			  },{
+				type: CONSTANT.SELECT,
+				name: "status",
+				id: "status",
+				title: MSG.STATUS,
+				options: JSON.stringify(elaborationStatuses)
+			  }];
+			if(warehouses.length > 1) {
+				options.push({
+					type: CONSTANT.SELECT,
+					name: "warehouse",
+					id: "warehouse",
+					title: MSG.WAREHOUSE,
+					options: JSON.stringify(warehouses.map(r => {
+						let w = {
+							value: r.id,			
+							name: r.name
+						};
+						return w;
+					}))
+				})
+			}
+			btnSearch.buildOptionsFilter(options);
+		});
+    }
+
+	search(detail) {
+		this.filtro.value = detail.search;
+		this.filtro.warehouse = detail.warehouse;
+		this.filtro.from = detail.startDate;
+		this.filtro.to = detail.endDate; 
+		this.filtro.status = detail.status;
+		this.filtro.page = 1;
+		this.filtro.perPage = 30;
+		this.init();
+	}
+
     loadMore() {
-        let filter = this.getFilter();
-        if(filter.page) {
-            filter.page = filter.page + 1;
-            this.setFilter(filter);
-            getElaborations(filter).then(elaborations => {
+        if(this.filtro.page) {
+            this.filtro.page = this.filtro.page + 1;
+            getElaborations(this.filtro).then(elaborations => {
                 if(elaborations.length == 0)
                     this.more = false;
                 elaborations.forEach((elaboration, i) => this.addRow(elaboration, i));
@@ -50,10 +104,7 @@ export class AonMobileElaborationList extends AonMobileList {
 
     init() {
         this.build();
-        getElaborations({
-            page:1,
-            perPage:30
-        }).then(elaborations => {
+        getElaborations(this.filtro).then(elaborations => {
             if(elaborations.length == 0){   
                 this.empty();
             }
@@ -77,18 +128,6 @@ export class AonMobileElaborationList extends AonMobileList {
             this.getApplication().setContent(aonElaboration);
         });
     }
-    
-    getFilter() {
-		return this.filter || {
-            page:1,
-            perPage:30
-        };
-	}
-
-    setFilter(filter) {		
-		this.filter = JSON.stringify(filter);
-        this.init();
-	}
 }
 if(!window.customElements.get(TAG.AON_MOBILE_ELABORATION_LIST)){
     window.customElements.define(TAG.AON_MOBILE_ELABORATION_LIST, AonMobileElaborationList);

@@ -128,101 +128,143 @@ export class AonNewMenu extends AonElement {
 	}
 
 	appSelection(app, sidenav) {
-		switch (app.app) {
-			case HOME.app:
-				this.rootPanel(new AonDesktop());
-				break;
-			case Apps.CONSOLE.app:
-				this.rootPanel(new AonConsole());
-				break;
-			case Apps.DOCUMENTAL.app:
-				this.rootPanel(new AonDocumental());
-				break;
-			case Apps.ACCOUNTING.app:
-				this.rootPanel(new AonAccounting());
-				break;
-			case Apps.FISCAL.app:
-				this.rootPanel(new AonFiscal());
-				break;
-			case Apps.PAYROLL.app:
-				this.rootPanel(new AonLaboral());
-				break;
-			case Apps.COMUNICA.app:
-				this.rootPanel(new AonComunica());
-				break;
-			case Apps.INVOICE.app:
-				this.rootPanel(new AonInvoicePanel());
-				break;
-			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonTimecontrol());
-				break;
-			case Apps.MESSENGER.app:
-				this.rootPanel(new AonMessenger());
-				break;
-			case AuxApps.TOOLS.app:
-				this.buildAppMenu(AuxApps.TOOLS);
-				break;
-			case Apps.NOTES.app:
-				this.rootPanel(new AonNotes());
-				break;
-			case Apps.OFFICE.app:
-				this.rootPanel(new AonOfficePanel());
-				break;
-			case Apps.WAREHOUSE.app:
-				this.rootPanel(new AonWarehouse());
-				break;
-			case Apps.MARKETING.app:
-				this.rootPanel(new AonMarketing());
-				break;
-			case HomeApps.HOME.app:
-				this.rootPanel(new AonDesktop());
-				break;
-			case ACCOUNTING_MENU.app:
-				this.rootPanel(new AonAccountingMenu());
-				break;
-			case COMMERCIAL_MENU.app:
-				this.rootPanel(new AonCommercialMenu());
-				break;
-			case GROUPWARE_MENU.app:
-				this.rootPanel(new AonGroupwareMenu());
-				break;
-			case MANAGEMENT_MENU.app:
-				this.rootPanel(new AonManagementMenu());
-				break;
-			case TREASURY_MENU.app:
-				this.rootPanel(new AonTreasuryMenu());
-				break;
-			case WAREHOUSE_MENU.app:
-				this.rootPanel(new AonWarehouseMenu());
-				break;
-			case FISCAL_MENU.app:
-				this.rootPanel(new AonFiscalMenu());
-				break;
-			case PAYROLL_MENU.app:
-				this.rootPanel(new AonPayrollMenu());
-				break;
-			case MARKETING_MENU.app:
-				this.rootPanel(new AonMarketingMenu());
-				break;
-			case ACADEMY.app:
-				this.rootPanel(new AonAcademyMenu());
-				break;
-			case COMMERCE.app:
-				this.rootPanel(new AonCommerceMenu());
-				break;
-			case GARAGE.app:
-				this.rootPanel(new AonGarageMenu());
-				break;	
-			default/*Apps.HOME*/ :
-				this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
-				break;
+		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
+			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+		} else {
+			switch (app.app) {
+				case HOME.app:
+					this.rootPanel(new AonDesktop());
+					break;
+				case Apps.CONSOLE.app:
+					this.rootPanel(new AonConsole());
+					break;
+				case Apps.DOCUMENTAL.app:
+					this.rootPanel(new AonDocumental());
+					break;
+				case Apps.ACCOUNTING.app:
+					this.rootPanel(new AonAccounting());
+					break;
+				case Apps.FISCAL.app:
+					this.rootPanel(new AonFiscal());
+					break;
+				case Apps.PAYROLL.app:
+					this.rootPanel(new AonLaboral());
+					break;
+				case Apps.COMUNICA.app:
+					this.rootPanel(new AonComunica());
+					break;
+				case Apps.INVOICE.app:
+					this.rootPanel(new AonInvoicePanel());
+					break;
+				case Apps.TIMECONTROL.app:
+					this.rootPanel(new AonTimecontrol());
+					break;
+				case Apps.MESSENGER.app:
+					this.rootPanel(new AonMessenger());
+					break;
+				case AuxApps.TOOLS.app:
+					this.buildAppMenu(AuxApps.TOOLS);
+					break;
+				case Apps.NOTES.app:
+					this.rootPanel(new AonNotes());
+					break;
+				case Apps.OFFICE.app:
+					this.rootPanel(new AonOfficePanel());
+					break;
+				case Apps.WAREHOUSE.app:
+					this.rootPanel(new AonWarehouse());
+					break;
+				case Apps.MARKETING.app:
+					this.rootPanel(new AonMarketing());
+					break;
+				case HomeApps.HOME.app:
+					this.rootPanel(new AonDesktop());
+					break;
+				case ACCOUNTING_MENU.app:
+					this.rootPanel(new AonAccountingMenu());
+					break;
+				case COMMERCIAL_MENU.app:
+					this.rootPanel(new AonCommercialMenu());
+					break;
+				case GROUPWARE_MENU.app:
+					this.rootPanel(new AonGroupwareMenu());
+					break;
+				case MANAGEMENT_MENU.app:
+					this.rootPanel(new AonManagementMenu());
+					break;
+				case TREASURY_MENU.app:
+					this.rootPanel(new AonTreasuryMenu());
+					break;
+				case WAREHOUSE_MENU.app:
+					this.rootPanel(new AonWarehouseMenu());
+					break;
+				case FISCAL_MENU.app:
+					this.rootPanel(new AonFiscalMenu());
+					break;
+				case PAYROLL_MENU.app:
+					this.rootPanel(new AonPayrollMenu());
+					break;
+				case MARKETING_MENU.app:
+					this.rootPanel(new AonMarketingMenu());
+					break;
+				case ACADEMY.app:
+					this.rootPanel(new AonAcademyMenu());
+					break;
+				case COMMERCE.app:
+					this.rootPanel(new AonCommerceMenu());
+					break;
+				case GARAGE.app:
+					this.rootPanel(new AonGarageMenu());
+					break;
+				default/*Apps.HOME*/:
+					this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					break;
 		}
+		
+	}
+	
 		let detail = {
 			app,
 			sidenav
 		};
-		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail } ));
+		if(!(!this.isApp(app) && !excludedApps.includes(app.app)))
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+		else{
+			let header = this.getElement("aonHeaderWeb");
+			header.style.removeProperty("background-color");
+
+			let apps = this.getElement("aonMenuListAppImg-applications");
+			apps.style.color = "var(--aonHeaderButtonColor)";
+
+			let headerapp = this.getElement("aonHeaderApp");
+			headerapp.style.display = "none";
+
+			let logo = this.getElement("aonLogo");
+			logo.style.display = "block";
+			logo.style.filter = "none";
+
+			let header1 = this.getElement("aonHeaderCompanyName")
+			header1.style.color = "var(--aonHeaderButtonColor)";
+
+			let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+			header2.style.color = "var(--aonHeaderButtonColor)";
+
+			let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+			header3.style.color = "var(--aonHeaderButtonColor)";
+
+			let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+			header4.style.color = "var(--aonHeaderButtonColor)";
+
+			let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+			header5.style.color = "var(--aonHeaderButtonColor)";
+
+			let header6 = this.getElement("aonHeaderUserButtonIconButton")
+			header6.style.color = "var(--aonHeaderButtonColor)";
+			
+		}
 	}
+	
 
 	build() {
 		let aonMenuLefttop = this.createElement(TAG.DIV);
@@ -480,7 +522,7 @@ export class AonNewMenu extends AonElement {
 		}
 		hoverDiv.style.display = 'none';
 		hoverDiv.classList.add('aonMenuAppHover');
-
+		
 		a.addEventListener(EVENT.MOUSEOVER, () => {
 			if (hoverDiv.style.display == 'none' && !this.isTopNav(a) && !hoverDiv.classList.contains('aonMenuAppHoverHidden')) {
 				hoverDiv.style.position = 'fixed';
@@ -496,6 +538,7 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.MOUSELEAVE, () => {
 			hoverDiv.style.display = 'none';
 		});
+		
 		//alert(app.app)
 		a.appendChild(hoverDiv);
 		let div = this.createElement(TAG.DIV);
@@ -587,9 +630,27 @@ export class AonNewMenu extends AonElement {
 				div.appendChild(span);
 			// }
 		}
-
+		/*
+		if(app.color == "grey"){
+			alert(app.color);
+			div.addEventListener("click", () =>{
+				alert("Entra en el listener");
+				let header = this.getElement("aonHeaderWeb");
+				header.style.backgroundColor = "red";
+	
+				let apps = this.getElement("aonMenuListAppImg-applications");
+				apps.style.color = "rgb(95, 99, 104)";
+	
+				let headerapp = this.getElement("aonHeaderApp");
+				headerapp.style.display = "none";
+	
+				let logo = this.getElement("aonLogo");
+				logo.style.display = "block";
+				logo.style.filter = "none";
+			})
+		}
+		*/
 		a.appendChild(div);
-
 		return a;
 	}
 
@@ -943,9 +1004,11 @@ export class AonNewMenu extends AonElement {
 		let element = a;
 		do {
 			element = element.parentElement;
-		} while (element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
-		return element.id == this.AON_MENU_TOPNAV;
-	}	
+		} while (element && element.id != this.AON_MENU_SIDENAV && element.id != this.AON_MENU_TOPNAV);
+		
+		return element && element.id == this.AON_MENU_TOPNAV;
+	}
+		
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

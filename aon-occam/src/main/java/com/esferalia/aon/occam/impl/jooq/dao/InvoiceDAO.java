@@ -502,7 +502,6 @@ public class InvoiceDAO {
 			.orderBy(INVOICE.ISSUE_DATE)
 			.fetch().stream().map(r -> new InvoiceSeries()
 					.setSales(true)
-					.setSeriesInfo(false)
 					.setDescription(r.getValue(INVOICE.SERIES))
 					.setCount(r.getValue(DSL.count(INVOICE.ID))))
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -768,28 +767,27 @@ public class InvoiceDAO {
 		.forEach( rec -> list.add(
 			new InvoiceSeries()
 				.setSales(rec.getValue(orderedType) == 1)
-				.setSeriesInfo(true)
 				.setDescription(rec.getValue(INVOICE.SERIES))
 				.setFromNumber(rec.getValue(min))
 				.setToNumber(rec.getValue(max))
 				.setCount(rec.getValue(records)))
 				);
-		AggregateFunction<Integer> count = DSL.count();
-		ctx.getDslContext()
-			.select(orderedType,INVOICE.TRANSACTION,count)
-			.from(INVOICE)
-			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
-			.groupBy(orderedType,INVOICE.TRANSACTION)
-			.fetch()
-			.stream()
-			.forEach( rec -> list.add(
-				new InvoiceSeries()
-					.setSales(rec.getValue(orderedType) == 1)
-					.setSeriesInfo(false)
-					.setDescription(InvoiceTransactionType.values()[rec.getValue(INVOICE.TRANSACTION)].getDescription())
-					.setFromNumber(rec.getValue(count)))
-					);
+//		AggregateFunction<Integer> count = DSL.count();
+//		ctx.getDslContext()
+//			.select(orderedType,INVOICE.TRANSACTION,count)
+//			.from(INVOICE)
+//			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+//			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+//			.groupBy(orderedType,INVOICE.TRANSACTION)
+//			.fetch()
+//			.stream()
+//			.forEach( rec -> list.add(
+//				new InvoiceSeries()
+//					.setSales(rec.getValue(orderedType) == 1)
+//					.setSeriesInfo(false)
+//					.setDescription(InvoiceTransactionType.values()[rec.getValue(INVOICE.TRANSACTION)].getDescription())
+//					.setFromNumber(rec.getValue(count)))
+//					);
 		return list;
 	}
 	
