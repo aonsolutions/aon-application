@@ -1752,6 +1752,7 @@ public interface Properties {
 		Property<String> getJsonNameProperty();
 		Property<String> getJsonTotalProperty();
 		Property<String> getJsonDateProperty();
+		Property<java.util.Date> getDateProperty();
 
 	}
 	

@@ -104,7 +104,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String contact;
 		String total;
 		String referenceCode;
-		String searchedDate;
 		String global = "";
 
 		Date from;
@@ -219,15 +218,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			return this;
 		}
 		
-		public String getSearchedDate() {
-			return searchedDate;
-		}
-		
-		public InvoiceFilter setSearchedDate(String searchedDate) {
-			this.searchedDate = searchedDate;
-			return this;
-		}
-		
 		public String getGlobal() {
 			return global;
 		}
@@ -241,28 +231,42 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private class RawdocFilter {
-		int nature;
 		Integer type;
 		String status;
-		String json;
-		String log;
-		int mimeType;
-		Integer page;
-		Integer perPage;
-		String referenceCode;
-		String name;
 		String total;
-		String searchedDate;
 		String global;
+		String contact;
 
+		Date from;
+		Date to;
 		
-		public int getNature() {
-			return nature;
+		public String getContact() {
+			return contact;
 		}
-		public RawdocFilter setNature(int nature) {
-			this.nature = nature;
+
+		public RawdocFilter setContact(String contact) {
+			this.contact = contact;
 			return this;
 		}
+
+		public Date getFrom() {
+			return from;
+		}
+
+		public RawdocFilter setFrom(Date from) {
+			this.from = from;
+			return this;
+		}
+
+		public Date getTo() {
+			return to;
+		}
+
+		public RawdocFilter setTo(Date to) {
+			this.to = to;
+			return this;
+		}
+		
 		public Integer getType() {
 			return type;
 		}
@@ -279,63 +283,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			return this;
 
 		}
-		public String getJson() {
-			return json;
-		}
-		public RawdocFilter setJson(String json) {
-			this.json = json;
-			return this;
-
-		}
-		public String getLog() {
-			return log;
-		}
-		public RawdocFilter setLog(String log) {
-			this.log = log;
-			return this;
-
-		}
-		public int getMimeType() {
-			return mimeType;
-		}
-		public RawdocFilter setMimeType(int mimeType) {
-			this.mimeType = mimeType;
-			return this;
-
-		}
-		public Integer getPage() {
-			return page;
-		}
-		public RawdocFilter setPage(Integer page) {
-			this.page = page;
-			return this;
-
-		}
-		public Integer getPerPage() {
-			return perPage;
-		}
-		public RawdocFilter setPerPage(Integer perPage) {
-			this.perPage = perPage;
-			return this;
-		}
-		
-		public String getReferenceCode() {
-			return referenceCode;
-		}
-		
-		public RawdocFilter setReferenceCode(String referenceCode) {
-			this.referenceCode = referenceCode;
-			return this;
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public RawdocFilter setName(String name) {
-			this.name = name;
-			return this;
-		}
 		
 		public String getTotal() {
 			return total;
@@ -343,15 +290,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		
 		public RawdocFilter setTotal(String total) {
 			this.total = total;
-			return this;
-		}
-		
-		public String getDate() {
-			return searchedDate;
-		}
-		
-		public RawdocFilter setDate(String searchedDate) {
-			this.searchedDate = searchedDate;
 			return this;
 		}
 		
@@ -489,15 +427,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private Object getInvoiceNewPortalObject(AonApiData api) {
 		InvoiceFilter filter = new InvoiceFilter()
-				.setDescription(api.getData().optString("description"))
+				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
 				.setStatus(api.getData().optString(IConstants.STATUS))
 				.setTypes(api.getData().opt(IConstants.TYPE) != null 
 					? api.getData().optString(IConstants.TYPE).split(","): null)
-				.setGlobal(api.getData().optString("global"))
-//				.setContact(api.getData().optString("contact"))
-//				.setTotal(api.getData().optString("total"))
-//				.setSearchedDate(api.getData().optString("searched_date"))
-//				.setReferenceCode(api.getData().optString("reference_code"))
+				.setGlobal(api.getData().optString(IJsonNames.GLOBAL))
+				.setContact(api.getData().optString("contact"))
+				.setTotal(api.getData().optString(IJsonNames.TOTAL))
+				.setReferenceCode(api.getData().optString(IJsonNames.NUMBER))
 				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
 				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
 				.setPage(api.getData().optInt("page"))
@@ -573,6 +510,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	    RawdocFilter filter = new RawdocFilter()
 	    		.setType(api.getData().optInt(IConstants.TYPE))
 	    		.setStatus(api.getData().optString(IConstants.STATUS))
+	    		.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+	    		.setContact(api.getData().optString("contact"))
+				.setTotal(api.getData().optString(IJsonNames.TOTAL))
 	    		.setGlobal(api.getData().optString("global"));
 	    Integer page = api.getData().optInt("page");
 	    Integer perPage = api.getData().optInt("per_page");
@@ -840,6 +781,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
     	}
     	
+    	if(invoiceFilter.getReferenceCode() != null) {
+    		filter = filter.and(f.getReferenceCodeProperty().like("%" + invoiceFilter.getReferenceCode() + "%"));
+    	}
+    	
+    	if(invoiceFilter.getContact() != null) {
+    		filter = filter.and(f.getRegistryNameProperty().like("%"+ invoiceFilter.getContact() +"%"));
+    	}
+    	
+    	if(invoiceFilter.getTotal() != null) {
+    		filter = filter.and(f.getTotalStringProperty().like("%" + invoiceFilter.getTotal() + "%"));
+    	}
+    	
     	if(!AonStringUtils.isBlank(invoiceFilter.getGlobal())) {
     		Filter filter3 = f.getRegistryNameProperty().like("%"+ invoiceFilter.getGlobal() +"%")
     				.or(f.getTotalStringProperty().like("%" + invoiceFilter.getGlobal() + "%"))
@@ -870,6 +823,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getStatusProperty().eq(RawdocStatus.INBOX.value()));
 		}else {
 			filter = filter.and(f.getStatusProperty().eq(RawdocStatus.safeValueOf(rawdocFilter.getStatus()).value()));
+		}
+		
+		if(!AonStringUtils.isBlank(rawdocFilter.getContact())) {
+			filter = filter.and(f.getJsonNameProperty().like("%"+ rawdocFilter.getContact() + "%"));
+		}
+		
+		if(!AonStringUtils.isBlank(rawdocFilter.getTotal())) {
+			filter = filter.and(f.getJsonTotalProperty().like("%"+ rawdocFilter.getTotal() + "%"));
+		}
+		
+		if(rawdocFilter.getTo() != null) {
+			filter = filter.and(f.getDateProperty().le(rawdocFilter.getTo()));
+		}
+		
+		if(rawdocFilter.getFrom() != null) {
+			filter = filter.and(f.getDateProperty().ge(rawdocFilter.getFrom()));
 		}
 		
 		if(!AonStringUtils.isBlank(rawdocFilter.getGlobal())) {
