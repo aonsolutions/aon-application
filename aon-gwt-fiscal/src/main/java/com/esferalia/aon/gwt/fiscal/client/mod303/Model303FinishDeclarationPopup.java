@@ -5,9 +5,11 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
@@ -81,7 +83,15 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getDomainName(),callback.getOptions().getDomain(),callback.getOptions().getUser());
 			final AonIbanTextBox iban = new AonIbanTextBox( new BanksSuggestOracle(callback) );
 			final AonTextBox nrc = new AonTextBox();			
-			final ListBox listBox = new ListBox();			
+			final ListBox listBox = new ListBox();
+			
+			FlexTable aplazaTable = new FlexTable();
+			Label aplazaLabel = new Label("Datos aplazamiento");
+//			Label avisoLabel = new Label("Aviso de lo que es la solicitud de aplazamiento, para que se ponga todo lo que sea necesario y que aparezca bien el aviso donde sea");
+			Label avisoLabel = new Label("Recuerde que si elige Solicitud de Aplazamiento, la presentación del modelo debe realizarla manualmente en la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicación de AON. Además adicionalmente a la presentación del modelo, deberá hacer tambien desde la misma Oficina Virtual, la solicitud de aplazamiento propiamente dicha. Una vez haya presentado el modelo en la Oficina Virtual, deberá marcarlo en la aplicación de AON, como presentado y si lo desea, podrá subir el PDF del modelo, si lo ha descargado desde la Web de la Agencia Tributaria. Los datos del IBAN, Número de Plazos y Fecha de Inicio, se quedarán grabados en el modelo, a título informátivo simplemente, ya que no se trasladan al fichero que debe obtenerse para la presentación del modelo en la Oficina Virtual. Según la normativa actual de la Agencia Tributaria, la fecha de inicio del aplazamiento, solo puede ser los días 5 o 20 de cada mes.");
+			AonIntegerBox plazos = new AonIntegerBox();
+			AonDateBox fechaInicio = new AonDateBox();
+			
 			listBox.setSelectedIndex(0);
 			if (AonMathUtils.isLessThanZero(mod303.getDeclarationResult()) ) {
 				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(), FiscalModelDeclarationType.PAYBACK.getValue());
@@ -94,6 +104,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
 				if (mod303.isAEAT()) {
 					listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(), FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
+					listBox.addItem(FiscalModelDeclarationType.APLAZAMIENTO.getDescription(), FiscalModelDeclarationType.APLAZAMIENTO.getValue());
 				}
 			}
 			listBox.addChangeHandler( event -> {
@@ -106,6 +117,14 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 					nrc.setValue("");
 					mod303.setNrc("");
 				}
+				if (type != FiscalModelDeclarationType.APLAZAMIENTO) {
+					plazos.setValue(0);
+					fechaInicio.setValue(null);
+					//mod303.set...("");
+				}
+				aplazaLabel.setVisible(type == FiscalModelDeclarationType.APLAZAMIENTO);
+				aplazaTable.setVisible(type == FiscalModelDeclarationType.APLAZAMIENTO);
+				avisoLabel.setVisible(type == FiscalModelDeclarationType.APLAZAMIENTO);				
 			});
 			tab.setWidget(row, 1, listBox );
 			row++;
@@ -159,7 +178,48 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 					mod303.setNrc(nrc.getValue());
 				});
 				tab.setWidget(row, 1, nrc);
+				row++;
 			}
+			
+			// FALTA - PANEL PARA PEDIR DATOS DEL APLAZAMIENTO: Nº de Plazos y Fecha primer plazo y mensaje de aviso
+			
+//			FlexTable aplazaTable = new FlexTable();		
+//			aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTableLabel());
+//			aplazaTable.setWidget(0, 0, new Label("Datos aplazamiento:"));
+			//aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTableLabel());
+			aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTabLabel());
+			aplazaTable.setWidget(0, 0, new Label("N\u00FAmero de Plazos"));
+//			AonIntegerBox plazos = new AonIntegerBox();
+			plazos.setMaxLength(2);
+			plazos.setVisibleLength(2);
+			aplazaTable.setWidget(0, 1, plazos);
+			//aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTableLabel());
+			aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTabLabel());
+			aplazaTable.setWidget(0, 2, new Label("Fecha Inicio"));
+//			AonDateBox fechaInicio = new AonDateBox();
+			aplazaTable.setWidget(0, 3, fechaInicio);
+			
+			//aplazaTable.getFlexCellFormatter().addStyleName(1, 0, AON.CSS.aonTabLabel());
+//			aplazaTable.getFlexCellFormatter().setColSpan(1, 0, 4);
+//			aplazaTable.setWidget(1, 0, new Label("Recuerde que si elige Solicitud de Aplazamiento, la presentación del modelo debe realizarla manualmente en la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicación de AON. Además adicionalmente a la presentación del modelo, deberá hacer tambien desde la misma Oficina Virtual de la Agencia Tributaria, la solicitud de aplazamiento propiamente dicha."));
+			
+			aplazaTable.setVisible(false);
+			
+//			FlowPanel aplazaPanel = new FlowPanel();
+//			aplazaPanel.add(aplazaTable);
+//			Label aplazaLabel = new Label("Datos aplazamiento");
+			aplazaLabel.setVisible(false);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			
+			tab.setWidget(row, 0, aplazaLabel);
+			tab.setWidget(row, 1, aplazaTable);
+			row++;
+			
+//			Label avisoLabel = new Label("Aviso de lo que es la solicitud de aplazamiento, para que se ponga todo lo que sea necesario y que aparezca bien el aviso donde sea");
+			avisoLabel.setVisible(false);			
+//			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTabLabel());
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.setWidget(row, 0, avisoLabel);			
+			row++;
 			
 		}
 		
