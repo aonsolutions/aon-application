@@ -114,7 +114,7 @@ export const PAYROLL = {
   symbol: MATERIAL_ICONS.GROUP,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
   newColor: "var(--aonPayroll)",
-  backgroundColor: '#e8f5f5',
+  backgroundColor: 'var(--aonPayroll)',
   hover: 'aonPayrollHover',
   access: [
     {
@@ -251,7 +251,7 @@ export const DOCUMENTAL = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
   newIcon: AON_ICONS.AON_NEW_DOCUMENTAL,
   color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
-  newColor: "#EF6292",
+  newColor: "var(--aonDocumental)",
   backgroundColor: 'var(--aonDocumentalBackground)',
   hover: 'aonDocumentalHover',
   access: [

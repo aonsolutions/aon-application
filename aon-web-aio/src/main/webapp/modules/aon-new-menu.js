@@ -228,10 +228,11 @@ export class AonNewMenu extends AonElement {
 			app,
 			sidenav
 		};
+
+		let header = this.getElement("aonHeaderWeb");
 		if(!(!this.isApp(app) && !excludedApps.includes(app.app)))
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
 		else{
-			let header = this.getElement("aonHeaderWeb");
 			header.style.removeProperty("background-color");
 
 			let apps = this.getElement("aonMenuListAppImg-applications");
@@ -263,6 +264,17 @@ export class AonNewMenu extends AonElement {
 			header6.style.color = "var(--aonHeaderButtonColor)";
 			
 		}
+
+		let appsDiv = this.getElement("aonMenuLeftop-applications");
+		if(app.app == "accounting")
+			appsDiv.style.backgroundColor = "var(--aonBlue)";
+		else
+			appsDiv.style.backgroundColor = app.color;
+		if(app.color == "var(--aonTopMenuAvailable)"){
+			header.style.backgroundColor = "var(--aonBlack)";
+			appsDiv.style.backgroundColor = "var(--aonBlack)";
+		}
+		
 	}
 	
 
@@ -650,15 +662,19 @@ export class AonNewMenu extends AonElement {
 					div.style.backgroundColor = 'white';
 					if(LS.isDarkTheme()){
 						div.style.color = "var(--aonBlack)";
-						if(app.color== "var(--aonTopMenuAvailable)")						
-							img.style.color = "var(--aonBlack)";
+						if(app.app == "accounting"){
+							img.style.color = "var(--aonBlue)";
+						}else if(app.color == "var(--aonTopMenuAvailable)")						
+							img.style.color = "Black";
 					}
 				});
 				div.addEventListener('mouseout', () => {
+					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
 					div.style.backgroundColor = 'transparent';
-					if(LS.isDarkTheme() && app.color == "var(--aonTopMenuAvailable)"){
+					if(LS.isDarkTheme()){
 						div.style.color = "var(--aonTopMenuAvailable)";
-						img.style.color = "var(--aonTopMenuAvailable)";
+						if(app.color == "var(--aonTopMenuAvailable)")
+							img.style.color = "var(--aonTopMenuAvailable)";
 					}
 				});
 			}

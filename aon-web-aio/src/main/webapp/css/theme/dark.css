@@ -1,13 +1,13 @@
 :root {
 	--aonAccounting: var(--aonWhite);
-	--aonAccountingBackground: rgba(0, 36, 105, .2);
-
 	--aonTopMenuAvailable: var(--aonWhite);
 	--aonTopMenuSpecial: var(--aonClearBlue);
+
+	--aonBlack: black;
 }
 .aonHeader {
-	--aonBlue: black;
-	--aonPayroll: #000;
+	--aonAccounting: var(--aonBlue);
+	--aonHome: var(--aonBlack);
 	background-color: #000;
 }
 
