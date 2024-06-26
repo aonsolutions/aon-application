@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
@@ -188,6 +189,13 @@ public class CommonImpl implements ICommon {
 	public PayrollWorkplace savePayrollWorkplace(AONContext ctx, PayrollWorkplace payrollWorkplace) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> PayrollWorkplaceDAO.save(ctx, payrollWorkplace));
+	}
+	
+
+	@Override
+	public PayrollWorkplace getPayrollWorkpalce(CloseableAONContext ctx, PayrollWorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PayrollWorkplaceDAO.get(ctx, filter));
 	}
 	
 	
