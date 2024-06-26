@@ -1697,9 +1697,29 @@ public class Contrata {
 
 				HtmlForm formTwo = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				String ide = sepeId.get();
-				formTwo.getInputByName("idcomunicacion1").setValue(ide.substring(0, 2));
-				formTwo.getInputByName("idcomunicacion2").setValue(ide.substring(2, 6));
-				formTwo.getInputByName("idcomunicacion3").setValue(ide.substring(6));
+				
+				if(ide.contains("-")) ide = ide.replaceAll("-", "");
+				
+				String province = "";
+				String year = "";
+				String code = "";
+				
+				if(ide.length() == 13) {
+					province = ide.substring(0, 2);
+					year = ide.substring(2, 6);
+					code = ide.substring(6);
+				} else if(ide.length() == 14) {
+					province = ide.substring(1, 3);
+					year = ide.substring(3, 7);
+					code = ide.substring(7);
+				}
+				
+				formTwo.getInputByName("idcomunicacion1").setValue(province);
+				formTwo.getInputByName("idcomunicacion2").setValue(year);
+				formTwo.getInputByName("idcomunicacion3").setValue(code);
+				formTwo.getInputByName("idcomunicacion1").setValueAttribute(province);
+				formTwo.getInputByName("idcomunicacion2").setValueAttribute(year);
+				formTwo.getInputByName("idcomunicacion3").setValueAttribute(code);
 
 				htmlPage = formTwo.getInputByName("aceptar").click();
 				handleSepeExceptions(htmlPage);
@@ -1713,7 +1733,7 @@ public class Contrata {
 			}
 
 			HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-
+			
 			Page page = formDatos1.getInputByName("Boton_imprimir").click();
 			if (page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
@@ -1766,13 +1786,27 @@ public class Contrata {
 
 				HtmlForm formTwo = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				String ide = sepeId.get();
-				String ide1 = ide.substring(0, 2);
-				String ide2 = ide.substring(2, 6);
-				String ide3 = ide.substring(6);
-				formTwo.getInputByName("idcomunicacion1").setValue(ide1);
-				formTwo.getInputByName("idcomunicacion2").setValue(ide2);
-				formTwo.getInputByName("idcomunicacion3").setValue(ide3);
-				formTwo.getInputByName("idcomunicacion").setValue(ide1 + "-" + ide2 + "-" + ide3);
+				
+				if(ide.contains("-")) ide = ide.replaceAll("-", "");
+				
+				String province = "";
+				String year = "";
+				String code = "";
+				
+				if(ide.length() == 13) {
+					province = ide.substring(0, 2);
+					year = ide.substring(2, 6);
+					code = ide.substring(6);
+				} else if(ide.length() == 14) {
+					province = ide.substring(1, 3);
+					year = ide.substring(3, 7);
+					code = ide.substring(7);
+				}
+				
+				formTwo.getInputByName("idcomunicacion1").setValue(province);
+				formTwo.getInputByName("idcomunicacion2").setValue(year);
+				formTwo.getInputByName("idcomunicacion3").setValue(code);
+				formTwo.getInputByName("idcomunicacion").setValue(province + "-" + year + "-" + code);
 
 				htmlPage = formTwo.getInputByName("aceptar").click();
 
@@ -1787,7 +1821,7 @@ public class Contrata {
 			}
 
 			HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-
+			
 			Page page = formDatos1.getInputByName("Boton_imprimir").click();
 			if (page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
