@@ -49,6 +49,8 @@ public interface Properties {
 		Property<Byte> getEconomicagreementProperty();
 		Property<Integer> getEnterpriseProperty();
 		Property<Integer> getScopeProperty();
+		
+		Property<String> getGeozoneNameProperty();
 	}
 	
 	public interface ProjectProperties {
@@ -519,6 +521,15 @@ public interface Properties {
 		Property<String> getNameProperty();
 		Property<String> getSignatureProperty();
 		Property<Integer> getUserIdProperty();
+	}
+	
+	public interface PayrollWorkplaceProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getAgreementProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Integer> getCalendarProperty();
 	}
 	
 	public interface RegistryAddressProperties{

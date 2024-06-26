@@ -580,8 +580,10 @@ class SistemaREDEmployee {
 					situation = "AL";
 				String ipf = empdata.get(4);
 
-				if (ipf != null)
+				if (ipf != null) {
+					if (ipf.contains(" ")) ipf = ipf.split(" ")[1];
 					ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
+				}
 
 				builder.setNss(nss).setName(name).setFra(fra).setSituation(situation).setIpf(ipf).setCtaCti(ccc)
 						.setRegime(regime);
@@ -746,9 +748,7 @@ class SistemaREDEmployee {
 			toYearIn.setValueAttribute(String.valueOf(toArray[2]));
 
 			onlineOption.click();
-			
-			//Toolkit.buildFile(document.asXml().getBytes(), "/Users/svaldepenas/Desktop/cccLaboralLife.html");
-
+		
 			formSubmit.click();
 
 			return getPDFDocument((HtmlElement) formSubmit);

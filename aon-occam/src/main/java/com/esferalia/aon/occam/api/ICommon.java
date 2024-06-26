@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
@@ -104,6 +105,7 @@ public interface ICommon {
 	// --------------------------------------------
 	
 	public PayrollWorkplace savePayrollWorkplace(AONContext ctx, PayrollWorkplace workplace);
+	public PayrollWorkplace getPayrollWorkpalce(CloseableAONContext ctx, PayrollWorkplaceFilter filter);
 	
 	// --------------------------------------------
 	// PRODUCT
@@ -212,6 +214,8 @@ public interface ICommon {
 	// SERIES
 	Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter);
 	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
+	
+	
 	
 
 }

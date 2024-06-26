@@ -89,6 +89,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 		
 		String link = "";
 		String sessionId = "";
+		
 			
 			
 			try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {				

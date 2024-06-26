@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
@@ -13,6 +15,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
+import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.impl.jooq.validation.WorkplaceAutoComplete;
@@ -39,11 +42,16 @@ public class WorkplaceDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DSL.trim(WORKPLACE.DESCRIPTION));}
 		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ECONOMICAGREEMENT);}
 		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ENTERPRISE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}	
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}
+		
+		@Override public Property<String> getGeozoneNameProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.NAME);}
 	}
 	
 	public static Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter){
-		return ctx.getDslContext().select().from(WORKPLACE).where(WORKPLACE_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext().select().from(WORKPLACE)
+				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(WORKPLACE.ADDRESS))
+				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+				.where(WORKPLACE_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(WORKPLACE).stream().map(new WorkplaceFiller()).findFirst().orElse(null);	
 	}
 	
