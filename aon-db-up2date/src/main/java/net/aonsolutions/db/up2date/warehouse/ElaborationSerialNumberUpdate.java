@@ -44,7 +44,7 @@ public class ElaborationSerialNumberUpdate implements Update {
 		return dslContext.select(com.esferalia.aon.jooq.tables.Domain.DOMAIN.ID, com.esferalia.aon.jooq.tables.Domain.DOMAIN.NAME)
 				.from(com.esferalia.aon.jooq.tables.Domain.DOMAIN)
 				.where(com.esferalia.aon.jooq.tables.Domain.DOMAIN.ID.eq(8786))
-				.and(com.esferalia.aon.jooq.tables.Domain.DOMAIN.NAME.eq("paturpat.aibanez.net"))
+				.and(com.esferalia.aon.jooq.tables.Domain.DOMAIN.NAME.eq("paturpat.aonsolutions.net"))
 				.fetch().stream().map(r -> new Domain()
 						.setId(r.getValue(com.esferalia.aon.jooq.tables.Domain.DOMAIN.ID))
 						.setName(r.getValue(com.esferalia.aon.jooq.tables.Domain.DOMAIN.NAME)))
