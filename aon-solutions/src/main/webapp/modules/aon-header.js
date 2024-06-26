@@ -475,7 +475,16 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		
+		if(LS.isDarkTheme()){
+			aonHeaderCompanyName.style.color = "var(--aonWhite)";
+			aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
+			let help = this.getElement("aonHeaderHelpButtonIconButton");
+			help.style.color = "var(--aonWhite)";
+			let config = this.getElement("aonHeaderConfigButtonIconButton");
+			config.style.color = "var(--aonWhite)";
+
+
+		}
 	}
 
 	timeControlStatus(signin) {
@@ -663,7 +672,7 @@ export class AonHeader extends AonElement {
 				button.setColor(color);
 				button.setBackgroundColor(backgroundColor);
 			});
-			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
+			//imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
 		} else {
 			imgs.forEach( (img) => img.style.removeProperty ('filter') );
 			texts.forEach( (text) => text.style.removeProperty('color') );

@@ -6,6 +6,7 @@ export const HOME = {
 	home : true,
 	title: MSG.HOME,
 	app: CONSTANT.HOME,
+	color: "transparent",
 	symbol: MATERIAL_ICONS.HOME,
 };
 
