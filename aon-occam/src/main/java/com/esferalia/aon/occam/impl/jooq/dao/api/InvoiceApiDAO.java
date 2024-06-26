@@ -165,9 +165,9 @@ public class InvoiceApiDAO {
 				.setSeries(r.getValue(INVOICE.SERIES))
 				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)))
 				.setInvoiceInfo(InvoiceInfoFiller.build(r))
-				.setVatQuota(r.getValue(quota).doubleValue())
-				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))
-				.setSurchargeQuota(r.getValue(surchargeQuota).doubleValue())
+				.setVatQuota(r.getValue(quota) != null ? r.getValue(quota).doubleValue() : 0)
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE) != null ? r.getValue(INVOICE.TAXABLE_BASE).doubleValue() : 0)
+				.setSurchargeQuota(r.getValue(surchargeQuota) != null ? r.getValue(surchargeQuota).doubleValue() : 0)
 				.setRetentionPercentage(r.getValue(retentionPercentage))
 				;
 		}
