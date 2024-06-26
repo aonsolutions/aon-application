@@ -1,13 +1,15 @@
+	import { TAG } from '../environments/environments.js'; 
 	import * as LS from '../services/localStorageService.js';
+
 	
 	export const removeRootPanel = (panel) => {
 		panel = panel || 'rootPanel';
-		const myNode = document.getElementById(panel);
+		const myNode = window.document.getElementById(panel);
 		myNode.innerHTML = '';
 	}
 
 	export const rootPanel = (html) => new Promise((resolve)=>{
-		const myNode = document.getElementById("rootPanel");
+		const myNode = window.document.getElementById("rootPanel");
 		if(myNode){
 			myNode.innerHTML = '';
 			myNode.innerHTML = html;
@@ -59,6 +61,12 @@
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
 
+	export const __load = (gwtOption, rootPanel) => {
+		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
+		window.drawChartsCallback = () => {};
+		__startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
+	}
+	
 	const loadEntryPointsFunctions = (gwtOption) => {
 		window.getSubEntryPoint = () => gwtOption.subEntryPoint;
 	}
@@ -99,7 +107,53 @@
 		}
 	}
 
+	export const __startModule = (module, entrypoint, rootPanel) => {
+		let panel = rootPanel || 'rootPanel';
+		if(rootPanel) {
+			localStorage.setItem('rootPanel', rootPanel);
+		} else {
+			localStorage.removeItem('rootPanel');
+		}
+		localStorage.setItem('aon_solutions', true);
+		removeRootPanel(panel);
+		if (window.document.createElement && window.document.getElementsByTagName) {
+			
+			let iframe = window.document.createElement(TAG.IFRAME)
+			iframe.style.width = '100%';
+			iframe.style.height = '100%';
+			iframe.style.border = 'none';
+			iframe.style.inset = 'none';
+			iframe.src = 'about:blank';
+			iframe.onload = () => {
+				// loadDomainFunctions
+				let iwindow = iframe.contentWindow;			
+				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
+				iwindow.getCurrentDomainName = () => LS.getDomainName();
+				iwindow.getCurrentDomain = () => LS.getDomainId();
+				iwindow.getCurrentUser = () => LS.getDomainLogin();
 
+				// inject 'gwt' script 
+				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;			
+
+				idocument.addEventListener("DOMContentLoaded", function(event) {
+				  console.log("DOM fully loaded and parsed");
+				});			
+
+				let script = idocument.createElement(TAG.SRIPT);
+				script.type = "text/javascript";
+				script.defer = "true";
+				script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
+				idocument.head.appendChild(script);
+
+				// TODO: Here triggerModuleStart ?	
+			}
+			
+			document.getElementById(panel)?.appendChild(iframe);
+			
+
+		}
+
+	}
 
 	export const triggerModuleStart = (module) => {
 		try{
@@ -117,3 +171,4 @@
 	export const getRamdomId = () => {
 		return Math.floor(Math.random() * 10000000) + 1;
 	};
+	
