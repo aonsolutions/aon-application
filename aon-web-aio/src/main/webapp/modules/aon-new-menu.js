@@ -274,6 +274,8 @@ export class AonNewMenu extends AonElement {
 			header.style.backgroundColor = "var(--aonBlack)";
 			appsDiv.style.backgroundColor = "var(--aonBlack)";
 		}
+		if(app.app == "home")
+			appsDiv.style.backgroundColor = header.style.backgroundColor;
 		
 	}
 	
