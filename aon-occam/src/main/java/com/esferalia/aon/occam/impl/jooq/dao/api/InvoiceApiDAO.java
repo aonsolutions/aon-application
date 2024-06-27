@@ -157,6 +157,7 @@ public class InvoiceApiDAO {
 				.setId(r.getValue(INVOICE.ID))
 				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
 				.setTotal(r.getValue(INVOICE.TOTAL))
 				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
 				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
