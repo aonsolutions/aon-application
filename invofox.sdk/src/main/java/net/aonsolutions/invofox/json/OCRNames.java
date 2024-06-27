@@ -78,6 +78,7 @@ public final class OCRNames {
 	public static final String FEES_RATE = "feesRate";
 	public static final String FIELDS = "fields";
 	public static final String FILENAME = "filename";
+	public static final String FILTER = "filter";
 	// ---------------------------------------------------------------------------------------------	[G]
 	public static final String GEOMETRY = "geometry";
 	public static final String GROSS_AMOUNT = "grossAmount";
@@ -167,6 +168,7 @@ public final class OCRNames {
 	// ---------------------------------------------------------------------------------------------	[S]
 	public static final String SECRET = "secret";
 	public static final String SECURITY = "security";
+	public static final String SELECT = "select";
 	public static final String SERIES_CODE = "seriesCode";
 	public static final String SERVICE_ADDRESS = "serviceAddress";
 	public static final String SEVERITY = "severity";
