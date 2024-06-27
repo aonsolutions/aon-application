@@ -581,8 +581,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private long getRawdocCount(AonApiData api) {
 		RawdocFilter filter = new RawdocFilter()
-	    		.setType(api.getData().optInt(IConstants.TYPE))
-	    		.setStatus(api.getData().optString(IConstants.STATUS));
+				.setType(api.getData().optInt(IConstants.TYPE))
+	    		.setStatus(api.getData().optString(IConstants.STATUS))
+	    		.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+	    		.setContact(api.getData().optString("contact"))
+				.setTotal(api.getData().optString(IJsonNames.TOTAL))
+	    		.setGlobal(api.getData().optString("global"));
 		
 		boolean ticket = api.getData().optBoolean("ticket");
 		
@@ -594,15 +599,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private long getInvoiceNewPortalCount(AonApiData api) {
 		
 		InvoiceFilter filter = new InvoiceFilter()
-                .setDescription(api.getData().optString("description"))
-                .setStatus(api.getData().optString(IConstants.STATUS))
-                .setTypes(api.getData().opt(IConstants.TYPE) != null 
-                    ? api.getData().optString(IConstants.TYPE).split(","): null)
-                .setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
-                .setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
-                .setPage(api.getData().optInt("page"))
-                .setPerPage(api.getData().optInt("per_page"))
-                .setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
+				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
+				.setStatus(api.getData().optString(IConstants.STATUS))
+				.setTypes(api.getData().opt(IConstants.TYPE) != null 
+					? api.getData().optString(IConstants.TYPE).split(","): null)
+				.setGlobal(api.getData().optString(IJsonNames.GLOBAL))
+				.setContact(api.getData().optString("contact"))
+				.setTotal(api.getData().optString(IJsonNames.TOTAL))
+				.setReferenceCode(api.getData().optString(IJsonNames.NUMBER))
+				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setPage(api.getData().optInt("page"))
+				.setPerPage(api.getData().optInt("per_page"))
+				.setRecorded(!api.getData().optString("recorded").equals("") ? InvoiceStatus.safeValueOf(api.getData().optString("recorded")).value() : null);
 		
 		return AON_SOLUTIONS.getInvoiceNewPortalCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> invoiceFilter(f , api.getDomain().getId(), filter));
