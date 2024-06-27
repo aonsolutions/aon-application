@@ -109,6 +109,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -119,6 +120,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
@@ -158,6 +160,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
+import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
 import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
@@ -169,6 +172,7 @@ import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO.SalaryPropertiesDAO;
 
 public class PropertiesDAO {
 	
@@ -921,7 +925,50 @@ public class PropertiesDAO {
 		public Property<Byte> getSalaryType() {
 			return new FilterDAO.PropertyDAO<>(SALARY.TYPE);
 		}
+
+		@Override
+		public Property<String> getNameProperty() {
+			return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);
+		}
+	}
+	
+	protected static class SalaryNewPortalPropertiesDAO extends SalaryPropertiesDAO implements SalaryNewPortalProperties{
 		
+		protected Condition[] getConditions(SalaryNewPortalFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		
+		@Override
+		public Property<Integer> getDomainProperty(){
+			return new FilterDAO.PropertyDAO<>(SALARY.DOMAIN);
+		}
+
+		@Override
+		public Property<String> getDateStringProperty() {
+			return new FilterDAO.PropertyDAO<>(
+			        DSL.concat(
+			            DSL.splitPart(SALARY.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 3),
+			            DSL.val("/"),
+			            DSL.splitPart(SALARY.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 2),
+			            DSL.val("/"),
+			            DSL.splitPart(SALARY.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 1)
+			          )
+			        );
+		}
+
+		@Override
+		public Property<Byte> getSalaryType() {
+			return new FilterDAO.PropertyDAO<>(SALARY.TYPE);
+		}
+		
+		@Override
+		public Property<String> getNameProperty(){
+			return new FilterDAO.PropertyDAO<>(SALARY.EMPLOYEE_NAME);
+		}
 		
 	}
 	

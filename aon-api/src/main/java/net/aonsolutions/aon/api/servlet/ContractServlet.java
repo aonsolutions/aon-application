@@ -18,7 +18,9 @@ import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -102,7 +104,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		 	Integer page = api.getData().optInt("page");
 		 	Integer perPage = api.getData().optInt("per_page");
 		    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-		            f -> buildFilter(f, api) , page, perPage);
+		            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
 		    for (AuxSalaryInfo s : salaryList) {
 		        array.put(toJSONSalaryInfo(s));
 		    }
@@ -112,14 +114,13 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static long getEmployeeSalariesCount(AonApiData api) {
 		LOGGER.info("GET COUNT METHOD");
 		return PAYROLL.getEmployeeSalaryCount(api.getDomain().getName() , api.getDomain().getId(), api.getUser().getLogin(),
-				f -> buildFilter(f, api));
+				f -> buildFilterSalariesNewPortal(f, api));
 	}
 	
 	
 	private static Filter buildFilter(ContractExtendedDataProperties properties, AonApiData api) {
 		JSONObject params = api.getData();
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
-		String name = JsonUtils.getString(params, IJsonNames.NAME);
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
 		Integer contractId = JsonUtils.getInteger(params, "contract");
@@ -127,9 +128,15 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer auxSalaryType = (int) salaryType;
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
-		if(name != null) {
-			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
+		
+//		if(name != null) {
+//			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
+//		}
+		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
+			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%"));
+//					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
 		}
+		
 		if(workplace != null) {
 			filter = filter.and(properties.getWorkplaceProperty().eq(workplace));
 		}
@@ -162,6 +169,28 @@ public class ContractServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
+	private static Filter buildFilterSalariesNewPortal(SalaryNewPortalProperties properties , AonApiData api) {
+		JSONObject params = api.getData();
+		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
+		Integer contractId = JsonUtils.getInteger(params, "contract");
+		byte salaryType = JsonUtils.getByte(params, "salary_type");
+		Integer auxSalaryType = (int) salaryType;
+
+		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
+			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
+					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
+		}
+		
+		if(contractId != null) {
+			filter = filter.and(properties.getContractProperty().eq(contractId));
+		}
+		
+		if(auxSalaryType != null) {
+			filter = filter.and(properties.getSalaryType().eq(salaryType));
+		}
+		return filter;
+	}
+	
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
 		return new JSONObject();
@@ -181,7 +210,8 @@ public class ContractServlet extends AonApiHttpServlet {
 			.put("workplaceId", salaryInfo.getWorkplaceId())
 			.put("workplaceName", salaryInfo.getWorkplaceName())
 			.put("startDate", salaryInfo.getStartDate())
-	        .put("endDate", salaryInfo.getEndDate());
+	        .put("endDate", salaryInfo.getEndDate())
+	        .put("issue_date", salaryInfo.getIssueDate());
 	}
 	
 }

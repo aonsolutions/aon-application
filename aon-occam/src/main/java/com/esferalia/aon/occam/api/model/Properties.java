@@ -127,6 +127,8 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 		Property<Integer> getSourceBatchProperty();
 		Property<Byte> getSourceTypeProperty();
+		Property<String>getNameProperty();
+		Property<String>getAttachDateStringProperty();
 	}
 	
 	public interface InvoicingGroupProperties extends AuditProperties {
@@ -1345,6 +1347,14 @@ public interface Properties {
 	public interface ContractExtendedDataProperties extends ContractProperties{
 		Property<String> getPersonFullNameProperty();
 		Property <Byte> getSalaryType();
+		Property<String> getNameProperty();
+	}
+	
+	public interface SalaryNewPortalProperties extends SalaryProperties{
+		Property<Integer> getDomainProperty();
+		Property<String> getDateStringProperty();
+		Property <Byte> getSalaryType();
+		Property<String> getNameProperty();
 	}
 	
 	public interface DocProperties{

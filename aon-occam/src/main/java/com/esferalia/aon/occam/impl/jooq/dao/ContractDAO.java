@@ -54,6 +54,9 @@ import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
+import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -67,11 +70,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertie
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractExtendedDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SalaryNewPortalPropertiesDAO;
 
 public class ContractDAO {
 	
 	public static final ContractPropertiesDAO CONTRACT_PROPERTIES = new ContractPropertiesDAO();
 	public static final ContractExtendedDataPropertiesDAO CONTRACT_EXTENDED_DATA_PROPERTIES = new ContractExtendedDataPropertiesDAO();
+	public static final SalaryNewPortalPropertiesDAO SALARY_NEW_PORTAL_PROPERTIES = new SalaryNewPortalPropertiesDAO();
 	public static final ContractDataPropertiesDAO CONTRACT_DATA_PROPERTIES = new ContractDataPropertiesDAO();
 	public static final IrpfDataPropertiesDAO IRPF_DATA_PROPERTIES = new IrpfDataPropertiesDAO();
 	public static final AgreementLevelCategoryPropertiesDAO AGREEMENT_LEVEL_CATEGORY_PROPERTIES = new AgreementLevelCategoryPropertiesDAO();
@@ -139,17 +144,15 @@ public class ContractDAO {
 				.get(WORKPLACE.ENTERPRISE);
 	}
 	
-	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , SalaryNewPortalFilter filter, Integer page, Integer perPage) {
 		List<AuxSalaryInfo> salaryList = new ArrayList<>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
 		Result<Record> results = ctx.getDslContext().select()
-			        .from(SALARY)
-			        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
-			        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-			        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
-			        .limit(perPage)
-					.offset(perPage * (page -1))
-			        .fetch();
+		        .from(SALARY)
+		        .where(SALARY_NEW_PORTAL_PROPERTIES.getConditions(filter))
+		        .limit(perPage)
+				.offset(perPage * (page -1))
+		        .fetch();
 		 
 		 for (Record salaryRecord : results) {
 		        AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
@@ -158,8 +161,10 @@ public class ContractDAO {
 				salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 				Date startDate = salaryRecord.get(SALARY.START_DATE);
 		        Date endDate = salaryRecord.get(SALARY.END_DATE);
+		        Date issueDate = salaryRecord.get(SALARY.ISSUE_DATE);
 		        salaryInfo.setStartDate(dateFormat.format(startDate));
 		        salaryInfo.setEndDate(dateFormat.format(endDate));
+		        salaryInfo.setIssueDate(dateFormat.format(issueDate));
 				salaryInfo.setType(salaryRecord.get(SALARY.TYPE));
 				salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 				salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -184,12 +189,12 @@ public class ContractDAO {
 		return salaryList;
 	}
 	
-	public static long getEmployeeSalaryCount(AONContext ctx , ContractExtendedDataFilter filter) {
+	public static long getEmployeeSalaryCount(AONContext ctx , SalaryNewPortalFilter filter) {
 		return ctx.getDslContext().select()
 		        .from(SALARY)
 		        .innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
 		        .innerJoin(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-		        .where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+		        .where(SALARY_NEW_PORTAL_PROPERTIES.getConditions(filter))
 		        .fetch().stream().count();
 	}
 	

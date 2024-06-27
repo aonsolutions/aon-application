@@ -24,7 +24,9 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
+import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -193,7 +195,7 @@ public class PAYROLL {
 
 	}
 	
-	public static List<AuxSalaryInfo> getEmployeeSalary(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter, Integer page, Integer perPage) {
+	public static List<AuxSalaryInfo> getEmployeeSalary(String domainName, Integer domainId, String login, SalaryNewPortalFilter filter, Integer page, Integer perPage) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -205,7 +207,7 @@ public class PAYROLL {
 		}
 	}
 	
-	public static long getEmployeeSalaryCount(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter) {
+	public static long getEmployeeSalaryCount(String domainName, Integer domainId, String login, SalaryNewPortalFilter filter) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
