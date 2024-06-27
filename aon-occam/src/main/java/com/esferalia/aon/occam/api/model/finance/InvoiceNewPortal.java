@@ -110,4 +110,10 @@ public class InvoiceNewPortal extends Invoice {
 		return this;
 	}
 	
+	@Override
+	public InvoiceNewPortal setRegistryDocument(String document) {
+		super.setRegistryDocument(document);
+		return this;
+	}
+	
 }

@@ -1009,6 +1009,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.SURCHARGE_QUOTA, invoice.getSurchargeQuota());
 		json.put(IJsonNames.QUOTA, invoice.getVatQuota());
 		json.put(IJsonNames.TOTAL, invoice.getTotal());
+		json.put(IJsonNames.DOCUMENT, invoice.getRegistryDocument());
 		json.put(IJsonNames.TYPE, invoice.getType());
 		json.put(IJsonNames.STATUS, invoice.isRecorded() 
 				? InvoiceStatus.SCORED.name().toLowerCase() 
