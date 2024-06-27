@@ -576,6 +576,7 @@ public final class IJsonNames {
 	public static final String SURCHARGE = "surcharge";
 	public static final String SURNAME = "surname";
 	public static final String SEARCH = "search";
+	public static final String SYNCSTATUS ="SyncStatus";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TABLE = "table";
 	public static final String TARIFF = "tariff";

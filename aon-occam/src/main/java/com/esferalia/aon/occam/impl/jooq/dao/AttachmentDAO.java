@@ -143,6 +143,7 @@ public class AttachmentDAO {
 	}
 	
 	private static SelectConditionStep<Record> selectRegistryAttach(AONContext ctx, AttachFilter filter, boolean withData) {
+		
 		SelectSelectStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD)
 				.select(DOMAIN.fields())
 				.select(CATEGORY.fields())
@@ -158,7 +159,7 @@ public class AttachmentDAO {
 	}
 	
 	
-	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, boolean withData, Options...options){					;
+	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, boolean withData, Options...options){	
 		List<Attach> attachList;
 		if(options.length > 0 && options[0].isPagination()) {
 			attachList = selectRegistryAttach(ctx, filter, withData)
@@ -178,8 +179,6 @@ public class AttachmentDAO {
 				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 				return attach;
 			}).toList();
-			
-	
 		}
 		return attachList.stream();
 	}

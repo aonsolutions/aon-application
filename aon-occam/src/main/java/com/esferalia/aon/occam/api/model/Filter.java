@@ -513,6 +513,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface SalaryNewPortalFilter{
+		Filter filter(SalaryNewPortalProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ContractDocFilter{
 		Filter filter(ContractDocProperties properties);
 	}

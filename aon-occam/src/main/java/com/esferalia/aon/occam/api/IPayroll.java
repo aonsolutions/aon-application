@@ -20,7 +20,9 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
+import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -51,8 +53,8 @@ public interface IPayroll {
 	public Stream<ContractExtendedData> getContractSimplifiedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage);
 	public void deleteContracts(AONContext ctx, Integer ...contractsId);
 	public long getContractCount(AONContext ctx, ContractExtendedDataFilter filter);
-	public List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage);
-	public long getEmployeeSalaryCount(AONContext ctx, ContractExtendedDataFilter filter);
+	public List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx, SalaryNewPortalFilter filter, Integer page, Integer perPage);
+	public long getEmployeeSalaryCount(AONContext ctx, SalaryNewPortalFilter filter);
 	// -------------------- CONTRACT DATA
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter);

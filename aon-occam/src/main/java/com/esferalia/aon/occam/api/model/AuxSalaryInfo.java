@@ -16,6 +16,7 @@ public class AuxSalaryInfo {
 	private Double totalPayment;
 	private Double totalDeduction;
 	private Double totalLiquid;
+	private String issueDate;
 	
 	public Integer getId() {
 		return id;
@@ -101,6 +102,13 @@ public class AuxSalaryInfo {
 	public void setTotalLiquid(Double totalLiquid) {
 		this.totalLiquid = totalLiquid;
 	}
+	public String getIssueDate() {
+		return issueDate;
+	}
+	public void setIssueDate(String issueDate) {
+		this.issueDate = issueDate;
+	}
+	
 	
 	
 }
