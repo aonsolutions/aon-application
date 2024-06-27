@@ -16,6 +16,11 @@ import { AonTabs } from '../../../components/aon-tabs.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { AonMobilePackageList } from './aon-mobile-package-list.js';
+import { AonDate } from '../../../components/aon-date.js';
+import { AonNewDate } from '../../../components/aon-new-date.js';
+import { AonNewInput } from '../../../components/aon-new-input.js';
+import { AonNewSelect } from '../../../components/aon-new-select.js';
+import { AonNewNumber } from '../../../components/aon-new-number.js';
 
 export class AonMobileElaboration extends AonElement {
 
@@ -156,7 +161,7 @@ export class AonMobileElaboration extends AonElement {
 		serialNumber.value = this.elaboration.detail.item.serialNumber;
 		table.addCell(serialNumber);
 
-		let serialDate = this.createInput(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
+		let serialDate = this.createDate(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
 		serialDate.value = this.elaboration.detail.item.serialDate;
 		table.addCell(serialDate);
 	}
@@ -241,23 +246,32 @@ export class AonMobileElaboration extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
+		let select = new AonNewSelect();
 		select.id = id;
 		select.title = title;
 		return select;
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
+		let select = new AonNewInput();
 		select.id = id;
 		select.description = title;
+		select.title = title;
 		return select;
 	}
 
+	createDate(id, title) {
+		let date = new AonNewDate();
+		date.id = id;
+		date.title = title;
+		return date;
+	}
+
 	createNumber(id, title) {
-		let number = new AonNumber();
+		let number = new AonNewNumber();
 		number.id = id;
 		number.description = title;
+		number.title = title;
 		return number;
 	}
 }
