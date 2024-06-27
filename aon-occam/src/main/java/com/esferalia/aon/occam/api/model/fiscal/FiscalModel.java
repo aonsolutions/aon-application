@@ -670,5 +670,54 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	// FALTA - PARA LOS APLAZAMIENTOS
+	
+	@Override
+	public int getPlazos() {
+    	return (int) ensureDetail("PLAZOS").getAmount();
+	}
+	
+	@Override
+	public FiscalModel setPlazos(int p) {
+		ensureDetail("PLAZOS").setAmount(p);
+		return this;
+	}
+	
+	// FALTA - LO PONGO COMO STRING A VER SI ES MAS FACIL EL MANEJO, SOLO HABRA QUE CONVERTIRLO CUANDO SE LEA DESDE ALGUN CONTROL ??
+	
+//	@Override
+//	public Date getFechaPlazo() {				
+//		SimpleDateFormat prueba = new SimpleDateFormat("dd/MM/yyyy");
+//		if (AonStringUtils.isNotEmpty(ensureDetail("FECHAPLAZO").getDescription())) {
+//			try {
+//				return prueba.parse(ensureDetail("FECHAPLAZO").getDescription());
+//			} catch (ParseException e) {
+//				return null;
+//			}	
+//		} else {
+//			return null;
+//		}
+//	}
+//	
+//	@Override
+//	public FiscalModel setFechaPlazo(Date d) {
+//		SimpleDateFormat prueba = new SimpleDateFormat("dd/MM/yyyy");
+//		ensureDetail("FECHAPLAZO").setDescription(prueba.format(d));
+//		return this;
+//	}
+	
+	
+	@Override
+	public String getFechaPlazo() {
+		return ensureDetail("FECHAPLAZO").getDescription();		
+	}
+	
+	@Override
+	public FiscalModel setFechaPlazo(String d) {
+		ensureDetail("FECHAPLAZO").setDescription(d);
+		return this;
+	}
+	
+	
 }
 

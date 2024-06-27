@@ -284,9 +284,13 @@ public class ModelMatrixPanel extends FlowPanel {
 								} else {									
 									ibanNrcLabel.setText(cloned.getIban());
 								}								
-								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo
+								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo o si es aplazamiento
 								if (params.isMultiplePresentation()) {
-									if (AonStringUtils.isBlank(ibanNrcLabel.getText())) {
+									if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.APLAZAMIENTO) {
+										ibanNrcLabel.setText("PRESENTACION MANUAL");
+										ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
+										checkBoxEnabled = false;
+									} else if (AonStringUtils.isBlank(ibanNrcLabel.getText())) {
 										if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
 											ibanNrcLabel.setText("FALTA NRC");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
@@ -295,7 +299,7 @@ public class ModelMatrixPanel extends FlowPanel {
 											ibanNrcLabel.setText("FALTA IBAN");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
 											checkBoxEnabled = false;
-										}
+										} 
 									}									 
 								}
 							}	

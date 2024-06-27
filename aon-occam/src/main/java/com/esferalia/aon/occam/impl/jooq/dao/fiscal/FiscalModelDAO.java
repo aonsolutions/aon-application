@@ -297,6 +297,19 @@ public class FiscalModelDAO {
 				fm.getMap().remove("NRC");
 			}
 			
+			// FALTA - Los datos del aplazamiento solo se graban si el tipo de declaración es "Aplazamiento", y están cumplimentados
+			
+			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.APLAZAMIENTO) || (fm.getPlazos() == 0)) {
+				fm.setPlazos(0);
+				fm.getMap().remove("PLAZOS");
+			}
+			
+			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.APLAZAMIENTO) || (fm.getFechaPlazo() == null)) {
+				fm.setFechaPlazo(null);
+				fm.getMap().remove("FECHAPLAZO");
+			}
+			
+			// Insertar o actualizar registro			
 			if (fm.getId() == null) {
 				insert(ctx, fm);
 			} else {

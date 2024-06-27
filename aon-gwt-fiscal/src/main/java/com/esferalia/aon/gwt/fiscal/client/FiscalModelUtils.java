@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.DataResource;
@@ -451,13 +452,14 @@ public class FiscalModelUtils {
 		});
 	}
 	
-	// Resultado 999,99 · <tipo_declaracion> · IBAN <iban> <alias_banco> · NRC <nrc>
+	// Resultado 999,99 · <tipo_declaracion> · Nº de plazos <plazos> · Fecha primer plazo 99/99/9999 · IBAN <iban> <alias_banco> · NRC <nrc>
 	public static String getPaymentInfo(FiscalModel mod) {
 		// Resultado
 		StringBuilder buff = new StringBuilder(AON.MSG.result());
 		buff.append(AonStringUtils.SPACE);
 		double result = AonNumberUtils.todouble(mod.getDeclarationResult());
 		buff.append(AON.FMT.format(result));
+
 		// Tipo Declaración
 		if (mod.getDeclarationResultType() != null) {
 			buff.append(AonStringUtils.SPACE);			
@@ -465,6 +467,25 @@ public class FiscalModelUtils {
 			buff.append(AonStringUtils.SPACE);
 			buff.append(mod.getDeclarationResultType().getDescription());
 		}
+		
+		// FALTA - Solicitud de Aplazamiento: Número de Plazos y Fecha Primer Plazo
+		if (mod.getDeclarationResultType() != null && mod.getDeclarationResultType() == FiscalModelDeclarationType.APLAZAMIENTO) {
+			if (mod.getPlazos() != 0) {
+				buff.append(AonStringUtils.SPACE);
+				buff.append(AonStringUtils.BULLET);
+				buff.append(AonStringUtils.SPACE);			
+				buff.append("N\u00BA de Plazos ");
+				buff.append(mod.getPlazos());
+			}
+			if (AonStringUtils.isNotEmpty(mod.getFechaPlazo())) {
+				buff.append(AonStringUtils.SPACE);
+				buff.append(AonStringUtils.BULLET);
+				buff.append(AonStringUtils.SPACE);			
+				buff.append("Fecha Primer Plazo ");
+				buff.append(mod.getFechaPlazo());				
+			}
+		}
+		
 		// IBAN
 		if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {			
 			buff.append(AonStringUtils.SPACE);
@@ -475,6 +496,7 @@ public class FiscalModelUtils {
 			buff.append(AonStringUtils.SPACE);
 			buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
 		}
+		
 		// NRC
 		if (AonStringUtils.isNotBlank(mod.getNrc())) {
 			buff.append(AonStringUtils.SPACE);
@@ -483,6 +505,7 @@ public class FiscalModelUtils {
 			buff.append("NRC ");
 			buff.append(mod.getNrc());
 		}
+		
 		return buff.toString();
 	}
 	
