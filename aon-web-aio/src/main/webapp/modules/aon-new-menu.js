@@ -278,18 +278,18 @@ export class AonNewMenu extends AonElement {
             header6.style.color = "var(--aonHeaderButtonColor)";
             
         }
-
-        let appsDiv = this.getElement("aonMenuLeftop-applications");
-        if(app.app == "accounting")
-            appsDiv.style.backgroundColor = "var(--aonBlue)";
-        else
-            appsDiv.style.backgroundColor = app.color;
-        if(app.color == "var(--aonTopMenuAvailable)"){
-            header.style.backgroundColor = "var(--aonBlack)";
-            appsDiv.style.backgroundColor = "var(--aonBlack)";
-        }
-        if(app.app == "home")
-            appsDiv.style.backgroundColor = header.style.backgroundColor;
+		let appsDiv = this.getElement("aonMenuLeftop-applications");
+		if(app.app == "accounting")
+			appsDiv.style.backgroundColor = "var(--aonBlue)";
+		else
+			appsDiv.style.backgroundColor = app.color;
+		if(app.color == "var(--aonTopMenuAvailable)"){
+			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
+			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
+		}
+		if(app.app == "home" || app.app == "applications")
+			appsDiv.style.backgroundColor = header.style.backgroundColor;
+		
 	}
 	
 
@@ -679,7 +679,7 @@ export class AonNewMenu extends AonElement {
 						if(this.isApp(app))
 							div.style.color = "var(--aonBlack)";
 						if(app.app == "accounting"){
-							img.style.color = "var(--aonBlue)";
+							document.documentElement.style.setProperty('--aonAccounting', 'var(--aonBlue)');
 						}else if(app.color == "var(--aonTopMenuAvailable)")						
 							img.style.color = "black";
 					}
@@ -690,7 +690,9 @@ export class AonNewMenu extends AonElement {
 					if(LS.isDarkTheme()){
 						if(this.isApp(app))
 							div.style.color = "var(--aonTopMenuAvailable)";
-						if(app.color == "var(--aonTopMenuAvailable)")
+						if(app.app == "accounting"){
+							document.documentElement.style.setProperty('--aonAccounting', 'var(--aonWhite)');
+						}else if(app.color == "var(--aonTopMenuAvailable)")
 							img.style.color = "var(--aonTopMenuAvailable)";
 					}
 				});

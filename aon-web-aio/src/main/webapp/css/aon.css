@@ -58,7 +58,10 @@
   --aonAccountingBackground: rgba(0, 36, 105, .2);
   
   --aonHeaderBackground: #f0f0f0;
+
   --aonHeaderButtonColor: rgb(95, 99, 104);
+
+  --aonHeaderBackgroundAvailable: var(--aonBlue);
 
 }
 
