@@ -469,7 +469,7 @@ public class FiscalModelUtils {
 		}
 		
 		// FALTA - Solicitud de Aplazamiento: Número de Plazos y Fecha Primer Plazo
-		if (mod.getDeclarationResultType() != null && mod.getDeclarationResultType() == FiscalModelDeclarationType.APLAZAMIENTO) {
+		if (mod.getDeclarationResultType() != null && mod.getDeclarationResultType() == FiscalModelDeclarationType.DEFERRAL) {
 			if (mod.getPlazos() != 0) {
 				buff.append(AonStringUtils.SPACE);
 				buff.append(AonStringUtils.BULLET);

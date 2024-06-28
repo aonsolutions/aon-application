@@ -299,12 +299,12 @@ public class FiscalModelDAO {
 			
 			// FALTA - Los datos del aplazamiento solo se graban si el tipo de declaración es "Aplazamiento", y están cumplimentados
 			
-			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.APLAZAMIENTO) || (fm.getPlazos() == 0)) {
+			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.DEFERRAL) || (fm.getPlazos() == 0)) {
 				fm.setPlazos(0);
 				fm.getMap().remove("PLAZOS");
 			}
 			
-			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.APLAZAMIENTO) || (fm.getFechaPlazo() == null)) {
+			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.DEFERRAL) || (fm.getFechaPlazo() == null)) {
 				fm.setFechaPlazo(null);
 				fm.getMap().remove("FECHAPLAZO");
 			}

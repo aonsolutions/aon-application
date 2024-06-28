@@ -542,7 +542,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester()) || 
 			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2)) {
 			validateLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
-			sendLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().getDeclarationResultType() != FiscalModelDeclarationType.APLAZAMIENTO && getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction()));
+			sendLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().getDeclarationResultType() != FiscalModelDeclarationType.DEFERRAL && getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction()));
 			checkLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction()));
 			viewDocumentLink.setVisible(getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction()));
 			uploadPDFLink.setVisible(viewDocumentLink.isVisible());

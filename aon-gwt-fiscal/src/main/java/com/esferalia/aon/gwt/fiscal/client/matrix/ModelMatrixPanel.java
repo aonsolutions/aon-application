@@ -286,7 +286,7 @@ public class ModelMatrixPanel extends FlowPanel {
 								}								
 								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo o si es aplazamiento
 								if (params.isMultiplePresentation()) {
-									if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.APLAZAMIENTO) {
+									if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEFERRAL) {
 										ibanNrcLabel.setText("PRESENTACION MANUAL");
 										ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
 										checkBoxEnabled = false;
