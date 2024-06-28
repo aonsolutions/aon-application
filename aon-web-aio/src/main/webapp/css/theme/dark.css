@@ -4,6 +4,13 @@
 	--aonTopMenuSpecial: var(--aonClearBlue);
 
 	--aonBlack: black;
+
+	--aonNewColor: red;
+
+	--aonHeaderButtonColor: var(--aonWhite);
+
+	--aonHeaderBackgroundAvailable: black;
+
 }
 .aonHeader {
 	--aonAccounting: var(--aonBlue);
