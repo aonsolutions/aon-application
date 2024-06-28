@@ -43,6 +43,10 @@ public class JsonUtils {
 	public static String optString(JSONObject json, String key ) {
 		return json != null ? json.optString(key, "") : "";
 	}
+
+	public static boolean isJSONObject(JSONObject json, String key) {
+		return getJSONObject(json, key) != null;
+	}
 	
 	public static JSONObject getJSONObject(JSONObject json, String key) {
 		return json != null && json.opt(key) != null 
@@ -106,6 +110,12 @@ public class JsonUtils {
 	public static Byte getByte(JSONObject json, String key ) {
 		if(json == null) return null;
 		Number opt = json.optNumber(key, null);
+		return null == opt ? 0 : AonNumberUtils.toInteger(opt).byteValue();
+	}
+	
+	public static byte getbyte(JSONObject json, String key ) {
+		if(json == null) return 0;
+		Number opt = json.optNumber(key, 0);
 		return null == opt ? 0 : AonNumberUtils.toInteger(opt).byteValue();
 	}
 	

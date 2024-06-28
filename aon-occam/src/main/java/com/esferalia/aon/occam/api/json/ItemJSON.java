@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -52,12 +53,20 @@ public class ItemJSON {
 
 				.setInternet(JsonUtils.getboolean(json, IJsonNames.INTERNET))
 
-				.setPackFormatTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_FORMAT_TAG)))
+				.setPackFormatTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_FORMAT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_FORMAT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_FORMAT_TAG)))
 				.setPackUnits(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS))
-				.setPackUnitsTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_UNITS_TAG)))
+				.setPackUnitsTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_UNITS_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_UNITS_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS_TAG)))
 				.setPackMeasurement(JsonUtils.getdouble(json, IJsonNames.PACK_MEASUREMENT))
-				.setPackMeasurementTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_MEASUREMENT_TAG)))
-				.setStockUnitTag(TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.STOCK_UNIT_TAG)))				
+				.setPackMeasurementTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_MEASUREMENT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_MEASUREMENT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_MEASUREMENT_TAG)))
+				.setStockUnitTag(JsonUtils.isJSONObject(json, IJsonNames.STOCK_UNIT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.STOCK_UNIT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.STOCK_UNIT_TAG)))				
 				.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
 				.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 				.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
