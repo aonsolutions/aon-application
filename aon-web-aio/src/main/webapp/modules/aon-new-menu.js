@@ -249,7 +249,7 @@ export class AonNewMenu extends AonElement {
         else{
             header.style.removeProperty("background-color");
 
-            let apps = this.getElement("aonMenuListAppImg-applications");
+            let apps = this.getElement("aonMenuListAppImgTop-applications");
             apps.style.color = "var(--aonHeaderButtonColor)";
 
             let headerapp = this.getElement("aonHeaderApp");
@@ -586,7 +586,7 @@ export class AonNewMenu extends AonElement {
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.id = `aonMenuListAppImg-${app.app}`;
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.innerHTML = app.symbol;
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;
@@ -597,14 +597,14 @@ export class AonNewMenu extends AonElement {
 		} else if (app.icon) {
 			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = style?.color || appColor;
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
-			img.id = `aonMenuListAppImg-${app.app}`;
+			img.id = `aonMenuListAppImgTop-${app.app}`;
 			img.style.width = '24px';
 			img.src = app.logo;
 			img.title = app.title;
@@ -673,8 +673,8 @@ export class AonNewMenu extends AonElement {
 				});
 			} else{
 				div.addEventListener('mouseover', () => {
-					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
-					div.style.backgroundColor = 'var(--aonWhite)';
+					let img = this.getElement(`aonMenuListAppImgTop-${app.app}`);
+					div.style.backgroundColor = 'white';
 					if(LS.isDarkTheme()){
 						if(this.isApp(app))
 							div.style.color = "var(--aonBlack)";
@@ -685,7 +685,7 @@ export class AonNewMenu extends AonElement {
 					}
 				});
 				div.addEventListener('mouseout', () => {
-					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
+					let img = this.getElement(`aonMenuListAppImgTop-${app.app}`);
 					div.style.backgroundColor = 'transparent';
 					if(LS.isDarkTheme()){
 						if(this.isApp(app))
