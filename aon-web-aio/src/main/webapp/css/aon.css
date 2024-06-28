@@ -32,6 +32,8 @@
   --sal: env(safe-area-inset-left);
 
   --aonNewColor: red;
+  --aonRightPanelColor: rgb(250, 249, 248);
+  --aonCardColor: white;
 
 
   --aonTopMenuAvailable : var(--aonBlue);

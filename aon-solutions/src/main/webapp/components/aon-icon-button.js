@@ -178,7 +178,7 @@ export class AonIconButton extends AonElement {
       this.style.width = "0px";
       this.style.display = "none";
     }
-
+/*
     let buttons = [
       "aonHeaderHelpButtonIconButton",
       "aonHeaderConfigButtonIconButton",
@@ -190,9 +190,9 @@ export class AonIconButton extends AonElement {
     let header = this.getElement("aonHeaderWeb");
 
     buttons.forEach((buttonId) => {
-      let button = document.getElementById(buttonId); // Obtener el botón por su ID
+      let button = document.getElementById(buttonId); 
     
-      if (button) { // Asegurarse de que el botón existe
+      if (button) { 
         button.addEventListener("mouseover", () => {
           button.style.backgroundColor = "this.getBackgroundHover()"; 
         });
@@ -212,7 +212,7 @@ export class AonIconButton extends AonElement {
         });
       }
     });
-    
+*/ 
     
          
       
