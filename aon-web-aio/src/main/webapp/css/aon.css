@@ -31,6 +31,8 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
+  --aonNewColor: red;
+
 
   --aonTopMenuAvailable : var(--aonBlue);
   --aonTopMenuNotAvailable : var(--aonGray);

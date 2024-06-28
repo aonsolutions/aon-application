@@ -674,7 +674,7 @@ export class AonNewMenu extends AonElement {
 			} else{
 				div.addEventListener('mouseover', () => {
 					let img = this.getElement(`aonMenuListAppImg-${app.app}`);
-					div.style.backgroundColor = 'white';
+					div.style.backgroundColor = 'var(--aonWhite)';
 					if(LS.isDarkTheme()){
 						if(this.isApp(app))
 							div.style.color = "var(--aonBlack)";
