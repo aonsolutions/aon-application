@@ -659,7 +659,7 @@ export class AonHeader extends AonElement {
 		let texts = [ 
 			this.getElement('aonHeaderApp'),
 			this.getElement('aonHeaderCompanyName'),
-			this.getElement('aonMenuListAppImg-applications')
+			this.getElement('aonMenuListAppImgTop-applications')
 		];
 		let imgs = [ 
 			this.getElement('aonLogo')

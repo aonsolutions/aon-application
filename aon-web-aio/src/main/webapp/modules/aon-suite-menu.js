@@ -315,6 +315,7 @@ export class AonSuiteMenu extends AonElement {
             opt.options.forEach((v) =>{
                 divGeneral.appendChild(this.buildCardData(v));
             })
+
         
             card.setContent(divGeneral); 
         }
