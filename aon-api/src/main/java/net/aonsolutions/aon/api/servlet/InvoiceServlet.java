@@ -561,6 +561,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.NUMBER, jsonInvoice.optString(IJsonNames.NUMBER));
 		json.put(IJsonNames.SERIE, jsonInvoice.optString(IJsonNames.SERIE));
 		json.put(IJsonNames.EMAIL, jsonInvoice.optBoolean(IJsonNames.EMAIL));
+		json.put(IJsonNames.DOCUMENT, jsonInvoice.optBoolean(IJsonNames.DOCUMENT));
 		if(rawdoc.getMimeType() != null){
 	        JSONObject data = new JSONObject();
 	        data.put("domain_name", api.getDomain().getName());
