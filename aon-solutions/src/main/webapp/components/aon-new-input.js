@@ -343,6 +343,8 @@ export class AonNewInput extends AonElement {
 
     setValue(value) {
         this.value = value;
+        let input = this.getElement(this.INPUT);
+        if(input) input.value = value;
     }
 
     isRequired() {
