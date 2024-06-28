@@ -179,7 +179,7 @@
 	
 					</aon:scroll>
 	
-					<aon:div id="customerFilterContainer" style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 4; display: none; scrollbar-width:none; border: 2px solid #000"  >
+					<aon:div id="customerFilterContainer" styleClass="aonFilterPopup" style="display:none" >
 							<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/filterEx.xhtml" >
 								<ui:param name="searchReRender" value="customerListContainer,customerToolbarContainer" />
 								<ui:define name="moreSearchBasicContent">
