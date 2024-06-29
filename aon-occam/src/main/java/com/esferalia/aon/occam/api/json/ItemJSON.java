@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -111,12 +112,24 @@ public class ItemJSON {
 				.put(IJsonNames.PURCHASE_PRICE, item.getPurchasePrice())
 				.put(IJsonNames.EXPENSES_FIXED, item.getExpensesFixed())
 				.put(IJsonNames.INTERNET, item.isInternet())
-				.put(IJsonNames.PACK_FORMAT_TAG, TagJSON.toJSON(item.getPackFormatTag()))
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.PACK_FORMAT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackFormatTag())
+						: item.getPackFormatTag().getId())
 				.put(IJsonNames.PACK_UNITS, item.getPackUnits())
-				.put(IJsonNames.PACK_UNITS_TAG, TagJSON.toJSON(item.getPackUnitsTag()))
+				// TODO  udapa probably fix temporary
+				.put(IJsonNames.PACK_UNITS_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackUnitsTag())
+						: item.getPackUnitsTag().getId())
 				.put(IJsonNames.PACK_MEASUREMENT, item.getPackMeasurement())
-				.put(IJsonNames.PACK_MEASUREMENT_TAG, TagJSON.toJSON(item.getPackMeasurementTag()))
-				.put(IJsonNames.STOCK_UNIT_TAG, TagJSON.toJSON(item.getStockUnitTag()))
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.PACK_MEASUREMENT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackMeasurementTag())
+						: item.getPackMeasurementTag().getId())
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.STOCK_UNIT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getStockUnitTag())
+						: item.getStockUnitTag().getId())
 				.put(IJsonNames.CREATION_USER, item.getCreationUser())
 				.put(IJsonNames.CREATION_DATE, item.getCreationDate())
 				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
@@ -124,5 +137,10 @@ public class ItemJSON {
 				.put(IJsonNames.ITEM_COMPOSITION, ItemCompositionJSON.toJSON(item.getItemComposition()))
 				.put(IJsonNames.REMOVED, item.isRemoved())
 				;
+	}
+	
+	
+	private static boolean isUdapa(Domain domain) {
+		return domain != null && domain.getId().equals(3049) && domain.getName().equals("udapa.aonsolutions.net");
 	}
 }
