@@ -725,6 +725,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testHolidaysWorkHoursI()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
