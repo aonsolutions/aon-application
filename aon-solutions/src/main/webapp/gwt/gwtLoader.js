@@ -125,6 +125,7 @@
 			iframe.style.inset = 'none';
 			iframe.src = 'about:blank';
 			iframe.onload = () => {
+				
 				// loadDomainFunctions
 				let iwindow = iframe.contentWindow;			
 				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
@@ -133,23 +134,76 @@
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
 
 				// inject 'gwt' script 
-				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;			
-
-				idocument.addEventListener("DOMContentLoaded", function(event) {
-				  console.log("DOM fully loaded and parsed");
-				});			
+				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
+				
+				for (const sheet of document.styleSheets) {
+					if ( sheet?.href?.includes('fonts.googleapis.com') ){
+						let link = idocument.createElement('link');
+						link.rel= 'stylesheet';
+						link.type= 'text/css';
+						link.href = sheet.href;
+						idocument.head.appendChild(link);
+					}
+					
+				}	
 
 				let script = idocument.createElement(TAG.SRIPT);
 				script.type = "text/javascript";
 				script.defer = "true";
-				script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
-				idocument.head.appendChild(script);
+				script.text = `
+				//<![CDATA[ 
 
-				// TODO: Here triggerModuleStart ?	
+					function startModule() {
+					    if (document.createElement && document.getElementsByTagName) {
+					      var script = document.createElement('script');
+					      script.type = 'text/javascript';
+					      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}';
+						  script.defer = true;
+						  document.head.appendChild(script);
+						  triggerModuleStart();
+						}
+					}				
+
+					function triggerModuleStart(){
+					    try{
+						    ${module}.onInjectionDone('${module}');
+						    if ( !document.createEventObject ) {
+						        var evt = document.createEvent("HTMLEvents");
+						        evt.initEvent("DOMContentLoaded", true, true);
+						        document.dispatchEvent(evt);
+						     }
+					    } catch ( e ) {
+					    	//window.setTimeout('triggerModuleStart()', 100 );
+					   } 
+					}
+					
+					startModule();
+				//]]>
+				`;
+
+				idocument.head.appendChild(script);
+/*	
+				let gwtScript = idocument.createElement(TAG.SRIPT);
+				gwtScript.type = "text/javascript";
+				gwtScript.defer = "true";
+				gwtScript.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
+				idocument.head.appendChild(gwtScript);
+*/				
+				
+				fetch('css/gwt.css')
+				.then(response => response.text())
+				.then((text) => {
+					let style = idocument.createElement('style');
+					style.textContent = text;
+					idocument.body.appendChild(style)
+				});
+
+								
+
 			}
+
 			
 			document.getElementById(panel)?.appendChild(iframe);
-			
 
 		}
 

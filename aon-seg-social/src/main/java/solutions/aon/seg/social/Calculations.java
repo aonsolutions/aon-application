@@ -445,6 +445,10 @@ class Calculations {
 									HtmlTableRow nafTableRow = (HtmlTableRow) nafRow.get();
 									htmlPage = nafTableRow.getCell(0).getElementsByTagName(HtmlAnchor.TAG_NAME).getFirst().click();
 								}
+								else {
+									System.out.println("NOT FOUND : " + naf + " " + liquidationType);
+									continue;
+								}
 							}
 						}
 						else {
@@ -456,8 +460,13 @@ class Calculations {
 						if (htmlPage.querySelector("li[title='Error']") == null) {
 
 							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<>();
-
+							
 							HtmlForm nafMonthForm = (HtmlForm) htmlPage.getElementById("idformularioDatosGlobalesTrabajadorMes");
+							if ( nafMonthForm == null ) {
+								System.out.println("ERROR: " + naf);
+								continue;
+							}
+								
 							HtmlTableBody firstTable = nafMonthForm.querySelector("table>tbody");
 							
 							if ( firstTable == null ) {

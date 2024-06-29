@@ -1,0 +1,94 @@
+/**
+ * The file contains styles for GWT widgets in the 365 theme.
+ */
+ 
+.gwt-Selector {
+  color: rgb(66, 66, 66);
+  text-rendering: optimizeLegibility;
+  
+  font-family: "Noto Sans", sans-serif !important;
+  font-optical-sizing: auto;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.material-icons {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-font-feature-settings: 'liga';
+  -moz-osx-font-smoothing: grayscale;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.aon_search_panel{
+	display:none;
+}
+
+.dataGridWidget table {
+	border-spacing: 0px 10px;
+	padding-right:10px;
+	padding-left:10px;
+}
+
+.dataGridHeader {
+	font-size: 12px;
+	font-weight: 400px;
+	border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+.dataGridOddRow,
+.dataGridEvenRow{
+	height: 54px;
+	font-size: 12px;
+	
+	background-color: transparent;
+}
+
+.dataGridHoveredRow {
+	border:none;
+	background-color: rgb(232,245,245);
+}
+
+.dataGridOddRowCell,
+.dataGridEvenRowCell {
+	border-left: none;
+	border-right: none;
+	border-top: 1px solid rgb(221, 221, 221);
+	border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+.dataGridFirstColumn {
+	border-right: none;
+	border-left: 1px solid rgb(221, 221, 221);
+	border-radius: 5px 0px 0px 5px ;
+}
+
+.dataGridLastColumn {
+	border-left: none;
+	border-right: 1px solid rgb(221, 221, 221);
+	border-radius: 0px 5px 5px 0px ;
+}
+
