@@ -14,14 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
-import org.htmlunit.TextPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
@@ -508,6 +506,9 @@ class Calculations {
 							
 							DomNodeList<DomNode> anchors = htmlPage.querySelectorAll("a[href*=\"CALCULOS_TRAMO\"]");
 							
+							Period employeePeriod = 
+							new Period(null, null);
+							
 							for (int i=0; i<anchors.size(); i++) {
 								
 								HtmlAnchor rad = (HtmlAnchor) anchors.get(i);
@@ -545,6 +546,14 @@ class Calculations {
 								.setQuoteDays(quoteDays)
 								;
 								
+								employeePeriod
+								.setEndDate( toDate)
+								.setHours(sum(hours, employeePeriod.getHours()))
+								.setBaseCC(sum(baseCC, employeePeriod.getBaseCC()))
+								.setBaseAT(sum(baseAT, employeePeriod.getBaseAT()))
+								.setQuoteDays(sum(quoteDays, employeePeriod.getQuoteDays()))
+								.setStartDate(fromDate != null ? fromDate : employeePeriod.getStartDate());
+								
 								firstTable = htmlPage.querySelector("table>tbody");
 								trList = firstTable.querySelectorAll("tr:not(.cabecera)");
 								
@@ -578,15 +587,22 @@ class Calculations {
 									
 								});
 								
-								if ( calcs.isEmpty() ) {
-									calcs.putAll(employeeCalcs);
+								//if ( calcs.isEmpty() ) {
+								//	calcs.putAll(employeeCalcs);
+								//}
+								if ( !calcs.isEmpty() ) {
+									periods.put(period, calcs);
 								}
-								
-								periods.put(period, calcs);
 								
 								htmlPage = htmlPage.getElementById("paginaVolver").click();
 								anchors = htmlPage.querySelectorAll("a[href*=\"CALCULOS_TRAMO\"]");
 							}
+							
+							// only null 'global' period. 
+							if ( periods.size() == 1) {
+								periods.put(employeePeriod, employeeCalcs);
+							}
+							
 							nafMap.put(naf, periods);
 							callback.accept(liquidationType, naf, periods);
 							
@@ -704,6 +720,15 @@ class Calculations {
 			}
 		}
 		return null;
+	}
+	
+	private static Double sum(Double d1, Double d2) {
+		if ( d1 == null )
+			return d2;
+		if ( d2 == null )
+			return d1;
+		return d1 + d2;
+		
 	}
 	
 	
