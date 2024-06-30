@@ -476,8 +476,8 @@ public class Cra {
 			if(typeCRA == craType) {
 				
 				// Accumulate craAmount (important if exists amount)
-				// Mirar amount por que en quote a veces está la base y eso es mucho mas que la percepcion en si
-				craAmount += amount > 0 ? amount : quote;
+				// Mirar amount (siempre para pagas extras) por que en quote a veces está la base y eso es mucho mas que la percepcion en si
+				craAmount += craType.equals(PaymentType.CRA_0004) || craType.equals(PaymentType.CRA_0005) ? quote : (amount > 0 ? amount : quote);
 				
 				// Last iteration
 				if(i+1 == salaryPaymentRecords.size()) {
@@ -496,7 +496,8 @@ public class Cra {
 				typeCRA = craType;
 				
 				// Update craAmount
-				craAmount = quote > 0 ? quote : amount;
+				craAmount = 0.00;
+				craAmount += craType.equals(PaymentType.CRA_0004) || craType.equals(PaymentType.CRA_0005) ? quote : (amount > 0 ? amount : quote);
 				
 				// Last iteration
 				if(i+1 == salaryPaymentRecords.size()) {
