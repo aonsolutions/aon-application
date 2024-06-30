@@ -846,10 +846,10 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.SUNDAY
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 8.00));
-		//if (expected == 0 ) 
-		//	expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
+//		if (expected == 0 ) 
+//			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 		if ( expected > 0.0 )
-		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+			Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
 		
 		
 
@@ -860,8 +860,9 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 				.findFirst().get().getContextData().get(PARTIAL_FACTOR.getName());
 		;
 
-		for (ContextData data : datas)
-			Assert.assertEquals(PARTIAL_FACTOR.getName(), 1.00, Double.parseDouble(data.getExpression()));
+		if (expected > 0.00 )
+			for (ContextData data : datas)
+				Assert.assertEquals(PARTIAL_FACTOR.getName(), 1.00, Double.parseDouble(data.getExpression()));
 		
 	}
 

@@ -1,6 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { CONSTANT, TAG, EVENT } from "aonsolutions/environments/environments.js";
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonRightPanel extends AonElement {
 
@@ -46,9 +47,10 @@ export class AonRightPanel extends AonElement {
     }
 
     build(){
+
         let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
 		rightPanel.style.width = '320px';
-		rightPanel.style.backgroundColor = '#faf9f8';
+		rightPanel.style.backgroundColor = "var(--aonRightPanelColor)";
 		rightPanel.style.visibility = "hidden";
         this.appendChild(rightPanel);
 
@@ -104,6 +106,21 @@ export class AonRightPanel extends AonElement {
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
 			this.close();
 		});
+
+
+        if(LS.isDarkTheme()){
+            this.style.color = "white";
+            let close = this.getElement("aonRightPanelCloseButtonIconButton");
+            let edit = this.getElement("aonRightPanelEditButtonIconButton");
+            let config = this.getElement("aonRightPanelConfigButtonIconButton")
+            let help = this.getElement("aonRightPanelHelpButtonIconButton");
+            let noti = this.getElement("aonRightPanelNotificationButtonIconButton");
+            close.style.color = "white";
+            edit.style.color = "white";
+            config.style.color = "white";
+            help.style.color = "white";
+            noti.style.color = "white";
+        }
 
         let title = this.createElement(TAG.H1);
 		title.id = this.TITLE;
