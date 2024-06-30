@@ -194,12 +194,15 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -209,6 +212,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
@@ -6542,8 +6546,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					.toArray()[0];
 
 			// Create employee object
-			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
-					eemployeeAux.getIpf());
+			solutions.aon.seg.social.object.Employee employee = createEmployee(new Domain().setId(domainId).setName(domainName), new User().setLogin(userLogin), employeeContractInfo, eemployeeAux.getIpf());
 
 			System.out.println(employee);
 
@@ -6586,7 +6589,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					.toArray()[0];
 
 			// Create employee object
-			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
+			solutions.aon.seg.social.object.Employee employee = createEmployee(new Domain().setId(domainId).setName(domainName), new User().setLogin(userLogin), employeeContractInfo,
 					eemployeeAux.getIpf());
 
 			System.out.println("sendEmployeeBaja \n" + employee.toString());
@@ -7493,7 +7496,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	// ------------------------------------------------- Auxiliar Methods
 
-	private solutions.aon.seg.social.object.Employee createEmployee(EmployeeContractInfo employeeContractInfo, String ipf) {
+	private solutions.aon.seg.social.object.Employee createEmployee(Domain domain, User user, EmployeeContractInfo employeeContractInfo, String ipf) {
 
 		EmployeeBuilder builder = new EmployeeBuilder();
 
@@ -7521,7 +7524,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setCno(employeeContractInfo.getContractInfo().getCno());
 
 		String agreementColective = employeeContractInfo.getContractInfo().getAgreementColective();
-		agreementColective = null == agreementColective ? "60888888888888" : agreementColective;
+		agreementColective = null == agreementColective ? getDefaultAgreement(domain, user, employeeContractInfo.getContractInfo().getWorkplaceId()) : agreementColective;
 
 		builder.setColec(agreementColective);
 		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
@@ -7549,6 +7552,49 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setCollective(employeesColective);
 
 		return builder.build();
+	}
+	
+	private String getDefaultAgreement(Domain domain, User user, Integer workplaceId) {
+		if(null != workplaceId) {
+			com.esferalia.aon.occam.api.model.Workplace workplace = AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(workplaceId));
+			
+			if(null != workplace) {
+				PayrollWorkplace parollWorkplace = AON.getPayrollWorkpalce(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkplaceProperty().eq(workplace.getId())));
+			
+				if(null != parollWorkplace.getAgreement()) {
+					try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+						AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(com.esferalia.aon.jooq.tables.Agreement.AGREEMENT)
+							.where(com.esferalia.aon.jooq.tables.Agreement.AGREEMENT.ID.eq(parollWorkplace.getAgreement()))
+							.fetchOne();
+						
+						if(null == agreementRecord) return getEnterpriseAgreement(domain, user);
+						else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? getEnterpriseAgreement(domain, user) : agreementRecord.getSsNumber();  
+					} catch (Exception e) {
+						return getEnterpriseAgreement(domain, user);
+					}
+				} else return getEnterpriseAgreement(domain, user);
+			} else return getEnterpriseAgreement(domain, user);
+			
+		} else return getEnterpriseAgreement(domain, user);
+	}
+	
+	private String getEnterpriseAgreement(Domain domain, User user) {
+		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
+		
+		if(enterpriseAgreementOpt.isEmpty()) return "60888888888888";
+		else {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+				AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(com.esferalia.aon.jooq.tables.Agreement.AGREEMENT)
+					.where(com.esferalia.aon.jooq.tables.Agreement.AGREEMENT.ID.eq(Integer.parseInt(enterpriseAgreementOpt.get().getExpression())))
+					.fetchOne();
+				
+				if(null == agreementRecord) return "60888888888888";
+				else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? "60888888888888" : agreementRecord.getSsNumber();  
+			} catch (Exception e) {
+				return "60888888888888";
+			}
+		}
 	}
 
 	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
