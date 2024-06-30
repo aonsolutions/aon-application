@@ -460,72 +460,77 @@ export class AonApplication extends AonElement {
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
       : this.getElement(this.SIDENAV);
-    let div = this.createElement(TAG.DIV);
-    div.id = sidenav.id + data.id;
-    div.style.paddingBottom = "10px";
-    sidenav.appendChild(div);
 
-    if(data.button && !this.isMobile()) {
-      let buttonDiv = this.createElement(TAG.DIV);
-      buttonDiv.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-      buttonDiv.style.right = "0px";
-      buttonDiv.style.position = "absolute";
-      let button = new AonIconButton();
-      button.icon = data.button.icon;
-      button.id = div.id + data.button.id;
-      buttonDiv.appendChild(button);
-      div.appendChild(buttonDiv);
-      button.addEventListener(EVENT.CLICK, data.button.fn);
-    }
-    if (newButton && !this.isMobile()) {
-      let addButton = this.createElement(TAG.DIV);
-      addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-      addButton.style.right = "0px";
-      addButton.style.position = "absolute";
-      let aonIconButton = new AonIconButton();
-      aonIconButton.icon = "add";
-      aonIconButton.id = div.id + "NewButton";
-      addButton.appendChild(aonIconButton);
-      div.appendChild(addButton);
-      this.getElement(div.id + "NewButton").addEventListener(EVENT.CLICK, newButton);
-    }
+    let div = this.getElement(sidenav.id + data.id);
+    if(!div){
+      div = this.createElement(TAG.DIV);
+      div.id = sidenav.id + data.id;
+      div.style.paddingBottom = "10px";
+      sidenav.appendChild(div);
 
-    let sidenavTitle = this.createElement(TAG.DIV);
-    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
-    sidenavTitle.id = "aonSidenavTitle"+data.id;
-    sidenavTitle.title = data.name;
-    sidenavTitle.style.cursor = "pointer";
-    sidenavTitle.style.userSelect = "none";
-    sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
-
-    let arrowTitleSpan = this.createElement(TAG.SPAN);
-    arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
-    arrowTitleSpan.style.borderColor = data.app && data.app.color ? data.app.color : 'black';
-
-    let arrowTitle = this.createElement("i");
-    arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
-    arrowTitle.className = "material-icons aonVerticalMiddle";
-    sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
-
-    sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
-      const selectDiv = this.getElement(sidenav.id + data.id + "SelectDiv");
-      if(selectDiv){
-        selectDiv.classList.toggle(CSS.ELEMENT_HIDDEN);
-        if(selectDiv.classList.contains(CSS.ELEMENT_HIDDEN)){
-          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
-          sidenavTitle.style.marginBottom = "0";
-        } else {
-          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
-          sidenavTitle.style.marginBottom = "10px";
-        }
+      if(data.button && !this.isMobile()) {
+        let buttonDiv = this.createElement(TAG.DIV);
+        buttonDiv.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
+        buttonDiv.style.right = "0px";
+        buttonDiv.style.position = "absolute";
+        let button = new AonIconButton();
+        button.icon = data.button.icon;
+        button.id = div.id + data.button.id;
+        buttonDiv.appendChild(button);
+        div.appendChild(buttonDiv);
+        button.addEventListener(EVENT.CLICK, data.button.fn);
       }
-    });  
+      if (newButton && !this.isMobile()) {
+        let addButton = this.createElement(TAG.DIV);
+        addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
+        addButton.style.right = "0px";
+        addButton.style.position = "absolute";
+        let aonIconButton = new AonIconButton();
+        aonIconButton.icon = "add";
+        aonIconButton.id = div.id + "NewButton";
+        addButton.appendChild(aonIconButton);
+        div.appendChild(addButton);
+        this.getElement(div.id + "NewButton").addEventListener(EVENT.CLICK, newButton);
+      }
 
-    let span = this.createElement(TAG.SPAN);
-    span.innerHTML = data.name.toUpperCase();
-    sidenavTitle.appendChild(span);
+      let sidenavTitle = this.createElement(TAG.DIV);
+      sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+      sidenavTitle.id = "aonSidenavTitle"+data.id;
+      sidenavTitle.title = data.name;
+      sidenavTitle.style.cursor = "pointer";
+      sidenavTitle.style.userSelect = "none";
+      sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
 
-    div.appendChild(sidenavTitle);
+      let arrowTitleSpan = this.createElement(TAG.SPAN);
+      arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
+      arrowTitleSpan.style.borderColor = data.app && data.app.color ? data.app.color : 'black';
+
+      let arrowTitle = this.createElement("i");
+      arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+      arrowTitle.className = "material-icons aonVerticalMiddle";
+      sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
+
+      sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+        const selectDiv = this.getElement(sidenav.id + data.id + "SelectDiv");
+        if(selectDiv){
+          selectDiv.classList.toggle(CSS.ELEMENT_HIDDEN);
+          if(selectDiv.classList.contains(CSS.ELEMENT_HIDDEN)){
+            arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+            sidenavTitle.style.marginBottom = "0";
+          } else {
+            arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+            sidenavTitle.style.marginBottom = "10px";
+          }
+        }
+      });  
+
+      let span = this.createElement(TAG.SPAN);
+      span.innerHTML = data.name.toUpperCase();
+      sidenavTitle.appendChild(span);
+
+      div.appendChild(sidenavTitle);
+    }
+    
     return div;
   }
 
@@ -536,35 +541,39 @@ export class AonApplication extends AonElement {
       
       if(div){
 
-        let selectDiv = this.createElement(TAG.DIV);
-        selectDiv.id = div.id + "SelectDiv";
-        selectDiv.classList.add("aonAppMenuSidenavListBeta");
-        selectDiv.style.display = "flex";
-        selectDiv.style.gap = ".5rem";
-        selectDiv.style.alignItems = "center";
-        selectDiv.style.border = "1px solid rgb(221, 221, 221)";
-        selectDiv.style.borderRadius = "5px";
-        selectDiv.style.padding = "5px";
-        selectDiv.style.margin = "0 20px";
-        div.appendChild(selectDiv);
+        let selectDiv = this.getElement(div.id + "SelectDiv");
+        if(!selectDiv){
+          selectDiv = this.createElement(TAG.DIV);
+          selectDiv.id = div.id + "SelectDiv";
+          selectDiv.classList.add("aonAppMenuSidenavListBeta");
+          selectDiv.style.display = "flex";
+          selectDiv.style.gap = ".5rem";
+          selectDiv.style.alignItems = "center";
+          selectDiv.style.border = "1px solid rgb(221, 221, 221)";
+          selectDiv.style.borderRadius = "5px";
+          selectDiv.style.padding = "5px";
+          selectDiv.style.margin = "0 20px";
+          div.appendChild(selectDiv);
 
-        if(options){
-          let option = options[0];
-          if(option.icon){
-            let i = this.createElement(TAG.I);
-            i.id = data.id + 'icon';
-            let iconClass = "material-icons";
-            if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
-            if(option.icon_color) {
-              i.title = option.id;
-              i.color = option.icon_color;
-              i.style.color = option.icon_color;
+          // Add icon to select
+          if(options){
+            let option = options[0];
+            if(option.icon){
+              let i = this.createElement(TAG.I);
+              i.id = data.id + 'icon';
+              let iconClass = "material-icons";
+              if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+              if(option.icon_color) {
+                i.title = option.id;
+                i.color = option.icon_color;
+                i.style.color = option.icon_color;
+              }
+              if(option.icon_class) iconClass = option.icon_class;
+              i.className = `${iconClass} aonVerticalMiddle`;
+              i.innerHTML = option.icon;
+    
+              selectDiv.appendChild(i);
             }
-            if(option.icon_class) iconClass = option.icon_class;
-            i.className = `${iconClass} aonVerticalMiddle`;
-            i.innerHTML = option.icon;
-  
-            selectDiv.appendChild(i);
           }
         }
 
@@ -579,12 +588,15 @@ export class AonApplication extends AonElement {
           select.style.width = "100%";
 
           selectDiv.appendChild(select);
+        } else {
+          select.innerHTML = null;
         }
         options.forEach((option, i) => {
           this.addSidenavSelectOptionsValue(data, option, select);
         });
         select.addEventListener('change', () => {
           let yearSelected = JSON.parse(select.value);
+          // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
           let filteredYears = options.filter(option => option.name == yearSelected);
           let optionFiltered = filteredYears[0];
           optionFiltered.fn();
