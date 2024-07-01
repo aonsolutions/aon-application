@@ -141,6 +141,8 @@ public class ItemJSON {
 	
 	
 	private static boolean isUdapa(Domain domain) {
-		return domain != null && domain.getId().equals(3049);
+		return domain != null
+			&& domain.getId() != null
+			&& domain.getId().equals(3049);
 	}
 }
