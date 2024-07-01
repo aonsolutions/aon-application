@@ -7577,6 +7577,12 @@ public class AON {
 		}
 	}
 	
+	public static Rawdoc getRawdocById(String domainName, int domain, String user, Integer id) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocByid(ctx, id);
+		}
+	}
+	
 	public static long getRawdocCount(String domainName, int domain, String user, RawdocFilter filter, boolean ticket) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getFinance().getRawdocCount(ctx, filter, ticket);

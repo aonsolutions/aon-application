@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -236,6 +237,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String total;
 		String global;
 		String contact;
+		Integer id;
 
 		Date from;
 		Date to;
@@ -301,6 +303,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			this.global = global;
 			return this;
 		}
+		
+		public Integer getId() {
+			return id;
+		}
+		
+		public RawdocFilter setId(Integer id) {
+			this.id = id;
+			return this;
+		}
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
@@ -326,6 +337,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/rawdoc_new_portal_count":
 				response(req, resp, getRawdocCount(api));
+				break;				
+			case"/rawdoc_by_id":
+				response(req, resp, getRawdocByid(api));
 				break;
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
@@ -416,6 +430,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/cancel":
 				response(req, resp, deleteInvoiceTBAI(api));
+				break;
+			case "/multiple_rawdoc":
+				response(req, resp, multipleRawdocDelete(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -525,6 +542,53 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	            });
 	    return jsArray;
 	}
+	
+	private JSONObject getRawdocByid(AonApiData api) {
+	    Integer id = api.getData().getInt("id");
+	    return fullRawdocToJson(AON.getRawdocById(api.getDomain().getName(),
+	    		api.getDomain().getId(),
+	    		api.getUser().getLogin(), 
+	    		id), api);
+	}
+	
+	 public static JSONObject fullRawdocToJson(Rawdoc r, AonApiData api) {
+	        JSONObject json = new JSONObject(r.getJson());
+	        json.put(IJsonNames.ID, r.getId());
+	        json.put(IJsonNames.STATUS, r.getStatus() != null ? r.getStatus().getName() : IConstants.INBOX);
+
+	        if (r.getMimeType() != null) {
+	            JSONObject data = new JSONObject();
+	            data.put("domain_name", api.getDomain().getName());
+	            data.put("domain_id", api.getDomain().getId());
+	            data.put("id", r.getId());
+	            data.put("attach_type", AttachType.RAWDOC.getName());
+	            String encodedData = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+	            String url = "ms/api/file/" + encodedData;
+
+	            JSONObject fileObject = new JSONObject();
+	            fileObject.put("url", url);
+	            fileObject.put("path", url);
+	            fileObject.put("content_type", r.getMimeType().getName());
+	            json.put("file", fileObject);
+	        }
+
+	        JSONArray log = new JSONArray(r.getLog() != null ? r.getLog() : "[]");
+	        json.put("remarks", log);
+	        
+	        return json;
+	    }
+	 
+	 public static JSONArray multipleRawdocDelete(AonApiData api) {
+		 JSONArray array = api.getData().optJSONArray("id");
+		 Integer [] arrayId = new Integer[array.length()];
+		 for(int i = 0; i < array.length(); i++) {
+			 arrayId[i] = array.getInt(i); 
+		 }
+		 AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				 f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().in(arrayId))
+				 );
+		 return new JSONArray();
+	 }	
 	
 	private JSONObject rawdoc2json(Rawdoc rawdoc, AonApiData api) {
 		JSONObject json = new JSONObject();
@@ -965,6 +1029,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return jsArray;
 	}
+	 
 	
 	private static JSONObject invoiceList2JSON(Invoice invoice) {
 		String referenceAux = "";

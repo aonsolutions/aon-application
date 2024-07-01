@@ -206,6 +206,7 @@ public interface IFinance {
 	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
 	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter, Integer page, Integer perPage, boolean ticket, RawdocOrder order);
+	public Rawdoc getRawdocByid(AONContext ctx, Integer id);
 	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket);
 	
 	// 	***********************************************
