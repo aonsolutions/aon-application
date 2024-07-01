@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -185,6 +186,19 @@ public class RawdocDAO {
 				fetch().
 				stream().
 				map(new RawdocFiller());
+	}
+	
+	public static Rawdoc getRawdocById(AONContext ctx, Integer id) {
+		return ctx.getDslContext()
+				.select()
+				.from(RAWDOC)
+				.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
+				.and(RAWDOC.ID.eq(id))
+				.fetch()
+				.stream()
+				.map(new RawdocFiller())
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public static long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
