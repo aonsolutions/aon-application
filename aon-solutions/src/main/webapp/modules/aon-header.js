@@ -378,13 +378,21 @@ export class AonHeader extends AonElement {
 			this.rootPanel(new AonParent());
 
 			let header = this.getElement("aonHeaderWeb");
-			header.style.removeProperty("background-color");
-
-			let apps = this.getElement("aonMenuListAppImg-applications");
-			apps.style.color = "rgb(95, 99, 104)";
-
+			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
-			headerapp.style.display = "none";
+
+			if(!LS.isDarkTheme()){	
+				header.style.backgroundColor = "rgb(240, 240, 240)";
+				apps.style.color = "rgb(95,99,104)";
+				apps.style.backgroundColor = "rgb(240,240,240)";
+				headerapp.style.display = "none";
+			}else{
+				header.style.backgroundColor = "black";
+				apps.style.color = "white";
+				apps.style.backgroundColor = "black";
+				headerapp.style.display = "none";
+			}
+			
 
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
