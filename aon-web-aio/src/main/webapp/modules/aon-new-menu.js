@@ -508,7 +508,7 @@ export class AonNewMenu extends AonElement {
 		
 		}
 		
-		rootPanel.style.marginTop = "69px";
+		rootPanel.style.marginTop = "68px";
 		rootPanel.style.height = `calc(100vh - 61px)`;
 	}
 
@@ -545,7 +545,7 @@ export class AonNewMenu extends AonElement {
 
 		icon.style.visibility = "visible";
 
-		rootPanel.style.marginLeft = '69px';
+		rootPanel.style.marginLeft = '68px';
 	}
 
 	hideSideNav(){

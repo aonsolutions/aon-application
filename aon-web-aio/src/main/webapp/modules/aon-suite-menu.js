@@ -4,6 +4,7 @@ import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonButton } from 'aonsolutions/components/aon-button.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import { AonCard } from 'aonsolutions/components/aon-card.js';
+import * as LS from 'aonsolutions/services/localStorageService.js';
 export class AonSuiteMenu extends AonElement {
 
 	SIDE_MENU;
@@ -50,12 +51,16 @@ export class AonSuiteMenu extends AonElement {
         let sideMenu = this.createDiv();
         sideMenu.id = this.SIDE_MENU;
         sideMenu.style.minWidth = "250px";
-        sideMenu.style.marginLeft = "2px"
+        //sideMenu.style.marginLeft = "2px"
         sideMenu.style.backgroundColor = "rgb(250, 249, 248)";
         sideMenu.style.borderRight = "1px solid rgba(0, 0, 0, 0.1)";
+        if(LS.isDarkTheme())
+            sideMenu.style.borderRight = "1px solid rgba(255,255,255,0.1)"
         sideMenu.style.overflowY = "auto";
         sideMenu.style.height = "calc(-61px + 100vh)";
         sideMenu.style.paddingBottom = "80px"
+        if(LS.isDarkTheme())
+            sideMenu.style.backgroundColor = "var(--aonRightPanelColor)";
         divFlex.appendChild(sideMenu);
 
         let divNewButton = this.createDiv();
@@ -82,6 +87,11 @@ export class AonSuiteMenu extends AonElement {
         newButton.style.borderLeftWidth = "1px";
         newButton.style.borderLeftStyle = "Solid";
         newButton.style.borderLeftColor = "rgb(72,70,68)";
+        if(LS.isDarkTheme()){
+            newButton.style.borderTopColor = "white";
+            newButton.style.borderBottomColor = "white";
+            newButton.style.borderLeftColor = "white";
+        }
         divNewButton.appendChild(newButton);  
         let newBtText = this.getElement(newButton.TEXT);
         let newBtIcon = this.getElement(newButton.ICON);
@@ -89,8 +99,11 @@ export class AonSuiteMenu extends AonElement {
         newBtText.style.color = "rgb(72,70,68)";
         newBtText.style.fontWeight = "normal";
         newBtText.innerHTML = MSG.ADD_NEW;
-        newBtIcon.style.color = "rgb(72,70,68)";
         newBtBt.style.boxShadow = "none";
+        if(LS.isDarkTheme()){
+            newBtText.style.color = "white";
+            newBtIcon.style.color = "white";
+        }
         this.setButtonHover(newButton);
 
         let dropdownButton = new AonButton();
@@ -102,7 +115,10 @@ export class AonSuiteMenu extends AonElement {
         dropdownButton.style.width = "50px";
         dropdownButton.style.borderTopRightRadius = "5px";
         dropdownButton.style.borderBottomRightRadius = "5px";
-        dropdownButton.style.border = "1px solid rgb(72,70,68)";
+        if(!LS.isDarkTheme())
+            dropdownButton.style.border = "1px solid rgb(72,70,68)";
+        else
+            dropdownButton.style.border = "1px solid white";
         dropdownButton.style.marginTop = "20px";
         dropdownButton.style.justifyContent = "center";
         divNewButton.appendChild(dropdownButton);
@@ -113,6 +129,8 @@ export class AonSuiteMenu extends AonElement {
         dropBtIcon.style.marginLeft = "-7px";
         dropBtText.innerHTML = "";
         dropBtBT.style.boxShadow = "none";
+        if(LS.isDarkTheme())
+            dropBtIcon.style.color = "white";
         this.setButtonHover(dropdownButton);
 
         let options = this.createElement(TAG.DIV);
@@ -138,6 +156,11 @@ export class AonSuiteMenu extends AonElement {
         let utilidades = this.createDiv();
         utilidades.className = "aonSidenavTitleBeta";
         utilidades.innerHTML = MSG.UTILITIES;
+        if(LS.isDarkTheme()){
+            sideNavTitle.style.color = "white";
+            utilidades.style.color = "white";
+        }
+            
         sideMenu.appendChild(utilidades);
 
         sideMenu.appendChild(this.buildSideNavRow(MSG.CONFIGURATION, "folder_managed"));
@@ -151,6 +174,8 @@ export class AonSuiteMenu extends AonElement {
             uploadButton.style.display = "block";
             uploadButton.style.width = "222px";
             uploadButton.style.border = "2px dashed rgba(0, 0, 0, 0.1)";
+            if(LS.isDarkTheme())
+                uploadButton.style.border = "2px dashed rgba(255,255,255,0.1)"
             uploadButton.style.borderRadius = "5px";
             uploadButton.style.marginLeft = "12px";
             uploadButton.style.marginTop = "20px";
@@ -161,6 +186,8 @@ export class AonSuiteMenu extends AonElement {
             text.className= CSS.AON_CARD_TEXT;
             text.style.fontWeight = "normal";
             icon.style.color = "rgb(72,70,68)";
+            if(LS.isDarkTheme())
+                icon.style.color = "white";
             button.style.boxShadow = "none";
             this.setButtonHover(uploadButton);
         }
@@ -171,6 +198,8 @@ export class AonSuiteMenu extends AonElement {
         content.style.width = "100%";
         content.style.overflowY = "auto";
         content.style.backgroundColor = "rgb(250, 249, 248)";
+        if(LS.isDarkTheme())
+            content.style.backgroundColor = "var(--aonRightPanelColor)";
         divFlex.appendChild(content);
 
         let div = this.createDiv();
@@ -183,6 +212,8 @@ export class AonSuiteMenu extends AonElement {
         let title = this.createDiv();
         title.id = this.TITLE;
         title.className = "aonSidenavTitleBeta";
+        if(LS.isDarkTheme())
+            title.style.color = "white";
         div.appendChild(title);
 
         let div2 = this.createDiv();
@@ -221,6 +252,8 @@ export class AonSuiteMenu extends AonElement {
 
         let icon = new AonIconButton();
         icon.icon = "info";
+        if(LS.isDarkTheme())
+            icon.color = "white";
         icon.style.height = "fit-content";
         icon.style.position = "relative";
         icon.style.top = "15px";
@@ -316,7 +349,7 @@ export class AonSuiteMenu extends AonElement {
                 divGeneral.appendChild(this.buildCardData(v));
             })
 
-        
+            
             card.setContent(divGeneral); 
         }
     }
@@ -332,7 +365,10 @@ export class AonSuiteMenu extends AonElement {
 		span.innerHTML = value.description;
         span.title = value.title;
         span.style.cursor = "pointer";
-        span.style.color = "var(--aonBlue)"
+        if(LS.isDarkTheme())
+            span.style.color = "var(--aonWhite)";
+        else
+            span.style.color = "var(--aonBlue)"
 		div.appendChild(span);
 
         if(value.description2){
@@ -341,15 +377,23 @@ export class AonSuiteMenu extends AonElement {
             span2.className = CSS.AON_CARD_TEXT;
             span2.innerHTML = value.description2
             span2.style.marginLeft = "5px";
+            if(LS.isDarkTheme())
+                span2.style.color = "grey";
             div.appendChild(span2);
         }
 
         span.addEventListener('mouseover', function() {
-            span.style.color = 'var(--aonBlue)';
+            if(LS.isDarkTheme())
+                span.style.color = "var(--aonWhite)";
+            else
+                span.style.color = "var(--aonBlue)"
             span.style.textDecoration = 'underline';
         });
         span.addEventListener('mouseout', function() {
-            span.style.color = 'var(--aonBlue)';
+            if(LS.isDarkTheme())
+                span.style.color = "var(--aonWhite)";
+            else
+                span.style.color = "var(--aonBlue)"
             span.style.textDecoration = '';
         });
 
@@ -357,20 +401,6 @@ export class AonSuiteMenu extends AonElement {
         span.addEventListener(EVENT.CLICK, value.action);
         span.addEventListener(EVENT.CLICK, function(){
             rootPanel.style.backgroundColor = "rgb(250, 249, 248)"; 
-            /*
-            for (let item in TOP_MENU_APPS) {
-                let app = TOP_MENU_APPS[item];
-                let title = this.getElement(`aonMenuListAppTitle-${app.app}`);
-                console.log(title);
-                title.style.color = "red";	
-            }
-            for (let item in MENU_APPS) {
-                let app = MENU_APPS[item];
-                let title = this.getElement(`aonMenuListAppTitle-${app.app}`);
-                console.log(title);
-                title.style.color = "red";	
-            }
-            */
         });
 		return div;
 	}
@@ -450,7 +480,7 @@ export class AonSuiteMenu extends AonElement {
         div.style.paddingLeft = "30px";
         div.style.borderRadius = "5px";
         div.style.paddingBottom = "5px";
-        div.style.cursor = "pointer";
+        div.style.cursor = "pointer"
 		div.style.display = "flex";
         div.style.transition = "background-color 0.2s"
 
@@ -460,21 +490,31 @@ export class AonSuiteMenu extends AonElement {
 		i.style.verticalAlign = "middle";
 		i.innerHTML= icon;
 		div.appendChild(i);
-
+        if(LS.isDarkTheme()){
+            //div.style.backgroundColor = "var(--aonCardColor)";
+            i.style.color = "white";
+        }
+        
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
         span.style.marginTop = "2px";
 		span.innerHTML = value;
 		div.appendChild(span);
 
-        div.addEventListener("mouseover", () => {
-            div.style.backgroundColor = "rgba(0,36,105,0.1)";
-        });
-           
-        div.addEventListener("mouseleave", () => {
-            div.style.backgroundColor = "transparent";
-        });
-
+       // if(!LS.isDarkTheme()){
+            div.addEventListener("mouseover", () => {
+                if(LS.isDarkTheme())
+                    div.style.backgroundColor = "var(--aonCardColor)";
+                else
+                    div.style.backgroundColor = "rgba(0,36,105,0.1)";
+            });
+               
+            div.addEventListener("mouseleave", () => {
+                div.style.backgroundColor = "transparent";
+            });
+    
+        //}
+        
 		return div;
 	}
 
