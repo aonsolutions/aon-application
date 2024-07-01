@@ -1535,7 +1535,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	
 	public static void main(String[] args) {
 		JSONObject data = new JSONObject();
 		data.put(IConstants.DOMAIN_NAME, "innovative-mac.aonsolutions.net");
@@ -1545,104 +1544,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
 		String url = "innovative-mac.aonsolutions.net/ms/api/file/" +  result;	
 		System.out.println(url);
-	}
-	
-	/// ***********************************************************************
-	/// ***********************************************************************
-	/// ***********************************************************************
-	/// ***********************************************************************
-
-	private class InvoiceFilter {
-		private String description;
-		private String status;
-		private String[] types;
-		private Integer page;
-		private Integer perPage;
-		private Byte recorded;
-		private Date from;
-		private Date to;
-		private Integer registry;
-		
-		public String getDescription() {
-			return description;
-		}
-
-		public InvoiceFilter setDescription(String description) {
-			this.description = description;
-			return this;
-		}
-
-		public String getStatus() {
-			return status;
-		}
-
-		public InvoiceFilter setStatus(String status) {
-			this.status = status;
-			return this;
-		}
-
-		public String[] getTypes() {
-			return types;
-		}
-
-		public InvoiceFilter setTypes(String[] types) {
-			this.types = types;
-			return this;
-		}
-
-		public Integer getPage() {
-			return page;
-		}
-
-		public InvoiceFilter setPage(Integer page) {
-			this.page = page;
-			return this;
-		}
-
-		public Integer getPerPage() {
-			return perPage;
-		}
-
-		public InvoiceFilter setPerPage(Integer perPage) {
-			this.perPage = perPage;
-			return this;
-		}
-		
-		public Date getFrom() {
-			return from;
-		}
-		
-		public InvoiceFilter setFrom(Date from) {
-			this.from = from;
-			return this;
-		}
-		
-		public Date getTo() {
-			return to;
-		}
-		
-		public InvoiceFilter setTo(Date to) {
-			this.to = to;
-			return this;
-		}
-		
-		public Byte getRecorded() {
-			return recorded;
-		}
-
-		public InvoiceFilter setRecorded(Byte recorded) {
-			this.recorded = recorded;
-			return this;
-		}
-		
-		public Integer getRegistry() {
-			return registry;
-		}
-		
-		public InvoiceFilter setRegistry(Integer registry) {
-			this.registry = registry;
-			return this;
-		}
 	}
 	
 	private JSONArray getInvoiceSeries(AonApiData api) {
