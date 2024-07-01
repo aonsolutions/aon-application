@@ -643,6 +643,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setRemarks(r.getValue(INVOICE.REMARKS))
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
