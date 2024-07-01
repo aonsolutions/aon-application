@@ -6,7 +6,6 @@ public class InvoiceSeries implements Serializable {
 	
 	private static final long serialVersionUID = -129893698643793652L;
 	
-	private boolean seriesInfo;
 	private String description;
 	private boolean sales;
 	private int fromNumber;
@@ -21,13 +20,6 @@ public class InvoiceSeries implements Serializable {
 		return this;
 	}
 
-	public boolean isSeriesInfo() {
-		return seriesInfo;
-	}
-	public InvoiceSeries setSeriesInfo(boolean seriesInfo) {
-		this.seriesInfo = seriesInfo;
-		return this;
-	}
 	public boolean isSales() {
 		return sales;
 	}

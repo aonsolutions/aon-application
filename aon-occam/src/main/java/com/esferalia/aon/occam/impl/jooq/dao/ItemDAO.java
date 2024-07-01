@@ -145,7 +145,13 @@ public class ItemDAO {
 	}
 	
 	public static Item getFull(AONContext ctx, ItemFilter filter){
-		return getFullStream(ctx, filter).findFirst().orElse(new Item());
+		Item item = getFullStream(ctx, filter).findFirst().orElse(new Item());
+	
+		if(item.getStockUnitTag().getId() != null) item.setStockUnitTag(TagDAO.getTag(ctx, item.getStockUnitTag().getId()));
+		if(item.getPackFormatTag().getId() != null) item.setPackFormatTag(TagDAO.getTag(ctx, item.getPackFormatTag().getId()));
+		if(item.getPackUnitsTag().getId() != null) item.setPackUnitsTag(TagDAO.getTag(ctx, item.getPackUnitsTag().getId()));
+		if(item.getPackMeasurementTag().getId() != null) item.setPackMeasurementTag(TagDAO.getTag(ctx, item.getPackMeasurementTag().getId()));
+		return item;
 	}
 	
 	public static Stream<Item> getFullStream(AONContext ctx, ItemFilter filter){

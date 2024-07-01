@@ -31,7 +31,6 @@ import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.json.OCRWebhookJSON;
 import net.aonsolutions.invofox.json.OCRWebhookResponseJSON;
-import net.aonsolutions.invofox.model.OCRApiKey;
 import net.aonsolutions.invofox.model.OCRApiKeyResponse;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
@@ -54,12 +53,9 @@ public class OCRInvofox {
 
 	private static final String APPLICATION_JSON = "application/json";
 
-
 	private static final int STATUS_OK = 200;
 	private static final int STATUS_OK1 = 201;
 
-
-	private static final String API_URL = "api-url";
    	private static final String API_KEY = "x-api-key";
 	private static final String API_TOKEN = "x-access-token";
 	
@@ -370,14 +366,20 @@ public class OCRInvofox {
 	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentsResponse getDocuments(String apiKey, String apiUrl, OCRDocumentsParams params) {
 		OCRDocumentsResponse documentsResponse = get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
-		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList())
+			.stream()
+//			.filter(params::filter)
+			.toList();
 		documentsResponse.setDocuments(documents);
 		return documentsResponse;
 	}
 	
 	public static OCRDocumentsResponse getDocumentsWithToken(String token, String apiUrl, OCRDocumentsParams params) {
 		OCRDocumentsResponse documentsResponse = getWithToken(token, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
-		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList())
+			.stream()
+//			.filter(params::filter)
+			.toList();
 		documentsResponse.setDocuments(documents);
 		return documentsResponse;
 	}

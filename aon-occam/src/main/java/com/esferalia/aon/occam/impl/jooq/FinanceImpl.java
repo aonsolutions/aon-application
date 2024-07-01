@@ -234,14 +234,15 @@ public class FinanceImpl implements IFinance {
 	
 	// ------------------------------------- INVOICE SERIES
 	@Override
-	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
-		return InvoiceDAO.getInvoiceSeries(ctx, from, to, taxDate);
+	public List<InvoiceSeries> getInvoiceSeries(AONContext ctx, int domain, Date from, Date to) {
+		return InvoiceDAO.getInvoiceSeries(ctx, domain, from, to)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override
-	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.getSalesSeries(ctx));
+	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx, int domain) {
+		return InvoiceDAO.getInvoiceSeries(ctx, domain, null, null)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	// ------------------------------------- FEE

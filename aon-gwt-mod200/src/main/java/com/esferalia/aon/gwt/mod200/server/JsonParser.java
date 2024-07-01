@@ -1,44 +1,17 @@
 package com.esferalia.aon.gwt.mod200.server;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-
-import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.mod200.shared.IRequestParamsNames;
-import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountParams;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainParams;
-import com.esferalia.aon.occam.api.model.FinanceParams;
-import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.accounting.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonParser {
 	
-	private static final String ENCODING = "utf-8";
-	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+//	private static final String ENCODING = "utf-8";
+//	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private JsonParser() {
 		
@@ -91,8 +64,6 @@ public class JsonParser {
 		return params;
 	}
 	
-	// FALTA - CREO QUE ESTOS NO SE UTILIZAN
-
 //	public static AccountParams parseAccountParams(String accountParams) throws ParseException {
 //		AccountParams params = new AccountParams();
 //		JSONParser parser = new JSONParser();

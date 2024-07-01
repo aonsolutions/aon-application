@@ -65,7 +65,6 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -83,6 +82,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -922,11 +922,11 @@ public class AccountingUtilitiesDAO {
 				Integer year = rec.get(INVOICE_YEAR_FIELD);
 				Date from = AonDateUtils.getYearFirstDay( year );
 				Date to = AonDateUtils.getYearLastDay( year );
-				LinkedList<InvoiceSeries> series = InvoiceDAO.getInvoiceSeries(ctx, from, to, false);
 				StringBuffer msg = new StringBuffer();
-				boolean regenerable = false;
-				for (InvoiceSeries invoiceSeries : series) {
-					if (!invoiceSeries.isSales() && invoiceSeries.isSeriesInfo()) {
+				MutableBoolean regenerable = new MutableBoolean(false);
+				InvoiceDAO.getInvoiceSeries(ctx, ctx.getDomainId(), from, to )
+					.filter( invoiceSeries -> !invoiceSeries.isSales() )
+					.forEach(invoiceSeries -> { 
 						msg.append(invoiceSeries.getDescription());
 						msg.append("|");
 						msg.append(invoiceSeries.getCount());
@@ -935,14 +935,14 @@ public class AccountingUtilitiesDAO {
 						msg.append("|");
 						msg.append(invoiceSeries.getToNumber());
 						msg.append("#");
-						regenerable = regenerable || !AonNumberUtils.equals(invoiceSeries.getCount(),invoiceSeries.getToNumber());					
-					}
-				}
+						regenerable.setValue( regenerable.getValue() 
+							|| !AonNumberUtils.equals(invoiceSeries.getCount(),invoiceSeries.getToNumber()));					
+				});
 				result.add( new  AccUtilitiesRegenerateInputVatItem()
 						.setDomain(ctx.getDomainId())
 						.setYear(year) 
 						.setMessage(msg.toString())
-						.setRegenerable( regenerable )
+						.setRegenerable( regenerable.getValue() )
 						);
 			});
 		;

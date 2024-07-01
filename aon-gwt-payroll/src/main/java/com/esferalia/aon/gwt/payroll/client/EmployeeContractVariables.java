@@ -460,7 +460,7 @@ public class EmployeeContractVariables extends Composite {
 	}
 	
 	public void openContractVariableDialog(ContractVariable selectedContractVariable) {
-		new ContractVariableDialog(selectedContractVariable) {
+		new ContractVariableDialog(selectedContractVariable, employeeContractVariablesObject.getContractStartDate(), employeeContractVariablesObject.getContractEndDate()) {
 			@Override
 			protected void onAccept(ContractVariable contractVariable) {
 				// Create new variable

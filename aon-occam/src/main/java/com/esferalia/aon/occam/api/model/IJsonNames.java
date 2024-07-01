@@ -367,6 +367,7 @@ public final class IJsonNames {
 	public static final String NUMBER_OF_USERS = "numberOfUsers";
 	public static final String NUMBER_PLATE = "numberPlate";
 	// ---------------------------------------------------------------------------------------------	[O] 
+	public static final String OFFER = "offer";
 	public static final String OFFER_DETAIL = "offerDetail";
 	public static final String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	public static final String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -429,6 +430,7 @@ public final class IJsonNames {
 	public static final String PK_ID = "pkId";
 	public static final String PLAN = "plan";
 	public static final String PORTAL = "portal";
+	public static final String POS = "pos";
 	public static final String POSTAL_CODE = "postal_code";
 	public static final String PREPAYMENT = "prepayment";
 	public static final String PREVIOUS_PERIODS = "previousPeriods";

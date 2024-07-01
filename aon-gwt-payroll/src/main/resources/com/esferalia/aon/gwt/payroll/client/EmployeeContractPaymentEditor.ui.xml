@@ -63,181 +63,191 @@
 			cursor: pointer;
 		}
 		
+		.mt-1 {
+			margin: 1rem 0;
+		}
+		
 	</ui:style>
 
-	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
+	<g:HTMLPanel styleName="{style.flexColumn} {style.mt-1}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		
+		<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
 	
-		<g:DeckPanel ui:field="deckPanel">
-		
-			<!-- PAYMENT -->
+			<g:DeckPanel ui:field="deckPanel">
 			
-			<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Tipo</g:Label>
-					<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Concepto</g:Label>
-					<g:SuggestBox ui:field="paymentConceptSB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Descripción</g:Label>
-					<g:TextBox ui:field="paymentDescriptionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Expresión</g:Label>
-					<g:TextArea ui:field="paymentExpressionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Tributa</g:Label>
+				<!-- PAYMENT -->
+				
+				<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo</g:Label>
+						<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Concepto</g:Label>
+						<g:SuggestBox ui:field="paymentConceptSB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:TextBox ui:field="paymentDescriptionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Expresión</g:Label>
+						<g:TextArea ui:field="paymentExpressionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tributa</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:ListBox ui:field="paymentTaxedTypeLB"/>
+							<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Cotiza</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:ListBox ui:field="paymentQuoteTypeLB"/>
+							<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:ListBox ui:field="paymentTaxedTypeLB"/>
-						<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll}"/>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentMonthPanel">
+							<g:Label styleName="{style.title}">Mes Cobro</g:Label>
+							<g:ListBox ui:field="paymentMonthLB"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+							<c:DateBoxEx ui:field="paymentStartDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+							<c:DateBoxEx ui:field="paymentEndDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Cotiza</g:Label>
+				
+				<!-- DEDUCTION -->
+				
+				<g:HTMLPanel ui:field="deductionTable" styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo</g:Label>
+						<g:ListBox ui:field="deductionTypeLB" styleName="{style.widthAll}"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Concepto</g:Label>
+						<g:SuggestBox ui:field="deductionConceptSB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:TextBox ui:field="deductionDescriptionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Expresión</g:Label>
+						<g:TextArea ui:field="deductionExpressionTB"/>
+					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:ListBox ui:field="paymentQuoteTypeLB"/>
-						<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll}"/>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+							<c:DateBoxEx ui:field="deductionStartDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+							<c:DateBoxEx ui:field="deductionEndDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentMonthPanel">
-						<g:Label styleName="{style.title}">Mes Cobro</g:Label>
-						<g:ListBox ui:field="paymentMonthLB"/>
+	
+				<!-- COST -->
+				
+				<g:HTMLPanel ui:field="costTable" styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo</g:Label>
+						<g:ListBox ui:field="costTypeLB" styleName="{style.widthAll}"/>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
-						<c:DateBoxEx ui:field="paymentStartDateBx" styleName="{style.date}"/>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Código</g:Label>
+						<g:SuggestBox ui:field="costCodeSB"/>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-						<c:DateBoxEx ui:field="paymentEndDateBx" styleName="{style.date}"/>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:TextBox ui:field="costDescriptionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Expresión</g:Label>
+						<g:TextArea ui:field="costExpressionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+							<c:DateBoxEx ui:field="costStartDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+							<c:DateBoxEx ui:field="costEndDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-			</g:HTMLPanel>
+				
+				<!-- BONUS -->
+				
+				<g:HTMLPanel ui:field="bonusTable" styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo</g:Label>
+						<g:HTMLPanel ui:field="bonusTypePanel" styleName="{style.widthAll}"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:SuggestBox ui:field="bonusDescriptionSB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Expresión</g:Label>
+						<g:TextArea ui:field="bonusExpressionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+							<c:DateBoxEx ui:field="bonusStartDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+							<c:DateBoxEx ui:field="bonusEndDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				
+				<!-- EMBARGO -->
+				
+				<g:HTMLPanel ui:field="embargoTable" styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:TextBox ui:field="embargoDescriptionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Expresión</g:Label>
+						<g:TextArea ui:field="embargoExpressionTB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Importe</g:Label>
+						<c:DoubleBox ui:field="embargoAmountDB" styleName="{style.widthAll}" />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+							<c:DateBoxEx ui:field="embargoStartDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+							<c:DateBoxEx ui:field="embargoEndDateBx" styleName="{style.date}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
 			
-			<!-- DEDUCTION -->
+			</g:DeckPanel>
+				
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>
 			
-			<g:HTMLPanel ui:field="deductionTable" styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Tipo</g:Label>
-					<g:ListBox ui:field="deductionTypeLB" styleName="{style.widthAll}"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Concepto</g:Label>
-					<g:SuggestBox ui:field="deductionConceptSB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Descripción</g:Label>
-					<g:TextBox ui:field="deductionDescriptionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Expresión</g:Label>
-					<g:TextArea ui:field="deductionExpressionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
-						<c:DateBoxEx ui:field="deductionStartDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-						<c:DateBoxEx ui:field="deductionEndDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-
-			<!-- COST -->
-			
-			<g:HTMLPanel ui:field="costTable" styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Tipo</g:Label>
-					<g:ListBox ui:field="costTypeLB" styleName="{style.widthAll}"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Código</g:Label>
-					<g:SuggestBox ui:field="costCodeSB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Descripción</g:Label>
-					<g:TextBox ui:field="costDescriptionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Expresión</g:Label>
-					<g:TextArea ui:field="costExpressionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
-						<c:DateBoxEx ui:field="costStartDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-						<c:DateBoxEx ui:field="costEndDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-			
-			<!-- BONUS -->
-			
-			<g:HTMLPanel ui:field="bonusTable" styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Tipo</g:Label>
-					<g:HTMLPanel ui:field="bonusTypePanel" styleName="{style.widthAll}"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Descripción</g:Label>
-					<g:SuggestBox ui:field="bonusDescriptionSB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Expresión</g:Label>
-					<g:TextArea ui:field="bonusExpressionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
-						<c:DateBoxEx ui:field="bonusStartDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-						<c:DateBoxEx ui:field="bonusEndDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-			
-			<!-- EMBARGO -->
-			
-			<g:HTMLPanel ui:field="embargoTable" styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Descripción</g:Label>
-					<g:TextBox ui:field="embargoDescriptionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Expresión</g:Label>
-					<g:TextArea ui:field="embargoExpressionTB"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Importe</g:Label>
-					<c:DoubleBox ui:field="embargoAmountDB" styleName="{style.widthAll}" />
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
-						<c:DateBoxEx ui:field="embargoStartDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-						<c:DateBoxEx ui:field="embargoEndDateBx" styleName="{style.date}"/>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-		
-		</g:DeckPanel>
-			
-		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>
-		
+		</g:HTMLPanel>	
 	</g:HTMLPanel>
+
+	
 
 </ui:UiBinder>

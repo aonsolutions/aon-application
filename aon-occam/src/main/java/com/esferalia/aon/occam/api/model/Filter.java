@@ -187,6 +187,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface PayrollWorkplaceFilter{
+		Filter filter(PayrollWorkplaceProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface RegistryAddressFilter{
 		Filter filter(RegistryAddressProperties properties);
 	}

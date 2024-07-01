@@ -49,12 +49,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			byte[] pdf = ServicioRED.getIDCPOST(certificateInputStream
+			byte[] pdf = SistemaRED.getIDC(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
-					, "011017250195"
 					, "0111"
 					, "01105577910"
+					, "011017250195"
 					, calendar.getTime()
 					);
 //			if (pdf != null) {
@@ -76,12 +76,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPOST(certificateInputStream
+			SistemaRED.getIDC(certificateInputStream
 					, "jg@FNFT"
 					, "pkcs12"
-					, "011017250195"
 					, "0111"
 					, "01105577910"
+					, "011017250195"
 					, calendar.getTime()
 					);
 			fail();
@@ -102,12 +102,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPOST(certificateInputStream
+			SistemaRED.getIDC(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
-					, "011017250195"
 					, "011"
 					, "01105577910"
+					, "011017250195"
 					, calendar.getTime()
 					);
 			fail();
@@ -128,12 +128,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPOST(certificateInputStream
+			SistemaRED.getIDC(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
-					, "011017250999"
 					, "0111"
 					, "01105577910"
+					, "011017250999"
 					, calendar.getTime()
 					);
 			fail();
@@ -154,12 +154,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPOST(certificateInputStream
+			SistemaRED.getIDC(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
-					, "011017250195"
 					, "0111"
 					, "01105577932"
+					, "011017250195"
 					, calendar.getTime()
 					);
 			fail();
@@ -180,12 +180,12 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPOST(certificateInputStream
+			SistemaRED.getIDC(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
-					, "011017250195"
 					, "0111"
 					, "01105577910"
+					, "011017250195"
 					, calendar.getTime()
 					);
 			fail();
@@ -1011,7 +1011,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void testgetIdcsPOST() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				Collection<Idc> idcs = ServicioRED.getIDCDatesPOST(
+				Collection<Idc> idcs = SistemaREDI.getIDCDates(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1036,7 +1036,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void testgetIdcsPOSTInvalidCertificate() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				ServicioRED.getIDCDatesPOST(
+				SistemaREDI.getIDCDates(
 						certificateInputStream,
 						"jg@FNFT",
 						"pkcs12",
@@ -1058,7 +1058,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void testgetIdcsPOSTInvalidRegime() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				ServicioRED.getIDCDatesPOST(
+				SistemaREDI.getIDCDates(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1080,7 +1080,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void testgetIdcsPOSTInvalidCCC() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				ServicioRED.getIDCDatesPOST(
+				SistemaREDI.getIDCDates(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
