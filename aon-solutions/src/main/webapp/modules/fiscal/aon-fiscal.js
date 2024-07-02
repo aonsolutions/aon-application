@@ -108,9 +108,9 @@ export class AonFiscal extends AonElement {
       }));
 
       let data = {
-        id: "Ejercicio",
-        title: "Ejercicio",
-        name: "Ejercicio",
+        id: "Periodo",
+        title: "Periodo",
+        name: "Periodo",
         app: FISCAL,
         options: ejercicios,
       };
@@ -275,14 +275,15 @@ export class AonFiscal extends AonElement {
       }
 
       let data2 = {
-        id: "Periodo",
-        title: "Periodo",
-        name: "Periodo",
+        parent: "Periodo",
+        id: "Ejercicio",
+        title: "Ejercicio",
+        name: "Ejercicio",
         app: FISCAL,
         options: periods,
       };
 
-      application.addSelectSidenav(data2);
+      application.addSelectToPanel(data2);
     }
   }
 
@@ -327,7 +328,7 @@ export class AonFiscal extends AonElement {
       id: "Borrador" + periodText,
       fn: () => {
         this._filter.period = "future";
-        this._filter.estimationFilter = {year: year, period: period, title: "Borrador " + periodText};
+        this._filter.estimationFilter = {year: year, period: period, title: "Borrador " + periodText, periodText: periodText};
         this.showView(FISCAL_VIEWS.AON_TAX);
       },
     };
