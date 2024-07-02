@@ -5,11 +5,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -27,7 +30,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -669,49 +671,64 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
-			if(checkPaymentDates()) {
-				hide();
-				onAccept(createContractConceptCalc());
-			}
+			checkPaymentDates(accept -> {
+				if(accept) {
+					hide();
+					onAccept(createContractConceptCalc());
+				}
+			});
 		});
 
 		buttonsPanel.add(acceptDialog);
 	}
 	
-	private boolean checkPaymentDates() {
-		switch (this.paymentType) {
-			case PAYMENT:
-				return checkPaymentDates(paymentStartDateBx, paymentEndDateBx);
-			case DEDUCTION:
-				return checkPaymentDates(deductionStartDateBx, deductionEndDateBx);
-			case COST:
-				return checkPaymentDates(costStartDateBx, costEndDateBx);
-			case BONUS:
-				return checkPaymentDates(bonusStartDateBx, bonusEndDateBx);
-			case EMBARGO:
-				return checkPaymentDates(embargoStartDateBx, embargoEndDateBx);
-			default:
-				return false;
-		}
+	private void checkPaymentDates(Consumer<Boolean> accept) {
+		if(this.paymentType.equals(ContractConceptCalcType.PAYMENT)) {
+			checkPaymentDates(paymentStartDateBx, paymentEndDateBx, accept);
+		} else if(this.paymentType.equals(ContractConceptCalcType.DEDUCTION)) {
+			checkPaymentDates(deductionStartDateBx, deductionEndDateBx, accept);
+		} else if(this.paymentType.equals(ContractConceptCalcType.COST)) {
+			checkPaymentDates(costStartDateBx, costEndDateBx, accept);
+		} else if(this.paymentType.equals(ContractConceptCalcType.BONUS)) {
+			checkPaymentDates(bonusStartDateBx, bonusEndDateBx, accept);
+		} else if(this.paymentType.equals(ContractConceptCalcType.EMBARGO)) {
+			checkPaymentDates(embargoStartDateBx, embargoEndDateBx, accept);
+		} else
+			accept.accept(false);
 	}
 	
-	private boolean checkPaymentDates(DateBoxEx startDateBx, DateBoxEx endDateBx) {
+	private void checkPaymentDates(DateBoxEx startDateBx, DateBoxEx endDateBx, Consumer<Boolean> accept) {
 		Date paymentStart = startDateBx.getValue(); 
 		Date paymentEnd = endDateBx.getValue();
-		if(null != paymentStart && paymentStart.before(contractStartDate)) {
-			AonMessagePanel.showError(messagePanel, "La fecha de inicio del devengo es anterior a la fecha de inicio del contrato");
-			return false;
-		} else if(null == paymentStart) {
+		
+		if(null == paymentStart) {
 			AonMessagePanel.showError(messagePanel, "La fecha inicio del devengo no esta definida");
-			return false;
+			accept.accept(false);
 		} else if(null != paymentStart && null != paymentEnd && paymentEnd.before(paymentStart)) {
 			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es anterior a la fecha de inicio del devengo");
-			return false;
+			accept.accept(false);
+		} else if(null != paymentStart && paymentStart.before(contractStartDate)) {
+			AonDialog warningDialog = new AonDialog("Fecha inicio", new HTMLPanel("La fecha de inicio del devengo es anterior a la fecha de inicio del contrato. \u00BFDesea continuar igualmente?"));
+			warningDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() { accept.accept(false); }
+				
+				@Override
+				public void onAccept() { accept.accept(true); }
+			});
 		} else if(null != paymentEnd && null != contractEndDate && paymentEnd.after(contractEndDate)) {
-			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es posterior a la fecha fin del contrato");
-			return false;
+			AonDialog warningDialog = new AonDialog("Fecha fin", new HTMLPanel("La fecha fin del devengo es posterior a la fecha fin del contrato. \u00BFDesea continuar igualmente?"));
+			warningDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() { accept.accept(false); }
+				
+				@Override
+				public void onAccept() { accept.accept(true); }
+			});
 		} else 
-			return true;
+			accept.accept(true);
 	}
 
 	public void setSaveButton() {

@@ -8,7 +8,9 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -176,9 +178,52 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	private void accept() {
 		Map<String, String> saveMessage = canSave();
 		if(saveMessage.isEmpty()) {
-			checkContractVariableValue();
-			onAccept(contractVariable);
-			hide();
+			
+			if(null != startDateBx.getValue() && startDateBx.getValue().before(contractStartDate)) {
+				AonDialog warningDialog = new AonDialog("Fecha inicio", new HTMLPanel("La fecha de inicio de la variable es anterior a la fecha de inicio del contrato. \u00BFDesea continuar igualmente?"));
+				warningDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() { 
+						saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es anterior a la fecha de inicio del contrato"); 
+						AonMessagePanel.showError(messagePanel, saveMessage);
+					}
+					
+					@Override
+					public void onAccept() {
+						checkContractVariableValue();
+						onAcceptDialog(contractVariable);
+						hide();
+					}
+				});
+			}
+			
+			else if(null != endDateBx.getValue() && null != contractEndDate && endDateBx.getValue().after(contractEndDate)) {
+				AonDialog warningDialog = new AonDialog("Fecha fin", new HTMLPanel("La fecha fin de la variable es posterior a la fecha fin del contrato. \u00BFDesea continuar igualmente?"));
+				warningDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() { 
+						saveMessage.put("Fecha fin", "La fecha fin de la variable es posterior a la fecha fin del contrato"); 
+						AonMessagePanel.showError(messagePanel, saveMessage);
+					}
+					
+					@Override
+					public void onAccept() {
+						checkContractVariableValue();
+						onAcceptDialog(contractVariable);
+						hide();
+					}
+				});
+			}
+			
+			else {
+				checkContractVariableValue();
+				onAcceptDialog(contractVariable);
+				hide();
+			}
+			
+			
 		} else
 			AonMessagePanel.showError(messagePanel, saveMessage);
 	}
@@ -205,15 +250,14 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		if(AonStringUtils.isBlank(variableName.getValue())) saveMessage.put("Nombre", "El nombre de la variable es obligatorio");
 		if(AonStringUtils.isBlank(variableValue.getValue())) saveMessage.put("Valor", "El valor de la variable es obligatorio");
 		if(null == startDateBx.getValue()) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es obligatoria");
-		if(null != startDateBx.getValue() && startDateBx.getValue().before(contractStartDate)) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es anterior a la fecha de inicio del contrato");
+		
 		if(null != startDateBx.getValue() && null != endDateBx.getValue() && endDateBx.getValue().before(startDateBx.getValue())) saveMessage.put("Fecha fin", "La fecha fin de la variable es anterior a la fecha de inicio de la variable");
-		if(null != endDateBx.getValue() && null != contractEndDate && endDateBx.getValue().after(contractEndDate)) saveMessage.put("Fecha fin", "La fecha fin de la variable es posterior a la fecha fin del contrato");
 		
 		return saveMessage;
 	}
 	
 	// ------------------------------------------------- AbstractMethods
 	
-	protected abstract void onAccept(ContractVariable createVariable);
+	protected abstract void onAcceptDialog(ContractVariable createVariable);
 	
 }
