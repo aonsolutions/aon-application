@@ -17,7 +17,7 @@
 					<ui:define name="additionalToolbarContent">
 						<aon:htmlCommandLink id="supplierReport-excel-report"
 							value="&#160;" target="_new" rendered="#{!supplier.nevv}"
-							action="#{report.onExecute}go" disabled="#{supplier.to != null}"
+							action="#{report.onExecute}" disabled="#{supplier.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel">
 							<f:param name="reportKey" value="supplierReport" />
@@ -126,10 +126,10 @@
 						</ui:decorate>
 					</aon:div>
                       
-                      <aon:div id="supplierFilterContainer"
-						style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 20; display: none; scrollbar-width: none; border-left: 1px solid #ccc">
+                      <aon:div id="supplierFilterContainer" styleClass="aonFilterPopup"
+						style="display:none">
 						<ui:decorate
-							template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+							template="/com/code/aon/ui/supplier/facelet/supplier/filterEx.xhtml">
 							<ui:param name="controller" value="#{supplier}" />
 							<ui:define name="searchContent">
 								<ui:include

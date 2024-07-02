@@ -35,6 +35,7 @@ public class SupplierController extends RegistryController implements IAuditable
 	private boolean showAuditInfoWindow;
 	
 	private String smartFilter = "";
+
 	
 	public void onWithholdingChanged(ValueChangeEvent event) {
 		Boolean value = (Boolean)event.getNewValue();
@@ -67,8 +68,8 @@ public class SupplierController extends RegistryController implements IAuditable
 			clearCriteria();
 			if ( AonStringUtils.isNotBlank(smartFilter) ) {
 				addOrExpression(getCriteria(), IEntityAlias.SUPPLIER_REGISTRY_NAME, smartFilter);
-				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_ALIAS, smartFilter);
-				addOrExpression(getCriteria(), IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.SUPPLIER_REGISTRY_ALIAS, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT, smartFilter);
 			}
 			onSearch( new ActionEvent(FacesContext.getCurrentInstance().getViewRoot()) );
 		} catch (ManagerBeanException e) {
@@ -77,6 +78,10 @@ public class SupplierController extends RegistryController implements IAuditable
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
+	
+	public void onEditSearch(ValueChangeEvent event){
+    	super.onEditSearch(new ActionEvent(event.getComponent()));
+    }
 	
 	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
 		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);

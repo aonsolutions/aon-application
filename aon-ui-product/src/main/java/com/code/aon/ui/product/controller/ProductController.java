@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.PRODUCT_COMPOSITION_REMOVE_
 
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -12,6 +13,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -26,13 +29,16 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.product.event.ItemSearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductController extends BasicController implements IAuditableController, IItemConstants {
 	
@@ -45,6 +51,47 @@ public class ProductController extends BasicController implements IAuditableCont
 	private Item saveStateItem;
 	private boolean showAccountsWindow;
 	private boolean showAuditInfoWindow;
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ProductController.class);
+	
+	private String smartFilter = "";
+	
+	public String getSmartFilter() {
+		return smartFilter;
+	}
+	
+	public void setSmartFilter(String smartFilter) {
+		this.smartFilter = smartFilter;
+	}
+	
+	public void setOnSmartFilter(boolean filter ) {
+		try {
+			clearCriteria();
+			if ( AonStringUtils.isNotBlank(smartFilter) ) {
+				addOrExpression(getCriteria(), IEntityAlias.PRODUCT_CATEGORY_NAME, smartFilter);
+				addOrExpression(getCriteria(), IEntityAlias.PRODUCT_CATEGORY_ID, smartFilter);
+				
+			}
+			onSearch( new ActionEvent(FacesContext.getCurrentInstance().getViewRoot()) );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSmartFilter: ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void onEditSearch(ValueChangeEvent event){
+    	super.onEditSearch(new ActionEvent(event.getComponent()));
+    }
+	
+	protected void addOrExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
+		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);
+		if ( expression != null ) {
+			criteria.addOrExpression(expression);
+		}
+	}
+
 
 	public ProductController() {
 		String value = AppParamUtil.getValue(AON_PRODUCT_DETAIL_LEVEL);
