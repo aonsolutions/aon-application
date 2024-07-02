@@ -63,7 +63,10 @@ export class AonHelp extends AonElement {
 		div.appendChild(span2);
 
         div.addEventListener("mouseover", () => {
-            div.style.backgroundColor = "rgba(0,36,105,0.1)";
+			if(LS.isDarkTheme())
+				div.style.backgroundColor = "var(--aonCardColor)";
+			else
+            	div.style.backgroundColor = "rgba(0,36,105,0.1)";
         });
            
         div.addEventListener("mouseleave", () => {

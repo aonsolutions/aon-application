@@ -35,6 +35,28 @@
 	color: white;
 }
 
+.aonContentBeta {
+	background-color: var(--aonRightPanelColor);
+}
+
+.aonDashboardButton {
+	color: white;
+	background-color: var(--aonCardColor);
+}
+
+.aonDashboardCard {
+	color: white;
+}
+
+.aonDashboardButton i{
+	color: white;
+	background-color: transparent;
+}
+
+.aonDashboardButton span{
+	color: white;
+}
+
 .aonMenuLeftop,
 .aonMenuTopnav,
 .aonMenuSidenav {

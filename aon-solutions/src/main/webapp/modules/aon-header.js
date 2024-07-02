@@ -346,8 +346,9 @@ export class AonHeader extends AonElement {
 			
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
+
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-			if(!this.isMobile()) {
+			if (!this.isMobile()) {
 				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
 				aonHeaderSearch.style.display = 'flex';
 
@@ -356,10 +357,12 @@ export class AonHeader extends AonElement {
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-				if(!LS.isNewTheme() && !this.newTheme){
+				
+				if (!LS.isNewTheme() && !this.newTheme) {
 					let aonShowMenu = this.getElement('aonShowMenu');
 					aonShowMenu.style.display = 'none';
 				}
+				
 				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
@@ -381,18 +384,17 @@ export class AonHeader extends AonElement {
 			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
 
-			if(!LS.isDarkTheme()){	
+			if (!LS.isDarkTheme()) {
 				header.style.backgroundColor = "rgb(240, 240, 240)";
-				apps.style.color = "rgb(95,99,104)";
+				apps.style.color = "rgb(95, 99, 104)";
 				apps.style.backgroundColor = "rgb(240,240,240)";
 				headerapp.style.display = "none";
-			}else{
+			} else {
 				header.style.backgroundColor = "black";
 				apps.style.color = "white";
 				apps.style.backgroundColor = "black";
 				headerapp.style.display = "none";
 			}
-			
 
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
@@ -404,15 +406,21 @@ export class AonHeader extends AonElement {
 			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
 			let welcome = this.getElement("aonCompanyTabFilter");
-			if(welcome){
-				appss.addEventListener("click", (event) => {
+
+			if (welcome) {
+				const welcomeClickListener = (event) => {
 					event.preventDefault();
 					event.stopPropagation();
-				});
+					// Remueve el listener después de ejecutarse
+					appss.removeEventListener("click", welcomeClickListener);
+				};
+				
+				appss.addEventListener("click", welcomeClickListener);
 			}
-			appss.style.color = "rgb(95, 99, 104)";
 
+			appss.style.color = "rgb(95, 99, 104)";
 		});
+
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
