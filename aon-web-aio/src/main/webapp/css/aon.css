@@ -1017,6 +1017,8 @@
   transition: 0.5s;
   height: calc(100vh - 102px);
   overflow-y: auto;
+
+  
 }
 
 .aonContentBeta {
@@ -1028,6 +1030,8 @@
   overflow-y: auto;
   border-radius: 0px;
   background-color: #fafafa;
+  
+  
 }
 
 .aonSubContent {
@@ -1181,6 +1185,7 @@
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: white;
 }
+
 
 
 .aonCardFlex{

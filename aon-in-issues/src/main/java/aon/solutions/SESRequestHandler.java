@@ -1,10 +1,20 @@
 package aon.solutions;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -14,6 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.print.DocFlavor.STRING;
+import javax.xml.bind.DatatypeConverter;
 
 import org.json.JSONArray;
 
@@ -35,6 +49,8 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import aon.solutions.SendSimpleEmail;
+
 
 import jakarta.mail.BodyPart;
 import jakarta.mail.Header;
@@ -89,26 +105,28 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 			try (InputStream is = s3Object.getObjectContent()) {
 				messageResults = getHtmlMessage(is, messageIds.get(i));
-				handleTask(sources.get(i), emailParts[1], messageResults.get(0), messageResults.get(1), messageResults.get(2));
+				handleTask(sources.get(i), dests.get(0), messageResults.get(0), messageResults.get(1), messageResults.get(2), messageResults.get(3));
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		System.out.println(sources);
-		System.out.println(messageIds);
+		
 
 		return null;
 	}
 	
-	private static List<String> getHtmlMessage(InputStream is, String messageId) throws MessagingException, IOException {
+	private static List<String> getHtmlMessage(InputStream is, String messageId) throws MessagingException, IOException, NoSuchAlgorithmException {
 		
 		List<String> attachIdList = new ArrayList<>();
 		List<String> result = new ArrayList<>();
 		List<String> fileNames = new ArrayList<>();
 		Map<String, String> imagesWithURL = new HashMap<>();
 		Map<String, String> attachesNames = new HashMap<>();
+		Map<String, String> base64 = new HashMap<>();
 		String html = "";
+		String textPlain = "";
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
 		String subjectArray[] = mimeMessage.getHeader("Subject");
@@ -116,30 +134,50 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 		System.out.println(subject);
 		Multipart multipart = (Multipart) mimeMessage.getContent();
 		for (int i = 0; i < multipart.getCount(); i++) {
-			 //System.out.println(multipart.getContentType());
+			 System.out.println(multipart.getContentType());
+			 if (multipart.getContentType().startsWith("multipart/alternative")) {
+				textPlain =  multipart.getBodyPart(0).getContent().toString();
+				html =  multipart.getBodyPart(1).getContent().toString();
+			 }
+			 System.out.println(multipart.getBodyPart(i).getContent().toString());
 			BodyPart bodyPart = multipart.getBodyPart(i);
 			System.out.println(multipart.getBodyPart(i).getFileName());
 			if(multipart.getBodyPart(i).getFileName() != null ) fileNames.add(multipart.getBodyPart(i).getFileName());
-			attachIdList = getAttachIds(bodyPart, attachIdList);
+
+			attachIdList = getAttachIds(bodyPart, attachIdList, attachesNames, base64);
+			if(bodyPart.getContentType().startsWith("multipart/related")) {
+				Multipart m = (Multipart) bodyPart.getContent();
+				System.out.println(m.getBodyPart(0).getContentType());
+				BodyPart b = m.getBodyPart(0);
+				Multipart m2 = (Multipart) b.getContent();
+				textPlain = m2.getBodyPart(0).getContent().toString();
+				html =  m2.getBodyPart(1).getContent().toString();
+				BodyPart bAttach = m.getBodyPart(1);
+				System.out.println(m.getBodyPart(1).getContent());
+				attachIdList = getAttachIds(bAttach, attachIdList, attachesNames, base64);
+				
+			}
+
 			if (bodyPart.getContentType().startsWith("multipart/alternative")) {
 				Multipart m = (Multipart) bodyPart.getContent();
+				textPlain = m.getBodyPart(0).getContent().toString();
 				html = m.getBodyPart(1).getContent().toString();
 				System.out.println(html);
 			}
 		}
 		
-		for (int i = 0; i < attachIdList.size(); i++) {
-			attachesNames.put(attachIdList.get(i), fileNames.get(i));
-		}
+		
 		
 		StringBuilder newHtml = new StringBuilder(html);
+		System.out.println(textPlain);
 		System.out.println(attachIdList);
 		imagesWithURL = formatUrlToImages(messageId, attachIdList, attachesNames);
-		String finalHtml = replaceAttachIds(newHtml, imagesWithURL, attachesNames);
-		String attaches = attachString(imagesWithURL, attachesNames);
+		String finalHtml = escapeEmojis(replaceAttachIds(newHtml, imagesWithURL, attachesNames));
+		String attaches = attachString(imagesWithURL, attachesNames, base64);
 		result.add(finalHtml);
 		result.add(subject);
 		result.add(attaches);
+		result.add(textPlain);
         
 		System.out.println(finalHtml);
 		
@@ -150,9 +188,14 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 	
 
 
-	private static void handleTask(String from, String to, String message, String subject, String attaches)
-			throws URISyntaxException, IOException, InterruptedException {
-
+	private static void handleTask(String from, String domainTo, String message, String subject, String attaches, String query)
+			throws URISyntaxException, IOException, InterruptedException, ConnectException {
+		
+		try {
+        String[] emailParts = domainTo.split("@");	
+        String to = emailParts[1];
+        System.out.println(from);
+        System.out.println(to);
 		Auth auth = AonAuth.getAuth(from, to);
 		if (auth.getUuid() != null && auth.getUuid().length() > 0) {
 			String token = AonToken.build(auth.getUuid(), AonDateUtils.addMonths(new Date(), 3));
@@ -212,7 +255,25 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 						    .setEmail(from);
 						    
 					if(!attaches.isEmpty()) AonTask.addTaskWorkflow(company.getDomain().getName(), user.getLogin(), attachWorkflow);
-						    
+					
+					String tokenGpt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME";
+					String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", tokenGpt).getString("uuid");
+					if(query.contains("image:")) query = query.replaceAll("\\[.*?\\]", "").trim();
+					String messageGpt = GptTrainerApi.createMessage(sessUuid, tokenGpt, query);
+					if(messageGpt.startsWith("gpt")) messageGpt = messageGpt.replace("gpt_trainer_ai_function_x_call", "");
+					System.out.println(messageGpt);
+					
+					
+					TaskWorkflow gptWorkflow = new TaskWorkflow();
+				    gptWorkflow.setCreationUser(user.getLogin())
+				    .setCreationDate(new Date())
+				    .setTask(task.getId())
+				    .setTaskHolder(taskHolderList.get(0))
+				    .setComment(messageGpt)
+				    .setType(TaskWorkflowType.COMMENT)
+				    .setEmail(from);
+					
+				    AonTask.addTaskWorkflow(company.getDomain().getName(), user.getLogin(), gptWorkflow);  
 						   
 
 				} else {
@@ -221,23 +282,48 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 				}
 			}
 
-		} else
-			throw new IllegalArgumentException();
+		} else {
+			SendSimpleEmail.send(domainTo , from );
+		}
 
+		} catch(ConnectException e) {
+			
+			SendSimpleEmail.send(domainTo , from );
+		}
+	
 	}
 
-	private static List<String> getAttachIds(BodyPart bodyPart, List<String> attachIds) throws MessagingException {
+
+	private static List<String> getAttachIds(BodyPart bodyPart, List<String> attachIds, Map<String, String> attachesNames, Map<String, String> base64) throws MessagingException, IOException, NoSuchAlgorithmException {
 
 		Enumeration<Header> headers = bodyPart.getAllHeaders();
+		String fileName = "";
+		String attachId = "";
+		String base64String = "";
 		for (Iterator<Header> iterator = headers.asIterator(); iterator.hasNext();) {
 			Header header = iterator.next();
 			System.out.println(header.getName() + "=" + header.getValue());
-			if (header.getName().equals("X-Attachment-Id"))
-				attachIds.add(header.getValue());
-			if(header.getName().contains("filen")) System.out.println("Es correcto");
-
+			if(header.getName().equals("Content-Disposition")) {
+				String headerName[] = header.getValue().split(";");
+				String headerValue = headerName[1].substring(10);
+				fileName = headerValue.replaceAll("\"", "");
+				System.out.println(fileName);
+				String md5 = convertToMD5(bodyPart.getInputStream());
+				attachIds.add(md5);
+				attachId = md5;
+			}
+			if (header.getName().equals("Content-ID")) {
+				attachIds.add(header.getValue().replaceAll("[<>]", ""));
+				attachId  = header.getValue().replaceAll("[<>]", "");
+				
+			}
+			
+			base64String = convertStreamToString(bodyPart.getInputStream());
+			
 		}
-
+        
+		if(!fileName.isBlank()) attachesNames.put(attachId, fileName);
+		if(!fileName.isBlank()) base64.put(attachId, base64String);
 		return attachIds;
 	}
 
@@ -265,8 +351,37 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 		return html.toString();
 	}
+	
+	private static String convertToMD5(InputStream message) throws NoSuchAlgorithmException, IOException {
+	    	
+	    	MessageDigest md = MessageDigest.getInstance("MD5");
+	        byte[] digest = md.digest(message.readAllBytes());
+	        String myHash = bytesToHex(digest).toUpperCase();
+	    	
+	    	return myHash;
+	    	
+	    }
+	
+	private  static String convertStreamToString(InputStream is) {
+		  
+		String result = new BufferedReader(new InputStreamReader(is))
+				   .lines().collect(Collectors.joining("\n"));
+		return result;
+		  
+		}
+	
+	private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
-	private static String attachString(Map<String, String> imagesWithURL, Map<String, String> attachesNames) {
+	private static String attachString(Map<String, String> imagesWithURL, Map<String, String> attachesNames, Map<String, String> base64) {
         
 		StringBuilder html = new StringBuilder();
 		for (Map.Entry<String, String> entry : imagesWithURL.entrySet()) {
@@ -276,7 +391,237 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 				html.append(" "); 
 			}
 			
-			 html.append("<a" + " " + "href=\"" + entry.getValue() + "\">" + attachesNames.get(entry.getKey()) + "</a>");
+			
+			
+			
+			
+			
+			if(attachesNames.get(entry.getKey()).endsWith("jpg")) {
+			
+				
+				
+				String html1= "<body>\n"
+						+ "   \n"
+						+ "\n"
+						+ "<div>\n"
+						+ "    <a class=\"descarga\" href=\"" + entry.getValue() + "\" onmouseover=\"document.getElementById('popupContainer').style.display = 'block'\" onmouseout=\"document.getElementById('popupContainer').style.display = 'none'\" title=\"" + attachesNames.get(entry.getKey()) + "\" ><span>Descargar</span><span>" + attachesNames.get(entry.getKey()) + "</span></a>\n"
+						+ "</div>\n"
+						+ "<div id=\"popupContainer\" class=\"" + entry.getKey() + "\">\n"
+						+ "        <img src=\"" + entry.getValue() + "\" alt=\"Imagen\">\n"
+						+ "    </div>"
+						+ "\n"
+						+ "</body>";
+				
+				
+				String css ="<style>\n"
+	            		+ ".descarga {\n"
+	            		+ "    background: #ffffff;\n"
+	            		+ "    border: solid 2px #ccc;\n"
+	            		+ "    border-radius: 2px;\n"
+	            		+ "    display: inline-block;\n"
+	            		+ "    height: 100px;\n"
+	            		+ "    line-height: 100px;\n"
+	            		+ "    margin: 5px;\n"
+	            		+ "    position: relative;\n"
+	            		+ "    text-align: center;\n"
+	            		+ "    vertical-align: middle;\n"
+	            		+ "    width: 100px;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga span {\n"
+	            		+ "    background: #f2594b;\n"
+	            		+ "    border-radius: 4px;\n"
+	            		+ "    color: #ffffff;\n"
+	            		+ "    display: inline-block;\n"
+	            		+ "    font-size: 11px;\n"
+	            		+ "    font-weight: 700;\n"
+	            		+ "    line-height: normal;\n"
+	            		+ "    padding: 5px 10px;\n"
+	            		+ "    position: relative;\n"
+	            		+ "    text-transform: uppercase;\n"
+	            		+ "    z-index: 1;\n"
+	            		+ "    top: 45%;\n"
+	            		+ "    text-align: center;\n"
+	            		+ "    max-width: 95%;;\n"
+	            		+ "    text-overflow: ellipsis;\n"
+	            		+ "    overflow: hidden;\n"
+	            		+ "    white-space: nowrap;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga span:last-child {\n"
+	            		+ "    margin: auto;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:before,\n"
+	            		+ ".descarga:after {\n"
+	            		+ "    background: #ffffff;\n"
+	            		+ "    border: solid 3px #9fb4cc;\n"
+	            		+ "    border-radius: 4px;\n"
+	            		+ "    content: '';\n"
+	            		+ "    display: block;\n"
+	            		+ "    height: 35px;\n"
+	            		+ "    left: 50%;\n"
+	            		+ "    margin: -17px 0 0 -12px;\n"
+	            		+ "    position: absolute;\n"
+	            		+ "    top: 50%;\n"
+	            		+ "    /*transform:translate(-50%,-50%);*/\n"
+	            		+ "    \n"
+	            		+ "    width: 25px;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:hover:before,\n"
+	            		+ ".descarga:hover:after {\n"
+	            		+ "    background: #e2e8f0;\n"
+	            		+ "}\n"
+	            		+ "/*a:before{transform:translate(-30%,-60%);}*/\n"
+	            		+ "\n"
+	            		+ ".descarga:before {\n"
+	            		+ "    margin: -23px 0 0 -5px;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:hover {\n"
+	            		+ "    background: #e2e8f0;\n"
+	            		+ "    border-color: #9fb4cc;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:active {\n"
+	            		+ "    background: #dae0e8;\n"
+	            		+ "    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .25);\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga span:first-child {\n"
+	            		+ "    display: none;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:hover span:first-child {\n"
+	            		+ "    display: inline-block;\n"
+	            		+ "}\n"
+	            		+ "\n"
+	            		+ ".descarga:hover span:last-child {\n"
+	            		+ "    display: none;\n"
+	            		+ "}\n"
+	            		+ "        /* Imagen dentro del contenedor pop-up */\n"
+	            		+ "." + entry.getKey() + " " + "img" + "{\n"
+	            		+ "max-width: 300px;\n"
+	            		+ "max-height: 200px;\n"
+	            		+ "box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;\n"
+	            		+ "margin-top: -100px;\n"
+	            		+ "margin-left: 40px;\n"
+	            		+ "z-index: 69;\n"
+	            		+ "position: relative;"
+	            		+ "}"
+	            		+ "</style>" ;
+				
+			
+				html.append(html1);
+				html.append(css);
+				
+			} else {
+			
+			String html1= "<body>\n"
+					+ "   \n"
+					+ "\n"
+					+ "<div>\n"
+					+ "    <a class=\"descarga\" target=\"_blank\" href=\""+entry.getValue() +"\" title=\"" + attachesNames.get(entry.getKey()) + "\" ><span>Descargar</span><span>" + attachesNames.get(entry.getKey()) + "</span></a>\n"
+					+ "</div>\n"
+					+ "\n"
+					+ "</body>";
+			
+            String css ="<style>\n"
+            		+ ".descarga {\n"
+            		+ "    background: #ffffff;\n"
+            		+ "    border: solid 2px #ccc;\n"
+            		+ "    border-radius: 2px;\n"
+            		+ "    display: inline-block;\n"
+            		+ "    height: 100px;\n"
+            		+ "    line-height: 100px;\n"
+            		+ "    margin: 5px;\n"
+            		+ "    position: relative;\n"
+            		+ "    text-align: center;\n"
+            		+ "    vertical-align: middle;\n"
+            		+ "    width: 100px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span {\n"
+            		+ "    background: #f2594b;\n"
+            		+ "    border-radius: 4px;\n"
+            		+ "    color: #ffffff;\n"
+            		+ "    display: inline-block;\n"
+            		+ "    font-size: 11px;\n"
+            		+ "    font-weight: 700;\n"
+            		+ "    line-height: normal;\n"
+            		+ "    padding: 5px 10px;\n"
+            		+ "    position: relative;\n"
+            		+ "    text-transform: uppercase;\n"
+            		+ "    z-index: 1;\n"
+            		+ "    top: 45%;\n"
+            		+ "    text-align: center;\n"
+            		+ "    max-width: 95%;;\n"
+            		+ "    text-overflow: ellipsis;\n"
+            		+ "    overflow: hidden;\n"
+            		+ "    white-space: nowrap;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span:last-child {\n"
+            		+ "    margin: auto;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:before,\n"
+            		+ ".descarga:after {\n"
+            		+ "    background: #ffffff;\n"
+            		+ "    border: solid 3px #9fb4cc;\n"
+            		+ "    border-radius: 4px;\n"
+            		+ "    content: '';\n"
+            		+ "    display: block;\n"
+            		+ "    height: 35px;\n"
+            		+ "    left: 50%;\n"
+            		+ "    margin: -17px 0 0 -12px;\n"
+            		+ "    position: absolute;\n"
+            		+ "    top: 50%;\n"
+            		+ "    /*transform:translate(-50%,-50%);*/\n"
+            		+ "    \n"
+            		+ "    width: 25px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover:before,\n"
+            		+ ".descarga:hover:after {\n"
+            		+ "    background: #e2e8f0;\n"
+            		+ "}\n"
+            		+ "/*a:before{transform:translate(-30%,-60%);}*/\n"
+            		+ "\n"
+            		+ ".descarga:before {\n"
+            		+ "    margin: -23px 0 0 -5px;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover {\n"
+            		+ "    background: #e2e8f0;\n"
+            		+ "    border-color: #9fb4cc;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:active {\n"
+            		+ "    background: #dae0e8;\n"
+            		+ "    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .25);\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga span:first-child {\n"
+            		+ "    display: none;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover span:first-child {\n"
+            		+ "    display: inline-block;\n"
+            		+ "}\n"
+            		+ "\n"
+            		+ ".descarga:hover span:last-child {\n"
+            		+ "    display: none;\n"
+            		+ "}\n"
+            		+ "</style>" ;
+            
+			
+			html.append(css);
+			html.append(html1);
+			
+			}
+			 
 		}
         
 		System.out.println(html.toString());
@@ -287,19 +632,50 @@ public class SESRequestHandler<T> implements RequestHandler<Map<String, T>, APIG
 
 		HashMap<String, String> imagesWithURL = new HashMap<>();
 		for (String attachId : attachIds) {
+			if(attachesNames.get(attachId) != null) {
 			imagesWithURL.put(attachId, "https://jkmoqwh5wdc2adjdbyjj2sc6eq0donyi.lambda-url.eu-west-1.on.aws/soporte/"
-					+ messageId + "/" + attachId + "/" + attachesNames.get(attachId));
+					 + messageId + "/" + attachId + "/" + attachesNames.get(attachId));
+			}
 		}
 
 		return imagesWithURL;
 	}
+	
+	private static void checkConn() throws URISyntaxException, IOException, InterruptedException {
+    	HttpRequest httpRequest = HttpRequest
+    	.newBuilder(new URI("https://issues-test.aonsolutions.org/"))
+    	.GET()
+    	.build();
+		HttpResponse<String> response = HttpClient.newHttpClient().send(httpRequest, BodyHandlers.ofString());
+	}
+	
+	private static String escapeEmojis(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            int codePoint = text.codePointAt(i);
+            if (Character.isSupplementaryCodePoint(codePoint)) {
+                sb.append("&#x").append(Integer.toHexString(codePoint)).append(";");
+                i++; 
+            } else {
+                sb.append((char) codePoint);
+            }
+        }
+        return sb.toString();
+    }
 
-	public static void main(String[] args) throws FileNotFoundException, IOException, MessagingException, URISyntaxException, InterruptedException {
-		String messageId = "rle89n3aslrm5sn6btc7qg2lpkm9u5fdu74lipo1";
-		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/rle89n3aslrm5sn6btc7qg2lpkm9u5fdu74lipo1")) {
+	public static void main(String[] args) throws FileNotFoundException, IOException, MessagingException, URISyntaxException, InterruptedException, NoSuchAlgorithmException {
+		String messageId = "bkm3o81qqd99dsoh2ksh0jo36b9nvpdn9iu2o4g1";
+		String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwOTExODY1OCwianRpIjoiMDNmNDExM2EtZjkwYS00MTAyLTgwZTYtMjA4YjAxYWMxNDFhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJhcGlfa2V5IjoiYTQ2MmJhMjk2YzM5ZjQ2YzhkZjE4OWZiOTgyN2NiMGRjNmRkOWJkODYyOTNmODU1NzYyZGNjNTkzZGI3ZDFhMyJ9LCJuYmYiOjE3MDkxMTg2NTh9.hRNe1VYIo88Zc4d-_ts1XMT7ETiwqGP6umlHUn8PHME"
+	   ;String sessUuid = GptTrainerApi.createChatbotSession("d22a72b597824782bebcf05028075b50", token).getString("uuid");
+		try (InputStream is = new FileInputStream("/home/asolaun/Descargas/bkm3o81qqd99dsoh2ksh0jo36b9nvpdn9iu2o4g1")) {
 			List<String> messageResults = new ArrayList<>();
 			messageResults = getHtmlMessage(is, messageId);
-			handleTask("anderysalma@gmail.com", "issues-test.aonsolutions.org", messageResults.get(0), messageResults.get(1), messageResults.get(2));
+			handleTask("anderysalma@gmail.com", "soporte@issues-test.aonsolutions.org", messageResults.get(0), messageResults.get(1), messageResults.get(2), messageResults.get(3));
+			String query = messageResults.get(3);
+			if(query.contains("image:")) query = query.replaceAll("\\[.*?\\]", "").trim();
+			String message = GptTrainerApi.createMessage(sessUuid, token, query);
+			if(message.startsWith("gpt")) message = message.replace("gpt_trainer_ai_function_x_call", "");
+			System.out.println(message);
 		}
 
 	}
