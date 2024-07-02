@@ -365,11 +365,7 @@ export class AonInvoice extends AonElement {
 		let invoiceToolbar = new AonToolbar();
 		invoiceToolbar.id = this.TOOLBAR;
 		invoiceToolbar.type = ToolbarType.SECONDARY;
-		let toolbarTitle = this.getInvoiceTitle()
-		if ( this.getInvoice() && this.getInvoice().status) {
-			toolbarTitle = toolbarTitle + " (" + this.getInvoice().status +")";
-		}
-		invoiceToolbar.title = toolbarTitle;
+		invoiceToolbar.title = this.getInvoiceTitle()
 		this.appendChild(invoiceToolbar);
 		invoiceToolbar.removeButtons();
 		invoiceToolbar.addButton2(ACTION.NEXT, () => this.nextInvoice());

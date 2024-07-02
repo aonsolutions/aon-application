@@ -5284,6 +5284,13 @@ public class AonStringUtils {
 		return str.toUpperCase();
 	}
 
+	public static String lowerCase(final String str) {
+		if (str == null) {
+			return null;
+		}
+		return str.toLowerCase();
+	}
+
 	// Count matches
 	// -----------------------------------------------------------------------
 	/**

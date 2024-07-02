@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.type.RawdocType;
+import es.translogia.tedi.ewok.TediInvoiceType;
 
 public class RawdocInvoiceCounterDetail implements Serializable {
 
 	private static final long serialVersionUID = 320474275458042903L;
 		
 	private Integer count;
-	private Map<RawdocType,Integer> map = new EnumMap<>(RawdocType.class);
+	private Map<TediInvoiceType,Integer> map = new EnumMap<>(TediInvoiceType.class);
 	
 	public RawdocInvoiceCounterDetail() {
 		count = 0;
@@ -31,11 +31,11 @@ public class RawdocInvoiceCounterDetail implements Serializable {
 		return this;
 	}
 	
-	public Map<RawdocType, Integer> getMap() {
+	public Map<TediInvoiceType, Integer> getMap() {
 		return map;
 	}
 	
-	public RawdocInvoiceCounterDetail setMap(Map<RawdocType, Integer> map) {
+	public RawdocInvoiceCounterDetail setMap(Map<TediInvoiceType, Integer> map) {
 		this.map = map;
 		return this;
 	}
