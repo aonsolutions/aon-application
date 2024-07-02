@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.xml.transform.TransformerException;
+
 import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.seg.social.Calculations.CalcCallback;
@@ -359,24 +361,23 @@ public class SistemaRED {
 
 	public static byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType, nss,
-				regimen, ccc, date);
+		return ServicioRED.getIDCPOST(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, date);
+//		return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType, nss,
+//				regimen, ccc, date);
 	}
 
 	public static byte[] getIDC(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
-					nss, regimen, ccc, date);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
+			return ServicioRED.getIDCPOST(certificateData, certificatePassword, certificateType,
+					regimen, ccc, nss, date);
+//			return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
+//					nss, regimen, ccc, date);
 	}
 
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try {
-			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
+			return ServicioRED.getIDCDatesPOST(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
 					ccc, nss);
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
@@ -389,7 +390,8 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDCDates(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
+		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
+//		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
 	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
@@ -779,7 +781,7 @@ public class SistemaRED {
 
 	public static Collection<It> getIts(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String regime, final String ccc, final Date startDate,
-			final Date endDate, final Optional<String> naf) throws SegSocialException {
+			final Date endDate, final Optional<String> naf) throws SegSocialException{
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					startDate, endDate, naf);
@@ -790,7 +792,7 @@ public class SistemaRED {
 
 	public static Collection<It> getIts(final InputStream cert, final String certificatePassword,
 			final String certificateType, final String regime, final String ccc, final Date startDate,
-			final Date endDate, final Optional<String> naf) throws SegSocialException {
+			final Date endDate, final Optional<String> naf) throws SegSocialException, FailingHttpStatusCodeException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(cert.readAllBytes())) {
 			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					startDate, endDate, naf);

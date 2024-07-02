@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
@@ -25,6 +27,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -46,6 +49,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- UiFields
 
+	@UiField
+	HTMLPanel messagePanel;
+	
 	@UiField
 	DeckPanel deckPanel;
 
@@ -112,7 +118,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	DateBoxEx deductionEndDateBx;
-
+	
 	// COST
 
 	@UiField
@@ -190,16 +196,22 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	private TypeListBox<Payment.Type> paymentTypeLB;
 	private TypeListBox<Bonus.Type> bonusTypeLB;
 	
+	private Date contractStartDate;
+	private Date contractEndDate;
+	
 	private Button acceptDialog;
 
 	// ----------------------------------------- Constructor
 
-	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType) {
+	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType, Date contractStartDate, Date contractEndDate) {
 		setCaption(getCaption(paymentType));
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
 		this.paymentType = paymentType;
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
 
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
@@ -219,13 +231,16 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		});
 	}
 
-	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType, ContractConceptCalc selectedPayment) {
+	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType, ContractConceptCalc selectedPayment, Date contractStartDate, Date contractEndDate) {
 		setCaption(getCaption(paymentType));
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
 		this.paymentType = paymentType;
 		this.payment = selectedPayment;
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
 
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
@@ -269,27 +284,27 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private void providedDeckPanel() {
 		switch (this.paymentType) {
-		case PAYMENT:
-			providedPayment();
-			deckPanel.showWidget(deckPanel.getWidgetIndex(paymentTable));
-			break;
-		case DEDUCTION:
-			providedDeduction();
-			deckPanel.showWidget(deckPanel.getWidgetIndex(deductionTable));
-			break;
-		case COST:
-			providedCost();
-			deckPanel.showWidget(deckPanel.getWidgetIndex(costTable));
-			break;
-		case BONUS:
-			providedBonus();
-			deckPanel.showWidget(deckPanel.getWidgetIndex(bonusTable));
-			break;
-		case EMBARGO:
-			deckPanel.showWidget(deckPanel.getWidgetIndex(embargoTable));
-			break;
-		default:
-			break;
+			case PAYMENT:
+				providedPayment();
+				deckPanel.showWidget(deckPanel.getWidgetIndex(paymentTable));
+				break;
+			case DEDUCTION:
+				providedDeduction();
+				deckPanel.showWidget(deckPanel.getWidgetIndex(deductionTable));
+				break;
+			case COST:
+				providedCost();
+				deckPanel.showWidget(deckPanel.getWidgetIndex(costTable));
+				break;
+			case BONUS:
+				providedBonus();
+				deckPanel.showWidget(deckPanel.getWidgetIndex(bonusTable));
+				break;
+			case EMBARGO:
+				deckPanel.showWidget(deckPanel.getWidgetIndex(embargoTable));
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -654,11 +669,49 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
-			hide();
-			onAccept(createContractConceptCalc());
+			if(checkPaymentDates()) {
+				hide();
+				onAccept(createContractConceptCalc());
+			}
 		});
 
 		buttonsPanel.add(acceptDialog);
+	}
+	
+	private boolean checkPaymentDates() {
+		switch (this.paymentType) {
+			case PAYMENT:
+				return checkPaymentDates(paymentStartDateBx, paymentEndDateBx);
+			case DEDUCTION:
+				return checkPaymentDates(deductionStartDateBx, deductionEndDateBx);
+			case COST:
+				return checkPaymentDates(costStartDateBx, costEndDateBx);
+			case BONUS:
+				return checkPaymentDates(bonusStartDateBx, bonusEndDateBx);
+			case EMBARGO:
+				return checkPaymentDates(embargoStartDateBx, embargoEndDateBx);
+			default:
+				return false;
+		}
+	}
+	
+	private boolean checkPaymentDates(DateBoxEx startDateBx, DateBoxEx endDateBx) {
+		Date paymentStart = startDateBx.getValue(); 
+		Date paymentEnd = endDateBx.getValue();
+		if(null != paymentStart && paymentStart.before(contractStartDate)) {
+			AonMessagePanel.showError(messagePanel, "La fecha de inicio del devengo es anterior a la fecha de inicio del contrato");
+			return false;
+		} else if(null == paymentStart) {
+			AonMessagePanel.showError(messagePanel, "La fecha inicio del devengo no esta definida");
+			return false;
+		} else if(null != paymentStart && null != paymentEnd && paymentEnd.before(paymentStart)) {
+			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es anterior a la fecha de inicio del devengo");
+			return false;
+		} else if(null != paymentEnd && null != contractEndDate && paymentEnd.after(contractEndDate)) {
+			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es posterior a la fecha fin del contrato");
+			return false;
+		} else 
+			return true;
 	}
 
 	public void setSaveButton() {
@@ -667,18 +720,18 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	
 	private ContractConceptCalc createContractConceptCalc() {
 		switch (this.paymentType) {
-		case PAYMENT:
-			return createPayment();
-		case DEDUCTION:
-			return createDeduction();
-		case COST:
-			return createCost();
-		case BONUS:
-			return createBonus();
-		case EMBARGO:
-			return createEmbargo();
-		default:
-			return null;
+			case PAYMENT:
+				return createPayment();
+			case DEDUCTION:
+				return createDeduction();
+			case COST:
+				return createCost();
+			case BONUS:
+				return createBonus();
+			case EMBARGO:
+				return createEmbargo();
+			default:
+				return null;
 		}
 	}
 

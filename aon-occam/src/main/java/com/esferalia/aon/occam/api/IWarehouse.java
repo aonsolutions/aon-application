@@ -41,7 +41,6 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -132,13 +131,6 @@ public interface IWarehouse {
 	
 	Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
 	LinkedList<Department> getDepartmentList(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
-	
-	// 	***********************************************
-	// 	************************************ SERIES ***
-	// 	***********************************************
-	
-	Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter);
-	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
 
 	// 	***********************************************
 	// 	************************************ STOCK ****

@@ -1,5 +1,6 @@
 :root{
   --aonBlue: #002469;
+  --aonClearBlue: #4F91FF;
   --aonOrange: #e6970a;
   --aonGreen: #169873;
   --aonRed: #f6655a;
@@ -30,7 +31,16 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
-  --aonInvoice: #4F91FF;
+  --aonNewColor: red;
+  --aonRightPanelColor: rgb(250, 249, 248);
+  --aonCardColor: white;
+
+
+  --aonTopMenuAvailable : var(--aonBlue);
+  --aonTopMenuNotAvailable : var(--aonGray);
+  --aonTopMenuSpecial: var(--aonBlack);
+
+  --aonInvoice: var(--aonClearBlue);
   --aonInvoiceBackground: #ebf2ff;
 
   --aonDocumental: #EF6292;
@@ -48,10 +58,14 @@
   --aonTimecontrol: #D1C36D;
   --aonTimecontrolBackground: rgba(209, 195, 109, .2);
 
-  --aonAccounting: #002469;
+  --aonAccounting: var(--aonBlue);
   --aonAccountingBackground: rgba(0, 36, 105, .2);
   
   --aonHeaderBackground: #f0f0f0;
+
+  --aonHeaderButtonColor: rgb(95, 99, 104);
+
+  --aonHeaderBackgroundAvailable: var(--aonBlue);
 
 }
 
@@ -339,12 +353,12 @@
 }
 
 .rightPanel {
-	top: 51px;
-	right: 0;
-	position: fixed;
-	z-index: 1000000;
-	height: calc(100vh - 49px);
-	overflow: hidden;
+    top: 51px;
+    right: 0;
+    position: fixed;
+    z-index: 1000000;
+    height: calc(100vh - 49px);
+    overflow: hidden;
 }
 
 .rootMobilePanel {
@@ -623,8 +637,8 @@
 }
 
 .aonLiBeta:hover {
-	background-color: #FFF;
-	box-shadow: 0 8px 16px 0 rgba(0,0,0,.1);
+    background-color: #FFF;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,.1);
 }
 
 .aonTextOverflow {
@@ -810,16 +824,16 @@
 }
 
 .aonMenuLeftop  {
-	top: 0;
-	left: 0;
-	z-index: 8;
-	height: 48px;
-	width: 68px;
-	position: fixed;
-	overflow-x: hidden;
-	font-size: 10px;
-	border-right: none;
-	background-color: transparent;
+    top: 0;
+    left: 0;
+    z-index: 8;
+    height: 48px;
+    width: 68px;
+    position: fixed;
+    overflow-x: hidden;
+    font-size: 10px;
+    border-right: none;
+    background-color: transparent;
 }
 
 .aonMenuSidenav::-webkit-scrollbar {
@@ -938,9 +952,9 @@
 }
 
 .aonSidenavTitleBeta span {
-	font-weight: 500;
-	display: inline-block;
-	text-transform: lowercase;
+    font-weight: 500;
+    display: inline-block;
+    text-transform: lowercase;
 }
 
 .aonSidenavTitleBeta span:first-letter{
@@ -1925,7 +1939,7 @@ label.rating:hover {
 }
 
 .aonHeaderApp {
-	margin-left: 49px;
+    margin-left: 49px;
 }
 
 /*
@@ -2266,98 +2280,98 @@ label.rating:hover {
 
 
 .aonError .material-icons {
-	font-size: 20px;
-	color: var(--aonError);
+    font-size: 20px;
+    color: var(--aonError);
 }
 
 .aonWarning .material-icons {
-	font-size: 20px;
-	color: var(--aonWarning);
-	
+    font-size: 20px;
+    color: var(--aonWarning);
+    
 }
 
 .aonRootGradiantHeader {
-	top: 48px;
-	left: 0;
-	right: 0px;
-	bottom: 0;
-	position: fixed;
-	background-color: #faf9f8;
+    top: 48px;
+    left: 0;
+    right: 0px;
+    bottom: 0;
+    position: fixed;
+    background-color: #faf9f8;
 }
 
 .aonRootGradiantHeaderBlur {
-	top: 48px;
-	left: 0;
-	right: 0px;
-	bottom: 0;
-	position: fixed;
-	backdrop-filter: blur(50px);
-	background-color: transparent;
+    top: 48px;
+    left: 0;
+    right: 0px;
+    bottom: 0;
+    position: fixed;
+    backdrop-filter: blur(50px);
+    background-color: transparent;
 }
 
 .aonRootGradiantHeaderTop {
-	top:48px;
-	left: 78%;
-	width: 800px;
-	height: 800px;
-	position: absolute;
-	transform-origin: center;
-	background: radial-gradient(circle,#1a4ff9 0,hsla(240,9%,96%,0) 68%);
+    top:48px;
+    left: 78%;
+    width: 800px;
+    height: 800px;
+    position: absolute;
+    transform-origin: center;
+    background: radial-gradient(circle,#1a4ff9 0,hsla(240,9%,96%,0) 68%);
 }
 
 .aonRootGradiantHeaderBottom {
-	top:49vh;
-	left: 89%;
-	width: 400px;
-	height: 400px;
-	position: absolute;
-	transform-origin: center;
-	background: radial-gradient(circle,#09e7fc 0,hsla(240,9%,96%,0) 68%);
+    top:49vh;
+    left: 89%;
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    transform-origin: center;
+    background: radial-gradient(circle,#09e7fc 0,hsla(240,9%,96%,0) 68%);
 }
 
 .aonParentDiv  {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .aonWelcomeDiv  {
-	width: 84%;
-	display: flex;
-	margin: 0 auto;
-	flex-wrap: wrap;
-	max-width: 1128px;
-	padding-top: 72px;
-	padding-bottom: 60px;
+    width: 84%;
+    display: flex;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    max-width: 1128px;
+    padding-top: 72px;
+    padding-bottom: 60px;
 }
 
 .aonTab {
-	overflow-x: auto;
-	width: 100%;
-	display: flex;
-	padding-top: 10px;
-	padding-bottom: 10px;
+    overflow-x: auto;
+    width: 100%;
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .aonTabItem {
-	float: left;
-	padding: 2px 24px 0 2px;
+    float: left;
+    padding: 2px 24px 0 2px;
   cursor: pointer;
 }
 
 .aonTabItemText {
-	color: #605E5C;
-	font-size: 16px;
-	font-weight: 400;
-	white-space: nowrap;
-	padding-bottom: 5px;
+    color: #605E5C;
+    font-size: 16px;
+    font-weight: 400;
+    white-space: nowrap;
+    padding-bottom: 5px;
 }
 
 .aonTabItemTextSelected {
-	color: #252423;
-	font-weight: 500;
-	border-bottom: 2px solid #0078d4;
-	
+    color: #252423;
+    font-weight: 500;
+    border-bottom: 2px solid #0078d4;
+    
 }
 
 .aonAppMoreBtn:hover {

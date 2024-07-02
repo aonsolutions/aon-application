@@ -170,6 +170,7 @@ export class AonWarehouse extends AonElement {
 	}
 
 	selectOption(option) {
+		this.getApplication().removeToolbarOptions();
 		switch(option.id){
 		case ELABORATION.id:
 			this.aonElaboration();

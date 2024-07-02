@@ -12,6 +12,7 @@ public class Packaging {
 	Item container;
 	List<Item> containers;
 	Integer copies;
+	Warehouse warehouse;
 	
 	double quantity;
 	
@@ -72,6 +73,15 @@ public class Packaging {
 	
 	public Packaging setCopies(Integer copies) {
 		this.copies = copies;
+		return this;
+	}
+	
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+	
+	public Packaging setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 		return this;
 	}
 	

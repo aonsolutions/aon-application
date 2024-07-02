@@ -13,8 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,24 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.net.ssl.SSLContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
+import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
@@ -61,10 +52,10 @@ import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
-import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.InvalidDateException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.ITPart;
 import solutions.aon.seg.social.object.ITPartPage;
@@ -79,6 +70,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static final String TRY_AGAIN  = "Intente nuevamente!";
 	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0002";
 	private static final String ARQ_SPM_OUT = "ARQ.SPM.OUT";
+	private static final String DT = ".//div[@class='datosEnLinea']/dl/div/dt";
+
 
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date startDate, Date endDate, Optional<String> nss)
@@ -91,7 +84,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	public static Optional<ITPart> getDataIT(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, String nss, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess)
-			throws SegSocialException {
+			throws SegSocialException, FailingHttpStatusCodeException {
 		return getItsImpl(
 			certificateInputStream, certificatePassword, certificateType, regime, ccc, Optional.of(nss), 
 			Optional.empty(), Optional.empty(), Optional.ofNullable(dateBj)
@@ -213,88 +206,172 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		return null; 
 	}
 	
-
-	public static List<ITPart> getItsImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static List<ITPart> getItsImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Optional<String> nss, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> dateBj)
-			throws SegSocialException {
-		SSLContext sslContext = null;
-		
-		try {
-			
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray())
-				.loadTrustMaterial(new TrustStrategy() {
-	                @Override
-	                 public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	                         return true;
-	                 }
-				})
-				.build();
-			
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
-		
-		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-			String body = Toolkit.getBodyGET(httpClient, BASE_URI);
-			Toolkit.checkProsaError(body);
-			checkAuthorization(body);
-			
-			String link ="https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
-			String ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
+			throws SegSocialException{
 
-			HttpPost httpPost = new HttpPost(link);
+
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setUseInsecureSSL(true);
 			
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
-			params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
-			params.add(new BasicNameValuePair(ARQ_SPM_OUT, "XML_STYLESHEET"));
-			params.add(new BasicNameValuePair("SPM.ACC.CONTINUAR_CONSULTA", "CONTINUAR_CONSULTA"));
-			params.add(new BasicNameValuePair("regimenConsulta", regime));
-			params.add(new BasicNameValuePair("cccConsulta", ccc));
-			params.add(new BasicNameValuePair("nafConsulta", nss.isPresent() ? nss.get() : ""));
-		
-			if(dateBj.isPresent()) {
-				Toolkit.formatDate(dateBj.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaBajaMedConsulta", d)));
-			} else {
-				params.add(new BasicNameValuePair("fechaBajaMedConsulta", ""));
+			if (endDate.isPresent() && Toolkit.isFuture(endDate.get()) )
+				throw new InvalidDateException();
+
+			ArrayList<ITPart> itParts = new ArrayList<>();
+
+			XmlPage xmlPage = webClient.getPage(BASE_URI);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			handleItPartErrors(htmlPage);
+
+			xmlPage = htmlPage.getElementById("PEST_3").click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+
+			wait4(htmlPage, p -> p.querySelector("[name=\"regimenConsulta\"]"))
+					.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4"))
+					.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+			form.getInputByName(ARQ_SPM_OUT).remove();
+
+			form.getInputByName("regimenConsulta").setValue(regime);
+			form.getInputByName("cccConsulta").setValue(ccc);
+			form.getInputByName("nafConsulta").setValue(nss.orElse(""));
+			
+			if ( startDate.isPresent() ) {
+				Toolkit.formatDate(startDate.get(), DATE_FORMAT).ifPresent(f -> form.getInputByName("fechaDesdeConsulta").setValue(f));
 			}
-	
-			if(startDate.isPresent()) {
-				Toolkit.formatDate(startDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaDesdeConsulta", d)));
-			} else {
-				params.add(new BasicNameValuePair("fechaDesdeConsulta", ""));
+			if (endDate.isPresent()) {
+				Toolkit.formatDate(endDate.get(), DATE_FORMAT).ifPresent(t -> form.getInputByName("fechaHastaConsulta").setValue(t));	
 			}
 			
-			if(endDate.isPresent()) {
-				Toolkit.formatDate(endDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaHastaConsulta", d)));
-			} else {
-				params.add(new BasicNameValuePair("fechaHastaConsulta", ""));
-			}
+
+			HtmlButton continueIn = (HtmlButton) wait4(htmlPage,
+					p -> p.querySelector("button[value=\"CONTINUAR_CONSULTA\"]")).orElseThrow();
+			xmlPage = continueIn.click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+			boolean nextExist = true;
+			do {
+				HtmlTable tableResults = (HtmlTable) htmlPage.getElementById("TABLA_12");
+				List<HtmlTableBody> tableBodies = tableResults.getBodies();
+				for (HtmlTableBody htmlTableBody : tableBodies) {
+					List<HtmlTableRow> rows = htmlTableBody.getRows();
+					for (HtmlTableRow row : rows) {
+						List<HtmlAnchor> anchor = row.getByXPath(".//a");
+						xmlPage = anchor.get(0).click();
+						HtmlPage detailsHtmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+
+						ITPart itPart = new ITPart();
+						DomElement datosConsulta = detailsHtmlPage.getElementById("CONTENEDOR_SECCION_11");
+						List<DomElement> dtConsultas = datosConsulta.getByXPath(DT);
+						for (DomElement dtConsulta : dtConsultas) {
+							if ("C.C.C.:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setCcc(ddConsulta);
+						    }
+							else if ("N.A.F.:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setNaf(ddConsulta);
+							}
+							else if ("Contingencia:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setContingency(ddConsulta);
+							}
+							else if ("Fecha de baja:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setWorkLeaveDate(Toolkit.parseDate(ddConsulta, DATE_FORMAT));
+							}
+							else if ("Tipo de parte:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setPartType(ddConsulta);
+							}
+							else if ("Fecha de recepción:".equals(dtConsulta.getTextContent())) {
+								String ddConsulta = dtConsulta.getNextElementSibling().getTextContent();
+								itPart.setReceptionDate(Toolkit.parseDate(ddConsulta, DATE_FORMAT));
+							}
+						}
+						
+						
+						DomElement datosPersonales = detailsHtmlPage.getElementById("CONTENEDOR_SECCION_12");
+						List<DomElement> dtPersonales = datosPersonales.getByXPath(DT);
+						for (DomElement dtPersonal : dtPersonales) {
+							if ("Nombre:".equals(dtPersonal.getTextContent())) {
+								String ddPersonal = dtPersonal.getNextElementSibling().getTextContent();
+								itPart.setNameEmployee(ddPersonal);
+						    }
+							else if ("IPF:".equals(dtPersonal.getTextContent())) {
+								String ddPersonal = dtPersonal.getNextElementSibling().getTextContent();
+								itPart.setIpf(ddPersonal);
+							}
+							else if ("Dirección:".equals(dtPersonal.getTextContent())) {
+								String ddPersonal = dtPersonal.getNextElementSibling().getTextContent();
+								itPart.setDirectionEmployee(ddPersonal);
+							}
+						}
+						DomElement datosEmpresa = detailsHtmlPage.getElementById("CONTENEDOR_SECCION_13");
+						List<DomElement> dtEmpresas = datosEmpresa.getByXPath(DT);
+						for (DomElement dtEmpresa : dtEmpresas) {
+							if ("Nombre:".equals(dtEmpresa.getTextContent())) {
+								String ddEmpresa = dtEmpresa.getNextElementSibling().getTextContent();
+								itPart.setNameEnterprise(ddEmpresa);
+						    }
+							else if ("Dirección:".equals(dtEmpresa.getTextContent())) {
+								String ddEmpresa= dtEmpresa.getNextElementSibling().getTextContent();
+								itPart.setDirectionEnterprise(ddEmpresa);
+							}
+						}
+						DomElement contrato = detailsHtmlPage.getElementById("CONTENEDOR_SECCION_18");
+						List<DomElement> dtContratos = contrato.getByXPath(DT);
+						for (DomElement dtContrato : dtContratos) {
+							if ("Tipo de contrato:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setTypeCto(ddContrato);
+						    }
+							else if ("Puesto de trabajo:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setCatProf(ddContrato);
+							}
+							else if ("Base de cotización:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setBaseCtz(Toolkit.parseStringToFloat(ddContrato));
+							}
+							else if ("Suma base de cotización:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setSumBCtz(Toolkit.parseStringToFloat(ddContrato)); 
+							}
+							else if ("Días cotizados/mes:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setDaysCtz(Integer.parseInt(ddContrato));
+							}
+							else if ("Suma días cotizados:".equals(dtContrato.getTextContent())) {
+								String ddContrato = dtContrato.getNextElementSibling().getTextContent();
+								itPart.setDaysSumCtz(Integer.parseInt(ddContrato));
+							}
+						}
+						itParts.add(itPart);
+					}
+				}	
+				DomElement next = htmlPage.getElementById("ENLACE_PAGINACION_11");
+				if (next != null) {
+					nextExist = true;
+					xmlPage = next.click();
+					htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+					webClient.waitForBackgroundJavaScript(10000);
+				}
+				else {
+					nextExist = false;
+				}
+			} while (nextExist);
 			
-		
-			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
-		
-			try {			
-			
-				link = "https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
-				ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
-				
-				String xml = Toolkit.getBodyPOST(httpClient, httpPost);
-				checkErrors(xml);
-				
-				return getParts(httpClient, xml, link, ticket, dateBj.isPresent());
-			} catch (SAXException e) {
-				e.printStackTrace();
-				throw new SegSocialException(e.getMessage());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SegSocialException(e.getMessage());
+			return itParts;
+		} catch (IOException | TransformerException | InterruptedException e) {
+			throw new SegSocialException(e);
 		}
 	}
-	
-	
-	
+		
 	// REGISTER IT START
 	private static byte[] registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
@@ -891,23 +968,29 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 	}
 	
-	public static void main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
+	// HANDLE IT PART ERRORS
+		private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {
+			DomNode errors = htmlPage.querySelector("#errores > ul");
+			if (errors != null) {
+				throw new InvalidDataException(errors.getVisibleText());
+			}
+		}
+		
+		
+		
+	public static void __main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
 		try ( InputStream is = new FileInputStream("/home/ndiaz/Documentos/pvasesores.p12");
 				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
-			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("29/06/2023");
-			byte[] pdf = 
-			getITReportImpl(
-			is,
-			"7624",
-			"PKCS12", 
-			"0111", 
-			"41017063249", 
-			"411051350384", 
-			null,
-			startDate,
-			null
-			);
-			os.write(pdf);
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/09/2023");
+			List<ITPart> itParts = getItsImpl(is, "7624", "PKCS12", "0111", "41017063249", Optional.empty(), Optional.of(startDate), Optional.of(new Date()), Optional.empty());
+			for (ITPart itPart : itParts) {
+				System.out.println(itPart);  
+			}
+			System.out.println( "---------------------------");
+			List<It> its = orderByIT(itParts);
+			for (It it: its) {
+				System.out.println(it);
+			}
 		}
 	}
 }

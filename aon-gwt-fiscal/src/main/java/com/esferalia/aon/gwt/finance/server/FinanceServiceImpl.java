@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.finance.server;
 import java.util.Date;
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -16,20 +14,15 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Finance Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Finance" })
 public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet implements FinanceService {
 
 	private static final long serialVersionUID = -6729210903627762279L;
-
-	@Override
-	public LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, String user, Date from, Date to, boolean taxDate)
-			throws AonCoreException {
-		return AON.getInvoiceSeries(domainName, domainId,user, from, to, taxDate );
-	}
 
 	@Override
 	public Integer getInvoiceNextNumber(String domainName, Integer domainId, String user, Byte[] types, String series) throws AonCoreException {

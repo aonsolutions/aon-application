@@ -55,6 +55,9 @@ public class ApplicationParameterServlet extends AonApiHttpServlet{
 				case "/all":
 					response(req, resp, getApplicationParameters(api));
 				break;
+				case "/menu-options":
+					response(req, resp, getMenuOptions(api));
+				break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -64,6 +67,11 @@ public class ApplicationParameterServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	private JSONObject getMenuOptions(AonApiData api) {
+		JSONObject params = api.getData();
+		return params;
+	}
+
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON APLICATION-PARAMETER - DELETE METHOD");

@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SeriesDAO {
@@ -52,7 +52,7 @@ public class SeriesDAO {
 				.where(SERIES_PROPERTIES.getConditions(filter))
 				.fetchInto(SERIES)
 				.stream()
-				.map(new FullSeriesFiller());	
+				.map(new SeriesFiller());	
 	}
 	
 	public static LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
@@ -62,13 +62,13 @@ public class SeriesDAO {
 			.where(SERIES.SCOPE.eq(scopeId))
 			.and(USER.LOGIN.eq(ctx.getUser()))
 			.and(SERIES.DELIVERY.eq((byte) 1))
-			.fetchInto(SERIES).stream().map(new FullSeriesFiller())
+			.fetchInto(SERIES).stream().map(new SeriesFiller())
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<Series> getInvoiceSeries(AONContext ctx){
 		return getSeries(ctx, 
-				p -> 
+			p -> 
 				p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
 				.and(p.getActiveProperty().eq((byte) 1)  )
 				.and(p.getInvoiceProperty().eq((byte) 1)  )
@@ -76,25 +76,14 @@ public class SeriesDAO {
 	}
 	public static Stream<Series> getRectificationSeries(AONContext ctx){
 		return getSeries(ctx, 
-				p -> 
+			p -> 
 				p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
 				.and(p.getActiveProperty().eq((byte) 1)  )
 				.and(p.getRectificationProperty().eq((byte) 1)  )
 				);	
 	}
 
-//	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
-//		return ctx.getDslContext().select().from(WORKPLACE)
-//				.where(WORKPLACE_PROPERTIES.getConditions(filter))
-//				.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
-//				.orderBy(WORKPLACE.DESCRIPTION)
-//				.fetchInto(WORKPLACE)
-//				.stream()
-//				.map(new FullWorkplaceFiller())
-//				.collect(Collectors.toCollection(LinkedList::new));	
-//	}
-	
-	private static class FullSeriesFiller implements Function<Record, Series> {
+	private static class SeriesFiller implements Function<Record, Series> {
 		
 		@Override
 		public Series apply(Record r) {

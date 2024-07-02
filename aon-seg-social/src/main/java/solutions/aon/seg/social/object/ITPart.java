@@ -53,7 +53,9 @@ public class ITPart {
 	private String  typeCto;
 	private Integer lack;
 
-	public ITPart() { /* TODO document why this constructor is empty */ }
+	public ITPart() {
+		
+	}
 	
 	public ITPart setBaseCtz(Float baseCtz) {
 		this.baseCtz = baseCtz;
@@ -478,10 +480,16 @@ public class ITPart {
 		if(partDate != null) visitor.visitPartDate(partDate);
 		if(partNum != null) visitor.visitPartNum(partNum);
 		if(partType != null) visitor.visitPartType(partType);
+		
 	}
 	
 	public static interface Visitor{
 		void visitReceptionDate(Date receptionDate);
+		void visitCatProf(String catProf);
+		void visitTypeCto(String typeCto);
+		void visitDirectionEnterprise(String directionEnterprise);
+		void visitnNameEnterprise(String nameEnterprise);
+		void visitDirectionEmployee(String directionEmployee);
 		void visitCcc(String ccc);
 		void visitConfirmationDate(Date confirmationDate);
 		void visitNaf(String naf);
@@ -542,6 +550,32 @@ public class ITPart {
 			public void visitCcc(String ccc) {
 				stringBuffer.append(String.format(" ccc : \"%s\" ", ccc));
 			}
+			
+			@Override
+			public void visitDirectionEmployee(String directionEmployee) {
+				stringBuffer.append(String.format(" directionEmployee : \"%s\" ", directionEmployee));
+			}
+			
+			@Override
+			public void visitnNameEnterprise(String nameEnterprise) {
+				stringBuffer.append(String.format(" nameEnterprise : \"%s\" ", nameEnterprise));
+			}
+			
+			@Override
+			public void visitDirectionEnterprise(String directionEnterprise) {
+				stringBuffer.append(String.format(" directionEnterprise : \"%s\" ", directionEnterprise));
+			}
+			
+			@Override
+			public void visitTypeCto(String typeCto) {
+				stringBuffer.append(String.format(" typeCto : \"%s\" ", typeCto));
+			}
+			
+			@Override
+			public void visitCatProf(String catProf) {
+				stringBuffer.append(String.format(" catProf : \"%s\" ", catProf));
+			}
+			
 		});
 		
 		getIpf().ifPresent(d-> stringBuffer.append(String.format(" dni : \"%s\" ", d)) );

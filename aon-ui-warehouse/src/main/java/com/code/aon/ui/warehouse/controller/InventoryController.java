@@ -56,9 +56,9 @@ import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferSource;
 

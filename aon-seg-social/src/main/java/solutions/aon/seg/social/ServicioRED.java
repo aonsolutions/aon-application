@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,8 +75,12 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 * @return a PDF file
 	 * @throws SegSocialException
 	 */
+	public static byte[] getIDCPOST (final byte[] certificateData, final String certificatePassword,
+			final String certificateType, String regime,String ccc, String affiliationNumber, Date date) throws SegSocialException {
+		return getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regime, ccc, affiliationNumber, date);
+	}
 	public static byte[] getIDCPOST (final InputStream certificateInputStream,final String certificatePassword,
-		final String certificateType, String affiliationNumber, String regime,String ccc, Date date) throws SegSocialException {
+		final String certificateType, String regime,String ccc, String affiliationNumber, Date date) throws SegSocialException {
 		
 		Date today = new Date(); 
 		date = date.after(today) ? today : date;
@@ -84,6 +89,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 		
 		String link = "";
 		String sessionId = "";
+		
 			
 			
 			try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {				
@@ -1105,9 +1111,14 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 * @return A collection with the IDCs
 	 * @throws SegSocialException
 	 */
+	public static Collection<Idc> getIDCDatesPOST(final byte[] certificateData,
+			final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String affiliationNumber) throws SegSocialException {
+		return getIDCDatesPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regime, ccc, affiliationNumber);
+	}
 	public static Collection<Idc> getIDCDatesPOST(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String ccc) throws SegSocialException {
+			final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String affiliationNumber) throws SegSocialException {
 		SSLContext sslContext = null;
 		try {
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
@@ -1117,7 +1128,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 		String link = "";
 		String sessionId = "";
 		
-		Set<Idc> collects = new HashSet<>();
+		List<Idc> collects = new ArrayList<>();
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
@@ -1185,7 +1196,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			e.printStackTrace();
 			throw new InvalidCertificateException();
 		}
-		
+		Collections.sort(collects, (i1,i2) -> i1.getFecha().compareTo(i2.getFecha()));
 		return collects;
 	}
 	
@@ -1302,7 +1313,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			final String regime, final String ccc) throws SegSocialException {
 		
 		try {
-				return getIDCDatesPOST(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc)
+				return getIDCDatesPOST(certificateInputStream, certificatePassword, certificateType, regime, ccc, affiliationNumber)
 					.stream()
 					.filter(idc -> idc.getDescripcion().equals("ALTA"))
 					.map(Idc::getFecha)

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.warehouse;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 

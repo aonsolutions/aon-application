@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -548,7 +549,8 @@ class Mod390HFGipuzkoa2021Declaration extends Mod390HFGIPUZKOADeclaration {
 	public void specificInitialization(AONContext ctx, Mod390HF mod) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, fromDate, toDate, false);
+		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
+			.collect(Collectors.toCollection(LinkedList::new));
 		Mod390Key[][] eKeys = new Mod390Key[][]{
 			 new Mod390Key[]{Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H,Mod390Key.GP_SE1X}
 			,new Mod390Key[]{Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H,Mod390Key.GP_SE2X}
@@ -566,23 +568,21 @@ class Mod390HFGipuzkoa2021Declaration extends Mod390HFGIPUZKOADeclaration {
 		int e = 0;
 		int r = 0;
 		for (InvoiceSeries series : seriesList) {
-			if (series.isSeriesInfo()) {
-				Mod390Key[][] keys = series.isSales()?eKeys:rKeys;
-				int idx = series.isSales()?e:r;
-				if (idx < 5) {
-					Mod390Key seriesKeys = keys[idx][0];
-					mod.putDescription(seriesKeys, series.getDescription());
-					Mod390Key fromKeys = keys[idx][1];
-					mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
-					Mod390Key toKeys = keys[idx][2];
-					mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
-					Mod390Key countKeys = keys[idx][3];
-					mod.putAmount(countKeys, series.getCount());
-					if (series.isSales()) {
-						++e;
-					} else {
-						++r;
-					}
+			Mod390Key[][] keys = series.isSales()?eKeys:rKeys;
+			int idx = series.isSales()?e:r;
+			if (idx < 5) {
+				Mod390Key seriesKeys = keys[idx][0];
+				mod.putDescription(seriesKeys, series.getDescription());
+				Mod390Key fromKeys = keys[idx][1];
+				mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
+				Mod390Key toKeys = keys[idx][2];
+				mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
+				Mod390Key countKeys = keys[idx][3];
+				mod.putAmount(countKeys, series.getCount());
+				if (series.isSales()) {
+					++e;
+				} else {
+					++r;
 				}
 			}
 		}

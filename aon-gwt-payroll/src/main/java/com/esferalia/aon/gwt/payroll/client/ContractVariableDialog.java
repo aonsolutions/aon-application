@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,12 +59,19 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	
 	private ContractVariable contractVariable;
 	
+	private Date contractStartDate;
+	private Date contractEndDate;
+	
 	// ------------------------------------------------- Constructor
 	
-	protected ContractVariableDialog(ContractVariable selectedContractVariable) {
+	protected ContractVariableDialog(ContractVariable selectedContractVariable, Date contractStartDate, Date contractEndDate) {
 		setCaption("Variables contrato");
 		setWidget(binder.createAndBindUi(this));
 		this.contractVariable = selectedContractVariable;
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		
 		initializeView();
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.variableType);
 	}
@@ -197,6 +205,9 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		if(AonStringUtils.isBlank(variableName.getValue())) saveMessage.put("Nombre", "El nombre de la variable es obligatorio");
 		if(AonStringUtils.isBlank(variableValue.getValue())) saveMessage.put("Valor", "El valor de la variable es obligatorio");
 		if(null == startDateBx.getValue()) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es obligatoria");
+		if(null != startDateBx.getValue() && startDateBx.getValue().before(contractStartDate)) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es anterior a la fecha de inicio del contrato");
+		if(null != startDateBx.getValue() && null != endDateBx.getValue() && endDateBx.getValue().before(startDateBx.getValue())) saveMessage.put("Fecha fin", "La fecha fin de la variable es anterior a la fecha de inicio de la variable");
+		if(null != endDateBx.getValue() && null != contractEndDate && endDateBx.getValue().after(contractEndDate)) saveMessage.put("Fecha fin", "La fecha fin de la variable es posterior a la fecha fin del contrato");
 		
 		return saveMessage;
 	}

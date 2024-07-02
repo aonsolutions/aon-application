@@ -32,6 +32,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -193,6 +194,8 @@ public class EmployeeContractPayments extends Composite {
 	
 	// ----------------------------------------------- Variables 
 	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private EmployeeContractPaymentsObject employeeContractPaymentsObject;
 	private List<ContractConceptCalc> contractConceptCalcList;
 	private Set<Payment> availablePayments = Collections.emptySet();
@@ -349,36 +352,51 @@ public class EmployeeContractPayments extends Composite {
 	    contractConceptCalcDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
 	    
 	    // StartDate column.
-	    Column<ContractConceptCalc, Date> startDateColumn = new Column<ContractConceptCalc, Date>(new DatePickerCell()) {
+	    Column<ContractConceptCalc, String> startDateColumn = new Column<ContractConceptCalc, String>(new TextCell()) {
 	    	@Override
-	        public Date getValue(ContractConceptCalc contractConceptCalc) {
-	    		return contractConceptCalc.getStartDate();
+	        public String getValue(ContractConceptCalc contractConceptCalc) {
+	    		return formatDate.format(contractConceptCalc.getStartDate());
 	        }
 		};
 		
-		startDateColumn.setFieldUpdater((index, contractConceptCalc, startDate) -> {
-			contractConceptCalc.setStartDate(startDate);
-	    	contractConceptCalc.setHasChange(true);
-	    	onSave();
-		});
+//	    Column<ContractConceptCalc, Date> startDateColumn = new Column<ContractConceptCalc, Date>(new DatePickerCell()) {
+//	    	@Override
+//	        public Date getValue(ContractConceptCalc contractConceptCalc) {
+//	    		return contractConceptCalc.getStartDate();
+//	        }
+//		};
+//		
+//		startDateColumn.setFieldUpdater((index, contractConceptCalc, startDate) -> {
+//			contractConceptCalc.setStartDate(startDate);
+//	    	contractConceptCalc.setHasChange(true);
+//	    	onSave();
+//		});
 
 	    startDateColumn.setSortable(true);
 	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    contractConceptCalcDG.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
-	    // EndDate column.	    
-	    Column<ContractConceptCalc, Date> endDateColumn = new Column<ContractConceptCalc, Date>(new DatePickerCell()) {
+	    // EndDate column.
+	    Column<ContractConceptCalc, String> endDateColumn = new Column<ContractConceptCalc, String>(new TextCell()) {
 			@Override
-			public Date getValue(ContractConceptCalc contractConceptCalc) {
-				return contractConceptCalc.getEndDate();
+			public String getValue(ContractConceptCalc contractConceptCalc) {
+				Date endDate = contractConceptCalc.getEndDate();
+				return endDate == null ? "" : formatDate.format(endDate);
 			}
 		};
-		
-		endDateColumn.setFieldUpdater((index, contractConceptCalc, endDate) -> {
-			contractConceptCalc.setEndDate(endDate);
-	    	contractConceptCalc.setHasChange(true);
-	    	onSave();
-		});
+	    
+//	    Column<ContractConceptCalc, Date> endDateColumn = new Column<ContractConceptCalc, Date>(new DatePickerCell()) {
+//			@Override
+//			public Date getValue(ContractConceptCalc contractConceptCalc) {
+//				return contractConceptCalc.getEndDate();
+//			}
+//		};
+//		
+//		endDateColumn.setFieldUpdater((index, contractConceptCalc, endDate) -> {
+//			contractConceptCalc.setEndDate(endDate);
+//	    	contractConceptCalc.setHasChange(true);
+//	    	onSave();
+//		});
 
 	    endDateColumn.setSortable(true);
 	    endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -464,7 +482,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	private void openDialog(ContractConceptCalc selectedPayment) {
 		boolean isHide = AonStringUtils.isNotBlank(selectedPayment.getExpression()) && AonStringUtils.containsIgnoreCase(selectedPayment.getExpression(), "HIDE");
-    	EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(selectedPayment.getContractConceptCalcType(), selectedPayment) {
+    	EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(selectedPayment.getContractConceptCalcType(), selectedPayment, employeeContractPaymentsObject.getContractStartDate(), employeeContractPaymentsObject.getContractEndDate()) {
 			@Override
 			protected void onAccept(ContractConceptCalc updatedPayment) {
 				switch (updatedPayment.getContractConceptCalcType()) {
@@ -874,7 +892,7 @@ public class EmployeeContractPayments extends Composite {
 	}
 	
 	public void openEditor(ContractConceptCalcType type) {
-		EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(type) {
+		EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(type, employeeContractPaymentsObject.getContractStartDate(), employeeContractPaymentsObject.getContractEndDate()) {
 			@Override
 			protected void onAccept(ContractConceptCalc contractConceptCalc) {
 				createAndGetPayments(contractConceptCalc);

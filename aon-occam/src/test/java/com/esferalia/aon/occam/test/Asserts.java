@@ -26,11 +26,13 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -1186,6 +1188,38 @@ public class Asserts {
 			Asserts.assertEqualsScope(expected.getScope(), actual.getScope());
 			assertEquals("Security Level", expected.getSecurityLevel().toString(), actual.getSecurityLevel().toString());
 			assertEquals("Status", expected.getStatus().toString(), actual.getStatus().toString());
+		}
+	}
+	
+	
+	public static void assertEqualsSeries(Series expected, Series actual) {
+		assertEqualsNulls( "Series", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Scope", expected.getScope(), actual.getScope());
+			assertEquals("Code",expected.getCode(), actual.getCode());
+			assertEquals("Description",expected.getDescription(), actual.getDescription());
+			assertEquals("Active",expected.isActive(), actual.isActive());
+			assertEquals("Tas",expected.isTas(), actual.isTas());
+			assertEquals("Offer",expected.isOffer(), actual.isOffer());
+			assertEquals("Sales",expected.isSales(), actual.isSales());
+			assertEquals("Delivery",expected.isDelivery(), actual.isDelivery());
+			assertEquals("Invoice",expected.isInvoice(), actual.isInvoice());
+			assertEquals("Rectification",expected.isRectification(), actual.isRectification()); 
+			assertEquals("Pos",expected.isPos(), actual.isPos());
+			assertEquals("Security Level", expected.getSecurityLevel().toString(), actual.getSecurityLevel().toString());
+		}
+	}
+	
+	public static void assertEqualsInvoiceSeries(InvoiceSeries expected, InvoiceSeries actual) {
+		assertEqualsNulls( "InvoiceSeries", expected, actual);
+		if (expected != null ) {
+			assertEquals("Description",expected.getDescription(), actual.getDescription());
+			assertEquals("Sales",expected.isSales(), actual.isSales());
+			assertEquals("FromNumber", expected.getFromNumber(), actual.getFromNumber());
+			assertEquals("ToNumber", expected.getToNumber(), actual.getToNumber());
+			assertEquals("Count", expected.getCount(), actual.getCount());
 		}
 	}
 }

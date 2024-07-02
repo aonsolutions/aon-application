@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
-import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class TransferInfo {

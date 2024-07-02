@@ -1,6 +1,7 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, TAG } from "../environments/environments.js";
 import { AonIcon } from "./aon-icon.js";
+import * as LS from '../services/localStorageService.js';
 
 export class AonIconButton extends AonElement {
   BUTTON;
@@ -177,22 +178,44 @@ export class AonIconButton extends AonElement {
       this.style.width = "0px";
       this.style.display = "none";
     }
+/*
+    let buttons = [
+      "aonHeaderHelpButtonIconButton",
+      "aonHeaderConfigButtonIconButton",
+      "aonHeaderNotificationButtonIconButton",
+      "aonHeaderUserButtonIconButton",
+      "aonHeaderCompanyListButtonIconButton"
+    ];
+    
     let header = this.getElement("aonHeaderWeb");
-    if (!this.getAttribute("noHover")) {
-      this.getButton().addEventListener("mouseover", () => {
-        this.getButton().style.backgroundColor = this.getBackgroundHover();
-      });
+
+    buttons.forEach((buttonId) => {
+      let button = document.getElementById(buttonId); 
+    
+      if (button) { 
+        button.addEventListener("mouseover", () => {
+          button.style.backgroundColor = "this.getBackgroundHover()"; 
+        });
+    
+        button.addEventListener("mouseleave", () => {
+          button.style.backgroundColor = background;
+          
+          if (!header.style.backgroundColor && buttons.includes(button.id)) {
+            button.style.color = "#5f6368";
+          } else if (header.style.backgroundColor && buttons.includes(button.id)) {
+            button.style.color = "white";
+          } else if (LS.isDarkTheme()) {
+            button.style.color = "white";
+          } else {
+            button.style.color = "#5f6368";
+          }
+        });
+      }
+    });
+*/ 
+    
+         
       
-      this.getButton().addEventListener("mouseleave", () => {
-        this.getButton().style.backgroundColor = background;
-        if((!header.style.backgroundColor)&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"||this.getButton().id=="aonHeaderCompanyListButtonIconButton"))
-          this.getButton().style.color = "#5f6368";
-        else if(header.style.backgroundColor&&(this.getButton().id=="aonHeaderHelpButtonIconButton"||this.getButton().id=="aonHeaderConfigButtonIconButton"||this.getButton().id=="aonHeaderNotificationButtonIconButton"||this.getButton().id=="aonHeaderUserButtonIconButton"||this.getButton().id=="aonHeaderCompanyListButtonIconButton"))
-          this.getButton().style.color = "white";
-        else 
-          this.getButton().style.color = "#5f6368";
-      });
-    }
 
     if (this.hasAttribute("icon")) {
       this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
@@ -224,9 +247,7 @@ export class AonIconButton extends AonElement {
 
 
   getBackgroundHover() {
-    //alert(this.backgroundColor);
-    //alert(this.isLightColor(this.hexToRgb(this.backgroundColor)));
-    return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)";
+    return this.backgroundColor && !this.isLightColor(this.hexToRgb(this.backgroundColor)) ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.15)";
   }
 
   clear() {
@@ -274,30 +295,24 @@ export class AonIconButton extends AonElement {
   }
 
   isLightColor(colorString) {
-    // Extraer los valores RGB del string
     const rgba = colorString.replace(/[^\d,]/g, '').split(',').map(Number);
     const [r, g, b] = rgba;
 
-    // Calcular el brillo relativo
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness > 128;  // Umbral: 128
+    return brightness > 128; 
   }
 
   hexToRgb(hex) {
-    // Eliminar el símbolo '#' si está presente
     hex = hex.replace(/^#/, '');
 
-    // Comprobar si el color es en formato corto (#RGB)
     if (hex.length === 3) {
       hex = hex.split('').map(c => c + c).join('');
     }
 
-    // Extraer los componentes rojo, verde y azul
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    // Devolver el color en formato RGB
     return `rgb(${r}, ${g}, ${b})`;
   }
 

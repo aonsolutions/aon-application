@@ -33,7 +33,6 @@ import org.jooq.InsertValuesStep13;
 import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
-import org.jooq.Record16;
 import org.jooq.Record18;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -59,6 +58,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -67,7 +67,6 @@ import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class DBStock {
