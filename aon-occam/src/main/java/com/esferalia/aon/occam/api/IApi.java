@@ -15,5 +15,5 @@ public interface IApi {
 	java.util.Date getInvoiceExpDate(AONContext ctx, Integer id); 
 	List<Invoice> getTbaiDeletedInvoices(AONContext ctx);
 	long getInvoiceNewPortalCount(AONContext ctx, InvoiceFilter filter);
-
+	void updateInvoiceNote(AONContext ctx,Integer id, String comment);
 }

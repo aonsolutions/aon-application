@@ -106,6 +106,15 @@ public class InvoiceApiDAO {
 				.count();				
 	}
 	
+	public static void updateInvoiceNote(AONContext ctx,Integer id,  String comment) {
+		ctx.getDslContext()
+		.update(INVOICE)
+		.set(INVOICE.COMMENTS, comment)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+		.and(INVOICE.ID.eq(id)))
+		.execute();
+	}
+	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);

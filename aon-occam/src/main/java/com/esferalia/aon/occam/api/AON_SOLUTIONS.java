@@ -507,6 +507,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static void updateInvoiceNote(String domainName, Integer domainId, String login,Integer id, String comment) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getApi().updateInvoiceNote(ctx,id , comment);
+		}
+	}
+	
 	public static long getInvoiceNewPortalCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceNewPortalCount(ctx, filter);

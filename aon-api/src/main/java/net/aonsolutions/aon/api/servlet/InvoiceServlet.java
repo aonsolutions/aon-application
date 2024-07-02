@@ -387,6 +387,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/selfconta_record":
 				response(req, resp, selfcontaRecord(api));
 				break;
+			case "/update_invoice_note":
+				response(req, resp, updateInvoiceNote(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -443,7 +446,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			error(req, resp, e);
 		}
 	}
-	
+
 	private Object getInvoiceNewPortalObject(AonApiData api) {
 		InvoiceFilter filter = new InvoiceFilter()
 				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
@@ -551,6 +554,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	    		api.getDomain().getId(),
 	    		api.getUser().getLogin(), 
 	    		id), api);
+	}
+	
+	private static JSONObject updateInvoiceNote(AonApiData api) {
+		String comment = api.getData().getString("note");
+		Integer id = api.getData().getInt("id");
+		AON_SOLUTIONS.updateInvoiceNote(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				id, comment);
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.RESULT, "OK");
+		return json;
 	}
 	
 	 public static JSONObject fullRawdocToJson(Rawdoc r, AonApiData api) {
