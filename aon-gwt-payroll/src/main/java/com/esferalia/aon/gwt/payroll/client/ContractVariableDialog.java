@@ -207,7 +207,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		if(null == startDateBx.getValue()) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es obligatoria");
 		if(null != startDateBx.getValue() && startDateBx.getValue().before(contractStartDate)) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es anterior a la fecha de inicio del contrato");
 		if(null != startDateBx.getValue() && null != endDateBx.getValue() && endDateBx.getValue().before(startDateBx.getValue())) saveMessage.put("Fecha fin", "La fecha fin de la variable es anterior a la fecha de inicio de la variable");
-		if(null != endDateBx.getValue() && endDateBx.getValue().after(contractEndDate)) saveMessage.put("Fecha fin", "La fecha fin de la variable es posterior a la fecha fin del contrato");
+		if(null != endDateBx.getValue() && null != contractEndDate && endDateBx.getValue().after(contractEndDate)) saveMessage.put("Fecha fin", "La fecha fin de la variable es posterior a la fecha fin del contrato");
 		
 		return saveMessage;
 	}

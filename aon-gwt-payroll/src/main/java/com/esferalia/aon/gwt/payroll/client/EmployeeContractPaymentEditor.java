@@ -27,6 +27,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -706,7 +707,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		} else if(null != paymentStart && null != paymentEnd && paymentEnd.before(paymentStart)) {
 			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es anterior a la fecha de inicio del devengo");
 			return false;
-		} else if(null != paymentEnd && paymentEnd.after(contractEndDate)) {
+		} else if(null != paymentEnd && null != contractEndDate && paymentEnd.after(contractEndDate)) {
 			AonMessagePanel.showError(messagePanel, "La fecha fin del devengo es posterior a la fecha fin del contrato");
 			return false;
 		} else 

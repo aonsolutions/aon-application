@@ -217,7 +217,8 @@ public class Cra {
 					// Get salaryPayment type of salary
 					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.eq("PPE")))
+							.and(SALARY_PAYMENT.AMOUNT.gt(0.00))
+//							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.eq("PPE")))
 							.limit(1)
 							.fetchOne();
 					
