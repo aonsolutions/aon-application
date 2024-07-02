@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -164,10 +165,32 @@ public class Page03 extends PageAbs {
 		for (int i = 0; i < callback.getMod200Object().getMod200().getParticipationsIn().size(); i++) {
 			final int idx = i;
 			
+			AonTextBox fjo = new AonTextBox();
 			AonDocumentTextBox document = new AonDocumentTextBox();
 			document.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).getDocument());
 			document.addValueChangeHandler(event -> {				
-				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setDocument(document.getValue());				
+				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setDocument(document.getValue());
+				
+				// Poner por defecto el valor de F/J/O según validaciones del documento PADIS
+				// el código J para contribuyentes cuyo NIF comience por A, B, C, D, F, J, P, Q, R y S 
+				// el código O para contribuyentes cuyo NIF comience por E, H, U, N y W
+				// el supuesto de NIF que empiece por V o G, la casilla F/J/O queda en blanco para que el declarante cumplimente J u O
+				// para el resto se asume F (persona física)
+				if (AonStringUtils.isNotEmpty(document.getValue())) {
+					if (document.getValue().matches("^(A|B|C|D|F|J|P|Q|R|S).*")) {
+						fjo.setValue("J", true);
+					}
+					else if (document.getValue().matches("^(E|H|U|N|W).*")) {
+						fjo.setValue("O", true);
+					}
+					else if (document.getValue().matches("^(G|V).*")) {
+						fjo.setValue("", true);
+					}
+					else { 
+						fjo.setValue("F", true);
+					}
+				}
+				
 				callback.markAsDirty();
 			});
 			otherInputs.add(document);
@@ -181,7 +204,7 @@ public class Page03 extends PageAbs {
 			otherInputs.add(rep);
 			
 			// El valor de "fjo" se guarda en el campo notary de la tabla 
-			AonTextBox fjo = new AonTextBox();
+			//AonTextBox fjo = new AonTextBox();
 			fjo.setMaxLength(1);
 			fjo.setVisibleLength(1);			
 			fjo.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).getNotary());
