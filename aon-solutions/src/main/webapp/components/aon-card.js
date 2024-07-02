@@ -137,6 +137,8 @@ export class AonCard extends AonElement {
 		let aib = new AonIconButton();
 		aib.id = id;
 		aib.icon = icon;
+		if(LS.isDarkTheme())
+			aib.color = "white"
 		aib.title = name;
 		aib.addEventListener(EVENT.CLICK, fn);
 		aib.background = background;
