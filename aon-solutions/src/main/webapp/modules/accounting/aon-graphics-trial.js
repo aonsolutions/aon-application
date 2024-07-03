@@ -81,7 +81,7 @@ export class AonGraphicsTrial extends AonElement {
 
     this.buildToolbar();
     this.buildPyGToolbar();
-    await this.buildFilter();
+    //await this.buildFilter();
 
    if(this.cardFilter){
       //Object { event: "click", search: "", year: "6215", show: "yearly", detail: "5" }
@@ -90,24 +90,55 @@ export class AonGraphicsTrial extends AonElement {
       this.filter.event = "click";
       this.filter.search = "";
       this.filter.show = this.cardFilter.show;
-      this.filter.detail = "5";
+      this.filter.detail = this.cardFilter.detail || "5";
       this.filter.year = period[0].id;
       this.selectedPeriod = period[0];
+
       this.cardFilter = undefined;
     }
 
     this.draw();
-    if (this.selectedPeriod){
-      this.getElement("year").value = this.selectedPeriod.id;
-    }
 
-    this.getElement("show").value = this.filter != null ? this.filter.show : "yearly";
-    this.getElement("detail").value = this.params.level;
+    this.getElement("aonAccountingSidenavoptionsSelect").value = '"Ejercicio ' + this.selectedPeriod.name + '"';
+    this.getElement("aonAccountingSidenavoptionsViewSelect").value = this.getViewSelectedOpt(this.filter.show);
+    this.getElement("aonAccountingSidenavoptionsDetailSelect").value = this.getDetailSelectedOpt(this.filter.detail);
+  }
+
+  getViewSelectedOpt(show){
+    if(!show) return '"Vista Anual"';
+    else {
+      switch (show) {
+        case "yearly":
+          return '"Vista Anual"';
+        case "quarterly":
+          return '"Vista Trimestral"';
+        case "monthly":
+          return '"Vista Mensual"';
+        default:
+          return '"Vista Anual"';
+      }
+    }
+  }
+
+  getDetailSelectedOpt(detail){
+    if(!detail) return '"Estándar"';
+    else {
+      switch (detail) {
+        case "5":
+          return '"Estándar"';
+        case "3":
+          return '"Resumido"';
+        case "9":
+          return '"Detallado"';
+        default:
+          return '"Estándar"';
+      }
+    }
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    this.applicationEl.addSearchOption(!this.isMobile());
+    //this.applicationEl.addSearchOption(!this.isMobile());
   }
 
   buildPyGToolbar() {
