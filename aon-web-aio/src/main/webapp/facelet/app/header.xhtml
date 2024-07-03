@@ -354,9 +354,16 @@
     	background-color: #fff;
 	}
 	
-	.rich-stglpanel.aon-portlet,
+	 .rich-stglpanel.aon-portlet,
 	.rich-stglpanel-body.aon-portlet-body {
 		padding: 0px;
+		scrollbar-width: none;
+	} 
+	
+	
+	 .rich-stglpanel.aon-portlet,
+	.rich-stglpanel-body.aon-portlet-body::-webkit-scrollbar {
+		display:none;
 	} 
 	
 	.aon-panelGrid-search .rich-stglpanel-header {
@@ -371,7 +378,7 @@
 	}
 	
 	.aon-search-content-width{
-		width: 380px;
+		width: 100%;
 	}	
 	
 	.aon-filter-lookup-button{
@@ -1235,6 +1242,12 @@
 	
 	}
 	
+	.aon-finding-toolbar-item.button:hover {
+		 
+         background-color: #f0f0f0;
+	
+	}
+	
 	.aon-finding-toolbar-item.button.round {
 		border-radius: 20px;
 		border: 1px solid var(--colorNeutralStroke2,#e0e0e0);
@@ -1750,6 +1763,7 @@
 		padding-top: 0px;
 		overflow-y: scroll;
 		height: calc( 100vh - 169px);
+		scrollbar-width: none;
 	} 
     
      
@@ -2245,6 +2259,11 @@
         padding-bottom: 15px;
         padding-left: 5px;
 }
+
+    .aon-panelGrid-search .aonCard::-webkit-scrollbar    {
+
+        display: none;
+     }
 	
 	.aonCardTitle {
 	    color: #262626;
@@ -2253,6 +2272,11 @@
 	    font-weight: 600;
 	    margin-bottom: 15px;
 	}
+	
+	.aon-panelGrid-search .aon-panelGrid   {
+
+        width:100%;
+}
 	
 .aonFilterPopup{
 	  overflow: auto; 
@@ -2271,6 +2295,21 @@
        padding-bottom:25px;
        left:62.5%;
 
+	}
+	
+	.listContainer {
+	  overflow: auto; 
+	  height: calc(100vh - 175px); 
+	  flex-grow : 4; 
+	  scrollbar-width: none;
+	}
+	
+	.listContainer::-webkit-scrollbar {
+	  display: none;
+	}
+	
+	.aon-form .aon-scroll-area::-webkit-scrollbar {
+	  display: none;
 	}
 	
 	</style>
