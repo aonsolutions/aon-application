@@ -7530,11 +7530,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
 
 		Double coef = employeeContractInfo.getContractInfo().getPartialityCoef();
-		if (coef != null) {
+		if (coef != null && coef < 1.0) {
 			coef = coef * 1000;
 			builder.setFactor(coef);
 			String coefStr = coef.toString();
 			builder.setCoef(AonStringUtils.leftPad(coefStr, 3, '0'));
+			builder.setFactor(coef);
 		}
 
 		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
