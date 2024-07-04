@@ -456,7 +456,7 @@ public class FiscalModelDAO {
 	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, T fm) {
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
-		if (fm.getAdministration() == null) {
+		if (fm.getAdministration() == null || fm.getAdministration() == Administration.UNKNOWN) {
 			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		}
 		if (fm.getYear() < 2005 || fm.getYear() > 2050) {
