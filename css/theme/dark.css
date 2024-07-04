@@ -1,0 +1,66 @@
+:root {
+	--aonAccounting: var(--aonWhite);
+	--aonTopMenuAvailable: var(--aonWhite);
+	--aonTopMenuSpecial: var(--aonClearBlue);
+
+	--aonBlack: black;
+
+	--aonNewColor: red;
+
+	--aonHeaderButtonColor: var(--aonWhite);
+
+	--aonHeaderBackgroundAvailable: black;
+
+	--aonRightPanelColor: #212121;
+
+	--aonCardColor: #3b3a39;
+
+}
+.aonHeader {
+	--aonAccounting: var(--aonBlue);
+	--aonHome: var(--aonBlack);
+	background-color: #000;
+}
+
+.aonCardTitle {
+	color: white;
+}
+
+.aonCard {
+	border: 0px;
+	background-color: var(--aonCardColor);
+}
+
+.aonCardText {
+	color: white;
+}
+
+.aonContentBeta {
+	background-color: var(--aonRightPanelColor);
+}
+
+.aonDashboardButton {
+	color: white;
+	background-color: var(--aonCardColor);
+}
+
+.aonDashboardCard {
+	color: white;
+}
+
+.aonDashboardButton i{
+	color: white;
+	background-color: transparent;
+}
+
+.aonDashboardButton span{
+	color: white;
+}
+
+.aonMenuLeftop,
+.aonMenuTopnav,
+.aonMenuSidenav {
+	color: #FFF;
+	background-color: #000;
+	
+}
