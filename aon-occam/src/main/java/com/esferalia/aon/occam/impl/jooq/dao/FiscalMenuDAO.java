@@ -241,6 +241,7 @@ public class FiscalMenuDAO {
 			.fetch()
 			.stream()
 			.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
+			.filter(rec -> fromAppParamName(rec.getValue(APP_PARAM.NAME)) != FiscalModelType.M200) // Ignorar el Modelo 200, no se puede hacer nada con él desde la matriz 
 			.map( rec -> new FiscalModel()
 					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
