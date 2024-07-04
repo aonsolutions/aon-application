@@ -89,8 +89,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 						
 			FlexTable aplazaTable = new FlexTable();
 			Label aplazaLabel = new Label("Datos aplazamiento");
-//			Label avisoLabel = new Label("Recuerde que si elige Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe realizarla manualmente en la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. Adem\u00E1s adicionalmente a la presentaci\u00F3n del modelo, deber\u00E1 hacer tambien desde la misma Oficina Virtual, la solicitud del aplazamiento propiamente dicha. Una vez haya presentado el modelo en la Oficina Virtual, deber\u00E1 marcarlo en la aplicaci\u00F3n de AON, como presentado y si lo desea, podr\u00E1 subir el PDF del modelo, si lo ha descargado desde la Web de la Agencia Tributaria. Los datos IBAN, N\u00FAmero de plazos y Fecha del primer plazo, se quedar\u00E1n grabados en el modelo, a t\u00EDtulo inform\u00E1tivo simplemente, ya que no se trasladan al fichero que debe obtenerse para la presentaci\u00F3n del modelo en la Oficina Virtual. Seg\u00FAn la normativa actual de la Agencia Tributaria, la fecha del primer plazo ser\u00E1 d\u00EDa 5 \u00F3 20 del mes que corresponda al vencimiento del plazo o fracci\u00F3n o el inmediato h\u00E1bil siguiente.");
-			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo inform\u00E1tivo, pues no se trasladan al fichero para su presentaci\u00F3n. Seg\u00FAn la normativa actual de la Agencia Tributaria, la fecha del primer plazo ser\u00E1 d\u00EDa 5 \u00F3 20 del mes que corresponda al vencimiento del plazo o fracci\u00F3n o el inmediato h\u00E1bil siguiente.");
+			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo informativo, pues no se trasladan al fichero para su presentaci\u00F3n. Seg\u00FAn la normativa actual de la Agencia Tributaria, la fecha del primer plazo ser\u00E1 d\u00EDa 5 \u00F3 20 del mes que corresponda al vencimiento del plazo o fracci\u00F3n o el inmediato h\u00E1bil siguiente.");
 
 			AonIntegerBox plazos = new AonIntegerBox();
 			AonDateBox fechaPlazo = new AonDateBox();
@@ -206,13 +205,10 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		
 			aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTabLabel());
 			aplazaTable.setWidget(0, 2, new Label("Fecha del primer plazo"));
-			//fechaPlazo.addValueChangeHandler(event -> mod303.setFechaPlazo(fechaPlazo.getValue()));
-			
 			if (AonStringUtils.isNotEmpty(mod303.getFechaPlazo())) {
 				fechaPlazo.setValue(fechaPlazo.parse(mod303.getFechaPlazo(), false));
 			}			
 			fechaPlazo.addValueChangeHandler( event -> mod303.setFechaPlazo(fechaPlazo.format()) );
-			
 			aplazaTable.setWidget(0, 3, fechaPlazo);
 			
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			

@@ -260,9 +260,7 @@ export class AonTax extends AonElement {
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
     
-    console.log(resp.model); // FALTA - PRUEBA
-    
-    // FALTA - ESTO NO APARECE EN EL 303, PUES EN EL 303 SE DEJA ELEGIR EL TIPO DE DECLARACION (POR EL APLAZAMIENTO)
+    // Esto no aparece en el modelo 303, pues en el 303 se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
     if (resp.model != "IVA")
 	    if(resp.typeText){
 	      const divK =  this.createElement(TAG.DIV);
@@ -279,8 +277,8 @@ export class AonTax extends AonElement {
     form.id = `${this.id}Form`;
     div.appendChild(form);
     
+    // Para el Modelo 303, se deja elegir el tipo de ingreso
     if (resp.model == "IVA") {
-	    // FALTA - APLAZAMIENTO SOLO APARECE POR AHORA PARA EL MODELO 303
 	    let types = [
 			{ value: 'DEPOSIT', name: 'Ingreso'}, 
 			{ value: 'BANK', name: 'Domiciliación'}, 
@@ -315,6 +313,8 @@ export class AonTax extends AonElement {
     aonInputId.value = resp.id;
     aonInputId.visible = false;
     form.appendChild(aonInputId);
+    
+    // NRC
 
     const divNrc =  this.createElement(TAG.DIV);
     divNrc.hidden = true;
@@ -332,20 +332,17 @@ export class AonTax extends AonElement {
     if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
     
-    // FALTA - DATOS APLAZAMIENTO
+    // DATOS APLAZAMIENTO
     
     const divAplazamiento = this.createElement(TAG.DIV);
     divAplazamiento.hidden = true;
     divAplazamiento.className= "aon-margin-0";
-    //divAplazamiento.className = CSS.AON_FLEX;
     divAplazamiento.id= "divAplazamiento";
     form.appendChild(divAplazamiento);
     
     const aonInputPlazos = new AonNumber();
     aonInputPlazos.className = "aonWidth75";
-    //aonInputPlazos.style.width= "100%";
     aonInputPlazos.id = "plazos";
-//    aonInputPlazos.name = "plazos";
     aonInputPlazos.description = "Número de Plazos";
     if (resp.plazos) aonInputPlazos.value = resp.plazos;  
     divAplazamiento.appendChild(aonInputPlazos);
@@ -357,7 +354,7 @@ export class AonTax extends AonElement {
 	aonInputFechaPlazo.readonly = ("CUSTOMER_CHECK"!==resp.status);	
 	divAplazamiento.appendChild(aonInputFechaPlazo);
 		
-    // -----
+    // CERTIFICADO ELECTRONICO
     
     const aonSelect2 = new AonSelect();
     aonSelect2.name = "certi";
@@ -413,10 +410,12 @@ export class AonTax extends AonElement {
     // Boton Rechazar
     const buttonCancel = dialog.addCancelAction(() =>{
 		// FALTA - COMPROBAR QUE ESTO NO DA ERROR PUES HE CAMBIADO VISIBLEFIELDS
-      this.visibleFields({type:"d"})
-      const certi = this.getElement('certi');
-      if (certi)
-      	certi.hidden = true;
+//      this.visibleFields({type:"d"})
+      this.visibleFields(null);
+      const tipodec = this.getElement('tipodec');
+      if (tipodec) tipodec.disabled = true;
+//      const certi = this.getElement('certi');
+//      if (certi) certi.hidden = true;
       div.innerHTML = "";
       textArea = new AonAutosizeTextarea();
       textArea.name = "reasonReject";
@@ -476,12 +475,9 @@ export class AonTax extends AonElement {
 			}
 		});
 		
-	// FALTA - HAY QUE PONER AQUI LA ASIGNACION DEL CAMPO
 	if (resp.fechaPlazo) {
-		const fechaPlazo = this.getElement('fechaPlazo');
-		//fechaPlazo.value = resp.fechaPlazo;
-		fechaPlazo.setDate(resp.fechaPlazo);
-			
+		const fechaPlazo = this.getElement('fechaPlazo');		
+		fechaPlazo.value = resp.fechaPlazo;			
 	}	
 		
   }
@@ -506,18 +502,17 @@ export class AonTax extends AonElement {
       
       const certi = this.getElement('certi');
       formObj["certi"] = certi.value;
-
-      // FALTA - DATOS APLAZAMIENTO
+      
       const plazos = this.getElement('plazos');
       formObj["plazos"] = plazos.value;      
       const fechaPlazo = this.getElement('fechaPlazo');
       formObj["fechaPlazo"] = fechaPlazo.value;      
       
-      
       return formObj;
   }
 
-/*  visibleFields({type}){
+/* FALTA - ESTO ERA LO ANTERIOR 
+visibleFields({type}){
     if(type){
       let iban = this.getElement("iban");
       let divNrc = this.getElement("divNrc");
@@ -557,7 +552,7 @@ export class AonTax extends AonElement {
       let aplazamientoHidden = true;
       let certiHidden = true;
 	
-    if(resp){
+    if (resp) {
       switch(resp.type){		
         case CONST_FISCAL.DEPOSIT:
           nrcHidden = false;

@@ -207,10 +207,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							.put("nrc", model.getNrc())
 							.put("plazos", model.getPlazos())
 							// FALTA - NO SE MUY BIEN COMO PASAR LA FECHA PARA QUE SALGA EN EL PORTAL
-						    //.put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo()))
-							//.put("fechaPlazo", model.getFechaPlazo())
-							.put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo()))
-//							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd")+"T00:00:00.000Z")
+//						    .put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo())) // pasarlo como date y recibe con setDate - NO FUNCIONA
+//						    .put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo())) // pasarlo como date y recibe con value - NO FUNCIONA
+//							.put("fechaPlazo", model.getFechaPlazo()) // pasarlo como texto dd/mm/yyyy y recibe como value - NO FUNCIONA
+//							.put("fechaPlazo", model.getFechaPlazo()) // pasarlo como texto dd/mm/yyyy y recibe como setDate - NO FUNCIONA
+//							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd")+"T00:00:00.000Z")							
+							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))  // pasarlo como texto yyyy-mm-dd y recibe como value - NO LO HE PROBADO AUN 
 							// PASANDOLO DE ESTA MANERA Y LEYENDO COMO value FUNCIONA
 							//.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
 							);
@@ -484,7 +486,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				int presModelAuto = reject || declarationType == FiscalModelDeclarationType.DEFERRAL ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo (solo si no ha sido Rechazado por el Cliente y No es aplazamiento)				
 				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
 				
-				int plazos = JsonUtils.getInteger(params, "plazos");
+				int plazos = AonNumberUtils.toint(JsonUtils.getInteger(params, "plazos"));
 				Date fechaPlazo = JsonUtils.getDate(params, "fechaPlazo");
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
@@ -535,6 +537,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 					model.setPlazos(plazos);
 					model.setFechaPlazo(AonDateUtils.simpleFormat(fechaPlazo));
 					markModelAsFinished(ctx, model);
+					
 					// Presentación automática del modelo 
 					if (presModelAuto == 1) {
 						send(aeatParams, model);
