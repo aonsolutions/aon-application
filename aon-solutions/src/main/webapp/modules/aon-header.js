@@ -133,7 +133,7 @@ export class AonHeader extends AonElement {
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.style.display = "none";
 		aonHeaderCompany.style.height = "14px";
-		aonHeaderCompany.style.color = "var(--aonHeaderButtonColor)"
+		aonHeaderCompany.style.color = "var(--aonGrayHeaderButtonsColor)"
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
@@ -384,17 +384,17 @@ export class AonHeader extends AonElement {
 			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
 
-			if (!LS.isDarkTheme()) {
-				header.style.backgroundColor = "rgb(240, 240, 240)";
-				apps.style.color = "rgb(95, 99, 104)";
-				apps.style.backgroundColor = "rgb(240,240,240)";
-				headerapp.style.display = "none";
-			} else {
-				header.style.backgroundColor = "black";
-				apps.style.color = "white";
-				apps.style.backgroundColor = "black";
-				headerapp.style.display = "none";
-			}
+			// if (!LS.isDarkTheme()) {
+			// 	header.style.backgroundColor = "rgb(240, 240, 240)";
+			// 	apps.style.color = "rgb(95, 99, 104)";
+			// 	apps.style.backgroundColor = "rgb(240,240,240)";
+			// 	headerapp.style.display = "none";
+			// } else {
+			// 	header.style.backgroundColor = "black";
+			// 	apps.style.color = "white";
+			// 	apps.style.backgroundColor = "black";
+			// 	headerapp.style.display = "none";
+			// }
 
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
@@ -491,16 +491,34 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		if(LS.isDarkTheme()){
-			aonHeaderCompanyName.style.color = "var(--aonWhite)";
-			aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
-			let help = this.getElement("aonHeaderHelpButtonIconButton");
-			help.style.color = "var(--aonWhite)";
-			let config = this.getElement("aonHeaderConfigButtonIconButton");
-			config.style.color = "var(--aonWhite)";
+		// if(LS.isDarkTheme()){
+		// 	aonHeaderCompanyName.style.color = "var(--aonWhite)";
+		// 	aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
+		// 	let help = this.getElement("aonHeaderHelpButtonIconButton");
+		// 	help.style.color = "var(--aonWhite)";
+		// 	let config = this.getElement("aonHeaderConfigButtonIconButton");
+		// 	config.style.color = "var(--aonWhite)";
 
 
-		}
+		// }
+
+		let header1 = this.getElement("aonHeaderCompanyName")
+		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+		header2.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+		header3.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+		header4.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+		header5.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header6 = this.getElement("aonHeaderUserButtonIconButton")
+		header6.style.color = "var--(aonGrayHeaderButtonsColor)";
 	}
 
 	timeControlStatus(signin) {
