@@ -5,10 +5,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
-
+	
+<aon:if test="#{!app.standAlone}">
 	<aon:valueParam name="valueController" default="#{auditableSearch}" />
 
-	<aon:panelCollapsible expanded="false" label="#{bundle.aon_audit}" >
+	<aon:panelCollapsible  expanded="false" label="#{bundle.aon_audit}" >
 		<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 
 			<aon:outputLabel for="#{controller.pojoShortName}_creationUser"
@@ -65,5 +66,70 @@
 
 		</aon:panelGrid>
 	</aon:panelCollapsible>
+	</aon:if>
+	
+	<aon:if test="#{app.standAlone}">
+	<aon:valueParam name="valueController" default="#{auditableSearch}" />
+
+	<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_audit}" >
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+			<aon:outputLabel for="#{controller.pojoShortName}_creationUser"
+				value="#{bundle.aon_creation_user}" />
+			<aon:inputText id="#{controller.pojoShortName}_creationUser" size="20"
+				value="#{valueController.creationUser}"
+				valueChangeListener="#{controller.addExpression}" />			
+
+			<aon:outputLabel value="#{bundle.aon_creation_date}" />
+			<aon:div>
+				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-From" styleClass="aon-form-date-label aon-padding-right" 
+					value="#{bundle.aon_date_from}:" />
+				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-From"
+					value="#{valueController.creationDate1}"
+					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+
+				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-To" styleClass="aon-form-date-label aon-padding-right" 
+					value="#{bundle.aon_date_to}:" />
+				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-To"
+					value="#{valueController.creationDate2}"
+					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+			</aon:div>
+
+			<aon:outputLabel for="#{controller.pojoShortName}_modificationUser"
+				value="#{bundle.aon_modification_user}" />
+			<aon:inputText id="#{controller.pojoShortName}_modificationUser" size="20"
+				value="#{valueController.modificationUser}"
+				valueChangeListener="#{controller.addExpression}" />			
+
+			<aon:outputLabel value="#{bundle.aon_modification_date}" />
+			<aon:div>
+				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-From" styleClass="aon-form-date-label aon-padding-right" 
+					value="#{bundle.aon_date_from}:" />
+				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-From"
+					value="#{valueController.modificationDate1}"
+					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+
+				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-To" styleClass="aon-form-date-label aon-padding-right" 
+					value="#{bundle.aon_date_to}:" />
+				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-To"
+					value="#{valueController.modificationDate2}"
+					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+			</aon:div>
+
+			<ui:insert name="additionalAuditableContent"/>
+
+		</aon:panelGrid>
+	</aon:panelCollapsible>
+	</aon:if>
 
 </ui:composition>

@@ -1080,6 +1080,8 @@
   transition: 0.5s;
   height: calc(100vh - 102px);
   overflow-y: auto;
+
+  
 }
 
 .aonContentBeta {
@@ -1295,6 +1297,7 @@
 }
 
 
+
 .aonCardFlex{
   position: relative;
   display: -ms-flexbox;
@@ -1385,7 +1388,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: auto
   background-color: rgba(0, 0, 0, 0.4);
   user-select: none;
 }
@@ -2658,6 +2661,10 @@ label.rating:hover {
   border: 1px solid white;
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.aonFavicon {
+	background-image: url("../images/o.svg");	
 }
 
 

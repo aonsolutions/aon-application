@@ -354,7 +354,7 @@ public class JooqEmployeeContractPayments {
 				.set(CONTRACT_DEDUCTION.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
 				.set(CONTRACT_DEDUCTION.DESCRIPTION, contractConceptCalc.getDescription())
 				.set(CONTRACT_DEDUCTION.EXPRESSION, contractConceptCalc.getExpression())
-				.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+				.set(CONTRACT_DEDUCTION.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
 				.set(CONTRACT_DEDUCTION.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
 				.set(CONTRACT_DEDUCTION.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 				.where(CONTRACT_DEDUCTION.ID.eq(contractConceptCalc.getId()))
