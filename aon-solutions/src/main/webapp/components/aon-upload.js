@@ -130,12 +130,18 @@ export class AonUpload extends AonElement {
         }
         const dragoverFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const dragenterFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const mouseleaveFn = (event) => {
@@ -145,7 +151,10 @@ export class AonUpload extends AonElement {
         
         const mouseoverFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const dragleaveFn = (event) => {

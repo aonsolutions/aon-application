@@ -3,6 +3,7 @@ import { Attach } from '../models/Attach.js';
 import { AonDialog } from './aon-dialog.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
+import * as LS from "../services/localStorageService.js";
 
 export class AonNewUpload extends AonElement {
 	
@@ -121,12 +122,18 @@ export class AonNewUpload extends AonElement {
         }
         const dragoverFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const dragenterFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const mouseleaveFn = (event) => {
@@ -136,7 +143,10 @@ export class AonNewUpload extends AonElement {
         
         const mouseoverFn = (event) => {
             preventDefault(event);
-            element.style.borderColor = "#002469";
+            if(LS.isDarkTheme())
+                element.style.borderColor = "white";
+            else
+                element.style.borderColor = "#002469";
         };
         
         const dragleaveFn = (event) => {
