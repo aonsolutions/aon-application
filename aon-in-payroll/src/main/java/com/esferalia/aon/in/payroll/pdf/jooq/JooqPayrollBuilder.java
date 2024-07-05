@@ -1082,9 +1082,13 @@ public class JooqPayrollBuilder {
 		if (noWorkDaysList != null && noWorkDaysList.contains(date)) {
 			return false;
 		}
-		if (festiveList != null && festiveList.contains(date)) {
+		
+		// Check if its festive day and dont have hours
+		Double dayHours = getDayHours(date, salaryData, salaryEnd);
+		if (festiveList != null && festiveList.contains(date) && !(dayHours != null && dayHours > 0)) {
 			return false;
 		}
+		
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
 		List<SalaryData> realSessions = salaryData.getOrDefault("JORNADAS_REALES", Collections.emptyList());
 		boolean isInWorkPeriod = workedDays.stream()

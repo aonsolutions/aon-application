@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -164,6 +165,20 @@ public class Idc {
 		return ssBonusListener.getSSBonuses();
 	}
 	
+	public static Collection<EmployeeIT> getEmployeeITs (byte pdf []) throws IOException, UnknownPDFException {
+		try (InputStream is = new ByteArrayInputStream(pdf)){
+			return getEmployeeITs(is);
+		}
+	}
+	
+	public static Collection<EmployeeIT> getEmployeeITs (InputStream is) throws IOException, UnknownPDFException {	
+		EmployeeITListener  itListener = new EmployeeITListener();
+		
+		IdcParser.parse(is, itListener );
+		
+		return itListener.getEmployeeITs();
+	}
+
 	public static TrabajadoresTramos getTrabajadoresTramos (InputStream is, Date startDate, Date endDate) throws IOException, UnknownPDFException {	
 		CretaListener  cretaListener = new IdcCretaListener();
 		IdcParser.parse(is, cretaListener );

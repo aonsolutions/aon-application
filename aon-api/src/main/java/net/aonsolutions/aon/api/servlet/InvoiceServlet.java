@@ -19,6 +19,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.FINANCE;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -1116,6 +1117,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getInvoiceSeries(AonApiData api) {
-		return InvoiceSeriesJSON.toJSON(AON.getInvoiceSalesSeries(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()));
+		return InvoiceSeriesJSON.to(FINANCE.getInvoiceSalesSeries(api.getOccam(), api.getDomain().getId()));	
 	}
 }

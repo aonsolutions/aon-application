@@ -155,6 +155,19 @@ public class RegistryImport extends Import {
 			}
 			return ;
 		}
+		
+		if(IConstants.ALIAS.equalsIgnoreCase(title)
+			|| IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
+			if(o.toString().length() > 31) {
+				reg.getRegistry().setAlias(o.toString().substring(0,31));
+				reg.getAccount().setAlias(o.toString().substring(0, 31));
+			} else {
+				reg.getRegistry().setAlias(o.toString());
+				reg.getAccount().setAlias(o.toString());
+			}
+			return ;
+		}
+	
 		if(IConstants.DOMICILIO.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION2.equalsIgnoreCase(title)) {
@@ -347,7 +360,7 @@ public class RegistryImport extends Import {
 						: new BankAccount(r.getCcc(), true);
 				
 				if(!ba.isValidIban() && !ba.isValidBban()) {
-					error.setTextWarning("Línea " + r.getLine() + ": El IBAN o CCC introducido no es correcto. se ha omitido");
+					error.setTextWarning("Línea " + r.getLine() + ": El IBAN o CCC introducido no es correcto. se ha omitido - (" + ba.getIban() + ")");
 				} else {
 					rbank = AON.getRBank(domain.getName(), domain.getId(), user.getLogin(), f -> 
 						f.getDomainProperty().eq(domain.getId())

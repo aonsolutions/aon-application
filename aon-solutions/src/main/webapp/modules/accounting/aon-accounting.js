@@ -3,6 +3,7 @@ import {AonElement} from '../../components/AonElement.js';
 
 // SERVICES
 import {getDomainUserRoles} from '../../services/service.js';
+import { getPeriods } from "../../services/accountingService.js";
 
 // MODELS
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -22,6 +23,14 @@ export class AonAccounting extends AonElement {
 	dur;
 	AON_ACCOUNTING;
 	filter;
+
+	params = {
+		domain: localStorage.getItem("aon_domain_id"),
+		domainName: localStorage.getItem("aon_domain_name"),
+		user: "",
+		level: 5,
+		byMonth: true,
+	};
 	
 	constructor(filter) {
 		super();
@@ -42,34 +51,106 @@ export class AonAccounting extends AonElement {
 		this.AON_ACCOUNTING = CONSTANT.AON_ACCOUNTING;
 	}
 
- 	build() {
+ 	async build() {
 		let application = this.getApplication();
-
-		this.aonGraphicsTrialView();
 
 		if(this.isMobile()){
 			application.addMobileSidenavHeader(ACCOUNTING);
 		}
+
+		if (!this.params.domain || !this.params.domainName) {
+			try {
+			  let company = JSON.parse(localStorage.getItem("company"));
+			  this.params.domain = company.id;
+			  this.params.domainName = company.domain;
+			} catch (error) {
+			  console.log(error);
+			}
+		}
+
+		this.PERIODS = await getPeriods(this.params)
+			.catch((error) => {
+				console.log(error);
+				return [];
+			});
+
+		let periodOptions = this.PERIODS.map((period) => ({
+			id: period.name,
+			icon: MATERIAL_ICONS.EVENT,
+			name: "Ejercicio " + period.name,
+			clickable: true,
+			fn: () => {
+				if(!this.filter) this.filter = {};
+				this.filter.year = period.name;
+				this.aonGraphicsTrialView ();
+			},
+		  }));
 		
-		let options2 = [
+		let viewOptions = [
 			{
 				id: 'VistaAnual',
 				name: 'Vista Anual',
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
-				fn: () => {}
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.show = "yearly";
+					this.aonGraphicsTrialView ();
+				}
 			},
 			{
 				id: 'VistaTrimestral',
 				name: 'Vista Trimestral',
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
-				fn: () => {}
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.show = "quarterly";
+					this.aonGraphicsTrialView ();
+				}
 			},
 			{
 				id: 'VistaMensual',
 				name: 'Vista Mensual',
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
-				fn: () => {}
-			},];
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.show = "monthly";
+					this.aonGraphicsTrialView ();
+				}
+			}
+		];
+
+		let detailOptions = [
+			{
+				id: 'Estándar',
+				name: 'Estándar',
+				icon: MATERIAL_ICONS.LIST,
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.detail = "5";
+					this.aonGraphicsTrialView ();
+				}
+			},
+			{
+				id: 'Resumido',
+				name: 'Resumido',
+				icon: MATERIAL_ICONS.LIST,
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.detail = "3";
+					this.aonGraphicsTrialView ();
+				}
+			},
+			{
+				id: 'Detallado',
+				name: 'Detallado',
+				icon: MATERIAL_ICONS.LIST,
+				fn: () => {
+					if(!this.filter) this.filter = {};
+					this.filter.detail = "9";
+					this.aonGraphicsTrialView ();
+				}
+			}
+		];
 
 
 		let options = [{
@@ -77,14 +158,37 @@ export class AonAccounting extends AonElement {
 			name: 'Pérdidas y Ganancias',
 			icon: MATERIAL_ICONS.BAR_CHART,
 			fn: () => {
-				let data = {
+				application.removeSidenavById(CONSTANT.OPTIONS);
+				
+				let periodOpt = {
 					id: CONSTANT.OPTIONS,
+					name: MSG.OPTIONS + " Gráfico",
+					app: ACCOUNTING,
+					options: periodOptions
+				}
+				
+				application.addSelectSidenav(periodOpt);
+
+				let viewOpt = {
+					parent: CONSTANT.OPTIONS,
+					id: CONSTANT.OPTIONS + "View",
 					name: MSG.OPTIONS,
 					app: ACCOUNTING,
-					options: options2
+					options: viewOptions
 				}
-				application.removeSidenavById( CONSTANT.OPTIONS);
-				application.addSidenavOptions3(data);
+
+				application.addSelectToPanel(viewOpt);
+
+				let detailOpt = {
+					parent: CONSTANT.OPTIONS,
+					id: CONSTANT.OPTIONS + "Detail",
+					name: MSG.OPTIONS,
+					app: ACCOUNTING,
+					options: detailOptions
+				}
+
+				application.addSelectToPanel(detailOpt);
+
 				this.clearElementById(this.getApplication().getContent().id);
 				this.aonGraphicsTrialView ();
 			}
@@ -110,15 +214,49 @@ export class AonAccounting extends AonElement {
 			options
 		}
 
-		let data2 = {
+		application.addSidenavOptions3(data1);
+
+		let periodOpt = {
 			id: CONSTANT.OPTIONS,
+			name: MSG.OPTIONS + " Gráfico",
+			app: ACCOUNTING,
+			options: periodOptions
+		}
+
+		application.addSelectSidenav(periodOpt);
+
+		let viewOpt = {
+			parent: CONSTANT.OPTIONS,
+			id: CONSTANT.OPTIONS + "View",
 			name: MSG.OPTIONS,
 			app: ACCOUNTING,
-			options: options2
+			options: viewOptions
 		}
-		
-		application.addSidenavOptions3(data1);
-		application.addSidenavOptions3(data2);
+
+		application.addSelectToPanel(viewOpt);
+
+		let detailOpt = {
+			parent: CONSTANT.OPTIONS,
+			id: CONSTANT.OPTIONS + "Detail",
+			name: MSG.OPTIONS,
+			app: ACCOUNTING,
+			options: detailOptions
+		}
+
+		application.addSelectToPanel(detailOpt);
+
+		application.addBackgroundSidenav("PyG", ACCOUNTING.color);
+
+		if(!this.filter){
+			let period = this.PERIODS.filter(period => period.name == new Date().getFullYear());
+
+			this.filter = {};
+			this.filter.year = period[0].name;
+			this.filter.show = "yearly";
+			this.filter.detail = "5";
+		}
+
+		this.aonGraphicsTrialView();
 	}
 
 	async loader(selector, doc=undefined) {

@@ -97,6 +97,7 @@ import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -1256,6 +1257,12 @@ public class AON {
 	public static PayrollWorkplace savePayrollWorkplace(String domainName, Integer domainId, String login, PayrollWorkplace payrollWorkplace) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().savePayrollWorkplace(ctx, payrollWorkplace);
+		} 
+	}
+	
+	public static PayrollWorkplace getPayrollWorkpalce(String domainName, Integer domainId, String login, PayrollWorkplaceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getPayrollWorkpalce(ctx, filter);
 		} 
 	}
 	
@@ -8432,18 +8439,6 @@ public class AON {
 	/// ****************************************************************
 	/// ****************************************************************
 	
-	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
-			int domainId, String login, Date from, Date to, boolean taxDate) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
-		}
-	}
-	public static List<InvoiceSeries> getInvoiceSalesSeries(String domainName, int domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSalesSeries(ctx);
-		}
-	}
-
 	public static LinkedList<Series> getSeriesDeliveryList(String domainName,
 			Integer domainId, String login, Integer scopeId) {
 		CloseableAONContext ctx = null;

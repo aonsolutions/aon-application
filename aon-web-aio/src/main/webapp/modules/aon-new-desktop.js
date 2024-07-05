@@ -2,7 +2,7 @@ import {AonElement} from 'aonsolutions/components/AonElement.js';
 
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
-
+import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonNewDesktop extends AonElement {
 	
@@ -27,6 +27,12 @@ export class AonNewDesktop extends AonElement {
 	}
 
 	build() {
+
+		if(LS.isDarkTheme()){
+			let root = this.getElement("rootPanel");
+			root.style.backgroundColor = "var(--aonRightPanelColor";
+		}
+		
 		
 		let headerDiv = this.createElement(TAG.DIV);
 		headerDiv.style.height = '48px';
@@ -41,6 +47,8 @@ export class AonNewDesktop extends AonElement {
 		let bannerAppsDiv = this.createElement(TAG.DIV);
 		let titleH1 = this.createElement(TAG.H1);
 		titleH1.innerHTML = MSG.APPLICATIONS;
+		if(LS.isDarkTheme())
+			titleH1.style.color = "white";
 		titleH1.style.fontSize = '20px';
 		titleH1.style.fontWeight = '500';
 		titleH1.style.paddingBottom = '32px';
@@ -62,6 +70,8 @@ export class AonNewDesktop extends AonElement {
 		let bannerAonAppsDiv = this.createElement(TAG.DIV);
 		let titleAonH1 = this.createElement(TAG.H1);
 		titleAonH1.innerHTML = 'Más de AON Solutions';
+		if(LS.isDarkTheme())
+			titleAonH1.style.color = "white";
 		titleAonH1.style.marginTop = '32px';
 		titleAonH1.style.fontSize = '16px';
 		titleAonH1.style.fontWeight = '500';
@@ -93,6 +103,8 @@ export class AonNewDesktop extends AonElement {
 		cardButton.style.position = 'absolute';
 		cardButton.style.right = '5px';
 		cardButton.style.top = "5px";
+		if(LS.isDarkTheme())
+			cardButton.style.color = "white";
 		cardButton.classList.add('aonAppMoreBtn');
 		cardButton.style.visibility = 'hidden';
 
@@ -232,10 +244,15 @@ export class AonNewDesktop extends AonElement {
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
 		titleSpan.style.textAlign = 'center';
+		if(LS.isDarkTheme())
+			titleSpan.style.color = "white";
 		titleSpan.innerHTML = app.title;
 		appDiv.appendChild(titleSpan);
 
 		appA.appendChild(appDiv);
+
+		if(LS.isDarkTheme() && (app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll"))
+			appDiv.style.color = "white";
 
 		cardDiv.appendChild(appA);
 
@@ -253,6 +270,8 @@ export class AonNewDesktop extends AonElement {
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 		cardButton.innerHTML = 'more_horiz';
 		cardButton.style.position = 'absolute';
+		if(LS.isDarkTheme())
+			cardButton.style.color = "white";
 		cardButton.style.right = '10px';
 		cardButton.style.top = "10px";
 		cardButton.classList.add('aonAppMoreBtn');
@@ -404,6 +423,8 @@ export class AonNewDesktop extends AonElement {
 
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
+		if(LS.isDarkTheme())
+			titleSpan.style.color = "white";
 		titleSpan.style.textAlign = 'center';
 		titleSpan.innerHTML = app.title;
 		titleSpan.style.marginLeft = '10px';
@@ -415,6 +436,8 @@ export class AonNewDesktop extends AonElement {
 
 		let descriptionSpan = this.createElement(TAG.SPAN);
 		descriptionSpan.innerHTML = app.description;
+		if(LS.isDarkTheme())
+			descriptionSpan.style.color = "white";
 		descriptionSpan.style.overflow = 'hidden';
 		descriptionSpan.style.fontSize = '11px';
 

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -1262,5 +1263,14 @@ public class AonFaker {
 			.setSecurityLevel( AonRandom.getRandomSecurityLevel() );
 	}
 	
+	public static InvoiceSeries getInvoiceSeries() {
+		return new InvoiceSeries()
+			.setDescription( AonRandom.name( 10, 30 )) 
+			.setSales(faker.random().nextBoolean() )
+			.setFromNumber( AonRandom.getInt( 0, 99999 ) )
+			.setToNumber( AonRandom.getInt( 0, 99999 ) )
+			.setCount( AonRandom.getInt( 0, 99999 ) )
+			;
+	}
 }
 

@@ -61,6 +61,16 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public interface IFinance {
 	
+	// 	***********************************************
+	// 	**************************** INVOICE SERIES ***
+	// 	***********************************************
+	List<InvoiceSeries> getInvoiceSeries(AONContext ctx, int domain, Date from, Date to);
+	List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx, int domain);
+
+	//-------------------------------------------
+	//-------------------------------------------
+	//-------------------------------------------
+	
 	// 	****************************************
 	// 	**************************** FINANCES ***
 	// 	****************************************
@@ -115,13 +125,6 @@ public interface IFinance {
 
 	LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter);
 	InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
-	
-	// 	***********************************************
-	// 	**************************** INVOICE SERIES ***
-	// 	***********************************************
-	
-	LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate);
-	List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx);
 	
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***

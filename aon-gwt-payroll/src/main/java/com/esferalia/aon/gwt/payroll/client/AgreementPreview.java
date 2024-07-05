@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
@@ -2040,12 +2041,85 @@ public abstract class AgreementPreview extends Composite {
 				payment.setMonth((short) 2);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
 				payment.setMonth(AonStringUtils.containsIgnoreCase(issueDate, "6") ? (short) 5 : (short) 6);
+				createPairExtra(payment, issueDate);
 			} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
 				payment.setMonth((short) 11);
+				createPairExtra(payment, issueDate);
 			}
 
 			setAgreementPreview(agreement);
 			setHasChange(true);
+		}
+	}
+
+	private void createPairExtra(Payment payment, String issueDate) {
+		List<Payment> aviablePairs = agreement.getPayments().stream().filter(paymentIt -> paymentIt.getType().equals(Payment.Type.CRA_0004) && !paymentIt.getId().equals(payment.getId())).collect(Collectors.toList());
+		if(aviablePairs.size() == 1) {
+			Payment aviablePair = aviablePairs.get(0);
+			createAviablePairExtra(aviablePair, issueDate);
+		} else {
+			ListBox aviablePairListBox = new ListBox();
+			aviablePairListBox.setWidth("100%");
+			aviablePairs.forEach(aviablePairIt -> aviablePairListBox.addItem(aviablePairIt.getDescription(), aviablePairIt.getId().toString()));
+			
+			AonDialog dialog = new AonDialog("Pareja paga extra", aviablePairListBox);
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					Payment aviablePair = agreement.getPayments().stream().filter(paymentIt -> paymentIt.getId().equals(Integer.parseInt(aviablePairListBox.getSelectedValue()))).findFirst().get();
+					createAviablePairExtra(aviablePair, issueDate);
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				}
+			});
+		}
+	}
+
+	private void createAviablePairExtra(Payment aviablePair, String issueDate) {
+		String issuePairDate = "";
+		if (AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+			issuePairDate = "31/12";
+		} else if (AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+			issuePairDate = "31/07";
+		}
+		
+		AgreementExtra extra = agreement.getExtraPayment(aviablePair.getId());
+		if (null == extra) {
+			Random rand = new Random();
+			int newExtraId = rand.nextInt(1000) * -1;
+
+			AgreementExtra newExtra = new AgreementExtra();
+			newExtra.setId(newExtraId);
+			newExtra.setAgreementPayment(aviablePair.getId());
+
+			newExtra.setIssueDate(issuePairDate);
+			newExtra.setStartDate(getAnualStartDate(issuePairDate));
+			newExtra.setEndDate(getAnualEndDate(issuePairDate));
+
+			agreement.addExtra(newExtra);
+
+			aviablePair.setModify(true);
+
+		} else {
+			extra.setDeleted(false);
+
+			extra.setIssueDate(issuePairDate);
+			extra.setStartDate(getAnualStartDate(issuePairDate));
+			extra.setEndDate(getAnualEndDate(issuePairDate));
+
+			aviablePair.setModify(true);
+		}
+		
+		if (AonStringUtils.containsIgnoreCase(issuePairDate, "6") || AonStringUtils.containsIgnoreCase(issuePairDate, "7")) {
+			aviablePair.setMonth(AonStringUtils.containsIgnoreCase(issuePairDate, "6") ? (short) 5 : (short) 6);
+		} else if (AonStringUtils.containsIgnoreCase(issuePairDate, "12")) {
+			aviablePair.setMonth((short) 11);
 		}
 	}
 

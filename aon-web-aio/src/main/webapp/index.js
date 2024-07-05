@@ -34,37 +34,45 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-    favicon();  
     // TODO: loadScriptFirebase();
     document.body.appendChild(new AonModule());
     loadScripts(); 
     window.loadScripts = () => loadScripts();
-    loadTheme();
+    loadTheme().then(() => favicon() );  
 
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
 
-export const loadTheme = (theme) => {
-    if (LS.isDarkTheme()) {
-        let url = `css/theme/dark.css`;
-        loadLink(url, 'stylesheet', 'text/css');
-    } else if(!LS.isDarkTheme()){
-        let defaultThemeUrl = 'aonsolutions/css/aon.css';
-        loadLink(defaultThemeUrl, 'stylesheet', 'text/css');
-    }
-    
+export const loadTheme = () => {
+    let themeUrl = getParam("theme") || LS.getTheme() || LS.AON_THEME; 
+    return loadLink(themeUrl, 'stylesheet', 'text/css');
 }
 
 
 const favicon = () => {
-	let url = 'assets/favicon.ico';
-    loadLink(url, 'icon', 'image/x-icon');
+	loadLink('', 'icon', 'image/x-icon')
+	.then( faviconLink  => {
+		const aonFavicon = document.createElement('span');
+		aonFavicon.className = 'aonFavicon';
+		aonFavicon.style.display = 'none';
+		document.body.appendChild(aonFavicon);
+		
+		setTimeout(function(){
+			const aonFaviconStyle = getComputedStyle(aonFavicon);
+			const backgroundImage = aonFaviconStyle.backgroundImage;
+			const href = /url\(["']?([^"']*)["']?\)/.exec(backgroundImage)[1];
+			aonFavicon.remove();
+			faviconLink.href = href;
+		}, 200);
+
+	});
+
 }
 
 const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
     const link = document.createElement('link');
     document.head.appendChild(link);
-    link.onload = resolve;
+    link.onload = resolve(link);
     link.onerror = reject;
     link.href = url;
     link.rel = rel || "stylesheet";
@@ -115,6 +123,14 @@ const isBeta = () => {
 const isLocal =  () => {
     const href = window.location.href;
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
-  }
+}
+
+const getParam = (paramName) => {
+	const queryString = window.location.search;
+	const searchParams = new URLSearchParams(queryString);
+	return searchParams.get(paramName);
+}
+
+  
 load();
 

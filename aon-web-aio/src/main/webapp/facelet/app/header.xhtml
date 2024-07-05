@@ -371,17 +371,20 @@
 	}
 	
 	.aon-search-content-width{
-		width: 400px;
+		width: 380px;
 	}	
 	
 	.aon-filter-lookup-button{
 		width: 400px;
-		bottom: 109px;
+		bottom: 0px;
 		position: absolute;
-		padding-top: 6px;
-		padding-bottom: 6px;
+		padding-top: 10px;
+		padding-bottom: 7px;
+		z-index: 11;
 		background-color: #fff;
+		right: 2%;
 	}
+	
 	
 	.rich-modalpanel .aon-commandButton,
 	.aon-search-lookup-button {
@@ -525,6 +528,25 @@
 		align-items: center;
 		flex-direction: row-reverse;
 		justify-content: space-between;
+	}
+	
+	.aon-panelGrid-search .aon-portlet-title{
+		overflow: hidden;
+		margin-top: 0px  !important;
+		margin-bottom: 0px !important;
+		padding-top: 0px  ;
+		padding-bottom: 0px ;
+		padding-right: 32px;
+
+		height: 15px;
+		font-size: 14px;
+		font-weight: 400;
+		
+		display: flex;
+		align-items: center;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		padding-left:25px;
 	}
 	
 	.aon-portlets-column1 {
@@ -1209,6 +1231,7 @@
 		color: var(--colorNeutralForeground1,#242424);
 		background: var(--colorNeutralBackground1,#fff);
 		border: 1px solid var(--colorNeutralStroke1,#d1d1d1);
+		border-radius: 4px;
 	
 	}
 	
@@ -1222,8 +1245,16 @@
 	.aon-finding-toolbar-item.aon-finding-toolbar-button .material-symbols-outlined{
 		margin-right: 6px;
 	}
-
+    
+   .aon-panelGrid-search .material-symbols-outlined{
+		padding-left: 8px;
+	}
 	
+	.rich-mp-container .aon-panelGrid {
+     border-collapse: collapse;
+     margin-top: 1em;
+      }
+
 	.aon-editDataTable-button.aon-icon-new,
 	.aon-editDataTable-button.aon-icon-csv,
 	.aon-editDataTable-button.aon-icon-pdf,
@@ -1720,7 +1751,8 @@
 		overflow-y: scroll;
 		height: calc( 100vh - 169px);
 	} 
-
+    
+     
 	.aon-scroll-area .rich-table-thead tr ,
 	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
 		border-bottom: none;
@@ -1742,6 +1774,7 @@
 		position: sticky;
 		background-clip: padding-box;
 		background-color:  var(--colorNeutralBackground2,#fff); 
+		z-index: 10;
 	}
 	
 	
@@ -2112,6 +2145,21 @@
  	    left: 20px;
 	    position: relative;
   		background-color: transparent;
+  		
+
+	}
+	
+	.aon-panelGrid-search .aonCard tbody:first-of-type > tr > td.aon-panelGrid-odd{
+		font-weight: 400;
+		display:inline-block;
+		
+  		border: none;
+	    top: 12px;
+ 	    left: 20px;
+	    position: relative;
+  		background-color: transparent;
+  		text-align:left
+  		
 
 	}
 	
@@ -2189,12 +2237,40 @@
 	    color: rgb(66, 66, 66)
 	}
 	
+    .aon-panelGrid-search .aonCard    {
+
+        text-align: left;
+        padding-top: 15px;
+        padding-right: 22px;
+        padding-bottom: 15px;
+        padding-left: 5px;
+}
+	
 	.aonCardTitle {
 	    color: #262626;
 	    display: flex;
 	    font-size: 14px;
 	    font-weight: 600;
 	    margin-bottom: 15px;
+	}
+	
+.aonFilterPopup{
+	  overflow: auto; 
+	  display: none;
+	 scrollbar-width:none;
+	  border: 2px solid #ccc; 
+	  position: fixed;  
+	  flex-direction: column;
+	   justify-content: flex-end; 
+	   width: 196px; height: auto;
+	    z-index: 2;
+       background-color: var(--colorNeutralBackground1,#fff); 
+       box-shadow: var(--shadow16,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 6px 16px var(--colorNeutralShadowKey,rgba(0,0,0,.14))); 
+       border-radius: 7px; 
+       width: 29%;  
+       padding-bottom:25px;
+       left:62.5%;
+
 	}
 	
 	</style>

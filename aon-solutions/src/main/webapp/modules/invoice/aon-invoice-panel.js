@@ -286,9 +286,9 @@ export class AonInvoicePanel extends AonElement {
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
 
-			// if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0){
-			// 	addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
-			// }
+			if(r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0){
+				addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
+			}
 
 			if(r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0){
 				addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);

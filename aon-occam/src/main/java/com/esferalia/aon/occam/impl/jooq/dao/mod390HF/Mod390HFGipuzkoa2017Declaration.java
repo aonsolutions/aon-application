@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -541,7 +542,8 @@ public class Mod390HFGipuzkoa2017Declaration extends Mod390HFGIPUZKOADeclaration
 	public void specificInitialization(AONContext ctx, Mod390HF mod) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, fromDate, toDate, false);
+		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
+			.collect(Collectors.toCollection(LinkedList::new));
 		Mod390Key[][] eKeys = new Mod390Key[][]{
 			 new Mod390Key[]{Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H,Mod390Key.GP_SE1X}
 			,new Mod390Key[]{Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H,Mod390Key.GP_SE2X}

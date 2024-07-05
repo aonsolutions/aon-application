@@ -30,6 +30,7 @@ public class PackagingJSON {
 			.setContainer(ItemJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CONTAINER)))
 			.setContainers(ItemJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.CONTAINERS)))
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
+			.setWarehouse(WarehouseJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WAREHOUSE)))
 			.setCopies(JsonUtils.getInteger(json, IJsonNames.COPIES));
 	}
 	
@@ -45,6 +46,7 @@ public class PackagingJSON {
 		json.put(IJsonNames.ITEM, ItemJSON.toJSON(object.getItem()));
 		json.put(IJsonNames.CONTAINER, ItemJSON.toJSON(object.getContainer()));
 		json.put(IJsonNames.CONTAINERS, ItemJSON.toJSON(object.getContainers()));
+		json.put(IJsonNames.WAREHOUSE, WarehouseJSON.toJSON(object.getWarehouse()));
 		json.put(IJsonNames.COPIES, object.getCopies());
 		return json;
 	}

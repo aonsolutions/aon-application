@@ -376,6 +376,7 @@ export const MESSAGE_CONTENT = "messageContent";
 export const RESIZE_VERTICAL = "resizeVertical";
 
 export const ELEMENT_HIDDEN = "elementHidden";
+export const OUTLINE_HIDDEN = "outlineHidden";
 
 export const MESSAGE_AFTER = "messageAfter";
 

@@ -58,6 +58,12 @@ export class AonMobilePackage extends AonElement {
 		this.build();
     }
 
+	disconnectedCallback() {
+		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
+		toolbar.removeButton(ACTION.PRINT.id);
+		toolbar.removeButton(ACTION.DELETE.id);
+    }
+
 	initialize() {
 		this.id = this.id || 'aonPackage';
 		this.PACKAGE_CARD = this.id + CONSTANT.CARD.initCap();
@@ -80,6 +86,8 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	build() {
+		this.getApplication().removeToolbarOptions();
+
 		let div = this.createElement(TAG.DIV);
 		div.style.width = "100%";
 		this.appendChild(div);
@@ -88,8 +96,7 @@ export class AonMobilePackage extends AonElement {
 		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
 		toolbar.removeButton(ACTION.PRINT.id);
 		toolbar.addButtonAfter(ACTION.DELETE, () => this.delete());
-		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
-		
+		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());		
 	}
 
   	buildPackage(parent){

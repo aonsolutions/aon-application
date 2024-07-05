@@ -133,7 +133,7 @@ export class AonHeader extends AonElement {
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
 		aonHeaderCompany.style.display = "none";
 		aonHeaderCompany.style.height = "14px";
-		aonHeaderCompany.style.color = "var(--aonHeaderButtonColor)"
+		aonHeaderCompany.style.color = "var(--aonGrayHeaderButtonsColor)"
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
@@ -156,6 +156,7 @@ export class AonHeader extends AonElement {
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
 		aonHeaderCompanyList.style.display = "none";
+		aonHeaderCompanyList.title = "Listado de empresas";
 
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
 		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
@@ -166,6 +167,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
+		aonHeaderHelp.title = MSG.HELP;
 
 		let aonHeaderHelpButton = new AonIconButton();
 		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
@@ -177,6 +179,7 @@ export class AonHeader extends AonElement {
 		if(this.newTheme){
 			let aonHeaderConfig = this.createElement(TAG.SPAN);
 			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+			aonHeaderConfig.title = MSG.CONFIGURATION;
 
 			let aonHeaderConfigButton = new AonIconButton();
 			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
@@ -189,6 +192,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
+		aonHeaderNotiication.title = MSG.NOTIFICATIONS;
 		if(this.newTheme){
 			let aonHeaderNotificationButton = new AonIconButton();
 			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
@@ -201,6 +205,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
 		aonHeaderUser.id = this.AON_HEADER_USER;
+		aonHeaderUser.title = MSG.USER;
 		
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
@@ -341,8 +346,9 @@ export class AonHeader extends AonElement {
 			
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
+
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-			if(!this.isMobile()) {
+			if (!this.isMobile()) {
 				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
 				aonHeaderSearch.style.display = 'flex';
 
@@ -351,10 +357,12 @@ export class AonHeader extends AonElement {
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-				if(!LS.isNewTheme() && !this.newTheme){
+				
+				if (!LS.isNewTheme() && !this.newTheme) {
 					let aonShowMenu = this.getElement('aonShowMenu');
 					aonShowMenu.style.display = 'none';
 				}
+				
 				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
@@ -373,13 +381,20 @@ export class AonHeader extends AonElement {
 			this.rootPanel(new AonParent());
 
 			let header = this.getElement("aonHeaderWeb");
-			header.style.removeProperty("background-color");
-
-			let apps = this.getElement("aonMenuListAppImg-applications");
-			apps.style.color = "rgb(95, 99, 104)";
-
+			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
-			headerapp.style.display = "none";
+
+			// if (!LS.isDarkTheme()) {
+			// 	header.style.backgroundColor = "rgb(240, 240, 240)";
+			// 	apps.style.color = "rgb(95, 99, 104)";
+			// 	apps.style.backgroundColor = "rgb(240,240,240)";
+			// 	headerapp.style.display = "none";
+			// } else {
+			// 	header.style.backgroundColor = "black";
+			// 	apps.style.color = "white";
+			// 	apps.style.backgroundColor = "black";
+			// 	headerapp.style.display = "none";
+			// }
 
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
@@ -390,13 +405,22 @@ export class AonHeader extends AonElement {
 			let enterprise = this.getElement("aonHeaderCompanyName");
 			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
-			appss.addEventListener("click", (event) => {
-				event.preventDefault();
-				event.stopPropagation();
-			});
-			appss.style.color = "rgb(95, 99, 104)";
+			let welcome = this.getElement("aonCompanyTabFilter");
 
+			if (welcome) {
+				const welcomeClickListener = (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					// Remueve el listener después de ejecutarse
+					appss.removeEventListener("click", welcomeClickListener);
+				};
+				
+				appss.addEventListener("click", welcomeClickListener);
+			}
+
+			appss.style.color = "rgb(95, 99, 104)";
 		});
+
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
@@ -467,7 +491,34 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		
+		// if(LS.isDarkTheme()){
+		// 	aonHeaderCompanyName.style.color = "var(--aonWhite)";
+		// 	aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
+		// 	let help = this.getElement("aonHeaderHelpButtonIconButton");
+		// 	help.style.color = "var(--aonWhite)";
+		// 	let config = this.getElement("aonHeaderConfigButtonIconButton");
+		// 	config.style.color = "var(--aonWhite)";
+
+
+		// }
+
+		let header1 = this.getElement("aonHeaderCompanyName")
+		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+		header2.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+		header3.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+		header4.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+		header5.style.color = "var--(aonGrayHeaderButtonsColor)";
+
+		let header6 = this.getElement("aonHeaderUserButtonIconButton")
+		header6.style.color = "var--(aonGrayHeaderButtonsColor)";
 	}
 
 	timeControlStatus(signin) {
@@ -508,8 +559,10 @@ export class AonHeader extends AonElement {
 
 	buildLogo() {
 		let aonLogo = this.getElement('aonLogo');
-
-		aonLogo.src = '../assets/aon-logo.svg';
+		if(LS.isDarkTheme())
+			aonLogo.src = '../assets/aon-white-logo.svg';
+		else if(!LS.isDarkTheme())
+			aonLogo.src = '../assets/aon-black-logo.svg';
 
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
@@ -640,7 +693,7 @@ export class AonHeader extends AonElement {
 		let texts = [ 
 			this.getElement('aonHeaderApp'),
 			this.getElement('aonHeaderCompanyName'),
-			this.getElement('aonMenuListAppImg-applications')
+			this.getElement('aonMenuListAppImgTop-applications')
 		];
 		let imgs = [ 
 			this.getElement('aonLogo')
@@ -653,7 +706,7 @@ export class AonHeader extends AonElement {
 				button.setColor(color);
 				button.setBackgroundColor(backgroundColor);
 			});
-			imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
+			//imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
 		} else {
 			imgs.forEach( (img) => img.style.removeProperty ('filter') );
 			texts.forEach( (text) => text.style.removeProperty('color') );

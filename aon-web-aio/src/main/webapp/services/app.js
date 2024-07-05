@@ -6,6 +6,7 @@ export const HOME = {
 	home : true,
 	title: MSG.HOME,
 	app: CONSTANT.HOME,
+	color: "var(--aonGrayHeaderButtonsColor)", 
 	symbol: MATERIAL_ICONS.HOME,
 };
 
@@ -13,12 +14,14 @@ export const APPS = {
 	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
+	color: "var(--aonGrayHeaderButtonsColor)",
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
 	home : true,
 	app: CONSTANT.APPLICATIONS,
+	color: "var(--aonGrayHeaderButtonsColor)",
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
 
@@ -60,7 +63,7 @@ export const COMMERCIAL_MENU = {
 	symbol: MATERIAL_ICONS.HANDSHAKE,
 	title: MSG.COMMERCIAL,
 	subtitle: "Comercial",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -71,7 +74,7 @@ export const MANAGEMENT_MENU = {
 	symbol: MATERIAL_ICONS.MONITORING,
 	title: MSG.MANAGEMENT,
 	subtitle: "Management",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -82,7 +85,7 @@ export const TREASURY_MENU = {
 	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.TREASURY,
 	subtitle: "Treasury",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -93,7 +96,7 @@ export const WAREHOUSE_MENU = {
 	symbol: MATERIAL_ICONS.TROLLEY,
 	title: MSG.WAREHOUSE,
 	subtitle: "Warehouse",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -104,7 +107,7 @@ export const GROUPWARE_MENU = {
 	symbol: MATERIAL_ICONS.NOTE_STACK,
 	title: MSG.GROUPWARE,
 	subtitle: "Groupware",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -115,7 +118,7 @@ export const ACCOUNTING_MENU = {
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,
 	subtitle: "Accounting",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -126,7 +129,7 @@ export const FISCAL_MENU = {
 	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.FISCAL,
 	subtitle: "Fiscal",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -137,7 +140,7 @@ export const PAYROLL_MENU = {
 	symbol: MATERIAL_ICONS.GROUPS,
 	title: MSG.PAYROLL,
 	subtitle: "Payroll",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };
@@ -148,7 +151,7 @@ export const MARKETING_MENU = {
 	symbol: MATERIAL_ICONS.CAMPAIGN,
 	title: MSG.MARKETING,
 	subtitle: "Marketing",
-	color: "var(--aonBlue)",
+	color: "var(--aonTopMenuAvailable)",
 	apps: [],
 	price: " ",
 };

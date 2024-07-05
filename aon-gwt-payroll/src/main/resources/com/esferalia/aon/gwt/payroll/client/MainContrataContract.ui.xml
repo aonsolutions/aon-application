@@ -62,6 +62,7 @@
 			color: orange;
 		}
 		
+	
 	</ui:style>
 
 	<g:DeckPanel ui:field="deckPanel">
@@ -76,7 +77,7 @@
 						<g:HTMLPanel styleName="{style.flexColumn}">
 							<g:HTMLPanel ui:field="messageContainer" />
 							<g:HTMLPanel ui:field="filterEmployeePanel" />
-						 	<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}" />
+						 	<c:DataGrid ui:field="employeeDataGrid" />
 						</g:HTMLPanel>
 					</g:center>
 					<g:south size="17">

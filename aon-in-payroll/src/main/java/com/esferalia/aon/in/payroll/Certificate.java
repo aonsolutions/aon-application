@@ -160,7 +160,7 @@ public class Certificate {
 			
 			com.esferalia.aon.occam.api.model.Certificate certificate = 
 			
-			AON.getCertificate(aonDomain, aonDomainId, aonUser, aonUserId, "SEPE");
+			AON.getCertificate(aonDomain, aonDomainId, aonUser, aonUserId, "TGSS");
 			
 			os.write(certificate.getData());
 			

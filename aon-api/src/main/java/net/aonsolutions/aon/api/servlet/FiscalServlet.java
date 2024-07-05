@@ -318,6 +318,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			JSONObject irpfSalariesAlavaJson = new JSONObject();
 			irpfSalariesAlavaJson.put("description", "IRPF Nominas Alava");
+			irpfSalariesAlavaJson.put("hacienda", "Alava");
 			irpfSalariesAlavaJson.put("amount", irpfSalariesAmount);
 			jsonModels.put(irpfSalariesAlavaJson);
 			
@@ -328,6 +329,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			JSONObject irpfSalariesBizkaiaJson = new JSONObject();
 			irpfSalariesBizkaiaJson.put("description", "IRPF Nominas Bizkaia");
+			irpfSalariesBizkaiaJson.put("hacienda", "Bizkaia");
 			irpfSalariesBizkaiaJson.put("amount", irpfSalariesAmount);
 			jsonModels.put(irpfSalariesBizkaiaJson);
 			
@@ -338,6 +340,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			JSONObject irpfSalariesGipuzkoaJson = new JSONObject();
 			irpfSalariesGipuzkoaJson.put("description", "IRPF Nominas Gipuzkoa");
+			irpfSalariesGipuzkoaJson.put("hacienda", "Gipuzkoa");
 			irpfSalariesGipuzkoaJson.put("amount", irpfSalariesAmount);
 			jsonModels.put(irpfSalariesGipuzkoaJson);
 			
@@ -348,6 +351,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			JSONObject irpfSalariesNavarraJson = new JSONObject();
 			irpfSalariesNavarraJson.put("description", "IRPF Nominas Navarra");
+			irpfSalariesNavarraJson.put("hacienda", "Navarra");
 			irpfSalariesNavarraJson.put("amount", irpfSalariesAmount);
 			jsonModels.put(irpfSalariesNavarraJson);
 			
@@ -358,6 +362,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			JSONObject irpfSalariesAeatJson = new JSONObject();
 			irpfSalariesAeatJson.put("description", "IRPF Nominas AEAT");
+			irpfSalariesAeatJson.put("hacienda", "AEAT");
 			irpfSalariesAeatJson.put("amount", irpfSalariesAmount);
 			jsonModels.put(irpfSalariesAeatJson);
 			

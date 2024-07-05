@@ -1,6 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { TAG } from "../../environments/environments.js";
 import { getChargePayments } from "../../services/invoiceService.js";
+import * as LS from "../../services/localStorageService.js";
 
 export class AonDashboardChargePayments extends AonElement {
   filter;
@@ -49,7 +50,10 @@ export class AonDashboardChargePayments extends AonElement {
 
     let titleDiv = this.createElement(TAG.SPAN);
     titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.period);
-    titleDiv.style.color = "grey";
+    if(LS.isDarkTheme())
+      titleDiv.style.color = "white";
+    else
+      titleDiv.style.color = "grey";
     titleDiv.style.fontWeight = "500";
     titleDiv.style.textAlign = "center";
     contentDiv.appendChild(titleDiv);

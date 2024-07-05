@@ -4,14 +4,41 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.util.function.Function;
 
+import org.jooq.Condition;
 import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Properties.PayrollWorkplaceProperties;
 
 public class PayrollWorkplaceDAO {
 	
 	private PayrollWorkplaceDAO() {}
+	
+	private static final PayrollWorkplacePropertiesDAO PAYROLL_WORKPLACE_PROPERTIES = new PayrollWorkplacePropertiesDAO();
+
+	protected static class PayrollWorkplacePropertiesDAO implements PayrollWorkplaceProperties {
+		protected Condition[] getConditions(PayrollWorkplaceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.DOMAIN);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.WORKPLACE);}
+		@Override public Property<Integer> getAgreementProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.AGREEMENT);}
+		@Override public Property<Integer> getEnterpriseActivityProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);}
+		@Override public Property<Integer> getCalendarProperty() {return new FilterDAO.PropertyDAO<>(PAYROLL_WORKPLACE.CALENDAR);}
+			
+	}
+
+	public static PayrollWorkplace get(CloseableAONContext ctx, PayrollWorkplaceFilter filter) {
+		return ctx.getDslContext().select().from(PAYROLL_WORKPLACE).where(PAYROLL_WORKPLACE_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PAYROLL_WORKPLACE).stream().map(new PayrollWorkplaceFiller()).findFirst().orElse(null);
+	}
 	
 	public static PayrollWorkplace save(AONContext ctx, PayrollWorkplace payrollWorkplace) {
 		return payrollWorkplace.getId() != null 

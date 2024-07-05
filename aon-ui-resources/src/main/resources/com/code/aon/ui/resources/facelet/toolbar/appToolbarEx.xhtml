@@ -10,12 +10,16 @@
 	<script type="text/javascript" > 
 		//<![CDATA[
 		function onClickFilter(el) {
-			
 			var style = #{rich:element(filterContainer)}.style;
-			if ( style.display == 'none' ) 
-				style.removeProperty('display');
-			else
+			var filterIcon = #{rich:element('filterIcon')};
+			if ( style.display == 'none' ) {
+				style.display = 'flex';
+				filterIcon.innerText = 'filter_list_off';
+			} else {
 				style.display = 'none';
+				filterIcon.innerText = 'filter_list';
+			}
+				
 		}
 		
 		//]]>
@@ -124,7 +128,7 @@
 						styleClass="aon-finding-toolbar-item button"
 						onclick="javascript:onClickFilter(this)"
 						>
-							<aon:outputText styleClass="material-symbols-outlined" value="filter_list" />
+							<aon:outputText id="filterIcon" styleClass="material-symbols-outlined" value="filter_list" />
 							<aon:outputText value="#{bundle.aon_search}" />
 					</aon:commandLink>
 				</aon:div>

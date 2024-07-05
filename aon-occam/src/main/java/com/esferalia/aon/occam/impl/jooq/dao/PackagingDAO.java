@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -37,7 +38,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDeliveryContent;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -122,7 +122,7 @@ public class PackagingDAO {
 		Item item = ItemDAO.get(ctx,  f ->
 			f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getBarcodeProperty().eq(pBarcode))
-			.and(f.getSerialNumberProperty().isNull()));
+			.and(f.getSerialNumberProperty().isNull()), new Options().setFull(true));
 		if(item.isEmpty()) throw new AonCoreException("El producto no existe.");
 
 		Item item2 = ItemDAO.get(ctx, f -> 
@@ -172,9 +172,8 @@ public class PackagingDAO {
 			packaging.setItem(item);			
 		} else packaging.setItem(item);
 
-		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		Elaboration elaboration = processElaboration(ctx, packaging, warehouse);
-		return processPackaging(ctx, packaging, elaboration, warehouse);
+		Elaboration elaboration = processElaboration(ctx, packaging);
+		return processPackaging(ctx, packaging, elaboration);
 	}
 	
 	public static void acceptDeliveryPackaging(AONContext ctx, Integer deliveryId) {
@@ -388,15 +387,23 @@ public class PackagingDAO {
 		}
 	}
 	
-	private static Elaboration processElaboration(AONContext ctx, Packaging packaging, Warehouse warehouse) {
+	private static Elaboration processElaboration(AONContext ctx, Packaging packaging) {
 		double quantity = packaging.getQuantity() * packaging.getCopies();
 		Elaboration elaboration;
-		ElaborationDetail elaborationDetail = ElaborationDAO.getElaborationDetail(ctx, f -> f.getItemProperty().eq(packaging.getItem().getId()));
+		ElaborationDetail elaborationDetail = ElaborationDAO.getElaborationDetail(ctx, f -> 
+				f.getItemProperty().eq(packaging.getItem().getId())
+				.and(f.getWarehouseProperty().eq(packaging.getWarehouse().getId())));
 		if(elaborationDetail.isEmpty()) {
 			String series = Integer.toString(AonDateUtils.getYear(new Date()));
 			Integer number = ElaborationDAO.getNextNumber(ctx, series);
 			String description = AonStringUtils.isBlank(packaging.getItem().getDescription())
-					? packaging.getItem().getProduct().getName() : packaging.getItem().getDescription();
+					? packaging.getItem().getProduct().getName() 
+					: packaging.getItem().getDescription();
+
+			if(!description.contains("#")) {
+				description = description + " #" + packaging.getItem().getSerialNumber();
+			}
+			
 			elaboration = new Elaboration()
 					.setDomain(ctx.getDomainId())
 					.setSeries(series)
@@ -404,7 +411,7 @@ public class PackagingDAO {
 					.setDate(new Date())
 					.setItem(packaging.getBase())
 					.setDescription(description)
-					.setWarehouse(warehouse)
+					.setWarehouse(packaging.getWarehouse())
 					.setQuantity(packaging.getQuantity())
 					.setStatus(ElaborationStatus.IN_PROGRESS)
 					.setComments("")
@@ -420,7 +427,7 @@ public class PackagingDAO {
 					.setDate(new Date())
 					.setItem(packaging.getItem())
 					.setQuantity(quantity)
-					.setWarehouse(warehouse)
+					.setWarehouse(packaging.getWarehouse())
 					.setAddInfo("");
 			Integer detailId = ElaborationDAO.insertElaborationDetail(ctx, elaborationDetail);
 			elaborationDetail.setId(detailId);
@@ -434,18 +441,19 @@ public class PackagingDAO {
 		}
 		
 		Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getItemProperty().eq(packaging.getItem().getId())));
+				.and(f.getItemProperty().eq(packaging.getItem().getId()))
+				.and(f.getWarehouseProperty().eq(packaging.getWarehouse().getId())));
 		if(stock.getId() == null) {
 			stock.setDomain(ctx.getDomainId())
 			.setItem(packaging.getItem().getId())
-			.setWarehouse(warehouse.getId())
+			.setWarehouse(packaging.getWarehouse().getId())
 			.setQuantity(quantity);
 		} else stock.setQuantity(stock.getQuantity() != null ? stock.getQuantity() + quantity : quantity);
 		WarehouseDAO.saveStock(ctx, stock);
 		return elaboration;
 	}
 	
-	private static List<Packaging> processPackaging(AONContext ctx, Packaging packaging, Elaboration elaboration, Warehouse warehouse) {
+	private static List<Packaging> processPackaging(AONContext ctx, Packaging packaging, Elaboration elaboration) {
 		List<Packaging> list = new LinkedList<>();
 		for(Integer i = 0; i < packaging.getCopies(); i++) {
 			Packaging p = packaging.copy(); 
@@ -466,7 +474,7 @@ public class PackagingDAO {
 				.setType(ElaborationDetailType.PACKAGING)
 				.setDate(new Date())
 				.setItem(container)
-				.setWarehouse(warehouse)
+				.setWarehouse(packaging.getWarehouse())
 				.setAddInfo("");
 			
 			Integer packingId = ElaborationDAO.insertElaborationDetail(ctx, packing);		
@@ -477,7 +485,7 @@ public class PackagingDAO {
 				.setElaborationDetail(packing)
 				.setItem(p.getItem())
 				.setQuantity(p.getQuantity())
-				.setWarehouse(warehouse)
+				.setWarehouse(packaging.getWarehouse())
 				.setAddInfo("");
 			Integer compositionId = ElaborationDetailCompositionDAO.insertElaborationDetailComposition(ctx, composition);
 			composition.setId(compositionId);
@@ -492,6 +500,16 @@ public class PackagingDAO {
 				.setDiscountExpression("0.0");
 			ItemCompositionDAO.save(ctx, itemComposition);
 			list.add(p.setContainer(container));
+			
+			// SAVE CONTAINER IN STOCK
+			Stock stock = new Stock()
+					.setDomain(ctx.getDomainId())
+					.setItem(container.getId())
+					.setQuantity(1.0)
+					.setWarehouse(packaging.getWarehouse().getId());
+			WarehouseDAO.saveStock(ctx, stock);
+			
+			// TODO RESTAR STOCK CONTAINER BASE????
 		}
 		return list;
 	}
