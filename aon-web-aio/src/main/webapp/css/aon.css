@@ -118,6 +118,13 @@
 
   --aonAccountingMouseOut: var(--aonBlue);
 
+  --aonSwitchButtonBarOn: #5f749f;
+
+  --aonSwitchButtonBarOff:#989797;
+
+  --aonSwitchButtonCircleOff:white;
+
+  --aonSwitchButtonCircleOn: var(--aonBlue);
 
 
 

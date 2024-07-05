@@ -116,6 +116,14 @@
 
 	--aonAccountingMouseOut: white;
 
+	--aonSwitchButtonBarOn: gray;
+
+	--aonSwitchButtonBarOff: gray;
+
+	--aonSwitchButtonCircleOff: var(--aonDarkGray);
+  
+	--aonSwitchButtonCircleOn: white;
+
 
   
   }
