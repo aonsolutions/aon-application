@@ -264,7 +264,7 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.height = '32px';
 		aonSearchDiv.style.border = 'none';
 		aonSearchDiv.style.borderRadius = '4px';
-		aonSearchDiv.style.backgroundColor = '#ffffff';
+		aonSearchDiv.style.backgroundColor = "var(--aonSearchBar)";
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
 	}

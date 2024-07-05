@@ -238,7 +238,7 @@ export class AonNewMenu extends AonElement {
             header.style.removeProperty("background-color");
 
             let apps = this.getElement("aonMenuListAppImgTop-applications");
-            apps.style.color = "var(----aonGrayHeaderButtonsColor)";
+            apps.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let headerapp = this.getElement("aonHeaderApp");
             headerapp.style.display = "none";
@@ -739,8 +739,10 @@ export class AonNewMenu extends AonElement {
 						div.style.color = "var(--aonTopMenuAvailableMouseOverText)";
 					if(app.app == "accounting"){
 						document.documentElement.style.setProperty('--aonAccounting', 'var(--aonAccountingMouseOver)');
-					}else if(app.color == "var(--aonTopMenuAvailable)" || app.app == "home")				
+					}else if(app.color == "var(--aonTopMenuAvailable)" ){
 						img.style.color = "var(--aonTopMenuAvailableMouseOverImg)";
+					}else if (app.app == "home")		
+						img.style.color = "var(--aonHomeMouseOverImg)";
 				});
 				div.addEventListener('mouseout', () => {
 					let img = this.getElement(`aonMenuListAppImgTop-${app.app}`);
@@ -749,8 +751,10 @@ export class AonNewMenu extends AonElement {
 						div.style.color = "var(--aonTopMenuAvailableMouseOutText)";
 					if(app.app == "accounting"){
 						document.documentElement.style.setProperty('--aonAccounting', 'var(--aonAccountingMouseOut)');
-					}else if(app.color == "var(--aonTopMenuAvailable)" || app.app == "home")
+					}else if(app.color == "var(--aonTopMenuAvailable)" ){
 						img.style.color = "var(--aonTopMenuAvailable)";
+					}else if(app.app == "home")
+						img.style.color = "var(--aonHomeImg)";
 				});
 			}
 		}

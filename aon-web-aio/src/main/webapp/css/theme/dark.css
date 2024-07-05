@@ -124,6 +124,13 @@
   
 	--aonSwitchButtonCircleOn: white;
 
+	--aonHomeMouseOverImg: black; 
+
+	--aonHomeImg: white;
+
+	--aonSearchBar: var(--aonContentBeta);
+
+	--aonSearchButton: white;
 
   
   }
@@ -1237,6 +1244,8 @@
 	-webkit-appearance: none;
 	outline: 0px;
 	font-size: 14px;
+	color: var(--aonSearcButton);
+  	background-color: var(--aonSearchBar);
   }
   
   .aonFormCenter {

@@ -6,7 +6,7 @@ export const HOME = {
 	home : true,
 	title: MSG.HOME,
 	app: CONSTANT.HOME,
-	color: "var(--aonGrayHeaderButtonsColor)", 
+	color: "var(--aonHomeImg)", 
 	symbol: MATERIAL_ICONS.HOME,
 };
 
