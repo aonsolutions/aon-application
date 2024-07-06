@@ -91,10 +91,10 @@ export class AonHeader extends AonElement {
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
 
-		let aonLogo = this.createElement(TAG.IMG);
+		let aonLogo = this.createElement(TAG.DIV);
 		aonLogo.id = "aonLogo";
-		aonLogo.style.paddingLeft = '0px';
-		aonLogo.style.width = '123px';
+		//aonLogo.style.paddingLeft = '0px';
+		//aonLogo.style.width = '123px';
 		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
 		div.appendChild(aonLogo);
 
@@ -540,12 +540,13 @@ export class AonHeader extends AonElement {
 	}
 
 	buildLogo() {
+/*
 		let aonLogo = this.getElement('aonLogo');
 		if(LS.isDarkTheme())
 			aonLogo.src = '../assets/aon-white-logo.svg';
 		else if(!LS.isDarkTheme())
 			aonLogo.src = '../assets/aon-black-logo.svg';
-
+*/
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
