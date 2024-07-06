@@ -413,7 +413,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			LOGGER.info("IDC-DATES END "+date);
 		}
 		
-		return SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+		return SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss, date);
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
