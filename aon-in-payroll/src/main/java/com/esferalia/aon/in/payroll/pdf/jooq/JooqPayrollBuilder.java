@@ -118,6 +118,26 @@ public class JooqPayrollBuilder {
 			printClassic(outputStream, payrolls, logo);
 		}
 	}
+	
+	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
+			Optional<Double> complementaryLimit, Boolean pwdEmployee, Boolean pwdEnterprise,  Integer... salaryIds) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			byte[] logo = getLogo(aonContext, enterpriseId);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
+			String password = pwdEmployee ? payrolls.stream().findFirst().get().getNif().get() : (pwdEnterprise ? payrolls.stream().findFirst().get().getCif().get() : null);
+			printAon(outputStream, payrolls, logo, password);
+		}
+	}
+
+	public static void generateClassicPayroll(Integer enterpriseId, String domainName, String user,
+			OutputStream outputStream, Optional<Double> complementaryLimit, Boolean pwdEmployee, Boolean pwdEnterprise,  Integer... salaryIds) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			byte[] logo = getLogo(aonContext, enterpriseId);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
+			String password = pwdEmployee ? payrolls.stream().findFirst().get().getNif().get() : (pwdEnterprise ? payrolls.stream().findFirst().get().getCif().get() : null);
+			printClassic(outputStream, payrolls, logo, password);
+		}
+	}
 
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
@@ -136,6 +156,16 @@ public class JooqPayrollBuilder {
 	public static void generateClassicPayroll(Integer enterpriseId, String domainName, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
 		generateClassicPayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, salaryIds);
+	}
+	
+	public static void generatePayroll(Integer enterpriseId, String domainName, OutputStream outputStream,
+			Optional<Double> complementaryLimit, Boolean pwdEmployee, Boolean pwdEnterprise, Integer... salaryIds) {
+		generatePayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, pwdEmployee, pwdEnterprise, salaryIds);
+	}
+
+	public static void generateClassicPayroll(Integer enterpriseId, String domainName, OutputStream outputStream,
+			Optional<Double> complementaryLimit, Boolean pwdEmployee, Boolean pwdEnterprise, Integer... salaryIds) {
+		generateClassicPayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, pwdEmployee, pwdEnterprise, salaryIds);
 	}
 
 	/**
@@ -1009,6 +1039,30 @@ public class JooqPayrollBuilder {
 			IPayrollTemplate template = new DefaultPayrollTemplate(payrolls,
 					Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null),
 					Optional.ofNullable(new Locale("es")));
+			template.print(outputStream);
+		} catch (CanNotCreatePdfException ignored) {
+		}
+	}
+	
+	private static void printAon(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo, String password) {
+		// PRINT
+		try {
+			PayrollTemplate template = new PayrollTemplate(payrolls,
+					Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null),
+					Optional.ofNullable(new Locale("es")),
+					password);
+			template.print(outputStream);
+		} catch (CanNotCreatePdfException ignored) {
+		}
+	}
+
+	private static void printClassic(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo, String password) {
+		// PRINT
+		try {
+			IPayrollTemplate template = new DefaultPayrollTemplate(payrolls,
+					Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null),
+					Optional.ofNullable(new Locale("es")),
+					password);
 			template.print(outputStream);
 		} catch (CanNotCreatePdfException ignored) {
 		}
