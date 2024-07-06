@@ -336,10 +336,10 @@ export class AonNewLogin extends AonElement {
   }
 
   buildLogo() {
-    let logoToolbar = this.getElement("aonLoginLogoImgToolbar");
+    let logoToolbar = this.getElement("aonLoginLogoDiv");
     const hrefToolbar = window.location.href;
-    let srcToolbar = "assets/aon-logo.svg";
-    logoToolbar.src = srcToolbar;
+    //let srcToolbar = "assets/aon-logo.svg";
+    //logoToolbar.src = srcToolbar;
     logoToolbar.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
