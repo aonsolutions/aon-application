@@ -77,7 +77,7 @@
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:HTMLPanel ui:field="textAreaPanel"></g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.flex}">
+			<g:HTMLPanel ui:field="messageVariablesPanel" styleName="{style.flex}">
 				<g:Label styleName="{style.message}">* Los valores NOMBRE_EMPLEADO, PERIODOS_NOMINA y INFORMACION_EMPRESA serán sustituidos por la información correspondiente en cada caso.</g:Label>
 			</g:HTMLPanel>
 		</g:HTMLPanel>

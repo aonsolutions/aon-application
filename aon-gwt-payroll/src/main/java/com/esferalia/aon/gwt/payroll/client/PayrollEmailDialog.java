@@ -19,7 +19,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -73,6 +72,9 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 	HTMLPanel textAreaPanel;
 	
 	@UiField
+	HTMLPanel messageVariablesPanel;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	// ------------------------------------------------------- Variables
@@ -98,6 +100,7 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 				sendTo.setVisible(false);
 				sendToMessage.setVisible(true);
 				sendToEnterpriseManagmentMessage.setVisible(false);
+				messageVariablesPanel.setVisible(true);
 				
 				ArrayList<Integer> salaryIds = new ArrayList<Integer>();
 				for(Entry<String, String> entry : params.entrySet())
@@ -124,12 +127,14 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 				sendTo.setVisible(true);
 				sendToMessage.setVisible(false);
 				sendToEnterpriseManagmentMessage.setVisible(false);
+				messageVariablesPanel.setVisible(false);
 				loadInfo(type, params);
 				break;
 			case ENTERPRISE_MANAGEMENT:
 				sendTo.setVisible(false);
 				sendToMessage.setVisible(false);
 				sendToEnterpriseManagmentMessage.setVisible(true);
+				messageVariablesPanel.setVisible(true);
 				
 				HashSet<Integer> enterpriseIds = new HashSet<Integer>();
 				for(Entry<String, String> entry : params.entrySet())
