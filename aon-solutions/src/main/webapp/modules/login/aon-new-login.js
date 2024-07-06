@@ -49,12 +49,13 @@ export class AonNewLogin extends AonElement {
 
     let divLogoToolbar = this.createElement(TAG.DIV);
     divLogoToolbar.id = 'aonLoginLogoDiv';
+	divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
-    let logoToolbar = this.createElement(TAG.IMG);
-    logoToolbar.id = 'aonLoginLogoImgToolbar';
-    logoToolbar.style.height = '25px';
-    divLogoToolbar.appendChild(logoToolbar);
+    //let logoToolbar = this.createElement(TAG.IMG);
+    //logoToolbar.id = 'aonLoginLogoImgToolbar';
+    //logoToolbar.style.height = '25px';
+    //divLogoToolbar.appendChild(logoToolbar);
 
     if(!this.isMobile()) {
       let divLanguage = this.createElement(TAG.DIV);
@@ -156,8 +157,11 @@ export class AonNewLogin extends AonElement {
     divInfo.innerHTML = `
       <span>
         <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-          aonSolutions
-        </a> ${MSG.REGISTERED_TRADEMARK_AON}
+        <!--  aonSolutions -->
+        </a> 
+		<span class="aonTrademark" >
+		<! -- ${MSG.REGISTERED_TRADEMARK_AON} -->
+		</span> 
       </span>
       <div id="aonManifest"></div>`;
     divFormContent.appendChild(divInfo);
@@ -332,10 +336,10 @@ export class AonNewLogin extends AonElement {
   }
 
   buildLogo() {
-    let logoToolbar = this.getElement("aonLoginLogoImgToolbar");
+    let logoToolbar = this.getElement("aonLoginLogoDiv");
     const hrefToolbar = window.location.href;
-    let srcToolbar = "assets/aon-logo.svg";
-    logoToolbar.src = srcToolbar;
+    //let srcToolbar = "assets/aon-logo.svg";
+    //logoToolbar.src = srcToolbar;
     logoToolbar.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
