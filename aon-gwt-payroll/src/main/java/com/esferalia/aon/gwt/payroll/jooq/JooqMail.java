@@ -502,7 +502,7 @@ public class JooqMail {
 				parameters += entry.getKey() + "=" + entry.getValue() + "&";
 		}
 		
-		parameters += "pwdEnt=true";
+//		parameters += "pwdEnt=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
@@ -529,7 +529,7 @@ public class JooqMail {
 		for(Record salaryRecord : salariesRecords)
 			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
 		
-		parameters += "pwdEnt=true";
+//		parameters += "pwdEnt=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
@@ -556,7 +556,7 @@ public class JooqMail {
 		for(Record salaryRecord : salariesRecords)
 			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
 		
-		parameters += "pwdEmpl=true";
+//		parameters += "pwdEmpl=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
