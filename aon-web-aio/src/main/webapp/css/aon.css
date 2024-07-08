@@ -170,6 +170,10 @@
   'opsz' 24
 }
 
+#aon-search-buttonIcon {
+	color: black;
+}
+
 .material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,
@@ -1236,6 +1240,7 @@
   font-size: 14px;
 }
 
+
 .aonSearchBoxBeta {
   height: 32px;
   border: none;
@@ -1245,6 +1250,7 @@
   color: var(--aonSearchButton);
   background-color: var(--aonSearchBar);
 }
+
 
 .aonFormCenter {
   display: flex;
