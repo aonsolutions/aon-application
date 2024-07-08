@@ -162,11 +162,6 @@ public class FeeDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
-				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
-				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
-				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
@@ -176,16 +171,6 @@ public class FeeDAO {
 			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
-		
-		if(null == customerFeeParams.getSeller())
-			condition = condition.and(
-					RSELLER.ID.isNull().or(
-							RSELLER.TYPE.eq((byte)1)
-							.and(RSELLER.STATUS.eq((byte)0)
-							.and(RSELLER.START_DATE.le(new Date(new java.util.Date().getTime())))
-							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime())))))
-					)
-			);
 			
 		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
@@ -200,11 +185,15 @@ public class FeeDAO {
 		
 		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 		
-		fees.forEach(fee -> fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId())));
+		fees.forEach(fee -> {
+			fee.setSegments(getCustomerFeeSegments(ctx, fee.getCustomer().getId()));
+			fee.setSellerComercial(getCustomerFeeSellerCommercial(ctx, fee.getId(), fee.getCustomer().getName()));
+			fee.setSellerSupport(getCustomerFeeSellerSupport(ctx, fee.getId(), fee.getCustomer().getName()));
+		});
 		
 		return fees;
 	}
-	
+
 	private static LinkedList<String> getCustomerFeeSegments(AONContext ctx, Integer id) {
 		List<String> segments = ctx.getDslContext().select(SEGMENT.NAME).from(SEGMENT)
 			.join(RSEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
@@ -212,6 +201,42 @@ public class FeeDAO {
 			.fetch(SEGMENT.NAME);
 		
 		return segments.isEmpty() ? new LinkedList<>() : segments.stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	private static Seller getCustomerFeeSellerCommercial(AONContext ctx, Integer customerFeeId, String customerName) {
+		Result<Record> sellerCommercials = ctx.getDslContext().select().from(CUSTOMER_FEE)
+			.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+			.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+			.where(CUSTOMER_FEE.ID.eq(customerFeeId))
+			.fetch();
+		
+		if(sellerCommercials.isEmpty()) return null;
+		else {
+			return null != sellerCommercials.get(0).get( SELLER_COMERCIAL.REGISTRY)
+					? SellerFiller.build(sellerCommercials.get(0), SELLER_COMERCIAL_ALIAS)
+					: new Seller().setId(sellerCommercials.get(0).getValue(CUSTOMER_FEE.SELLER));
+		}
+	}
+
+	private static Seller getCustomerFeeSellerSupport(AONContext ctx, Integer customerFeeId, String customerName) {
+		Result<Record> sellerSupports =  ctx.getDslContext().select().from(CUSTOMER_FEE)
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+				.where(CUSTOMER_FEE.ID.eq(customerFeeId))
+				.and(RSELLER.TYPE.eq((byte)1))
+				.and(RSELLER.STATUS.eq((byte)0)
+				.and(RSELLER.START_DATE.le(new Date(new java.util.Date().getTime())))
+				.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime())))))
+				.fetch();
+		
+		if(sellerSupports.isEmpty()) return null;
+		else {
+			return null != sellerSupports.get(0).get(SELLER_SUPPORT.REGISTRY)
+					? SellerFiller.build(sellerSupports.get(0), SELLER_SUPPORT_ALIAS)
+					: new Seller().setId(sellerSupports.get(0).getValue(CUSTOMER_FEE.SELLER));
+		}
 	}
 
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
