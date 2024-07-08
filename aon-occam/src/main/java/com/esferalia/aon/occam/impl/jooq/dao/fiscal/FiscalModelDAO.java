@@ -297,7 +297,7 @@ public class FiscalModelDAO {
 				fm.getMap().remove("NRC");
 			}
 			
-			// FALTA - Los datos del aplazamiento solo se graban si el tipo de declaración es "Aplazamiento", y están cumplimentados
+			// Los datos del aplazamiento solo se graban si el tipo de declaración es "Aplazamiento", y están cumplimentados
 			
 			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.DEFERRAL) || (fm.getPlazos() == 0)) {
 				fm.setPlazos(0);

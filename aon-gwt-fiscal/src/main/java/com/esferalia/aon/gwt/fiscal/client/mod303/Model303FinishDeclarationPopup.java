@@ -187,7 +187,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				row++;
 			}
 			
-			// FALTA - PANEL PARA PEDIR DATOS DEL APLAZAMIENTO: Nº de Plazos y Fecha primer plazo y mensaje de aviso
+			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso
 			avisoLabel.setVisible(false);			
 			aplazaLabel.setVisible(false);
 			aplazaTable.setVisible(false);

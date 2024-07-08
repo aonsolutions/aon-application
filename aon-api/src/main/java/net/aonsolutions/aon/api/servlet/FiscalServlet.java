@@ -205,16 +205,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
-							.put("plazos", model.getPlazos())
-							// FALTA - NO SE MUY BIEN COMO PASAR LA FECHA PARA QUE SALGA EN EL PORTAL
-//						    .put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo())) // pasarlo como date y recibe con setDate - NO FUNCIONA
-//						    .put("fechaPlazo", AonDateUtils.parse(model.getFechaPlazo())) // pasarlo como date y recibe con value - NO FUNCIONA
-//							.put("fechaPlazo", model.getFechaPlazo()) // pasarlo como texto dd/mm/yyyy y recibe como value - NO FUNCIONA
-//							.put("fechaPlazo", model.getFechaPlazo()) // pasarlo como texto dd/mm/yyyy y recibe como setDate - NO FUNCIONA
-//							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd")+"T00:00:00.000Z")							
-							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))  // pasarlo como texto yyyy-mm-dd y recibe como value - NO LO HE PROBADO AUN 
-							// PASANDOLO DE ESTA MANERA Y LEYENDO COMO value FUNCIONA
-							//.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+							.put("plazos", model.getPlazos())							
+							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))							
 							);
 					
 				}

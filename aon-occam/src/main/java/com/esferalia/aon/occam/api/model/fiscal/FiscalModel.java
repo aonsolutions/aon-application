@@ -670,7 +670,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	// FALTA - PARA LOS APLAZAMIENTOS
+	// PARA LOS APLAZAMIENTOS
 	
 	@Override
 	public int getPlazos() {
@@ -683,29 +683,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	// FALTA - LO PONGO COMO STRING A VER SI ES MAS FACIL EL MANEJO, SOLO HABRA QUE CONVERTIRLO CUANDO SE LEA DESDE ALGUN CONTROL ??
-	
-//	@Override
-//	public Date getFechaPlazo() {				
-//		SimpleDateFormat prueba = new SimpleDateFormat("dd/MM/yyyy");
-//		if (AonStringUtils.isNotEmpty(ensureDetail("FECHAPLAZO").getDescription())) {
-//			try {
-//				return prueba.parse(ensureDetail("FECHAPLAZO").getDescription());
-//			} catch (ParseException e) {
-//				return null;
-//			}	
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	@Override
-//	public FiscalModel setFechaPlazo(Date d) {
-//		SimpleDateFormat prueba = new SimpleDateFormat("dd/MM/yyyy");
-//		ensureDetail("FECHAPLAZO").setDescription(prueba.format(d));
-//		return this;
-//	}
-	
+	// Lo pongo como String, para que sea más fácil su manejo, pues en fs_model_detail, realmente se graba como un string
 	
 	@Override
 	public String getFechaPlazo() {
@@ -716,8 +694,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public FiscalModel setFechaPlazo(String d) {
 		ensureDetail("FECHAPLAZO").setDescription(d);
 		return this;
-	}
-	
+	}	
 	
 }
 

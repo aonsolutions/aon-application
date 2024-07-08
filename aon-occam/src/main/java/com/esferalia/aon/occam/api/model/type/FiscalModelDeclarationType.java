@@ -15,7 +15,7 @@ public enum FiscalModelDeclarationType {
 	,PAYBACK	("D", "A devolver"						,true		,true )
 	,PAYBACK_CCT("V", "Devoluci\u00F3n a anotar en CCT"	,false		,false)
 	
-	// FALTA - SOLICITUD DE APLAZAMIENTO, POR AHORA LE PONGO GENERAR FINANCE Y PEDIR BANCO
+	// FALTA - SOLICITUD DE APLAZAMIENTO, POR AHORA LE PONGO GENERAR FINANCE Y PEDIR BANCO, HABRA QUE VER AL FINAL COMO HACEMOS LO DE FINANCE
 	,DEFERRAL ("A","Solicitud de aplazamiento"		,true		,true )	
 	;
 
