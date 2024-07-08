@@ -21,6 +21,10 @@ export const APP_MENU = 'aonConfigSwitchApps';
 export const DARK_MENU = 'aonConfigDarkSwitch';
 export const WHITE_BRAND = 'aonConfigWhiteBrandSwitch';
 
+export const THEME = 'aonTheme';
+export const AON_THEME = '/css/theme/aon.css';
+export const DARK_THEME = '/css/theme/dark.css';
+
 export const get = (item) => localStorage.getItem(item);
 
 export const set = (item, value) => {
@@ -77,17 +81,25 @@ export const setAppMenu= (value) => {
     set(APP_MENU, value);
 }
 
-export const isDarkTheme= () => {
-    let aon = getDarkTheme();
-    return CONSTANT.TRUE == aon;
+export const getTheme= () => {
+    return get (THEME);
 }
 
-export const getDarkTheme= () => {
-    return get (DARK_MENU);
+export const setTheme= (theme) => {
+    return set (THEME, theme);
+}
+
+export const isDarkTheme= () => {
+    let theme = get (THEME);
+    return DARK_THEME == theme;
 }
 
 export const setDarkTheme= (value) => {
-    set(DARK_MENU, value);
+	if ( value ==  CONSTANT.TRUE ) {
+    	setTheme(DARK_THEME);
+	} else {
+		remove(THEME);
+	}
 }
 
 export const isWhiteBrand = () => {

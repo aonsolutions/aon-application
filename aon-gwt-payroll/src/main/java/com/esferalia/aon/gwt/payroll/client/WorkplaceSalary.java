@@ -130,9 +130,12 @@ public class WorkplaceSalary extends Composite {
 				
 				workplaceSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
 					s -> {
-						AonMessagePanel.showInfo(messagePanel, workplaceSalaryObject.getEmailStatus());
+						AonMessagePanel.showSuccess(messagePanel, workplaceSalaryObject.getEmailStatus());
 						hide();
-					},f -> {}
+					},f -> {
+						AonMessagePanel.showError(messagePanel, f.getMessage());
+						hide();
+					}
 				);
 			}
 		};

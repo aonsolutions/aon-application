@@ -9,6 +9,7 @@ import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
 import { TAG } from "../../environments/environments.js";
 import { MATERIAL_ICONS } from "../../environments/environments.js";
+import * as LS from "../../services/localStorageService.js";
 
 export class AonFiscalCard extends AonElement {
   AON_FISCAL;
@@ -189,11 +190,15 @@ export class AonFiscalCard extends AonElement {
         info.style.color = "rgb(120, 120, 133)";
         info.style.fontSize = ".7rem";
         info.style.minWidth = "7.5rem";
+        if(LS.isDarkTheme())
+          info.style.color = "white";
         info.innerHTML = this.getModelDescription(modelData.newModel);
         leftContent2.appendChild(info);
 
         let territory = this.createElement(TAG.SPAN);
         territory.style.color = "rgb(120, 120, 133)";
+        if(LS.isDarkTheme())
+          territory.style.color = "white";
         territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);
@@ -255,6 +260,8 @@ export class AonFiscalCard extends AonElement {
 
         let info = this.createElement(TAG.SPAN);
         info.style.color = "rgb(120, 120, 133)";
+        if(LS.isDarkTheme())
+          info.style.color = "white";
         info.style.fontSize = ".7rem";
         info.style.minWidth = "7.5rem";
         info.innerHTML = this.getModelDescription(modelData.newModel);
@@ -262,6 +269,8 @@ export class AonFiscalCard extends AonElement {
 
         let territory = this.createElement(TAG.SPAN);
         territory.style.color = "rgb(120, 120, 133)";
+        if(LS.isDarkTheme())
+          territory.style.color = "white";
         territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);

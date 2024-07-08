@@ -194,7 +194,7 @@ export class AonIconButton extends AonElement {
     
       if (button) { 
         button.addEventListener("mouseover", () => {
-          button.style.backgroundColor = "this.getBackgroundHover()"; 
+          button.style.backgroundColor = this.getBackgroundHover(); 
         });
     
         button.addEventListener("mouseleave", () => {
@@ -212,11 +212,7 @@ export class AonIconButton extends AonElement {
         });
       }
     });
-*/ 
-    
-         
-      
-
+*/
     if (this.hasAttribute("icon")) {
       this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
       this.getIcon().innerHTML = this.getAttribute("icon");

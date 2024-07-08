@@ -153,7 +153,20 @@ export class AonTax extends AonElement {
             aonTable.addRow(res, () => this.openDialog(res));
           });
 
+          let elementHTML = document.createElement(TAG.DIV);
+          elementHTML.style.alignItems = "center";
+          elementHTML.style.fontWeight = "bold";
+          elementHTML.style.maxWidth = "6rem";
+          elementHTML.title = "Borrador";
+          
+          let description = document.createElement(TAG.SPAN);
+          description.innerText = "Total";
+          elementHTML.appendChild(description);
+
+          const statusHtml = elementHTML.innerHTML;
+
           let row = aonTable.addRow({
+            statusHtml: statusHtml,
             statusText: "Total",
             resultFormat: this.getTotal(resp),
           });
@@ -222,19 +235,31 @@ export class AonTax extends AonElement {
 
   formatEstimationModel(model, estimationFilter) {
     const newModel = ""; //Empty
-    const statusText = ""; //Empty
+
+    let elementHTML = document.createElement(TAG.DIV);
+    elementHTML.style.alignItems = "center";
+    elementHTML.style.fontWeight = "bold";
+    elementHTML.style.maxWidth = "6rem";
+    elementHTML.title = "Borrador";
+    
+    let description = document.createElement(TAG.SPAN);
+    description.innerText = "Borrador";
+    elementHTML.appendChild(description);
+
+    const statusHtml = elementHTML.outerHTML;
 
     return {
       ...model,
       resultFormat: !isNaN(model.amount)
         ? formatNumber(model.amount, 2, "EUR")
         : null,
-      periodText: estimationFilter.title,
+      periodText: estimationFilter.periodText,
       modelText: model.description,
       year : estimationFilter.year,
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
-      statusText,
+      statusHtml,
+      statusText : "Borrardor",
       newModel
     };
   }

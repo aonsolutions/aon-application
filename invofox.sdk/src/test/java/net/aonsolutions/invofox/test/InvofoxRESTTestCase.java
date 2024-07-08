@@ -22,6 +22,7 @@ import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.json.OCRCompanyJSON;
 import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
+import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
@@ -39,13 +40,14 @@ class InvofoxRESTTestCase {
 	
 	private static final String API_URL = "https://api.invofox.com";
 	private static final String X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
-	private static final String DEMO_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
-
+	private static final String DEMO_X_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
+	private static final String TEST_X_API_KEY = "$2b$10$sOCmh0BS1Mna1UMsfm6PbeTr8SD2/0wUaBWBeulReiXYCkmxin3H.";
+	
 	@Test
 	@Disabled("Disabled due 403 ")
 	void getInvalidDocument() {
 		String documentId = "DOCUMENTO_NO_VALIDO";
-		OCRDocumentResponse response = OCRInvofox.getDocument(X_API_KEY, API_URL, documentId);
+		OCRDocumentResponse response = OCRInvofox.getDocument(DEMO_X_API_KEY, API_URL, documentId);
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 400, response.getHttpCode().get());
@@ -60,7 +62,7 @@ class InvofoxRESTTestCase {
 	@Disabled("Disabled due 403 ")
 	void getValidDocument() {
 		String documentId = "648088d6c632f4000891fa82";
-		OCRDocumentResponse response = OCRInvofox.getDocument(X_API_KEY, API_URL, documentId);
+		OCRDocumentResponse response = OCRInvofox.getDocument(DEMO_X_API_KEY, API_URL, documentId);
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
@@ -70,10 +72,30 @@ class InvofoxRESTTestCase {
 	}
 	
 	@Test
+	@Disabled
+	void markAsPendingCorrection() {
+		String documentId = "6669722cc6ad854d305854fc";
+		OCRDocumentResponse response = OCRInvofox.markAsPendingCorrection(DEMO_X_API_KEY, API_URL, documentId );
+		assertNotNull(response);
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getDocument().isPresent());
+		assertTrue(response.getDocument().get().getId().isPresent());
+		assertEquals( documentId, response.getDocument().get().getId().get());
+		assertTrue(response.getDocument().get().getPublicState().isPresent());
+		assertEquals( OCRSeverity.pendingCorrection, response.getDocument().get().getPublicState().get());
+	}
+
+	@Test
 	@Disabled("Disabled due 403 ")
 	void markAsExported() {
-		String documentId = "648991a5226c11000964a87b";
-		OCRDocumentResponse response = OCRInvofox.markAsExported(X_API_KEY, API_URL, documentId);
+		String documentId = "6669722cc6ad854d305854fc";
+		OCRDocumentResponse response = OCRInvofox.markAsExported(DEMO_X_API_KEY, API_URL, documentId);
+		if ( response.getError().isPresent() ) {
+			OCRError error = response.getError().get();
+			System.out.println( OCRErrorJSON.to( error ).toString(1) );
+		}
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
@@ -87,8 +109,7 @@ class InvofoxRESTTestCase {
 	@Test
 	@Disabled("Disabled due 403 ")
 	void getDocuments() {
-		OCRDocumentsResponse response = OCRInvofox.getDocuments(X_API_KEY, API_URL, 
-				OCRDocumentsParams.get().withType(OCRType.invoice) );
+		OCRDocumentsResponse response = OCRInvofox.getDocuments(DEMO_X_API_KEY, API_URL, OCRDocumentsParams.get().withType(OCRType.invoice) );
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
@@ -97,18 +118,21 @@ class InvofoxRESTTestCase {
 		
 		response.getDocuments().get()
 			.stream()
-			.filter( d ->
-				d.getData()
-				.flatMap( i -> i.getRecipientTaxId() )
-				.flatMap( n -> n.getValue() )
-				.filter( doc -> "ESB01487271".equals(doc))
-				.isPresent()
-			)
+//			.filter( d ->
+//				d.getData()
+//				.flatMap( i -> i.getRecipientTaxId() )
+//				.flatMap( n -> n.getValue() )
+//				.filter( doc -> "ESB01487271".equals(doc))
+//				.isPresent()
+//			)
 			.forEach( d -> {
 				System.out.println(
 					d.getCompany().orElse("<NO COMP>")
 					+ " " + 
 					d.getId().orElse("<NO ID>")
+					+ " " +
+					d.getPublicState().orElse( null )
+					+ " " 
 					+ " [Issuer: " +
 					d.getData()
 						.flatMap( i -> i.getIssuerTaxId() )
@@ -135,7 +159,7 @@ class InvofoxRESTTestCase {
 	void createCompany() {
 		OCRCompany company = OCRFaker.getCompany();
 		System.out.println( OCRCompanyJSON.to(company).toString(1) );
-		OCRCompanyResponse response = OCRInvofox.postCompany(X_API_KEY, API_URL, company );
+		OCRCompanyResponse response = OCRInvofox.postCompany(DEMO_X_API_KEY, API_URL, company );
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertTrue( response.getHttpCode().get() == 200 
@@ -154,7 +178,7 @@ class InvofoxRESTTestCase {
 	@Test
 	@Disabled("Disabled due 403 ")
 	void getCompanies() {
-		OCRCompaniesResponse response = OCRInvofox.getCompanies(X_API_KEY, API_URL, OCRCompanyParams.get().withTaxId("B01487271") );
+		OCRCompaniesResponse response = OCRInvofox.getCompanies(DEMO_X_API_KEY, API_URL, OCRCompanyParams.get().withTaxId("B01487271") );
 		
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
@@ -166,7 +190,7 @@ class InvofoxRESTTestCase {
 	@Test
 	@Disabled("Disabled due 403 ")
 	void getCompanyInvoices() {
-		OCRDocumentsResponse response = OCRInvofox.getCompanyInvoices(X_API_KEY, API_URL, "B01487271" );
+		OCRDocumentsResponse response = OCRInvofox.getCompanyInvoices(DEMO_X_API_KEY, API_URL, "B01487271" );
 		
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
@@ -178,7 +202,7 @@ class InvofoxRESTTestCase {
 	@Test
 	@Disabled("Disabled due 403 ")
 	void getLoginnToken() {
-		OCRLoginTokenResponse response = OCRInvofox.getLoginToken(X_API_KEY, API_URL);
+		OCRLoginTokenResponse response = OCRInvofox.getLoginToken(DEMO_X_API_KEY, API_URL);
 		
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
@@ -194,7 +218,7 @@ class InvofoxRESTTestCase {
 		Date from = AonDateUtils.getBiMonthFirstDay( new Date() );
 		Date to = AonDateUtils.getBiMonthLastDay( new Date() );
 		
-		OCRDocumentsResponse response = OCRInvofox.getDocuments(DEMO_API_KEY, API_URL, 
+		OCRDocumentsResponse response = OCRInvofox.getDocuments(DEMO_X_API_KEY, API_URL, 
 			OCRDocumentsParams.get()
 				.withSelect( OCRNames.PUBLIC_STATE
 					, OCRNames.CREATION

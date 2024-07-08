@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.RawdocPropertyOrd
 import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
@@ -393,19 +394,29 @@ public class RawdocDAO {
 		RawdocInvoiceCounter counter = new RawdocInvoiceCounter();
 		
 		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
-		
-		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, COUNT)
+		Field<Boolean> ticket = DSL.decode()
+			.when(DSL.position(RAWDOC.JSON,"\"TICKET\"").greaterThan(0), true)
+			.otherwise( false);
+				
+		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, ticket, COUNT)
 		.from(RAWDOC)
 		.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
-		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE)
+		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE, ticket)
 		.fetch().stream().forEach(r -> {
+			boolean isTicket = r.getValue(ticket);
 			RawdocStatus status = RawdocStatus.safeValueOf(r.getValue(RAWDOC.STATUS));
 			RawdocType type = RawdocType.safeValueOf(r.getValue(RAWDOC.TYPE));
+			TediInvoiceType tediType = null;
+			if ( type == RawdocType.OUTPUT) {
+				tediType = TediInvoiceType.EMITIDA;
+			} else {
+				tediType = isTicket?TediInvoiceType.TICKET: TediInvoiceType.RECIBIDA;
+			}
 			Integer count = r.getValue(COUNT);
 			counter.getMap().computeIfAbsent(status, k -> new RawdocInvoiceCounterDetail());
 			counter.getMap().get(status).addCount(count);
 			if(RawdocStatus.INBOX.equals(status)) {
-				counter.getMap().get(status).getMap().put(type, count);
+				counter.getMap().get(status).getMap().put(tediType, count);
 			}
 		});
 		

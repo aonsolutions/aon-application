@@ -109,6 +109,11 @@
   opacity: 0;
   height: 0;
   overflow: hidden;
+  display: none !important;
+}
+
+.outlineHidden{
+  outline: none;
 }
 
 .focusColorMinus:hover,

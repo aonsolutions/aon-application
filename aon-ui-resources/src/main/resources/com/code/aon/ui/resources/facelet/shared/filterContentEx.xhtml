@@ -11,9 +11,10 @@
 		
 		<aon:div styleClass="aon-panelGrid-search">
 			<aon:div styleClass="aon-panelGrid-search-info">
+			    <aon:outputText  styleClass="material-symbols-outlined" value="filter_list" />
 				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
-				<h:outputLink style="font-size:1em;font-weight:bold;float:right;" value="#" >
-					<aon:outputText value="[?]" />
+				<h:outputLink style="font-size:1em;font-weight:bold;float:right; padding-left: 45px;" value="#" >
+					<aon:outputText id="infoIcon" styleClass="material-symbols-outlined" value="info" />
 					<rich:componentControl for="searchHelp" event="onclick" operation="show"/>													
 				</h:outputLink>				
 			</aon:div>			
