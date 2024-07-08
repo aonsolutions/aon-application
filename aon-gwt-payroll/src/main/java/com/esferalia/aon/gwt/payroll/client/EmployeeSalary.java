@@ -129,9 +129,12 @@ public abstract class EmployeeSalary extends Composite {
 				
 				employeeSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
 					s -> {
-						AonMessagePanel.showInfo(messagePanel, employeeSalaryObject.getEmailStatus());
+						AonMessagePanel.showSuccess(messagePanel, employeeSalaryObject.getEmailStatus());
 						hide();
-					},f -> {}
+					},f -> {
+						AonMessagePanel.showError(messagePanel, f.getMessage());
+						hide();
+					}
 				);
 			}
 		};

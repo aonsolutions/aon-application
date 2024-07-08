@@ -44,6 +44,10 @@ public class PayrollPrintServlet extends HttpServlet {
 		resp.setContentType(MimeType.MIME_PDF.getName());
 		String cLimitStr = req.getParameter(PayrollPrintService.Parameter.COMPLEMENTARY_LIMIT.getName());
 		Double cLimit = null;
+		
+		Boolean pwdEmployee = req.getParameter("pwdEmpl") == null ? false : true;
+		Boolean pwdEnterprise = req.getParameter("pwdEnt") == null ? false : true;
+		
 		try {
 			if (cLimitStr != null) {
 				cLimit = Double.parseDouble(cLimitStr);
@@ -59,13 +63,20 @@ public class PayrollPrintServlet extends HttpServlet {
 					, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
 					, resp.getOutputStream()
 					, Optional.ofNullable(cLimit)
-					, ids);
+					, pwdEmployee
+					, pwdEnterprise
+					, ids
+					);
 		} else {
 			JooqPayrollBuilder.generatePayroll(Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()))
 					, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
 					, resp.getOutputStream()
 					, Optional.ofNullable(cLimit)
-					, ids);
+					, pwdEmployee
+					, pwdEnterprise
+					, ids
+					);
+					
 		}
 		
 	}
