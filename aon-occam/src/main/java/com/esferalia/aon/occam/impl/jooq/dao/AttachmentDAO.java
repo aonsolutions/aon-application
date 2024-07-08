@@ -163,7 +163,7 @@ public class AttachmentDAO {
 		List<Attach> attachList;
 		if(options.length > 0 && options[0].isPagination()) {
 			attachList = selectRegistryAttach(ctx, filter, withData)
-					.orderBy(RATTACH.ATTACH_DATE.desc())
+					.orderBy(RATTACH.ATTACH_DATE.desc(), RATTACH.ID.desc())
 					.limit(options[0].getPerPage()).offset(options[0].getPerPage() * (options[0].getPage() -1))
 					.fetch().stream().map( r-> {
 						Attach attach =  RegistryAttachFiller.build(r);
@@ -173,7 +173,7 @@ public class AttachmentDAO {
 			
 		} else {
 			attachList = selectRegistryAttach(ctx, filter, withData) 
-			.orderBy(RATTACH.ATTACH_DATE.desc())
+			.orderBy(RATTACH.ATTACH_DATE.desc(),RATTACH.ID.desc())
 			.fetch().stream().map( r-> {
 				Attach attach =  RegistryAttachFiller.build(r);
 				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
