@@ -108,10 +108,10 @@ export class AonHelp extends AonElement {
 		cardDiv.style.backgroundColor = "var(--aonCardColor)";
 
 		let divGeneral = this.createDiv();
-		divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE));
-		divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL));
-		divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL));
-		divGeneral.appendChild(this.buildSupportData("administración@aonSolutions.es", "Facturación, cobros y pago", MATERIAL_ICONS.MAIL));
+		divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
+		divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
+		divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
+		divGeneral.appendChild(this.buildSupportData("administración@aonSolutions.es", "Facturación, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
 		rightPanelAboutContactCard.setContent(divGeneral);
 
 		let rightPanelAboutScheduleCard = new AonCard();
@@ -129,8 +129,8 @@ export class AonHelp extends AonElement {
 		cardDiv2.style.backgroundColor = "var(--aonCardColor)";
 
 		let divGeneral2 = this.createDiv();
-		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE));
-		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE));
+		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
+		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
 		rightPanelAboutScheduleCard.setContent(divGeneral2);
 		
 		getManifest().then(
@@ -147,8 +147,11 @@ export class AonHelp extends AonElement {
 				divInfo.innerHTML = `
 				  <span>
 					<a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-					  aonSolutions
-					</a> ${MSG.REGISTERED_TRADEMARK_AON}
+					  <!-- aonSolutions -->
+					</a> 
+					<span class="aonTrademark" >
+						<!-- ${MSG.REGISTERED_TRADEMARK_AON} -->
+					</span> 
 				  </span>
 				  <div id="aonManifest">${version}</div>`;
 				  this.appendChild(divInfo);
@@ -157,7 +160,7 @@ export class AonHelp extends AonElement {
 	
 	}
 
-	buildSupportData(value, title, icon) {
+	buildSupportData(value, title, icon, className) {
 		let div = this.createDiv();
 		div.style.marginTop = '10px';
 		div.style.title = title;
@@ -171,8 +174,8 @@ export class AonHelp extends AonElement {
 		div.appendChild(i);
 
 		let span = this.createDiv();
-		span.className = CSS.AON_CARD_TEXT;
-		span.innerHTML = value;
+		span.className = `${CSS.AON_CARD_TEXT} ${className}`;
+		//span.innerHTML = value;
 		div.appendChild(span);
 
 		return div;

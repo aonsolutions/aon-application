@@ -173,7 +173,8 @@ public class JooqMail {
 		html += "</ul>";
 		html += "<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
-		html += generateForm(params);
+//		html += generateForm(params);
+		html += generateAnchor(params);
 
 		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
 		html += " <a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, Integer.parseInt(params.get("enterprise"))) + "</a>";
@@ -196,10 +197,7 @@ public class JooqMail {
 		html += 	"<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
 		html += 	"<div id=\"form\">";
-		html +=			"<a type=\"button\" href=\"URL_DOWNLOAD\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
-		html +=				"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
-		html +=				"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
-		html +=			"</a>";
+		html += 		"<a href=\"\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
 		html += 	"</div>";
 
 		html += 	"<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
@@ -223,10 +221,7 @@ public class JooqMail {
 		html += 	"<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
 		html += 	"<div id=\"form\">";
-		html +=			"<a type=\"button\" href=\"URL_DOWNLOAD\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
-		html +=				"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
-		html +=				"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
-		html +=			"</a>";
+		html += 		"<a href=\"\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
 		html += 	"</div>";
 
 		html += 	"<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
@@ -433,7 +428,7 @@ public class JooqMail {
 		
 		// GENERATE URL
 		params.put("enterprise", enterpriseId.toString());
-		String formHTML = generateFormEmployee(params, salariesRecords);
+		String payrollsAnchor = generateEnterprisePayrollsAnchor(params, salariesRecords);
 		
 		String enterpriseNames = "<a style=\"font-weight: bold;\">NOMBRE_EMPRESA</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">NOMINA_TRABAJDORES</li>";
@@ -452,7 +447,7 @@ public class JooqMail {
 		
 		html = html.split(payrollPeriods)[0] + createPeriodsEnterprise(dslContext, salariesRecords) + html.split(payrollPeriods)[1];
 		
-		html = html.split("<div id=\"form\">")[0] + formHTML + html.split("<div id=\"form\">")[1].split("</div>")[1];
+		html = html.split("<div id=\"form\">")[0] + payrollsAnchor + html.split("<div id=\"form\">")[1].split("</div>")[1];
 		
 		html = html.split(enterpriseInfo)[0] +  "<a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, enterpriseId) + "</a>";
 		
@@ -462,7 +457,7 @@ public class JooqMail {
 	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, DSLContext dslContext) {
 		
 		// GENERATE URL
-		String formHTML = generateFormEmployee(params, salariesRecords);
+		String payrollsAnchor = generateEmployeePayrollsAnchor(params, salariesRecords);
 		
 		String employeeName = "<a style=\"font-weight: bold;\">NOMBRE_EMPLEADO</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">PERIODOS_NOMINA</li>";
@@ -481,44 +476,18 @@ public class JooqMail {
 		
 		html = html.split(payrollPeriods)[0] + createPeriods(salariesRecords) + html.split(payrollPeriods)[1];
 		
-		html = html.split("<div id=\"form\">")[0] + formHTML + html.split("<div id=\"form\">")[1].split("</div>")[1];
+		html = html.split("<div id=\"form\">")[0] + payrollsAnchor + html.split("<div id=\"form\">")[1].split("</div>")[1];
 		
 		html = html.split(enterpriseInfo)[0] +  "<a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, Integer.parseInt(params.get("enterprise"))) + "</a>";
 		
 		return html;
 	}
 	
-	private static String generateFormEmployee(HashMap<String, String> params, Result<Record> salariesRecords) {
+	private static String generateAnchor(HashMap<String, String> params) {
 		String html = "";
+		String parameters = "";
 		
-		html += "<div>";
-		html += "<form method\"post\" action=\"" + params.get("url") + "\" target=\"_blank\">";
-		
-		for(Entry<String, String> entry : params.entrySet()) {
-			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.contains(entry.getKey(), "id"))
-				continue;
-			
-			html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";
-		}
-		
-		for(Record salaryRecord : salariesRecords)
-			html += "<input type=\"hidden\" name=\"id\" value=\"" + salaryRecord.get(SALARY.ID) + "\">";
-		
-		html += "<button type=\"submit\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
-		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
-		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
-		html += "</button>";
-		html += "</form>";
-		html += "</div>";
-		
-		return html;
-	}
-
-	private static String generateForm(HashMap<String, String> params) {
-		String html = "";
-		
-		html += "<div>";
-		html += "<form method\"post\" action=\"" + params.get("url") + "\" target=\"_blank\">";
+		html += "<div style=\"display: flex; gap: .5rem;\">";
 		
 		for(Entry<String, String> entry : params.entrySet()) {
 			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url"))
@@ -528,16 +497,71 @@ public class JooqMail {
 			Matcher matcher = salaryIdPattern.matcher(AonStringUtils.trimToEmpty(entry.getKey()));
 			
 			if(matcher.matches())
-				html += "<input type=\"hidden\" name=\"id\" value=\"" + entry.getValue() + "\">";
+				parameters += "id=" + entry.getValue() + "&";
 			else 
-				html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";
+				parameters += entry.getKey() + "=" + entry.getValue() + "&";
 		}
 		
-		html += "<button type=\"submit\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
-		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
-		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
-		html += "</button>";
-		html += "</form>";
+//		parameters += "pwdEnt=true";
+		
+//		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
+		
+		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		
+		html += "</div>";
+		
+		return html;
+	}
+	
+	private static String generateEnterprisePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords) {
+		String html = "";
+		String parameters = "";
+		
+		html += "<div style=\"display: flex; gap: .5rem;\">";
+		
+		for(Entry<String, String> entry : params.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.contains(entry.getKey(), "id"))
+				continue;
+			
+			parameters += entry.getKey() + "=" + entry.getValue() + "&";
+		}
+		
+		for(Record salaryRecord : salariesRecords)
+			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
+		
+//		parameters += "pwdEnt=true";
+		
+//		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
+		
+		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		
+		html += "</div>";
+		
+		return html;
+	}
+	
+	private static String generateEmployeePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords) {
+		String html = "";
+		String parameters = "";
+		
+		html += "<div style=\"display: flex; gap: .5rem;\">";
+		
+		for(Entry<String, String> entry : params.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.contains(entry.getKey(), "id"))
+				continue;
+			
+			parameters += entry.getKey() + "=" + entry.getValue() + "&";
+		}
+		
+		for(Record salaryRecord : salariesRecords)
+			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
+		
+//		parameters += "pwdEmpl=true";
+		
+//		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
+		
+		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		
 		html += "</div>";
 		
 		return html;

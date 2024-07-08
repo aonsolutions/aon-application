@@ -8,89 +8,125 @@
 
 	<aon:outputText value="" />
 	<aon:div styleClass="aon-search-content-width">
-		<aon:panelCollapsible expanded="true" label="#{bundle.aon_customer}">
-			<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">
+		<aon:panelCollapsible styleClass="aonCard" expanded="false" label="#{bundle.aon_customer}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
 				<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchBasicContent.xhtml" />
 			</aon:panelGrid>
-		</aon:panelCollapsible>					
-					
-		<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}">
-			<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">		
+		</aon:panelCollapsible>
+				
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.registry_address_module}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
 					<ui:param name="searchController" value="#{customerSearch}" />
 				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
-
-		<aon:panelCollapsible expanded="false" label="#{bundle.aon_contacts}">
-			<aon:panelGrid columns="1" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+		
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_contacts}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
 					<ui:param name="searchController" value="#{customerSearch}" />
 				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
+		
+		
 
 		<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
-			<aon:panelCollapsible expanded="false" label="#{bundle.registry_finance_data_module}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/searchContent.xhtml">
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.registry_finance_data_module}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/searchContent.xhtml">
 						<ui:param name="searchController" value="#{customerSearch}" />
 					</ui:include>
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>
-
-		<aon:if test="#{aonConfiguration.bean.customer.showSegment}">
-			<aon:panelCollapsible expanded="false" label="#{bundle.registry_segment_module}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
-						<ui:param name="searchController" value="#{customerSearch}" />
-					</ui:include>
-				</aon:panelGrid>
-			</aon:panelCollapsible>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
 		</aon:if>
 		
+		<aon:if test="#{aonConfiguration.bean.customer.showSegment}">
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.registry_segment_module}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
+						<ui:param name="searchController" value="#{customerSearch}" />
+					</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>		
+		
 		<aon:if test="#{aonConfiguration.bean.customer.showProduct}">
-			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">
-					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml">
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_role_product}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml">
 						<ui:param name="rItemController" value="#{customerItem}" />
-					</ui:include>					
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>
-						
+					</ui:include>	
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>	
+		
 		<aon:if test="#{aonConfiguration.bean.customer.showSeller}">
-			<aon:panelCollapsible expanded="false" label="#{bundle.aon_module_commercial}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">					
-					<ui:include src="/com/code/aon/ui/registry/facelet/rseller/searchContent.xhtml" />					
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_module_commercial}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rseller/searchContent.xhtml" />		
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>					
 
 		<aon:if test="#{aonConfiguration.bean.customer.showProfile}">	
-			<aon:panelCollapsible expanded="false" label="#{bundle.registry_profile}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">
-					<ui:include src="/com/code/aon/ui/registry/facelet/rprofile/searchContent.xhtml" />					
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>		
-				
-		<aon:if test="#{aonRole.document}">
-			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.registry_profile}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rprofile/searchContent.xhtml" />			
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>	
 						
+        
+		<aon:if test="#{aonRole.document}">
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_documents}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />	
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>	
+		
+		
 		<aon:if test="#{aonConfiguration.bean.customer.showAddInfo}">	
-			<aon:panelCollapsible expanded="false" label="#{bundle.aon_addInfo}">
-				<aon:panelGrid columns="1" columnClasses="tbl-tab-search-even">
-					<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/searchContent.xhtml" />					
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</aon:if>		
+		<aon:panelCollapsible expanded="false" styleClass="aonCard" label="#{bundle.aon_addInfo}">
+			<aon:panelGrid 
+			columns="2" 
+			styleClass="aonCard"
+			columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-500">
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/searchContent.xhtml" />	
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+		</aon:if>	
+						
+				
 				
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" />
 						

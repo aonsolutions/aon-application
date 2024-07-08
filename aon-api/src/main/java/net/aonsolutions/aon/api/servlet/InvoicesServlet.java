@@ -203,7 +203,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     	
     	InvoiceCounter invoiceCounter = AON.getInvoiceCounter(api.getDomain(), api.getUser());
     	json.put(IJsonNames.INVOICE, InvoiceCounterJSON.toJSON(invoiceCounter));
-    	
+    	System.out.println( json.toString(1)  );
     	return json;
     }
     

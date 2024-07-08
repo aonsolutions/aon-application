@@ -1,0 +1,81 @@
+:root {
+	--aonAccounting: var(--aonWhite);
+
+	--aonBlack: black;
+	
+	
+	--aonNewColor: red;
+
+	--leevyColor: #e5ff04;
+
+	--leevyBackground: #06022e;
+
+	--aonCardColor:var(--aonWhite);
+
+	--aonTopMenuSpecial: var(--leevyColor);
+
+	--aonTopMenuAvailable: var(--leevyColor);
+
+	--aonHeaderButtonColor: var(--leevyColor);
+
+	--aonRightPanelColor: #fafafa;
+
+	--aonHeaderBackgroundAvailable: var(--leevyBackground);
+
+
+}
+.aonHeader {
+	--aonAccounting: var(--leevyBackground);
+	--aonHome: var(--leevyBackground);
+	background-color:var(--leevyBackground);
+}
+
+.aonCardTitle {
+	color:var(--leevyBackground);
+}
+
+.aonCard {
+	border: 0px;
+	background-color: var(--aonCardColor);
+}
+
+.aonCardText {
+	color: white;
+}
+
+.aonContentBeta {
+	background-color: var(--aonRightPanelColor);
+}
+
+.aonDashboardButton {
+	color: white;
+	background-color: var(--aonCardColor);
+}
+
+.aonDashboardCard {
+	color: white;
+}
+
+.aonDashboardButton i{
+	color:var(--leevyColor);
+	background-color: transparent;
+}
+
+.aonDashboardButton span{
+	color:var(--leevyBackground);
+}
+
+.aonMenuLeftop,
+.aonMenuTopnav,
+.aonMenuSidenav {
+	color:var(--leevyColor);
+	background-color: var(--leevyBackground);
+	
+}
+
+.aonFavicon {
+	background-image: url("https://leevy.es/favicon.svg");
+}
+
+
+

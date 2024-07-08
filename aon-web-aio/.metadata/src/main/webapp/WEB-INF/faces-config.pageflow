@@ -1,2 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pageflow:Pageflow xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf15263810423200" configfile="/aon-aio/src/main/webapp/WEB-INF/faces-config.xml"/>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf15263810423200" configfile="/aon-aio/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="8626" id="pf17177026323320" outlinks="pf17177026323331 pf17177026323332 pf17177026323333 pf17177026323334 pf17177026323335 pf17177026323336 pf17177026323337 pf17177026323338 pf17177026323339 pf171770263233310 pf171770263233311 pf171770263233312 pf171770263233313 pf171770263233314 pf171770263233315 pf171770263233316 pf171770263233317 pf171770263233318 pf171770263233319 pf171770263233320 pf171770263233321 pf171770263233322 pf171770263233323 pf171770263233324 pf171770263233325 pf171770263233326 pf171770263233327 pf171770263233328 pf171770263233329 pf171770263233330 pf171770263233331 pf171770263233332 pf171770263233333 pf171770263233334 pf171770263233335 pf171770263233336 pf171770263233337 pf171770263233338 pf171770263233339 pf171770263233340 pf171770263233341 pf171770263233342 pf171770263233343 pf171770263233344 pf171770263233345" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/enterprise.xhtml" x="338" y="178" id="pf171770263233346" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf17177026323331" path="/facelet/menu/enterprise.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/crm.xhtml" x="338" y="562" id="pf171770263233347" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf17177026323332" path="/facelet/menu/crm.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/marketing.xhtml" x="338" y="946" id="pf171770263233348" referenceLink="//@navigationRule.0/@navigationCase.2/@toViewId|" inlinks="pf17177026323333" path="/facelet/menu/marketing.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/management.xhtml" x="338" y="1330" id="pf171770263233349" referenceLink="//@navigationRule.0/@navigationCase.3/@toViewId|" inlinks="pf17177026323334" path="/facelet/menu/management.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/treasury.xhtml" x="338" y="1714" id="pf171770263233350" referenceLink="//@navigationRule.0/@navigationCase.4/@toViewId|" inlinks="pf17177026323335" path="/facelet/menu/treasury.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/sales.xhtml" x="338" y="2098" id="pf171770263233351" referenceLink="//@navigationRule.0/@navigationCase.5/@toViewId|" inlinks="pf17177026323336" path="/facelet/menu/sales.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/purchase.xhtml" x="338" y="2482" id="pf171770263233352" referenceLink="//@navigationRule.0/@navigationCase.6/@toViewId|" inlinks="pf17177026323337" path="/facelet/menu/purchase.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/expenses.xhtml" x="338" y="2866" id="pf171770263233353" referenceLink="//@navigationRule.0/@navigationCase.7/@toViewId|" inlinks="pf17177026323338" path="/facelet/menu/expenses.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/warehouse.xhtml" x="338" y="3250" id="pf171770263233354" referenceLink="//@navigationRule.0/@navigationCase.8/@toViewId|" inlinks="pf17177026323339" path="/facelet/menu/warehouse.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/config.xhtml" x="338" y="3634" id="pf171770263233355" referenceLink="//@navigationRule.0/@navigationCase.9/@toViewId|" inlinks="pf171770263233310" path="/facelet/menu/config.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/fiscal.xhtml" x="338" y="4018" id="pf171770263233356" referenceLink="//@navigationRule.0/@navigationCase.10/@toViewId|" inlinks="pf171770263233311" path="/facelet/menu/fiscal.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/accounting.xhtml" x="338" y="4402" id="pf171770263233357" referenceLink="//@navigationRule.0/@navigationCase.11/@toViewId|" inlinks="pf171770263233312" path="/facelet/menu/accounting.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/groupware.xhtml" x="338" y="4786" id="pf171770263233358" referenceLink="//@navigationRule.0/@navigationCase.12/@toViewId|" inlinks="pf171770263233313" path="/facelet/menu/groupware.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/payroll.xhtml" x="338" y="5170" id="pf171770263233359" referenceLink="//@navigationRule.0/@navigationCase.13/@toViewId|" inlinks="pf171770263233314" path="/facelet/menu/payroll.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/asset.xhtml" x="338" y="5554" id="pf171770263233360" referenceLink="//@navigationRule.0/@navigationCase.14/@toViewId|" inlinks="pf171770263233315" path="/facelet/menu/asset.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/document.xhtml" x="338" y="5938" id="pf171770263233361" referenceLink="//@navigationRule.0/@navigationCase.15/@toViewId|" inlinks="pf171770263233316" path="/facelet/menu/document.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/configuration.xhtml" x="338" y="6322" id="pf171770263233362" referenceLink="//@navigationRule.0/@navigationCase.16/@toViewId|" inlinks="pf171770263233317" path="/facelet/menu/configuration.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/garage.xhtml" x="338" y="6706" id="pf171770263233363" referenceLink="//@navigationRule.0/@navigationCase.17/@toViewId|" inlinks="pf171770263233318" path="/facelet/menu/garage.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/academy.xhtml" x="338" y="7090" id="pf171770263233364" referenceLink="//@navigationRule.0/@navigationCase.18/@toViewId|" inlinks="pf171770263233319" path="/facelet/menu/academy.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/hotel.xhtml" x="338" y="7474" id="pf171770263233365" referenceLink="//@navigationRule.0/@navigationCase.19/@toViewId|" inlinks="pf171770263233320" path="/facelet/menu/hotel.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/pos.xhtml" x="338" y="7858" id="pf171770263233366" referenceLink="//@navigationRule.0/@navigationCase.20/@toViewId|" inlinks="pf171770263233321" path="/facelet/menu/pos.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/contrata.xhtml" x="338" y="8242" id="pf171770263233367" referenceLink="//@navigationRule.0/@navigationCase.21/@toViewId|" inlinks="pf171770263233322" path="/facelet/menu/contrata.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/aonOne.xhtml" x="338" y="8626" id="pf171770263233368" referenceLink="//@navigationRule.0/@navigationCase.22/@toViewId|" inlinks="pf171770263233323" path="/facelet/menu/aonOne.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/aonFinance.xhtml" x="338" y="9010" id="pf171770263233369" referenceLink="//@navigationRule.0/@navigationCase.23/@toViewId|" inlinks="pf171770263233324" path="/facelet/menu/aonFinance.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/financePortal.xhtml" x="338" y="9394" id="pf171770263233370" referenceLink="//@navigationRule.0/@navigationCase.24/@toViewId|" inlinks="pf171770263233325" path="/facelet/menu/financePortal.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/menu/ecommerce.xhtml" x="338" y="9778" id="pf171770263233371" referenceLink="//@navigationRule.0/@navigationCase.25/@toViewId|" inlinks="pf171770263233326" path="/facelet/menu/ecommerce.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/accounting.xhtml" x="338" y="10162" id="pf171770263233372" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" inlinks="pf171770263233327" path="/facelet/portal/accounting.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/fiscal.xhtml" x="338" y="10546" id="pf171770263233373" referenceLink="//@navigationRule.1/@navigationCase.1/@toViewId|" inlinks="pf171770263233328" path="/facelet/portal/fiscal.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/payroll.xhtml" x="338" y="10930" id="pf171770263233374" referenceLink="//@navigationRule.1/@navigationCase.2/@toViewId|" inlinks="pf171770263233329" path="/facelet/portal/payroll.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/configuration.xhtml" x="338" y="11314" id="pf171770263233375" referenceLink="//@navigationRule.1/@navigationCase.3/@toViewId|" inlinks="pf171770263233330" path="/facelet/portal/configuration.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/invoice.xhtml" x="338" y="11698" id="pf171770263233376" referenceLink="//@navigationRule.1/@navigationCase.4/@toViewId|" inlinks="pf171770263233331" path="/facelet/portal/invoice.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/notes.xhtml" x="338" y="12082" id="pf171770263233377" referenceLink="//@navigationRule.1/@navigationCase.5/@toViewId|" inlinks="pf171770263233332" path="/facelet/portal/notes.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/comunica.xhtml" x="338" y="12466" id="pf171770263233378" referenceLink="//@navigationRule.1/@navigationCase.6/@toViewId|" inlinks="pf171770263233333" path="/facelet/portal/comunica.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/documental.xhtml" x="338" y="12850" id="pf171770263233379" referenceLink="//@navigationRule.1/@navigationCase.7/@toViewId|" inlinks="pf171770263233334" path="/facelet/portal/documental.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/timecontrol.xhtml" x="338" y="13234" id="pf171770263233380" referenceLink="//@navigationRule.1/@navigationCase.8/@toViewId|" inlinks="pf171770263233335" path="/facelet/portal/timecontrol.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/office.xhtml" x="338" y="13618" id="pf171770263233381" referenceLink="//@navigationRule.1/@navigationCase.9/@toViewId|" inlinks="pf171770263233336" path="/facelet/portal/office.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/messenger.xhtml" x="338" y="14002" id="pf171770263233382" referenceLink="//@navigationRule.1/@navigationCase.10/@toViewId|" inlinks="pf171770263233337" path="/facelet/portal/messenger.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/cau.xhtml" x="338" y="14386" id="pf171770263233383" referenceLink="//@navigationRule.1/@navigationCase.11/@toViewId|" inlinks="pf171770263233338" path="/facelet/homepage/cau.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/portal/warehouse.xhtml" x="338" y="14770" id="pf171770263233384" referenceLink="//@navigationRule.1/@navigationCase.12/@toViewId|" inlinks="pf171770263233339" path="/facelet/portal/warehouse.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/advanced.xhtml" x="338" y="15154" id="pf171770263233385" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf171770263233340" path="/facelet/homepage/advanced.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/alarm.xhtml" x="338" y="15538" id="pf171770263233386" referenceLink="//@navigationRule.2/@navigationCase.1/@toViewId|" inlinks="pf171770263233341" path="/facelet/homepage/alarm.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/password.xhtml" x="338" y="15922" id="pf171770263233387" referenceLink="//@navigationRule.2/@navigationCase.2/@toViewId|" inlinks="pf171770263233342" path="/facelet/homepage/password.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/user.xhtml" x="338" y="16306" id="pf171770263233388" referenceLink="//@navigationRule.2/@navigationCase.3/@toViewId|" inlinks="pf171770263233343" path="/facelet/homepage/user.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/favorite.xhtml" x="338" y="16690" id="pf171770263233489" referenceLink="//@navigationRule.2/@navigationCase.4/@toViewId|" inlinks="pf171770263233344" path="/facelet/homepage/favorite.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="facelet/homepage/employee.xhtml" x="338" y="17074" id="pf171770263233490" referenceLink="//@navigationRule.2/@navigationCase.5/@toViewId|" inlinks="pf171770263233345" path="/facelet/homepage/employee.xhtml"/>
+  <links id="pf17177026323331" target="pf171770263233346" source="pf17177026323320" outcome="menu_enterprise"/>
+  <links id="pf17177026323332" target="pf171770263233347" source="pf17177026323320" outcome="menu_crm"/>
+  <links id="pf17177026323333" target="pf171770263233348" source="pf17177026323320" outcome="menu_marketing"/>
+  <links id="pf17177026323334" target="pf171770263233349" source="pf17177026323320" outcome="menu_management"/>
+  <links id="pf17177026323335" target="pf171770263233350" source="pf17177026323320" outcome="menu_treasury"/>
+  <links id="pf17177026323336" target="pf171770263233351" source="pf17177026323320" outcome="menu_sales"/>
+  <links id="pf17177026323337" target="pf171770263233352" source="pf17177026323320" outcome="menu_purchase"/>
+  <links id="pf17177026323338" target="pf171770263233353" source="pf17177026323320" outcome="menu_expenses"/>
+  <links id="pf17177026323339" target="pf171770263233354" source="pf17177026323320" outcome="menu_warehouse"/>
+  <links id="pf171770263233310" target="pf171770263233355" source="pf17177026323320" outcome="menu_config"/>
+  <links id="pf171770263233311" target="pf171770263233356" source="pf17177026323320" outcome="menu_fiscal"/>
+  <links id="pf171770263233312" target="pf171770263233357" source="pf17177026323320" outcome="menu_accounting"/>
+  <links id="pf171770263233313" target="pf171770263233358" source="pf17177026323320" outcome="menu_groupware"/>
+  <links id="pf171770263233314" target="pf171770263233359" source="pf17177026323320" outcome="menu_payroll"/>
+  <links id="pf171770263233315" target="pf171770263233360" source="pf17177026323320" outcome="menu_asset"/>
+  <links id="pf171770263233316" target="pf171770263233361" source="pf17177026323320" outcome="menu_document"/>
+  <links id="pf171770263233317" target="pf171770263233362" source="pf17177026323320" outcome="menu_configuration"/>
+  <links id="pf171770263233318" target="pf171770263233363" source="pf17177026323320" outcome="menu_garage"/>
+  <links id="pf171770263233319" target="pf171770263233364" source="pf17177026323320" outcome="menu_academy"/>
+  <links id="pf171770263233320" target="pf171770263233365" source="pf17177026323320" outcome="menu_hotel"/>
+  <links id="pf171770263233321" target="pf171770263233366" source="pf17177026323320" outcome="menu_pos"/>
+  <links id="pf171770263233322" target="pf171770263233367" source="pf17177026323320" outcome="menu_contrata"/>
+  <links id="pf171770263233323" target="pf171770263233368" source="pf17177026323320" outcome="menu_aonOne"/>
+  <links id="pf171770263233324" target="pf171770263233369" source="pf17177026323320" outcome="menu_aonFinance"/>
+  <links id="pf171770263233325" target="pf171770263233370" source="pf17177026323320" outcome="menu_finance_portal"/>
+  <links id="pf171770263233326" target="pf171770263233371" source="pf17177026323320" outcome="menu_eCommerce"/>
+  <links id="pf171770263233327" target="pf171770263233372" source="pf17177026323320" outcome="portal_accounting"/>
+  <links id="pf171770263233328" target="pf171770263233373" source="pf17177026323320" outcome="portal_fiscal"/>
+  <links id="pf171770263233329" target="pf171770263233374" source="pf17177026323320" outcome="portal_payroll"/>
+  <links id="pf171770263233330" target="pf171770263233375" source="pf17177026323320" outcome="portal_configuration"/>
+  <links id="pf171770263233331" target="pf171770263233376" source="pf17177026323320" outcome="portal_invoice"/>
+  <links id="pf171770263233332" target="pf171770263233377" source="pf17177026323320" outcome="portal_notes"/>
+  <links id="pf171770263233333" target="pf171770263233378" source="pf17177026323320" outcome="portal_comunica"/>
+  <links id="pf171770263233334" target="pf171770263233379" source="pf17177026323320" outcome="portal_documental"/>
+  <links id="pf171770263233335" target="pf171770263233380" source="pf17177026323320" outcome="portal_timecontrol"/>
+  <links id="pf171770263233336" target="pf171770263233381" source="pf17177026323320" outcome="portal_office"/>
+  <links id="pf171770263233337" target="pf171770263233382" source="pf17177026323320" outcome="portal_messenger"/>
+  <links id="pf171770263233338" target="pf171770263233383" source="pf17177026323320" outcome="portal_cau_messenger"/>
+  <links id="pf171770263233339" target="pf171770263233384" source="pf17177026323320" outcome="portal_warehouse"/>
+  <links id="pf171770263233340" target="pf171770263233385" source="pf17177026323320" outcome="home_advanced"/>
+  <links id="pf171770263233341" target="pf171770263233386" source="pf17177026323320" outcome="home_alarm"/>
+  <links id="pf171770263233342" target="pf171770263233387" source="pf17177026323320" outcome="home_password"/>
+  <links id="pf171770263233343" target="pf171770263233388" source="pf17177026323320" outcome="home_user"/>
+  <links id="pf171770263233344" target="pf171770263233489" source="pf17177026323320" outcome="home_favorite"/>
+  <links id="pf171770263233345" target="pf171770263233490" source="pf17177026323320" outcome="home_employee"/>
+</pageflow:Pageflow>

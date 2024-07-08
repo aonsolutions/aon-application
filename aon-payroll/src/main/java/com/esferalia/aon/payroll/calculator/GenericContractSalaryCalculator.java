@@ -1128,6 +1128,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 				Date deductionStart = Period.max(contractDeduction.getStartDate(), start);
 				Date deductionEnd = Period.min(contractDeduction.getEndDate(), end);
+				if (deductionEnd.before(deductionStart)) {
+					continue; // TODO : must be done in context ?
+				}
 				
 				try {
 

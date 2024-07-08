@@ -8,6 +8,7 @@
 
 	<ui:define name="content">
 		<aon:form>
+		  <aon:if test="#{!app.standAlone}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.finance_creditor_module}" />
@@ -69,7 +70,81 @@
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
+           </aon:if>
+           
+           <aon:if test="#{app.standAlone}">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/appToolbar.xhtml">
+					<ui:param name="controller" value="#{product}" />
+					<ui:param name="filterController" value="#{product}" />
+					<ui:param name="filterReRender" value="supplierListContainer" />
+					<ui:param name="filterContainer" value="supplierFilterContainer" />
+					<ui:param name="toolbarTitle" value="#{bundle.aon_product}" />
 
+				</ui:decorate>
+				
+				
+						<aon:if test="#{aonConfiguration.bean.product.showProduct}">
+							<aon:lookupButtonPopup lookup="#{purchaseItemLookup}" />
+						</aon:if>
+						
+						
+						
+				<aon:div styleClass="aon-scroll-area"
+					style="display: flex; flex-direction: row; ">
+
+					<aon:div id="supplierListContainer"
+						style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4; scrollbar-width: none">
+						<ui:decorate
+							template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+							<ui:param name="controller" value="#{creditor}" />
+
+
+							<ui:define name="columns">
+	
+						<ui:include 
+							src="/com/code/aon/ui/finance/facelet/creditor/listBasic.xhtml" />
+
+						<aon:column alias="Creditor.registry.alias"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.alias}" />
+						</aon:column>
+
+						<aon:column alias="Creditor.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+	
+					</ui:define>
+						</ui:decorate>
+					</aon:div>
+                      
+                      <aon:div id="supplierFilterContainer" styleClass="aonFilterPopup"
+						style="display:none">
+						<ui:decorate
+							template="/com/code/aon/ui/finance/facelet/creditor/searchContent.xhtml">
+							<ui:param name="controller" value="#{supplier}" />
+							<ui:define name="searchContent">
+								<ui:include
+									src="/com/code/aon/ui/product/facelet/product/filterContent.xhtml">
+									<ui:param name="searchController" value="#{supplierSearch}" />
+								</ui:include>
+							</ui:define>
+						</ui:decorate>
+
+					</aon:div>
+                    
+					
+
+				</aon:div>
+			</aon:if>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

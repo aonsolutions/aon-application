@@ -149,9 +149,8 @@ export class AonInvoiceList extends AonElement {
 				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
 					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
 				} 
-
 				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
-					invoices = invoices.filter(f => f.type === this.getFilter().type);
+					invoices = invoices.filter(f => f.type.toLowerCase() === this.getFilter().type.toLowerCase());
 				}
 				invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
 

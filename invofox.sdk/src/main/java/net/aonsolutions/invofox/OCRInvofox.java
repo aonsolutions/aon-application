@@ -79,7 +79,9 @@ public class OCRInvofox {
         private static String getOcrInfoURL(String apiURL) {
             return getDocumentURL(apiURL)+ "/ocr";
         }
-
+        private static String getChangePublicStateURL(String apiURL) {
+        	return getDocumentsURL(apiURL) + "/{0}/publicState";
+        }
         private static String getDocumentsURL(String apiURL) {
             return apiURL + "/documents";
         }
@@ -403,12 +405,35 @@ public class OCRInvofox {
 	public static OCRDocumentResponse putDocument(String apiKey, String apiUrl, OCRDocument document) {
 		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), document.getId().orElseThrow(IllegalArgumentException::new)), OCRDocumentJSON.to(document), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
+	
+	public static OCRDocumentResponse changePublicStatus(String apiKey, String apiUrl, String documentId, OCRSeverity publicState) {
+		JSONObject putData = new JSONObject();
+		putData.put( OCRNames.PUBLIC_STATE, publicState );
+		return put(apiKey
+			, MessageFormat.format(getChangePublicStateURL(apiUrl), documentId)
+			, putData
+			, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
 
 	public static OCRDocumentResponse markAsExported(String apiKey, String apiUrl, String documentId) {
-		JSONObject putData = new JSONObject();
-		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
-		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.exported);
 	}
+	public static OCRDocumentResponse markAsPendingCorrection(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.pendingCorrection);
+	}
+	public static OCRDocumentResponse markAsDiscarded(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.discarded);
+	}
+	public static OCRDocumentResponse markAsPendingDecission(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.pendingDecission);
+	}
+	public static OCRDocumentResponse markAsRejected(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.rejected);
+	}
+	public static OCRDocumentResponse markAsError(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.error);
+	}
+	
 	public static OCRInfoResponse getOcrInfo(String apiKey, String apiUrl, String documentId) {
 		return get(apiKey, MessageFormat.format(getOcrInfoURL(apiUrl), documentId), OCRInfoResponse::new, OCRInfoResponseJSON::from);
 	}

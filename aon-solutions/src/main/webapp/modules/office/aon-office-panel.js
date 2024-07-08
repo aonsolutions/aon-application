@@ -106,19 +106,19 @@ export class AonOfficePanel extends AonElement {
         taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
         options.push(taskHolder);
 
-
-        if(this.isSig()){
-            let consoleOptions = [];
-            let linkDomain = LINK_DOMAINS;
-            linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
-            consoleOptions.push(linkDomain);
+        // Hide for 03/07 OPENGES meet
+        // if(this.isSig()){
+        //     let consoleOptions = [];
+        //     let linkDomain = LINK_DOMAINS;
+        //     linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
+        //     consoleOptions.push(linkDomain);
     
-            let bookingPanel = BOOKING_PANEL;
-            bookingPanel.fn = () => this.showView(BOOKING_PANEL.id);
-            consoleOptions.push(bookingPanel);
+        //     let bookingPanel = BOOKING_PANEL;
+        //     bookingPanel.fn = () => this.showView(BOOKING_PANEL.id);
+        //     consoleOptions.push(bookingPanel);
     
-            application.addSidenavOptions(MSG.CONSOLE, consoleOptions);
-        }
+        //     application.addSidenavOptions(MSG.CONSOLE, consoleOptions);
+        // }
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
