@@ -183,7 +183,9 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			}
 		}
 		if(order == null) {
-			order = o.getRegistryNamePropertyName().orderBy().ASC();
+			order = o.getRegistryNamePropertyName().orderBy().ASC().and(o.getIdPropertyName().orderBy().DESC());
+		} else {
+			order = o.getIdPropertyName().orderBy().DESC();
 		}
 		return order;
 	}
@@ -207,7 +209,9 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			}
 		}
 		if(order == null) {
-			order = o.getRegistryNamePropertyName().orderBy().ASC();
+			order = o.getRegistryNamePropertyName().orderBy().ASC().and(o.getIdPropertyName().orderBy().DESC());
+		} else {
+			order = o.getIdPropertyName().orderBy().DESC();
 		}
 		return order;
 	}

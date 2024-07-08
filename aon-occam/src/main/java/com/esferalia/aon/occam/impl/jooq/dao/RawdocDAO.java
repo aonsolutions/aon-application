@@ -180,13 +180,14 @@ public class RawdocDAO {
 	}
 	
 	public static Stream<Rawdoc> getRawdocNewPortal(AONContext ctx , RawdocFilter filter , Integer page, Integer perPage, boolean ticket, RawdocOrder order){
+		int limit = perPage != null ? perPage : 10;
+		int offset = page != null && perPage != null ? perPage * (page -1) : 0;
 		return prepareQuery(ctx, filter, ticket)
 				.orderBy(RAWDOC_PROPERTY_ORDERS.getOrders(order))
-				.limit(perPage)
-				.offset(perPage * (page -1)).
-				fetch().
-				stream().
-				map(new RawdocFiller());
+				.limit(offset, limit)
+				.fetch()
+				.stream()
+				.map(new RawdocFiller());
 	}
 	
 	public static Rawdoc getRawdocById(AONContext ctx, Integer id) {

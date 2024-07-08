@@ -494,7 +494,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 		}
 		if(order == null) {
-			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+			order = o.getStartIssueDatePropertyName().orderBy().DESC().and(o.getIdPropertyName().orderBy().DESC());
+		} else {
+			order = o.getIdPropertyName().orderBy().DESC();
 		}
 		return order;
 	}
@@ -521,7 +523,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 		}
 		if(order == null) {
-			order = o.getStartIssueDatePropertyName().orderBy().DESC();
+			order = o.getStartIssueDatePropertyName().orderBy().DESC().and(o.getIdPropertyName().orderBy().DESC());
+		} else {
+			order = o.getIdPropertyName().orderBy().DESC();
 		}
 		return order;
 	}
