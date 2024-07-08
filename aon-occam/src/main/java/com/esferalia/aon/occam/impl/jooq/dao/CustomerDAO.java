@@ -156,7 +156,7 @@ public class CustomerDAO {
 	
 	public static long getCustomersCount(AONContext ctx, CustomerFilter filter) {
 		return ctx.getDslContext()
-				.select()
+				.select(CUSTOMER.REGISTRY)
 				.from(CUSTOMER)
 				.where(CUSTOMER_PROPERTIES.getConditions(filter))
 				.fetch()
