@@ -55,8 +55,6 @@ import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
-import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
-import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -201,71 +199,96 @@ public class ContractDAO {
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);
-		Field<Integer> totalTime = DSL.field("total_time", Integer.class);
-		Field<String> rDocument = DSL.field("rDocument", String.class);
+		Field<Long> totalTime = DSL.field("total_time", Long.class);
 		Field<Integer> rnSalary = DSL.field("rnSalary", Integer.class);
 		Field<Integer> idSalary = DSL.field("idSalary", Integer.class);
 		Field<Double> salaryAmount = DSL.field("salaryAmount", Double.class);
 		Field<Integer> rnContractData = DSL.field("rnContractData", Integer.class);
 		Field<Integer> idContractData = DSL.field("idContractData", Integer.class);
 		Field<String> expressionCD = DSL.field("expressionCD", String.class);
-		Table<?> registryTable = REGISTRY.as("registryTable");
-		Table<?> salary = SALARY.as("s");
-		Table<?> contractData = CONTRACT_DATA.as("cd");
-		Table<?> tm = Timecontrol.TIMECONTROL.as("tm");
+		List<ContractExtendedData> arrayContracts = new ArrayList<>();
+		List<Integer> ids = new ArrayList<>();
+		List<String> documents = new ArrayList<>();
 		
-		Select<?> subQ1 = DSL.select(SALARY.CONTRACT.as(idSalary))
-				.select(SALARY.CGC_BASE.as(salaryAmount))
+		ctx.getDslContext()
+			.select(CONTRACT.ID)
+			.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+			.select(CONTRACT.START_DATE)
+			.select(CONTRACT.END_DATE)
+			.select(REGISTRY.DOCUMENT)
+			.select(CONTRACT.DOMAIN)
+			.select(CONTRACT.PERSON)
+			.select(CONTRACT.WORKPLACE)
+			.select(WORKPLACE.DESCRIPTION)
+			.from(CONTRACT)
+			.join(WORKPLACE).onKey()
+			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			.groupBy(CONTRACT.ID)
+			.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+			.orderBy(REGISTRY.NAME.asc())
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().forEach( (r) -> {
+				arrayContracts.add(new ContractExtendedDataFiller().apply(r));
+				ids.add(r.get(CONTRACT.ID));
+				documents.add(r.get(REGISTRY.DOCUMENT));
+			});
+			
+		CommonTableExpression<Record> cteSalary = DSL.name("cte").as(DSL.select(SALARY.CONTRACT.as(idSalary))
+				.select(SALARY.TOTAL_PAYMENT.as(salaryAmount))
 				.select(DSL.rowNumber().over(DSL.partitionBy(SALARY.CONTRACT).orderBy(SALARY.END_DATE.desc())).as(rnSalary))
-				.from(SALARY);
+				.from(SALARY).where(SALARY.CONTRACT.in(ids)));
 		
-		Select<?> subQ2 = DSL.select(CONTRACT_DATA.CONTRACT.as(idContractData))
+		ctx.getDslContext().with(cteSalary)
+			.select(cteSalary.field(idSalary),cteSalary.field(salaryAmount))
+			.from(cteSalary)
+			.where(cteSalary.field(rnSalary).eq(1)).fetch().stream().forEach(r -> {
+				arrayContracts.forEach(e -> {
+					if(r.getValue(cteSalary.field(idSalary)).intValue() == e.getId().intValue())
+						e.setGrossSalaryLastMonth(r.getValue(cteSalary.field(salaryAmount)));
+				});
+			});;
+		
+		CommonTableExpression<Record> cteType = DSL.name("cte").as(DSL.select(CONTRACT_DATA.CONTRACT.as(idContractData))
 				.select(CONTRACT_DATA.EXPRESSION.as(expressionCD))
 				.select(DSL.rowNumber().over(DSL.partitionBy(CONTRACT_DATA.CONTRACT).orderBy(CONTRACT_DATA.START_DATE.desc())).as(rnContractData))
 				.from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("TC2"));
+				.where(CONTRACT_DATA.NAME.eq("TC2").and(CONTRACT_DATA.CONTRACT.in(ids))));
 		
-		Select<?> subQ3 = DSL.select(
-					DSL.coalesce(
-							DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
-						).cast(Double.class), 0).cast(Double.class).as(totalTime)
-					)
-				.select(registryTable.field(REGISTRY.DOCUMENT).as(rDocument))
-				.from(Timecontrol.TIMECONTROL)
-				.join(REGISTRY.as(registryTable)).on(registryTable.field(REGISTRY.ID).eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
-				.where(
-						Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
-						.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
-						.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
-						)
-				.groupBy(registryTable.field(REGISTRY.DOCUMENT));
+		ctx.getDslContext().with(cteType)
+			.select(cteType.field(expressionCD), cteType.field(rnContractData), cteType.field(idContractData))
+			.from(cteType)
+			.where(cteType.field(idContractData).in(ids).and(cteType.field(rnContractData).eq(1)))
+			.fetch().stream().forEach(r -> {
+				arrayContracts.forEach(e -> {
+					if(r.getValue(cteType.field(idContractData)).intValue() == e.getId().intValue()) {
+						e.setContractType(r.getValue(cteType.field(expressionCD)));
+					}
+				});				
+			});;
 		
-		return ctx.getDslContext()
-				.select(CONTRACT.ID)
-				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
-				.select(CONTRACT.START_DATE)
-				.select(CONTRACT.END_DATE)
-				.select(REGISTRY.DOCUMENT)
-				.select(subQ2.asTable().as(contractData).field(expressionCD).as(CONTRACT_TYPE))
-				.select(CONTRACT.DOMAIN)
-				.select(CONTRACT.PERSON)
-				.select(CONTRACT.WORKPLACE)
-				.select(WORKPLACE.DESCRIPTION)
-				.select(subQ1.asTable().as(salary).field(salaryAmount).as(SALARY_CGC_BASE))
-				.select(subQ3.asTable().as(tm).field(totalTime).as(MARK_TOTAL_TIME))
-				.from(CONTRACT)
-				.join(WORKPLACE).onKey()
-				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-				.leftJoin(subQ1.asTable().as(salary))
-					.on(CONTRACT.ID.eq(subQ1.asTable().as(salary).field(idSalary)).and(subQ1.asTable().as(salary).field(rnSalary).eq(1)))
-				.leftJoin(subQ2.asTable().as(contractData))
-					.on(CONTRACT.ID.eq(subQ2.asTable().as(contractData).field(idContractData)).and(subQ2.asTable().as(contractData).field(rnContractData).eq(1)))
-				.leftJoin(subQ3.asTable().as(tm)).on(subQ3.asTable().as(tm).field(rDocument).eq(REGISTRY.DOCUMENT))
-				.groupBy(CONTRACT.ID)
-				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME.asc())
-				.limit(perPage).offset(perPage * (page -1))
-				.fetch().stream().map(new ContractExtendedDataFiller());
+		ctx.getDslContext().select(
+				DSL.coalesce(
+						DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
+								).cast(Long.class), 0).cast(Long.class).as(totalTime)
+				)
+		.select(REGISTRY.DOCUMENT)
+		.from(Timecontrol.TIMECONTROL)
+		.join(REGISTRY).on(REGISTRY.ID.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+		.where(
+				Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
+				.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
+				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
+				.and(REGISTRY.DOCUMENT.in(documents))
+				)
+		.groupBy(REGISTRY.DOCUMENT).fetch().stream().forEach(r -> {
+			arrayContracts.forEach(e -> {
+				if(r.getValue(REGISTRY.DOCUMENT).equals(e.getPersonDocument())) {
+					e.setTotalMarksLastMonth(r.getValue(totalTime).doubleValue());
+				}				
+			});
+		});
+		
+		return arrayContracts.stream();
 	}
 	
 	// -------------------- IRPF DATA

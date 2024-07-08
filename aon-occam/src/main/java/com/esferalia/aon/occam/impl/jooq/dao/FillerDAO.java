@@ -595,8 +595,8 @@ public class FillerDAO {
 		@Override
 		public ContractExtendedData apply(Record r) {
 			return new ContractExtendedData()
-					.setGrossSalaryLastMonth(r.getValue(ContractDAO.SALARY_CGC_BASE))
-					.setTotalMarksLastMonth(r.getValue(ContractDAO.MARK_TOTAL_TIME))
+//					.setGrossSalaryLastMonth(r.getValue(ContractDAO.SALARY_CGC_BASE))
+//					.setTotalMarksLastMonth(r.getValue(ContractDAO.MARK_TOTAL_TIME))
 					.setId(r.getValue(CONTRACT.ID))
 					.setDomain(r.getValue(CONTRACT.DOMAIN))
 					.setPerson(r.getValue(CONTRACT.PERSON))
@@ -604,7 +604,7 @@ public class FillerDAO {
 					.setWorkplaceName(r.getValue(WORKPLACE.DESCRIPTION))
 					.setStartDate(r.getValue(CONTRACT.START_DATE))
 					.setEndDate(r.getValue(CONTRACT.END_DATE))
-					.setContractType(r.getValue(ContractDAO.CONTRACT_TYPE))
+//					.setContractType(r.getValue(ContractDAO.CONTRACT_TYPE))
 					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME));
 		}
