@@ -68,6 +68,7 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -106,6 +107,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
+import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
@@ -157,7 +159,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean includePackingList;
 	private Integer packingList;
 	private boolean newPackingList;
-
+	
+	private boolean partialPreparation;
+	private SerializableListDataModel prepareSaleModel;
 
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -460,6 +464,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void setIncludePackingList(boolean includePackingList) {
 		this.includePackingList = includePackingList;
+	}
+	
+	public boolean isPartialPreparation() {
+		return partialPreparation;
+	}
+	
+	public void setPartialPreparation(boolean partialPreparation) {
+		this.partialPreparation = partialPreparation;
 	}
 	
 	public Carrier getCarrier() {
@@ -1230,6 +1242,30 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		}
 	}
 	
+	public SerializableListDataModel getPrepareSaleModel() {
+		if(prepareSaleModel == null){
+			Sales sales = (Sales) this.getTo();
+			
+			prepareSaleModel = new SerializableListDataModel(getDetailList(sales));
+		}
+		return prepareSaleModel;
+	}
+	
+	@Transient
+	public List<ITransferObject> getDetailList(Sales sales) {
+		try {
+			System.out.println(IEntityAlias.SALES_DETAIL_SALES_ID);
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			return salesDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining salesDetail list", e);
+		}
+		return null;
+	}
+	
+	
 	public void onPrepareSale(ActionEvent event) {
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -1307,8 +1343,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		List<CarrierPacking> packingListList = 
 			AON.getCarrierPackingList(new Domain().setId(to.getDomain()).setName(domainName),
 				login, f -> f.getDomainProperty().eq(to.getDomain())
-				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value())
-				.and(f.getCarrierProperty().eq(getCarrier().getId())))
+				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value()))
+						
+//				.and(f.getCarrierProperty().eq(getCarrier().getId()))
 			);
 		LinkedList<SelectItem> list = new LinkedList<>();
 		for (CarrierPacking cp : packingListList) {

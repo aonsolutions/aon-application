@@ -102,7 +102,7 @@
 										</aon:selectOneMenu>
 										
 									</aon:panelGrid>
-									<!-- <aon:div>
+									<aon:div>
 										<aon:selectBooleanCheckbox id="Sales_includePackingList" styleClass="aon-margin-left"
 											value="#{sales.includePackingList}" 
 											reRender="packingListDiv" immediate="true"
@@ -118,13 +118,14 @@
 											value="Packing List" />
 										<aon:div>
 											<aon:selectOneMenu id="Sales_PackingList" 
+												disabled="#{sales.newPackingList}"
 												value="#{sales.packingList}">
 												<f:selectItem itemLabel=" - " itemValue="#{null}" />
 												<f:selectItems value="#{sales.packingLists}" />
 											</aon:selectOneMenu>
 											
 											<aon:selectBooleanCheckbox id="Sales_newPackingList" styleClass="aon-margin-left"
-												value="#{sales.newPackingList}" />
+												value="#{sales.newPackingList}" reRender="packingListDiv" immediate="true" />
 											<aon:outputLabel for="Sales_newPackingList" styleClass="aon-italic"
 												value="Crear Nuevo Packing List" />
 										</aon:div>
@@ -132,27 +133,87 @@
 										<aon:outputLabel for="Sales_numberPlate"
 											value="Matricula" />
 										<aon:inputText id="Sales_numberPlate"  
+											disabled="#{!sales.newPackingList}"
 											size="20" maxlength="128"
 											value="#{sales.numberPlate}" />
 											
 										<aon:outputLabel for="Sales_driverName"
 											value="Nombre Conductor" />
 										<aon:inputText id="Sales_driverName"  
+											disabled="#{!sales.newPackingList}"
 											size="20" maxlength="128"
 											value="#{sales.driverName}" />
 											
 										<aon:outputLabel for="Sales_driverDocument"
 											value="Documento Conductor" />
 										<aon:inputText id="Sales_driverDocument"  
+											disabled="#{!sales.newPackingList}"
 											size="20" maxlength="128"
 											value="#{sales.driverDocument}" />
 									</aon:panelGrid>	
 									</aon:if>
-									</aon:div> -->
+									</aon:div>
 									
 									<!-- Seleccionar detalles ... -->
 									
+									<aon:div>
+										<aon:selectBooleanCheckbox id="Sales_partialPreparation" styleClass="aon-margin-left"
+											value="#{sales.partialPreparation}" 
+											reRender="partialPreparationDiv" immediate="true"
+											/>
+										<aon:outputLabel for="Sales_partialPreparation" styleClass="aon-italic"
+											value="Preparación Parcial" />
+									</aon:div>					
 									
+									<aon:div id="partialPreparationDiv"  styleClass="aon-margin-top">
+									
+										<aon:dataTable id="linesDataTable" var="to" rows="10" 
+											value="#{sales.prepareSaleModel}"
+											rendered="#{sales.partialPreparation}">
+	
+											<aon:column styleClass="aon-editDataTable-iconColumn">
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:div>
+													<aon:selectBooleanCheckbox id="prepareSaleDetail" styleClass="aon-margin-left"
+														value="&#160;"
+														immediate="true"
+													/>
+												</aon:div>
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+												<f:facet name="header">
+													<aon:outputLabel value="#{bundle.aon_line}" />
+												</f:facet>
+												<aon:outputText value="#{to.line}" />
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+												<f:facet name="header">
+													<aon:outputLabel value="#{bundle.aon_product}" />
+												</f:facet>
+												<aon:div id="customerName">
+													<aon:outputText value="#{to.description}" />
+												</aon:div>
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+												<f:facet name="header">
+													<aon:outputLabel value="#{bundle.aon_quantity}" />
+												</f:facet>
+												<aon:outputText value="#{to.quantity}">
+													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+												</aon:outputText>
+											</aon:column>
+											
+										</aon:dataTable>
+										
+<!-- 										<aon:dataScroller for="linesDataTable" showNote="true" pageSize="10"
+											rowCount="#{sales.elaborationProcess.model.rowCount}" /> -->
+									
+									</aon:div> 
 									
 								</aon:div>
 							</aon:div>
