@@ -1111,9 +1111,9 @@ public class SalaryDAO {
 
 	private static final SalaryPropertiesDAO SALARY_PROPERTIES = new SalaryPropertiesDAO();
 
-	private static class SalaryPropertiesDAO implements SalaryProperties {
+	public static class SalaryPropertiesDAO implements SalaryProperties {
 
-		private Condition[] getConditions(SalaryFilter filter) {
+		protected Condition[] getConditions(SalaryFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
@@ -1185,7 +1185,6 @@ public class SalaryDAO {
 		public Property<Date> getIssueDateProperty() {
 			return new FilterDAO.DatePropertyDAO(SALARY.ISSUE_DATE);
 		}
-		
 	}
 
 	private static class BackIterator<T> implements Iterator<T> {

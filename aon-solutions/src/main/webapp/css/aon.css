@@ -11,6 +11,7 @@
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
   --aonGray: gray;
+  --aonHeaderButtonColor: rgb(95, 99, 104);
   --aonLightGray: #f1f1f1;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
@@ -326,10 +327,14 @@
 }
 
 .aonLogo {
-  max-width: 200px;
-  max-height: 60px;
+  width: 200px;
+  height: 48px;
   padding: 5px;
   cursor: pointer;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("../assets/aon-black-logo.svg");
 }
 
 .aonParentLogo {
@@ -1763,10 +1768,15 @@ label.rating:hover {
 }
 
 .aonNewLogo{
-  max-width: 9rem;
-  padding: 5px;
+  width: 132px;
+  height: 32px;
   cursor: pointer;
+  padding: 0px 0px 0px 68px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../assets/aon-black-logo.svg");
 }
+
 
 .aonHeaderButtons{
   display: flex;
@@ -2120,3 +2130,45 @@ label.rating:hover {
 	color: var(--aonWarning);
 	
 }
+
+.aonLoginLogo{
+  width: 132px;
+  height: 32px;
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../assets/aon-logo.svg");
+}
+
+.aonLink:after {
+	content: 'aonSolutions';
+}
+
+.aonTrademark:after {
+	content: 'es una marca registrada de AON SOLUTIONS, S.L.';
+}
+
+.aonWeekSchedule:after{
+	content: 'Lunes a jueves de 8:00 a 15:00';
+}
+
+.aonWeekFridaySchedule:after{
+	content: 'Viernes de 8:00 a 14:00';
+}
+
+.aonSupportTelephone:after {
+	content: '(+34) 900 831 205';	
+}
+
+.aonSupportUsersEmail:after {
+	content: 'soporte@aonSolutions.es';	
+}
+
+.aonSupportSalesEmail:after {
+	content: 'comercial@aonSolutions.es';	
+}
+
+.aonSupportAdminEmail:after {
+	content: 'administración@aonSolutions.es';	
+}
+

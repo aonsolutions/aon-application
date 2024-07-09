@@ -1,5 +1,10 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
+import static solutions.aon.seg.social.toolkit.Toolkit.getDateArray;
+import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +41,20 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSpan;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -74,110 +93,107 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 * @return a PDF file
 	 * @throws SegSocialException
 	 */
+	public static byte[] getIDCPOST (final byte[] certificateData, final String certificatePassword,
+			final String certificateType, String regime,String ccc, String affiliationNumber, Date date) throws SegSocialException {
+		return getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regime, ccc, affiliationNumber, date);
+	}
 	public static byte[] getIDCPOST (final InputStream certificateInputStream,final String certificatePassword,
-		final String certificateType, String affiliationNumber, String regime,String ccc, Date date) throws SegSocialException {
+		final String certificateType, String regime,String ccc, String affiliationNumber, Date date) throws SegSocialException {
 		
 		Date today = new Date(); 
 		date = date.after(today) ? today : date;
 		
-		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
-		
-		String link = "";
-		String sessionId = "";
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			
+			webClient.getOptions().setUseInsecureSSL(true);
 			
-			try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {				
-				
-				String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
-				link = Toolkit.getLink(body);
-				sessionId = Toolkit.getSessionId(body);
-				
-				HttpPost httpPost = new HttpPost(link);
-				
-				String txtSDFTESNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(0, 2) : "";
-				String txtSDFNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(2) : "";
+			HtmlPage document = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
 
-				String txtSDFTESCTA = ccc.length() > 2 ? ccc.substring(0, 2) : "";
-				String txtSDFCUENTA = ccc.length() > 2 ? ccc.substring(2) : "";
+			// Número de Afiliación
+			HtmlInput nssInput = document.querySelector("#SDFTESNAF");
+			HtmlInput nssInput1 = document.querySelector("#SDFNAF");
+
+			nssInput.setValue(affiliationNumber.substring(0, 2));
+			nssInput.setValueAttribute(affiliationNumber.substring(0, 2));
+			nssInput1.setValue(affiliationNumber.substring(2));
+			nssInput1.setValueAttribute(affiliationNumber.substring(2));
+			
+			// Régimen / CCC
+			HtmlInput regimeInput = document.querySelector("#SDFREGCTA");
+			HtmlInput cccCodeInput = document.querySelector("#SDFTESCTA");
+			HtmlInput cccInput = document.querySelector("#SDFCUENTA");
+
+			regimeInput.setValue(regime);
+			regimeInput.setValueAttribute(regime);
+			cccCodeInput.setValue(ccc.substring(0, 2));
+			cccCodeInput.setValueAttribute(ccc.substring(0, 2));
+			cccInput.setValue(ccc.substring(2));
+			cccInput.setValueAttribute(ccc.substring(2));
+			
+			// Fecha
+			Integer[] fromArray = getDateArray(date);
+			
+			HtmlInput fromDayInput = document.querySelector("#SDFDIA");
+			HtmlInput fromMonthInput = document.querySelector("#SDFMES");
+			HtmlInput fromYearInput = document.querySelector("#SDFAO");
+			
+			fromDayInput.setValue(String.valueOf(fromArray[0]));
+			fromDayInput.setValueAttribute(String.valueOf(fromArray[0]));
+			
+			fromMonthInput.setValue(String.valueOf(fromArray[1]));
+			fromMonthInput.setValueAttribute(String.valueOf(fromArray[1]));
+			
+			fromYearInput.setValue(String.valueOf(fromArray[2]));
+			fromYearInput.setValueAttribute(String.valueOf(fromArray[2]));
+			
+			// Tipo impresion
+			HtmlSelect onlineSelect = document.querySelector("#ListaTipoImpresion");
+			onlineSelect.getOption(1).setSelected(true);
+
+			HtmlSubmitInput continueButton = document.querySelector("#Sub2207601004");
+
+			// Check if we have more than one CCC for this person
+			try {
+				document = continueButton.click();
 				
-				List<NameValuePair> params = new ArrayList<>();
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESNAF, txtSDFTESNAF));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFNAF, txtSDFNAF));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFREGCTA, regime));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESCTA, txtSDFTESCTA));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFCUENTA, txtSDFCUENTA));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFDIA, String.format("%td", date)));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFMES, String.format("%tm", date)));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFAO, String.format("%tY", date)));
-				params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
-				params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
-				params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM3700"));
-				params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-				params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, IServicioRedConstants.SUB2207601004));
-				params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
-				params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
+				// Check table
+				HtmlTable table = document.querySelector("#Sub0900112078");
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
-				
-				body = Toolkit.getBodyPOST(httpClient, httpPost);
-				ServicioREDRegeXML.checkOldSsError(body);
-				link = Toolkit.getLink(body);
-				sessionId = Toolkit.getSessionId(body);
-				
-				httpPost = new HttpPost(link);
-				
-				params = new ArrayList<>();
-				params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
-				params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM3701"));
-				params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-				params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, "tbl_cbo_Sub0900112078_0_0"));
-				params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
-				params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "EN"));
-				params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
-				params.add(new BasicNameValuePair("tbl_cbo_Sub0900112078_0_0", "Select"));
-				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
-				
-				body = Toolkit.getBodyPOST(httpClient, httpPost);
-				
-				String cont = Toolkit.getElementByAttributeFirstTag(body, "value", "Continuar");
-				if (cont != null) {
-					link = Toolkit.getLink(body);
+				for(int row=1; row < table.getRowCount(); row++) {
+					HtmlTableCell startDateCell = table.getCellAt(row, 1);
+					HtmlTableCell endDateCell = table.getCellAt(row, 2);
 					
-					httpPost = new HttpPost(link);
+					String startDate = startDateCell.getTextContent().trim();
+					String endDate = endDateCell.getTextContent().trim();
 					
-					params = new ArrayList<>();
-					params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, "SGIRED"));
-					params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATTMBPER"));
-					params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-					params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, "Archivo_SalirALTF4_101"));
-					params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
-					params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, "0"));
-					params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Atr37"));
-					params.add(new BasicNameValuePair("btn_Sub2203901009", "Continuar"));
-					
-					httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
-					
-					body = Toolkit.getBodyPOST(httpClient, httpPost);
-					
+					if(startDate.length() > 0 && endDate.length() == 0) {
+						HtmlSpan span = (HtmlSpan) startDateCell.getChildNodes().get(1);
+						HtmlLabel label = (HtmlLabel) span.getChildNodes().get(1);
+						return getPDFDocument(label);
+					}
 				}
-				
-				httpPost = Toolkit.reportGenerationForm(body);
-				
-				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
-					Toolkit.checkResponseStatus(resp);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					resp.getEntity().writeTo(baos);
-					return baos.toByteArray();
-				}
-				
-				
-				
-			} catch (IOException e) {
-				throw new InvalidCertificateException();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		
+			// DESCOMENTAR LINEAS
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+	
+	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
+		try {
+			UnexpectedPage docPage = linkElement.dblClick();
+			return docPage.getWebResponse().getContentAsStream().readAllBytes();
+		} catch (IOException e) {
+			// Exception
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
 	
 	/**
 	 * INFORME DATOS COTIZACION/PERIODO LIQUIDACION-CCC
@@ -1105,9 +1121,14 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 * @return A collection with the IDCs
 	 * @throws SegSocialException
 	 */
+	public static Collection<Idc> getIDCDatesPOST(final byte[] certificateData,
+			final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String affiliationNumber) throws SegSocialException {
+		return getIDCDatesPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regime, ccc, affiliationNumber);
+	}
 	public static Collection<Idc> getIDCDatesPOST(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String ccc) throws SegSocialException {
+			final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String affiliationNumber) throws SegSocialException {
 		SSLContext sslContext = null;
 		try {
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
@@ -1117,7 +1138,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 		String link = "";
 		String sessionId = "";
 		
-		Set<Idc> collects = new HashSet<>();
+		List<Idc> collects = new ArrayList<>();
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
@@ -1185,7 +1206,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			e.printStackTrace();
 			throw new InvalidCertificateException();
 		}
-		
+		Collections.sort(collects, (i1,i2) -> i1.getFecha().compareTo(i2.getFecha()));
 		return collects;
 	}
 	
@@ -1302,7 +1323,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			final String regime, final String ccc) throws SegSocialException {
 		
 		try {
-				return getIDCDatesPOST(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc)
+				return getIDCDatesPOST(certificateInputStream, certificatePassword, certificateType, regime, ccc, affiliationNumber)
 					.stream()
 					.filter(idc -> idc.getDescripcion().equals("ALTA"))
 					.map(Idc::getFecha)

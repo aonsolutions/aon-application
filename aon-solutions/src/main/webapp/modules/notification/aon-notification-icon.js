@@ -153,7 +153,8 @@ export class AonNotificationIcon extends AonElement {
 				}
 			} 
 		} catch(e){
-            console.log(e);
+            // console.log("e");
+            console.log("Firebase not supported this browser. Probably no https, or no localhost ...) ");
         }
   	}
       

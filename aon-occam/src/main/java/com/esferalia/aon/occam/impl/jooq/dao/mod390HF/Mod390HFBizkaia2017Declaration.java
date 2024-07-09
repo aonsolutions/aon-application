@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -745,22 +746,21 @@ class Mod390HFBizkaia2017Declaration extends Mod390HFBizkaiaDeclaration {
 	public void specificInitialization(AONContext ctx, Mod390HF mod) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, fromDate, toDate, false);
+		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
+				.collect(Collectors.toCollection(LinkedList::new));
 		int e = 0;
 		int r = 0;
 		for (InvoiceSeries series : seriesList) {
-			if (series.isSeriesInfo()) {
-				Mod390Key[][] keys = getSeriresKeys(series);
-				int idx = series.isSales()?e:r;
-				if (idx < 5) {
-					mod.putDescription(keys[idx][0], series.getDescription());
-					mod.putDescription(keys[idx][1], AonNumberUtils.toString( series.getFromNumber()));
-					mod.putDescription(keys[idx][2], AonNumberUtils.toString( series.getToNumber()));
-					if (series.isSales()) {
-						++e;
-					} else {
-						++r;
-					}
+			Mod390Key[][] keys = getSeriresKeys(series);
+			int idx = series.isSales()?e:r;
+			if (idx < 5) {
+				mod.putDescription(keys[idx][0], series.getDescription());
+				mod.putDescription(keys[idx][1], AonNumberUtils.toString( series.getFromNumber()));
+				mod.putDescription(keys[idx][2], AonNumberUtils.toString( series.getToNumber()));
+				if (series.isSales()) {
+					++e;
+				} else {
+					++r;
 				}
 			}
 		}

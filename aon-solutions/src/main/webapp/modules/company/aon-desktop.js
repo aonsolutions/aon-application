@@ -1006,7 +1006,7 @@ export class AonDesktop extends AonElement {
 		if(dayDiff > 30){
 			setTimeout(() => {
 				aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
-			}, 100);
+			}, 500);
 		}
 	}
 

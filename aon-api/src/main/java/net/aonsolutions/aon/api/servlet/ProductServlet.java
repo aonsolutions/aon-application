@@ -359,7 +359,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	private JSONArray getProductsNewPortal(AonApiData api) {
 		Integer page = api.getData().optInt("page");
 	    Integer perPage = api.getData().optInt("per_page");
-	    if(page != 0 && perPage != 0) {
+	    if(page == 0 && perPage == 0) {
 	    	page = 1;
 	    	perPage = 20;
 	    }
@@ -413,7 +413,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			}
 		}
 		if(order == null) {
-			order = o.getNamePropertyName().orderBy().ASC();
+			order = o.getNamePropertyName().orderBy().ASC().and(o.getIdPropertyName().orderBy().DESC());
+		} else {
+			order = o.getIdPropertyName().orderBy().DESC();
 		}
 		return order;
 	}

@@ -15,6 +15,9 @@ import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.impl.DSL;
@@ -54,10 +57,21 @@ public class CreditorSupplierDAO {
 	private static final Field<String> type = DSL.field(DSL.name("typeRegistry"), String.class);
 	
 	public static long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {
-		return prepareQueryCustomer(ctx, filter, globalFilter)
-			.fetch()
-			.stream()
-			.count();
+		
+		SelectJoinStep<Record1<Integer>> i = ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER).leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(CUSTOMER.REGISTRY))
+			    .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(CUSTOMER.REGISTRY).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)));
+		if(globalFilter.isEmpty()) {
+			i.where(CUSTOMER_PROPERTIES.getConditions(filter));
+		}else {
+			i.leftJoin(RMEDIA).on(CUSTOMER.REGISTRY.eq(RMEDIA.REGISTRY))
+			.leftJoin(RADDRESS).on(CUSTOMER.REGISTRY.eq(RADDRESS.REGISTRY))
+			.where(CUSTOMER_PROPERTIES.getConditions(filter))
+			.or(CUSTOMER.DOMAIN.eq(ctx.getDomainId()).and(RMEDIA.MEDIA.eq((byte) 2).or(RMEDIA.MEDIA.isNull()).or(RMEDIA.MEDIA.eq((byte) 1))).and(RMEDIA.VALUE.like("%" + globalFilter + "%"))
+			.or(CUSTOMER.DOMAIN.eq(ctx.getDomainId()).and(RADDRESS.ADDRESS.like("%" + globalFilter + "%"))))
+			;
+		}
+		
+			return i.fetch().stream().count();	
 	}
 	
 	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter, int offset, int limit, String globalFilter, CustomerOrder order){
@@ -93,15 +107,31 @@ public class CreditorSupplierDAO {
 		}
 		return customers.groupBy(REGISTRY.ID);
 	}
-	
+
 	public static long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter) {
-		return ctx.getDslContext()
-			.select(DSL.asterisk())
-			.from(prepareQuery(ctx, filter, filter2, globalFilter).asTable(REGISTRY))
-			.groupBy(REGISTRY.ID)
-			.fetch()
-			.stream()
-			.count();
+	    SelectJoinStep<Record1<Integer>> creditors = ctx.getDslContext().select(CREDITOR.REGISTRY).from(CREDITOR);
+	    SelectJoinStep<Record1<Integer>> suppliers = ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER);
+
+	    if (globalFilter.isEmpty()) {
+	        creditors.where(CREDITOR_PROPERTIES.getConditions(filter));
+	        suppliers.where(SUPPLIER_PROPERTIES.getConditions(filter2));
+	    } else {
+	        creditors.leftJoin(RMEDIA).on(CREDITOR.REGISTRY.eq(RMEDIA.REGISTRY))
+	                .leftJoin(RADDRESS).on(CREDITOR.REGISTRY.eq(RADDRESS.REGISTRY))
+	                .where(CREDITOR_PROPERTIES.getConditions(filter))
+	                        .and(RMEDIA.MEDIA.in((byte) 1, (byte) 2).and(RMEDIA.VALUE.like("%" + globalFilter + "%"))
+	                        .or(RADDRESS.ADDRESS.like("%" + globalFilter + "%")))
+	                .groupBy(CREDITOR.REGISTRY);
+	        
+	        suppliers.leftJoin(RMEDIA).on(SUPPLIER.REGISTRY.eq(RMEDIA.REGISTRY))
+	                .leftJoin(RADDRESS).on(SUPPLIER.REGISTRY.eq(RADDRESS.REGISTRY))
+	                .where(SUPPLIER_PROPERTIES.getConditions(filter2))
+	                        .and(RMEDIA.MEDIA.in((byte) 1, (byte) 2).and(RMEDIA.VALUE.like("%" + globalFilter + "%"))
+	                        .or(RADDRESS.ADDRESS.like("%" + globalFilter + "%")))
+	                .groupBy(SUPPLIER.REGISTRY);
+	    }
+	    	    	    
+	   return creditors.union(suppliers).fetch().stream().count();
 	}
 	
 	public static Stream<CreditorSupplier> getSupplierCreditorStream(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, int offset, int limit, String globalFilter, SupplierCreditorOrder order){

@@ -131,7 +131,6 @@ export class AonInvoiceList extends AonElement {
 				invoice.referenceTable = invoice.reference;
 				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
 				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-			invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 				invoice.icons = this.buildRowIcons(invoice);
 				aonInvoiceTable.addRow(invoice, () => {
 					getInvofoxDocument(invoice.id).then( doc => {
@@ -150,9 +149,8 @@ export class AonInvoiceList extends AonElement {
 				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
 					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
 				} 
-
 				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
-					invoices = invoices.filter(f => f.type === this.getFilter().type);
+					invoices = invoices.filter(f => f.type.toLowerCase() === this.getFilter().type.toLowerCase());
 				}
 				invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -288,23 +286,23 @@ export class AonInvoiceList extends AonElement {
 		toolbar.addSeparator();
 
 		if(this.getFilter().status === 'inbox') {
-			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
-			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
-			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
-			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'accounting'){
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
-			if(this.isBeta()) {
-				aonInvoice.addToolbarOption2(ACTION.DELETE_INVOICES, () => this.nullInvoices());
-			}
+			//if(this.isBeta()) {
+			//	aonInvoice.addToolbarOption2(ACTION.DELETE_INVOICES, () => this.nullInvoices());
+			//}
 		}
 	}
 
@@ -550,9 +548,10 @@ export class AonInvoiceList extends AonElement {
 	    	  actions = [download, deleteInvoice];
 	    	}
 		} else {
-			actions = this.isBeta() 
-				? [deleteTBAI, send, download]
-				: [send, download];
+			actions = [send, download];
+			//actions = this.isBeta() 
+			//	? [deleteTBAI, send, download]
+			//	: [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);

@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -20,10 +20,12 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionValue;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -1241,6 +1243,34 @@ public class AonFaker {
 				.setMedias(medias)
 				.setBanks(new LinkedList<>())
 				.setRecordDatas(new LinkedList<>());
+	}
+	
+	public static Series getSeries() {
+		return new Series()
+			.setId( AonRandom.number( 20, 10, 99999 ) )
+			.setDomain( AonRandom.getInt( 10, 99999 ) )
+			.setDescription( AonRandom.name( 10, 30 )) 
+			.setScope( AonRandom.number( 20, 10, 99999 ) ) 
+			.setCode( AonRandom.name( 10, 5 ))
+			.setActive(faker.random().nextBoolean() )
+			.setTas(faker.random().nextBoolean() )
+			.setOffer(faker.random().nextBoolean() )
+			.setSales(faker.random().nextBoolean() )
+			.setDelivery(faker.random().nextBoolean() )
+			.setInvoice(faker.random().nextBoolean() )
+			.setRectification(faker.random().nextBoolean() )
+			.setPos( faker.random().nextBoolean() )
+			.setSecurityLevel( AonRandom.getRandomSecurityLevel() );
+	}
+	
+	public static InvoiceSeries getInvoiceSeries() {
+		return new InvoiceSeries()
+			.setDescription( AonRandom.name( 10, 30 )) 
+			.setSales(faker.random().nextBoolean() )
+			.setFromNumber( AonRandom.getInt( 0, 99999 ) )
+			.setToNumber( AonRandom.getInt( 0, 99999 ) )
+			.setCount( AonRandom.getInt( 0, 99999 ) )
+			;
 	}
 }
 

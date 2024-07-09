@@ -98,12 +98,12 @@ public class ProductDAO {
 	
 	public static long getProductCount(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext()
-				.select()
-				.from(PRODUCT)
-				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.fetch()
-				.stream()
-				.count();
+		.select(PRODUCT.ID)
+		.from(PRODUCT)
+		.where(PRODUCT_PROPERTIES.getConditions(filter))
+		.fetch()
+		.stream()
+		.count();
 	}
 	
 	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage, ProductOrder order){	

@@ -33,14 +33,17 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -65,6 +68,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
@@ -185,6 +189,13 @@ public class CommonImpl implements ICommon {
 	public PayrollWorkplace savePayrollWorkplace(AONContext ctx, PayrollWorkplace payrollWorkplace) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> PayrollWorkplaceDAO.save(ctx, payrollWorkplace));
+	}
+	
+
+	@Override
+	public PayrollWorkplace getPayrollWorkpalce(CloseableAONContext ctx, PayrollWorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PayrollWorkplaceDAO.get(ctx, filter));
 	}
 	
 	
@@ -578,4 +589,17 @@ public class CommonImpl implements ICommon {
 		CostCenterDAO.delete(ctx, id));
 	}
 	
+	// -------------------- Series
+
+	@Override
+	public LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
+		return ctx.getDslContext().transactionResult(configuration ->
+				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
+	}
+	
+	@Override
+	public Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+				SeriesDAO.getSeries(ctx, filter));
+	}
 }

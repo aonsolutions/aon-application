@@ -20,6 +20,8 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
@@ -65,6 +67,17 @@ public class AttachPropertiesDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DESCRIPTION);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.TYPE);}
 		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<Date>(RATTACH.ATTACH_DATE);}
+		@Override public Property<String> getAttachDateStringProperty() {return new FilterDAO.PropertyDAO<>(
+		        DSL.concat(
+		                DSL.splitPart(RATTACH.ATTACH_DATE.cast(SQLDataType.VARCHAR), "-", 3),
+		                DSL.val("/"),
+		                DSL.splitPart(RATTACH.ATTACH_DATE.cast(SQLDataType.VARCHAR), "-", 2),
+		                DSL.val("/"),
+		                DSL.splitPart(RATTACH.ATTACH_DATE.cast(SQLDataType.VARCHAR), "-", 1)
+		              )
+		            );
+				
+				}
 		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.CATEGORY);}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.CREATION_USER);}
@@ -87,6 +100,9 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.TAG);}
 
 		@Override public Property<Integer> getContractProperty() {return null;}
+
+		@Override
+		public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DESCRIPTION);}
 	}
 	
 	protected static class ContractAttachPropertiesDAO implements AttachProperties {
@@ -124,6 +140,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class IattachPropertiesDAO implements AttachProperties {
@@ -161,6 +184,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class InvoiceAttachPropertiesDAO implements AttachProperties {
@@ -199,6 +229,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class OfferAttachPropertiesDAO implements AttachProperties {
@@ -236,6 +273,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class PayrollAttachPropertiesDAO implements AttachProperties {
@@ -273,6 +317,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class ProjectAttachPropertiesDAO implements AttachProperties {
@@ -312,6 +363,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_USER);}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
 	protected static class SepeAttachPropertiesDAO implements AttachProperties {
@@ -349,6 +407,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.SOURCE_TYPE);}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class DataAttachPropertiesDAO implements AttachProperties {
@@ -386,6 +451,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DESCRIPTION);}
 		@Override public Property<Integer> getTagProperty() {return null;}
 		@Override public Property<Integer> getContractProperty() {return null;}
+		@Override public Property<String> getAttachDateStringProperty(){return null;}
+
+		@Override
+		public Property<String> getNameProperty() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	protected static class RattachTagPropertiesDAO implements RattachTagProperties {

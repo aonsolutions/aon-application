@@ -6,27 +6,23 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.JSON;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
-import org.jooq.tools.json.JSONValue;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.RawdocPropertyOrd
 import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
@@ -64,7 +61,7 @@ public class RawdocDAO {
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
-	private static final RawdocPropertyOrdersDAO RAWDOC_PROPERTY_ORDERS = new RawdocPropertyOrdersDAO();
+	private static final RawdocPropertyOrdersDAO RAWDOC_PROPERTY_ORDERS = new RawdocPropertyOrdersDAO();	
 	
 	private static class RawdocPropertiesDAO implements RawdocProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RawdocFilter filter) {
@@ -87,22 +84,11 @@ public class RawdocDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.MODIFICATION_USER);}
-		@Override public Property<String> getReferenceCodeProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.reference"));}
-		@Override public Property<String> getJsonNameProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.name"));}
-		@Override public Property<String> getJsonTotalProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.total"));}
-		@Override public Property<String> getJsonDateProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue((Field) RAWDOC.JSON.cast(SQLDataType.JSON), "$.date"));}
-		
-		
-		public Integer getPage(RawdocFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.getPage();
-		}
-
-		
-		public Integer getPerPage(RawdocFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.getPage();
-		}
+		@Override public Property<String> getReferenceCodeProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.reference").cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getJsonNameProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.name").cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getJsonTotalProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.total").cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getJsonDateProperty(){return new FilterDAO.PropertyDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.date").cast(SQLDataType.VARCHAR));}
+		@Override public Property<java.util.Date> getDateProperty(){return new FilterDAO.DatePropertyDAO(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.date").cast(SQLDataType.DATE));}
 	}
 	
 	private static class RawdocFiller  implements Function<Record,Rawdoc> {
@@ -194,15 +180,27 @@ public class RawdocDAO {
 	}
 	
 	public static Stream<Rawdoc> getRawdocNewPortal(AONContext ctx , RawdocFilter filter , Integer page, Integer perPage, boolean ticket, RawdocOrder order){
-		System.out.println(prepareQuery(ctx, filter, ticket).orderBy(RAWDOC_PROPERTY_ORDERS.getOrders(order)).limit(perPage).getSQL());
-		Collection<SortField<?>> collection = RAWDOC_PROPERTY_ORDERS.getOrders(order);
+		int limit = perPage != null ? perPage : 10;
+		int offset = page != null && perPage != null ? perPage * (page -1) : 0;
 		return prepareQuery(ctx, filter, ticket)
 				.orderBy(RAWDOC_PROPERTY_ORDERS.getOrders(order))
-				.limit(perPage)
-				.offset(perPage * (page -1)).
-				fetch().
-				stream().
-				map(new RawdocFiller());
+				.limit(offset, limit)
+				.fetch()
+				.stream()
+				.map(new RawdocFiller());
+	}
+	
+	public static Rawdoc getRawdocById(AONContext ctx, Integer id) {
+		return ctx.getDslContext()
+				.select()
+				.from(RAWDOC)
+				.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
+				.and(RAWDOC.ID.eq(id))
+				.fetch()
+				.stream()
+				.map(new RawdocFiller())
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public static long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {
@@ -397,19 +395,29 @@ public class RawdocDAO {
 		RawdocInvoiceCounter counter = new RawdocInvoiceCounter();
 		
 		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
-		
-		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, COUNT)
+		Field<Boolean> ticket = DSL.decode()
+			.when(DSL.position(RAWDOC.JSON,"\"TICKET\"").greaterThan(0), true)
+			.otherwise( false);
+				
+		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, ticket, COUNT)
 		.from(RAWDOC)
 		.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
-		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE)
+		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE, ticket)
 		.fetch().stream().forEach(r -> {
+			boolean isTicket = r.getValue(ticket);
 			RawdocStatus status = RawdocStatus.safeValueOf(r.getValue(RAWDOC.STATUS));
 			RawdocType type = RawdocType.safeValueOf(r.getValue(RAWDOC.TYPE));
+			TediInvoiceType tediType = null;
+			if ( type == RawdocType.OUTPUT) {
+				tediType = TediInvoiceType.EMITIDA;
+			} else {
+				tediType = isTicket?TediInvoiceType.TICKET: TediInvoiceType.RECIBIDA;
+			}
 			Integer count = r.getValue(COUNT);
 			counter.getMap().computeIfAbsent(status, k -> new RawdocInvoiceCounterDetail());
 			counter.getMap().get(status).addCount(count);
 			if(RawdocStatus.INBOX.equals(status)) {
-				counter.getMap().get(status).getMap().put(type, count);
+				counter.getMap().get(status).getMap().put(tediType, count);
 			}
 		});
 		

@@ -3,6 +3,9 @@ package net.aonsolutions.aon.api.servlet.documental;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -27,6 +30,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.google.api.services.calendar.model.Calendar;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -250,6 +254,19 @@ public class DocumentalServlet extends AonApiHttpServlet{
 
 		if(api.getData().opt("per_page") != null){
 			filter.perPage(api.getData().optInt("per_page"));
+		}
+		
+//		if(api.getData().optString("name") != null) {
+//			filter = filter.and(f.getNameProperty().like("%" + api.getData().optString("name") + "%"));
+//		}
+//		
+//		if (api.getData().optString("date") != null) {
+//		 filter = filter.and(f.getAttachDateStringProperty().like("%" + api.getData().optString("date")+"%"));
+//		}
+
+		if(api.getData().optString("global") != null) {
+			filter = filter.and(f.getNameProperty().like("%" + api.getData().optString("global") + "%")
+					.or(f.getAttachDateStringProperty().like("%" + api.getData().optString("global")+"%")));
 		}
 		
 		return filter;

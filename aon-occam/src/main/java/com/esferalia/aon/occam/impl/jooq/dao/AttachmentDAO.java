@@ -143,6 +143,7 @@ public class AttachmentDAO {
 	}
 	
 	private static SelectConditionStep<Record> selectRegistryAttach(AONContext ctx, AttachFilter filter, boolean withData) {
+		
 		SelectSelectStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD)
 				.select(DOMAIN.fields())
 				.select(CATEGORY.fields())
@@ -158,11 +159,11 @@ public class AttachmentDAO {
 	}
 	
 	
-	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, boolean withData, Options...options){					;
+	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, boolean withData, Options...options){	
 		List<Attach> attachList;
 		if(options.length > 0 && options[0].isPagination()) {
 			attachList = selectRegistryAttach(ctx, filter, withData)
-					.orderBy(RATTACH.ATTACH_DATE.desc())
+					.orderBy(RATTACH.ATTACH_DATE.desc(), RATTACH.ID.desc())
 					.limit(options[0].getPerPage()).offset(options[0].getPerPage() * (options[0].getPage() -1))
 					.fetch().stream().map( r-> {
 						Attach attach =  RegistryAttachFiller.build(r);
@@ -172,14 +173,12 @@ public class AttachmentDAO {
 			
 		} else {
 			attachList = selectRegistryAttach(ctx, filter, withData) 
-			.orderBy(RATTACH.ATTACH_DATE.desc())
+			.orderBy(RATTACH.ATTACH_DATE.desc(),RATTACH.ID.desc())
 			.fetch().stream().map( r-> {
 				Attach attach =  RegistryAttachFiller.build(r);
 				attach.setTagList(getRegistryAttachTag(ctx, attach.getId()));
 				return attach;
 			}).toList();
-			
-	
 		}
 		return attachList.stream();
 	}

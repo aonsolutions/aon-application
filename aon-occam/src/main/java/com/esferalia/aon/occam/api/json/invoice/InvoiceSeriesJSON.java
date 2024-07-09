@@ -14,45 +14,48 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 public class InvoiceSeriesJSON {
 	
 	private InvoiceSeriesJSON() {
-	
 	}
 	
-	public static List<InvoiceSeries> fromJSON(JSONArray json) {
+	public static InvoiceSeries from(String json) {
+		return from(new JSONObject(json));
+	}
+
+	public static List<InvoiceSeries> from(JSONArray json) {
 		LinkedList<InvoiceSeries> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
-			list.add(fromJSON(json.getJSONObject(i)));
+			list.add(from(json.getJSONObject(i)));
 		}
  		return list;
 	}
 	
-	public static InvoiceSeries fromJSON(JSONObject json) {
+	public static InvoiceSeries from(JSONObject json) {
 		return new InvoiceSeries()
-				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-				.setCount(JsonUtils.getInt(json, IJsonNames.COUNT))
-				.setFromNumber(JsonUtils.getInt(json, IJsonNames.FROM_NUMBER))
-				.setToNumber(JsonUtils.getInt(json, IJsonNames.TO_NUMBER))
-				.setSales(JsonUtils.getboolean(json, IJsonNames.SALES))
-				.setSeriesInfo(JsonUtils.getboolean(json, IJsonNames.SERIES_INFO));
+			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+			.setCount(JsonUtils.getInt(json, IJsonNames.COUNT))
+			.setFromNumber(JsonUtils.getInt(json, IJsonNames.FROM_NUMBER))
+			.setToNumber(JsonUtils.getInt(json, IJsonNames.TO_NUMBER))
+			.setSales(JsonUtils.getboolean(json, IJsonNames.SALES))
+		;
 	}
 	
-	public static JSONArray toJSON(List<InvoiceSeries> list) {
-		return toJSON(list.stream());
+	public static JSONArray to(List<InvoiceSeries> list) {
+		return to(list.stream());
 	}
 	
-	public static JSONArray toJSON(Stream<InvoiceSeries> invoiceSeries) {
+	public static JSONArray to(Stream<InvoiceSeries> invoiceSeries) {
 		JSONArray array = new JSONArray();
-		invoiceSeries.forEach(series -> array.put(toJSON(series)));
+		invoiceSeries.forEach(series -> array.put(to(series)));
 		return array;
 	}
 	
-	public static JSONObject toJSON(InvoiceSeries series) {
+	public static JSONObject to(InvoiceSeries series) {
 		return new JSONObject()
-				.put(IJsonNames.DESCRIPTION, series.getDescription() != null ? series.getDescription() : "")
-				.put(IJsonNames.COUNT, series.getCount())
-				.put(IJsonNames.FROM_NUMBER, series.getFromNumber())
-				.put(IJsonNames.TO_NUMBER, series.getToNumber())
-				.put(IJsonNames.SALES, series.isSales())
-				.put(IJsonNames.SERIES_INFO, series.isSeriesInfo());
+			.putOpt(IJsonNames.DESCRIPTION, series.getDescription() )
+			.put(IJsonNames.COUNT, series.getCount())
+			.put(IJsonNames.FROM_NUMBER, series.getFromNumber())
+			.put(IJsonNames.TO_NUMBER, series.getToNumber())
+			.put(IJsonNames.SALES, series.isSales())
+			;
 	}
 
 }

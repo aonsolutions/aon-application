@@ -46,6 +46,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -411,7 +413,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			LOGGER.info("IDC-DATES END "+date);
 		}
 		
-		return ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+		return SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss, date);
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
@@ -567,26 +569,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String modCtz      = params.has("md_ctz") && !params.isNull("md_ctz") ? params.optString("md_ctz") : null; //para regime agrario
 		Boolean quoteMonth = params.optBoolean("quoteMonth");
 		Date   fra         = AonDateUtils.parse(params.optString("fecha"), FORMAT_DATE);
+		String workplaceName      = params.optString(IJsonNames.WORKPLACE);
 		
 		// Try to get enterprise agreement default
-		if(AonStringUtils.isBlank(convenio)) {
-			LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-			Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
-			
-			if(enterpriseAgreementOpt.isEmpty()) convenio = "60888888888888";
-			else {
-				try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
-					AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
-						.where(AGREEMENT.ID.eq(Integer.parseInt(enterpriseAgreementOpt.get().getExpression())))
-						.fetchOne();
-					
-					if(null == agreementRecord) convenio = "60888888888888";
-					else convenio = AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? "60888888888888" : agreementRecord.getSsNumber();  
-				} catch (Exception e) {
-					convenio = "60888888888888";
-				}
-			}
-		}
+		if(AonStringUtils.isBlank(convenio)) convenio = getDefaultAgreement(domain, user, workplaceName);
 
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(regime)
@@ -642,6 +628,49 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return new JSONObject().put(IJsonNames.FILE, base64);
 	}
 	
+	private String getDefaultAgreement(Domain domain, User user, String workplaceName) {
+		if(AonStringUtils.isNotBlank(workplaceName)) {
+			Workplace workplace = AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getGeozoneNameProperty().like(workplaceName)));
+			
+			if(null != workplace) {
+				PayrollWorkplace parollWorkplace = AON.getPayrollWorkpalce(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkplaceProperty().eq(workplace.getId())));
+			
+				if(null != parollWorkplace.getAgreement()) {
+					try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+						AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
+							.where(AGREEMENT.ID.eq(parollWorkplace.getAgreement()))
+							.fetchOne();
+						
+						if(null == agreementRecord) return getEnterpriseAgreement(domain, user);
+						else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? getEnterpriseAgreement(domain, user) : agreementRecord.getSsNumber();  
+					} catch (Exception e) {
+						return getEnterpriseAgreement(domain, user);
+					}
+				} else return getEnterpriseAgreement(domain, user);
+			} else return getEnterpriseAgreement(domain, user);
+			
+		} else return getEnterpriseAgreement(domain, user);
+	}
+	
+	private String getEnterpriseAgreement(Domain domain, User user) {
+		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
+		
+		if(enterpriseAgreementOpt.isEmpty()) return "60888888888888";
+		else {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+				AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
+					.where(AGREEMENT.ID.eq(Integer.parseInt(enterpriseAgreementOpt.get().getExpression())))
+					.fetchOne();
+				
+				if(null == agreementRecord) return "60888888888888";
+				else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? "60888888888888" : agreementRecord.getSsNumber();  
+			} catch (Exception e) {
+				return "60888888888888";
+			}
+		}
+	}
+
 	private JSONObject sendBaja(AonApiData api) throws Exception{
 		JSONObject params = api.getData(); 
 	    Domain domain     = api.getDomain();
@@ -744,8 +773,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		
-		byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-				nss, regime, ccc, date);
+		byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+				regime, ccc, nss, date);
 				
 		return EmployeeJSON.toJSON(EmployeeParse.IdcToEmployeeOccam(fileByte));
 //		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
@@ -895,7 +924,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				try {
 					Date now = new Date();
 					Date newDate = date.compareTo(now) > 0 ? now : date;
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
 					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -949,7 +978,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				try {
 					Date now = new Date();
 					Date newDate = date.compareTo(now) > 0 ? now : date;
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					byte[] fileByte = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
 					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);

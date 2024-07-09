@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
-import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -492,22 +490,6 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
-	public static List<InvoiceSeries> getSalesSeries(AONContext ctx) {
-		return ctx.getDslContext()
-			.select(INVOICE.SERIES, DSL.max(INVOICE.ISSUE_DATE), DSL.count(INVOICE.ID))
-			.from(INVOICE)
-			.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
-				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value())))
-			.groupBy(INVOICE.SERIES)
-			.orderBy(INVOICE.ISSUE_DATE)
-			.fetch().stream().map(r -> new InvoiceSeries()
-					.setSales(true)
-					.setSeriesInfo(false)
-					.setDescription(r.getValue(INVOICE.SERIES))
-					.setCount(r.getValue(DSL.count(INVOICE.ID))))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
 		return ctx.getDslContext().select().from(ACCOUNT)
 		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
@@ -643,6 +625,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setRemarks(r.getValue(INVOICE.REMARKS))
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
@@ -750,48 +733,6 @@ public class InvoiceDAO {
 				: insert(ctx, invoicingGroup) ;
 	}
 	
-	public static LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate){
-		Field<Integer> orderedType = getOrderedType();
-		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
-		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
-		AggregateFunction<Integer> records = DSL.count();
-		LinkedList<InvoiceSeries> list = new LinkedList<>(); 
-		ctx.getDslContext()
-		.select(orderedType,INVOICE.SERIES,min,max,records)
-		.from(INVOICE)
-		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
-		.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
-		.groupBy(orderedType,INVOICE.SERIES)
-		.fetch()
-		.stream()
-		.forEach( rec -> list.add(
-			new InvoiceSeries()
-				.setSales(rec.getValue(orderedType) == 1)
-				.setSeriesInfo(true)
-				.setDescription(rec.getValue(INVOICE.SERIES))
-				.setFromNumber(rec.getValue(min))
-				.setToNumber(rec.getValue(max))
-				.setCount(rec.getValue(records)))
-				);
-		AggregateFunction<Integer> count = DSL.count();
-		ctx.getDslContext()
-			.select(orderedType,INVOICE.TRANSACTION,count)
-			.from(INVOICE)
-			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
-			.groupBy(orderedType,INVOICE.TRANSACTION)
-			.fetch()
-			.stream()
-			.forEach( rec -> list.add(
-				new InvoiceSeries()
-					.setSales(rec.getValue(orderedType) == 1)
-					.setSeriesInfo(false)
-					.setDescription(InvoiceTransactionType.values()[rec.getValue(INVOICE.TRANSACTION)].getDescription())
-					.setFromNumber(rec.getValue(count)))
-					);
-		return list;
-	}
 	
 	private static class InvoiceDetailFiller extends Filler implements Function<Record, InvoiceDetail> {
 
@@ -1865,4 +1806,41 @@ public class InvoiceDAO {
 			.map( ItemFiller::build )
 			.findFirst();		
 	}
+	
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	
+	public static Stream<InvoiceSeries> getInvoiceSeries(AONContext ctx, int domain, Date from, Date to){
+		Field<Integer> orderedType = getOrderedType();
+		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
+		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
+		AggregateFunction<Integer> records = DSL.count();
+		AggregateFunction<java.sql.Date> maxDate = DSL.max(INVOICE.ISSUE_DATE);
+		Condition fromCondition = (from != null)
+			?INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(from))
+			:DSL.trueCondition();
+		Condition toCondition = (to != null) 
+			?INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(to))
+			:DSL.trueCondition();
+		
+		return ctx.getDslContext()
+			.select(orderedType,INVOICE.SERIES,min,max,records)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(domain))
+			.and( fromCondition )
+			.and( toCondition )
+			.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
+			.groupBy(orderedType,INVOICE.SERIES)
+			.orderBy(maxDate.desc())
+			.fetch()
+			.map(rec -> new InvoiceSeries()
+				.setSales(rec.getValue(orderedType) == 1)
+				.setDescription(rec.getValue(INVOICE.SERIES))
+				.setFromNumber(rec.getValue(min))
+				.setToNumber(rec.getValue(max))
+				.setCount(rec.getValue(records))
+			)
+			.stream();
+	}
+
 }

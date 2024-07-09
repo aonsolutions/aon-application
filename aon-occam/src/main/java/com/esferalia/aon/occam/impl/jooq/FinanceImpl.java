@@ -234,14 +234,15 @@ public class FinanceImpl implements IFinance {
 	
 	// ------------------------------------- INVOICE SERIES
 	@Override
-	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
-		return InvoiceDAO.getInvoiceSeries(ctx, from, to, taxDate);
+	public List<InvoiceSeries> getInvoiceSeries(AONContext ctx, int domain, Date from, Date to) {
+		return InvoiceDAO.getInvoiceSeries(ctx, domain, from, to)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override
-	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.getSalesSeries(ctx));
+	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx, int domain) {
+		return InvoiceDAO.getInvoiceSeries(ctx, domain, null, null)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	// ------------------------------------- FEE
@@ -588,6 +589,11 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<Rawdoc> getRawdocNewPortal(AONContext ctx, RawdocFilter filter , Integer page, Integer perPage , boolean ticket, RawdocOrder order){
 		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocNewPortal(ctx, filter , page, perPage ,ticket, order));
+	}
+	
+	@Override
+	public Rawdoc getRawdocByid(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration -> RawdocDAO.getRawdocById(ctx, id));
 	}
 	@Override
 	public long getRawdocCount(AONContext ctx , RawdocFilter filter , boolean ticket) {

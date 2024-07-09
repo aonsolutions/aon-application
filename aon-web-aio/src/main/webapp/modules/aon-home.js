@@ -72,6 +72,7 @@ export class AonHome extends AonElement {
 			let app = e.detail.app;
 			let sidenav = e.detail.sidenav; 
 			console.log(JSON.stringify(e.detail));
+			const appColor = app.newColor || app.color;
 			if ( !app.home ){
 				let appEl = aonMenu.buildApp(app, 
 				{
@@ -82,12 +83,18 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
+				aonHeader.setColor(appColor && '#fff', appColor);
+				if(appColor == "var(--aonTopMenuAvailable)")
+					aonHeader.setBackgroundColor("var(--aonHeaderBackgroundAvailable)")
+				else
+					aonHeader.setBackgroundColor(appColor);
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
+				aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
+				aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
-			const appColor = app.newColor || app.color;
 			/*
 			let div = this.getElement(app.app);
 			if(appColor == "grey"){
@@ -107,8 +114,7 @@ export class AonHome extends AonElement {
 				})
 			}else{
 			*/
-				aonHeader.setColor(appColor && '#fff', appColor);
-				aonHeader.setBackgroundColor(appColor);
+				
 			//}
 			
 		});
@@ -138,7 +144,7 @@ export class AonHome extends AonElement {
 		let title = this.getElement('aonRightPanelTitle')
 		if(LS.isRightPanel()) {
 			LS.removeRightPanel();
-			rootPanel.style.marginRight = '321px';
+			rootPanel.style.marginRight = '320px';
 			rightPanel.clear();
 			rightPanel.setContent(new AonConfig());
 			rightPanel.setTitle(MSG.CONFIGURATION);
@@ -160,7 +166,7 @@ export class AonHome extends AonElement {
 					rightPanel.clear();
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
-					rootPanel.style.marginRight = '321px';
+					rootPanel.style.marginRight = '320px';
 					configButton.style.visibility='visible';
 					helpButton.style.visibility='hidden';
 					editButton.style.visibility='hidden';
@@ -187,7 +193,7 @@ export class AonHome extends AonElement {
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
-					rootPanel.style.marginRight = '321px';
+					rootPanel.style.marginRight = '320px';
 					title.style.marginLeft = '10px';
 					helpButton.style.visibility='visible';
 					editButton.style.visibility='hidden';
@@ -240,7 +246,7 @@ export class AonHome extends AonElement {
 					rightPanel.clear();
 					rightPanel.setContent(new AonNotificationPanel());
 					rightPanel.setTitle(MSG.NOTIFICATIONS);
-					rootPanel.style.marginRight = '321px';
+					rootPanel.style.marginRight = '320px';
 					editButton.style.visibility = 'hidden';
 					helpButton.style.visibility = 'hidden';
 					configButton.style.visibility = 'hidden';

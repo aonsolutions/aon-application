@@ -115,7 +115,6 @@ public class InvoiceJSON {
 	
 	public static JSONObject toJSON(Invoice invoice) {
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
-		
 		JSONObject json = new JSONObject()
 			.put(IJsonNames.STATUS, invoice.isRecorded() 
 				? InvoiceStatus.SCORED.name().toLowerCase() 
@@ -145,7 +144,9 @@ public class InvoiceJSON {
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
-			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
+			.put(IJsonNames.REMARKS, new JSONArray(invoice.getRemarks()))
+			.put(IJsonNames.COMMENTS, invoice.getComments());
 		
 		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());

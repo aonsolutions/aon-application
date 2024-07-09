@@ -98,6 +98,7 @@ import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -303,7 +304,7 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -1260,6 +1261,12 @@ public class AON {
 	public static PayrollWorkplace savePayrollWorkplace(String domainName, Integer domainId, String login, PayrollWorkplace payrollWorkplace) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().savePayrollWorkplace(ctx, payrollWorkplace);
+		} 
+	}
+	
+	public static PayrollWorkplace getPayrollWorkpalce(String domainName, Integer domainId, String login, PayrollWorkplaceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getPayrollWorkpalce(ctx, filter);
 		} 
 	}
 	
@@ -3777,36 +3784,6 @@ public class AON {
 		}
 	}
 
-	public static LinkedList<Series> getSeriesDeliveryList(String domainName,
-			Integer domainId, String login, Integer scopeId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getSeriesDeliveryList(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Series getSeries(String domainName, Integer domainId, String login, SeriesFilter filter){
-		return getSeriesStream(domainName, domainId, login, filter).findFirst().orElse(new Series());
-	}
-	
-	public static LinkedList<Series> getSeriesList(String domainName, Integer domainId, String login, SeriesFilter filter){
-		return getSeriesStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Stream<Series> getSeriesStream(String domainName,Integer domainId, String login, SeriesFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getSeriesStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 
 	// ------------------------------------------------------------------- STATS
 	public static StatParams createStatParams(String domainName, int domain,
@@ -6141,19 +6118,6 @@ public class AON {
 		}
 	}
 
-	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
-			int domainId, String login, Date from, Date to, boolean taxDate) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
-		}
-	}
-	
-	public static List<InvoiceSeries> getInvoiceSalesSeries(String domainName, int domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoiceSalesSeries(ctx);
-		}
-	}
-
 	public static MailAccount getMailAccount(String domainName,
 			Integer domainId, String login, MailAccountFilter filter) {
 		CloseableAONContext ctx = null;
@@ -7577,6 +7541,12 @@ public class AON {
 		}
 	}
 	
+	public static Rawdoc getRawdocById(String domainName, int domain, String user, Integer id) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocByid(ctx, id);
+		}
+	}
+	
 	public static long getRawdocCount(String domainName, int domain, String user, RawdocFilter filter, boolean ticket) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getFinance().getRawdocCount(ctx, filter, ticket);
@@ -8571,5 +8541,40 @@ public class AON {
 		}
 	}
 
+	/// ****************************************************************
+	/// ****************************************************************
+	/// ****************************************************************
+	/// ****************************************************************
+	
+	public static LinkedList<Series> getSeriesDeliveryList(String domainName,
+			Integer domainId, String login, Integer scopeId) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getSeriesDeliveryList(ctx, scopeId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Series getSeries(String domainName, Integer domainId, String login, SeriesFilter filter){
+		return getSeriesStream(domainName, domainId, login, filter).findFirst().orElse(new Series());
+	}
+	
+	public static LinkedList<Series> getSeriesList(String domainName, Integer domainId, String login, SeriesFilter filter){
+		return getSeriesStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Stream<Series> getSeriesStream(String domainName,Integer domainId, String login, SeriesFilter filter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getSeriesStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 }

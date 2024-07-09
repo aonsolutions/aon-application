@@ -166,11 +166,11 @@ export class AonParent extends AonElement {
 		let button3 = this.getElement("aonHeaderNotificationButtonIconButton");
 		let button4 = this.getElement("aonHeaderUserButtonIconButton");
 		let button5 = this.getElement("aonHeaderCompanyListButtonIconButton");
-		button1.style.color = "rgb(95, 99, 104)";
-		button2.style.color = "rgb(95, 99, 104)";
-		button3.style.color = "rgb(95, 99, 104)";
-		button4.style.color = "rgb(95, 99, 104)";
-		button5.style.color = "rgb(95, 99, 104)";
+		button1.style.color = "var(--aonGrayHeaderButtonsColor)";
+		button2.style.color = "var(--aonGrayHeaderButtonsColor)";
+		button3.style.color = "var(--aonGrayHeaderButtonsColor)";
+		button4.style.color = "var(--aonGrayHeaderButtonsColor)";
+		button5.style.color = "var(--aonGrayHeaderButtonsColor)";
 	
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;

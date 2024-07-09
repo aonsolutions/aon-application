@@ -243,6 +243,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.Payments;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -2428,8 +2429,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
 			Date today = new Date(System.currentTimeMillis()); //TODO:  TimeoOne ????
-			List<Employee> aonEmployees = getCCCEmployees(connection, today, today, cccIds);
-			aonEmployees.forEach(e -> System.out.println(e.getName() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
+			// For already PrevMov register in Aon
+			Date endDate = new Date(AonDateUtils.addMonths(today, 1).getTime());
+			
+			List<Employee> aonEmployees = getCCCEmployees(connection, today, endDate, cccIds);
+			aonEmployees.forEach(e -> System.out.println(e.getName() + ", document : " + e.getDocument() + ", naf : " + e.getSocialSecurity() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
 
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
 			

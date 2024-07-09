@@ -1,12 +1,13 @@
 package net.aonsolutions.invofox;
 
-import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.invofox.json.OCRNames;
-import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRSeverity;
 import net.aonsolutions.invofox.model.OCRType;
 
@@ -15,8 +16,6 @@ public class OCRDocumentsParams extends OCRParams {
 	public static final Sort ASC = Sort.ASC;
 	public static final Sort DESC = Sort.DESC;
 	
-	private Predicate<OCRDocument> filter;
-
 	public enum Sort {
 		ASC(""), DESC("-");
 
@@ -31,11 +30,11 @@ public class OCRDocumentsParams extends OCRParams {
 		}
 	}
 	
+	private OCRDocumentsParams() {
+	}
+
 	public static OCRDocumentsParams get() {
 		return new OCRDocumentsParams();
-	}
-	private OCRDocumentsParams() {
-		filter = ocrDocument -> true; 
 	}
 	protected OCRDocumentsParams append(String name, int value) {
 		super.append(name, AonNumberUtils.toString(value));
@@ -46,21 +45,20 @@ public class OCRDocumentsParams extends OCRParams {
 		return this; 
 	}
 	
-	protected OCRDocumentsParams append(Predicate<OCRDocument> predicate) {
-		this.filter = this.filter.and(predicate);
-		return this;
-	}
-	
-	public boolean filter(OCRDocument ocrDocument ) {
-		return filter.test(ocrDocument);
-	}
-	
 	public OCRDocumentsParams limit(int param) {
 		return append(OCRNames.LIMIT, param);
 	}
 
 	public OCRDocumentsParams skiping(int param) {
 		return append(OCRNames.SKIP, param);
+	}
+
+	public OCRDocumentsParams withFilter(Supplier<OCRFilter> filterSupplier) {
+		return append(OCRNames.FILTER, filterSupplier.get().build());
+	}
+
+	public OCRDocumentsParams withSelect(String ... fields) {
+		return append(OCRNames.SELECT, AonCollectionUtils.stream(fields).collect(Collectors.joining(",")));
 	}
 
 	public OCRDocumentsParams withType(OCRType param) {
@@ -77,20 +75,6 @@ public class OCRDocumentsParams extends OCRParams {
 	
 	public OCRDocumentsParams withEnvironment(String param) {
 		return append(OCRNames.ENVIRONMENT, param);
-	}
-
-	public OCRDocumentsParams withIssuerTaxId(String param) {
-		return append(ocrDocument -> ocrDocument.getData()
-				.map(data -> AonStringUtils.equalsIgnoreCase(normalize(data.getIssuerDocument()),param)).orElse(true));
-	}
-
-	public OCRDocumentsParams withRecipientTaxId(String param) {
-		return append(ocrDocument -> ocrDocument.getData()
-				.map(data -> AonStringUtils.equalsIgnoreCase(normalize(data.getRecipientDocument()),param)).orElse(true));
-	}
-
-	public OCRDocumentsParams withPredicate(Predicate<OCRDocument> predicate) {
-		return append(predicate);
 	}
 
 	public OCRDocumentsParams sort(String param, Sort sort) {

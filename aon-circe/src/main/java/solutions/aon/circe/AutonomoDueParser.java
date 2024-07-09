@@ -5,7 +5,6 @@ import static com.esferalia.aon.watson.util.AonStringUtils.remove;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -18,10 +17,10 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.eclipse.jetty.util.Loader;
 
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -37,16 +36,15 @@ public class AutonomoDueParser {
 //				}
 //			});
 //		}
+		
+		Pattern p = Pattern.compile("^(.*\\-)?(?<suspensionType>.*)\\s*(?<from>\\d{2}\\-\\d{2}\\-\\d{4})\\s*(?<to>\\d{2}\\-\\d{2}\\-\\d{4}).*$", Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher("P. DELEG.-ACCIDENTE DE TRABAJO 24-08-2020 24-08-2020");
+		boolean matcher = m.matches();
+		System.out.println(m.group(0));
+		System.out.println(m.group("suspensionType"));
+		System.out.println(m.group("from"));
+		System.out.println(m.group("to"));
 
-		Pattern p = Pattern.compile(
-				"^\\s*SEXO\\s*:\\s*(?<sexo>.*)\\s*TIPO\\s*R.GIMEN\\s*MATRIMONIAL\\s*:\\s*(?<tipoRegimen>.*)$",
-				Pattern.CASE_INSENSITIVE);
-		Matcher matcher = p.matcher("Sexo: Mujer Tipo Régimen Matrimonial: Gananciales");
-		matcher.matches();
-		System.out.println(matcher.group(0));
-		System.out.println(matcher.group("sexo"));
-		System.out.println(matcher.group("tipoRegimen"));
-//		System.out.println(matcher.group("socioAdministrador"));
 
 	}
 

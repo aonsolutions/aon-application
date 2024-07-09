@@ -30,6 +30,7 @@ public class PropertyOrdersDAO {
 			OrderDAO orderDAO = (OrderDAO) order.order(this);
 			return orderDAO.getOrder();
 		}
+		@Override public PropertyOrder getIdPropertyName() {return new OrderDAO.PropertyOrderDAO<>(INVOICE.ID);}
 		@Override public PropertyOrder getStartIssueDatePropertyName() {return new OrderDAO.PropertyOrderDAO<>(INVOICE.ISSUE_DATE);}
 		@Override public PropertyOrder getReferenceCodePropertyName() {return new OrderDAO.PropertyOrderDAO<>(INVOICE.REFERENCE_CODE);}
 		@Override public PropertyOrder getRegistryNamePropertyName() {return new OrderDAO.PropertyOrderDAO<>(INVOICE.RNAME);}
@@ -41,6 +42,7 @@ public class PropertyOrdersDAO {
 			OrderDAO orderDAO = (OrderDAO) order.order(this);
 			return orderDAO.getOrder();
 		}
+		@Override public PropertyOrder getIdPropertyName() {return new OrderDAO.PropertyOrderDAO<>(RAWDOC.ID);}
 		@Override public PropertyOrder getStartIssueDatePropertyName() {return new OrderDAO.PropertyOrderDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.date"));}
 		@Override public PropertyOrder getReferenceCodePropertyName() {return new OrderDAO.PropertyOrderDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.reference"));}
 		@Override public PropertyOrder getRegistryNamePropertyName() {return new OrderDAO.PropertyOrderDAO<>(DSL.jsonValue(RAWDOC.JSON.cast(SQLDataType.JSON), "$.name"));}
@@ -52,6 +54,7 @@ public class PropertyOrdersDAO {
 			OrderDAO orderDAO = (OrderDAO) order.order(this);
 			return orderDAO.getOrder();
 		}
+		@Override public PropertyOrder getIdPropertyName() {return new OrderDAO.PropertyOrderDAO<>(PRODUCT.ID);}
 		@Override public PropertyOrder getNamePropertyName() {return new OrderDAO.PropertyOrderDAO<>(PRODUCT.NAME);}
 		@Override public PropertyOrder getCodePropertyName() {return new OrderDAO.PropertyOrderDAO<>(PRODUCT.CODE);}
 		@Override public PropertyOrder getCategoryPropertyName() {return new OrderDAO.PropertyOrderDAO<>(CATEGORY.NAME);}
@@ -62,6 +65,7 @@ public class PropertyOrdersDAO {
 			OrderDAO orderDAO = (OrderDAO) order.order(this);
 			return orderDAO.getOrder();
 		}
+		@Override public PropertyOrder getIdPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.ID);}
 		@Override public PropertyOrder getRegistryNamePropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.NAME);}
 		@Override public PropertyOrder getRegistryDocumentPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.DOCUMENT);}
 		@Override public PropertyOrder getRegistryNationalityPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.NATIONALITY);}
@@ -72,6 +76,7 @@ public class PropertyOrdersDAO {
 			OrderDAO orderDAO = (OrderDAO) order.order(this);
 			return orderDAO.getOrder();
 		}
+		@Override public PropertyOrder getIdPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.ID);}
 		@Override public PropertyOrder getRegistryNamePropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.NAME);}
 		@Override public PropertyOrder getRegistryDocumentPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.DOCUMENT);}
 		@Override public PropertyOrder getRegistryNationalityPropertyName() {return new OrderDAO.PropertyOrderDAO<>(REGISTRY.NATIONALITY);}

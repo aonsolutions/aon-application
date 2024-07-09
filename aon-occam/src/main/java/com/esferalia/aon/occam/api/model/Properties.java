@@ -49,6 +49,8 @@ public interface Properties {
 		Property<Byte> getEconomicagreementProperty();
 		Property<Integer> getEnterpriseProperty();
 		Property<Integer> getScopeProperty();
+		
+		Property<String> getGeozoneNameProperty();
 	}
 	
 	public interface ProjectProperties {
@@ -127,6 +129,8 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 		Property<Integer> getSourceBatchProperty();
 		Property<Byte> getSourceTypeProperty();
+		Property<String>getNameProperty();
+		Property<String>getAttachDateStringProperty();
 	}
 	
 	public interface InvoicingGroupProperties extends AuditProperties {
@@ -519,6 +523,15 @@ public interface Properties {
 		Property<String> getNameProperty();
 		Property<String> getSignatureProperty();
 		Property<Integer> getUserIdProperty();
+	}
+	
+	public interface PayrollWorkplaceProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getAgreementProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Integer> getCalendarProperty();
 	}
 	
 	public interface RegistryAddressProperties{
@@ -1345,6 +1358,14 @@ public interface Properties {
 	public interface ContractExtendedDataProperties extends ContractProperties{
 		Property<String> getPersonFullNameProperty();
 		Property <Byte> getSalaryType();
+		Property<String> getNameProperty();
+	}
+	
+	public interface SalaryNewPortalProperties extends SalaryProperties{
+		Property<Integer> getDomainProperty();
+		Property<String> getDateStringProperty();
+		Property <Byte> getSalaryType();
+		Property<String> getNameProperty();
 	}
 	
 	public interface DocProperties{
@@ -1752,6 +1773,7 @@ public interface Properties {
 		Property<String> getJsonNameProperty();
 		Property<String> getJsonTotalProperty();
 		Property<String> getJsonDateProperty();
+		Property<java.util.Date> getDateProperty();
 
 	}
 	

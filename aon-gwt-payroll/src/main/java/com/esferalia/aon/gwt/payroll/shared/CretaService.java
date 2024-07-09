@@ -8,6 +8,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 
 public interface CretaService {
+	
+	public static String DATE_FORMAT = "dd/MM/yyyy";
 
 	public static enum Message {
 		BEGIN,

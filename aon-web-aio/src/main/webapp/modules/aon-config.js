@@ -3,6 +3,7 @@ import { MSG, CONSTANT, CSS, EVENT, TAG } from "aonsolutions/environments/enviro
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
 import { AonCard } from 'aonsolutions/components/aon-card.js';
 import { Language } from 'aonsolutions/models/Language.js';
+import { loadTheme } from '..';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonConfig extends AonElement {
@@ -10,6 +11,8 @@ export class AonConfig extends AonElement {
 	TOP_SWITCH;
 	LEFT_SWITCH;
 	APPS_SWITCH;
+	DARK_SWITCH;
+	WHITE_BRAND_SWITCH;
 	LANG_CARD;
 	TYPE_CARD;
 
@@ -31,6 +34,8 @@ export class AonConfig extends AonElement {
 		this.TOP_SWITCH = this.id + 'SwitchTop';
 		this.LEFT_SWITCH = this.id + 'SwitchLeft';
 		this.APPS_SWITCH = this.id + 'SwitchApps';
+		this.DARK_SWITCH = this.id + 'DarkSwitch';
+		this.WHITE_BRAND_SWITCH = this.id + 'WhiteBrandSwitch';
 		this.LANG_CARD = this.id + 'HelpLangCard';
 		this.TYPE_CARD = this.id + 'TypeCard';
 	}
@@ -70,7 +75,7 @@ export class AonConfig extends AonElement {
 		this.appendChild(rightPanelSwitchLeftButton);
 
 		let span3 = this.createSpan();
-		span3.innerHTML = "Mostrar todas las aplicaciones";
+		span3.innerHTML = "Mostrar todas las apps";
 		span3.style.left = '-81px';
 		span3.style.position = "relative";
 		span3.style.top = '35px';
@@ -85,18 +90,56 @@ export class AonConfig extends AonElement {
 		rightPanelAppsButton.checked = LS.isAppMenu();
 		this.appendChild(rightPanelAppsButton);
 
+		let span4 = this.createSpan();
+		span4.innerHTML = "Modo oscuro";
+		span4.style.left = '11px';
+		span4.style.position  = "relative";
+		span4.style.top = '50px';
+		span4.style.display = "flex";
+		this.appendChild(span4);
+
+		let rightPanelDarkButton = new AonSwitch();
+		rightPanelDarkButton.id = this.DARK_SWITCH;
+		rightPanelDarkButton.style.marginLeft = '10px';
+		rightPanelDarkButton.style.right = '30px';
+		rightPanelDarkButton.style.position = "absolute";
+		rightPanelDarkButton.style.top = '155px';
+		rightPanelDarkButton.checked = LS.isDarkTheme();
+		this.appendChild(rightPanelDarkButton);
+
+		let span5 = this.createSpan();
+		span5.innerHTML = "Marca blanca";
+		span5.style.left = "11px";
+		span5.style.position = "relative";
+		span5.style.top = "65px";
+		span5.style.display = "flex";
+		this.appendChild(span5);
+
+		let rightPanelWhiteBrandButton = new AonSwitch();
+		rightPanelWhiteBrandButton.id = this.WHITE_BRAND_SWITCH;
+		rightPanelWhiteBrandButton.style.marginLeft = '10px';
+		rightPanelWhiteBrandButton.style.right = '30px';
+		rightPanelWhiteBrandButton.style.position = "absolute";
+		rightPanelWhiteBrandButton.style.top = '190';
+		rightPanelWhiteBrandButton.checked = LS.isWhiteBrand();
+		this.appendChild(rightPanelWhiteBrandButton);
+
 		let rightPanelLangCard = new AonCard();
 		rightPanelLangCard.id = this.LANG_CARD;
 		rightPanelLangCard.title = MSG.SELECT_LANGUAGE;
+		let title = this.getElement(rightPanelLangCard.TITLE);
 		rightPanelLangCard.style.width = "90%";
 		rightPanelLangCard.style.height = "fit-content";
+		if(LS.isDarkTheme())
+			rightPanelLangCard.style.color = "white";
 		rightPanelLangCard.style.marginLeft = "10px";
 		this.appendChild(rightPanelLangCard);
 
 		let cardDivv = this.getElement(rightPanelLangCard.CARD);
 		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+		cardDivv.style.backgroundColor = "var(--aonCardColor)"
 		cardDivv.style.borderRadius = '2px';
-		cardDivv.style.marginTop = '50px';
+		cardDivv.style.marginTop = '60px';
 
 		let divGenerall = this.createDiv();
 		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
@@ -133,7 +176,20 @@ export class AonConfig extends AonElement {
 			aonMenu.buildMenuTopnav();
 			aonMenu.reloadTopNav();
 		});
-		
+
+		rightPanelDarkButton.addEventListener(EVENT.CHANGE, () => {
+			LS.setDarkTheme(rightPanelDarkButton.checked);
+			if (rightPanelDarkButton.checked) {
+				loadTheme("dark");
+			} else if (!rightPanelDarkButton.checked){
+				loadTheme("aon");
+			}
+			location.reload();
+		});
+
+		rightPanelWhiteBrandButton.addEventListener(EVENT.CHANGE, () => {
+			LS.setWhiteBrand(rightPanelWhiteBrandButton.checked);
+		})
 	}
 
 	buildLanguageData(value,language) {

@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -53,12 +54,20 @@ public class ItemJSON {
 
 				.setInternet(JsonUtils.getboolean(json, IJsonNames.INTERNET))
 
-				.setPackFormatTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_FORMAT_TAG)))
+				.setPackFormatTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_FORMAT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_FORMAT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_FORMAT_TAG)))
 				.setPackUnits(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS))
-				.setPackUnitsTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS_TAG)))
+				.setPackUnitsTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_UNITS_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_UNITS_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS_TAG)))
 				.setPackMeasurement(JsonUtils.getdouble(json, IJsonNames.PACK_MEASUREMENT))
-				.setPackMeasurementTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_MEASUREMENT_TAG)))
-				.setStockUnitTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.STOCK_UNIT_TAG)))				
+				.setPackMeasurementTag(JsonUtils.isJSONObject(json, IJsonNames.PACK_MEASUREMENT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PACK_MEASUREMENT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_MEASUREMENT_TAG)))
+				.setStockUnitTag(JsonUtils.isJSONObject(json, IJsonNames.STOCK_UNIT_TAG)
+						? TagJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.STOCK_UNIT_TAG))
+						: new Tag().setId(JsonUtils.getInteger(json, IJsonNames.STOCK_UNIT_TAG)))				
 				.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
 				.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 				.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
@@ -103,12 +112,24 @@ public class ItemJSON {
 				.put(IJsonNames.PURCHASE_PRICE, item.getPurchasePrice())
 				.put(IJsonNames.EXPENSES_FIXED, item.getExpensesFixed())
 				.put(IJsonNames.INTERNET, item.isInternet())
-				.put(IJsonNames.PACK_FORMAT_TAG, item.getPackFormatTag().getId())
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.PACK_FORMAT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackFormatTag())
+						: item.getPackFormatTag().getId())
 				.put(IJsonNames.PACK_UNITS, item.getPackUnits())
-				.put(IJsonNames.PACK_UNITS_TAG, item.getPackUnitsTag().getId())
+				// TODO  udapa probably fix temporary
+				.put(IJsonNames.PACK_UNITS_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackUnitsTag())
+						: item.getPackUnitsTag().getId())
 				.put(IJsonNames.PACK_MEASUREMENT, item.getPackMeasurement())
-				.put(IJsonNames.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag().getId())
-				.put(IJsonNames.STOCK_UNIT_TAG, item.getStockUnitTag().getId())
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.PACK_MEASUREMENT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getPackMeasurementTag())
+						: item.getPackMeasurementTag().getId())
+				// TODO udapa probably fix temporary
+				.put(IJsonNames.STOCK_UNIT_TAG, !isUdapa(item.getDomain())
+						? TagJSON.toJSON(item.getStockUnitTag())
+						: item.getStockUnitTag().getId())
 				.put(IJsonNames.CREATION_USER, item.getCreationUser())
 				.put(IJsonNames.CREATION_DATE, item.getCreationDate())
 				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
@@ -116,5 +137,12 @@ public class ItemJSON {
 				.put(IJsonNames.ITEM_COMPOSITION, ItemCompositionJSON.toJSON(item.getItemComposition()))
 				.put(IJsonNames.REMOVED, item.isRemoved())
 				;
+	}
+	
+	
+	private static boolean isUdapa(Domain domain) {
+		return domain != null
+			&& domain.getId() != null
+			&& domain.getId().equals(3049);
 	}
 }

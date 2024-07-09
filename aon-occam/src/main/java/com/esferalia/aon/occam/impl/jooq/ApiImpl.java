@@ -45,5 +45,10 @@ public class ApiImpl implements IApi {
 					configuration -> InvoiceApiDAO.getInvoiceNewPortalCount(ctx, filter));
 				
 	}
+	@Override
+	public void updateInvoiceNote(AONContext ctx,Integer id, String comment) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceApiDAO.updateInvoiceNote(ctx, id,comment));
+	}
 
 }

@@ -132,7 +132,7 @@
 					<ui:param name="filterReRender" value="customerListContainer" />
 					<ui:param name="filterContainer" value="customerFilterContainer" />
 					<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
-					
+
 				</ui:decorate>
 				</aon:div>
 				</aon:form>
@@ -143,10 +143,12 @@
 				
 				<aon:div  styleClass="aon-scroll-area aon-scroll"  style="display: flex; flex-direction: row; " >
 					
+
 					<aon:scroll 
 					id="customerListContainer"
 					style="overflow: auto; height: calc(100vh - 175px); flex-grow : 4" 
 					>
+
 
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 							<ui:param name="controller" value="#{customer}" />
@@ -177,7 +179,7 @@
 	
 					</aon:scroll>
 	
-					<aon:div id="customerFilterContainer" style="overflow: auto; height: calc(100vh - 175px); flex-shrink : 4; display: none" >
+					<aon:div id="customerFilterContainer" styleClass="aonFilterPopup" style="display:none" >
 							<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/filterEx.xhtml" >
 								<ui:param name="searchReRender" value="customerListContainer,customerToolbarContainer" />
 								<ui:define name="moreSearchBasicContent">

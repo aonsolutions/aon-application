@@ -8,13 +8,18 @@ import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -51,6 +56,11 @@ public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	private static final InvoicePropertyOrdersDAO INVOICE_PROPERTY_ORDERS = new InvoicePropertyOrdersDAO();
+	private static final Table<?> retention = INVOICE_TAX.as("retention");
+	private static final Table<?> tax = INVOICE_TAX.as("tax");
+	private static final Field<BigDecimal> surchargeQuota = DSL.sum(tax.field(INVOICE_TAX.SURCHARGE_QUOTA));
+	private static final Field<BigDecimal> quota = DSL.sum(tax.field(INVOICE_TAX.QUOTA));
+	private static final Field<Double> retentionPercentage = retention.field(INVOICE_TAX.PERCENTAGE);
 	
 	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter, InvoiceOrder order) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
@@ -65,14 +75,22 @@ public class InvoiceApiDAO {
 			.select(INVOICE.ISSUE_DATE)
 			.select(INVOICE.RNAME)
 			.select(INVOICE.TYPE)
+			.select(INVOICE.RDOCUMENT)
 			.select(INVOICE.STATUS)
 			.select(INVOICE_ATTACH.MIMETYPE)
 			.select(INVOICE_INFO.fields())
+			.select(INVOICE.TAXABLE_BASE)
+			.select(surchargeQuota)
+			.select(quota)
+			.select(retentionPercentage)
 			.from(INVOICE)
 			.leftJoin(INVOICE_ATTACH).on(INVOICE.ID.eq(INVOICE_ATTACH.INVOICE))
 			.leftJoin(INVOICE_INFO).on(INVOICE.ID.eq(INVOICE_INFO.INVOICE).and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.EMAIL.value())))
-			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.leftJoin(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+			.leftJoin(INVOICE_TAX.asTable(retention)).on(INVOICE_DETAIL.ID.eq(retention.field(INVOICE_TAX.INVOICE_DETAIL)).and(retention.field(INVOICE_TAX.TAX_TYPE).eq((byte)2)))
+			.leftJoin(INVOICE_TAX.asTable(tax)).on(INVOICE_DETAIL.ID.eq(tax.field(INVOICE_TAX.INVOICE_DETAIL)).and(tax.field(INVOICE_TAX.TAX_TYPE).eq((byte)1)))
 			.groupBy(INVOICE.ID)
+			.having(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(INVOICE_PROPERTY_ORDERS.getOrders(order))
 			.limit(perPage)
 			.offset(perPage * (page -1))
@@ -86,6 +104,15 @@ public class InvoiceApiDAO {
 				.fetch()
 				.stream()
 				.count();				
+	}
+	
+	public static void updateInvoiceNote(AONContext ctx,Integer id,  String comment) {
+		ctx.getDslContext()
+		.update(INVOICE)
+		.set(INVOICE.COMMENTS, comment)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+		.and(INVOICE.ID.eq(id)))
+		.execute();
 	}
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
@@ -139,6 +166,7 @@ public class InvoiceApiDAO {
 				.setId(r.getValue(INVOICE.ID))
 				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
 				.setTotal(r.getValue(INVOICE.TOTAL))
 				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)))
 				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
@@ -146,7 +174,12 @@ public class InvoiceApiDAO {
 				.setNumber(r.getValue(INVOICE.NUMBER))
 				.setSeries(r.getValue(INVOICE.SERIES))
 				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)))
-				.setInvoiceInfo(InvoiceInfoFiller.build(r));
+				.setInvoiceInfo(InvoiceInfoFiller.build(r))
+				.setVatQuota(r.getValue(quota) != null ? r.getValue(quota).doubleValue() : 0)
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE) != null ? r.getValue(INVOICE.TAXABLE_BASE).doubleValue() : 0)
+				.setSurchargeQuota(r.getValue(surchargeQuota) != null ? r.getValue(surchargeQuota).doubleValue() : 0)
+				.setRetentionPercentage(r.getValue(retentionPercentage))
+				;
 		}
 	}
 

@@ -31,7 +31,6 @@ import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.json.OCRWebhookJSON;
 import net.aonsolutions.invofox.json.OCRWebhookResponseJSON;
-import net.aonsolutions.invofox.model.OCRApiKey;
 import net.aonsolutions.invofox.model.OCRApiKeyResponse;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
@@ -54,12 +53,9 @@ public class OCRInvofox {
 
 	private static final String APPLICATION_JSON = "application/json";
 
-
 	private static final int STATUS_OK = 200;
 	private static final int STATUS_OK1 = 201;
 
-
-	private static final String API_URL = "api-url";
    	private static final String API_KEY = "x-api-key";
 	private static final String API_TOKEN = "x-access-token";
 	
@@ -83,7 +79,9 @@ public class OCRInvofox {
         private static String getOcrInfoURL(String apiURL) {
             return getDocumentURL(apiURL)+ "/ocr";
         }
-
+        private static String getChangePublicStateURL(String apiURL) {
+        	return getDocumentsURL(apiURL) + "/{0}/publicState";
+        }
         private static String getDocumentsURL(String apiURL) {
             return apiURL + "/documents";
         }
@@ -370,14 +368,20 @@ public class OCRInvofox {
 	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentsResponse getDocuments(String apiKey, String apiUrl, OCRDocumentsParams params) {
 		OCRDocumentsResponse documentsResponse = get(apiKey, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
-		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList())
+			.stream()
+//			.filter(params::filter)
+			.toList();
 		documentsResponse.setDocuments(documents);
 		return documentsResponse;
 	}
 	
 	public static OCRDocumentsResponse getDocumentsWithToken(String token, String apiUrl, OCRDocumentsParams params) {
 		OCRDocumentsResponse documentsResponse = getWithToken(token, getDocumentsURL(apiUrl) + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
-		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList()).stream().filter(params::filter).toList();
+		List<OCRDocument> documents = documentsResponse.getDocuments().orElse(Collections.emptyList())
+			.stream()
+//			.filter(params::filter)
+			.toList();
 		documentsResponse.setDocuments(documents);
 		return documentsResponse;
 	}
@@ -401,12 +405,35 @@ public class OCRInvofox {
 	public static OCRDocumentResponse putDocument(String apiKey, String apiUrl, OCRDocument document) {
 		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), document.getId().orElseThrow(IllegalArgumentException::new)), OCRDocumentJSON.to(document), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
+	
+	public static OCRDocumentResponse changePublicStatus(String apiKey, String apiUrl, String documentId, OCRSeverity publicState) {
+		JSONObject putData = new JSONObject();
+		putData.put( OCRNames.PUBLIC_STATE, publicState );
+		return put(apiKey
+			, MessageFormat.format(getChangePublicStateURL(apiUrl), documentId)
+			, putData
+			, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
 
 	public static OCRDocumentResponse markAsExported(String apiKey, String apiUrl, String documentId) {
-		JSONObject putData = new JSONObject();
-		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
-		return put(apiKey, MessageFormat.format(getDocumentURL(apiUrl), documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.exported);
 	}
+	public static OCRDocumentResponse markAsPendingCorrection(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.pendingCorrection);
+	}
+	public static OCRDocumentResponse markAsDiscarded(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.discarded);
+	}
+	public static OCRDocumentResponse markAsPendingDecission(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.pendingDecission);
+	}
+	public static OCRDocumentResponse markAsRejected(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.rejected);
+	}
+	public static OCRDocumentResponse markAsError(String apiKey, String apiUrl, String documentId) {
+		return changePublicStatus( apiKey, apiUrl, documentId, OCRSeverity.error);
+	}
+	
 	public static OCRInfoResponse getOcrInfo(String apiKey, String apiUrl, String documentId) {
 		return get(apiKey, MessageFormat.format(getOcrInfoURL(apiUrl), documentId), OCRInfoResponse::new, OCRInfoResponseJSON::from);
 	}

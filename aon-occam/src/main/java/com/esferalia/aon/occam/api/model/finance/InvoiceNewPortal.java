@@ -8,6 +8,26 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 public class InvoiceNewPortal extends Invoice {
 	private static final long serialVersionUID = 1L;
 	MimeType mimeType;
+	Double surchargeQuota;
+	Double retentionPercentage;
+	
+	public Double getRetentionPercentage() {
+		return retentionPercentage;
+	}
+
+	public InvoiceNewPortal setRetentionPercentage(Double value) {
+		this.retentionPercentage = value;
+		return this;
+	}
+
+	public Double getSurchargeQuota() {
+		return this.surchargeQuota;
+	}
+	
+	public InvoiceNewPortal setSurchargeQuota(Double value) {
+		this.surchargeQuota = value;
+		return this;
+	}
 
 	public MimeType getMimeType() {
 		return mimeType;
@@ -75,6 +95,24 @@ public class InvoiceNewPortal extends Invoice {
 	@Override
 	public InvoiceNewPortal setInvoiceInfo(InvoiceInfo invoiceInfo) {
 		super.setInvoiceInfo(invoiceInfo);
+		return this;
+	}
+	
+	@Override
+	public InvoiceNewPortal setVatQuota(double vatQuota) {
+		super.setVatQuota(vatQuota);
+		return this;
+	}
+	
+	@Override
+	public InvoiceNewPortal setTaxableBase(double taxableBase) {
+		super.setTaxableBase(taxableBase);
+		return this;
+	}
+	
+	@Override
+	public InvoiceNewPortal setRegistryDocument(String document) {
+		super.setRegistryDocument(document);
 		return this;
 	}
 	
