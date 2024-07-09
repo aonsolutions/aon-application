@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -212,11 +217,17 @@ class PECListener  implements IdcParserListener {
 		{
 			put("01", "CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E"); 	// Cuota empresarial por AT y EP, Cuotas de recaudación	conjunta
 			put("03", "CGC_E"); 							// Cuota empresarial por Contingencias Comunes
-			put("43", "CGC_E"); 							// Contingencias Comunes  
 			put("51", "CUOTA_EMPRESARIAL"); 					// Cuota Empresarial - Horas extras			
 			put("57", "CUOTA_EMPRESARIAL"); 					// Cuota Total
 			put("68", "CGC_E + IT_E + IMS_E"); 					// Contingencias Comunes y Profesionales - Cuota Total
 			//put("81", "");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> COST_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+		{
+			put("43", "-CGC_E"); 							// Contingencias Comunes  
 		}
 	};
 
@@ -408,6 +419,10 @@ class PECListener  implements IdcParserListener {
 				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
 					newBonus(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this);
 				}
+				else if ( COST_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
+					newCost(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this);
+				}				
+				
 				if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
 					newDeduction(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this); ;
 				}
@@ -453,12 +468,18 @@ class PECListener  implements IdcParserListener {
 	
 	
 	// ------------------------------------------------------------------------
+	static String getCostFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		return getBonusFormula(COST_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+		
+	}
+	
 	static String getBonusFormula(String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		return getBonusFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
 		
 	}
-	
+
 	static String getDeductionFormula(String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		return getDeductionFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
@@ -466,6 +487,24 @@ class PECListener  implements IdcParserListener {
 	
 	// ------------------------------------------------------------------------
 	
+	private static Cost newCost(String nss, String ccc, String code, String description, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		
+		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+		
+		Cost ssCost = new Cost();		
+		ssCost.setCcc(ccc);
+		ssCost.setNss(nss);
+		ssCost.setStartDate(start);
+		ssCost.setEndDate(end);
+		ssCost.setDescription(String.format(new Locale("es", "ES"),PEC_DESCRIPTION_MAP.getOrDefault(code, "%s (%.2f%%)"), description, percent));
+		ssCost.setFormula(getCostFormula(code, portTipo, quota, start, end));
+
+		ssCost.setName("RED_" + getNameByExpression(ssCost.getFormula()).orElse("SS_E"));
+		
+		return ssCost;
+	}
+
 	private static Bonus newBonus(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		
@@ -493,10 +532,10 @@ class PECListener  implements IdcParserListener {
 		ssDeduction.setNss(nss);
 		ssDeduction.setStartDate(start);
 		ssDeduction.setEndDate(end);
-		ssDeduction.setName(ContextVariable.BONUS_EMPLOYEE.getName());
 		ssDeduction.setDescription(String.format(new Locale("es", "ES"),PEC_DESCRIPTION_MAP.getOrDefault(code, "%s (%.2f%%)"), description, percent));
 		ssDeduction.setFormula(getDeductionFormula(code, portTipo, quota, start, end));
 		
+		ssDeduction.setName("RED_" + getNameByExpression(ssDeduction.getFormula()).orElse("SS"));
 		
 		return ssDeduction;
 	}
@@ -771,7 +810,7 @@ class PECListener  implements IdcParserListener {
 				));
 		t.setDescription(String.format(new Locale("es", "ES"),"%s (%s)", description, portTipo));
 		//t.setName(getDeductionType(var).name());
-		t.setName(ContextVariable.BONUS_EMPLOYEE.getName());
+		t.setName(ContextVariable.REDUCTION_EMPLOYEE.getName());
 		
 		return t;
 	}
@@ -831,6 +870,39 @@ class PECListener  implements IdcParserListener {
 		default:
 			return "";
 		}
+	}
+	
+	private static Optional<String> getNameByExpression(String expression) {
+		ContextVariable [] names = new ContextVariable [] {
+
+			ContextVariable.CGC_ENTERPRISE,
+			ContextVariable.IT_ENTERPRISE,
+			ContextVariable.IMS_ENTERPRISE,
+			ContextVariable.FP_ENTERPRISE,
+			ContextVariable.FOGASA_ENTERPRISE,
+			ContextVariable.UNEMPLOY_ENTERPRISE,
+
+			ContextVariable.CGC_EMPLOYEE,
+			ContextVariable.FP_EMPLOYEE,
+			ContextVariable.MEI_EMPLOYEE,
+			ContextVariable.UNEMPLOY_EMPLOYEE,
+
+		};
+		
+		String regExp = Arrays.stream(names)
+				.map(ContextVariable::getName)
+				.collect(Collectors.joining("|","(",")"));
+		
+		Pattern pattern =  Pattern.compile(regExp);
+		Matcher matcher = pattern.matcher(expression);
+		
+		List<String> matches = new ArrayList<>();
+		while ( matcher.find() ) {
+			matches.add(matcher.group());
+		}
+		
+		//return Optional.empty();
+		return matches.size() == 1 ? Optional.of(matches.get(0)) : Optional.empty(); 
 	}
 
 }
