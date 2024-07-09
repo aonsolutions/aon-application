@@ -279,7 +279,6 @@ export class AonNewMenu extends AonElement {
 			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
 			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
 		}
-		*/
 		if(!app.app == "home" || !app.app == "applications"){
 			let appsColor = this.getElement("aonMenuListAppImgTop-applications");
 			appsColor.style.color = "var(--aonHeaderButtonsColor)";
