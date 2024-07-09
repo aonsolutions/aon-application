@@ -267,10 +267,14 @@ export class AonNewMenu extends AonElement {
             
         }
 		let appsDiv = this.getElement("aonMenuLeftop-applications");
-		appsDiv.style.backgroundColor = header.style.backgroundColor;
-		if(app.app == "accounting")
-			appsDiv.style.backgroundColor = "var(--aonBlue)";
-		/*
+		//if(app.app == "accounting")
+		//	appsDiv.style.backgroundColor = "var(--aonBlue)";
+		//else
+		//	appsDiv.style.backgroundColor = app.color;
+		appsDiv.style.removeProperty('background-color'); 
+		let appName = app.app[0].toUpperCase() + app.app.slice(1);
+		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`;
+		
 		if(app.color == "var(--aonTopMenuAvailable)"){
 			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
 			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
@@ -645,8 +649,8 @@ export class AonNewMenu extends AonElement {
 		
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.innerHTML = app.symbol;
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;
