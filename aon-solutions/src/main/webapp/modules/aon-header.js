@@ -697,6 +697,14 @@ export class AonHeader extends AonElement {
 		}
 	}
 
+	setClassName(className) {
+		if ( className ) {
+			this.getElement(this.AON_HEADER_WEB).className = className;
+		} else {
+			this.getElement(this.AON_HEADER_WEB).removeAttribute('className');
+		}
+	}
+
 	setBackgroundColor(backgroundColor) {
 		if ( backgroundColor ) {
 			this.getElement(this.AON_HEADER_WEB).style.backgroundColor = backgroundColor;
