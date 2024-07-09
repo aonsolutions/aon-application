@@ -230,14 +230,15 @@ export class AonNewMenu extends AonElement {
 		};
 
 		let header = this.getElement("aonHeaderWeb");
-        if(!(!this.isApp(app) && !excludedApps.includes(app.app))){
+        if(this.isApp(app) || excludedApps.includes(app.app)){
+//			if(!(!this.isApp(app) && !excludedApps.includes(app.app))){
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
 		}
         else{
             header.style.removeProperty("background-color");
 
             let apps = this.getElement("aonMenuListAppImgTop-applications");
-            apps.style.color = "var(--aonHeaderButtonColor)";
+            apps.style.color = "var(----aonGrayHeaderButtonsColor)";
 
             let headerapp = this.getElement("aonHeaderApp");
             headerapp.style.display = "none";
@@ -247,22 +248,22 @@ export class AonNewMenu extends AonElement {
             logo.style.filter = "none";
 
             let header1 = this.getElement("aonHeaderCompanyName")
-            header1.style.color = "var(--aonHeaderButtonColor)";
+            header1.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
-            header2.style.color = "var(--aonHeaderButtonColor)";
+            header2.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let header3 = this.getElement("aonHeaderHelpButtonIconButton")
-            header3.style.color = "var(--aonHeaderButtonColor)";
+            header3.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let header4 = this.getElement("aonHeaderConfigButtonIconButton")
-            header4.style.color = "var(--aonHeaderButtonColor)";
+            header4.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
-            header5.style.color = "var(--aonHeaderButtonColor)";
+            header5.style.color = "var(--aonGrayHeaderButtonsColor)";
 
             let header6 = this.getElement("aonHeaderUserButtonIconButton")
-            header6.style.color = "var(--aonHeaderButtonColor)";
+            header6.style.color = "var(--aonGrayHeaderButtonsColor)";
             
         }
 		let appsDiv = this.getElement("aonMenuLeftop-applications");
@@ -278,13 +279,31 @@ export class AonNewMenu extends AonElement {
 			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
 			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
 		}
-		if(app.app == "home" || app.app == "applications"){
-			appsDiv.style.backgroundColor = header.style.backgroundColor;
-			if(LS.isDarkTheme()){
-				appsDiv.style.color = "white";
-			}	
-		} 
+		*/
+		if(!app.app == "home" || !app.app == "applications"){
+			let appsColor = this.getElement("aonMenuListAppImgTop-applications");
+			appsColor.style.color = "var(--aonHeaderButtonsColor)";
 
+			let header1 = this.getElement("aonHeaderCompanyName")
+            header1.style.color = "--aonHeaderButtonsColor";
+
+            let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
+            header2.style.color = "--aonHeaderButtonsColor";
+
+            let header3 = this.getElement("aonHeaderHelpButtonIconButton")
+            header3.style.color = "--aonHeaderButtonsColor";
+
+            let header4 = this.getElement("aonHeaderConfigButtonIconButton")
+            header4.style.color = "--aonHeaderButtonsColor";
+
+            let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
+            header5.style.color = "--aonHeaderButtonsColor";
+
+            let header6 = this.getElement("aonHeaderUserButtonIconButton")
+            header6.style.color = "--aonHeaderButtonsColor";
+
+		} 
+/*
 		let appsDivv = this.getElement("aonMenuListAppImgTop-applications");
 
 		if(app.app == "home" && LS.isDarkTheme()){
@@ -333,7 +352,7 @@ export class AonNewMenu extends AonElement {
             header6.style.color = "rgb(95, 99, 104)";
 
 		}
-
+		*/
 	}
 	
 
@@ -478,6 +497,7 @@ export class AonNewMenu extends AonElement {
 		appDiv.style.backgroundColor = 'transparent';
 		appDiv.appendChild(this.buildApp(app,undefined,false));
 	
+		appDiv.style.color = "var(--aonTopAppTextColor)";
 		appDiv.style.transition = 'background-color 0.2s';
 		appDiv.style.backgroundColor = 'transparent';
 		appDiv.addEventListener('mouseover', () => {
@@ -719,26 +739,22 @@ export class AonNewMenu extends AonElement {
 				div.addEventListener('mouseover', () => {
 					let img = this.getElement(`aonMenuListAppImgTop-${app.app}`);
 					div.style.backgroundColor = 'white';
-					if(LS.isDarkTheme()){
-						if(this.isApp(app))
-							div.style.color = "var(--aonBlack)";
-						if(app.app == "accounting"){
-							document.documentElement.style.setProperty('--aonAccounting', 'var(--aonBlue)');
-						}else if(app.color == "var(--aonTopMenuAvailable)")						
-							img.style.color = "black";
-					}
+					if(this.isApp(app))
+						div.style.color = "var(--aonTopMenuAvailableMouseOverText)";
+					if(app.app == "accounting"){
+						document.documentElement.style.setProperty('--aonAccounting', 'var(--aonAccountingMouseOver)');
+					}else if(app.color == "var(--aonTopMenuAvailable)" || app.app == "home")				
+						img.style.color = "var(--aonTopMenuAvailableMouseOverImg)";
 				});
 				div.addEventListener('mouseout', () => {
 					let img = this.getElement(`aonMenuListAppImgTop-${app.app}`);
 					div.style.backgroundColor = 'transparent';
-					if(LS.isDarkTheme()){
-						if(this.isApp(app))
-							div.style.color = "var(--aonTopMenuAvailable)";
-						if(app.app == "accounting"){
-							document.documentElement.style.setProperty('--aonAccounting', 'var(--aonWhite)');
-						}else if(app.color == "var(--aonTopMenuAvailable)")
-							img.style.color = "var(--aonTopMenuAvailable)";
-					}
+					if(this.isApp(app))
+						div.style.color = "var(--aonTopMenuAvailableMouseOutText)";
+					if(app.app == "accounting"){
+						document.documentElement.style.setProperty('--aonAccounting', 'var(--aonAccountingMouseOut)');
+					}else if(app.color == "var(--aonTopMenuAvailable)" || app.app == "home")
+						img.style.color = "var(--aonTopMenuAvailable)";
 				});
 			}
 		}

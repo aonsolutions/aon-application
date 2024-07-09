@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FiscalConfig implements Serializable {
 
@@ -43,7 +44,10 @@ public class FiscalConfig implements Serializable {
 		return administration;
 	}
 	public Administration getAdministration(Administration ifnullAdminitration) {
-		if (getAdministration() == null) return ifnullAdminitration;
+		if (getAdministration() == null 
+		 || AonNumberUtils.equals(getAdministration(), Administration.UNKNOWN.ordinal())) {
+			return ifnullAdminitration;
+		}
 		return Administration.values()[getAdministration()];
 	}
 	public FiscalConfig setAdministration(Integer administration) {

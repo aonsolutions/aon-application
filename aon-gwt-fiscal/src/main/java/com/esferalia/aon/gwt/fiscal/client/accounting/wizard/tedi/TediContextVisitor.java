@@ -201,7 +201,8 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 							callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
 							callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
 							callback.getResult().getInvoice().setTransaction(ai.getTransaction());
-							if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+							if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET
+								&& registry.getType() == AccountingRegistryType.CREDITOR ) {
 								callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
 							} else {
 								callback.getResult().getInvoice().setType( ai.getInvoiceType());
@@ -255,7 +256,8 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 									callback.getResult().getInvoice().setWithholdingFarmer(ai.isWithholdingFarmer());
 									callback.getResult().getInvoice().setVatAccrualPayment(ai.isVatAccrualPayment());
 									// ****
-									if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+									if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET
+									 && registry.getType() == AccountingRegistryType.CREDITOR ) {
 										callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
 									} else {
 										callback.getResult().getInvoice().setType(ai.getInvoiceType());	

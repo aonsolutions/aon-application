@@ -178,7 +178,7 @@ export class AonIconButton extends AonElement {
       this.style.width = "0px";
       this.style.display = "none";
     }
-
+/*
     let buttons = [
       "aonHeaderHelpButtonIconButton",
       "aonHeaderConfigButtonIconButton",
@@ -212,7 +212,7 @@ export class AonIconButton extends AonElement {
         });
       }
     });
-
+*/
     if (this.hasAttribute("icon")) {
       this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
       this.getIcon().innerHTML = this.getAttribute("icon");

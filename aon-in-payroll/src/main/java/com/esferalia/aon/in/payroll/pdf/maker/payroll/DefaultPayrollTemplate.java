@@ -58,6 +58,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
@@ -139,6 +141,97 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			byte[] bLogo = null;
 			if (logo.isPresent())
 				bLogo = logo.get().readAllBytes();
+			
+			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
+			if (payrolls != null) {
+				payrolls.stream().sorted((o1, o2) -> {
+					String name1 = o1.getEmployee().orElse(null);
+					String name2 = o2.getEmployee().orElse(null);
+					Date date1 = o1.getLiquidPeriodEnd().orElse(null);
+					Date date2 = o2.getLiquidPeriodEnd().orElse(null);
+					int strCompare = AonStringUtils.compare(name1, name2);
+					if (strCompare != 0) {
+						return strCompare;
+					} else {
+						return com.esferalia.aon.watson.util.AonDateUtils.compare(date1, date2);
+					}
+				}).forEach(orderedPayrolls::add);
+			}
+
+			for (IDefaultPayroll payroll : orderedPayrolls) {
+				if (bLogo != null)
+					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
+
+				this.p = payroll;
+				if (payroll == null)
+					throw new CanNotCreatePdfException("No payroll found.");
+
+				PDPage page = createVerticalPage();
+				doc.addPage(page);
+
+				this.contents = new PDPageContentStream(doc, page);
+
+				this.drawHeader();
+				boolean jump = this.calculate();
+
+				this.logo = logo;
+
+				if (jump) {
+					this.drawPayments();
+					drawBorderedBox(this.contents, 10, 10, 575, 695, LIGHT_GRAY);
+					this.contents.close();
+
+					page = createVerticalPage();
+					doc.addPage(page);
+					this.contents = new PDPageContentStream(doc, page);
+
+					this.drawHeader();
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
+					this.y -= 15;
+
+					this.drawDeductions();
+					this.drawFooter();
+				} else {
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
+					this.drawPayments();
+					this.drawDeductions();
+					this.drawFooter();
+				}
+				this.contents.close();
+				if (payroll.getPartTimeParams().isPresent()) {				
+					PartTimeTemplate.append(doc, payroll.getPartTimeParams().get());
+				}
+			}
+		} catch (IOException | CanNotCreatePdfException e) {
+			throw new CanNotCreatePdfException(e);
+		}
+	}
+	
+	public DefaultPayrollTemplate(Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language, String password) throws CanNotCreatePdfException {
+		try {
+			this.doc		 = new PDDocument();
+
+			this.lang  = language.orElse(new Locale("Es"));
+			this.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.ClassicPayrollBundle",
+					this.lang);
+			this.limit = 800;
+
+			byte[] bLogo = null;
+			if (logo.isPresent())
+				bLogo = logo.get().readAllBytes();
+			
+			 if(null != password) {
+		    	// Crear permisos de acceso
+		        AccessPermission accessPermission = new AccessPermission();
+
+		        // Establecer la política de protección
+		        StandardProtectionPolicy policy = new StandardProtectionPolicy("40ns0lut10ns", password, accessPermission);
+		        policy.setEncryptionKeyLength(128); // También puede ser 256
+		        policy.setPermissions(accessPermission);
+		        
+		        // Proteger el documento con la política establecida
+		        this.doc.protect(policy);
+		    }
 			
 			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
 			if (payrolls != null) {

@@ -6,6 +6,7 @@ import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CompanyPieChart } from "./CompanyPieChart.js";
 import { CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import * as LS from "../../../services/localStorageService.js";
 
 let filterPeriod;
 let chartCanva;
@@ -173,10 +174,15 @@ const paintCompanyCostPieChart = async () => {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
 
-    title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+    if(LS.isDarkTheme())
+      title = `${title}<br> ${workplaceText} <span style="color:white;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+    else
+      title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
 
     let divTitle = document.getElementById("aon-company-costs-cardtitleDiv");
     divTitle.innerHTML = title;
+    if(LS.isDarkTheme())
+      divTitle.style.color = "white";
   } catch (error) {
     console.log(error);
   }
