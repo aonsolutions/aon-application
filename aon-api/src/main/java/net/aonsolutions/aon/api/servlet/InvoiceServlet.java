@@ -829,7 +829,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
     
-    	if(invoiceFilter.getDescription() != null) {
+    	if(invoiceFilter.getDescription() != null && !AonStringUtils.isBlank(invoiceFilter.getDescription())) {
     		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
         			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))
         			.or(f.getSeriesProperty().like("%" + invoiceFilter.getDescription() + "%"))
@@ -845,11 +845,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
-    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value())
-    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
+    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value());
     		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
-    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
-   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
+    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()));
     		}
     		filter = filter.and(filter2); 
     	}
@@ -870,15 +868,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getRegistryProperty().eq(invoiceFilter.getRegistry()));
     	}
     	
-    	if(invoiceFilter.getReferenceCode() != null) {
+    	if(!AonStringUtils.isBlank(invoiceFilter.getReferenceCode()) && invoiceFilter.getReferenceCode() != null) {
     		filter = filter.and(f.getReferenceCodeProperty().like("%" + invoiceFilter.getReferenceCode() + "%"));
     	}
     	
-    	if(invoiceFilter.getContact() != null) {
+    	if(!AonStringUtils.isBlank(invoiceFilter.getContact()) && invoiceFilter.getContact() != null) {
     		filter = filter.and(f.getRegistryNameProperty().like("%"+ invoiceFilter.getContact() +"%"));
     	}
     	
-    	if(invoiceFilter.getTotal() != null) {
+    	if(!AonStringUtils.isBlank(invoiceFilter.getTotal()) && invoiceFilter.getTotal() != null) {
     		filter = filter.and(f.getTotalStringProperty().like("%" + invoiceFilter.getTotal() + "%"));
     	}
     	
