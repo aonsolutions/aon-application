@@ -272,22 +272,23 @@ export class AonNewMenu extends AonElement {
 //             let header6 = this.getElement("aonHeaderUserButtonIconButton")
 //             header6.style.color = "var(--aonGrayHeaderButtonsColor)";
             
-//         }
-// 		let appsDiv = this.getElement("aonMenuLeftop-applications");
-// 		appsDiv.style.backgroundColor = header.style.backgroundColor;
-// 		/*
-// 		if(app.app == "accounting")
-// 			appsDiv.style.backgroundColor = "var(--aonBlue)";
-// 		*/
-// 		/*
-// 		if(app.color == "var(--aonTopMenuAvailable)"){
-// 			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
-// 			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
-// 		}
-// 		*/
-// 		if(!app.app == "home" || !app.app == "applications"){
-// 			let appsColor = this.getElement("aonMenuListAppImgTop-applications");
-// 			appsColor.style.color = "var(--aonHeaderButtonsColor)";
+        }
+		let appsDiv = this.getElement("aonMenuLeftop-applications");
+		//if(app.app == "accounting")
+		//	appsDiv.style.backgroundColor = "var(--aonBlue)";
+		//else
+		//	appsDiv.style.backgroundColor = app.color;
+		appsDiv.style.removeProperty('background-color'); 
+		let appName = app.app[0].toUpperCase() + app.app.slice(1);
+		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`;
+		
+		if(app.color == "var(--aonTopMenuAvailable)"){
+			header.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
+			appsDiv.style.backgroundColor = "var(--aonHeaderBackgroundAvailable)";
+		}
+		if(!app.app == "home" || !app.app == "applications"){
+			let appsColor = this.getElement("aonMenuListAppImgTop-applications");
+			appsColor.style.color = "var(--aonHeaderButtonsColor)";
 
 // 			let header1 = this.getElement("aonHeaderCompanyName")
 //             header1.style.color = "--aonHeaderButtonsColor";
@@ -659,8 +660,8 @@ export class AonNewMenu extends AonElement {
 		
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.innerHTML = app.symbol;
 			/*
 			if(app.newColor || app.color) {

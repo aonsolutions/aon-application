@@ -115,7 +115,12 @@ export class AonHome extends AonElement {
 				})
 			}else{
 			*/
-				
+				//aonHeader.setColor(appColor && '#fff', appColor);
+				//aonHeader.setBackgroundColor(appColor);
+				aonHeader.setColor();
+				aonHeader.setBackgroundColor();
+				let appName = app.app[0].toUpperCase() + app.app.slice(1);
+				aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
 			//}
 			
 		});

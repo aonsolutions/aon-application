@@ -1698,7 +1698,7 @@ public class Bases {
 			
 			long days = p.daysStream().count();
 			
-			return ret / workedDays * days;
+			return ret / workedDays * Math.min(days, workedDays);
 		}
 		
 		private static long days(Period p) {
