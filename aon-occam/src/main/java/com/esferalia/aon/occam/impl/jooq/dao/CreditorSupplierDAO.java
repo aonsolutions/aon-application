@@ -57,8 +57,9 @@ public class CreditorSupplierDAO {
 	private static final Field<String> type = DSL.field(DSL.name("typeRegistry"), String.class);
 	
 	public static long getCustomerCount(AONContext ctx, CustomerFilter filter, String globalFilter) {
-		
-		SelectJoinStep<Record1<Integer>> i = ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER).leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(CUSTOMER.REGISTRY))
+		SelectJoinStep<Record1<Integer>> i = ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(CUSTOMER.REGISTRY))
 			    .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(CUSTOMER.REGISTRY).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)));
 		if(globalFilter.isEmpty()) {
 			i.where(CUSTOMER_PROPERTIES.getConditions(filter));
@@ -109,8 +110,8 @@ public class CreditorSupplierDAO {
 	}
 
 	public static long getSupplierCreditorCount(AONContext ctx, CreditorFilter filter, SupplierFilter filter2, String globalFilter) {
-	    SelectJoinStep<Record1<Integer>> creditors = ctx.getDslContext().select(CREDITOR.REGISTRY).from(CREDITOR);
-	    SelectJoinStep<Record1<Integer>> suppliers = ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER);
+	    SelectJoinStep<Record1<Integer>> creditors = ctx.getDslContext().select(CREDITOR.REGISTRY).from(CREDITOR).join(REGISTRY).on(REGISTRY.ID.eq(CREDITOR.REGISTRY));
+	    SelectJoinStep<Record1<Integer>> suppliers = ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER).join(REGISTRY).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY));
 
 	    if (globalFilter.isEmpty()) {
 	        creditors.where(CREDITOR_PROPERTIES.getConditions(filter));
