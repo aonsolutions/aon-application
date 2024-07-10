@@ -246,6 +246,121 @@
 	/* background-color: var(--aonLightGray); */
 	background-color: var(--aonLightBlue);
   }
+
+  .aonSideNavHomeButton {
+
+
+  }
+  
+  .aonApplicationsButton {
+  
+  
+  }
+  
+  .aonSideNavInvoiceButton {
+  
+  
+  }
+  
+  .aonSideNavDocumentalButton {
+  
+  
+  }
+  
+  .aonSideNavAccountingButton {
+  
+  
+  }
+  
+  .aonSideNavFiscalButton {
+  
+  
+  }
+  
+  .aonSideNavPayrollButton {
+  
+  
+  }
+  
+  .aonSideNavTimeControlButton {
+  
+  
+  }
+  
+  .aonSideNavNotesButton {
+  
+  
+  }
+  
+  .aonSideNavRequestsButton {
+  
+  
+  }
+  
+  .aonTopNavOfficeButton {
+  
+  
+  }
+  
+  .aonTopNavGarageButton {
+  
+  
+  }
+  
+  .aonTopNavAcademyButton {
+  
+  
+  }
+  
+  .aonTopNavOfficeButton {
+  
+  
+  }
+  
+  .aonTopNavCommercialButton {
+  
+  
+  }
+  
+  .aonTopNavManagementButton {
+  
+  
+  }
+  
+  .aonTopNavWarehouseButton {
+  
+  
+  }
+  
+  .aonTopNavTreasuryButton {
+  
+  
+  }
+  
+  .aonTopNavGroupwareButton {
+  
+  
+  }
+  
+  .aonTopNavAccoutningButton {
+  
+  
+  }
+
+  .aonTopNavFiscalButton {
+	
+	
+  }
+  
+  .aonTopNavPayrollButton {
+  
+  
+  }
+  
+  .aonTopNavMarketingButton {
+  
+  
+  }
   
   .aonListGroup {
 	display: -ms-flexbox;
@@ -369,7 +484,7 @@
   
   [placeholder]:empty::before {
 	content: attr(placeholder);
-	color: #555; 
+	color: white; 
 	opacity: 0.6;
   }
   
@@ -430,6 +545,11 @@
 	  z-index: 1000000;
 	  height: calc(100vh - 49px);
 	  overflow: hidden;
+	 border-left:  solid rgba(255, 255, 255, 0.1);
+  }
+
+  .rightPanel .aonIconButton {
+	color: white;
   }
   
   .rootMobilePanel {

@@ -83,16 +83,17 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
-				aonHeader.setColor(appColor && '#fff', appColor);
+				/*aonHeader.setColor(appColor && '#fff', appColor);
 				if(appColor == "var(--aonTopMenuAvailable)")
 					aonHeader.setBackgroundColor("var(--aonHeaderBackgroundAvailable)")
 				else
 					aonHeader.setBackgroundColor(appColor);
+				*/
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
-				aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
-				aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
+				//aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
+				//aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
 			/*
