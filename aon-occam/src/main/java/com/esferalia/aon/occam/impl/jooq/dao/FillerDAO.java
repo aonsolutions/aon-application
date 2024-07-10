@@ -36,6 +36,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 import org.jooq.Record;
@@ -614,10 +615,14 @@ public class FillerDAO {
 	public static class ContractSimplifiedDataFiller implements Function<Record, ContractExtendedData> {
 		@Override
 		public ContractExtendedData apply(Record r) {
+			
+			ArrayList<String> idList = new ArrayList<>();
+			idList.add(r.getValue("contract_ids").toString());
 			return new ContractExtendedData()
-					.setId(r.getValue(CONTRACT.ID))		
+					.setId(r.getValue(REGISTRY.ID))		
 					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME));
+					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME))
+					.setIdLists(idList);
 		}
 	}
 	

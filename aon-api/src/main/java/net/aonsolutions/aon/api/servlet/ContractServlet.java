@@ -172,21 +172,28 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static Filter buildFilterSalariesNewPortal(SalaryNewPortalProperties properties , AonApiData api) {
 		JSONObject params = api.getData();
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
-		Integer contractId = JsonUtils.getInteger(params, "contract");
 		byte salaryType = JsonUtils.getByte(params, "salary_type");
 		Integer auxSalaryType = (int) salaryType;
+		String contractIds = JsonUtils.getString(params, "contract_ids");
 
 		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
 			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
 					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
 		}
 		
-		if(contractId != null) {
-			filter = filter.and(properties.getContractProperty().eq(contractId));
-		}
-		
 		if(auxSalaryType != null) {
 			filter = filter.and(properties.getSalaryType().eq(salaryType));
+		}
+				
+		if(contractIds != null) {
+			String [] stringIdArray = contractIds.split(",");
+			Integer [] intIdArray = new Integer[stringIdArray.length];
+
+			for (int i = 0; i < stringIdArray .length; i++) {
+				intIdArray [i] = Integer.parseInt(stringIdArray[i]);			
+			}
+			filter = filter.and(properties.getContractProperty().in(intIdArray));
+
 		}
 		return filter;
 	}
