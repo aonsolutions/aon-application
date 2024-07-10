@@ -324,8 +324,8 @@ export class AonTax extends AonElement {
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
     
-    // Esto no aparece en el modelo 303, pues en el 303 se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
-    if (resp.model != "IVA")
+    // Esto no aparece en el modelo 303 a ingresar, pues en el 303 se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
+    if (resp.model != "IVA" || resp.result <= 0)
 	    if(resp.typeText){
 	      const divK =  this.createElement(TAG.DIV);
 	      divK.classList.add("aonFlexBetween", "colorGrey", "aonFontWeight-700");
@@ -341,8 +341,8 @@ export class AonTax extends AonElement {
     form.id = `${this.id}Form`;
     div.appendChild(form);
     
-    // Para el Modelo 303, se deja elegir el tipo de ingreso
-    if (resp.model == "IVA") {
+    // Para el Modelo 303 a ingresar, se deja elegir el tipo de ingreso
+    if (resp.model == "IVA" && resp.result > 0) {
 	    let types = [
 			{ value: 'DEPOSIT', name: 'Ingreso'}, 
 			{ value: 'BANK', name: 'Domiciliación'}, 
@@ -455,7 +455,7 @@ export class AonTax extends AonElement {
 
     // Si esta configurado presentacion automatica del modelo, mostrar texto informandolo (tambien se muestra si está en entorno de pruebas de la AEAT)
     if (resp.presModelAuto == 1) {
-      const divTextPres = this.createElement(TAG.DIV);
+      const divTextPres = this.createElement(TAG.DIV, "divTextPres");
       divTextPres.style.marginTop = 6;
       divTextPres.style.textAlign = "center";
       divTextPres.style.fontWeight = "bold";
@@ -473,13 +473,9 @@ export class AonTax extends AonElement {
 
     // Boton Rechazar
     const buttonCancel = dialog.addCancelAction(() =>{
-		// FALTA - COMPROBAR QUE ESTO NO DA ERROR PUES HE CAMBIADO VISIBLEFIELDS
-//      this.visibleFields({type:"d"})
       this.visibleFields(null);
       const tipodec = this.getElement('tipodec');
       if (tipodec) tipodec.disabled = true;
-//      const certi = this.getElement('certi');
-//      if (certi) certi.hidden = true;
       div.innerHTML = "";
       textArea = new AonAutosizeTextarea();
       textArea.name = "reasonReject";
@@ -577,55 +573,32 @@ export class AonTax extends AonElement {
       
   }
 
-
-/* FALTA - ESTO ERA LO ANTERIOR 
-  visibleFields({ type }) {
-    if (type) {
-      let iban = this.getElement("iban");
-      let divNrc = this.getElement("divNrc");
-      let divAplazamiento = this.getElement("divAplazamiento");
-      let ibanHidden = true;
-      let nrcHidden = true;
-      switch (type) {
-        case CONST_FISCAL.DEPOSIT:
-          nrcHidden = false;
-          break;
-        case CONST_FISCAL.BANK:
-        case CONST_FISCAL.PAYBACK:
-          ibanHidden = false;
-          break;
-      }
-      iban.hidden = ibanHidden;
-      divNrc.hidden = nrcHidden;
-    }
-  }
-*/
-  
   visibleFields(resp){
-      let iban = this.getElement("iban");
-      let divNrc = this.getElement("divNrc");
-      let divAplazamiento = this.getElement("divAplazamiento");
-      let certi = this.getElement('certi');
-      let divTextPres = this.getElement('divTextPres');
-      let ibanHidden = true;      
-      let nrcHidden = true;
-      let aplazamientoHidden = true;
-      let certiHidden = true;
+	
+    let iban = this.getElement("iban");
+    let divNrc = this.getElement("divNrc");
+    let divAplazamiento = this.getElement("divAplazamiento");
+    let certi = this.getElement('certi');
+    let divTextPres = this.getElement('divTextPres');
+    let ibanHidden = true;      
+    let nrcHidden = true;
+    let aplazamientoHidden = true;
+    let certiHidden = true;      
 	
     if (resp) {
+      certiHidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
       switch(resp.type){		
         case CONST_FISCAL.DEPOSIT:
           nrcHidden = false;
-          certiHidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
         break;
         case CONST_FISCAL.BANK:
         case CONST_FISCAL.PAYBACK:
           ibanHidden = false;
-          certiHidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
         break;
 		case CONST_FISCAL.DEFERRAL:
           ibanHidden = false;
           aplazamientoHidden = false;
+          certiHidden = true;
         break;        
       }      
     }

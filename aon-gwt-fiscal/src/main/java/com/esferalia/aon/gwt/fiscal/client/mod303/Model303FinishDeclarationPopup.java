@@ -89,10 +89,12 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 						
 			FlexTable aplazaTable = new FlexTable();
 			Label aplazaLabel = new Label("Datos aplazamiento");
-			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo informativo, pues no se trasladan al fichero para su presentaci\u00F3n. Seg\u00FAn la normativa actual de la Agencia Tributaria, la fecha del primer plazo ser\u00E1 d\u00EDa 5 \u00F3 20 del mes que corresponda al vencimiento del plazo o fracci\u00F3n o el inmediato h\u00E1bil siguiente.");
+			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo informativo, pues no se trasladan al fichero para su presentaci\u00F3n.");
 
 			AonIntegerBox plazos = new AonIntegerBox();
 			AonDateBox fechaPlazo = new AonDateBox();
+			
+			// TIPO 
 			
 			final ListBox listBox = new ListBox();			
 			listBox.setSelectedIndex(0);
@@ -135,6 +137,8 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 			tab.setWidget(row, 1, listBox );
 			row++;
 			
+			// ACREEDOR
+			
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel()); 
 			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
 			Finance finance = mod303.getFinance();
@@ -157,6 +161,8 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 			tab.setWidget(row, 1, creditorPanel);
 			row++;
 	
+			// IBAN
+			
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 			tab.setWidget(row, 0, new Label(AON.MSG.bankAccount()));
 			
@@ -172,10 +178,11 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				mod303.getFinance().setBankAlias(cont.getAlias());
 				mod303.getFinance().setBic(cont.getBic());
 			});
+			row++;
 			
 			// NRC (Solo si el resultado es positivo)
-			if (mod303.getDeclarationResult() > 0) {
-				row++;				
+			
+			if (mod303.getDeclarationResult() > 0) {								
 				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 				tab.setWidget(row, 0, nrcLabel);
 				
@@ -187,39 +194,41 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				row++;
 			}
 			
-			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso
-			avisoLabel.setVisible(false);			
-			aplazaLabel.setVisible(false);
-			aplazaTable.setVisible(false);
-			aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTabLabel());
-			aplazaTable.setWidget(0, 0, new Label("N\u00FAmero de plazos"));
-			plazos.setMaxLength(2);
-			plazos.setVisibleLength(2);
-			plazos.setValue(mod303.getPlazos());
-			plazos.addValueChangeHandler( event -> {
-				if (plazos.getValue() == null)
-					plazos.setValue(0);
-				mod303.setPlazos(plazos.getValue()); 	
-			});			
-			aplazaTable.setWidget(0, 1, plazos);
-		
-			aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTabLabel());
-			aplazaTable.setWidget(0, 2, new Label("Fecha del primer plazo"));
-			if (AonStringUtils.isNotEmpty(mod303.getFechaPlazo())) {
-				fechaPlazo.setValue(fechaPlazo.parse(mod303.getFechaPlazo(), false));
-			}			
-			fechaPlazo.addValueChangeHandler( event -> mod303.setFechaPlazo(fechaPlazo.format()) );
-			aplazaTable.setWidget(0, 3, fechaPlazo);
+			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso (solo si es positivo)
 			
-			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			
-			tab.setWidget(row, 0, aplazaLabel);
-			tab.setWidget(row, 1, aplazaTable);
-			row++;
+			if (mod303.getDeclarationResult() > 0) {
+				avisoLabel.setVisible(false);			
+				aplazaLabel.setVisible(false);
+				aplazaTable.setVisible(false);
+				aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTabLabel());
+				aplazaTable.setWidget(0, 0, new Label("N\u00FAmero de plazos"));
+				plazos.setMaxLength(2);
+				plazos.setVisibleLength(2);
+				plazos.setValue(mod303.getPlazos());
+				plazos.addValueChangeHandler( event -> {
+					if (plazos.getValue() == null)
+						plazos.setValue(0);
+					mod303.setPlazos(plazos.getValue()); 	
+				});			
+				aplazaTable.setWidget(0, 1, plazos);
 			
-			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-			tab.setWidget(row, 0, avisoLabel);			
-			row++;
-			
+				aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTabLabel());
+				aplazaTable.setWidget(0, 2, new Label("Fecha del primer plazo"));
+				if (AonStringUtils.isNotEmpty(mod303.getFechaPlazo())) {
+					fechaPlazo.setValue(fechaPlazo.parse(mod303.getFechaPlazo(), false));
+				}			
+				fechaPlazo.addValueChangeHandler( event -> mod303.setFechaPlazo(fechaPlazo.format()) );
+				aplazaTable.setWidget(0, 3, fechaPlazo);
+				
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			
+				tab.setWidget(row, 0, aplazaLabel);
+				tab.setWidget(row, 1, aplazaTable);
+				row++;
+				
+				tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+				tab.setWidget(row, 0, avisoLabel);			
+				row++;
+			}
 		}
 		
 		row++;

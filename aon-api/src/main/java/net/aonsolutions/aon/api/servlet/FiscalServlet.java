@@ -533,6 +533,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 					model.setNrc(nrc);
 					model.setPlazos(plazos);
 					model.setFechaPlazo(AonDateUtils.simpleFormat(fechaPlazo));
+					// FALTA - Aplazamiento, ponemos por ahora la fecha de vencimiento la fecha de aplazamiento 
+					if (declarationType == FiscalModelDeclarationType.DEFERRAL && model.getFinance() != null && fechaPlazo != null) {
+						model.getFinance().setDueDate(fechaPlazo);
+					}
 					markModelAsFinished(ctx, model);
 					
 					// Presentación automática del modelo 
