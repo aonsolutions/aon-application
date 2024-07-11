@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -319,13 +320,7 @@ public class CretaServlet extends HttpServlet
 						if (file == CretaService.File.TRABAJADORES_TRAMOS) {
 							trabajadoresYTramosIss.add(part.getInputStream());
 						}else if (file == CretaService.File.RESPUESTA) {
-							try {
-								// Try with IDC first
-								//trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req, part));
-								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-							} catch ( Throwable t ) {
-								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
-							}
+							trabajadoresYTramosIss.addAll(generateTrabajadoresYTramos(connection, req, part));
 						}
 					} catch (IllegalArgumentException e) {
 		
@@ -334,28 +329,11 @@ public class CretaServlet extends HttpServlet
 			}
 			catch ( ServletException e ) { 
 				//if this request is not of type multipart/form-data
-				try {
-					// Try with IDC first
-					// trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
-					
-					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-				} catch ( Throwable t ) {
-					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-				}
-				
-			}
-			
-			if ( trabajadoresYTramosIss.isEmpty() ) {
-				try {
-					// Try with IDC first
-					//trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
-					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-				} catch ( Throwable t ) {
-				}
+				trabajadoresYTramosIss.addAll(generateTrabajadoresYTramos(connection, req));
 			}
 
 			if ( trabajadoresYTramosIss.isEmpty() ) {
-				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+				trabajadoresYTramosIss.addAll(generateTrabajadoresYTramos(connection, req));
 			}
 			
 			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
@@ -609,7 +587,13 @@ public class CretaServlet extends HttpServlet
 
 	// ------------------------------------------------------------------------
 
-	private static InputStream generateTrabajadoresYTramos(Connection connection, InputStream respuestaIs ) throws JAXBException, IOException {
+	private static InputStream generateSalaryTrabajadoresYTramos(Connection connection, Part part ) throws JAXBException, IOException {
+		try (InputStream is = part.getInputStream() ) {
+			return generateSalaryTrabajadoresYTramos(connection, is);
+		}
+	}
+
+	private static InputStream generateSalaryTrabajadoresYTramos(Connection connection, InputStream respuestaIs ) throws JAXBException, IOException {
 		
 		Respuesta respuesta = Utils.unmarshal(Respuesta.class, respuestaIs);
 		
@@ -656,8 +640,36 @@ public class CretaServlet extends HttpServlet
 		
 	}
 
+	private static List<InputStream> generateTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
+		try {
+			boolean withIdc = AonStringUtils.equalsIgnoreCase("on",
+					req.getParameter(CretaService.Parameter.WITH_IDC.name()));
+			if ( withIdc ) {
+				return generateIDCTrabajadoresYTramos(req);
+			}
+		} catch ( Exception e ) {
+		}
 
-	private static InputStream generateTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
+		InputStream trabajadoreYTramosIs = generateSalaryTrabajadoresYTramos(connection, req);
+		return Collections.singletonList( trabajadoreYTramosIs );
+	}
+
+	private static List<InputStream> generateTrabajadoresYTramos(Connection connection, HttpServletRequest req , Part part ) throws JAXBException, IOException {
+		
+		try {
+			boolean withIdc = AonStringUtils.equalsIgnoreCase("on",
+					req.getParameter(CretaService.Parameter.WITH_IDC.name()));
+			if ( withIdc ) {
+				return generateIDCTrabajadoresYTramos(null, part);
+			}
+		} catch ( Exception e ) {
+		}
+		InputStream trabajadoresYTramosIs =  generateSalaryTrabajadoresYTramos(connection, part);
+		return Collections.singletonList(trabajadoresYTramosIs);
+	}
+
+
+	private static InputStream generateSalaryTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
 		
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
 		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
@@ -776,11 +788,6 @@ public class CretaServlet extends HttpServlet
 			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
 			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 			String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
-			String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
-			String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
-			String ctrlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
-			String ctrlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
-			String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 			
 			Date desdeDate = toDate(desdeMes, desdeAnho); 
 			
