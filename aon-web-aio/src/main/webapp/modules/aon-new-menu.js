@@ -128,9 +128,22 @@ export class AonNewMenu extends AonElement {
 	}
 
 	appSelection(app, sidenav) {
+		let apps = this.getElement("applications");
+		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
 			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+			let headerapp = this.getElement("aonHeaderApp");
+			headerapp.style.display = "none";
+			let logo = this.getElement("aonLogo");
+			logo.style.display = "block";
+			logo.style.filter = "none";
+
+			let header2 = this.getElement('aonHeaderWeb');
+			header2.className = 'aonHeader aonHeaderStart';
+			let applications = this.getElement('applications');
+			applications.className = 'aonMenuLeftopStart';
+
 		} else {
 			switch (app.app) {
 				case HOME.app:
@@ -236,8 +249,6 @@ export class AonNewMenu extends AonElement {
 		
 		let appsDiv = this.getElement("aonMenuLeftop-applications");
 		appsDiv.style.removeProperty('background-color'); 
-		let apps = this.getElement("applications");
-		apps.className = '';
 		let appName = app.app[0].toUpperCase() + app.app.slice(1);
 		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`
 	}

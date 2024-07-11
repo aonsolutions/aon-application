@@ -39,15 +39,7 @@ export class AonHelp extends AonElement {
 		this.appendChild(span);
 
 		let div = this.createSpan();
-		div.style.paddingTop = '5px';
-		div.style.title = "Índice contenidos";
-        div.style.paddingLeft = "10px";
-		div.style.marginTop = "14px";
-        div.style.borderRadius = "5px";
-        div.style.paddingBottom = "5px";
-        div.style.cursor = "pointer";
-		div.style.display = "flex";
-        div.style.transition = "background-color 0.2s"
+		div.className = "helpCardText";
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
@@ -61,18 +53,6 @@ export class AonHelp extends AonElement {
         span2.style.marginTop = "2px";
 		span2.innerHTML = "Índice contenidos";
 		div.appendChild(span2);
-
-        div.addEventListener("mouseover", () => {
-			if(LS.isDarkTheme())
-				div.style.backgroundColor = "var(--aonCardColor)";
-			else
-            	div.style.backgroundColor = "rgba(0,36,105,0.1)";
-        });
-           
-        div.addEventListener("mouseleave", () => {
-            div.style.backgroundColor = "transparent";
-        });
-
 		this.appendChild(div);
 
 		let rightPanelSwitchSupportButton = new AonSwitch();
@@ -137,13 +117,7 @@ export class AonHelp extends AonElement {
 		  (manifest) => {
 				let version = MSG.VERSION + ": " + manifest.build_date;
 				let divInfo = this.createElement(TAG.DIV);
-				if(LS.isDarkTheme())
-					divInfo.style.color = "white";
-				else
-					divInfo.style.color = '#666';
-				divInfo.style.fontSize = '9px';
-				divInfo.style.marginTop = '10px';
-				divInfo.style.padding = '15px';
+				divInfo.className = "divInfo";
 				divInfo.innerHTML = `
 				  <span>
 					<a target="_blank" class="aonLink" href="http://www.aonsolutions.es">

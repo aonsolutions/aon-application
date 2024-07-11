@@ -424,6 +424,15 @@
     z-index: 1000000;
     height: calc(100vh - 49px);
     overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.rightPanel .aonIconButton {
+  color: red;
+} 
+
+h1 {
+  color:rgb(66,66,66);
 }
 
 .rootMobilePanel {
@@ -2924,7 +2933,7 @@ label.rating:hover {
 #payrollMenu:hover,
 #marketingMenu:hover{
   background-color: white;
-  transition: background-color 0.2s;
+  /*transition: background-color 0.2s;*/
 }
 
 #aonHeaderCompanyList:hover,
@@ -2934,10 +2943,78 @@ label.rating:hover {
 #aonHeaderUser:hover{
   background-color: rgba(0,0,0,0.1);
   border-radius: 100px;
-  transition: background-color 0.2s;
+  /*transition: background-color 0.2s;*/
 }
 
 #applications:hover{
   background-color:rgba(0,0,0,0.1);
+  /*transition: background-color 0.2s;*/
+}
+
+.divLogout{
+  border-top: 1px solid rgba(0,0,0,.08);
+  color: inherit;
+  background-color: rgba(0,0,0,.04);
+  height: 43px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.divLogout:hover{
+  border-top: 1px solid rgba(0,0,0,.08);
+  color: inherit;
+  background-color: rgba(0,0,0,.1);
+  height: 43px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.divInfo{
+  color: #666;
+  font-size: 9px;
+  margin-top: 10px;
+  padding: 15px;
+}
+
+.helpCardText{
+  padding-top: 5px;
+  padding-left: 10px;
+  margin-top: 14px;
+  border-radius: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  display: flex;
   transition: background-color 0.2s;
+}
+
+.helpCardText:hover{
+  background-color:rgba(0,36,105,0.1);
+}
+
+.fiscalCardInfo{
+  color: rgb(120,120,133);
+  font-size: .7rem;
+  min-width: 7.5rem;
+}
+
+.fiscalCardTerritory{
+  color: rgb(120,20,133);
+}
+
+.graphicsDashBoardSummary{
+  color: grey;
+  font-weight: 500;
+  text-align: center;
+}
+
+.graphicsDashBoardYear{
+  background: none;
+  border: 1px gray solid;
+
+}
+
+.rightPanelLangCard{
+  width: 90%;
+  height: fit-content;
+  margin-left: 10px;
 }
