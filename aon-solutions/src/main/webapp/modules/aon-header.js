@@ -383,6 +383,7 @@ export class AonHeader extends AonElement {
 			let header = this.getElement("aonHeaderWeb");
 			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
+			headerapp.style.display = "none";
 
 			// if (!LS.isDarkTheme()) {
 			// 	header.style.backgroundColor = "rgb(240, 240, 240)";
@@ -418,7 +419,10 @@ export class AonHeader extends AonElement {
 				appss.addEventListener("click", welcomeClickListener);
 			}
 
-			appss.style.color = "rgb(95, 99, 104)";
+		let header2 = this.getElement('aonHeaderWeb');
+		header2.className = 'aonHeader aonHeaderStart';
+		let applications = this.getElement('applications');
+		applications.className = 'aonMenuLeftopStart';
 		});
 
 		if(this.activeTimecontrol) {

@@ -178,41 +178,6 @@ export class AonIconButton extends AonElement {
       this.style.width = "0px";
       this.style.display = "none";
     }
-/*
-    let buttons = [
-      "aonHeaderHelpButtonIconButton",
-      "aonHeaderConfigButtonIconButton",
-      "aonHeaderNotificationButtonIconButton",
-      "aonHeaderUserButtonIconButton",
-      "aonHeaderCompanyListButtonIconButton"
-    ];
-    
-    let header = this.getElement("aonHeaderWeb");
-
-    buttons.forEach((buttonId) => {
-      let button = document.getElementById(buttonId); 
-    
-      if (button) { 
-        button.addEventListener("mouseover", () => {
-          button.style.backgroundColor = this.getBackgroundHover(); 
-        });
-    
-        button.addEventListener("mouseleave", () => {
-          button.style.backgroundColor = background;
-          
-          if (!header.style.backgroundColor && buttons.includes(button.id)) {
-            button.style.color = "#5f6368";
-          } else if (header.style.backgroundColor && buttons.includes(button.id)) {
-            button.style.color = "white";
-          } else if (LS.isDarkTheme()) {
-            button.style.color = "white";
-          } else {
-            button.style.color = "#5f6368";
-          }
-        });
-      }
-    });
-*/
     if (this.hasAttribute("icon")) {
       this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
       this.getIcon().innerHTML = this.getAttribute("icon");

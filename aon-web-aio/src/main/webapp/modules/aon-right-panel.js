@@ -52,10 +52,6 @@ export class AonRightPanel extends AonElement {
 		rightPanel.style.width = '320px';
 		rightPanel.style.backgroundColor = "var(--aonRightPanelColor)";
 		rightPanel.style.visibility = "hidden";
-        if(LS.isDarkTheme())
-            rightPanel.style.borderLeft = "1px solid rgba(255, 255, 255, 0.1)";
-        else
-            rightPanel.style.borderLeft = "1px solid rgba(0 , 0 , 0, 0.1)";
         this.appendChild(rightPanel);
 
         let rightPanelEditButton = new AonIconButton(); 
