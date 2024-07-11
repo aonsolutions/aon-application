@@ -331,6 +331,7 @@ import com.esferalia.aon.occam.impl.jooq.StatsImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
@@ -1836,13 +1837,8 @@ public class AON {
 	}
 	
 	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -1862,9 +1858,13 @@ public class AON {
 
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice, Integer rawdocId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+			return acceptInvoice(ctx, invoice, rawdocId);
 		}
 	}
+	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
+		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+	}
+	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
@@ -1937,6 +1937,10 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoice(ctx, id);
 		}
+	}
+	
+	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {
+		return InvoiceDAO.getLastItem(ctx, registry);
 	}
 	
 	public static Invoice getLastSaleInvoice(Occam occam, String serie){

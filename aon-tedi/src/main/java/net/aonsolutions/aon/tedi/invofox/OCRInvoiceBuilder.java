@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -41,7 +42,6 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -1166,7 +1166,7 @@ public class OCRInvoiceBuilder {
 	private static void guessItemsOrAccounts(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
 		if (invoice != null && invoice.getRegistry() != null) {
 			// Se busca el último item del registry que se trata
-			Optional<Item> opItem = InvoiceDAO.getLastItem(ctx, invoice.getRegistry());
+			Optional<Item> opItem = AON.getLastItem(ctx, invoice.getRegistry());
 			if (opItem.isPresent()) {
 				invoiceDetail.setItem( opItem.get() );	
 			} else {
