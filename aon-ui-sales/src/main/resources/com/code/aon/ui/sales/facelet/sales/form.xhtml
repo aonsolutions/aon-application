@@ -89,7 +89,7 @@
 						<aon:if test="#{domainSwitcher.paturpat}">
 							<aon:menuItem id="prepareSale"
 								value="#{bundle.prepare_sale}"
-								immediate="#{true}" rendered="#{sales.pending}"
+								immediate="#{true}" rendered="#{(sales.pending or sales.inPreparation) and sales.showPrepareSale }"
 								iconClass="aon-icon-package"
 								reRender="showPrepareSaleWindow">
 								<f:setPropertyActionListener target="#{sales.showPrepareSaleWindow}"

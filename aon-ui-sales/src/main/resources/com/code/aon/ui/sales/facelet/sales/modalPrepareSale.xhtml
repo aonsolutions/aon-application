@@ -22,6 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
+							actionListener="#{sales.onCancelPrepareSale}"
 							reRender="showPrepareSaleWindow, salesForm" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
@@ -47,6 +48,7 @@
 
 									<aon:commandButton id="prepareSale-cancel"
 										value="#{bundle.aon_cancel}"
+										actionListener="#{sales.onCancelPrepareSale}"
 										reRender="showPrepareSaleWindow, salesForm"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
@@ -61,7 +63,7 @@
 										<aon:outputLabel for="Sales_chargeDate"
 											value="Fecha Carga" />
 										<aon:selectInputDate id="Sales_chargeDate"
-											value="#{sales.chargeDate}" required="true"
+											value="#{sales.prepareSaleProcess.chargeDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"
 											jointPoint="bottom-right"
@@ -72,13 +74,13 @@
 											value="Albarán" />
 										<aon:div>
 											<aon:selectOneMenu id="Sales_delivery" 
-												value="#{sales.delivery}">
+												value="#{sales.prepareSaleProcess.delivery}">
 												<f:selectItem itemLabel=" - " itemValue="#{null}" />
 												<f:selectItems value="#{sales.deliveries}" />
 											</aon:selectOneMenu>
 											
 											<aon:selectBooleanCheckbox id="Sales_newDelivery" styleClass="aon-margin-left"
-												value="#{sales.newDelivery}" />
+												value="#{sales.prepareSaleProcess.newDelivery}" />
 											<aon:outputLabel for="Sales_newDelivery" styleClass="aon-italic"
 												value="Crear Nuevo Albarán" />
 										</aon:div>
@@ -96,7 +98,7 @@
 										<aon:outputLabel for="Sales_carrier"
 											value="#{bundle.warehouse_delivery_carrier}" />
 										<aon:selectOneMenu id="Sales_carrier" 
-											value="#{sales.carrier}">
+											value="#{sales.prepareSaleProcess.carrier}">
 											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{carrierCollections.carriers}" />
 										</aon:selectOneMenu>
@@ -104,28 +106,28 @@
 									</aon:panelGrid>
 									<aon:div>
 										<aon:selectBooleanCheckbox id="Sales_includePackingList" styleClass="aon-margin-left"
-											value="#{sales.includePackingList}" 
+											value="#{sales.prepareSaleProcess.includePackingList}" 
 											reRender="packingListDiv" immediate="true"
 											/>
 										<aon:outputLabel for="Sales_includePackingList" styleClass="aon-italic"
 											value="Incluir Packing List" />
 									</aon:div>
 									<aon:div id="packingListDiv" styleClass="aon-padding-top">
-										<aon:if test="#{sales.includePackingList}">
+										<aon:if test="#{sales.prepareSaleProcess.includePackingList}">
 												
 									<aon:panelGrid id="packingListMenuGrid" columns="4" dir="true" style="width: 100%;" >
 										<aon:outputLabel for="Sales_PackingList"
 											value="Packing List" />
 										<aon:div>
 											<aon:selectOneMenu id="Sales_PackingList" 
-												disabled="#{sales.newPackingList}"
-												value="#{sales.packingList}">
+												disabled="#{sales.prepareSaleProcess.newPackingList}"
+												value="#{sales.prepareSaleProcess.packingList}">
 												<f:selectItem itemLabel=" - " itemValue="#{null}" />
 												<f:selectItems value="#{sales.packingLists}" />
 											</aon:selectOneMenu>
 											
 											<aon:selectBooleanCheckbox id="Sales_newPackingList" styleClass="aon-margin-left"
-												value="#{sales.newPackingList}" reRender="packingListDiv" immediate="true" />
+												value="#{sales.prepareSaleProcess.newPackingList}" reRender="packingListDiv" immediate="true" />
 											<aon:outputLabel for="Sales_newPackingList" styleClass="aon-italic"
 												value="Crear Nuevo Packing List" />
 										</aon:div>
@@ -133,23 +135,23 @@
 										<aon:outputLabel for="Sales_numberPlate"
 											value="Matricula" />
 										<aon:inputText id="Sales_numberPlate"  
-											disabled="#{!sales.newPackingList}"
+											disabled="#{!sales.prepareSaleProcess.newPackingList}"
 											size="20" maxlength="128"
-											value="#{sales.numberPlate}" />
+											value="#{sales.prepareSaleProcess.numberPlate}" />
 											
 										<aon:outputLabel for="Sales_driverName"
 											value="Nombre Conductor" />
 										<aon:inputText id="Sales_driverName"  
-											disabled="#{!sales.newPackingList}"
+											disabled="#{!sales.prepareSaleProcess.newPackingList}"
 											size="20" maxlength="128"
-											value="#{sales.driverName}" />
+											value="#{sales.prepareSaleProcess.driverName}" />
 											
 										<aon:outputLabel for="Sales_driverDocument"
 											value="Documento Conductor" />
 										<aon:inputText id="Sales_driverDocument"  
-											disabled="#{!sales.newPackingList}"
+											disabled="#{!sales.prepareSaleProcess.newPackingList}"
 											size="20" maxlength="128"
-											value="#{sales.driverDocument}" />
+											value="#{sales.prepareSaleProcess.driverDocument}" />
 									</aon:panelGrid>	
 									</aon:if>
 									</aon:div>
@@ -158,7 +160,7 @@
 									
 									<aon:div>
 										<aon:selectBooleanCheckbox id="Sales_partialPreparation" styleClass="aon-margin-left"
-											value="#{sales.partialPreparation}" 
+											value="#{sales.prepareSaleProcess.partialPreparation}" 
 											reRender="partialPreparationDiv" immediate="true"
 											/>
 										<aon:outputLabel for="Sales_partialPreparation" styleClass="aon-italic"
@@ -168,17 +170,17 @@
 									<aon:div id="partialPreparationDiv"  styleClass="aon-margin-top">
 									
 										<aon:dataTable id="linesDataTable" var="to" rows="10" 
-											value="#{sales.prepareSaleModel}"
-											rendered="#{sales.partialPreparation}">
+											value="#{sales.prepareSaleProcess.model}"
+											rendered="#{sales.prepareSaleProcess.partialPreparation}">
 	
 											<aon:column styleClass="aon-editDataTable-iconColumn">
 												<f:facet name="header">
 													<aon:outputText value="&#160;" />
 												</f:facet>
 												<aon:div>
-													<aon:selectBooleanCheckbox id="prepareSaleDetail" styleClass="aon-margin-left"
-															value="#{sales.rowCheckedDetail}"
-															valueChangeListener="#{sales.rowSelectedDetail}" 
+													<aon:selectBooleanCheckbox id="Sales_partialPreparationCheckbox#{to.id}" styleClass="aon-margin-left"
+															actionListener="#{sales.prepareSaleProcess.rowSelectedDetail(to.id)}"
+															
 													/>
 												</aon:div>
 											</aon:column>
