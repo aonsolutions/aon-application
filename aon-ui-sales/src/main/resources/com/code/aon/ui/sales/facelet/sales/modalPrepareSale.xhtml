@@ -177,8 +177,8 @@
 												</f:facet>
 												<aon:div>
 													<aon:selectBooleanCheckbox id="prepareSaleDetail" styleClass="aon-margin-left"
-														value="&#160;"
-														immediate="true"
+															value="#{sales.rowCheckedDetail}"
+															valueChangeListener="#{sales.rowSelectedDetail}" 
 													/>
 												</aon:div>
 											</aon:column>

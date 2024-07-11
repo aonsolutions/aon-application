@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
@@ -104,6 +105,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -171,6 +173,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private SalesIngenetHandler ingenetHandler;
 	
 	private SalesElaborationProcess elaborationProcess;
+	private List<SalesDetail> salesDetailsChecks;
+
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -1258,6 +1262,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+//			criteria.addNullExpression("SalesDetail_delivery_id");
 			return salesDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining salesDetail list", e);
@@ -1265,6 +1270,45 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return null;
 	}
 	
+
+	public void rowSelectedDetail(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			setRowCheckedDetail(((Boolean)event.getNewValue()).booleanValue());
+		}
+	}
+	
+	public boolean isRowCheckedDetail() {
+		return getRowCheckedDetail();
+	}
+	
+	public boolean getRowCheckedDetail() {
+		SalesDetail detail = (SalesDetail) getPrepareSaleModel().getRowData();
+		return getSalesDetailsChecks().contains(detail);
+	}
+	
+	public void setRowCheckedDetail(boolean rowChecked) {
+		if (rowChecked) {
+			SalesDetail to = (SalesDetail) getPrepareSaleModel().getRowData();
+			if (!getSalesDetailsChecks().contains(to)) {
+				getSalesDetailsChecks().add(to);
+			}
+		} else {
+			SalesDetail to = (SalesDetail) getPrepareSaleModel().getRowData();
+			if (getSalesDetailsChecks().contains(to)) {
+				getSalesDetailsChecks().remove(to);
+			}
+		}
+	}
+	
+	public List<SalesDetail> getSalesDetailsChecks() {
+		if(salesDetailsChecks == null) 
+			clearSalesDetailsChecks();
+		return salesDetailsChecks;
+	}
+	
+	public void clearSalesDetailsChecks() {
+		salesDetailsChecks= new ArrayList<SalesDetail>();
+	}
 	
 	public void onPrepareSale(ActionEvent event) {
 		String domainName = AonUtil.getDomainName();
@@ -1273,7 +1317,30 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Sales to = (Sales)this.getTo();
 		to.setCarrier(getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
-
+		Integer packingListId = null;
+		if(isIncludePackingList()) {
+			packingListId = getPackingList();
+			if(isNewPackingList() || packingListId == null) {
+				CarrierPacking cp = new CarrierPacking()
+						.setDomain(to.getDomain())
+						.setCarrier(to.getCarrier().getId())
+						.setCarrierName(to.getCarrier().getRegistry().getName())
+						.setCarrierDocument(to.getCarrier().getRegistry().getDocument())
+						.setSeries(series)
+						.setType(CarrierPackingType.WAYBILL)
+						.setStatus(CarrierPackingStatus.PENDING)
+						.setIssueDate(getChargeDate())
+						.setDeliveryDate(to.getDeliveryDate())
+						.setCarrierReference("")
+						.setNumberPlate(getNumberPlate())
+						.setDriverName(getDriverName())
+						.setDriverDocument(getDriverDocument())						
+						;
+				packingListId = AON.insertCarrierPacking(domainName, to.getDomain(), login, cp);				
+			}
+			to.setCarrierPacking(packingListId);
+		}
+		
 		Integer deliveryId = getDelivery();
 		if(isNewDelivery() || deliveryId == null) {
 			com.esferalia.aon.occam.api.model.warehouse.Delivery d = new com.esferalia.aon.occam.api.model.warehouse.Delivery()
@@ -1289,16 +1356,22 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setNumberPlate(getNumberPlate())
 				.setDriver(getDriverName())
 				.setDriverDocument(getDriverDocument())
-				.setStatusModificationDate(getChargeDate());
+				.setStatusModificationDate(getChargeDate())
+				.setCarrierPacking(packingListId);
 			d = AON.saveDelivery(domainName, to.getDomain(), login, d);
 			deliveryId = d.getId();
 		}
 		Integer deliveryIdAux = deliveryId;
+		
 		AON.getSalesDetailStream(domainName, to.getDomain(), login, f -> f.getSalesProperty().eq(to.getId()))
 		.forEach(detail -> {
-			detail.setDelivery(deliveryIdAux);
-			AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			if(!isPartialPreparation() || (isPartialPreparation() && getSalesDetailsChecks().stream().filter(f -> f.getId().equals(detail.getId())).count() > 0)) {
+				detail.setDelivery(deliveryIdAux);
+				AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			}
 		});
+		
+		
 		
 		accept(event);
 	
