@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.test.product.TargetItemTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	InvoiceBreakdownJSONTest.class,
 	ValidationSaveEmptyDomainTest.class,
 	ValidationSaveEmptyIssueDateTest.class,
 	ValidationSaveEmptyTaxDateTest.class,
