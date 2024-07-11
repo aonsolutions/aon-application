@@ -1933,7 +1933,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				
 			};
 			dialog.setVisibleReftificationMark(true);
+			dialog.setVisibleWithIDC("L00".equals(dialog.getType()));
 			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
+			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleWithIDC("L00".equals(dialog.getType())));
 			setupDialog(dialog);
 		}
 	
@@ -1971,6 +1973,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solictudRecepcionRNT = dialog.solicitudRecepcionRNT();
+			boolean withIDC = dialog.withIDC();
 			
 	
 			CCC cccCopy  = new CCC();
@@ -1993,7 +1996,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				calcsDetailed,
 				i54,
 				reftificationMark,
-				solictudRecepcionRNT);
+				solictudRecepcionRNT,
+				withIDC);
 	
 			return true;
 		}

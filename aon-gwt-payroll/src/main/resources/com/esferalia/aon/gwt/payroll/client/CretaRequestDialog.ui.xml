@@ -194,6 +194,14 @@
 					<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="aceptarBasesAnterioresCheckBox" checked="false"/>
 				</td>
 			</tr>
+			<tr ui:field="withIDCTR"  >
+				<td class="{style.label}">
+					<g:Label text="Consultar TGSS IDC" />
+				</td>
+				<td class="{style.field}" >
+					<g:CheckBox  name="{WITH_IDC.name}" ui:field="withIDCCheckBox" checked="false"/>
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
 			</tr>

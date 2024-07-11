@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
@@ -62,7 +61,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 				+ times + " facturas creadas.)"
 				,times));
 		Assert.assertTrue( 
-			InvoiceDAO.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)
+			AON.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)
 				.findFirst()
 				.isPresent()
 		);

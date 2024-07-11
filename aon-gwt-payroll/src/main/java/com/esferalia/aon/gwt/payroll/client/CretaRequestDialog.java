@@ -149,6 +149,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	Element monthTR;
 
 	@UiField
+	Element withIDCTR;
+
+	@UiField
 	MonthListBox monthListBox;
 
 	@UiField
@@ -197,6 +200,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	ListBox typeListBox;
 	
 	@UiField
+	CheckBox withIDCCheckBox;
+
+	@UiField
 	CheckBox previousBasesCheckBox;
 
 	@UiField
@@ -228,6 +234,8 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setWidget(binder.createAndBindUi(this));
 		
 		setVisibleI54(false);
+
+		setVisibleWithIDC(false);
 
 		setVisiblePreviousBases(false);
 		
@@ -451,6 +459,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		onAuthChanged((ValueChangeEvent<Long>)null);
 	}
 
+	public boolean withIDC(){
+		return withIDCCheckBox.getValue();
+	}
+
 	public boolean previousBases(){
 		return previousBasesCheckBox.getValue();
 	}
@@ -485,6 +497,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	}
 	// ------------------------------------------------------------------------
 	
+	protected void setVisibleWithIDC(boolean visible){
+		setVisible(visible, withIDCTR);
+	}
+
 	protected void setVisibleMonth(boolean visible){
 		setVisible(visible, monthTR);
 	}

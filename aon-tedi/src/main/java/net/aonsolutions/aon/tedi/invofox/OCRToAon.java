@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.tedi.invofox;
 
-
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -31,7 +30,7 @@ public class OCRToAon {
 				Invoice savedInvoice = null;
 				Rawdoc savedRawdoc = null;
 				try {
-					savedInvoice = InvoiceDAO.accept(ctx, invoice, null);
+					savedInvoice = AON.acceptInvoice(ctx, invoice, null);
 				} catch( Exception e ) {
 					savedRawdoc = RawdocDAO.save(ctx, new Rawdoc()
 						.setDomain( invoice.getDomain() )

@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +51,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
@@ -69,6 +68,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -231,7 +231,7 @@ public class AccountingInvoiceDAO {
 				}
 				
 				if ( !ai.isAccountSource() ) {
-					fillBreakdown(ctx, ai.getInvoice());
+					InvoiceDAO.fillBreakdown(ctx, ai.getInvoice());
 				}
 				ai.getInvoice().setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				
@@ -392,70 +392,6 @@ public class AccountingInvoiceDAO {
 			.setSurchargeQuotaEdited( false  )
 			.setDeductibleQuotaEdited( false  )
 		);
-	}
-
-	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
-		fillBreakdown(ctx, invoice, false);
-	}
-	
-	public static void fillBreakdown(AONContext ctx, Invoice invoice, boolean skipVatExempt) {
-		if (invoice.getBreakdown() == null) {
-			invoice.setBreakdown(new LinkedList<>());
-		}
-		
-		boolean vatExempt = 
-				invoice.isSales()  && !invoice.isNational() && !skipVatExempt		// VENTA NO NACIONAL
-			;
-
-		ctx.getDslContext()
-			.select( 
-				INVOICE_TAX.TAX_TYPE,
-				INVOICE_TAX.BASE,
-				INVOICE_TAX.PERCENTAGE,
-				INVOICE_TAX.QUOTA,
-				INVOICE_TAX.SURCHARGE,
-				INVOICE_TAX.SURCHARGE_QUOTA,
-				INVOICE_TAX.WITHHOLDING_TYPE
-					) 
-		.from( INVOICE_DETAIL )
-		.innerJoin( INVOICE_TAX ).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-		.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
-		.and( !vatExempt ? DSL.trueCondition(): INVOICE_TAX.TAX_TYPE.ne(TaxType.VAT.value()) )
-		.fetch()
-		.stream()
-		.map( tax -> new InvoiceBreakdown()
-			.setTaxType( TaxType.safeValueOf(tax.getValue(INVOICE_TAX.TAX_TYPE) ))
-			.setBase(tax.getValue(INVOICE_TAX.BASE))
-			.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-			.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
-			.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
-			.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-			.setWithholdingType(WithholdingType.safeValueOf(tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE) )))
-		.forEach( br -> {
-			boolean added = false;
-			for (InvoiceBreakdown invBr : invoice.getBreakdown()) {
-				if ( invBr.getTaxType() == br.getTaxType() && AonNumberUtils.equals(invBr.getPercentage(), br.getPercentage())) {
-					invBr.setBase(AonMathUtils.round( invBr.getBase() + br.getBase(), 4));
-					invBr.setQuota(AonMathUtils.round( invBr.getQuota() + br.getQuota(), 4));
-					added = true;
-				} 
-			}
-			if (!added) {
-				invoice.getBreakdown().add(br);		
-			}
-		});
-		for (InvoiceBreakdown br : invoice.getBreakdown()) {
-			if (AonMathUtils.isZero( br.getQuota() )) {
-				br.setQuota( AonMathUtils.round( br.getBase() * br.getPercentage() / 100 ) );
-			}
-			if (AonMathUtils.isNotZero(br.getSurcharge()) && AonMathUtils.isZero( br.getSurchargeQuota() )) {
-				br.setSurchargeQuota( AonMathUtils.round( br.getBase() * br.getSurcharge() / 100 ) );
-			}
-		}
-		invoice.getBreakdown().sort((b1, b2) -> Comparator
-			.comparing(InvoiceBreakdown::getTaxType)
-			.thenComparing(InvoiceBreakdown::getPercentage)		
-			.compare(b1, b2));
 	}
 
 	public static AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType type, Integer registryId, AccountingInvoice ai, boolean preserveData) {
@@ -1605,5 +1541,53 @@ public class AccountingInvoiceDAO {
 		}
 	}
 	
+	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryDocumentProperty().like(filter)
+				  .or(p.getRegistryNameProperty().like(filter))
+				  .or(p.getReferenceCodeProperty().like(filter))
+				  )
+				 .and(p.getTransactionProperty().eq(InvoiceTransactionType.EXTRACOMMUNITY.value())
+				  .or(p.getTransactionProperty().eq(InvoiceTransactionType.CAN_CEU_MEL.value()))
+				  )
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryProperty().eq(registry))
+				 .and(p.getRectificationTypeProperty().isNull())
+				 .and(p.getReferenceCodeProperty().like(filter))
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	private static String decorateQueryString( String query) {
+		String q = null; 
+		if (!AonStringUtils.contains(query, AonStringUtils.PERCENT)) {
+			if (AonStringUtils.isNumeric(query)) {
+				q = AonStringUtils.EMPTY;
+			} else {
+				q = AonStringUtils.PERCENT; 
+			}
+			q = q + query  + AonStringUtils.PERCENT;
+		} else {
+			q = query;
+		}
+		return q;
+	}
 }
 
