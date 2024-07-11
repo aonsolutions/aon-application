@@ -217,7 +217,12 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				if (AonStringUtils.isNotEmpty(mod303.getFechaPlazo())) {
 					fechaPlazo.setValue(fechaPlazo.parse(mod303.getFechaPlazo(), false));
 				}			
-				fechaPlazo.addValueChangeHandler( event -> mod303.setFechaPlazo(fechaPlazo.format()) );
+				fechaPlazo.addValueChangeHandler( event -> { 
+						mod303.setFechaPlazo(fechaPlazo.format());
+						// FALTA - POR AHORA LE PONEMOS LA FECHA DEL PRIMER PLAZO
+						if (mod303.getFinance() != null) 
+							mod303.getFinance().setDueDate(fechaPlazo.getValue());
+					});
 				aplazaTable.setWidget(0, 3, fechaPlazo);
 				
 				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			
