@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +51,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
@@ -69,6 +68,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -1541,5 +1541,53 @@ public class AccountingInvoiceDAO {
 		}
 	}
 	
+	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryDocumentProperty().like(filter)
+				  .or(p.getRegistryNameProperty().like(filter))
+				  .or(p.getReferenceCodeProperty().like(filter))
+				  )
+				 .and(p.getTransactionProperty().eq(InvoiceTransactionType.EXTRACOMMUNITY.value())
+				  .or(p.getTransactionProperty().eq(InvoiceTransactionType.CAN_CEU_MEL.value()))
+				  )
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryProperty().eq(registry))
+				 .and(p.getRectificationTypeProperty().isNull())
+				 .and(p.getReferenceCodeProperty().like(filter))
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	private static String decorateQueryString( String query) {
+		String q = null; 
+		if (!AonStringUtils.contains(query, AonStringUtils.PERCENT)) {
+			if (AonStringUtils.isNumeric(query)) {
+				q = AonStringUtils.EMPTY;
+			} else {
+				q = AonStringUtils.PERCENT; 
+			}
+			q = q + query  + AonStringUtils.PERCENT;
+		} else {
+			q = query;
+		}
+		return q;
+	}
 }
 
