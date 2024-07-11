@@ -6,7 +6,6 @@ export const HOME = {
 	home : true,
 	title: MSG.HOME,
 	app: CONSTANT.HOME,
-	color: "var(--aonGrayHeaderButtonsColor)", 
 	symbol: MATERIAL_ICONS.HOME,
 };
 
@@ -14,14 +13,12 @@ export const APPS = {
 	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
-	color: "var(--aonGrayHeaderButtonsColor)",
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
 	home : true,
 	app: CONSTANT.APPLICATIONS,
-	color: "var(--aonGrayHeaderButtonsColor)",
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
 
