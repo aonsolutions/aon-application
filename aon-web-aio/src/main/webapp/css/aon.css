@@ -418,18 +418,17 @@
 }
 
 .rightPanel {
-    top: 51px;
-    right: 0;
-    position: fixed;
-    z-index: 1000000;
-    height: calc(100vh - 49px);
-    overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.1);
+  width: 320px;
+  top: 51px;
+  background-color: var(--aonRightPanelColor);
+  right: 0;
+  position: fixed;
+  z-index: 1000000;
+  height: calc(100vh - 49px);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+  visibility: hidden;
 }
-
-.rightPanel .aonIconButton {
-  color: red;
-} 
 
 h1 {
   color:rgb(66,66,66);
@@ -999,6 +998,7 @@ h1 {
   margin-bottom: 10px;
   font-weight: bold;
   margin-left: 15px;
+  color: var(--aonSuiteMenuTitle);
 }
 
 .aonSidenavTitleBeta span {
@@ -1166,17 +1166,15 @@ h1 {
 
 .aonSuiteMenuDropdownButton {
   display: block;
-  color: transparent;
   width: 50px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  border: 1px solid var(--aonSuiteNewButtonBorder);
+  border: 1px solid var(--aonSuiteMenuNewButtonBorder);
   margin-top: 20px;
   justify-content: center;
 }
 
 .aonSuiteMenuUploadButton {
-	color: transparent;
 	display: block;
 	width: 222px;
 	border: 2px dashed var(--aonSuiteMenuUploadButtonBorder);
@@ -3013,8 +3011,469 @@ label.rating:hover {
 
 }
 
+.rightPanel{
+  width: 320px;
+  background-color: var(--aonRightPanelColor)
+}
+
 .rightPanelLangCard{
   width: 90%;
   height: fit-content;
   margin-left: 10px;
+}
+
+.rightPanelEditButton{
+  cursor: pointer;
+  position: fixed;
+  visibility: hidden;
+  right: 280px;
+  top: 60px;
+}
+
+.rightPanelButtons{
+  cursor: pointer;
+  position: fixed;
+  visibility: hidden;
+  right: 280px;
+  margin-top: 8px;
+}
+
+.rightPanelCloseButton{
+  cursor: pointer;
+  position: fixed;
+  right: 10px;
+  margin-top: 8px;
+}
+
+.rightPanelSwitchSupportButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 70px;
+}
+
+.rightPanelAboutContactCard{
+  width: 90%;
+  height: fit-content;
+  margin-left: 10px;
+}
+
+.rightPanelCardDiv{
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  background-color: var(--aonCardColor);
+}
+
+.rightPanelAboutScheduleCard{
+  width: 90%;
+  height: fit-content;
+  margin-left: 10px;
+}
+
+.configPanelSuiteDiv{
+  margin-left: 10px;
+  position: relative;
+  top: -15px;
+}
+
+.configPanelSuiteButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: -1px;
+}
+
+.configPanelPortalDiv{
+  margin-left: 10px;
+  position: relative;
+  top: 0px;
+}
+
+.configPanelPortalButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 90px;
+}
+
+.configPanelAppsDiv{
+  left: -81px;
+  position: relative;
+  top: 35px;
+}
+
+.configPanelAppsButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 122px;
+}
+
+.configPanelDarkDiv{
+  left: 11px;
+  position: relative;
+  top: 50px;
+  display: flex;
+}
+
+.configPanelDarkButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 155px;
+}
+
+.configPanelWhiteDiv{
+  left: 11px;
+  position: relative;
+  top: 65px;
+  display: flex;
+}
+
+.configPanelWhiteButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 190;
+}
+
+.configPanelCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  background-color: var(--aonCardColor);
+  border-radius: 2px;
+  margin-top: 60px;
+}
+
+.configPanelLanguageDiv{
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.configPanelLanguageI{
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.userPanelDivUserInfo{
+  margin-left: 34px;
+  margin-top: -22px;
+  max-width: 205px;
+  margin-bottom: 12px;
+}
+
+.userPanelNameInfoDiv{
+  margin-top: 5px;
+  display: flex;
+}
+
+.userPanelNameSpan{
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.userPanelInfoI{
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: 0px;
+  font-size: 18px;
+}
+
+.userPanelInfoSpan{
+  font-size: 12px;
+}
+
+.userPanelInfoLinkDiv{
+  margin-top: 8px;
+  display: flex;
+  margin-left: 15px;
+}
+
+.userPanelInfoLinkI{
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: 0px;
+  font-size: 24px;
+}
+
+.userPanelInfoLinkSpan{
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.userPanelImage{
+  scale: 2.6;
+  margin-left: 40px;
+  margin-top: 15px;
+  border: none;
+  background-color: var(--aonBlue);
+  color: white;
+}
+
+.notificationPanelGeneralDiv{
+  margin-top: -40px;
+}
+
+.notificationPanelAllDiv{
+  cursor: pointer;
+  position: relative;
+  padding: 9px;
+  width: 97px;
+  top: -20px;
+  left: 172px;
+}
+
+.notificationPanelAllDiv:hover{
+  background-color: rgba(225,225,227,1);
+}
+
+.notifcationPanelRowGeneralDiv{
+  margin: 0.3rem 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(225,225,227,1);
+}
+
+.notificationPanelRowIcon{
+  color: #1fd8b9;
+  size: 50px;
+  margin-top: 5px;
+}
+
+.notificationPanelRowDiv{
+  width: 70%;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+}
+
+.notificationPanelRowSubDiv1{
+  font-weight: 700;
+}
+
+.notificationPanelRowSubDiv2{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.notificationPanelRowSubDiv3{
+  font-size: 0.8rem;
+  color: rgba (0,0,0,0.61);
+}
+
+.notificationPanelRowSpan{
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  top: 18px;
+}
+
+.notificationPanelRowPrincipalDiv:hover{
+  background-color: rgba(225, 225, 227, 1);
+}
+
+.suiteMenuNewButton{
+  display: block;
+  width: 157px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  margin-left: 14px;
+  margin-top: 20px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--aonSuiteMenuNewButtonBorder);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--aonSuiteMenuNewButtonBorder);
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suiteMenuNewButtonText{
+  color: var(--aonSuiteMenuNewButtonBorder);
+  font-weight: normal;
+}
+
+.suiteMenuNewButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suitteMenuNewButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuDropdownButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+  margin-left: -7px;
+}
+
+.suiteMenuDropdownButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuSidenavTitle{
+  color: var(--aonSuiteMenuNewButtonText);
+}
+
+.suiteMenuSidenavUtilities{
+  color: var(--aonSuiteMenUNewButtonText);
+}
+
+.suiteMenuUploadButtonText{
+  font-weight: normal;
+}
+
+.suiteMenuUploadButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suiteMenuUploadButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuContent{
+  height: calc(-61px + 100vh);
+  width: 100%;
+  overflow-y: auto;
+  background-color: var(--aonContentBeta);
+}
+
+.suiteMenuDiv{
+  margin-top: 15px;
+  width: 100%;
+  justify-content: left;
+  display: flex;
+}
+
+.suiteMenuDiv2{
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  justify-content: center;
+  padding-right: 20px;
+  padding-bottom: 70px;
+}
+
+.suiteMenuSideNavCardCard{
+  min-width: 230px;
+  display: flex;
+  min-height: 20px;
+  margin-top: 10px;
+}
+
+.suiteMenuSideNavCardTitle{
+  margin-left: 24px;
+}
+
+.suiteMenuSideNavCardIcon{
+  height: fit-content;
+  position: relative;
+  top: 15px;
+  left: -231px;
+}
+
+.suiteMenuSideNavCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  border-radius: 2px;
+  min-width: 230px;
+}
+
+.suiteMenuCardCard{
+  min-width: 375px;
+  max-width: 375px;
+  display: flex;
+  max-height: 375px;
+  margin-left: 10px;
+}
+
+.suiteMenuCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  border-radius: 2px;
+  min-width: 375px;
+}
+
+.suiteMenuCardDataDiv{
+  margin-top: 10px;
+  display: block;
+  padding: 2px;
+}
+
+.suiteMenuCardDataSpan{
+  cursor: pointer;
+  color: var(--aonSuiteMenuCardText);
+}
+
+.suiteMenuCardDataSpan:hover{
+  color: var(--aonSuiteMenuCardText);
+  text-decoration: underline;
+}
+
+.suiteMenuCardDataSpan2{
+  margin-left: 5px;
+  color: var(--aonSuiteMenuCardText2);
+}
+
+.suiteMenuSideNavCardDataDiv{
+  margin-top: 10px;
+  padding: 2px;
+  position: relative;
+}
+
+.suiteMenuSideNavCardDataSpan2{
+  right: 0px;
+  position: absolute;
+}
+
+.suiteMenuSideNavCardDataButton:hover{
+  background-color: rgba(72,70,68,0.1);
+}
+
+.suiteMenuOptionsDiv{
+  width: 209px;
+  margin-left: 13px;
+  margin-top: 5px;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 24px 54px, rgba(0, 0, 0, 0.08) 0px 4.5px 13.5px;
+}
+
+.suiteMenuOptionsUl{
+  width: 221px;
+  padding-top: 0px;
+  padding-right: 15px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+}
+
+.suiteMenuSideNavRowDiv{
+  padding-top: 5px;
+  padding-left: 30px;
+  border-radius: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  transition: background-color 0.2s;
+}
+
+.suiteMenuSideNavRowDiv:hover{
+  background-color: var(--aonSideNavRowHoverColor);
+}
+
+.suiteMenuSideNavRowI{
+  margin-right: 5px;
+  vertical-align: middle;
+  color: var(--aonCardText);
+}
+
+.suiteMenuSideNavRowSpan{
+  margin-top: 2px;
+}
+
+.suiteMenuLi{
+  padding: 5px;
+  padding-left: 25px;
 }

@@ -44,84 +44,56 @@ export class AonConfig extends AonElement {
 
 		let div = this.createDiv();
 		div.innerHTML = MSG.SUITE_MENU;
-		div.style.marginLeft = '10px';
-		div.style.position = "relative";
-		div.style.top = "-15px";
+		div.className = "configPanelSuiteDiv";
 		this.appendChild(div);
 
 		let rightPanelSwitchTopButton = new AonSwitch();
 		rightPanelSwitchTopButton.id = this.TOP_SWITCH;
-		rightPanelSwitchTopButton.style.marginLeft = '10px';
-		rightPanelSwitchTopButton.style.right = '30px';
-		rightPanelSwitchTopButton.style.position = 'absolute';
-		rightPanelSwitchTopButton.style.top = "-1px";
+		rightPanelSwitchTopButton.className = "configPanelSuiteButton";
 		rightPanelSwitchTopButton.checked = LS.isTopMenu();
 		div.appendChild(rightPanelSwitchTopButton);
 
 		let span2= this.createSpan();
 		span2.innerHTML = MSG.PORTAL_MENU;
-		span2.style.marginLeft = '10px';
-		span2.style.position = "relative";
-		span2.style.top = '0px';
+		span2.className = "configPanelPortalDiv";
 		this.appendChild(span2);
 
 		let rightPanelSwitchLeftButton = new AonSwitch();
 		rightPanelSwitchLeftButton.id = this.LEFT_SWITCH;
-		rightPanelSwitchLeftButton.style.marginLeft = '10px';
-		rightPanelSwitchLeftButton.style.right = '30px';
-		rightPanelSwitchLeftButton.style.position = 'absolute';
-		rightPanelSwitchLeftButton.style.top = "90px";
+		rightPanelSwitchLeftButton.className = "configPanelPortalButton";
 		rightPanelSwitchLeftButton.checked =  LS.isLeftMenu();
 		this.appendChild(rightPanelSwitchLeftButton);
 
 		let span3 = this.createSpan();
 		span3.innerHTML = "Mostrar todas las apps";
-		span3.style.left = '-81px';
-		span3.style.position = "relative";
-		span3.style.top = '35px';
+		span3.className = "configPanelAppsDiv";
 		this.appendChild(span3);
 
 		let rightPanelAppsButton = new AonSwitch();
 		rightPanelAppsButton.id = this.APPS_SWITCH;
-		rightPanelAppsButton.style.marginLeft = '10px';
-		rightPanelAppsButton.style.right = '30px';
-		rightPanelAppsButton.style.position = "absolute";
-		rightPanelAppsButton.style.top = '122px';
+		rightPanelAppsButton.className = "configPanelAppsButton";
 		rightPanelAppsButton.checked = LS.isAppMenu();
 		this.appendChild(rightPanelAppsButton);
 
 		let span4 = this.createSpan();
 		span4.innerHTML = "Modo oscuro";
-		span4.style.left = '11px';
-		span4.style.position  = "relative";
-		span4.style.top = '50px';
-		span4.style.display = "flex";
+		span4.className = "configPanelDarkDiv";
 		this.appendChild(span4);
 
 		let rightPanelDarkButton = new AonSwitch();
 		rightPanelDarkButton.id = this.DARK_SWITCH;
-		rightPanelDarkButton.style.marginLeft = '10px';
-		rightPanelDarkButton.style.right = '30px';
-		rightPanelDarkButton.style.position = "absolute";
-		rightPanelDarkButton.style.top = '155px';
+		rightPanelDarkButton.className = "configPanelDarkButton";
 		rightPanelDarkButton.checked = LS.isDarkTheme();
 		this.appendChild(rightPanelDarkButton);
 
 		let span5 = this.createSpan();
 		span5.innerHTML = "Marca blanca";
-		span5.style.left = "11px";
-		span5.style.position = "relative";
-		span5.style.top = "65px";
-		span5.style.display = "flex";
+		span5.className = "configPanelWhiteDiv";
 		this.appendChild(span5);
 
 		let rightPanelWhiteBrandButton = new AonSwitch();
 		rightPanelWhiteBrandButton.id = this.WHITE_BRAND_SWITCH;
-		rightPanelWhiteBrandButton.style.marginLeft = '10px';
-		rightPanelWhiteBrandButton.style.right = '30px';
-		rightPanelWhiteBrandButton.style.position = "absolute";
-		rightPanelWhiteBrandButton.style.top = '190';
-		rightPanelWhiteBrandButton.checked = LS.isWhiteBrand();
+		rightPanelWhiteBrandButton.className = "configPanelWhiteButton";
 		this.appendChild(rightPanelWhiteBrandButton);
 
 		let rightPanelLangCard = new AonCard();
@@ -131,10 +103,7 @@ export class AonConfig extends AonElement {
 		this.appendChild(rightPanelLangCard);
 
 		let cardDivv = this.getElement(rightPanelLangCard.CARD);
-		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDivv.style.backgroundColor = "var(--aonCardColor)"
-		cardDivv.style.borderRadius = '2px';
-		cardDivv.style.marginTop = '60px';
+		cardDivv.className = "aonCard configPanelCardDiv";
 
 		let divGenerall = this.createDiv();
 		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
@@ -189,14 +158,11 @@ export class AonConfig extends AonElement {
 
 	buildLanguageData(value,language) {
 		let div = this.createDiv();
-		div.style.marginTop = '5px';
 		div.style.title = "Idioma";
-		div.style.cursor = "pointer";
+		div.className = "configPanelLanguageDiv";
 
 		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
 		div.appendChild(i);
 		
 		let span = this.createElement(TAG.SPAN);
