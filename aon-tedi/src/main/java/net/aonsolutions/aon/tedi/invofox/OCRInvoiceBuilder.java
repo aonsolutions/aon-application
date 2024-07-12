@@ -814,6 +814,7 @@ public class OCRInvoiceBuilder {
 	private static void fillFinancePayMethod(AONContext aonContext, OCRInvoice ocrInvoice, Finance finance) {
 		String iban = ocrInvoice.getIBAN().flatMap( d -> d.getValue() ).orElse(null);
 		String paymethodDesc = ocrInvoice.getPaymentMethod().flatMap( d -> d.getValue() ).orElse(null);
+		paymethodDesc = AonStringUtils.substring(paymethodDesc, 32 );
 		if (AonStringUtils.isNotBlank( paymethodDesc )) {
 		    PayMethod paymethod = PayMethodDAO.get(aonContext, paymethodDesc);
 		    if (paymethod == null) {
