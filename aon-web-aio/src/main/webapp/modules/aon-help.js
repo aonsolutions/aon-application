@@ -35,7 +35,7 @@ export class AonHelp extends AonElement {
 
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
-		span.style.marginLeft = '10px';
+		span.classList.add("aonHelpSpan");
 		this.appendChild(span);
 
 		let div = this.createSpan();
@@ -43,14 +43,13 @@ export class AonHelp extends AonElement {
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		i.classList.add("aonHelpI");
 		i.innerHTML= "school";
 		div.appendChild(i);
 
 		let span2 = this.createDiv();
 		span2.className = CSS.AON_CARD_TEXT;
-        span2.style.marginTop = "2px";
+        span2.classList.add("aonHelpSpan2");
 		span2.innerHTML = "Índice contenidos";
 		div.appendChild(span2);
 		this.appendChild(div);

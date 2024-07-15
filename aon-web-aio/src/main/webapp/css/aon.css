@@ -2038,8 +2038,10 @@ label.rating:hover {
 }
 
 .aonHeaderApp {
-    margin-left: 49px;
-}
+  margin-left: 49px;
+  /* min-width: 120px;
+  display: none; */
+}       
 
 /*
 ********************************************
@@ -3045,6 +3047,19 @@ label.rating:hover {
   margin-top: 8px;
 }
 
+.aonHelpSpan{
+  margin-left: 10px;
+}
+
+.aonHelpI{
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.aonHelpSpan2{
+  margin-top: 2px;
+}
+
 .rightPanelSwitchSupportButton{
   margin-left: 10px;
   right: 30px;
@@ -3476,4 +3491,130 @@ label.rating:hover {
 .suiteMenuLi{
   padding: 5px;
   padding-left: 25px;
+}
+
+
+  .appDiv{
+    color: black;
+  }
+
+.aonHeaderSearch{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 150px;
+  max-width: 500px;
+}
+
+.aonHeaderCompany{
+  display: none;
+  height: 14px;
+  color: var(--aonGrayHeaderButtonsColor);
+}
+
+.aonHeaderCompanyList{
+  display: none;
+}
+
+.aonNewDesktopHeaderDiv{
+  height: 48px;
+}
+
+.aonNewDesktopDesktopDiv{
+  display: grid;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+.aonNewDesktopTitleH1{
+  font-size: 20px;
+  font-weight: 500;
+  padding-bottom: 32px;
+}
+
+.aonNewDesktopTitleAonH1{
+  margin-top: 32px;
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 32px;
+}
+
+.aonNewDesktopCardDiv{
+  position: relative;
+}
+
+.aonNewDesktopCardButton{
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  visibility: hidden;
+}
+
+.aonNewDesktopCardButton2{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  visibility: hidden;
+}
+
+.aonNewDesktopOptionsDiv{
+  display: none;
+  background-color: white;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.aonNewDesktopOptionsDiv2{
+  display: none;
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.aonNewDesktopOptionsList{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aonNewDesktopAppDiv{
+  height: 56px;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aonNewDekstopAppDiv{
+  text-align: center;
+}
+
+.aonNewDesktopMainDiv{
+  display: flex;
+  align-items: cener;
+  flex-direction: row;
+  width: 100%;
+}
+
+.aonNewDesktopAppA{
+  width: 100%;
+  height: 100%;
+}
+
+.aonNewDesktopTitleSpan{
+  text-align: center;
+  margin-left: 10px;
+}
+
+.aonNewDesktopDescriptionDiv{
+  text-align: left;
+  margin-top: 10px;
+}
+
+.aonNewDesktopDescriptionSpan{
+  overflow: hidden;
+  font-size: 11px;
 }

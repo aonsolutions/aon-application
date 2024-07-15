@@ -69,7 +69,7 @@ export class AonRightPanel extends AonElement {
         rightPanelHelpButton.className = "rightPanelButtons";
 		rightPanel.appendChild(rightPanelHelpButton);
 
-        let rightPanelNotificationButton = new AonIconButton(); 
+        let rightPanelNotificationButton = new AonIconButton();
 		rightPanelNotificationButton.id = 'aonRightPanelNotificationButton';
 		rightPanelNotificationButton.icon ='notifications';
         rightPanelNotificationButton.className = "rightPanelButtons";
