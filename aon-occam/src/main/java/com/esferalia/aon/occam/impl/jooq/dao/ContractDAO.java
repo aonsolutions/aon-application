@@ -120,6 +120,7 @@ public class ContractDAO {
 		return ctx.getDslContext()
 				.select(CONTRACT.ID)
 				.from(CONTRACT)
+				.join(WORKPLACE).onKey()
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
 				.fetch()
