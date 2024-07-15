@@ -52,24 +52,11 @@ export class AonNotificationPanel extends AonElement {
 	build() {
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
-        divGeneral.style.marginTop = "-40px";
+        divGeneral.className = "notificationPanelGeneralDiv";
 
         let divTodas = this.createDiv();
         divTodas.innerHTML = MSG.SEE_ALL.toUpperCase();
-        divTodas.style.cursor = 'pointer';
-        divTodas.style.position = 'relative';
-        divTodas.style.padding = '9px';
-        divTodas.style.width = '97px';
-        divTodas.style.top = '-20px';
-        divTodas.style.left = '172px';
-
-        divTodas.addEventListener(EVENT.MOUSEOVER, () => {
-			divTodas.style.backgroundColor = 'rgba(225, 225, 227, 1)';
-		});
-        divTodas.addEventListener(EVENT.MOUSELEAVE, () => {
-			divTodas.style.backgroundColor = 'transparent';
-		});
-
+        divTodas.className = "notificationPanelAllDiv";
         divGeneral.appendChild(divTodas);
 		divTodas.addEventListener(EVENT.CLICK, () => this.goAonNotification());
 
@@ -82,70 +69,42 @@ export class AonNotificationPanel extends AonElement {
         let divPrincipal = this.createDiv();
 
         let divGeneral = this.createDiv();
-        divGeneral.style.className = 'aonAppLi';
-        divGeneral.style.margin = "0.3rem 0.6rem";
-        divGeneral.style.display = "flex";
-        divGeneral.style.justifyContent = "space-between";
-        divGeneral.style.cursor = "pointer";
-        divGeneral.style.borderBottom = "1px solid rgba(225, 225, 227, 1)";
+        divGeneral.style.className = 'aonAppLi notifcationPanelRowGeneralDiv';
 
         let icon = new AonIcon();
         icon.icon = "aon_new_messenger";
-        icon.color = "#1fd8b9";
-        icon.title = "Solicitudes";
-        icon.size = "50px";
-        icon.style.marginTop = "5px";
-        
+        icon.className= 'notificationPanelRowIcon';
         divGeneral.appendChild(icon);
 
         let div = this.createDiv();
-        div.style.width = "70%";
-        div.style.fontSize = "0.8rem";
-        div.style.display = "flex";
-        div.style.flexDirection = "column";
-        div.style.rowGap = "4px";
+        div.className = 'notificationPanelRowDiv';
 
         let subDiv1 = this.createDiv();
-        subDiv1.style.fontWeight = '700';
-        subDiv1.title = res.title;
+        subDiv1.className = 'notificationPanelRowSubDiv1';
         subDiv1.innerHTML = res.title;
         div.appendChild(subDiv1);
 
         let subDiv2 = this.createDiv();
-        subDiv2.style.overflow = "hidden";
-        subDiv2.style.whiteSpace = "nowrap";
-        subDiv2.style.textOverflow = "ellipsis";
-        subDiv2.title = res.body;
+        subDiv2.className = 'notificationPanelRowSubDiv2';
         subDiv2.innerHTML = res.body;
         div.appendChild(subDiv2);
 
         let subDiv3 = this.createDiv();
-        subDiv3.style.fontSize = "0.8rem";
-        subDiv3.style.color = "rgba (0,0,0,0.61)";
+        subDiv3.className = 'notificationPanelRowSubDiv3';
         subDiv3.innerHTML = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
         div.appendChild(subDiv3);
 
         divGeneral.appendChild(div);
 
         let span = this.createElement(TAG.SPAN);
-        span.className = "material-icons";
-        span.style.fontSize = "20px";
-        span.style.cursor = "pointer";
-        span.style.position = "relative";
-        span.style.top = "18px";
+        span.className = "material-icons notificationPanelRowSpan";
         span.innerHTML = "delete";
 
         divGeneral.appendChild(span);
 
         divPrincipal.appendChild(divGeneral);
 
-        divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
-			divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
-		});
-
-        divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
-			divPrincipal.style.backgroundColor = 'transparent';
-		});
+        divPrincipal.className = 'notificationPanelRowPrincipalDiv';
 
         return divPrincipal;
     }

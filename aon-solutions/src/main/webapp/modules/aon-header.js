@@ -93,26 +93,20 @@ export class AonHeader extends AonElement {
 
 		let aonLogo = this.createElement(TAG.DIV);
 		aonLogo.id = "aonLogo";
-		//aonLogo.style.paddingLeft = '0px';
-		//aonLogo.style.width = '123px';
 		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
 		div.appendChild(aonLogo);
-
-        let aonHeaderApp = this.createElement(TAG.DIV);
+		
+		let aonHeaderApp = this.createElement(TAG.DIV);
 		aonHeaderApp.id = "aonHeaderApp";
 		aonHeaderApp.className = "aonHeaderApp";
 		aonHeaderApp.style.minWidth = '120px';
 		aonHeaderApp.style.display = "none";
 		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		div.appendChild(aonHeaderApp);
-
+		
 		let aonHeaderSearch = this.createElement(TAG.SPAN);
 		aonHeaderSearch.id = this.AON_HEADER_SEARCH;
-		aonHeaderSearch.style.display = "flex";
-		aonHeaderSearch.style.alignItems = "center";
-		aonHeaderSearch.style.width = "100%";
-		aonHeaderSearch.style.minWidth = '150px';
-		aonHeaderSearch.style.maxWidth = '500px';
+		aonHeaderSearch.classList.add("aonHeaderSearch");
 		
 		let aonHeaderSearchBox = new AonSearchBox();
 		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
@@ -131,9 +125,7 @@ export class AonHeader extends AonElement {
 		
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
-		aonHeaderCompany.style.display = "none";
-		aonHeaderCompany.style.height = "14px";
-		aonHeaderCompany.style.color = "var(--aonGrayHeaderButtonsColor)"
+		aonHeaderCompany.classList.add("aonHeaderCompany");
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
@@ -155,7 +147,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
-		aonHeaderCompanyList.style.display = "none";
+		aonHeaderCompanyList.classList.add("aonHeaderCompanyList");
 		aonHeaderCompanyList.title = "Listado de empresas";
 
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
@@ -383,18 +375,7 @@ export class AonHeader extends AonElement {
 			let header = this.getElement("aonHeaderWeb");
 			let apps = this.getElement("aonMenuLeftop-applications");
 			let headerapp = this.getElement("aonHeaderApp");
-
-			// if (!LS.isDarkTheme()) {
-			// 	header.style.backgroundColor = "rgb(240, 240, 240)";
-			// 	apps.style.color = "rgb(95, 99, 104)";
-			// 	apps.style.backgroundColor = "rgb(240,240,240)";
-			// 	headerapp.style.display = "none";
-			// } else {
-			// 	header.style.backgroundColor = "black";
-			// 	apps.style.color = "white";
-			// 	apps.style.backgroundColor = "black";
-			// 	headerapp.style.display = "none";
-			// }
+			headerapp.style.display = "none";
 
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
@@ -418,7 +399,10 @@ export class AonHeader extends AonElement {
 				appss.addEventListener("click", welcomeClickListener);
 			}
 
-			appss.style.color = "rgb(95, 99, 104)";
+		let header2 = this.getElement('aonHeaderWeb');
+		header2.className = 'aonHeader aonHeaderStart';
+		let applications = this.getElement('applications');
+		applications.className = 'aonMenuLeftopStart';
 		});
 
 		if(this.activeTimecontrol) {
@@ -491,16 +475,7 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		// if(LS.isDarkTheme()){
-		// 	aonHeaderCompanyName.style.color = "var(--aonWhite)";
-		// 	aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
-		// 	let help = this.getElement("aonHeaderHelpButtonIconButton");
-		// 	help.style.color = "var(--aonWhite)";
-		// 	let config = this.getElement("aonHeaderConfigButtonIconButton");
-		// 	config.style.color = "var(--aonWhite)";
-
-
-		// }
+		
 
 		let header1 = this.getElement("aonHeaderCompanyName")
 		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
@@ -558,13 +533,7 @@ export class AonHeader extends AonElement {
 	}
 
 	buildLogo() {
-/*
-		let aonLogo = this.getElement('aonLogo');
-		if(LS.isDarkTheme())
-			aonLogo.src = '../assets/aon-white-logo.svg';
-		else if(!LS.isDarkTheme())
-			aonLogo.src = '../assets/aon-black-logo.svg';
-*/
+
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()

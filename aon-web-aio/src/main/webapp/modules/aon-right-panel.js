@@ -49,64 +49,37 @@ export class AonRightPanel extends AonElement {
     build(){
 
         let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
-		rightPanel.style.width = '320px';
-		rightPanel.style.backgroundColor = "var(--aonRightPanelColor)";
-		rightPanel.style.visibility = "hidden";
-        /*
-        if(LS.isDarkTheme())
-            rightPanel.style.borderLeft = "1px solid rgba(255, 255, 255, 0.1)";
-        else
-            rightPanel.style.borderLeft = "1px solid rgba(0 , 0 , 0, 0.1)";
-        */
+
         this.appendChild(rightPanel);
         
         let rightPanelEditButton = new AonIconButton(); 
 		rightPanelEditButton.id = this.EDIT_BUTTON;
 		rightPanelEditButton.icon ='manage_accounts';
-		rightPanelEditButton.style.cursor = "pointer";
-		rightPanelEditButton.style.position = "fixed";
-        rightPanelEditButton.style.visibility = 'hidden';
-        rightPanelEditButton.style.right = '280px';
-        rightPanelEditButton.style.top = '60px';
+        rightPanelEditButton.className = "rightPanelEditButton";
 		rightPanel.appendChild(rightPanelEditButton);
 
         let rightPanelConfigButton = new AonIconButton(); 
 		rightPanelConfigButton.id = 'aonRightPanelConfigButton';
 		rightPanelConfigButton.icon ='settings';
-		rightPanelConfigButton.style.cursor = "pointer";
-		rightPanelConfigButton.style.position = "fixed";
-        rightPanelConfigButton.style.visibility = 'hidden';
-        rightPanelConfigButton.style.right = '280px';
-        rightPanelConfigButton.style.marginTop = '8px';
+		rightPanelConfigButton.className = "rightPanelButtons";
 		rightPanel.appendChild(rightPanelConfigButton);
 
         let rightPanelHelpButton = new AonIconButton(); 
 		rightPanelHelpButton.id = 'aonRightPanelHelpButton';
 		rightPanelHelpButton.icon ='help_outline';
-		rightPanelHelpButton.style.cursor = "pointer";
-		rightPanelHelpButton.style.position = "fixed";
-        rightPanelHelpButton.style.visibility = 'hidden';
-        rightPanelHelpButton.style.right = '280px';
-        rightPanelHelpButton.style.marginTop = '8px';
+        rightPanelHelpButton.className = "rightPanelButtons";
 		rightPanel.appendChild(rightPanelHelpButton);
 
-        let rightPanelNotificationButton = new AonIconButton(); 
+        let rightPanelNotificationButton = new AonIconButton();
 		rightPanelNotificationButton.id = 'aonRightPanelNotificationButton';
 		rightPanelNotificationButton.icon ='notifications';
-		rightPanelNotificationButton.style.cursor = "pointer";
-		rightPanelNotificationButton.style.position = "fixed";
-        rightPanelNotificationButton.style.visibility = 'hidden';
-        rightPanelNotificationButton.style.right = '280px';
-        rightPanelNotificationButton.style.marginTop = '8px';
+        rightPanelNotificationButton.className = "rightPanelButtons";
 		rightPanel.appendChild(rightPanelNotificationButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
 		rightPanelCloseButton.id = this.CLOSE_BUTTON;
 		rightPanelCloseButton.icon ='close';
-		rightPanelCloseButton.style.cursor = "pointer";
-		rightPanelCloseButton.style.position = "fixed";
-		rightPanelCloseButton.style.right = '10px';
-        rightPanelCloseButton.style.marginTop = '8px';
+        rightPanelCloseButton.className = "rightPanelCloseButton";
 		rightPanel.appendChild(rightPanelCloseButton);
 
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
@@ -131,7 +104,6 @@ export class AonRightPanel extends AonElement {
 
         let title = this.createElement(TAG.H1);
 		title.id = this.TITLE;
-
 		title.style.marginTop = '18px';
 		title.style.marginLeft = '10px'
 		title.style.fontSize = '16px';
