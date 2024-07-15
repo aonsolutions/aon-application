@@ -130,7 +130,7 @@ public class ItemCompositionDAO {
 				.setDomain(getInteger(r, ITEM_COMPOSITION.DOMAIN))
 				.setItemId(getInteger(r, ITEM_COMPOSITION.ITEM))
 				.setCompositionItemId(getInteger(r, ITEM_COMPOSITION.COMPOSITION_ITEM))
-				.setSequence(getValue(r, ITEM_COMPOSITION.SEQUENCE))
+				.setSequence(getShort(r, ITEM_COMPOSITION.SEQUENCE))
 				.setDescription(getValue(r, ITEM_COMPOSITION.DESCRIPTION))
 				.setQuantity(getDouble(r, ITEM_COMPOSITION.QUANTITY))
 				.setDiscountExpression(getValue(r, ITEM_COMPOSITION.DISCOUNT_EXPR))
