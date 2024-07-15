@@ -109,6 +109,7 @@ export class AonLoginPanel extends AonElement {
 		divLogout.className = 'divLogout';
 		divLogout.addEventListener(EVENT.CLICK, () => {
 			closeSession();
+			LS.setNewTheme(true);
 		});
 		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT,MSG.CLOSE_SESSION))
 		this.appendChild(divLogout);
