@@ -3040,9 +3040,9 @@ label.rating:hover {
 	margin-right: 20px;
 }
 
-.aonConfigApps1,
-.aonConfigBrand1,
-.aonConfigTopNav1 {
+.aonConfigApps,
+.aonConfigBrand,
+.aonConfigTopNav {
 	display: none;
 }
 
