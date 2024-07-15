@@ -82,8 +82,6 @@
 
   --aonNewUploadLabel: #aaa;
 
-  --aonNotes: #ffc000;
-
   --aonContentBeta: #fafafa;
 
   --aonDashboardButtonText: #19191d;
@@ -130,25 +128,6 @@
 
   --aonSwitchButtonCircleOn: var(--aonBlue);
 
-  --aonHomeMouseOverImg: black; 
-
-  --aonHomeImg: var(--aonDarkGray);
-
-  --aonSearchBar:white;
-
-  --aonSearchButton: rgb(95, 99, 104);
-
-  --aonHeaderHome: ;
-
-  --aonHeaderInvoice: ;
-
-  --aonHeaderDocumental: ;
-
-  --aonHeaderAccounting: ;
-
-  --aonHeaderFiscal: ;
-
-  --aonHeaderPayroll: ;
 
 
 
@@ -186,10 +165,6 @@
   'wght' 400,
   'GRAD' 0,
   'opsz' 24
-}
-
-#aon-search-buttonIcon {
-	color: black;
 }
 
 .material-symbols-outlined {
@@ -265,254 +240,6 @@
   /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);
 }
-
-#applications:hover{
-  background-color: rgba(0,0,0,0.1);
-}
-
-.aonHeaderButtons .aonIconButton:hover {
-  background-color: rgba(0,0,0,0.1);
-
-}
-
-#aonHeaderCompanyName {
-  color: white;
-
-}
-
-.aonHeader .material-icons {
-  color: white;
-
-}
-
-.aonApplicationsButton .material-symbols-outlined {
-  color: white;
-
-}
-
-.aonSideNavHomeButton {
-
-
-}
-
-.aonSideNavInvoiceButton path{
-  fill: #0078d4;
-
-}
-
-.aonSideNavDocumentalButton {
- 
-
-}
-
-.aonSideNavAccountingButton {
-
-
-}
-
-.aonSideNavFiscalButton {
-
-
-}
-
-.aonSideNavPayrollButton {
-
-
-}
-
-.aonSideNavTimeControlButton {
-
-
-}
-
-.aonSideNavNotesButton {
-
-
-}
-
-.aonSideNavRequestsButton {
-
-
-}
-
-.aonTopNavOfficeButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavGarageButton {
-
-
-}
-
-.aonTopNavAcademyButton {
-
-
-}
-
-.aonTopNavOfficeButton {
-  
-
-}
-
-.aonTopNavCommercialButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavManagementButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavWarehouseButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavTreasuryButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavGroupwareButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavAccountingButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavFiscalButton .material-symbols-outlined {
-  color:var(--aonTopMenuAvailable);
-}
-
-.aonTopNavPayrollButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonTopNavMarketingButton .material-symbols-outlined{
-  color:var(--aonTopMenuAvailable);
-
-}
-
-.aonHeaderapplications {
-  background-color: var(--aonWhiteGray);
-
-}
-
-.aonHeaderhome {
-  background-color: var(--aonWhiteGray);
-}
-
-.aonHeaderinvoice {
-  background-color: var(--aonInvoice);
-
-}
-
-.aonHeaderdocumental{
-  background-color: var(--aonDocumental);
-
-}
-
-.aonHeaderaccounting{
-  background-color: var(--aonAccounting);
-
-}
-
-.aonHeaderfiscal{
-  background-color:var(--aonFiscal);
-
-}
-
-.aonHeaderpayroll {
-  background-color:var(--aonPayroll);
-
-}
-
-.aonHeadertimecontrol {
-  background-color:var(--aonTimecontrol);
-
-}
-
-.aonHeadernote {
-  background-color:var(--aonNotes)
-
-}
-
-.aonHeadermessenger {
-  background-color: var(--aonMessenger);
-
-}
-
-.aonHeaderoffice {
-  background-color: var(--aonTopMenuSpecial);
-
-}
-
-.aonHeaderacademy{
-
-
-}
-
-.aonHeadergarage {
-
-
-}
-
-.aonHeadercommerce {
-
-
-}
-
-.aonHeadercomercialMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeadermanagementMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeadertreasuryMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeaderwarehouseMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeadergroupwareMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeaderaccountingMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeaderfiscalMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeaderpayrollMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
-.aonHeadermarketingMenu {
-  background-color: var(--aonTopMenuAvailable);
-
-}
-
 
 .aonListGroup {
   display: -ms-flexbox;
@@ -694,7 +421,6 @@
   width: 320px;
   top: 51px;
   background-color: var(--aonRightPanelColor);
-
   right: 0;
   position: fixed;
   z-index: 1000000;
@@ -703,6 +429,7 @@
   border: 1px solid rgba(0,0,0,0.1);
   visibility: hidden;
 }
+
 h1 {
   color:rgb(66,66,66);
 }
@@ -862,25 +589,7 @@ h1 {
 
 .aonHeader {
   margin: 0 !important;
-  color: white;
-  height: 48px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 1rem;
-  position: relative;
-  top: 0%;
-  z-index: 8;
-  
-  align-items: center; 
-  border-bottom: none;
-  /*background-color: var(--aonHeaderBackgroundColor)*/;
-}
-
-.aonHeaderStart{
-
-  margin: 0 !important;
-  color: white;
+  color: #5f6368;
   height: 48px;
   width: 100%;
   display: flex;
@@ -893,9 +602,7 @@ h1 {
   align-items: center; 
   border-bottom: none;
   background-color: var(--aonHeaderBackgroundColor);
-
 }
-
 
 .aonHeaderBeta {
   margin: 0 !important;
@@ -1511,17 +1218,13 @@ h1 {
   font-size: 14px;
 }
 
-
 .aonSearchBoxBeta {
   height: 32px;
   border: none;
   -webkit-appearance: none;
   outline: 0px;
   font-size: 14px;
-  color: var(--aonSearchButton);
-  background-color: var(--aonSearchBar);
 }
-
 
 .aonFormCenter {
   display: flex;
