@@ -467,7 +467,7 @@ export class AonDesktop extends AonElement {
 
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
-		cardsPanel.className = CSS.FLEX_ROW;
+		cardsPanel.className = CSS.AON_CARDS_PANEL;
 		cardsPanel.style.gap = '1rem';
 		cardsPanel.style.flexWrap = 'wrap';
 		cardsPanel.id = "cardsPanel";

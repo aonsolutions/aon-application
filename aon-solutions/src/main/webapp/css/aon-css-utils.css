@@ -10,7 +10,8 @@
   gap: 1rem;
 }
 
-.flexRow {
+.flexRow,
+.aonCardsPanel {
   display: flex;
   flex-direction: row;
   gap: 1rem;
