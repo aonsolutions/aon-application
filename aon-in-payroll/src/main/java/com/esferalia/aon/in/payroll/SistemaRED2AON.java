@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -838,17 +839,23 @@ public class SistemaRED2AON {
 		}
 	}
 
-	private static DeductionType getDeductionType(String name) {
-		ContextVariable var = ContextVariable.getVariableByName(name);
+	public static DeductionType getDeductionType(String name) {
+		String varName = AonStringUtils.replaceOnce(name, "RED_", "");
+		ContextVariable var = ContextVariable.getVariableByName(varName);
 		if ( var != null )
 			return getDeductionType(var );
 		
-		DeductionType type = DeductionType.valueOf(name); 
-		if ( type != null ) 
-			return type;
+		for ( DeductionType type : DeductionType.values() ){
+			if ( AonStringUtils.equalsIgnoreCase(type.name(), varName))
+				return type;
+		}
+		//		DeductionType type = DeductionType.valueOf(varName); 
+		//		if ( type != null ) 
+		//			return type;
 
 		return DeductionType.BONUS;
 	}
+	
 
 
 	public static void syncWithIdc(byte data[], String userLogin, String domainName, Integer domainId, Date date, String ccc, String  naf) throws IOException, UnknownPDFException {

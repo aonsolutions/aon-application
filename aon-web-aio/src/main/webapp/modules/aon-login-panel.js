@@ -89,26 +89,7 @@ export class AonLoginPanel extends AonElement {
 
 		let divLogout = this.createDiv();
 		divLogout.id = this.LOGOUT;
-		divLogout.style.borderTop = "1px solid rgba(0,0,0,.08)";
-		if(LS.isDarkTheme())
-			divLogout.style.borderTop = "1px solid rgba(255,255,255,.08)";
-		divLogout.style.color= "inherit";
-		divLogout.style.backgroundColor= "rgba(0,0,0,.04)";
-		divLogout.style.height = "43px";
-		divLogout.style.width = "100%";
-		divLogout.style.cursor = "pointer";
-		divLogout.style.transition = "background-color 0.1s"; 
-		divLogout.style.backgroundColor = "rgba(0,0,0,.04)";	
-		divLogout.addEventListener("mouseover", function() {
-			if(LS.isDarkTheme())
-				this.style.backgroundColor = "var(--aonCardColor)";
-			else
-				this.style.backgroundColor = "rgba(0,0,0,.1)"; 
-		});
-
-		divLogout.addEventListener("mouseout", function() {
-			this.style.backgroundColor = "rgba(0,0,0,.04)";
-		});
+		divLogout.className = 'divLogout';
 		divLogout.addEventListener(EVENT.CLICK, () => {
 			closeSession();
 		});

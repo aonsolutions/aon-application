@@ -346,6 +346,7 @@ public class SLDSalaries {
 	private static Optional<DeductionType>  getReductionType(String description) {
 		switch (description) {
 		case "REDUCCIONES A CARGO DE LA TGSS":
+		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		default:
 			return Optional.empty();
@@ -386,6 +387,7 @@ public class SLDSalaries {
 		case "COMP.IT POR ACCIDENTE DE TRABAJO" :
 		case "BONIF.Y SUBVENC.CON CARGO AL INEM":
 		case "REDUCCIONES A CARGO DE LA TGSS":
+		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.empty();
 		default:
 			return Optional.of(DeductionType.OTHER);

@@ -135,21 +135,13 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
       let titleSpan = this.createElement(TAG.SPAN);
       titleSpan.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.show);
-      if(LS.isDarkTheme())
-        titleSpan.style.color = "white";
-      else
-        titleSpan.style.color = "grey";
-      titleSpan.style.fontWeight = "500";
-      titleSpan.style.textAlign = "center";
+      titleSpan.className = "graphicsDashBoardSummary";
       titleDiv.appendChild(titleSpan);
 
       let yearelect = this.createElement('select');
       yearelect.id = 'pyGyearelect';
       yearelect.title = 'Año';
-      yearelect.style.background = "none";
-      if(LS.isDarkTheme())
-        yearelect.style.color = "white";
-      yearelect.style.border = "1px gray solid";
+      yearelect.className = "graphicsDashBoardYear";
 
       for (const element of this.PERIODS) {
         let optYear = this.createElement('option');

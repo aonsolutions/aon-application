@@ -625,7 +625,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		protected void send(long autorizado, final int fromMonth, final int fromYear, final int toMonth,
 				final int toYear, final int ctrlMonth, final int ctrlYear, final String tipo,
 				final Collection<CCC> cccs, final boolean basesMesAnterior, final boolean calcsDetailed,
-				final String i54, final boolean reftificativa, final boolean solicitudRecepcionRNT) {
+				final String i54, final boolean reftificativa, final boolean solicitudRecepcionRNT, final boolean withIDC) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
@@ -654,6 +654,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			if (solicitudRecepcionRNT)
 				requestDataBuffer.append("&" + Parameter.SOLICITUD_RECEPCION_RNT + "=on");
+
+			if (withIDC)
+				requestDataBuffer.append("&" + Parameter.WITH_IDC + "=on");
 
 			requestDataBuffer.append("&" + Parameter.I54 + "=" + i54);
 
@@ -900,9 +903,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
 			boolean solicitudRecepcionRNT = dialog.solicitudRecepcionRNT();
+			boolean withIDC = dialog.withIDC();
 
 			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, checkCCCs(ccs),
-					basesMesAnterior, calcsDetailed, i54, reftificationMark, solicitudRecepcionRNT);
+					basesMesAnterior, calcsDetailed, i54, reftificationMark, solicitudRecepcionRNT, withIDC);
 
 			return true;
 		}
@@ -969,10 +973,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void visitBases(Void t, Void l) throws RuntimeException {
-					// TODO: add TypeChangeHadler to CretaRequestDialog?
-					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
+
+					dialog.setVisibleWithIDC(true);
 					dialog.setVisibleReftificationMark(true);
 					dialog.setVisibleSolicitudRecepcionRNT(true);
+					
+
+					// TODO: add TypeChangeHadler to CretaRequestDialog?
+					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
+					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleWithIDC("L00".equals(dialog.getType())));
 				}
 
 				@Override

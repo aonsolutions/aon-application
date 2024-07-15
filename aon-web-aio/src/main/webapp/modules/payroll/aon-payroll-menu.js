@@ -189,11 +189,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
             },{
                 description: "Modelo 111",
                 title: "Modelo 111",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_111)
             },{
                 description: "Modelo 190",
                 title: "Modelo 190",
-                action: () => alert("description")
+                action: () => GWT.load(GWT.MODEL_190)
             }]
         },{
             title: 'Antiguas Opciones (Obsoletas)',

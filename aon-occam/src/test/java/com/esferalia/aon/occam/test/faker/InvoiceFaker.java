@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -29,7 +30,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -379,7 +379,7 @@ public class InvoiceFaker {
 				Customer customer = AonRandom.getCustomer( params.getCtx() );
 				fillRegistryData(invoice, customer);
 				invoice.setSeries(params.getConfig().getDefaultInvoiceSeries());
-				invoice.setNumber( InvoiceDAO.getNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+				invoice.setNumber( AON.getInvoiceNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 				
 				invoice.setScope(customer.getScope());
 				invoice.setTransaction( customer.getTransaction() );

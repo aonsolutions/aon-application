@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -95,6 +97,7 @@ public interface IFinance {
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
+	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
@@ -296,6 +299,7 @@ public interface IFinance {
 	// 	***********************************************
 	
 	Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter);
+	Optional<Item> getLastItem(AONContext ctx, Integer registry);
 
 }
 	

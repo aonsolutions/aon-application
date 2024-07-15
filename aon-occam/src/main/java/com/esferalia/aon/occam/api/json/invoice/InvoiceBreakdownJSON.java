@@ -10,14 +10,19 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceBreakdownJSON {
 
 	private InvoiceBreakdownJSON() {
-	
 	}
 	
+	public static InvoiceBreakdown fromString(String text) {
+		JSONObject json = new JSONObject(text);
+		return fromJSON(json); 
+	}
+
 	public static List<InvoiceBreakdown> fromJSON(JSONArray json) {
 		LinkedList<InvoiceBreakdown> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
@@ -28,13 +33,19 @@ public class InvoiceBreakdownJSON {
 	
 	public static InvoiceBreakdown fromJSON(JSONObject json) {
 		return new InvoiceBreakdown()
-				.setTaxType(TaxType.safeValueOf(json.optString(IJsonNames.TAX)))
-				.setBase(JsonUtils.getdouble(json, IJsonNames.BASE))
-				.setPercentage(JsonUtils.getdouble(json, IJsonNames.PERCENTAGE))
-				.setQuota(JsonUtils.getdouble(json, IJsonNames.QUOTA))
-				.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
-				.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA))
-				.setWithholdingType(WithholdingType.safeValueOf(json.optString(IJsonNames.WITHHOLDING_TYPE)));
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+			.setInvoice(JsonUtils.getInteger(json, IJsonNames.INVOICE))
+			.setTaxType(TaxType.safeValueOf(json.optString(IJsonNames.TAX)))
+			.setBase(JsonUtils.getdouble(json, IJsonNames.BASE))
+			.setPercentage(JsonUtils.getdouble(json, IJsonNames.PERCENTAGE))
+			.setQuota(JsonUtils.getdouble(json, IJsonNames.QUOTA))
+			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
+			.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA))
+			.setDeductibleQuota(JsonUtils.getdouble(json, IJsonNames.DEDUCTIBLE_QUOTA))
+			.setWithholdingType(WithholdingType.safeValueOf(json.optString(IJsonNames.WITHHOLDING_TYPE)))
+			.setVatDeductionType(VatDeductionType.safeValueOf(json.optString(IJsonNames.VAT_DEDUCTION_TYPE)))
+		;
 	}
 	
 	public static JSONArray toJSON(List<InvoiceBreakdown> breakdown) {
@@ -44,16 +55,26 @@ public class InvoiceBreakdownJSON {
 	}
 	
 	
-	public static JSONObject toJSON(InvoiceBreakdown breakdown) {
+	public static JSONObject toJSON(InvoiceBreakdown ib) {
+		String taxType = ib.getTaxType() != null 
+			? ib.getTaxType().getName2() 
+			: TaxType.UNKNOWN.getName2();
 		return new JSONObject()
-				.put(IJsonNames.TAX, breakdown.getTaxType().getName2())
-				.put(IJsonNames.TYPE, breakdown.getTaxType().getName2())
-				.put(IJsonNames.BASE, breakdown.getBase())
-				.put(IJsonNames.PERCENTAGE, breakdown.getPercentage())
-				.put(IJsonNames.QUOTA, breakdown.getQuota())
-				.put(IJsonNames.SURCHARGE, breakdown.getSurcharge())
-				.put(IJsonNames.SURCHARGE_QUOTA, breakdown.getSurchargeQuota())
-				.put(IJsonNames.WITHHOLDING_TYPE, breakdown.getWithholdingType() != null 
-					? breakdown.getWithholdingType().name() : null);
+			.put(IJsonNames.ID, ib.getId())
+			.put(IJsonNames.DOMAIN, ib.getDomain())
+			.put(IJsonNames.INVOICE, ib.getInvoice())
+			.put(IJsonNames.TAX, taxType )
+			// <BORRAR>
+			.put(IJsonNames.TYPE, taxType )
+			// </BORRAR>
+			.put(IJsonNames.BASE, ib.getBase())
+			.put(IJsonNames.PERCENTAGE, ib.getPercentage())
+			.put(IJsonNames.QUOTA, ib.getQuota())
+			.put(IJsonNames.SURCHARGE, ib.getSurcharge())
+			.put(IJsonNames.SURCHARGE_QUOTA, ib.getSurchargeQuota())
+			.put(IJsonNames.DEDUCTIBLE_QUOTA, ib.getDeductibleQuota())
+			.put(IJsonNames.WITHHOLDING_TYPE, ib.getWithholdingType() != null ? ib.getWithholdingType().name() : null)
+			.put(IJsonNames.VAT_DEDUCTION_TYPE, ib.getVatDeductionType() != null ? ib.getVatDeductionType().name() : null)
+		;
 	}
 }

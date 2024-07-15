@@ -59,6 +59,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -5018,14 +5019,18 @@ public class IdcTest extends AbstractSQLTestCase {
 		ssBonuses.stream().filter(pec -> isDeduction(pec)).forEach(d -> {
 			ContractDeductionRecord deduction = addDeduction(aonContext, contract, toSQL(d.getStartDate()),
 					toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName());
-			if (deduction.getDeductionConcept() == null) {
-				deduction.setType((byte) com.esferalia.aon.occam.api.model.type.DeductionType.BONUS.ordinal());
-				deduction.update();
-			}
+			deduction.setType((byte) SistemaRED2AON.getDeductionType(d.getName()).ordinal());
+			deduction.update();
 		});
 
-		ssBonuses.stream().filter(pec -> isCost(pec)).forEach(d -> addCost(aonContext, contract,
-				toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
+		ssBonuses.stream().filter(pec -> isCost(pec)).forEach(d -> {
+			ContractCostRecord contractCost = addCost(aonContext, contract,
+					toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName());
+			contractCost.setType((byte) SistemaRED2AON.getDeductionType(d.getName()).ordinal());
+			contractCost.update();
+			
+		});
+				
 
 		return contract;
 	}
@@ -5586,6 +5591,82 @@ public class IdcTest extends AbstractSQLTestCase {
 			double imsEPercent = 2.20;
 
 			assertEquals(cgcBase * ( cgcEPercent *  0.05  + itPercent + imsEPercent ) / 100.00 , salary.getTotalEnterprise() , DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdcXXXVNoBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXV.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2024);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.JUNE);
+			Date june012024 = calendar.getTime();
+
+			//assertPECS(ssPecs, july112023, null, 1, pec -> true);
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), june012024, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			double cgcBase = salary.getCommonBase();
+			
+			double cgcPercent = 4.70;
+			double cgcEPercent = 23.60;
+			double meiPercent = 0.10;
+			double meiEPercent = 0.50;
+			
+			assertEquals(salary.getSalaryBonus().size(), 0);
+
+			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
+			
+			salary.getSalaryDeductions().stream()
+			.forEach( d -> { 
+				try {
+					assertEquals(DeductionType.MEI, d.getType());
+				} catch ( AssertionError failure ) {
+					assertEquals(DeductionType.COMMON_CONTINGENCY, d.getType());
+				}
+			});
+			
+			double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount()));
+			
+			assertEquals(cgcBase *  cgcPercent / 100.00 *  0.05 + cgcBase *  meiPercent / 100.00 , deductions  , DELTA);
+
+			salary.getSalaryCosts().forEach( d -> System.out.println(d.getAmount() + ": " + d.getCostConcept() + " = " + d.getExpression() + " , " + d.getAmount() ));
+			
+			salary.getSalaryCosts().stream()
+			.forEach( d -> {
+				try {
+					assertEquals(DeductionType.MEI, d.getType());
+				} catch ( AssertionError failure ) {
+					try {
+						assertEquals(DeductionType.COMMON_CONTINGENCY, d.getType());
+					} catch ( AssertionError f ) {
+						assertEquals(DeductionType.PROFESSIONAL_CONTINGENCY, d.getType());
+					}
+				}
+			});
+
+
+			double costs = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(d -> d.getAmount()));
+			
+			double itPercent = 1.40;
+			double imsEPercent = 2.20;
+
+			assertEquals(cgcBase * ( cgcEPercent *  0.05  + itPercent + imsEPercent + meiEPercent ) / 100.00 , costs , DELTA);
 			
 		}
 	}

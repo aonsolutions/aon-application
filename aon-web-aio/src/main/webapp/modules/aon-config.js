@@ -127,12 +127,7 @@ export class AonConfig extends AonElement {
 		let rightPanelLangCard = new AonCard();
 		rightPanelLangCard.id = this.LANG_CARD;
 		rightPanelLangCard.title = MSG.SELECT_LANGUAGE;
-		let title = this.getElement(rightPanelLangCard.TITLE);
-		rightPanelLangCard.style.width = "90%";
-		rightPanelLangCard.style.height = "fit-content";
-		if(LS.isDarkTheme())
-			rightPanelLangCard.style.color = "white";
-		rightPanelLangCard.style.marginLeft = "10px";
+		rightPanelLangCard.className = "rightPanelLangCard";
 		this.appendChild(rightPanelLangCard);
 
 		let cardDivv = this.getElement(rightPanelLangCard.CARD);
