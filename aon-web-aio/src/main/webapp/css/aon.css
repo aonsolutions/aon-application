@@ -36,6 +36,8 @@
   --aonRightPanelColor: rgb(250, 249, 248);
   --aonCardColor: white;
 
+  --aonSearchBar: white;
+  --aonSearchButton: rgb(95, 99, 104);
 
   --aonTopMenuAvailable : var(--aonBlue);
   --aonTopMenuNotAvailable : var(--aonGray);
@@ -1224,6 +1226,12 @@ h1 {
   -webkit-appearance: none;
   outline: 0px;
   font-size: 14px;
+  background-color: var(--aonSearchBar);
+}
+
+
+.aonSearchButton {
+  color: var(--aonSearchButton);
 }
 
 .aonFormCenter {
@@ -2842,6 +2850,30 @@ label.rating:hover {
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons {
 	color: var(--aonWhite);
+}
+
+.aonHeaderNote #aon-search-buttonIcon,
+.aonHeaderFiscal #aon-search-buttonIcon,
+.aonHeaderPayroll #aon-search-buttonIcon,
+.aonHeaderInvoice  #aon-search-buttonIcon,
+.aonHeaderMessenger #aon-search-buttonIcon,
+.aonHeaderAccounting #aon-search-buttonIcon,
+.aonHeaderDocumental #aon-search-buttonIcon,
+.aonHeaderTimecontrol #aon-search-buttonIcon,
+.aonHeaderOffice #aon-search-buttonIcon,
+.aonHeaderGarage #aon-search-buttonIcon,
+.aonHeaderAcademy #aon-search-buttonIcon,
+.aonHeaderComerce #aon-search-buttonIcon,
+.aonHeaderComercialMenu #aon-search-buttonIcon,
+.aonHeaderManagementMenu #aon-search-buttonIcon,
+.aonHeaderTreasuryMenu #aon-search-buttonIcon,
+.aonHeaderWarehouseMenu #aon-search-buttonIcon,
+.aonHeaderGroupwareMenu #aon-search-buttonIcon,
+.aonHeaderAccountingMenu #aon-search-buttonIcon,
+.aonHeaderFiscalMenu #aon-search-buttonIcon,
+.aonHeaderPayrollMenu #aon-search-buttonIcon,
+.aonHeaderMarketingMenu #aon-search-buttonIcon{
+  color: var(--aonSearchButton);
 }
 
 .aonHeaderHome .material-icons,

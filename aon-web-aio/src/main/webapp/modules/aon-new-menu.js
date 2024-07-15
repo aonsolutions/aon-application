@@ -246,12 +246,15 @@ export class AonNewMenu extends AonElement {
 //			if(!(!this.isApp(app) && !excludedApps.includes(app.app))){
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
 		}
-
+		
 		let appsDiv = this.getElement("aonMenuLeftop-applications");
 		appsDiv.style.removeProperty('background-color'); 
 		let appName = app.app[0].toUpperCase() + app.app.slice(1);
+		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`
 	}
-build() {
+	
+
+	build() {
 		let aonMenuLefttop = this.createElement(TAG.DIV);
 		aonMenuLefttop.id = this.AON_MENU_LEFTOP;
 		aonMenuLefttop.className = CSS.AON_MENU_LEFTOP;
@@ -510,7 +513,6 @@ build() {
 		hoverDiv.classList.add('aonMenuAppHover');
 		a.appendChild(hoverDiv);
 		let div = this.createElement(TAG.DIV);
-		div.className = app.style;
 		div.id = app.app;
 		div.style.padding = '1px';
 		div.style.display = 'flex';
@@ -530,11 +532,9 @@ build() {
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.innerHTML = app.symbol;
-			/*
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;
 			}
-			*/
 			icon.style.padding = "4px";
 			icon.style.fontSize = "24px";
 			div.appendChild(icon);
@@ -576,7 +576,6 @@ build() {
 				event.preventDefault(); 
 				event.stopPropagation();
 			});
-
 		}
 		a.appendChild(div);
 		return a;

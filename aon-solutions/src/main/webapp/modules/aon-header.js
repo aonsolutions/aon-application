@@ -112,7 +112,6 @@ export class AonHeader extends AonElement {
 		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
 		aonHeaderSearchBox.newTheme = this.newTheme;
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
-
 		div.appendChild(aonHeaderSearch);
 
 		let aonHeaderButtons = this.createElement(TAG.DIV);
